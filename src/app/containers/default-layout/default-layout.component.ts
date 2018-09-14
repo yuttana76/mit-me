@@ -1,16 +1,28 @@
-import { Component, Input } from '@angular/core';
-import { navItems } from './../../_nav';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+// import { navItems } from './../../_nav';
+import { navItems } from './../../_MerchantNav';
+
+import { AuthService } from '../../views/services/auth.service';
+import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './default-layout.component.html'
 })
-export class DefaultLayoutComponent {
+export class DefaultLayoutComponent implements OnInit, OnDestroy{
+
+  userAuthenticated = false;
+  private authListenerSubs: Subscription;
+
   public navItems = navItems;
+
   public sidebarMinimized = true;
   private changes: MutationObserver;
   public element: HTMLElement = document.body;
-  constructor() {
+
+  constructor(private authService: AuthService,  private router: Router) {
 
     this.changes = new MutationObserver((mutations) => {
       this.sidebarMinimized = document.body.classList.contains('sidebar-minimized');
@@ -19,5 +31,22 @@ export class DefaultLayoutComponent {
     this.changes.observe(<Element>this.element, {
       attributes: true
     });
+  }
+
+  ngOnInit() {
+    this.userAuthenticated = this.authService.getIsAuth();
+    this.authListenerSubs = this.authService.getAuthStatusListener()
+    .subscribe(isAuthenticated => {
+      this.userAuthenticated = isAuthenticated;
+    });
+  }
+
+  onLogout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy() {
+    this.authListenerSubs.unsubscribe();
   }
 }

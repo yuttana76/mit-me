@@ -11,11 +11,13 @@ import { Router } from '@angular/router';
   selector: 'app-dashboard',
   templateUrl: './default-layout.component.html'
 })
-export class DefaultLayoutComponent implements OnInit, OnDestroy{
+export class DefaultLayoutComponent implements OnInit, OnDestroy {
 
+  userHasNew = false;
   userAuthenticated = false;
-  private authListenerSubs: Subscription;
+  public userData = null;
 
+  private authListenerSubs: Subscription;
   public navItems = navItems;
 
   public sidebarMinimized = true;
@@ -34,6 +36,9 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit() {
+
+    this.userData = this.authService.getUserData();
+
     this.userAuthenticated = this.authService.getIsAuth();
     this.authListenerSubs = this.authService.getAuthStatusListener()
     .subscribe(isAuthenticated => {

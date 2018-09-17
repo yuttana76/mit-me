@@ -12,16 +12,16 @@ export const navItems = [
   //   title: true,
   //   name: 'Theme'
   // },
-  {
-    name: 'Colors',
-    url: '/theme/colors',
-    icon: 'icon-drop'
-  },
-  {
-    name: 'Typography',
-    url: '/theme/typography',
-    icon: 'icon-pencil'
-  },
+  // {
+  //   name: 'Colors',
+  //   url: '/theme/colors',
+  //   icon: 'icon-drop'
+  // },
+  // {
+  //   name: 'Typography',
+  //   url: '/theme/typography',
+  //   icon: 'icon-pencil'
+  // },
   {
     divider: true
   },

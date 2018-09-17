@@ -46,15 +46,20 @@ import { ChartsModule } from 'ng2-charts/ng2-charts';
 import { NgForm, FormsModule } from '@angular/forms';
 
 import {
+  MatFormFieldModule,
   MatButtonModule,
   MatCardModule ,
   MatInputModule,
   MatToolbarModule,
   MatExpansionModule,
   MatProgressSpinnerModule,
-  MatPaginatorModule
+  MatPaginatorModule,
+  MatDialogModule
 } from '@angular/material';
+
 import { AuthInterceptor } from './views/services/auth/auth-interceptor';
+import { ErrorInterceptor } from './error-interceptor';
+import { CustomErrorComponent } from './views/error/customError.component';
 
 @NgModule({
   imports: [
@@ -71,6 +76,7 @@ import { AuthInterceptor } from './views/services/auth/auth-interceptor';
     TabsModule.forRoot(),
     ChartsModule,
     HttpClientModule,
+    MatFormFieldModule,
     FormsModule,
     MatInputModule,
     MatCardModule,
@@ -79,7 +85,14 @@ import { AuthInterceptor } from './views/services/auth/auth-interceptor';
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    MatDialogModule,
     HttpClientModule,
+  ],
+  exports: [
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCardModule,
   ],
   declarations: [
     AppComponent,
@@ -88,16 +101,17 @@ import { AuthInterceptor } from './views/services/auth/auth-interceptor';
     P500Component,
     LoginComponent,
     RegisterComponent,
+    CustomErrorComponent,
   ],
   // providers: [{
   //   provide: LocationStrategy,
   //   useClass: HashLocationStrategy
   // }],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true
-    }
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
   ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [ AppComponent ],
+  entryComponents: [CustomErrorComponent]
 })
 export class AppModule { }

@@ -42,24 +42,12 @@ import { AppRoutingModule } from './app.routing';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ChartsModule } from 'ng2-charts/ng2-charts';
-
-import { NgForm, FormsModule } from '@angular/forms';
-
-import {
-  MatFormFieldModule,
-  MatButtonModule,
-  MatCardModule ,
-  MatInputModule,
-  MatToolbarModule,
-  MatExpansionModule,
-  MatProgressSpinnerModule,
-  MatPaginatorModule,
-  MatDialogModule
-} from '@angular/material';
+import {FormsModule } from '@angular/forms';
 
 import { AuthInterceptor } from './views/services/auth/auth-interceptor';
 import { ErrorInterceptor } from './error-interceptor';
 import { CustomErrorComponent } from './views/error/customError.component';
+import { AngularMaterialModule } from './angular-material.module';
 
 @NgModule({
   imports: [
@@ -76,23 +64,10 @@ import { CustomErrorComponent } from './views/error/customError.component';
     TabsModule.forRoot(),
     ChartsModule,
     HttpClientModule,
-    MatFormFieldModule,
     FormsModule,
-    MatInputModule,
-    MatCardModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatExpansionModule,
-    MatProgressSpinnerModule,
-    MatPaginatorModule,
-    MatDialogModule,
+
     HttpClientModule,
-  ],
-  exports: [
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
+    AngularMaterialModule
   ],
   declarations: [
     AppComponent,

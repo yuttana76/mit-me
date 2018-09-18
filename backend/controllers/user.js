@@ -2,16 +2,23 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// var config = {
+//   user: "mftsuser",
+//   password: "P@ssw0rd",
+//   server: "192.168.10.48",
+//   database: "MFTS"
+// };
+
 var config = {
-  user: "mftsuser",
-  password: "P@ssw0rd",
-  server: "192.168.10.48",
-  database: "MFTS"
+  user: process.env.AUTH_SRV_USER,
+  password: process.env.AUTH_SRV_PWD,
+  server: process.env.AUTH_SRV_IP,
+  database: process.env.AUTH_SRV_db
 };
 
 const SALT_WORK_FACTOR = 10;
 
-const TOKEN_SECRET_STRING = 'secret_this_should_be_longer';
+const TOKEN_SECRET_STRING = process.env.JWT_KEY;
 const TOKEN_EXPIRES = '1h';
 
 exports.createUser = (req,res,next)=>{
@@ -25,6 +32,7 @@ exports.createUser = (req,res,next)=>{
 
       sql.connect(config, err => {
         new sql.Request().query(queryStr, (err, result) => {
+          sql.close();
             if(err){
               res.status(500).json({
                 error:err
@@ -36,16 +44,17 @@ exports.createUser = (req,res,next)=>{
                 result: result
               });
             }
-            sql.close();
+
         })
 
       });
 
       sql.on("error", err => {
+        sql.close();
         res.status(500).json({
           error:err
         });
-        sql.close();
+
       });
   });
 }
@@ -100,18 +109,18 @@ sql.connect(config).then(pool => {
    })
    .catch(err => {
        // NOT FOUND USER
+       sql.close();
        return res.status(401).json({
          message: 'Auth failed. 3'
        });
-
-       sql.close();
    })
 
  sql.on("error", err => {
    // ... error handler
+   sql.close();
    return res.status(401).json({
      message: 'Auth failed. 4'
    });
-   sql.close();
+
  });
 }

@@ -54,7 +54,6 @@ export class AuthService {
 
   login(email: string, password: string) {
     const authData: AuthData = { email: email, password: password };
-    console.log('Login service authData>>' + authData);
 
     this.http
       .post<{ token: string, expiresIn: number, userData: string }>( BACKEND_URL + 'login', authData)

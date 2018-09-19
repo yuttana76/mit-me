@@ -1,25 +1,15 @@
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const dbConfig = require('./config');
 
-// var config = {
-//   user: "mftsuser",
-//   password: "P@ssw0rd",
-//   server: "192.168.10.48",
-//   database: "MFTS"
-// };
+var config = dbConfig.dbParameters;
 
-var config = {
-  user: process.env.AUTH_SRV_USER,
-  password: process.env.AUTH_SRV_PWD,
-  server: process.env.AUTH_SRV_IP,
-  database: process.env.AUTH_SRV_db
-};
-
-const SALT_WORK_FACTOR = 10;
+// const SALT_WORK_FACTOR = 10;
+const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
 
 const TOKEN_SECRET_STRING = process.env.JWT_KEY;
-const TOKEN_EXPIRES = '1h';
+const TOKEN_EXPIRES = dbConfig.TOKEN_EXPIRES;
 
 exports.createUser = (req,res,next)=>{
   // console.log('API /register>>', req.body.email,' ;pwd>>', req.body.password);

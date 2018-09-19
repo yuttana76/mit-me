@@ -5,6 +5,9 @@ import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import {Fund} from './fund.model';
+import { environment } from '../../../../environments/environment';
+
+const BACKEND_URL = environment.apiURL ;
 
 @Injectable({ providedIn: 'root' })
 export class FundService {
@@ -21,7 +24,7 @@ export class FundService {
     const queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
     console.log('queryParams>' + queryParams);
 
-    this.http.get<{ message: string, result: any }>('http://localhost:3000/api/connexFund')
+    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/connexFund')
     .pipe(map((fundtData) => {
         return fundtData.result.map(fund => {
             return {

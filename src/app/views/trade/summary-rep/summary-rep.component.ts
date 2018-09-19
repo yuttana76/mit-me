@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FundService } from '../services/fund.service';
 import { Fund } from '../services/fund.model';
 import { Subscription } from 'rxjs';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-summary-rep',
@@ -11,6 +13,8 @@ import { Subscription } from 'rxjs';
 
 export class SummaryRepComponent implements OnInit, OnDestroy {
 
+  spinnerLoading = false;
+  form: FormGroup;
   funds: Fund[] = [];
   private fundsSub: Subscription;
 
@@ -19,6 +23,28 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
     ) { }
 
   ngOnInit() {
+    this.form = new FormGroup({
+      startDate: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      endDate: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      amc: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      fund: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+    });
+/*
+    Initial Fund
+*/
+    this.fundService.getFunds(1, 5);
+    this.fundsSub = this.fundService.getFundUpdateListener().subscribe((funds: Fund[]) => {
+      this.funds = funds;
+      console.log('Final Fund>>' + JSON.stringify(this.funds) );
+    });
   }
 
   ngOnDestroy(): void {
@@ -32,7 +58,6 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
   onGetFund() {
 
     this.fundService.getFunds(1, 5);
-
     this.fundsSub = this.fundService.getFundUpdateListener().subscribe((funds: Fund[]) => {
       this.funds = funds;
       console.log('Final Fund>>' + JSON.stringify(this.funds) );
@@ -40,4 +65,18 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
 
   }
 
+  onExecute() {
+    console.log(' onExecute()');
+
+    if (this.form.invalid) {
+      console.log('form.invalid() ' + this.form.invalid);
+      return true;
+    }
+    console.log( 'NEXT FORM VALUES>>' + this.form.value.amc);
+  }
+
+  reset() {
+    console.log('Reset()');
+
+  }
 }

@@ -2,10 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const connexRoutes = require('./routes/connex');
-const fundConnexRoutes = require('./routes/fundConnex');
+const fundRoutes = require('./routes/fund');
 const userRoutes = require('./routes/user');
 const amcRoutes = require('./routes/amc');
-
+const transRoutes = require('./routes/transaction');
 const app = express();
 
 app.use(bodyParser.json());
@@ -26,8 +26,9 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/connex",connexRoutes);
-app.use("/api/connexFund",fundConnexRoutes);
+app.use("/api/fund",fundRoutes);
 app.use("/api/user",userRoutes);
 app.use("/api/amc",amcRoutes);
+app.use("/api/trans",transRoutes);
 
 module.exports = app;

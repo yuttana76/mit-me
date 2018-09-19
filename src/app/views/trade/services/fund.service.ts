@@ -24,7 +24,7 @@ export class FundService {
     const queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
     console.log('queryParams>' + queryParams);
 
-    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/connexFund')
+    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/fund')
     .pipe(map((fundtData) => {
         return fundtData.result.map(fund => {
             return {

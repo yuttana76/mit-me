@@ -1,6 +1,6 @@
-const userModel = {
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
-};
+// const userModel = {
+//   email: { type: String, required: true, unique: true },
+//   password: { type: String, required: true }
+// };
 
-module.exports = userModel;
+// module.exports = userModel;

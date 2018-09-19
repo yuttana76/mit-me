@@ -21,7 +21,10 @@
 
     <mat-form-field>
       <mat-select placeholder="AMC" formControlName="amc">
-        <mat-option value="option">Option</mat-option>
+          <mat-option *ngFor="let option of amcs" [value]="option.amcCode">
+              {{ option.amcCode }}
+            </mat-option>
+
       </mat-select>
       <mat-error *ngIf="form.get('amc').invalid">Please choose AMC.</mat-error>
     </mat-form-field>

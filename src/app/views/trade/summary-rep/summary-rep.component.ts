@@ -1,6 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FundService } from '../services/fund.service';
+
 import { Fund } from '../services/fund.model';
+import { FundService } from '../services/fund.service';
+
+import { Amc } from '../services/amc.model';
+import { AmcService } from '../services/amc.service';
+
 import { Subscription } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
@@ -15,14 +20,19 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
 
   spinnerLoading = false;
   form: FormGroup;
+
   funds: Fund[] = [];
+  amcs: Amc[] = [];
+
   private fundsSub: Subscription;
 
   constructor(
-    private fundService: FundService
+    private fundService: FundService,
+    private amcService: AmcService
     ) { }
 
   ngOnInit() {
+    this.spinnerLoading = true;
     this.form = new FormGroup({
       startDate: new FormControl(null, {
         validators: [Validators.required]
@@ -40,10 +50,17 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
 /*
     Initial Fund
 */
-    this.fundService.getFunds(1, 5);
-    this.fundsSub = this.fundService.getFundUpdateListener().subscribe((funds: Fund[]) => {
-      this.funds = funds;
-      console.log('Final Fund>>' + JSON.stringify(this.funds) );
+    // this.fundService.getFunds(1, 5);
+    // this.fundsSub = this.fundService.getFundUpdateListener().subscribe((funds: Fund[]) => {
+    //   this.funds = funds;
+    //   console.log('Final Fund>>' + JSON.stringify(this.funds) );
+    // });
+
+    this.amcService.getAmc();
+    this.fundsSub = this.amcService.getAmcUpdateListener().subscribe((amc: Amc[]) => {
+      this.amcs = amc;
+      // console.log('AMC>>' + JSON.stringify(this.amcs) );
+      this.spinnerLoading = false;
     });
   }
 

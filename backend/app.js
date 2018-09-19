@@ -1,9 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const postsRoutes = require('./routes/posts');
+
 const connexRoutes = require('./routes/connex');
 const fundConnexRoutes = require('./routes/fundConnex');
 const userRoutes = require('./routes/user');
+const amcRoutes = require('./routes/amc');
 
 const app = express();
 
@@ -24,9 +25,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/posts",postsRoutes);
 app.use("/api/connex",connexRoutes);
 app.use("/api/connexFund",fundConnexRoutes);
 app.use("/api/user",userRoutes);
+app.use("/api/amc",amcRoutes);
 
 module.exports = app;

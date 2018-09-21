@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { CustomerService } from '../services/customer.service';
 import { AuthService } from '../../services/auth.service';
-import { Customer } from '../services/customer.model';
+import { Customer } from '../model/customer.model';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material';
+import { CustomerCond } from '../model/customerCond.model';
 
 @Component({
   selector: 'app-customer-list',
@@ -16,20 +17,23 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   customers: Customer[] = [];
   private postsSub: Subscription;
   spinnerLoading = false;
-  showResult = false;
   form: FormGroup;
+  conditions: CustomerCond;
 
   currentPage = 1;
-  rowsPerPage = 5;
+  rowsPerPage = 20;
   totalRecords = 10;
-  pageSizeOptions = [1, 2, 5, 10];
+  pageSizeOptions = [10, 20, 50, 100];
   constructor(public customerService: CustomerService, private authService: AuthService) { }
 
   ngOnInit() {
     this.form = new FormGroup({
-      searchInput: new FormControl(null, {
+      custId: new FormControl(null, {
         validators: [Validators.required]
-      })
+      }),
+      // custType: new FormControl(null, {
+      //   validators: [Validators.required]
+      // }),
     });
 
   //   this.spinnerLoading = true;
@@ -50,7 +54,9 @@ export class CustomerListComponent implements OnInit, OnDestroy {
     this.spinnerLoading = true;
     this.currentPage =  pageData.pageIndex + 1;
     this.rowsPerPage =  pageData.pageSize;
-    this.customerService.getCustomers(this.rowsPerPage, this.currentPage);
+
+    console.log('Condition>>', this.conditions);
+    this.customerService.getCustomers(this.rowsPerPage, this.currentPage, this.conditions);
     this.postsSub = this.customerService.getCustomerUpdateListener().subscribe((customers: Customer[]) => {
           this.spinnerLoading = false;
           this.customers = customers;
@@ -58,15 +64,20 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   }
 
   onSerachCust() {
-    console.log('onSerachCust ! ');
 
+    console.log('onSerachCust ! ');
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);
       return true;
     }
 
-    console.log('searchInput>>', this.form.value.searchInput);
-    this.customerService.getCustomers(this.rowsPerPage, 1);
+    // Assign conditions
+    // console.log('searchInput>>', this.form.value.custId);
+    this.conditions = {
+      custId: this.form.value.custId,
+      custType: null};
+
+    this.customerService.getCustomers(this.rowsPerPage, 1, this.conditions);
     this.postsSub = this.customerService.getCustomerUpdateListener().subscribe((customers: Customer[]) => {
           this.spinnerLoading = false;
           this.customers = customers;

@@ -10,15 +10,16 @@
     <mat-card-content>
       <div class="condition-div">
         <mat-form-field>
-          <input matInput formControlName="searchInput" placeholder="Card No./ Name">
-          <mat-error *ngIf="form.get('searchInput').invalid">Please enter a condition.</mat-error>
+          <input matInput formControlName="custId" placeholder="Card No./ Name">
+          <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error>
         </mat-form-field>
 
-        <mat-form-field>
-          <mat-select placeholder="Type of Unitholder">
+        <!-- <mat-form-field>
+          <mat-select  formControlName="custType"  placeholder="Type of Unitholder">
             <mat-option value="option">Option</mat-option>
           </mat-select>
-        </mat-form-field>
+          <mat-error *ngIf="form.get('custType').invalid">Please enter a condition.</mat-error>
+        </mat-form-field> -->
       </div>
 
     </mat-card-content>
@@ -30,7 +31,7 @@
   </form>
 </mat-card>
 
-<mat-card *ngIf = "showResult">
+<mat-card >
   <mat-card-title>Result</mat-card-title>
   <mat-card-content>
 

@@ -4,10 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import {Customer} from './customer.model';
+import {Customer} from '../model/customer.model';
 import { environment } from '../../../../environments/environment';
+import { CustomerCond } from '../model/customerCond.model';
 
-const BACKEND_URL = environment.apiURL ;
+const BACKEND_URL = environment.apiURL + '/customer/';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerService {
@@ -16,16 +17,27 @@ export class CustomerService {
 
   constructor(private http: HttpClient , private router: Router) { }
 
-  getCustomers(rowPerPage: number, currentPage: number) {
+  getCustomers(rowPerPage: number, currentPage: number, conditionObj: CustomerCond) {
 
-    console.log(' Fund service get:' + rowPerPage);
+    // console.log(' Fund service get:' + rowPerPage + ' ;currentPage=' + currentPage + ' ;CustomerCond=' + JSON.stringify(conditionObj));
+    // const queryParams = `?pagesize=${rowPerPage}&page=${currentPage}&cust_id=${conditionObj.custId}&cust_type=${conditionObj.custType}`;
+    let queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
 
-    const queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
+
+    console.log('isNaN>>', isNaN(Number(conditionObj.custId)));
+
+    if ( !isNaN(Number(conditionObj.custId))) {
+      queryParams += `&cust_id=${conditionObj.custId}`;
+    } else {
+      queryParams += `&cust_name=${conditionObj.custId}`;
+    }
+
     console.log('queryParams>' + queryParams);
 
-    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/customer')
+    this.http.get<{ message: string, result: any }>(BACKEND_URL + queryParams)
     .pipe(map((resultData) => {
         return resultData.result.map(data => {
+
             return {
               Cust_Code: data.Cust_Code,
               Card_Type: data.Card_Type,
@@ -62,3 +74,4 @@ export class CustomerService {
   }
 
 }
+

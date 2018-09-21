@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Fund } from '../services/fund.model';
+import { Fund } from '../model/fund.model';
 import { FundService } from '../services/fund.service';
 
 import { Amc } from '../model/amc.model';

@@ -25,15 +25,23 @@ exports.getCustomers = (req, res, next) => {
 
   console.log('Welcome getCustomers()');
 
-  var numPerPage = parseInt(req.query.pageSize, 10) || 1;
+  var numPerPage = parseInt(req.query.pagesize, 10) || 1;
   var page = parseInt(req.query.page, 10) || 1;
-  var condition = req.query.condition || false;
+  var custId = req.query.cust_id || false;
+  var cust_name = req.query.cust_name || false;
+  var whereCond = '';
+console.log('numPerPage='+numPerPage + ';page=' + page + ' ;custId=' +custId + ';cust_name=' + cust_name);
 
-  console.log('numPerPage='+numPerPage + ';page=' + page + ' ;condition=' +condition);
+  if ( custId !== null ){
+    whereCond = `Cust_Code like '%${custId}%'`;
+  }else {
+    whereCond = `First_Name_T like N'%${cust_name}%'`;
+  }
 
+console.log('whereCond>>',whereCond);
   var queryStr = `SELECT * FROM (
     SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,
-           * FROM [MFTS].[dbo].[Account_Info]
+           * FROM [MFTS].[dbo].[Account_Info] WHERE ${whereCond}
       ) AS TBL
 WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
 ORDER BY Cust_Code`;
@@ -49,7 +57,7 @@ ORDER BY Cust_Code`;
             message: err,
           });
         }else{
-          // console.log('>>',JSON.stringify(result));
+          console.log('>>',JSON.stringify(result));
           res.status(200).json({
             message: "Connex  successfully!",
             result: result.recordset

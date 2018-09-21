@@ -26,10 +26,12 @@ export class CustomerService {
 
     console.log('isNaN>>', isNaN(Number(conditionObj.custId)));
 
-    if ( !isNaN(Number(conditionObj.custId))) {
-      queryParams += `&cust_id=${conditionObj.custId}`;
-    } else {
+    var splitted = conditionObj.custId.split("-");
+
+    if ( isNaN(Number(splitted[0])) === true) {
       queryParams += `&cust_name=${conditionObj.custId}`;
+    } else {
+      queryParams += `&cust_id=${conditionObj.custId}`;
     }
 
     console.log('queryParams>' + queryParams);

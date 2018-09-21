@@ -32,13 +32,14 @@ exports.getCustomers = (req, res, next) => {
   var whereCond = '';
 console.log('numPerPage='+numPerPage + ';page=' + page + ' ;custId=' +custId + ';cust_name=' + cust_name);
 
-  if ( custId !== null ){
+  if ( custId !== false ){
     whereCond = `Cust_Code like '%${custId}%'`;
   }else {
     whereCond = `First_Name_T like N'%${cust_name}%'`;
   }
 
 console.log('whereCond>>',whereCond);
+
   var queryStr = `SELECT * FROM (
     SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,
            * FROM [MFTS].[dbo].[Account_Info] WHERE ${whereCond}

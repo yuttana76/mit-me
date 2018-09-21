@@ -1,3 +1,8 @@
+:host {
+  display: block;
+
+}
+
 .condition-div {
   max-width: 400px;
 }
@@ -9,4 +14,11 @@ input {
 
 mat-spinner {
     margin: auto;
+}
+
+.resultDiv {
+  margin-top: 1rem;
+}
+.resultDiv table {
+  width: 100%;
 }

@@ -63,11 +63,11 @@ export const navItems = [
         url: '/trade/customerList',
         icon: 'icon-sapace'
       }
-      // , {
-      //   name: 'Customer Detail',
-      //   url: '/trade/customerDetail',
-      //   icon: 'icon-sapace'
-      // }
+      , {
+        name: 'Customer Detail',
+        url: '/trade/customerDetail',
+        icon: 'icon-sapace'
+      }
       // , {
       //   name: 'Cust-Detail',
       //   url: '/trade/CustDetail',

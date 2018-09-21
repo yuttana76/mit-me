@@ -1,3 +1,193 @@
-<p>
-  customer Detail works!
-</p>
+<div class="example-container">
+  <mat-card-title>Customer Detail</mat-card-title>
+  <form [formGroup]="form" (submit)="onSubmit()" #custForm="ngForm" *ngIf="!spinnerLoading">
+
+    <mat-form-field>
+      <mat-select formControlName="custType" placeholder="Customer Type">
+        <mat-option value="C" checked>Customer</mat-option>
+        <mat-option value="I">Company</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('custType').invalid">Please choose customer type.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput formControlName="custId" placeholder="Card No.">
+      <mat-error *ngIf="form.get('custId').invalid">Please enter a Card No.</mat-error>
+    </mat-form-field>
+    <!-- Thai info -->
+    <mat-form-field>
+      <mat-select formControlName="bf_title_th" placeholder="Before Title(TH)">
+        <mat-option value="C" checked>Mr.</mat-option>
+        <mat-option value="I">Mrs.</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('bf_title_th').invalid">Please choose customer type.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput formControlName="firstName_th" placeholder="First name(TH)">
+      <mat-error *ngIf="form.get('firstName_th').invalid">Please enter a first name.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput formControlName="lastName_th" placeholder="First name(EN)">
+      <mat-error *ngIf="form.get('lastName_th').invalid">Please enter a first name.</mat-error>
+    </mat-form-field>
+
+    <!-- English info -->
+    <mat-form-field>
+      <mat-select formControlName="bf_title_en" placeholder="Before Title(EN)">
+        <mat-option value="C" checked>Mr.</mat-option>
+        <mat-option value="I">Mrs.</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('bf_title_en').invalid">Please choose customer type.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput formControlName="firstName_en" placeholder="First name(EN)">
+      <mat-error *ngIf="form.get('firstName_en').invalid">Please enter a first name.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput formControlName="lastName_en" placeholder="First name(EN)">
+      <mat-error *ngIf="form.get('lastName_en').invalid">Please enter a first name.</mat-error>
+    </mat-form-field>
+    <!-- ******************* -->
+
+    <mat-form-field>
+      <input matInput [matDatepicker]="dobDate" formControlName="dobDate" placeholder="date of birth.">
+      <mat-datepicker-toggle matSuffix [for]="dobDate"></mat-datepicker-toggle>
+      <mat-datepicker #dobDate></mat-datepicker>
+      <mat-error *ngIf="form.get('dobDate').invalid ">Please correct date of birth.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [matDatepicker]="compRegisDate" formControlName="compRegisDate" placeholder="date of birth.">
+      <mat-datepicker-toggle matSuffix [for]="compRegisDate"></mat-datepicker-toggle>
+      <mat-datepicker #compRegisDate></mat-datepicker>
+      <mat-error *ngIf="form.get('compRegisDate').invalid ">Please correct register date.</mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field>
+      <input matInput formControlName="mobile" placeholder="Mobile number.">
+      <mat-error *ngIf="form.get('mobile').invalid">Please enter mobile number.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput formControlName="email" placeholder="Email address">
+      <mat-error *ngIf="form.get('email').invalid">Please enter Email address.</mat-error>
+    </mat-form-field>
+<!-- Census Address -->
+<mat-tab-group>
+    <mat-tab label="Census Address">
+        <!-- <mat-card-title>Census Address</mat-card-title> -->
+        <mat-form-field>
+            <input matInput formControlName="ce_addr1" placeholder="Address number">
+            <mat-error *ngIf="form.get('ce_addr1').invalid">Please enter Address number.</mat-error>
+          </mat-form-field>
+    
+          <mat-form-field>
+              <input matInput formControlName="ce_addr2" placeholder="Floor Building">
+              <mat-error *ngIf="form.get('ce_addr2').invalid">Please enter Floor Building.</mat-error>
+            </mat-form-field>
+    
+            <mat-form-field>
+                <mat-select formControlName="ce_country" placeholder="Coutry">
+                  <mat-option >Option</mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('ce_country').invalid">Please choose Coutry.</mat-error>
+              </mat-form-field>
+    
+              <mat-form-field>
+                  <mat-select formControlName="ce_province" placeholder="Province">
+                    <mat-option >Option</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('ce_province').invalid">Please choose Province.</mat-error>
+                </mat-form-field>
+    
+              <mat-form-field>
+                  <mat-select formControlName="ce_districe" placeholder="Districe">
+                    <mat-option >Option</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('ce_districe').invalid">Please choose Districe.</mat-error>
+                </mat-form-field>
+    
+              <mat-form-field>
+                  <mat-select formControlName="ce_subdistrict" placeholder="Sub District">
+                    <mat-option >Option</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('ce_subdistrict').invalid">Please choose Sub District.</mat-error>
+                </mat-form-field>
+    
+            <mat-form-field>
+                <input matInput formControlName="ce_tel" placeholder="Floor Building">
+                <mat-error *ngIf="form.get('ce_tel').invalid">Please enter Tel number.</mat-error>
+              </mat-form-field>
+    
+              <mat-form-field>
+                  <input matInput formControlName="ce_fax" placeholder="Floor Building">
+                  <mat-error *ngIf="form.get('ce_fax').invalid">Please enter Fax number.</mat-error>
+                </mat-form-field>
+
+    </mat-tab>
+    <mat-tab label="Mailing Address"> 
+        <!-- Mailing Address (START)-->
+        <mat-form-field>
+            <input matInput formControlName="mail_addr1" placeholder="Address number">
+            <mat-error *ngIf="form.get('mail_addr1').invalid">Please enter Address number.</mat-error>
+          </mat-form-field>
+    
+          <mat-form-field>
+              <input matInput formControlName="mail_addr2" placeholder="Floor Building">
+              <mat-error *ngIf="form.get('mail_addr2').invalid">Please enter Floor Building.</mat-error>
+            </mat-form-field>
+    
+            <mat-form-field>
+                <mat-select formControlName="mail_country" placeholder="Coutry">
+                  <mat-option >Option</mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('mail_country').invalid">Please choose Coutry.</mat-error>
+              </mat-form-field>
+    
+              <mat-form-field>
+                  <mat-select formControlName="mail_province" placeholder="Province">
+                    <mat-option >Option</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('mail_province').invalid">Please choose Province.</mat-error>
+                </mat-form-field>
+    
+              <mat-form-field>
+                  <mat-select formControlName="mail_districe" placeholder="Districe">
+                    <mat-option >Option</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('mail_districe').invalid">Please choose Districe.</mat-error>
+                </mat-form-field>
+    
+              <mat-form-field>
+                  <mat-select formControlName="mail_subdistrict" placeholder="Sub District">
+                    <mat-option >Option</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('mail_subdistrict').invalid">Please choose Sub District.</mat-error>
+                </mat-form-field>
+    
+            <mat-form-field>
+                <input matInput formControlName="mail_tel" placeholder="Floor Building">
+                <mat-error *ngIf="form.get('mail_tel').invalid">Please enter Tel number.</mat-error>
+              </mat-form-field>
+    
+              <mat-form-field>
+                  <input matInput formControlName="mail_fax" placeholder="Floor Building">
+                  <mat-error *ngIf="form.get('mail_fax').invalid">Please enter Fax number.</mat-error>
+                </mat-form-field>
+      <!-- Mailing Address (END)-->
+    </mat-tab>
+  </mat-tab-group>
+
+    
+    
+    <mat-card-actions><button mat-raised-button color="primary" type='submit'>Submit</button></mat-card-actions>
+
+
+  </form>
+
+</div>

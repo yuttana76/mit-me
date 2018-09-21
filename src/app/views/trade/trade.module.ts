@@ -6,6 +6,8 @@ import { TradeRoutingModule } from './trade-routing.module';
 import { SummaryRepComponent } from './summary-rep/summary-rep.component';
 import { AngularMaterialModule } from '../../angular-material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CustomerDetailComponent } from './customerDetail/customerDetail.component';
+import { CustomerListComponent } from './customer-list/customer-list.component';
 
 @NgModule({
   imports: [
@@ -15,7 +17,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule
   ],
-  declarations: [ SummaryRepComponent ]
+  declarations: [
+    SummaryRepComponent,
+    CustomerDetailComponent,
+    CustomerListComponent,
+  ]
 })
 export class TradeModule {}
 

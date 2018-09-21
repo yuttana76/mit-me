@@ -82,92 +82,53 @@ exports.getFundByCode = (req, res, next) => {
 }
 
 
-// exports.getFundsY = (req, res, next) => {
+exports.getFundsXX = (req, res, next) => {
 
-//   var queryStr = `select * FROM [MFTS].[dbo].[MFTS_Fund] ORDER  BY Amc_Id ,Thai_Name`;
-//   var sql = require("mssql");
+  // const pageSize = +req.query.pageSize;
+  // const currentPage = +req.query.page;
+  console.log('Welome getFundsXX ');
+    var numRows;
+    var queryPagination;
+    var numPerPage = parseInt(req.query.pageSize, 10) || 1;
+    var page = parseInt(req.query.page, 10) || 0;
+    console.log('numPerPage>'+numPerPage + ';page>' + page);
 
-//   sql.connect(config, err => {
-//     // Callbacks
-//     new sql.Request().query(``, (err, result) => {
-//       // ... error checks
-//         if(err){
-//           console.log('Was err !!!' + err);
-//           res.status(201).json({
-//             message: err,
-//           });
-//           sql.close();
-//         }
-
-//         res.status(200).json({
-//           message: "Connex  successfully!",
-//           result: result.recordset
-//         });
-//         sql.close();
-//     })
-//   });
-
-//   sql.on("error", err => {
-//     // ... error handler
-//     console.log('sql.on !!!' + err);
-//     sql.close();
-//   });
-// }
-
-// // `select * FROM [MFTS].[dbo].[MFTS_Fund] ORDER  BY Amc_Id ,Thai_Name`;
-// // var mysql   = require('mysql');
-// var sql = require("mssql");
-
-// var connection = sql.createConnection({
-//   host     : process.env.AUTH_SRV_IP,
-//   user     : process.env.AUTH_SRV_USER,
-//   password : process.env.AUTH_SRV_PWD,
-//   database : process.env.AUTH_SRV_db
-// });
-// var queryAsync = Promise.promisify(connection.query.bind(connection));
-// connection.connect();
-
-// exports.getFundsXX = (req, res, next) => {
-
-//   // const pageSize = +req.query.pageSize;
-//   // const currentPage = +req.query.page;
-//   console.log('Welome getFundsXX ');
-//     var numRows;
-//     var queryPagination;
-//     var numPerPage = parseInt(req.query.pageSize, 10) || 1;
-//     var page = parseInt(req.query.page, 10) || 0;
-//     console.log('numPerPage>'+numPerPage + ';page>' + page);
-
-//     var numPages;
-//     var skip = page * numPerPage;
-//     // Here we compute the LIMIT parameter for MySQL query
-//     var limit = skip + ',' + skip + numPerPage;
-//     queryAsync('SELECT count(*) as numRows FROM [MFTS].[dbo].[MFTS_Fund]')
-//     .then(function(results) {
-//       numRows = results[0].numRows;
-//       numPages = Math.ceil(numRows / numPerPage);
-//       console.log('number of pages:', numPages);
-//     })
-//     .then(() => queryAsync('SELECT * FROM [MFTS].[dbo].[MFTS_Fund] ORDER BY ID Amc_Id ,Thai_Name LIMIT ' + limit))
-//     .then(function(results) {
-//       var responsePayload = {
-//         results: results
-//       };
-//       if (page < numPages) {
-//         responsePayload.pagination = {
-//           current: page,
-//           perPage: numPerPage,
-//           previous: page > 0 ? page - 1 : undefined,
-//           next: page < numPages - 1 ? page + 1 : undefined
-//         }
-//       }
-//       else responsePayload.pagination = {
-//         err: 'queried page ' + page + ' is >= to maximum page number ' + numPages
-//       }
-//       res.json(responsePayload);
-//     })
-//     .catch(function(err) {
-//       console.error(err);
-//       res.json({ err: err });
-//     });
-// }
+    var numPages;
+    var skip = page * numPerPage;
+    // Here we compute the LIMIT parameter for MySQL query
+    var limit = skip + ',' + skip + numPerPage;
+    queryAsync('SELECT count(*) as numRows FROM [MFTS].[dbo].[MFTS_Fund]')
+    .then(function(results) {
+      numRows = results[0].numRows;
+      numPages = Math.ceil(numRows / numPerPage);
+      console.log('number of pages:', numPages);
+    })
+    .then(() => queryAsync(`
+    SELECT * FROM (
+                 SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,
+                        * FROM [MFTS].[dbo].[Account_Info]
+                   ) AS TBL
+    WHERE NUMBER BETWEEN ((${numPages} - 1) * ${numRows} + 1) AND (${numPages} * ${numRows})
+    ORDER BY Cust_Code`))
+    .then(function(results) {
+      var responsePayload = {
+        results: results
+      };
+      if (page < numPages) {
+        responsePayload.pagination = {
+          current: page,
+          perPage: numPerPage,
+          previous: page > 0 ? page - 1 : undefined,
+          next: page < numPages - 1 ? page + 1 : undefined
+        }
+      }
+      else responsePayload.pagination = {
+        err: 'queried page ' + page + ' is >= to maximum page number ' + numPages
+      }
+      res.json(responsePayload);
+    })
+    .catch(function(err) {
+      console.error(err);
+      res.json({ err: err });
+    });
+}

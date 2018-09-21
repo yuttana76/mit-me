@@ -6,6 +6,7 @@ const fundRoutes = require('./routes/fund');
 const userRoutes = require('./routes/user');
 const amcRoutes = require('./routes/amc');
 const transRoutes = require('./routes/transaction');
+const customerRoutes = require('./routes/customer');
 const app = express();
 
 app.use(bodyParser.json());
@@ -30,5 +31,6 @@ app.use("/api/fund",fundRoutes);
 app.use("/api/user",userRoutes);
 app.use("/api/amc",amcRoutes);
 app.use("/api/trans",transRoutes);
+app.use("/api/customer",customerRoutes);
 
 module.exports = app;

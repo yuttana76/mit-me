@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import {Amc} from './amc.model';
+import {Amc} from '../model/amc.model';
 import { environment } from '../../../../environments/environment';
 
 const BACKEND_URL = environment.apiURL ;

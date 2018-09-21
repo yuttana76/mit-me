@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Fund } from '../services/fund.model';
 import { FundService } from '../services/fund.service';
 
-import { Amc } from '../services/amc.model';
+import { Amc } from '../model/amc.model';
 import { AmcService } from '../services/amc.service';
 
 import { Subscription } from 'rxjs';

@@ -54,6 +54,28 @@ export const navItems = [
   //   name: 'Mutual Fund Trading System',
   // },
   {
+    name: 'Account Management',
+    url: '/trade',
+    icon: 'icon-briefcase',
+    children: [
+      {
+        name: 'Customer Information',
+        url: '/trade/customerList',
+        icon: 'icon-sapace'
+      }
+      // , {
+      //   name: 'Customer Detail',
+      //   url: '/trade/customerDetail',
+      //   icon: 'icon-sapace'
+      // }
+      // , {
+      //   name: 'Cust-Detail',
+      //   url: '/trade/CustDetail',
+      //   icon: 'icon-sapace'
+      // }
+    ]
+  },
+  {
     name: 'Report & Enquiry',
     url: '/trade',
     icon: 'icon-pie-chart',

@@ -1,19 +1,67 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { CustType } from '../model/custType.model';
+import { BeforeTitle } from '../model/before_title.model';
 
 @Component({
   selector: 'app-customer',
   templateUrl: './customerDetail.component.html',
   styleUrls: ['./customerDetail.component.scss']
 })
-export class CustomerDetailComponent implements OnInit {
+export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
-  spinnerLoading = false;
-  
+  spinnerLoading = true;
+
+  custType = 'P';
+  asRegisterAddr = false;
+
+  customerTypeList: CustType[] = [{ code: 'P', text: 'Personal' }, { code: 'I', text: 'Insatitute' }];
+  thaiTitles: BeforeTitle[] = [
+    {
+      Title_Name: 'นาย'
+      , Prefix_Name: 'นาย'
+      , Suffix_Name: 'นาย'
+    },
+    {
+      Title_Name: 'นาง'
+      , Prefix_Name: 'นาง'
+      , Suffix_Name: 'นาง'
+    },
+    {
+      Title_Name: 'นส.'
+      , Prefix_Name: 'นส.'
+      , Suffix_Name: 'นส.'
+    },
+  ];
+
+  engTitles: BeforeTitle[] = [
+    {
+      Title_Name: 'MR.'
+      , Prefix_Name: 'MR.'
+      , Suffix_Name: 'MR.'
+    },
+    {
+      Title_Name: 'MRS.'
+      , Prefix_Name: 'MRS.'
+      , Suffix_Name: 'MRS.'
+    },
+    {
+      Title_Name: 'MISS.'
+      , Prefix_Name: 'MISS.'
+      , Suffix_Name: 'MISS.'
+    },
+  ];
+
+  // Customer fields
+  thaiTitle: string;
+  engTitle: string;
+
   constructor() { }
 
   ngOnInit() {
+    console.log('Custeomer Detail  Inititial!!!');
+
     this.form = new FormGroup({
       custType: new FormControl(null, {
         validators: [Validators.required]
@@ -39,6 +87,11 @@ export class CustomerDetailComponent implements OnInit {
       lastName_en: new FormControl(null, {
         validators: [Validators.required]
       }),
+
+      nationality: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+
       dobDate: new FormControl(null, {
         validators: [Validators.required]
       }),
@@ -70,10 +123,13 @@ export class CustomerDetailComponent implements OnInit {
       ce_subdistrict: new FormControl(null, {
         validators: [Validators.required]
       }),
+      ce_postCode: new FormControl(null, {
+        validators: [Validators.required]
+      }),
       ce_tel: new FormControl(null, null),
       ce_fax: new FormControl(null, null),
-       // Mail Address
-       mail_addr1: new FormControl(null, {
+      // Mail Address
+      mail_addr1: new FormControl(null, {
         validators: [Validators.required]
       }),
       mail_addr2: new FormControl(null, {
@@ -91,9 +147,18 @@ export class CustomerDetailComponent implements OnInit {
       mail_subdistrict: new FormControl(null, {
         validators: [Validators.required]
       }),
+      mail_postcode: new FormControl(null, {
+        validators: [Validators.required]
+      }),
       mail_tel: new FormControl(null, null),
       mail_fax: new FormControl(null, null),
     });
+
+    this.spinnerLoading = false;
+  }
+
+  ngOnDestroy() {
+    console.log('Custeomer Detail  Destroy!!!');
   }
 
   onSubmit() {

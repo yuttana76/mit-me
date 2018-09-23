@@ -32,6 +32,8 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   dataSource = new BehaviorSubject([]);
 
   ngOnInit() {
+    console.log('Custeomer Search  Inititial!!!');
+
     this.form = new FormGroup({
       custId: new FormControl(null, {
         validators: [Validators.required]
@@ -51,6 +53,7 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    console.log('Custeomer Seach  Destroy!!!');
     this.postsSub.unsubscribe();
   }
 

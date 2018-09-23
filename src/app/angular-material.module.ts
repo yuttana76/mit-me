@@ -15,7 +15,10 @@ import {
   MatNativeDateModule,
   MatDividerModule,
   MatTableModule,
-  MatTabsModule
+  MatTabsModule,
+  MatRadioModule,
+  MatIconModule,
+  MatCheckboxModule
 
 } from '@angular/material';
 
@@ -36,7 +39,10 @@ import {
     MatNativeDateModule,
     MatDividerModule,
     MatTableModule,
-    MatTabsModule
+    MatTabsModule,
+    MatRadioModule,
+    MatIconModule,
+    MatCheckboxModule
   ]
 })
 export class AngularMaterialModule {}

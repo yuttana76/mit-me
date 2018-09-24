@@ -21,7 +21,9 @@ import { CustomerListComponent } from './customer-list/customer-list.component';
     SummaryRepComponent,
     CustomerDetailComponent,
     CustomerListComponent,
-  ]
+    // MasterDataComponent,
+  ],
+  // entryComponents: [MasterDataComponent]
 })
 export class TradeModule {}
 

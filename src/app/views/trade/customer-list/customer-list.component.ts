@@ -88,7 +88,7 @@ export class CustomerListComponent implements OnInit, OnDestroy {
 
     this.customerService.getCustomers(this.rowsPerPage, 1, this.conditions);
     this.postsSub = this.customerService.getCustomerUpdateListener().subscribe((customers: Customer[]) => {
-          // this.spinnerLoading = false;
+          this.spinnerLoading = false;
           this.customers = customers;
           console.log('RESULT>>', JSON.stringify(this.customers));
           this.dataSource.next(this.customers);

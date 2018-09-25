@@ -2,7 +2,12 @@ exports.dbParameters = {
   user: process.env.AUTH_SRV_USER,
   password: process.env.AUTH_SRV_PWD,
   server: process.env.AUTH_SRV_IP,
-  database: process.env.AUTH_SRV_db
+  database: process.env.AUTH_SRV_db,
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  }
 }
 
 exports.mssql_db_user = process.env.AUTH_SRV_USER;

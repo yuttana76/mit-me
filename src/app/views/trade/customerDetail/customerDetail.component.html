@@ -70,9 +70,10 @@
 
         <div class="row">
           <mat-form-field class="col-sm-12 col-md-4">
-            <mat-select formControlName="nationality" placeholder="Nationality">
-              <mat-option value="TH" checked>TH</mat-option>
-              <mat-option value="EN">English</mat-option>
+            <mat-select formControlName="nationality" placeholder="Nationality" [(ngModel)]="Nation_Code" (selectionChange) ="nationChange($event)">
+              <mat-option *ngFor="let obj of nationList" [value]="obj.Nation_Code">
+                {{obj.Nation_Desc}}
+              </mat-option>
             </mat-select>
             <mat-error *ngIf="form.get('nationality').invalid">Please choose Nationality.</mat-error>
           </mat-form-field>
@@ -170,7 +171,7 @@
 
           <div class="row">
             <mat-form-field class="col-md-4">
-              <mat-select formControlName="ce_country" placeholder="Coutry" >
+              <mat-select formControlName="ce_country" placeholder="Coutry" (selectionChange) ="ceCountryChange($event)" >
                 <mat-option *ngFor="let obj of ce_countryList" [value]="obj.Country_ID">
                   {{obj.Name_Thai}}
                 </mat-option>
@@ -259,7 +260,7 @@
 
           <div class="row">
             <mat-form-field class="col-md-4">
-              <mat-select formControlName="ma_country" placeholder="Coutry" [(ngModel)]="ma_country">
+              <mat-select formControlName="ma_country" placeholder="Coutry" [(ngModel)]="ma_country" (selectionChange) ="maCountryChange($event)">
                 <mat-option *ngFor="let obj of ce_countryList" [value]="obj.Country_ID">
                   {{obj.Name_Thai}}
                 </mat-option>

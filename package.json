@@ -60,6 +60,7 @@
     "rxjs": "^6.3.0",
     "rxjs-compat": "^6.3.0",
     "simple-line-icons": "^2.4.1",
+    "tedious": "^2.6.4",
     "ts-helpers": "^1.1.2",
     "zone.js": "^0.8.26"
   },

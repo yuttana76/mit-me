@@ -12,6 +12,7 @@ const clientTypeRoutes = require('./routes/clientType');
 const PIDTypesRoutes = require('./routes/PIDTypes');
 const thaiTitleRoutes = require('./routes/thaiTitle');
 const engTitleRoutes = require('./routes/engTitle');
+const nationRoutes = require('./routes/nation');
 const countryRoutes = require('./routes/country');
 const provinceRoutes = require('./routes/province');
 const amphurRoutes = require('./routes/amphur');
@@ -52,5 +53,6 @@ app.use("/api/country",countryRoutes);
 app.use("/api/province",provinceRoutes);
 app.use("/api/amphur",amphurRoutes);
 app.use("/api/tambon",tambonRoutes);
+app.use("/api/nation",nationRoutes);
 
 module.exports = app;

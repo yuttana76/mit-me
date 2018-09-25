@@ -1,15 +1,13 @@
-
 const dbConfig = require('./config');
 
 var config = dbConfig.dbParameters;
 
-exports.getProvinces = (req, res, next) => {
+exports.getClientTypes = (req, res, next) => {
 
-  var fncName = 'getProvinces';
-
+  var fncName = 'getAllClientType';
   var queryStr = `select *
-  FROM [MFTS].[dbo].[REF_Provinces]
-  ORDER BY [Name_Thai]`;
+  FROM [MFTS].[dbo].[REF_ClientTypes]
+  ORDER  BY ClientType_Code`;
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {

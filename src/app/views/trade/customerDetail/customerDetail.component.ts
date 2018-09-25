@@ -5,13 +5,14 @@ import { BeforeTitle } from '../model/ref_before_title.model';
 import { MasterDataService } from '../services/masterData.service';
 import { PIDTypes } from '../model/ref_PIDTypes.model';
 import { AccountInfo } from '../model/accountInfo.model';
-import { MatRadioChange } from '@angular/material';
+import { MatRadioChange, MatSelectChange } from '@angular/material';
 import { Country } from '../model/ref_country';
 import { Provinces } from '../model/ref_provinces.model';
 import { Amphurs } from '../model/ref_amphurs.model';
 import { Tambons } from '../model/ref_tambons.model';
 import { NullTemplateVisitor } from '@angular/compiler';
 import { Subscription } from 'rxjs';
+import { Nation } from '../model/ref_nation.model';
 
 @Component({
   selector: 'app-customer',
@@ -31,29 +32,30 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   // engTitlesList: BeforeTitle[];
 
   // clientTypeList: ClientType[] = this.masterDataService.getClientTypeList();
-
   clientTypeList: ClientType[] = [];
-  private clientTypeListSub: Subscription;
 
-
-  PIDTypeMasList: PIDTypes[] = this.masterDataService.getPIDTypeList();
+  // PIDTypeMasList: PIDTypes[] = this.masterDataService.getPIDTypeList();
+  PIDTypeMasList: PIDTypes[] = [];
   PIDTypeList: PIDTypes[];
-  thaiTitleList: BeforeTitle[] = this.masterDataService.getThaiTitleList();
-  engTitlesList: BeforeTitle[] = this.masterDataService.getEngTitleList();
 
-  countryMasList: Country[] = this.masterDataService.getCountry();
+  thaiTitleList: BeforeTitle[];
+  engTitlesList: BeforeTitle[];
+
+  nationList: Nation[];
+
+  countryMasList: Country[];
   ce_countryList: Country[] ;
   ma_countryList: Country[] ;
 
-  provinceMasList: Provinces[] = this.masterDataService.getProvince();
+  provinceMasList: Provinces[];
   ce_provinceList: Provinces[] ;
   ma_provinceList: Provinces[] ;
 
-  amphursMasList: Amphurs[] = this.masterDataService.getAmphurs();
+  amphursMasList: Amphurs[];
   ce_amphursList: Amphurs[] ;
   ma_amphursList: Amphurs[] ;
 
-  tambonsMasList: Tambons[] = this.masterDataService.getTambons();
+  tambonsMasList: Tambons[];
   ce_tambonsList: Tambons[] ;
   ma_tambonsList: Tambons[] ;
 
@@ -63,6 +65,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   Group_Code: string;
   thaiTitle: string;
   engTitle: string;
+  Nation_Code = '000';
+
   asRegisterAddr = false;
   sex: string;
   fc_ipfg: string;
@@ -185,42 +189,85 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       ma_fax: new FormControl(null, null),
     });
 
-    this.masterDataService.getClientTypeList();
-    this.clientTypeListSub = this.masterDataService.getClientTypeListListener().subscribe((ClientTypes: ClientType[]) => {
-        this.spinnerLoading = false;
-        this.clientTypeList = ClientTypes;
+    // Initial Master data
+    this.masterDataService.getClientTypes().subscribe((data: any[]) => {
+      this.clientTypeList = data;
+    },
+    error => () => {
+        console.log('Was error', error);
+    },
+    () => {
+       console.log('Loading complete');
     });
 
+    this.masterDataService.getPIDTypes().subscribe((data: any[]) => {
+      this.PIDTypeMasList = data;
+    }, error => () => {
+        console.log('Was error', error);
+    }, () => {
+       this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.card_Type);
+    });
 
-    this.PIDTypeList = this.getPIDTypeListByClientType(this.card_Type);
+    this.masterDataService.getThaiTitleList().subscribe((data: any[]) => {
+      this.thaiTitleList = data;
+    });
 
-    this.ce_countryList = this.getCountryByNation(this.countryMasList, '000');
-    this.ce_provinceList = this.getProvinceByCountry(this.provinceMasList, this.ce_country);
-    this.ce_amphursList = this.getAmphursByProvince(this.amphursMasList, this.ce_amphure);
-    this.ce_tambonsList = this.getTambonsByAmphur(this.tambonsMasList, this.ce_tambon);
+    this.masterDataService.getEngTitleList().subscribe((data: any[]) => {
+      this.engTitlesList = data;
+    });
 
-    this.ma_countryList = this.getCountryByNation(this.countryMasList, '000');
-    this.ma_provinceList = this.getProvinceByCountry(this.provinceMasList, this.ma_country);
-    this.ma_amphursList = this.getAmphursByProvince(this.amphursMasList, this.ma_amphur);
-    this.ma_tambonsList = this.getTambonsByAmphur(this.tambonsMasList, this.ma_tambon);
+    this.masterDataService.getNations().subscribe((data: any[]) => {
+      this.nationList = data;
+    });
+
+    this.masterDataService.getCountry().subscribe((data: any[]) => {
+      this.countryMasList = data;
+    }, error => () => {
+        console.log('Was error', error);
+    }, () => {
+      this.ce_countryList = this.getCountryByNation( this.countryMasList, this.Nation_Code);
+      this.ma_countryList = this.getCountryByNation( this.countryMasList, this.Nation_Code);
+    });
+
+    this.masterDataService.getProvince().subscribe((data: any[]) => {
+      this.provinceMasList = data;
+    }, error => () => {
+        console.log('Was error', error);
+    }, () => {
+      this.ce_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ce_country);
+      this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ma_country);
+    });
+
+    // Mapping to View list
+    // this.ce_countryList = this.getCountryByNation(this.countryMasList, '000');
+    // this.ce_provinceList = this.getProvinceByCountry(this.provinceMasList, this.ce_country);
+    // this.ce_amphursList = this.getAmphursByProvince(this.amphursMasList, this.ce_amphure);
+    // this.ce_tambonsList = this.getTambonsByAmphur(this.tambonsMasList, this.ce_tambon);
+
+    // this.ma_countryList = this.getCountryByNation(this.countryMasList, '000');
+    // this.ma_provinceList = this.getProvinceByCountry(this.provinceMasList, this.ma_country);
+    // this.ma_amphursList = this.getAmphursByProvince(this.amphursMasList, this.ma_amphur);
+    // this.ma_tambonsList = this.getTambonsByAmphur(this.tambonsMasList, this.ma_tambon);
 
     this.spinnerLoading = false;
   }
 
   ngOnDestroy() {
-    console.log('Custeomer Detail  Destroy!!!');
+    console.log('On destroy !');
   }
 
-  getPIDTypeListByClientType(code: string) {
-    const filtered: any[] = this.PIDTypeMasList.filter(element => element.TypeHolder === code);
+  getPIDTypeListByClientType(PIDTypeMasList: PIDTypes[], code: string) {
+    if (PIDTypeMasList === null) {
+      return null;
+    }
+    const filtered: any[] = PIDTypeMasList.filter(element => element.TypeHolder === code);
     return filtered;
   }
 
   getCountryByNation(countryList: Country[], code: string) {
-    if (countryList === null) {
+    if (countryList === null || code === null) {
       return null;
     }
-
     const filtered: any[] = countryList.filter(element => element.Nation === code);
     return filtered;
   }
@@ -258,8 +305,20 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   }
 
   clientTypeChange(event: MatRadioChange) {
-    this.PIDTypeList = this.getPIDTypeListByClientType(event.value);
+    this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, event.value);
 }
 
+nationChange(event: MatSelectChange) {
+  this.ce_countryList = this.getCountryByNation( this.countryMasList, event.value);
+  this.ma_countryList = this.getCountryByNation( this.countryMasList, event.value);
+}
+
+ceCountryChange(event: MatSelectChange) {
+  this.ce_provinceList = this.getProvinceByCountry( this.provinceMasList,  event.value);
+}
+
+maCountryChange(event: MatSelectChange) {
+  this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList,  event.value);
+}
 
 }

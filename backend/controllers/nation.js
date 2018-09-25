@@ -3,13 +3,13 @@ const dbConfig = require('./config');
 
 var config = dbConfig.dbParameters;
 
-exports.getProvinces = (req, res, next) => {
+exports.getNations = (req, res, next) => {
 
-  var fncName = 'getProvinces';
+  var fncName = 'getNations';
 
   var queryStr = `select *
-  FROM [MFTS].[dbo].[REF_Provinces]
-  ORDER BY [Name_Thai]`;
+  FROM [MFTS].[dbo].[REF_Nations]
+  ORDER BY CASE WHEN [Nation_Code] IN('000','999') THEN NULL ELSE [Nation_Desc] END`;
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {

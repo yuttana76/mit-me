@@ -11,6 +11,7 @@ import { Provinces } from '../model/ref_provinces.model';
 import { Amphurs } from '../model/ref_amphurs.model';
 import { Tambons } from '../model/ref_tambons.model';
 import { NullTemplateVisitor } from '@angular/compiler';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-customer',
@@ -29,7 +30,12 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   // thaiTitleList: BeforeTitle[];
   // engTitlesList: BeforeTitle[];
 
-  clientTypeList: ClientType[] = this.masterDataService.getClientTypeList();
+  // clientTypeList: ClientType[] = this.masterDataService.getClientTypeList();
+
+  clientTypeList: ClientType[] = [];
+  private clientTypeListSub: Subscription;
+
+
   PIDTypeMasList: PIDTypes[] = this.masterDataService.getPIDTypeList();
   PIDTypeList: PIDTypes[];
   thaiTitleList: BeforeTitle[] = this.masterDataService.getThaiTitleList();
@@ -74,6 +80,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log('Custeomer Detail  Inititial!!!');
+    this.spinnerLoading = true;
 
     this.form = new FormGroup({
       custType: new FormControl(null, {
@@ -176,6 +183,12 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       }),
       ma_tel: new FormControl(null, null),
       ma_fax: new FormControl(null, null),
+    });
+
+    this.masterDataService.getClientTypeList();
+    this.clientTypeListSub = this.masterDataService.getClientTypeListListener().subscribe((ClientTypes: ClientType[]) => {
+        this.spinnerLoading = false;
+        this.clientTypeList = ClientTypes;
     });
 
 

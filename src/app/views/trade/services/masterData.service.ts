@@ -1,5 +1,5 @@
 
-import { Injectable, OnInit, OnDestroy } from '../../../../../node_modules/@angular/core';
+import { Injectable} from '../../../../../node_modules/@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,33 +8,42 @@ import { environment } from '../../../../environments/environment';
 import { ClientType } from '../model/ref_clientType.model';
 import { BeforeTitle } from '../model/ref_before_title.model';
 
+const BACKEND_URL = environment.apiURL ;
+
 @Injectable({ providedIn: 'root' })
-export class MasterDataService implements OnInit, OnDestroy{
+export class MasterDataService {
 
-  PIDTypeList = MOCK_PIDTypeList;
+  // PIDTypeList = MOCK_PIDTypeList;
+  private clientTypeList: ClientType[] = [];
+  private clientTypeListUpdated = new Subject<ClientType[]>();
 
-  constructor(private http: HttpClient , private router: Router) { }
-
-  ngOnInit() {
-    console.log('MasterDataService > Init');
-  }
-
-  ngOnDestroy() {
-    console.log('MasterDataService > Destroy');
-  }
+  constructor(private http: HttpClient ) { }
 
   getClientTypeList() {
-    return MOCK_clientTypeList;
+    // return MOCK_clientTypeList;
+
+    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/clientType')
+    .pipe(map((fundtData) => {
+        return fundtData.result.map(rtnData => {
+            return {
+              ClientType_Code: rtnData.ClientType_Code,
+              ClientType_Desc: rtnData.ClientType_Desc,
+            };
+        });
+    }))
+    .subscribe((transformedData) => {
+        this.clientTypeList = transformedData;
+        this.clientTypeListUpdated.next([...this.clientTypeList]);
+    });
+  }
+
+  getClientTypeListListener() {
+    return this.clientTypeListUpdated.asObservable();
   }
 
   getPIDTypeList() {
     return MOCK_PIDTypeList;
   }
-
-  // getPIDTypeListByClientType(clientCode: string) {
-  //   const filtered: any[] = this.PIDTypeList.filter(element => element.TypeHolder !== clientCode);
-  //   return filtered;
-  // }
 
   getThaiTitleList() {
     return MOCK_thaiTitleList;

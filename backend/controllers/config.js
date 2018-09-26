@@ -7,6 +7,9 @@ exports.dbParameters = {
     max: 10,
     min: 0,
     idleTimeoutMillis: 30000
+  },
+  options: {
+    encrypt: false // Use this if you're on Windows Azure
   }
 }
 

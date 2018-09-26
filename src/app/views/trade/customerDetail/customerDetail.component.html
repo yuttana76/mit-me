@@ -183,7 +183,8 @@
 
           <div class="row">
             <mat-form-field class="col-md-4">
-              <mat-select formControlName="ce_province" placeholder="Province" [(ngModel)]="ce_province">
+              <mat-select formControlName="ce_province" placeholder="Province" [(ngModel)]="ce_province"
+              (selectionChange) ="ceProvinceChange($event)">
                 <mat-option *ngFor="let obj of ce_provinceList" [value]="obj.Province_ID">
                   {{obj.Name_Thai}}
                 </mat-option>
@@ -194,7 +195,8 @@
 
           <div class="row">
             <mat-form-field class="col-md-4">
-              <mat-select formControlName="ce_amphure" placeholder="Districe" [(ngModel)]="ce_amphure">
+              <mat-select formControlName="ce_amphure" placeholder="Districe" [(ngModel)]="ce_amphure"
+              (selectionChange) ="ceAmphurChange($event)">
                 <mat-option *ngFor="let obj of ce_amphursList" [value]="obj.Amphur_ID">
                   {{obj.Name_Thai}}
                 </mat-option>
@@ -203,7 +205,8 @@
             </mat-form-field>
 
             <mat-form-field class="col-md-4">
-              <mat-select formControlName="ce_tambon" placeholder="Sub District" [(ngModel)]="ce_tambon">
+              <mat-select formControlName="ce_tambon" placeholder="Sub District" [(ngModel)]="ce_tambon"
+              (selectionChange) ="ceTambonChange($event)">
                 <mat-option *ngFor="let obj of ce_tambonsList" [value]="obj.Tambon_ID">
                   {{obj.Name_Thai}}
                 </mat-option>
@@ -260,7 +263,8 @@
 
           <div class="row">
             <mat-form-field class="col-md-4">
-              <mat-select formControlName="ma_country" placeholder="Coutry" [(ngModel)]="ma_country" (selectionChange) ="maCountryChange($event)">
+              <mat-select formControlName="ma_country" placeholder="Coutry" [(ngModel)]="ma_country"
+              (selectionChange) ="maCountryChange($event)">
                 <mat-option *ngFor="let obj of ce_countryList" [value]="obj.Country_ID">
                   {{obj.Name_Thai}}
                 </mat-option>
@@ -271,7 +275,8 @@
 
           <div class="row">
             <mat-form-field class="col-md-4">
-              <mat-select formControlName="ma_province" placeholder="Province" [(ngModel)]="ma_province">
+              <mat-select formControlName="ma_province" placeholder="Province" [(ngModel)]="ma_province"
+              (selectionChange) ="maProvinceChange($event)">
                 <mat-option *ngFor="let obj of ma_provinceList" [value]="obj.Province_ID">
                   {{obj.Name_Thai}}
                 </mat-option>
@@ -282,7 +287,8 @@
 
           <div class="row">
             <mat-form-field class="col-md-4">
-              <mat-select formControlName="ma_amphur" placeholder="Districe" [(ngModel)]="ma_amphur">
+              <mat-select formControlName="ma_amphur" placeholder="Districe" [(ngModel)]="ma_amphur"
+              (selectionChange) ="maAmphurChange($event)">
                 <mat-option *ngFor="let obj of ma_amphursList" [value]="obj.Amphur_ID">
                   {{obj.Name_Thai}}
                 </mat-option>
@@ -291,7 +297,8 @@
             </mat-form-field>
 
             <mat-form-field class="col-md-4">
-              <mat-select formControlName="ma_tambon" placeholder="Sub District" [(ngModel)]="ma_tambon">
+              <mat-select formControlName="ma_tambon" placeholder="Sub District" [(ngModel)]="ma_tambon"
+              (selectionChange) ="maTambonChange($event)">
                 <mat-option *ngFor="let obj of ma_tambonsList" [value]="obj.Tambon_ID">
                   {{obj.Name_Thai}}
                 </mat-option>

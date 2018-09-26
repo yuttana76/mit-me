@@ -61,12 +61,10 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   // Customer fields
   card_Type = this.CLIENT_TYPE_PERSION;
-
   Group_Code: string;
   thaiTitle: string;
   engTitle: string;
   Nation_Code = '000';
-
   asRegisterAddr = false;
   sex: string;
   fc_ipfg: string;
@@ -74,7 +72,6 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   ce_province: string;
   ce_amphure: string;
   ce_tambon: string;
-
   ma_country: string;
   ma_province: string;
   ma_amphur: string;
@@ -192,11 +189,9 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     // Initial Master data
     this.masterDataService.getClientTypes().subscribe((data: any[]) => {
       this.clientTypeList = data;
-    },
-    error => () => {
+    }, error => () => {
         console.log('Was error', error);
-    },
-    () => {
+    }, () => {
        console.log('Loading complete');
     });
 
@@ -236,6 +231,24 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     }, () => {
       this.ce_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ce_country);
       this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ma_country);
+    });
+
+    this.masterDataService.getAmphurs().subscribe((data: any[]) => {
+      this.amphursMasList = data;
+    }, error => () => {
+        console.log('Was error', error);
+    }, () => {
+      this.ce_amphursList = this.getAmphursByProvince( this.amphursMasList, this.ce_province);
+      this.ma_amphursList = this.getAmphursByProvince( this.amphursMasList, this.ma_province);
+    });
+
+    this.masterDataService.getTambons().subscribe((data: any[]) => {
+      this.tambonsMasList = data;
+    }, error => () => {
+        console.log('Was error', error);
+    }, () => {
+      this.ce_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, this.ce_amphure);
+      this.ma_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, this.ma_amphur);
     });
 
     // Mapping to View list
@@ -313,12 +326,39 @@ nationChange(event: MatSelectChange) {
   this.ma_countryList = this.getCountryByNation( this.countryMasList, event.value);
 }
 
+
 ceCountryChange(event: MatSelectChange) {
   this.ce_provinceList = this.getProvinceByCountry( this.provinceMasList,  event.value);
 }
 
+ceProvinceChange(event: MatSelectChange) {
+  this.ce_amphursList = this.getAmphursByProvince( this.amphursMasList, event.value);
+}
+ceAmphurChange(event: MatSelectChange) {
+
+  this.ce_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, event.value);
+
+}
+ceTambonChange(event: MatSelectChange) {
+  console.log('ceTambonChange>>', event.value);
+}
+
+
+
 maCountryChange(event: MatSelectChange) {
   this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList,  event.value);
+}
+
+maProvinceChange(event: MatSelectChange) {
+  this.ma_amphursList = this.getAmphursByProvince( this.amphursMasList, event.value);
+}
+maAmphurChange(event: MatSelectChange) {
+
+  this.ma_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, event.value);
+
+}
+maTambonChange(event: MatSelectChange) {
+  console.log('maTambonChange>>', event.value);
 }
 
 }

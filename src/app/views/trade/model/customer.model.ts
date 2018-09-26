@@ -1,6 +1,11 @@
-export interface Customer {
+export class Customer {
+
+   constructor() {}
+
   Cust_Code: string;
   Card_Type: string;
+  Card_IssueDate: string;
+  Card_ExpDate: string;
   Group_Code: string;
   Title_Name_T: string;
   First_Name_T: string;

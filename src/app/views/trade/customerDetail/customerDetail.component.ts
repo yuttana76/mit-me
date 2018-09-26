@@ -15,6 +15,8 @@ import { Subscription } from 'rxjs';
 import { Nation } from '../model/ref_nation.model';
 import { Customer } from '../model/customer.model';
 import { CustAddress } from '../model/custAddress.model';
+import { CustomerService } from '../services/customer.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-customer',
@@ -24,6 +26,7 @@ import { CustAddress } from '../model/custAddress.model';
 export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   CLIENT_TYPE_PERSION = '1';
+  TRADE_FORMAT_DATE = 'yyyy-MM-dd';
 
   form: FormGroup;
   spinnerLoading = false;
@@ -77,7 +80,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   // ma_amphur: string;
   // ma_tambon: string;
 
-  constructor( private masterDataService: MasterDataService) { }
+  constructor( private datePipe: DatePipe, private masterDataService: MasterDataService , private customerService: CustomerService) { }
 
   ngOnInit() {
     this.spinnerLoading = true;
@@ -194,8 +197,6 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       ma_fax: new FormControl(null, null),
     });
 
-
-    this.form.
     // Initial Master data
     this.masterDataService.getClientTypes().subscribe((data: any[]) => {
       this.clientTypeList = data;
@@ -309,16 +310,22 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log("ON SUBMIT !");
+    console.log('ON SUBMIT !');
 
     // if (this.form.invalid) {
     //   console.log('form.invalid() ' + this.form.invalid);
     //   return true;
     // }
 
+    // CONVERT VALUES
+    const d = new Date(this.customer.Birth_Day);
+    this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
+
     console.log('CUST>>', JSON.stringify(this.customer));
     console.log('CE ADDR>>', JSON.stringify(this.ceAddress));
     console.log('MA ADDR>>', JSON.stringify(this.maAddress));
+
+    this.customerService.createCustomer(this.customer, this.ceAddress, this.maAddress);
 
   }
 

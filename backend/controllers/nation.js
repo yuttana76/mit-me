@@ -18,7 +18,7 @@ exports.getNations = (req, res, next) => {
         // ... error checks
         if(err){
           console.log( fncName +' Quey db. Was err !!!' + err);
-          res.status(201).json({
+          res.status(404).json({
             message: err,
           });
         }else {

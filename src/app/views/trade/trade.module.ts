@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { TradeRoutingModule } from './trade-routing.module';
 
@@ -23,6 +23,7 @@ import { CustomerListComponent } from './customer-list/customer-list.component';
     CustomerListComponent,
     // MasterDataComponent,
   ],
+  providers: [DatePipe]
   // entryComponents: [MasterDataComponent]
 })
 export class TradeModule {}

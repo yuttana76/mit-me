@@ -1,36 +1,75 @@
 // var Promise = require('bluebird');
+
 const dbConfig = require('./config');
 var sql = require("mssql");
 var config = dbConfig.dbParameters;
-// var connection = mssql.con({
-//   host     : dbConfig.mssql_db_server,
-//   user     : dbConfig.mssql_db_user,
-//   password : dbConfig.mssql_db_password,
-//   database : dbConfig.mssql_db_database
-// });
 
-// var queryAsync = Promise.promisify(connection.query.bind(connection));
-// connection.connect();
 
-// // do something when app is closing
-// // see http://stackoverflow.com/questions/14031763/doing-a-cleanup-action-just-before-node-js-exits
-// process.stdin.resume()
-// process.on('exit', exitHandler.bind(null, { shutdownDb: true } ));
+// exports.getCustomers = (req, res, next) => {
 
-// // var bodyParser = require('body-parser');
-// // app.use(bodyParser.urlencoded({ extended: true }));
+//   var fncName = 'getNations';
+
+//   var numPerPage = parseInt(req.query.pagesize, 10) || 1;
+//   var page = parseInt(req.query.page, 10) || 1;
+//   var custId = req.query.cust_id || false;
+//   var cust_name = req.query.cust_name || false;
+//   var whereCond = '';
+
+//   if ( custId !== false ){
+//     whereCond = `Cust_Code like '%${custId}%'`;
+//   }else {
+//     whereCond = `First_Name_T like N'%${cust_name}%'`;
+//   }
+
+
+//   var queryStr = `SELECT * FROM (
+//     SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,
+//            * FROM [MFTS].[dbo].[Account_Info] WHERE ${whereCond}
+//       ) AS TBL
+// WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+// ORDER BY Cust_Code`;
+//   // Here we compute the LIMIT parameter for MySQL query
+
+//   sql.connect(config, err => {
+//     // Callbacks
+//     new sql.Request().query(queryStr, (err, result) => {
+//       // ... error checks
+//         if(err){
+//           console.log('Was err !!!' + err);
+//           res.status(201).json({
+//             message: err,
+//           });
+//         }else{
+//           console.log('>>',JSON.stringify(result));
+//           res.status(200).json({
+//             message: "Connex  successfully!",
+//             result: result.recordset
+
+//           });
+//           sql.close();
+//           // ****************************
+//         }
+//     })
+//   });
+
+//   sql.on("error", err => {
+//     // ... error handler
+//     console.log('sql.on !!!' + err);
+//     sql.close();
+//   });
+// }
+
 
 
 exports.getCustomers = (req, res, next) => {
 
-  console.log('Welcome getCustomers()');
+  var fncName = 'getNations';
 
   var numPerPage = parseInt(req.query.pagesize, 10) || 1;
   var page = parseInt(req.query.page, 10) || 1;
   var custId = req.query.cust_id || false;
   var cust_name = req.query.cust_name || false;
   var whereCond = '';
-console.log('numPerPage='+numPerPage + ';page=' + page + ' ;custId=' +custId + ';cust_name=' + cust_name);
 
   if ( custId !== false ){
     whereCond = `Cust_Code like '%${custId}%'`;
@@ -38,41 +77,112 @@ console.log('numPerPage='+numPerPage + ';page=' + page + ' ;custId=' +custId + '
     whereCond = `First_Name_T like N'%${cust_name}%'`;
   }
 
-console.log('whereCond>>',whereCond);
-
   var queryStr = `SELECT * FROM (
     SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,
            * FROM [MFTS].[dbo].[Account_Info] WHERE ${whereCond}
       ) AS TBL
 WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
 ORDER BY Cust_Code`;
-  // Here we compute the LIMIT parameter for MySQL query
 
-  sql.connect(config, err => {
-    // Callbacks
-    new sql.Request().query(queryStr, (err, result) => {
-      // ... error checks
+const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
         if(err){
-          console.log('Was err !!!' + err);
+          console.log( fncName +' Quey db. Was err !!!' + err);
           res.status(201).json({
             message: err,
           });
-        }else{
-          console.log('>>',JSON.stringify(result));
+        }else {
           res.status(200).json({
-            message: "Connex  successfully!",
+            message: fncName + "Quey db. successfully!",
             result: result.recordset
-
           });
-          sql.close();
-          // ****************************
         }
     })
-  });
-
-  sql.on("error", err => {
+  })
+  pool1.on('error', err => {
     // ... error handler
-    console.log('sql.on !!!' + err);
-    sql.close();
-  });
+    console.log("EROR>>"+err);
+  })
+}
+
+exports.CreateCustomer = (req, res, next) => {
+
+  var customerObj = JSON.parse(req.body.customer);
+  var ceAddressObj = JSON.parse(req.body.ceAddress);
+  var maAddressObj = JSON.parse(req.body.maAddress);
+
+var v_Cust_Code = customerObj.Cust_Code;
+
+console.log('Birth_Day>>',customerObj.Birth_Day);
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+
+    var transaction = new sql.Transaction(pool1);
+    transaction.begin(function(err) {
+
+        var requestAccount = new sql.Request(transaction);
+        var queryStr = `INSERT INTO  [MFTS].[dbo].[Account_Info]
+        VALUES(
+        '${v_Cust_Code}'
+        ,'${validStr(customerObj.Card_Type)}'
+        ,'${validStr(customerObj.Group_Code)}'
+        ,'${validStr(customerObj.Title_Name_T)}'
+        ,'${validStr(customerObj.First_Name_T)}'
+        ,'${validStr(customerObj.Last_Name_T)}'
+        ,'${validStr(customerObj.Title_Name_E)}'
+        ,'${validStr(customerObj.First_Name_E)}'
+        ,'${validStr(customerObj.Last_Name_E)}'
+         ,CONVERT(datetime, ${validStr(customerObj.Birth_Day)})
+        ,'${validStr(customerObj.Nation_Code)}'
+        ,'${validStr(customerObj.Sex)}'
+        ,'${validStr(customerObj.Tax_No)}'
+        ,'${validStr(customerObj.Mobile)}'
+        ,'${validStr(customerObj.Email)}'
+        ,'${validStr(customerObj.MktId,0)}'
+        ,'${validStr(customerObj.Create_By)}'
+        , CURRENT_TIMESTAMP
+        ,'${validStr(customerObj.Modify_By)}'
+        , NULL
+        ,'${validStr(customerObj.IT_SentRepByEmail)}'
+        );`;
+
+        requestAccount.query(queryStr, function(err, recordset) {
+            if (err) {
+              console.log('Was error !!',err);
+                  transaction.rollback(err => {
+                      // console.log('rollback>>',err);
+                  })
+              } else {
+                  transaction.commit(err => {
+                      console.log('Cmmited !');
+                  })
+              }
+            });
+
+        });
+     });
+
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+    pool1.close();
+  })
+}
+
+exports.UpdateCustomer = (req, res, next) => {
+
+}
+
+// *************** Utilities
+function validStr(val, defaultVal = '') {
+  if (val !== undefined && val !== null) {
+    // v has a value
+    return val ;
+  } else {
+    // v does not have a value
+    return defaultVal;
+  }
 }

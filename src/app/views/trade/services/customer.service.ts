@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import {Customer} from '../model/customer.model';
 import { environment } from '../../../../environments/environment';
 import { CustomerCond } from '../model/customerCond.model';
+import { CustAddress } from '../model/custAddress.model';
 
 const BACKEND_URL = environment.apiURL + '/customer/';
 
@@ -73,6 +74,26 @@ export class CustomerService {
 
   getCustomerUpdateListener() {
     return this.customerUpdated.asObservable();
+  }
+
+  createCustomer(customer: Customer, ceAddress: CustAddress, maAddress: CustAddress){
+    console.log('Service   createCustomer() !');
+    const data = {
+      'customer': JSON.stringify(customer),
+      'ceAddress': JSON.stringify(ceAddress),
+      'maAddress': JSON.stringify(maAddress)
+      };
+
+    this.http
+        .post<{ message: string, data: any }>(BACKEND_URL, data)
+        .subscribe(responseData => {
+          console.log('Service  Result createCustomer()>>', JSON.stringify(responseData));
+            this.router.navigate(['/']);
+        });
+  }
+
+  updateCustomer(customer: Customer, ceAddress: CustAddress, maAddress: CustAddress){
+    console.log('updateCustomer !');
   }
 
 }

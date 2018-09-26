@@ -112,7 +112,8 @@
 
       <div class="row">
         <mat-form-field class="col-md-4">
-          <input matInput [matDatepicker]="dobDate" formControlName="dobDate" placeholder="date of birth /Register date" [(ngModel)]="customer.Birth_Day">
+          <input matInput [matDatepicker]="dobDate" formControlName="dobDate" placeholder="date of birth /Register date"
+           [(ngModel)]="customer.Birth_Day" >
           <mat-datepicker-toggle matSuffix [for]="dobDate"></mat-datepicker-toggle>
           <mat-datepicker #dobDate></mat-datepicker>
           <mat-error *ngIf="form.get('dobDate').invalid ">Please correct date of birth /Register date</mat-error>

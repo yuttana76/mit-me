@@ -17,6 +17,7 @@ import { Customer } from '../model/customer.model';
 import { CustAddress } from '../model/custAddress.model';
 import { CustomerService } from '../services/customer.service';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-customer',
@@ -80,7 +81,10 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   // ma_amphur: string;
   // ma_tambon: string;
 
-  constructor( private datePipe: DatePipe, private masterDataService: MasterDataService , private customerService: CustomerService) { }
+  constructor( private datePipe: DatePipe,
+    private masterDataService: MasterDataService ,
+    private customerService: CustomerService,
+    private authService: AuthService) { }
 
   ngOnInit() {
     this.spinnerLoading = true;
@@ -320,6 +324,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     // CONVERT VALUES
     const d = new Date(this.customer.Birth_Day);
     this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
+    // this.customer.Create_By = this.authService.getUserData() || 'NONE';
 
     console.log('CUST>>', JSON.stringify(this.customer));
     console.log('CE ADDR>>', JSON.stringify(this.ceAddress));

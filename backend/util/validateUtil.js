@@ -6,6 +6,6 @@ export  function validStr(val){
     return val;
   } else {
     // v does not have a value
-    return 'xxx';
+    return '';
   }
 }

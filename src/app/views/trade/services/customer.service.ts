@@ -27,7 +27,7 @@ export class CustomerService {
 
     console.log('isNaN>>', isNaN(Number(conditionObj.custId)));
 
-    var splitted = conditionObj.custId.split("-");
+    var splitted = conditionObj.custId.split('-');
 
     if ( isNaN(Number(splitted[0])) === true) {
       queryParams += `&cust_name=${conditionObj.custId}`;
@@ -76,7 +76,7 @@ export class CustomerService {
     return this.customerUpdated.asObservable();
   }
 
-  createCustomer(customer: Customer, ceAddress: CustAddress, maAddress: CustAddress){
+  createCustomer(customer: Customer, ceAddress: CustAddress, maAddress: CustAddress) {
     console.log('Service   createCustomer() !');
     const data = {
       'customer': JSON.stringify(customer),

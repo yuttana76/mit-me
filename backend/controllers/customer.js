@@ -63,6 +63,7 @@ var config = dbConfig.dbParameters;
 
 exports.getCustomers = (req, res, next) => {
 
+
   var fncName = 'getNations';
 
   var numPerPage = parseInt(req.query.pagesize, 10) || 1;
@@ -109,7 +110,7 @@ const sql = require('mssql')
 }
 
 exports.CreateCustomer = (req, res, next) => {
-
+  console.log('CreateCustomer>>' +v_Cust_Code + " ;v_DOB>>"+v_DOB);
   var customerObj = JSON.parse(req.body.customer);
   var ceAddressObj = JSON.parse(req.body.ceAddress);
   var maAddressObj = JSON.parse(req.body.maAddress);
@@ -117,6 +118,8 @@ exports.CreateCustomer = (req, res, next) => {
  // Convert parameter
 var v_Cust_Code = customerObj.Cust_Code;
 var v_DOB = customerObj.Birth_Day;
+
+console.log('CreateCustomer>>' +v_Cust_Code + " ;v_DOB>>"+v_DOB);
 
 var accountInfoStr = `INSERT INTO  [MFTS].[dbo].[Account_Info]
         VALUES(
@@ -166,16 +169,17 @@ var accountInfoStr = `INSERT INTO  [MFTS].[dbo].[Account_Info]
         });
       // End Transaction 1
      });
-
-  pool1.on('error', err => {
-    console.log("EROR>>"+err);
-    pool1.close();
-  })
-}
+     pool1.on('error', err => {
+          console.log("EROR>>"+err);
+          pool1.close();
+        })
+      }
 
 exports.UpdateCustomer = (req, res, next) => {
 
 }
+
+// *************** Functions
 
 // *************** Utilities
 function validStr(val, defaultVal = '') {

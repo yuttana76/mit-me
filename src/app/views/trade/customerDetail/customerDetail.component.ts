@@ -24,6 +24,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './customerDetail.component.html',
   styleUrls: ['./customerDetail.component.scss']
 })
+// @CrossOrigin(origins = {"http://localhost:4200"})
 export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   CLIENT_TYPE_PERSION = '1';
@@ -322,8 +323,10 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     // }
 
     // CONVERT VALUES
-    const d = new Date(this.customer.Birth_Day);
-    this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
+    if(this.customer.Birth_Day){
+      const d = new Date(this.customer.Birth_Day);
+      this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
+    }
     // this.customer.Create_By = this.authService.getUserData() || 'NONE';
 
     console.log('CUST>>', JSON.stringify(this.customer));

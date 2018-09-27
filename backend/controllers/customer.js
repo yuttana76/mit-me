@@ -114,18 +114,11 @@ exports.CreateCustomer = (req, res, next) => {
   var ceAddressObj = JSON.parse(req.body.ceAddress);
   var maAddressObj = JSON.parse(req.body.maAddress);
 
+ // Convert parameter
 var v_Cust_Code = customerObj.Cust_Code;
+var v_DOB = customerObj.Birth_Day;
 
-console.log('Birth_Day>>',customerObj.Birth_Day);
-
-  const sql = require('mssql')
-  const pool1 = new sql.ConnectionPool(config, err => {
-
-    var transaction = new sql.Transaction(pool1);
-    transaction.begin(function(err) {
-
-        var requestAccount = new sql.Request(transaction);
-        var queryStr = `INSERT INTO  [MFTS].[dbo].[Account_Info]
+var accountInfoStr = `INSERT INTO  [MFTS].[dbo].[Account_Info]
         VALUES(
         '${v_Cust_Code}'
         ,'${validStr(customerObj.Card_Type)}'
@@ -136,7 +129,7 @@ console.log('Birth_Day>>',customerObj.Birth_Day);
         ,'${validStr(customerObj.Title_Name_E)}'
         ,'${validStr(customerObj.First_Name_E)}'
         ,'${validStr(customerObj.Last_Name_E)}'
-         ,CONVERT(datetime, ${validStr(customerObj.Birth_Day)})
+         , CONVERT(datetime, '${v_DOB}')
         ,'${validStr(customerObj.Nation_Code)}'
         ,'${validStr(customerObj.Sex)}'
         ,'${validStr(customerObj.Tax_No)}'
@@ -150,7 +143,14 @@ console.log('Birth_Day>>',customerObj.Birth_Day);
         ,'${validStr(customerObj.IT_SentRepByEmail)}'
         );`;
 
-        requestAccount.query(queryStr, function(err, recordset) {
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+
+    // Start Transaction 1
+    var transaction = new sql.Transaction(pool1);
+    transaction.begin(function(err) {
+        var requestAccountInfo = new sql.Request(transaction);
+        requestAccountInfo.query(accountInfoStr, function(err, recordset) {
             if (err) {
               console.log('Was error !!',err);
                   transaction.rollback(err => {
@@ -164,6 +164,7 @@ console.log('Birth_Day>>',customerObj.Birth_Day);
             });
 
         });
+      // End Transaction 1
      });
 
   pool1.on('error', err => {

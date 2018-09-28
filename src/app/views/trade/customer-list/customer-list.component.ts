@@ -32,7 +32,6 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   dataSource = new BehaviorSubject([]);
 
   ngOnInit() {
-    console.log('Custeomer Search  Inititial!!!');
 
     this.form = new FormGroup({
       custId: new FormControl(null, {
@@ -68,11 +67,11 @@ export class CustomerListComponent implements OnInit, OnDestroy {
     this.postsSub = this.customerService.getCustomerUpdateListener().subscribe((customers: Customer[]) => {
           this.spinnerLoading = false;
           this.customers = customers;
+          this.dataSource.next(this.customers);
       });
   }
 
   onSerachCust() {
-
     console.log('onSerachCust ! ');
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);

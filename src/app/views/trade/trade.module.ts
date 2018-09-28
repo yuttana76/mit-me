@@ -8,6 +8,7 @@ import { AngularMaterialModule } from '../../angular-material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomerDetailComponent } from './customerDetail/customerDetail.component';
 import { CustomerListComponent } from './customer-list/customer-list.component';
+import { SaleDialogComponent } from './dialog/sale-dialog/sale-dialog.component';
 
 @NgModule({
   imports: [
@@ -21,10 +22,11 @@ import { CustomerListComponent } from './customer-list/customer-list.component';
     SummaryRepComponent,
     CustomerDetailComponent,
     CustomerListComponent,
+    SaleDialogComponent,
     // MasterDataComponent,
   ],
-  providers: [DatePipe]
-  // entryComponents: [MasterDataComponent]
+  providers: [DatePipe],
+  entryComponents: [  SaleDialogComponent],
 })
 export class TradeModule {}
 

@@ -162,4 +162,24 @@ export class MasterDataService {
       })
     );
   }
+
+  getSaleAgent() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL + '/saleAgent')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(rtnData => {
+          return {
+            Id: rtnData.Id,
+            Type: rtnData.Type,
+            License_Code: rtnData.License_Code,
+            Issue_Date: rtnData.Issue_Date,
+            User_Code: rtnData.User_Code,
+            Full_Name: rtnData.Full_Name,
+            Email: rtnData.Email
+          };
+        });
+      })
+    );
+  }
 }

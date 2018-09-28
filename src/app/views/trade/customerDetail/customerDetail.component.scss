@@ -11,13 +11,20 @@ mat-spinner {
     top: 100px;
     margin: auto;
 }
+mat-checkbox{
+  margin-left: 20px;
+}
+
+mat-radio-button {
+  margin-left: 20px;
+}
 
 .custTyperadio-group{
     display: inline-flex;
-    flex-direction: column;
+    // flex-direction: column;
 
     // display: block;
-    margin-left: 50px;
+    margin-left: 20px;
     margin-top: 20px;
     // margin-left: auto;
     // margin-right: auto
@@ -41,3 +48,8 @@ mat-spinner {
   .addr-border {
     margin-top: 10px;
   }
+
+  .find-right {
+    position: absolute;
+    right: 10px;
+}

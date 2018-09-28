@@ -5,7 +5,7 @@ import { BeforeTitle } from '../model/ref_before_title.model';
 import { MasterDataService } from '../services/masterData.service';
 import { PIDTypes } from '../model/ref_PIDTypes.model';
 import { AccountInfo } from '../model/accountInfo.model';
-import { MatRadioChange, MatSelectChange } from '@angular/material';
+import { MatRadioChange, MatSelectChange, MatDialogRef, MatDialog } from '@angular/material';
 import { Country } from '../model/ref_country';
 import { Provinces } from '../model/ref_provinces.model';
 import { Amphurs } from '../model/ref_amphurs.model';
@@ -18,6 +18,8 @@ import { CustAddress } from '../model/custAddress.model';
 import { CustomerService } from '../services/customer.service';
 import { DatePipe } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { SaleDialogComponent } from '../dialog/sale-dialog/sale-dialog.component';
+import { Sale } from '../model/sale.model';
 
 @Component({
   selector: 'app-customer',
@@ -33,10 +35,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   form: FormGroup;
   spinnerLoading = false;
 
-  // clientTypeList: ClientType[] = this.masterDataService.getClientTypeList();
   clientTypeList: ClientType[] = [];
 
-  // PIDTypeMasList: PIDTypes[] = this.masterDataService.getPIDTypeList();
   PIDTypeMasList: PIDTypes[] = [];
   PIDTypeList: PIDTypes[];
 
@@ -47,52 +47,45 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   countryMasList: Country[];
   ce_countryList: Country[] ;
-  ma_countryList: Country[] ;
+  ma_countryList: Country[] ;//Contact
+  of_countryList: Country[] ;
 
   provinceMasList: Provinces[];
   ce_provinceList: Provinces[] ;
   ma_provinceList: Provinces[] ;
+  of_provinceList: Provinces[] ;
 
   amphursMasList: Amphurs[];
   ce_amphursList: Amphurs[] ;
   ma_amphursList: Amphurs[] ;
+  of_amphursList: Amphurs[] ;
 
   tambonsMasList: Tambons[];
   ce_tambonsList: Tambons[] ;
   ma_tambonsList: Tambons[] ;
+  of_tambonsList: Tambons[] ;
 
   // Customer fields
   customer: Customer = new Customer();
-  ceAddress: CustAddress = new CustAddress();
-  maAddress: CustAddress = new CustAddress();
-  // card_Type = this.CLIENT_TYPE_PERSION;
-  // Group_Code: string;
-  // thaiTitle: string;
-  // engTitle: string;
-  // Nation_Code = '000';
-  // asRegisterAddr = false;
-  // sex: string;
-  // fc_ipfg: string;
-  // ce_country: string;
-  // ce_province: string;
-  // ce_amphure: string;
-  // ce_tambon: string;
-  // ma_country: string;
-  // ma_province: string;
-  // ma_amphur: string;
-  // ma_tambon: string;
+  ceAddress: CustAddress = new CustAddress();  // Register address
+  maAddress: CustAddress = new CustAddress();  // Mail & Contact address
+  ofAddress: CustAddress = new CustAddress();  // Office address
+
+
+  saleDialogRef: MatDialogRef<SaleDialogComponent>;
 
   constructor( private datePipe: DatePipe,
     private masterDataService: MasterDataService ,
     private customerService: CustomerService,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    public dialog: MatDialog) { }
 
   ngOnInit() {
     this.spinnerLoading = true;
     this.customer.Card_Type = this.CLIENT_TYPE_PERSION;
     this.customer.Nation_Code = '000';
 
-    //Initial Form fields
+    // Initial Form fields
     this.form = new FormGroup({
       custType: new FormControl(null, {
         validators: [Validators.required]
@@ -134,7 +127,10 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       // compRegisDate: new FormControl(null, {
       //   validators: [Validators.required]
       // }),
-      compExpDate: new FormControl(null, {
+      issueDate: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      Card_ExpDate: new FormControl(null, {
         validators: [Validators.required]
       }),
       mobile: new FormControl(null, {
@@ -173,6 +169,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       }),
       ce_tel: new FormControl(null, null),
       ce_fax: new FormControl(null, null),
+
       // Mail Address
       ma_addr_No: new FormControl(null, {
         validators: [Validators.required]
@@ -200,6 +197,35 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       }),
       ma_tel: new FormControl(null, null),
       ma_fax: new FormControl(null, null),
+
+      // Office Address
+      of_addr_No: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      of_place: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      of_road: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      of_country: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      of_province: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      of_amphur: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      of_tambon: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      of_zip_Code: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      of_tel: new FormControl(null, null),
+      of_fax: new FormControl(null, null),
+
     });
 
     // Initial Master data
@@ -238,6 +264,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     }, () => {
       this.ce_countryList = this.getCountryByNation( this.countryMasList, this.customer.Nation_Code);
       this.ma_countryList = this.getCountryByNation( this.countryMasList, this.customer.Nation_Code);
+      this.of_countryList = this.getCountryByNation( this.countryMasList, this.customer.Nation_Code);
     });
 
     this.masterDataService.getProvince().subscribe((data: any[]) => {
@@ -247,6 +274,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     }, () => {
       this.ce_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ceAddress.Country_Id);
       this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList, this.maAddress.Country_Id);
+      this.of_provinceList = this.getProvinceByCountry( this.provinceMasList, this.maAddress.Country_Id);
     });
 
     this.masterDataService.getAmphurs().subscribe((data: any[]) => {
@@ -256,6 +284,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     }, () => {
       this.ce_amphursList = this.getAmphursByProvince( this.amphursMasList, this.ceAddress.Province_Id);
       this.ma_amphursList = this.getAmphursByProvince( this.amphursMasList, this.maAddress.Province_Id);
+      this.of_amphursList = this.getAmphursByProvince( this.amphursMasList, this.maAddress.Province_Id);
     });
 
     this.masterDataService.getTambons().subscribe((data: any[]) => {
@@ -265,6 +294,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     }, () => {
       this.ce_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, this.ceAddress.Amphur_Id);
       this.ma_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, this.maAddress.Amphur_Id);
+      this.of_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, this.maAddress.Amphur_Id);
     });
 
     this.spinnerLoading = false;
@@ -323,7 +353,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     // }
 
     // CONVERT VALUES
-    if(this.customer.Birth_Day){
+    if ( this.customer.Birth_Day) {
       const d = new Date(this.customer.Birth_Day);
       this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
     }
@@ -364,6 +394,21 @@ ceTambonChange(event: MatSelectChange) {
 }
 
 
+ofCountryChange(event: MatSelectChange) {
+  this.of_provinceList = this.getProvinceByCountry( this.provinceMasList,  event.value);
+}
+
+ofProvinceChange(event: MatSelectChange) {
+  this.of_amphursList = this.getAmphursByProvince( this.amphursMasList, event.value);
+}
+ofAmphurChange(event: MatSelectChange) {
+
+  this.of_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, event.value);
+
+}
+ofTambonChange(event: MatSelectChange) {
+  console.log('maTambonChange>>', event.value);
+}
 
 maCountryChange(event: MatSelectChange) {
   this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList,  event.value);
@@ -379,6 +424,30 @@ maAmphurChange(event: MatSelectChange) {
 }
 maTambonChange(event: MatSelectChange) {
   console.log('maTambonChange>>', event.value);
+}
+
+
+openSaleDialog() {
+
+  console.log('Sale Dialog clicked !');
+
+  this.saleDialogRef = this.dialog.open(SaleDialogComponent, {
+    width: '600px',
+    data: 'This text is passed into the dialog!'
+  });
+
+  this.saleDialogRef.afterClosed().subscribe(result => {
+    // console.log('Dialog closed:', JSON.stringify(result));
+    // const obj = result;
+    // console.log(obj.User_Code);
+
+    if ( result !== 'close' ) {
+      const saleObj = result;
+      this.customer.MktId = saleObj.User_Code;
+    }
+
+  });
+
 }
 
 }

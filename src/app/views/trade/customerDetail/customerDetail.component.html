@@ -173,6 +173,11 @@
         </ng-template>
         <!-- <mat-card-title>Census Address</mat-card-title> -->
         <div class="border border-primary addr-border">
+
+            <div class="row">
+               <br><br>
+            </div>
+
             <div class="row">
                 <mat-form-field class="col-md-4">
                   <input matInput formControlName="ce_addr_No" placeholder="Address number" [(ngModel)]="ceAddress.Addr_No">
@@ -268,7 +273,7 @@
         <div class="border border-primary addr-border">
           <div class="row">
             <section style="margin-top: 20px;margin-left: 30px">
-              <mat-checkbox #asRegisterAddr>Same as register address</mat-checkbox>
+              <mat-checkbox #asRegisterAddr (click)="ofSameAsRegister()">Same as register address</mat-checkbox>
             </section>
           </div>
 
@@ -369,9 +374,10 @@
         <div class="border border-primary addr-border">
           <div class="row">
             <section style="margin-top: 20px;margin-left: 30px">
-              <mat-checkbox #asRegisterAddr >Same as Register address</mat-checkbox>
-              <mat-checkbox #asOfficerAddr>Same as Office address</mat-checkbox>
+              <mat-checkbox #asRegisterAddr (click)="maSameAsRegister()" >Same as Register address</mat-checkbox>
+              <mat-checkbox #asOfficerAddr (click)="maSameAsOffice()">Same as Office address</mat-checkbox>
             </section>
+
           </div>
 
           <div class="row">

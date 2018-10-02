@@ -19,7 +19,8 @@ export class SaleDialogComponent implements OnInit {
   private salesSub: Subscription;
 
 
-  displayedColumns = ['checked','User_Code', 'Full_Name', 'License_Code'];
+  // displayedColumns = ['checked','User_Code', 'Full_Name', 'License_Code'];
+  displayedColumns = ['User_Code', 'Full_Name', 'License_Code'];
   dataSource = new BehaviorSubject([]);
 
   currentPage = 1;
@@ -71,7 +72,7 @@ export class SaleDialogComponent implements OnInit {
     this.currentPage =  pageData.pageIndex + 1;
     this.rowsPerPage =  pageData.pageSize;
 
-    console.log('Condition>>', this.form.value.userCode);
+    // console.log('Condition>>', this.form.value.userCode);
     this.saleAgentService.getSales(this.rowsPerPage, this.currentPage, this.form.value.userCode);
     this.salesSub = this.saleAgentService.getSalesUpdateListener().subscribe((sales: Sale[]) => {
           this.spinnerLoading = false;

@@ -3,60 +3,83 @@
 <mat-card-title>Search</mat-card-title>
 
 <form [formGroup]="form" (submit)="onSubmit()" #custForm="ngForm" *ngIf="!spinnerLoading">
-<mat-form-field>
-  <input matInput formControlName="userCode" placeholder="Sale Name">
-  <mat-error *ngIf="form.get('userCode').invalid">Please enter a condition.</mat-error>
-</mat-form-field>
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <input matInput formControlName="userCode" placeholder="Sale Name">
+      <mat-error *ngIf="form.get('userCode').invalid">Please enter a condition.</mat-error>
+    </mat-form-field>
 
-<mat-card-actions>
-    <button mat-raised-button color="primary" type='submit'>Search</button>&nbsp;
-    <button mat-raised-button color="warn" type='reset'>Reset</button>
-</mat-card-actions>
+    <mat-card-actions  class="row col-md-4  div-center">
+      <button mat-stroked-button color="primary" type='submit'>Search</button>
+      &nbsp;
+      <button mat-stroked-button color="warn" type='reset'>Clear</button>
+    </mat-card-actions>
+  </div>
 </form>
 
 <!-- Table -->
 <mat-card class="resultDiv">
-<table mat-table [dataSource]="dataSource">
+  <table mat-table [dataSource]="dataSource">
 
-    <ng-container matColumnDef="checked">
+    <!-- <ng-container matColumnDef="checked">
         <mat-header-cell *matHeaderCellDef>Check</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-checkbox [(ngModel)]="element.checked"></mat-checkbox>
+          <mat-radio-button value="2" ></mat-radio-button>
         </mat-cell>
-      </ng-container>
+      </ng-container> -->
 
-  <!-- Position Column -->
-  <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef> No. </th>
-    <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-  </ng-container>
+    <!-- Position Column -->
+    <!-- <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef> No. </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.position}} </td>
+    </ng-container> -->
 
-  <!-- Position Column -->
-  <ng-container matColumnDef="User_Code">
-    <th mat-header-cell *matHeaderCellDef> User</th>
-    <td mat-cell *matCellDef="let element"> {{element.User_Code}} </td>
-  </ng-container>
+    <!-- Position Column -->
+    <ng-container matColumnDef="User_Code">
+      <th mat-header-cell *matHeaderCellDef> User</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-radio-button value="2"></mat-radio-button>
+        {{element.User_Code}}
+      </td>
+    </ng-container>
 
-  <!-- Name Column -->
-  <ng-container matColumnDef="Full_Name">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.Full_Name}} </td>
-  </ng-container>
+    <!-- Name Column -->
+    <ng-container matColumnDef="Full_Name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.Full_Name}} </td>
+    </ng-container>
 
-  <!-- Weight Column -->
-  <ng-container matColumnDef="License_Code">
-    <th mat-header-cell *matHeaderCellDef> License Code </th>
-    <td mat-cell *matCellDef="let element"> {{element.License_Code}} </td>
-  </ng-container>
+    <!-- Weight Column -->
+    <ng-container matColumnDef="License_Code">
+      <th mat-header-cell *matHeaderCellDef> License Code </th>
+      <td mat-cell *matCellDef="let element"> {{element.License_Code}} </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-  (click)="row.highlighted = !row.highlighted ;onRowClicked(row)"></tr>
-</table>
-<mat-paginator [length]="totalRecords" [pageSize]="rowsPerPage" [pageSizeOptions]="pageSizeOptions" (page)="onChangedPage($event)">
-</mat-paginator>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="row.highlighted = !row.highlighted ;onRowClicked(row)"></tr>
+  </table>
+
+  <!-- <mat-paginator [length]="totalRecords" [pageSize]="rowsPerPage" [pageSizeOptions]="pageSizeOptions" (page)="onChangedPage($event)">
+  </mat-paginator>
+   -->
+   <!-- <mat-card-actions>
+      <button  mat-stroked-button color="primary" (click)="onCloseConfirm()">Choose</button>
+      <button  mat-stroked-button color="warn" (click)="onCloseCancel()">Cancel</button>
+   </mat-card-actions> -->
+   <mat-card-actions >
+      <button  mat-stroked-button color="primary" (click)="onCloseConfirm()">Choose</button>
+      &nbsp;
+      <button  mat-stroked-button color="warn" (click)="onCloseCancel()">Close</button>
+    </mat-card-actions>
 </mat-card>
-<!-- table -->
+<!--
+<div class="row" >
+    <mat-card-actions class="col-md-4" >
+        <button  mat-stroked-button color="primary" (click)="onCloseConfirm()">Choose</button>
+        &nbsp;
+        <button  mat-stroked-button color="warn" (click)="onCloseCancel()">Close</button>
+      </mat-card-actions>
+  </div> -->
 
-<button md-raised-button (click)="onCloseConfirm()">CONFIRM</button>&nbsp;
-<button md-raised-button (click)="onCloseCancel()">CANCEL</button>
+

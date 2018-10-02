@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ClientType } from '../model/ref_clientType.model';
 import { BeforeTitle } from '../model/ref_before_title.model';
@@ -20,6 +20,8 @@ import { DatePipe } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { SaleDialogComponent } from '../dialog/sale-dialog/sale-dialog.component';
 import { Sale } from '../model/sale.model';
+import { AccountAddress } from '../model/accountAddress.model';
+import { WipCustomerService } from '../services/wipCustomer.service';
 
 @Component({
   selector: 'app-customer',
@@ -76,7 +78,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   constructor( private datePipe: DatePipe,
     private masterDataService: MasterDataService ,
-    private customerService: CustomerService,
+    private wipCustomerService: WipCustomerService,
     private authService: AuthService,
     public dialog: MatDialog) { }
 
@@ -363,7 +365,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     console.log('CE ADDR>>', JSON.stringify(this.ceAddress));
     console.log('MA ADDR>>', JSON.stringify(this.maAddress));
 
-    this.customerService.createCustomer(this.customer, this.ceAddress, this.maAddress);
+    // this.customerService.createCustomer(this.customer, this.ceAddress, this.maAddress);
+    this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.maAddress);
 
   }
 
@@ -428,26 +431,59 @@ maTambonChange(event: MatSelectChange) {
 
 
 openSaleDialog() {
-
-  console.log('Sale Dialog clicked !');
-
   this.saleDialogRef = this.dialog.open(SaleDialogComponent, {
     width: '600px',
     data: 'This text is passed into the dialog!'
   });
 
   this.saleDialogRef.afterClosed().subscribe(result => {
-    // console.log('Dialog closed:', JSON.stringify(result));
-    // const obj = result;
-    // console.log(obj.User_Code);
-
-    if ( result !== 'close' ) {
+    if ( result && result !== 'close' ) {
       const saleObj = result;
       this.customer.MktId = saleObj.User_Code;
     }
-
   });
+}
+
+// ceAddress: CustAddress = new CustAddress();  // Register address
+// maAddress: CustAddress = new CustAddress();  // Mail & Contact address
+// ofAddress: CustAddress = new CustAddress();  // Office address
+
+ofSameAsRegister() {
+  copyAddr(this.ceAddress, this.ofAddress);
+
+  this.of_provinceList = this.getProvinceByCountry( this.provinceMasList,  this.ofAddress.Country_Id);
+  this.of_amphursList = this.getAmphursByProvince( this.amphursMasList, this.ofAddress.Province_Id);
+  this.of_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, this.ofAddress.Amphur_Id);
+}
+
+maSameAsRegister() {
+  copyAddr(this.ceAddress, this.maAddress);
+
+  this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList,  this.maAddress.Country_Id);
+  this.ma_amphursList = this.getAmphursByProvince( this.amphursMasList, this.maAddress.Province_Id);
+  this.ma_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, this.maAddress.Amphur_Id);
 
 }
 
+maSameAsOffice() {
+  copyAddr(this.ofAddress, this.maAddress);
+
+  this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList,  this.maAddress.Country_Id);
+  this.ma_amphursList = this.getAmphursByProvince( this.amphursMasList, this.maAddress.Province_Id);
+  this.ma_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, this.maAddress.Amphur_Id);
+
+}
+
+function copyAddr (A_Addr: AccountAddress , B_Addr: AccountAddress): void {
+
+  B_Addr.Addr_No = A_Addr.Addr_No;
+  B_Addr.Place = A_Addr.Place;
+  B_Addr.Road = A_Addr.Road;
+  B_Addr.Tambon_Id = A_Addr.Tambon_Id;
+  B_Addr.Amphur_Id = A_Addr.Amphur_Id;
+  B_Addr.Province_Id = A_Addr.Province_Id;
+  B_Addr.Country_Id = A_Addr.Country_Id;
+  B_Addr.Zip_Code = A_Addr.Zip_Code;
+  B_Addr.Tel = A_Addr.Tel;
+  B_Addr.Fax = A_Addr.Fax;
 }

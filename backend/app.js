@@ -18,6 +18,7 @@ const provinceRoutes = require('./routes/province');
 const amphurRoutes = require('./routes/amphur');
 const tambonRoutes = require('./routes/tambon');
 const saleAgentRoutes = require('./routes/saleAgent');
+const wipCustomerRoutes = require('./routes/wipCustomer');
 
 const app = express();
 
@@ -57,5 +58,6 @@ app.use("/api/tambon",tambonRoutes);
 app.use("/api/nation",nationRoutes);
 
 app.use("/api/saleAgent",saleAgentRoutes);
+app.use("/api/wipcustomer",wipCustomerRoutes);
 
 module.exports = app;

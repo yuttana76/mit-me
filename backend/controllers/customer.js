@@ -4,59 +4,6 @@ const dbConfig = require("./config");
 var sql = require("mssql");
 var config = dbConfig.dbParameters;
 
-// exports.getCustomers = (req, res, next) => {
-
-//   var fncName = 'getNations';
-
-//   var numPerPage = parseInt(req.query.pagesize, 10) || 1;
-//   var page = parseInt(req.query.page, 10) || 1;
-//   var custId = req.query.cust_id || false;
-//   var cust_name = req.query.cust_name || false;
-//   var whereCond = '';
-
-//   if ( custId !== false ){
-//     whereCond = `Cust_Code like '%${custId}%'`;
-//   }else {
-//     whereCond = `First_Name_T like N'%${cust_name}%'`;
-//   }
-
-//   var queryStr = `SELECT * FROM (
-//     SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,
-//            * FROM [MFTS].[dbo].[Account_Info] WHERE ${whereCond}
-//       ) AS TBL
-// WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
-// ORDER BY Cust_Code`;
-//   // Here we compute the LIMIT parameter for MySQL query
-
-//   sql.connect(config, err => {
-//     // Callbacks
-//     new sql.Request().query(queryStr, (err, result) => {
-//       // ... error checks
-//         if(err){
-//           console.log('Was err !!!' + err);
-//           res.status(201).json({
-//             message: err,
-//           });
-//         }else{
-//           console.log('>>',JSON.stringify(result));
-//           res.status(200).json({
-//             message: "Connex  successfully!",
-//             result: result.recordset
-
-//           });
-//           sql.close();
-//           // ****************************
-//         }
-//     })
-//   });
-
-//   sql.on("error", err => {
-//     // ... error handler
-//     console.log('sql.on !!!' + err);
-//     sql.close();
-//   });
-// }
-
 exports.getCustomers = (req, res, next) => {
   var fncName = "getNations";
 
@@ -112,9 +59,9 @@ exports.CreateCustomer = (req, res, next) => {
   var ceAddressObj = JSON.parse(req.body.ceAddress);
   var maAddressObj = JSON.parse(req.body.maAddress);
 
-  var accountInfoQuery = getAccountInfoQuery(customerObj);
-  var getAccountAddrQuery_1 = getAccountAddrQuery(customerObj.Cust_Code,1,ceAddressObj);
-  var getAccountAddrQuery_2 = getAccountAddrQuery(customerObj.Cust_Code,2,maAddressObj);
+  var accountInfoQuery = accountInfoQuery(customerObj);
+  var getAccountAddrQuery_1 = addressQuery(customerObj.Cust_Code,1,ceAddressObj);
+  var getAccountAddrQuery_2 = addressQuery(customerObj.Cust_Code,2,maAddressObj);
 
   var executeQueryList = [accountInfoQuery, getAccountAddrQuery_1 ,getAccountAddrQuery_2]
   const sql = require("mssql");
@@ -128,12 +75,18 @@ exports.CreateCustomer = (req, res, next) => {
 
       requestAccountInfo.query(element, function(err, recordset) {
         if (err) {
-          console.log("Was error !!", err);
+          // console.log("Was error !!", err);
           accInfoTransaction.rollback(err => {
+             res.status(400).json({
+                message: 'Create Customer fail'
+              });
           });
         } else {
           accInfoTransaction.commit(err => {
-            console.log("Cmmited !");
+            // console.log("Cmmited !");
+             res.status(201).json({
+              message: 'Customer create successfully'
+            });
           });
         }
       });
@@ -141,12 +94,7 @@ exports.CreateCustomer = (req, res, next) => {
     // End Account Info Transaction 1
   }); // ENd loop
 
-  // res.status(201).json({
-  //   message: 'Customer create successfully',
-  //   // customer:  req.body.customer,
-  //   // ceAddress:req.body.ceAddress,
-  //   // maAddress: req.body.maAddress
-  // });
+
 
 
   });
@@ -156,10 +104,12 @@ exports.CreateCustomer = (req, res, next) => {
   });
 };
 
-exports.UpdateCustomer = (req, res, next) => {};
+exports.UpdateCustomer = (req, res, next) => {
+
+};
 
 // *************** Functions
-function  getAccountInfoQuery(customerObj){
+function  accountInfoQuery(customerObj){
   var v_Cust_Code = customerObj.Cust_Code;
   var v_DOB = customerObj.Birth_Day;
 
@@ -190,7 +140,7 @@ function  getAccountInfoQuery(customerObj){
 }
 
 
-function  getAccountAddrQuery(v_Cust_Code,v_Addr_Seq,ceAddressObj){
+function  addressQuery(v_Cust_Code,v_Addr_Seq,ceAddressObj){
 
   return  `INSERT INTO  [MFTS].[dbo].[Account_Address]
         VALUES(

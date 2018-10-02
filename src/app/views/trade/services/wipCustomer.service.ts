@@ -16,11 +16,12 @@ export class WipCustomerService {
 
   constructor(private http: HttpClient , private router: Router) { }
 
-  createCustomer(customer: Customer, ceAddress: CustAddress, maAddress: CustAddress) {
+  createCustomer(customer: Customer, ceAddress: CustAddress, ofAddress: CustAddress, maAddress: CustAddress) {
     console.log('Service WIP  createCustomer() !');
     const data = {
       'customer': JSON.stringify(customer),
       'ceAddress': JSON.stringify(ceAddress),
+      'ofAddress': JSON.stringify(ofAddress),
       'maAddress': JSON.stringify(maAddress)
       };
 

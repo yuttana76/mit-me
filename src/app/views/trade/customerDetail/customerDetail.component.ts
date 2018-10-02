@@ -347,7 +347,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log('ON SUBMIT !');
+    // console.log('ON SUBMIT !');
 
     // if (this.form.invalid) {
     //   console.log('form.invalid() ' + this.form.invalid);
@@ -361,12 +361,13 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     }
     // this.customer.Create_By = this.authService.getUserData() || 'NONE';
 
-    console.log('CUST>>', JSON.stringify(this.customer));
-    console.log('CE ADDR>>', JSON.stringify(this.ceAddress));
-    console.log('MA ADDR>>', JSON.stringify(this.maAddress));
+    // console.log('CUST>>', JSON.stringify(this.customer));
+    // console.log('CE ADDR>>', JSON.stringify(this.ceAddress));
+    // console.log('OFF ADDR>>', JSON.stringify(this.ofAddress));
+    // console.log('MA ADDR>>', JSON.stringify(this.maAddress));
 
     // this.customerService.createCustomer(this.customer, this.ceAddress, this.maAddress);
-    this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.maAddress);
+    this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress);
 
   }
 
@@ -474,7 +475,7 @@ maSameAsOffice() {
 
 }
 
-function copyAddr (A_Addr: AccountAddress , B_Addr: AccountAddress): void {
+function copyAddr (A_Addr: AccountAddress , B_Addr: AccountAddress) {
 
   B_Addr.Addr_No = A_Addr.Addr_No;
   B_Addr.Place = A_Addr.Place;

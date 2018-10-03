@@ -7,6 +7,47 @@ import { Subscription, BehaviorSubject } from 'rxjs';
 import { PageEvent, MatTableDataSource } from '@angular/material';
 import { CustomerCond } from '../model/customerCond.model';
 
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({name: 'customerFullname'})
+export class CustomerFullnamePipe implements PipeTransform {
+  transform(value: string, groupCode: string, title: string, lastName: string): string {
+
+    let newStr: string = '';
+    if (groupCode === '1') {
+      // newStr = 'บุคคลธรรมดา';
+      // newStr = title + ' ' + firstName + ' ' + lastName;
+      newStr = `${title} ${value} ${lastName}`;
+
+    } else if (groupCode === '2') {
+      // newStr = 'นิติบุคคล';
+      // newStr = title + ' ' + firstName;
+      newStr = `${title} ${value}`;
+    } else {
+      newStr = value;
+    }
+
+    return newStr;
+  }
+}
+
+@Pipe({name: 'groupCodeStr'})
+export class GroupCodeStrPipe implements PipeTransform {
+  transform(value: string): string {
+
+    let newStr: string = '';
+    if (value === '1') {
+      newStr = 'บุคคลธรรมดา';
+    } else if (value === '2') {
+      newStr = 'นิติบุคคล';
+    } else {
+      newStr = 'N/A';
+    }
+
+    return newStr;
+  }
+}
+
 @Component({
   selector: 'app-customer-list',
   templateUrl: './customer-list.component.html',
@@ -26,7 +67,7 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   pageSizeOptions = [10, 20, 50, 100];
   constructor(public customerService: CustomerService, private authService: AuthService) { }
 
-  displayedColumns: string[] = ['Cust_Code', 'First_Name_T', 'Card_Type', 'Birth_Day'];
+  displayedColumns: string[] = ['Cust_Code', 'First_Name_T', 'Group_Code', 'Birth_Day', 'Action'];
 
   //dataSource = new MatTableDataSource<Customer>(this.customers);
   dataSource = new BehaviorSubject([]);
@@ -89,7 +130,8 @@ export class CustomerListComponent implements OnInit, OnDestroy {
     this.postsSub = this.customerService.getCustomerUpdateListener().subscribe((customers: Customer[]) => {
           this.spinnerLoading = false;
           this.customers = customers;
-          console.log('RESULT>>', JSON.stringify(this.customers));
+
+          // console.log('RESULT>>', JSON.stringify(this.customers));
           this.dataSource.next(this.customers);
       });
   }

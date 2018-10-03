@@ -11,11 +11,10 @@ var config = dbConfig.dbParameters;
 
 exports.ExeWIPCustomer = (req, res, next) => {
 
-
   console.log("ExeWIPCustomer>> ");
-
   var o2x = require('object-to-xml');
   var fncName = "ExeWIPCustomer";
+
   var customerObj = JSON.parse(req.body.customer);
   var ceAddressObj = JSON.parse(req.body.ceAddress);
   var ofAddressObj = JSON.parse(req.body.ofAddress);
@@ -44,9 +43,11 @@ exports.ExeWIPCustomer = (req, res, next) => {
             message: err
           });
         } else {
+
+          console.log(fncName + " Result>>" + JSON.stringify(result));
           res.status(200).json({
             message: fncName + "Quey db. successfully!",
-            result: result.recordset
+            result: result.output
           });
         }
       });

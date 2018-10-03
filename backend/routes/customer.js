@@ -5,10 +5,12 @@ const checkAuth = require('../middleware/check-auth');
 const customerController = require('../controllers/customer')
 
 // router.get("", checkAuth, fundController.getFunds);
-router.get("", customerController.getCustomers);
+router.get("", customerController.searchCustomers);
+
+router.get("/:cusCode", customerController.getCustomer);
 
 router.post("",customerController.CreateCustomer);
 
-router.put("/:id",customerController.UpdateCustomer);
+router.put("/:cusCode",customerController.UpdateCustomer);
 
 module.exports = router;

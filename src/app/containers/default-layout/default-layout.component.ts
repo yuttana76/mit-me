@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-// import { navItems } from './../../_nav';
+// import { navItems } from './../../_nav';  // CORE UI MENU (default)
 import { navItems } from './../../_MerchantNav';
 
 import { AuthService } from '../../views/services/auth.service';

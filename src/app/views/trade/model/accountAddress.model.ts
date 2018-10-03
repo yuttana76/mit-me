@@ -1,4 +1,6 @@
-export interface AccountAddress {
+export class AccountAddress {
+  constructor() {}
+
   Cust_Code: string;
   Addr_Seq: string;
   Addr_No: string;

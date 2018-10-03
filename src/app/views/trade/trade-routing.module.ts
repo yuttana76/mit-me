@@ -41,6 +41,13 @@ const routes: Routes = [
           title: 'Customer Detail !'
         }
       },
+      {
+        path: 'customerEdit/:cust_Code',
+        component: CustomerDetailComponent,
+        data: {
+          title: 'Edit Customer '
+        }
+      },
     ]
   },
 ];

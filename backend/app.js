@@ -19,6 +19,7 @@ const amphurRoutes = require('./routes/amphur');
 const tambonRoutes = require('./routes/tambon');
 const saleAgentRoutes = require('./routes/saleAgent');
 const wipCustomerRoutes = require('./routes/wipCustomer');
+const custAddressRoutes = require('./routes/custAddress');
 
 const app = express();
 
@@ -59,5 +60,6 @@ app.use("/api/nation",nationRoutes);
 
 app.use("/api/saleAgent",saleAgentRoutes);
 app.use("/api/wipcustomer",wipCustomerRoutes);
+app.use("/api/custAddress",custAddressRoutes);
 
 module.exports = app;

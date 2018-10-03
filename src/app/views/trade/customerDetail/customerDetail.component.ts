@@ -22,6 +22,8 @@ import { SaleDialogComponent } from '../dialog/sale-dialog/sale-dialog.component
 import { Sale } from '../model/sale.model';
 import { AccountAddress } from '../model/accountAddress.model';
 import { WipCustomerService } from '../services/wipCustomer.service';
+import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'app-customer',
@@ -36,6 +38,9 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
   spinnerLoading = false;
+  saveCustomerComplete = false;
+  private mode = 'create';
+  private custCode: string;
 
   clientTypeList: ClientType[] = [];
 
@@ -73,26 +78,29 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   maAddress: CustAddress = new CustAddress();  // Mail & Contact address
   ofAddress: CustAddress = new CustAddress();  // Office address
 
-
+// Dialog
   saleDialogRef: MatDialogRef<SaleDialogComponent>;
 
   constructor( private datePipe: DatePipe,
     private masterDataService: MasterDataService ,
     private wipCustomerService: WipCustomerService,
     private authService: AuthService,
-    public dialog: MatDialog) { }
+    private router: Router,
+    public dialog: MatDialog,
+    public route: ActivatedRoute) { }
 
   ngOnInit() {
     this.spinnerLoading = true;
-    this.customer.Card_Type = this.CLIENT_TYPE_PERSION;
+    // this.customer.Card_Type = this.CLIENT_TYPE_PERSION;
+    this.customer.Group_Code = this.CLIENT_TYPE_PERSION;
     this.customer.Nation_Code = '000';
 
     // Initial Form fields
     this.form = new FormGroup({
-      custType: new FormControl(null, {
+      groupCdoe: new FormControl(null, {
         validators: [Validators.required]
       }),
-      groupCdoe: new FormControl(null, {
+      custType: new FormControl(null, {
         validators: [Validators.required]
       }),
       custId: new FormControl(null, {
@@ -230,6 +238,41 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
     });
 
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      if (paramMap.has('cust_Code')) {
+        this.mode = 'edit';
+        this.custCode = paramMap.get('cust_Code');
+        this.spinnerLoading = true;
+
+        console.log('Edit Mode. >>', this.custCode );
+
+        // this.postsService.getPost(this.postId).subscribe(postData => {
+        //   this.spinnerLoading = false;
+        //   this.post = {
+        //     id: postData._id,
+        //     title: postData.title,
+        //     content: postData.content,
+        //     imagePath: null,
+        //     creator: null
+        //   };
+
+        //   this.form.setValue({
+        //     title: this.post.title,
+        //     content: this.post.title,
+        //     image: this.post.imagePath
+        //   });
+
+        // });
+
+      } else {
+        this.mode = 'create';
+        this.custCode = null;
+        console.log('Create New Mode. >>');
+
+      }
+    });
+
+
     // Initial Master data
     this.masterDataService.getClientTypes().subscribe((data: any[]) => {
       this.clientTypeList = data;
@@ -244,7 +287,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     }, error => () => {
         console.log('Was error', error);
     }, () => {
-       this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Card_Type);
+      //  this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Card_Type);
+       this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Group_Code);
     });
 
     this.masterDataService.getThaiTitleList().subscribe((data: any[]) => {
@@ -304,6 +348,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('On destroy !');
+
   }
 
   getPIDTypeListByClientType(PIDTypeMasList: PIDTypes[], code: string) {
@@ -360,20 +405,62 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
     }
     // this.customer.Create_By = this.authService.getUserData() || 'NONE';
-
-    // console.log('CUST>>', JSON.stringify(this.customer));
-    // console.log('CE ADDR>>', JSON.stringify(this.ceAddress));
-    // console.log('OFF ADDR>>', JSON.stringify(this.ofAddress));
-    // console.log('MA ADDR>>', JSON.stringify(this.maAddress));
-
     // this.customerService.createCustomer(this.customer, this.ceAddress, this.maAddress);
-    this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress);
+    this.ceAddress.Cust_Code = this.customer.Cust_Code;
+    this.ceAddress.Addr_Seq = '1';
 
+    this.ofAddress.Cust_Code = this.customer.Cust_Code;
+    this.ofAddress.Addr_Seq = '3';
+
+    this.maAddress.Cust_Code = this.customer.Cust_Code;
+    this.maAddress.Amphur_Id = '2';
+    // this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress)
+
+ // Initial Master data
+    // this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress)
+    // .subscribe((data: any[]) => {
+
+    //   console.log('AFTER SAVE', JSON.stringify(data));
+    this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress)
+    .subscribe((result: any[] ) => {
+      console.log('AFTER SAVE', JSON.stringify(result));
+      // Show result message
+      if ( typeof result.result !== 'undefined' && typeof result.result.wfRef !== 'undefined') {
+        this.openDialog('success', 'Create customer was successful.', 'The refference number is ' +  result.result.wfRef);
+        this.saveCustomerComplete = true;
+      } else {
+        this.openDialog('danger','Create customer was error', 'Please contact IT staff.');
+      }
+      // this.openDialog();
+
+    }, error => () => {
+        console.log('Was error', error);
+    }, () => {
+       console.log('Loading complete');
+    });
+  }
+
+
+  openDialog(alertTypeStr: string, alertHeaderStr: string, alertMsgStr: string): void {
+    const dialogRef = this.dialog.open(ResultDialogComponent, {
+      width: '450px',
+      // tslint:disable-next-line:max-line-length
+      data: {alertType: alertTypeStr , alertHeader: alertHeaderStr , alertMsg: alertMsgStr}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      // this.animal = result;
+      if (this.saveCustomerComplete) {
+        this.router.navigate(['/']);
+      }
+
+    });
   }
 
   clientTypeChange(event: MatRadioChange) {
     this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, event.value);
-}
+  }
 
 nationChange(event: MatSelectChange) {
   this.ce_countryList = this.getCountryByNation( this.countryMasList, event.value);
@@ -440,7 +527,7 @@ openSaleDialog() {
   this.saleDialogRef.afterClosed().subscribe(result => {
     if ( result && result !== 'close' ) {
       const saleObj = result;
-      this.customer.MktId = saleObj.User_Code;
+      this.customer.MktId = saleObj.Id;
     }
   });
 }
@@ -450,7 +537,7 @@ openSaleDialog() {
 // ofAddress: CustAddress = new CustAddress();  // Office address
 
 ofSameAsRegister() {
-  copyAddr(this.ceAddress, this.ofAddress);
+  this.ofAddress = this.copyAddr(this.ceAddress);
 
   this.of_provinceList = this.getProvinceByCountry( this.provinceMasList,  this.ofAddress.Country_Id);
   this.of_amphursList = this.getAmphursByProvince( this.amphursMasList, this.ofAddress.Province_Id);
@@ -458,7 +545,7 @@ ofSameAsRegister() {
 }
 
 maSameAsRegister() {
-  copyAddr(this.ceAddress, this.maAddress);
+  this.maAddress = this.copyAddr(this.ceAddress);
 
   this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList,  this.maAddress.Country_Id);
   this.ma_amphursList = this.getAmphursByProvince( this.amphursMasList, this.maAddress.Province_Id);
@@ -467,7 +554,8 @@ maSameAsRegister() {
 }
 
 maSameAsOffice() {
-  copyAddr(this.ofAddress, this.maAddress);
+
+  this.maAddress = this.copyAddr(this.ofAddress);
 
   this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList,  this.maAddress.Country_Id);
   this.ma_amphursList = this.getAmphursByProvince( this.amphursMasList, this.maAddress.Province_Id);
@@ -475,7 +563,11 @@ maSameAsOffice() {
 
 }
 
-function copyAddr (A_Addr: AccountAddress , B_Addr: AccountAddress) {
+copyAddr (A_Addr: AccountAddress  ): AccountAddress {
+
+  console.log(JSON.stringify(A_Addr));
+
+  const B_Addr: AccountAddress = new AccountAddress();
 
   B_Addr.Addr_No = A_Addr.Addr_No;
   B_Addr.Place = A_Addr.Place;
@@ -487,4 +579,20 @@ function copyAddr (A_Addr: AccountAddress , B_Addr: AccountAddress) {
   B_Addr.Zip_Code = A_Addr.Zip_Code;
   B_Addr.Tel = A_Addr.Tel;
   B_Addr.Fax = A_Addr.Fax;
+
+  return B_Addr;
 }
+
+// function copyAddr (A_Addr: AccountAddress , B_Addr: AccountAddress) {
+
+//   B_Addr.Addr_No = A_Addr.Addr_No;
+//   B_Addr.Place = A_Addr.Place;
+//   B_Addr.Road = A_Addr.Road;
+//   B_Addr.Tambon_Id = A_Addr.Tambon_Id;
+//   B_Addr.Amphur_Id = A_Addr.Amphur_Id;
+//   B_Addr.Province_Id = A_Addr.Province_Id;
+//   B_Addr.Country_Id = A_Addr.Country_Id;
+//   B_Addr.Zip_Code = A_Addr.Zip_Code;
+//   B_Addr.Tel = A_Addr.Tel;
+//   B_Addr.Fax = A_Addr.Fax;
+// }

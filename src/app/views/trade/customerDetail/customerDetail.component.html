@@ -11,7 +11,8 @@
     <mat-card-title>Customer Detail</mat-card-title>
     <div class="border border-primary">
       <div class="row">
-        <mat-radio-group class="custTyperadio-group" formControlName="custType" [(ngModel)]="customer.Card_Type">
+        <!-- <mat-radio-group class="custTyperadio-group" formControlName="custType" [(ngModel)]="customer.Card_Type"> -->
+            <mat-radio-group class="custTyperadio-group" formControlName="groupCdoe" [(ngModel)]="customer.Group_Code">
           <mat-radio-button class="example-radio-button" *ngFor="let clientType of clientTypeList" [value]="clientType.ClientType_Code"
             (change)="clientTypeChange($event)">
             {{clientType.ClientType_Desc}}
@@ -85,7 +86,7 @@
 
     <div class="border border-primary section-2">
 
-      <div class="row sex-div" *ngIf="customer.Card_Type == CLIENT_TYPE_PERSION ">
+      <div class="row sex-div" *ngIf="customer.Group_Code == CLIENT_TYPE_PERSION ">
         <mat-radio-group class="sex-radio-group" formControlName="sex" [(ngModel)]="customer.Sex" >
           <mat-radio-button class="example-radio-button" value="M">Male</mat-radio-button>
           <mat-radio-button class="example-radio-button" value="F">Female</mat-radio-button>
@@ -104,12 +105,12 @@
 
       <div class="row">
         <mat-form-field class="col-md-4">
-          <mat-select formControlName="groupCdoe" placeholder="Card Type" [(ngModel)]="customer.Group_Code">
+          <mat-select formControlName="custType" placeholder="Card Type" [(ngModel)]="customer.Card_Type">
             <mat-option *ngFor="let obj of PIDTypeList" [value]="obj.PIDType_Code">
               {{obj.PIDType_Desc}}
             </mat-option>
           </mat-select>
-          <mat-error *ngIf="form.get('groupCdoe').invalid">Please choose Card Type.</mat-error>
+          <mat-error *ngIf="form.get('custType').invalid">Please choose Card Type.</mat-error>
         </mat-form-field>
       </div>
 

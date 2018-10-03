@@ -1,0 +1,9 @@
+
+<alert [type]="data.alertType">
+    <h4 class="alert-heading">{{data.alertHeader}}</h4>
+    <p>{{data.alertMsg}}</p>
+  </alert>
+
+  <div mat-dialog-actions>
+      <button mat-button (click)="onOKClick()">OK</button>
+    </div>

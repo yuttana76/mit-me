@@ -20,6 +20,7 @@ import { WipCustomerService } from '../services/wipCustomer.service';
 import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomerService } from '../services/customer.service';
+import { AddressService } from '../services/address.service';
 
 @Component({
   selector: 'app-customer',
@@ -79,6 +80,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   constructor( private datePipe: DatePipe,
     private customerService: CustomerService ,
+    private addressService: AddressService ,
     private masterDataService: MasterDataService ,
     private wipCustomerService: WipCustomerService,
     private authService: AuthService,
@@ -319,9 +321,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
         this.mode = 'edit';
         this.custCode = paramMap.get('cust_Code');
         // this.spinnerLoading = true;
-
-        console.log('Edit Mode. >>', this.custCode );
-
+        // console.log('Edit Mode. >>', this.custCode );
         this.masterDataService.getCountry().subscribe((data: any[]) => {
           this.countryMasList = data;
         }, error => () => {
@@ -332,12 +332,9 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
           this.of_countryList = this.getCountryByNation( this.countryMasList, this.customer.Nation_Code);
         });
 
-
+        // Load customer(Account) info.
         this.customerService.getCustomer(this.custCode).subscribe(custData => {
           this.spinnerLoading = false;
-
-          console.log('custData>>', JSON.stringify(custData) );
-
           this.customer = {
             Cust_Code: custData[0].Cust_Code,
             Card_Type: custData[0].Card_Type,
@@ -363,11 +360,38 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
             Modify_Date: custData[0].Modify_Date,
             IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
           };
-
-          console.log('custData>>', this.customer.Cust_Code);
-
           this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Group_Code);
+        });
 
+        // Loading Addresses
+        this.addressService.getAddress(this.custCode).subscribe(addrData => {
+
+            // CE ADDRESS
+            const ceAddr = addrData.filter(function (i, n) {
+                      return i.Addr_Seq === 1;
+                  })[0];
+            if (ceAddr) {
+              this.ceAddress = ceAddr;
+              this.ce_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ceAddress.Country_Id);
+            }
+
+            // Mail Address
+              const maAddr = addrData.filter(function (i, n) {
+              return i.Addr_Seq === 2;
+                  })[0];
+              if (maAddr) {
+                this.maAddress = maAddr;
+                this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList, this.maAddress.Country_Id);
+              }
+
+            // // Office Address
+            const offAddr =  addrData.filter(function (i, n) {
+              return i.Addr_Seq === 3;
+                  })[0];
+            if ( offAddr) {
+              this.ofAddress = offAddr;
+              this.of_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ofAddress.Country_Id);
+            }
         });
 
       } else {
@@ -598,9 +622,7 @@ maSameAsOffice() {
 }
 
 copyAddr (A_Addr: AccountAddress  ): AccountAddress {
-
-  console.log(JSON.stringify(A_Addr));
-
+  // console.log(JSON.stringify(A_Addr));
   const B_Addr: AccountAddress = new AccountAddress();
 
   B_Addr.Addr_No = A_Addr.Addr_No;
@@ -617,17 +639,3 @@ copyAddr (A_Addr: AccountAddress  ): AccountAddress {
   return B_Addr;
   }
 }
-
-// function copyAddr (A_Addr: AccountAddress , B_Addr: AccountAddress) {
-
-//   B_Addr.Addr_No = A_Addr.Addr_No;
-//   B_Addr.Place = A_Addr.Place;
-//   B_Addr.Road = A_Addr.Road;
-//   B_Addr.Tambon_Id = A_Addr.Tambon_Id;
-//   B_Addr.Amphur_Id = A_Addr.Amphur_Id;
-//   B_Addr.Province_Id = A_Addr.Province_Id;
-//   B_Addr.Country_Id = A_Addr.Country_Id;
-//   B_Addr.Zip_Code = A_Addr.Zip_Code;
-//   B_Addr.Tel = A_Addr.Tel;
-//   B_Addr.Fax = A_Addr.Fax;
-// }

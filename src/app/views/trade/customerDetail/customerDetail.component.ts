@@ -481,7 +481,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     .subscribe((result: any[] ) => {
       console.log('AFTER SAVE', JSON.stringify(result));
       // Show result message
-      if ( typeof result.result !== 'undefined' && typeof result.result.wfRef !== 'undefined') {
+      if (  result.result !== 'undefined' &&  result.result.wfRef !== 'undefined') {
         this.openDialog('success', 'Create customer was successful.', 'The refference number is ' +  result.result.wfRef);
         this.saveCustomerComplete = true;
       } else {

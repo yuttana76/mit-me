@@ -19,6 +19,7 @@ import {
   MatRadioModule,
   MatIconModule,
   MatCheckboxModule,
+  MatListModule,
 
 } from '@angular/material';
 
@@ -42,7 +43,8 @@ import {
     MatTabsModule,
     MatRadioModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatListModule
   ]
 })
 export class AngularMaterialModule {}

@@ -11,7 +11,7 @@ var config = dbConfig.dbParameters;
 
 exports.ExeWIPCustomer = (req, res, next) => {
 
-  console.log("ExeWIPCustomer>> ");
+  // console.log("ExeWIPCustomer>> ");
   var o2x = require('object-to-xml');
   var fncName = "ExeWIPCustomer";
 
@@ -22,9 +22,9 @@ exports.ExeWIPCustomer = (req, res, next) => {
 
   // console.log('XML>>',o2x(customerObj));
   // console.log("customerObj>> ", JSON.stringify(customerObj));
-  console.log("ceAddressObj>> ", JSON.stringify(ceAddressObj));
-  console.log("ofAddressObj>> ", JSON.stringify(ofAddressObj));
-  console.log("maAddressObj>> ", JSON.stringify(maAddressObj));
+  // console.log("ceAddressObj>> ", JSON.stringify(ceAddressObj));
+  // console.log("ofAddressObj>> ", JSON.stringify(ofAddressObj));
+  // console.log("maAddressObj>> ", JSON.stringify(maAddressObj));
   // console.log("Cust_Code>> ", customerObj.Cust_Code);
 
   const sql = require("mssql");
@@ -44,7 +44,7 @@ exports.ExeWIPCustomer = (req, res, next) => {
           });
         } else {
 
-          console.log(fncName + " Result>>" + JSON.stringify(result));
+          // console.log(fncName + " Result>>" + JSON.stringify(result));
           res.status(200).json({
             message: fncName + "Quey db. successfully!",
             result: result.output

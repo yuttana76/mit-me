@@ -98,12 +98,12 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(pageData: PageEvent) {
-    console.log(pageData);
+    // console.log(pageData);
     this.spinnerLoading = true;
     this.currentPage =  pageData.pageIndex + 1;
     this.rowsPerPage =  pageData.pageSize;
 
-    console.log('Condition>>', this.conditions);
+    // console.log('Condition>>', this.conditions);
     this.customerService.getCustomers(this.rowsPerPage, this.currentPage, this.conditions);
     this.postsSub = this.customerService.getCustomerUpdateListener().subscribe((customers: Customer[]) => {
           this.spinnerLoading = false;
@@ -113,7 +113,7 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   }
 
   onSerachCust() {
-    console.log('onSerachCust ! ');
+    // console.log('onSerachCust ! ');
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);
       return true;

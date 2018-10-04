@@ -15,9 +15,13 @@ exports.searchCustomers = (req, res, next) => {
 
   if (custId !== false) {
     whereCond = `Cust_Code like '%${custId}%'`;
+    // whereCond = `CONTAINS(Cust_Code,${custId})`;
   } else {
     whereCond = `First_Name_T like N'%${cust_name}%'`;
+    // whereCond = `CONTAINS(First_Name_T, ${cust_name})`;
   }
+
+
 
   var queryStr = `SELECT * FROM (
     SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,

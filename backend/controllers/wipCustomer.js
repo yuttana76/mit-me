@@ -22,9 +22,9 @@ exports.ExeWIPCustomer = (req, res, next) => {
 
   // console.log('XML>>',o2x(customerObj));
   // console.log("customerObj>> ", JSON.stringify(customerObj));
-  // console.log("ceAddressObj>> ", JSON.stringify(ceAddressObj));
-  // console.log("ofAddressObj>> ", JSON.stringify(ofAddressObj));
-  // console.log("maAddressObj>> ", JSON.stringify(maAddressObj));
+  console.log("ceAddressObj>> ", JSON.stringify(ceAddressObj));
+  console.log("ofAddressObj>> ", JSON.stringify(ofAddressObj));
+  console.log("maAddressObj>> ", JSON.stringify(maAddressObj));
   // console.log("Cust_Code>> ", customerObj.Cust_Code);
 
   const sql = require("mssql");

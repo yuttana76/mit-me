@@ -462,8 +462,9 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       const d = new Date(this.customer.Birth_Day);
       this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
     }
-    // this.customer.Create_By = this.authService.getUserData() || 'NONE';
+    this.customer.Create_By = this.authService.getUserData() || 'NONE';
     // this.customerService.createCustomer(this.customer, this.ceAddress, this.maAddress);
+
     this.ceAddress.Cust_Code = this.customer.Cust_Code;
     this.ceAddress.Addr_Seq = '1';
 
@@ -471,7 +472,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     this.ofAddress.Addr_Seq = '3';
 
     this.maAddress.Cust_Code = this.customer.Cust_Code;
-    this.maAddress.Amphur_Id = '2';
+    this.maAddress.Addr_Seq = '2';
     // this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress)
 
  // Initial Master data

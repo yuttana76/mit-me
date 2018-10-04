@@ -12,6 +12,7 @@ import { SaleDialogComponent } from './dialog/sale-dialog/sale-dialog.component'
 
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ResultDialogComponent } from './dialog/result-dialog/result-dialog.component';
+import { WorkFlowComponent } from './work-flow/work-flow.component';
 
 @NgModule({
   imports: [
@@ -30,6 +31,7 @@ import { ResultDialogComponent } from './dialog/result-dialog/result-dialog.comp
     ResultDialogComponent,
     GroupCodeStrPipe,
     CustomerFullnamePipe,
+    WorkFlowComponent,
 
     // MasterDataComponent,
   ],

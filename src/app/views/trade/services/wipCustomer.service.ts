@@ -35,7 +35,7 @@ export class WipCustomerService {
 
 
   createCustomer(customer: Customer, ceAddress: CustAddress, ofAddress: CustAddress, maAddress: CustAddress): Observable<any> {
-    console.log('Service WIP  createCustomer() !');
+    // console.log('Service WIP  createCustomer() !');
     const data = {
       'customer': JSON.stringify(customer),
       'ceAddress': JSON.stringify(ceAddress),

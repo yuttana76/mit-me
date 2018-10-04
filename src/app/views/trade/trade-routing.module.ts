@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { SummaryRepComponent } from './summary-rep/summary-rep.component';
 import { CustomerListComponent } from './customer-list/customer-list.component';
 import { CustomerDetailComponent } from './customerDetail/customerDetail.component';
+import { WorkFlowComponent } from './work-flow/work-flow.component';
 
 const routes: Routes = [
   {
@@ -42,10 +43,17 @@ const routes: Routes = [
         }
       },
       {
-        path: 'customerEdit/:cust_Code',
+        path: 'customerEdit/:cust_Code/:source',
         component: CustomerDetailComponent,
         data: {
           title: 'Edit Customer '
+        }
+      },
+      {
+        path: 'workflow',
+        component: WorkFlowComponent,
+        data: {
+          title: 'Work flow '
         }
       },
     ]

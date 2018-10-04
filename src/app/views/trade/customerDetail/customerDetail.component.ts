@@ -33,6 +33,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   CLIENT_TYPE_PERSION = '1';
   TRADE_FORMAT_DATE = 'yyyy-MM-dd';
 
+  formScreen = 'N';
   form: FormGroup;
   spinnerLoading = false;
   saveCustomerComplete = false;
@@ -133,9 +134,6 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       dobDate: new FormControl(null, {
         validators: [Validators.required]
       }),
-      // compRegisDate: new FormControl(null, {
-      //   validators: [Validators.required]
-      // }),
       Card_IssueDate: new FormControl(null, {
         validators: [Validators.required]
       }),
@@ -237,8 +235,6 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
     });
 
-
-
     // Initial Master data
     this.masterDataService.getClientTypes().subscribe((data: any[]) => {
       this.clientTypeList = data;
@@ -317,7 +313,13 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
 
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      if (paramMap.has('source')) {
+        console.log('SOURCE>>', paramMap.get('source'));
+        this.formScreen = paramMap.get('source');
+      }
+
       if (paramMap.has('cust_Code')) {
+
         this.mode = 'edit';
         this.custCode = paramMap.get('cust_Code');
         // this.spinnerLoading = true;
@@ -473,11 +475,6 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
     this.maAddress.Cust_Code = this.customer.Cust_Code;
     this.maAddress.Addr_Seq = '2';
-    // this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress)
-
- // Initial Master data
-    // this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress)
-    // .subscribe((data: any[]) => {
 
     //   console.log('AFTER SAVE', JSON.stringify(data));
     this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress)
@@ -488,7 +485,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
         this.openDialog('success', 'Create customer was successful.', 'The refference number is ' +  result.result.wfRef);
         this.saveCustomerComplete = true;
       } else {
-        this.openDialog('danger','Create customer was error', 'Please contact IT staff.');
+        this.openDialog('danger', 'Create customer was error', 'Please contact IT staff.');
       }
       // this.openDialog();
 

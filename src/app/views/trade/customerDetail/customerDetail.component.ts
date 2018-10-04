@@ -4,26 +4,22 @@ import { ClientType } from '../model/ref_clientType.model';
 import { BeforeTitle } from '../model/ref_before_title.model';
 import { MasterDataService } from '../services/masterData.service';
 import { PIDTypes } from '../model/ref_PIDTypes.model';
-import { AccountInfo } from '../model/accountInfo.model';
 import { MatRadioChange, MatSelectChange, MatDialogRef, MatDialog } from '@angular/material';
 import { Country } from '../model/ref_country';
 import { Provinces } from '../model/ref_provinces.model';
 import { Amphurs } from '../model/ref_amphurs.model';
 import { Tambons } from '../model/ref_tambons.model';
-import { NullTemplateVisitor } from '@angular/compiler';
-import { Subscription } from 'rxjs';
 import { Nation } from '../model/ref_nation.model';
 import { Customer } from '../model/customer.model';
 import { CustAddress } from '../model/custAddress.model';
-import { CustomerService } from '../services/customer.service';
 import { DatePipe } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { SaleDialogComponent } from '../dialog/sale-dialog/sale-dialog.component';
-import { Sale } from '../model/sale.model';
 import { AccountAddress } from '../model/accountAddress.model';
 import { WipCustomerService } from '../services/wipCustomer.service';
 import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { CustomerService } from '../services/customer.service';
 
 @Component({
   selector: 'app-customer',
@@ -54,7 +50,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   countryMasList: Country[];
   ce_countryList: Country[] ;
-  ma_countryList: Country[] ;//Contact
+  ma_countryList: Country[] ; // Contact
   of_countryList: Country[] ;
 
   provinceMasList: Provinces[];
@@ -82,6 +78,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   saleDialogRef: MatDialogRef<SaleDialogComponent>;
 
   constructor( private datePipe: DatePipe,
+    private customerService: CustomerService ,
     private masterDataService: MasterDataService ,
     private wipCustomerService: WipCustomerService,
     private authService: AuthService,
@@ -137,7 +134,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       // compRegisDate: new FormControl(null, {
       //   validators: [Validators.required]
       // }),
-      issueDate: new FormControl(null, {
+      Card_IssueDate: new FormControl(null, {
         validators: [Validators.required]
       }),
       Card_ExpDate: new FormControl(null, {
@@ -238,39 +235,6 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
     });
 
-    this.route.paramMap.subscribe((paramMap: ParamMap) => {
-      if (paramMap.has('cust_Code')) {
-        this.mode = 'edit';
-        this.custCode = paramMap.get('cust_Code');
-        this.spinnerLoading = true;
-
-        console.log('Edit Mode. >>', this.custCode );
-
-        // this.postsService.getPost(this.postId).subscribe(postData => {
-        //   this.spinnerLoading = false;
-        //   this.post = {
-        //     id: postData._id,
-        //     title: postData.title,
-        //     content: postData.content,
-        //     imagePath: null,
-        //     creator: null
-        //   };
-
-        //   this.form.setValue({
-        //     title: this.post.title,
-        //     content: this.post.title,
-        //     image: this.post.imagePath
-        //   });
-
-        // });
-
-      } else {
-        this.mode = 'create';
-        this.custCode = null;
-        console.log('Create New Mode. >>');
-
-      }
-    });
 
 
     // Initial Master data
@@ -344,6 +308,76 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     });
 
     this.spinnerLoading = false;
+  }
+
+  // tslint:disable-next-line:use-life-cycle-interface
+  ngAfterViewInit() {
+
+
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      if (paramMap.has('cust_Code')) {
+        this.mode = 'edit';
+        this.custCode = paramMap.get('cust_Code');
+        // this.spinnerLoading = true;
+
+        console.log('Edit Mode. >>', this.custCode );
+
+        this.masterDataService.getCountry().subscribe((data: any[]) => {
+          this.countryMasList = data;
+        }, error => () => {
+            console.log('Was error', error);
+        }, () => {
+          this.ce_countryList = this.getCountryByNation( this.countryMasList, this.customer.Nation_Code);
+          this.ma_countryList = this.getCountryByNation( this.countryMasList, this.customer.Nation_Code);
+          this.of_countryList = this.getCountryByNation( this.countryMasList, this.customer.Nation_Code);
+        });
+
+
+        this.customerService.getCustomer(this.custCode).subscribe(custData => {
+          this.spinnerLoading = false;
+
+          console.log('custData>>', JSON.stringify(custData) );
+
+          this.customer = {
+            Cust_Code: custData[0].Cust_Code,
+            Card_Type: custData[0].Card_Type,
+            Card_IssueDate: custData[0].Birth_Day, // custData.Card_IssueDate,
+            Card_ExpDate: custData[0].Card_ExpDate,
+            Group_Code: custData[0].Group_Code,
+            Title_Name_T: custData[0].Title_Name_T,
+            First_Name_T: custData[0].First_Name_T,
+            Last_Name_T: custData[0].Last_Name_T,
+            Title_Name_E: custData[0].Title_Name_E,
+            First_Name_E: custData[0].First_Name_E,
+            Last_Name_E: custData[0].Last_Name_E,
+            Birth_Day: custData[0].Birth_Day,
+            Nation_Code: custData[0].Nation_Code,
+            Sex: custData[0].Sex,
+            Tax_No: custData[0].Tax_No,
+            Mobile: custData[0].Mobile,
+            Email: custData[0].Email,
+            MktId: custData[0].MktId,
+            Create_By: custData[0].Create_By,
+            Create_Date: custData[0].Create_Date,
+            Modify_By: custData[0].Modify_By,
+            Modify_Date: custData[0].Modify_Date,
+            IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
+          };
+
+          console.log('custData>>', this.customer.Cust_Code);
+
+          this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Group_Code);
+
+        });
+
+      } else {
+        this.mode = 'create';
+        this.custCode = null;
+        console.log('Create New Mode. >>');
+
+      }
+    });
+
   }
 
   ngOnDestroy() {
@@ -581,6 +615,7 @@ copyAddr (A_Addr: AccountAddress  ): AccountAddress {
   B_Addr.Fax = A_Addr.Fax;
 
   return B_Addr;
+  }
 }
 
 // function copyAddr (A_Addr: AccountAddress , B_Addr: AccountAddress) {

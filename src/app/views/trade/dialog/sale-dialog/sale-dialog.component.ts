@@ -16,7 +16,7 @@ export class SaleDialogComponent implements OnInit {
   form: FormGroup;
   sales: Sale[] = [];
   rowSelected: Sale;
-  // private salesSub: Subscription;
+  private salesSub: Subscription;
 
 
   // displayedColumns = ['checked','User_Code', 'Full_Name', 'License_Code'];

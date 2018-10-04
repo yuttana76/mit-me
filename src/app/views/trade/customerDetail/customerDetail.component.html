@@ -93,7 +93,7 @@
         </mat-radio-group>
       </div>
 
-      <div class="row">
+      <div class="row" *ngIf="customer.Group_Code == CLIENT_TYPE_PERSION " >
         <mat-form-field class="col-md-4">
           <input matInput [matDatepicker]="dobDate" formControlName="dobDate" placeholder="date of birth /Register date"
            [(ngModel)]="customer.Birth_Day" >
@@ -123,11 +123,11 @@
 
       <div class="row">
         <mat-form-field class="col-md-4">
-          <input matInput [matDatepicker]="issueDate" formControlName="issueDate" placeholder="Issue Date"
-           [(ngModel)]="customer.Issue_Date" >
-          <mat-datepicker-toggle matSuffix [for]="issueDate"></mat-datepicker-toggle>
-          <mat-datepicker #issueDate></mat-datepicker>
-          <mat-error *ngIf="form.get('issueDate').invalid ">Please correct date of birth /Register date</mat-error>
+          <input matInput [matDatepicker]="Card_IssueDate" formControlName="Card_IssueDate" placeholder="Issue Date"
+           [(ngModel)]="customer.Card_IssueDate" >
+          <mat-datepicker-toggle matSuffix [for]="Card_IssueDate"></mat-datepicker-toggle>
+          <mat-datepicker #Card_IssueDate></mat-datepicker>
+          <mat-error *ngIf="form.get('Card_IssueDate').invalid ">Please correct date of birth /Register date</mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-md-4 ">

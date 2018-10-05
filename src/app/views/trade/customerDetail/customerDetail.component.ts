@@ -478,16 +478,20 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
     //   console.log('AFTER SAVE', JSON.stringify(data));
     this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress)
-    .subscribe((result: any[] ) => {
-      console.log('AFTER SAVE', JSON.stringify(result));
+    .subscribe((data: any ) => {
+
+      // console.log('AFTER SAVE', JSON.stringify(data));
       // Show result message
-      if (  result.result !== 'undefined' &&  result.result.wfRef !== 'undefined') {
-        this.openDialog('success', 'Create customer was successful.', 'The refference number is ' +  result.result.wfRef);
+      // if (  result.result !== 'undefined' &&  result.result.wfRef !== 'undefined') {
+      if ( data.result && data.result.wfRef !== 'undefined') {
+        this.openDialog('success', 'Create customer was successful.', 'The refference number is ' +  data.result.wfRef);
         this.saveCustomerComplete = true;
+
       } else {
-        this.openDialog('danger', 'Create customer was error', 'Please contact IT staff.');
+
+        // tslint:disable-next-line:max-line-length
+        this.openDialog('danger', 'Create customer was error',  data.message.originalError.info.message + '!  Please contact IT staff.' );
       }
-      // this.openDialog();
 
     }, error => () => {
         console.log('Was error', error);

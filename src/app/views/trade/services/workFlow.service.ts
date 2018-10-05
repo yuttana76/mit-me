@@ -8,6 +8,7 @@ import {Customer} from '../model/customer.model';
 import { environment } from '../../../../environments/environment';
 import { CustomerCond } from '../model/customerCond.model';
 import { CustAddress } from '../model/custAddress.model';
+import { WorkFlowTrans } from '../model/workFlowTrans.model';
 
 const BACKEND_URL = environment.apiURL + '/workFlow/';
 
@@ -23,8 +24,8 @@ export class WorkFlowService {
       return fundtData.result.map(data => {
         return {
             wfRef: data.wfRef,
-            Method: data.wfRef,
-            SeqNo: data.Method,
+            Method: data.Method,
+            SeqNo: data.SeqNo,
             Flow: data.Flow,
             Level: data.Level,
             WFStatus: data.WFStatus,
@@ -40,5 +41,33 @@ export class WorkFlowService {
     }));
   }
 
+
+  upWorkFlow(wfRef: string, SeqNo: string, WFStatus: string, Comment: string, ActionBy: string) {
+
+    const workFlowTrans: WorkFlowTrans = { wfRef: wfRef,
+      Method: null,
+      SeqNo: Number(SeqNo),
+      Flow: null,
+      Level: null,
+      WFStatus: WFStatus,
+      Comment: Comment,
+      CreateBy: null,
+      CreateDate: null,
+      ActionBy: ActionBy,
+      ActionDate: null,
+      AppRef: null,
+      AppId: null};
+
+    this.http
+        .put(BACKEND_URL + wfRef, workFlowTrans)
+        .subscribe(response => {
+            // const updatedPosts = [...this.posts];
+            // const oldPostIndex = updatedPosts.findIndex(p => p.id === post.id);
+            // updatedPosts[oldPostIndex] = post;
+            // this.posts = updatedPosts;
+            // this.postUpdated.next([...this.posts]);
+            // this.router.navigate(['/']);
+        });
+}
 
 }

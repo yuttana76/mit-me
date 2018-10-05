@@ -44,7 +44,7 @@ export class WipCustomerService {
       };
 
     return this.http
-        .post<{ message: string, data: any }>(BACKEND_URL, data);
+        .post<{ message: string, result: string }>(BACKEND_URL, data);
   }
 
 }

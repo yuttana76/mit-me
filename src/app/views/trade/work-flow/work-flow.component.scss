@@ -2,3 +2,39 @@ mat-panel-description span {
 font-size: 14px;
 margin-left: 20px;
 }
+
+mat-card {
+  margin-top: 10px;
+}
+
+mat-expansion-panel {
+  margin-top: 1rem;
+}
+
+mat-divider {
+  margin-top: 10px;
+}
+
+.wfStatus-Y-icon {
+  color:LimeGreen;
+}
+.wfStatus-N-icon {
+  color:CornflowerBlue;
+}
+.wfStatus-R-icon {
+  color:OrangeRed;
+}
+
+.wfComment{
+  width: 50%;
+  right: 10px;
+  // position: absolute;
+}
+
+.wfComment-edit{
+  width: 50%;
+}
+
+.content-block{
+  margin-top: 10px;
+}

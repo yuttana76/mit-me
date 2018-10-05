@@ -1,36 +1,86 @@
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 
+<mat-card>
+  <mat-card-title>
+    Work Flow Search
+  </mat-card-title>
 
-<mat-accordion >
+  <form [formGroup]="form" (submit)="searchWorkFlow()" #custForm="ngForm" >
+    <mat-card-content>
+      <mat-form-field>
+        <input matInput formControlName="refNo"  placeholder="Reference No" >
+        <mat-error *ngIf="form.get('refNo').invalid">Please enter a Reference No.</mat-error>
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" type='submit' (click)="searchWorkFlow()">Search</button>&nbsp;
+      <button mat-stroked-button color="warn" type='reset' (click)="resetForm()" >Reset</button>
+    </mat-card-actions>
+  </form>
+</mat-card>
+
+<mat-card *ngIf="WorkFlowTrans">
   <mat-expansion-panel *ngFor="let item of WorkFlowTrans;let i = index">
 
     <mat-expansion-panel-header>
       <mat-panel-title>
-        {{i+1}}
+        <span>
+            <i *ngIf="item.WFStatus === 'N'" class="fas fa-pencil-alt fa-1x wfStatus-N-icon"></i>
+            SEQ NO {{i+1}}
+        </span>
       </mat-panel-title>
-      <mat-panel-description>
-       {{item.Flow | uppercase}}
+      <mat-panel-description style="width:350px">
+        <span >
+            {{item.Flow | uppercase}}
+        </span>
       </mat-panel-description>
 
-      <mat-panel-description>
-        <i *ngIf="item.WFStatus === 'Y'" class="fas fa-check-circle fa-2x wfStatus-icon"></i>
-        <i *ngIf="item.WFStatus !== 'Y'"class="fas fa-edit"></i>
+      <mat-panel-description >
+          <!-- <span>
+              <i *ngIf="item.WFStatus === 'Y'" class="fas fa-check-circle fa-1x wfStatus-Y-icon" alt='Approved'></i>
+              <i *ngIf="item.WFStatus === 'N'" class="fas fa-edit fa-1x wfStatus-N-icon" alt='Wait dicision'></i>
+              <i *ngIf="item.WFStatus === 'R'" class="fas fa-ban fa-1x wfStatus-R-icon" alt='Reject'></i>
 
-        <span>Create Date {{item.CreateDate | date:"dd/MM/yyyy"}}</span>
+              <i *ngIf="item.WFStatus === 'N'" class="fas fa-pencil-alt fa-1x wfStatus-N-icon"></i>
+          </span> -->
+
+        <span>Create: {{item.CreateDate | date:"dd/MM/yyyy"}}</span>
+        <span *ngIf="item.WFStatus !== 'N'">Action: {{item.ActionDate | date:"dd/MM/yyyy"}}</span>
       </mat-panel-description>
-
     </mat-expansion-panel-header>
 
+      <div  class="wfComment" *ngIf="item.WFStatus !== 'N'">
 
+        <div class='content-block'>
+            <h5>Action By </h5>
+            <p>{{item.ActionBy}}</p>
+        </div>
 
-    <p>Description</p>
+        <mat-divider [inset]="true"></mat-divider>
 
+        <div class='content-block'>
+            <h5> Action Date </h5>
+            <p>{{item.ActionDate | date:"dd/MM/yyyy"}}</p>
+        </div>
 
-      <mat-action-row >
-          <a mat-button color="primary" >APPROVE</a>
-          <button mat-button color="warn"  > REJECT</button>
-        </mat-action-row>
+        <mat-divider [inset]="true"></mat-divider>
+
+        <div class='content-block'>
+            <h5>Comment</h5>
+            <p>{{item.Comment}}<p>
+        </div>
+
+      </div>
+
+    <mat-form-field class="wfComment-edit" *ngIf="item.WFStatus === 'N'">
+        <textarea  matInput placeholder="Leave a comment" [(ngModel)]="wfcomment" >{{item.Comment}}</textarea>
+    </mat-form-field>
+
+    <mat-action-row *ngIf="item.WFStatus === 'N'" >
+      <a mat-button color="primary" (click)="onApprove(item.wfRef,item.SeqNo)">APPROVE</a>
+      <button mat-button color="warn" (click)="onReject(item.wfRef,item.SeqNo)" > REJECT</button>
+    </mat-action-row>
 
   </mat-expansion-panel>
-</mat-accordion>
-
+</mat-card>

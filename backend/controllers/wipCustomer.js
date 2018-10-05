@@ -35,16 +35,20 @@ exports.ExeWIPCustomer = (req, res, next) => {
       .input('ofAddressXML', sql.Xml,  o2x(ofAddressObj))
       .input('maAddressXML', sql.Xml,  o2x(maAddressObj))
       .output('wfRef', sql.VarChar(20))
+      // .output('message', sql.VarChar(500))
       .execute('[dbo].[MIT_Insert_WIP_customer]', (err, result) => {
 
+       console.log('err>>',JSON.stringify(err));
+
         if (err) {
-          console.log(fncName + " Quey db. Was err !!!" + err);
+          console.log(fncName + " Quey db. Was err !!!" + JSON.stringify(result));
+
           res.status(201).json({
             message: err
+            // result: result.output
           });
         } else {
-
-          // console.log(fncName + " Result>>" + JSON.stringify(result));
+          console.log(fncName + " Result>>" + JSON.stringify(result));
           res.status(200).json({
             message: fncName + "Quey db. successfully!",
             result: result.output

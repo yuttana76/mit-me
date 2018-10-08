@@ -5,10 +5,10 @@ const checkAuth = require('../middleware/check-auth');
 const workflowController = require('../controllers/workflow')
 
 
-router.get("/:cusCode", workflowController.getWorkFlow);
+router.get("/:appRef", workflowController.getWorkFlow);
 
 // router.post("",customerController.CreateCustomer);
 
-router.put("/:cusCode",workflowController.updateWorkFlow);
+router.put("/:appRef",workflowController.updateWorkFlow);
 
 module.exports = router;

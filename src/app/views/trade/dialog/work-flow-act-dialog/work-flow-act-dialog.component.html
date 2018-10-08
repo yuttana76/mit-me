@@ -1,0 +1,26 @@
+<mat-card>
+
+  <mat-card-title>Action For <span class="title-val">{{workFlowTrans.AppRef}}</span></mat-card-title>
+
+  <mat-card-content>
+
+    <mat-radio-group [(ngModel)]="workFlowTrans.WFStatus">
+      <mat-radio-button value="Y">Approve</mat-radio-button>
+      <mat-radio-button value="R">Reject</mat-radio-button>
+    </mat-radio-group>
+
+    <mat-divider></mat-divider>
+
+    <mat-form-field class="example-full-width">
+      <textarea matInput placeholder="Leave a comment" [(ngModel)]="workFlowTrans.Comment"></textarea>
+    </mat-form-field>
+
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button class="button" mat-stroked-button color="primary" (click)="onSave()"><i class="far fa-save"></i> Save</button>
+    <button class="button" mat-stroked-button color="warn" (click)="onClose()"> <i class="fas fa-ban"></i> Close</button>
+  </mat-card-actions>
+
+
+</mat-card>

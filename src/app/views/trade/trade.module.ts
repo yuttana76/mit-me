@@ -12,7 +12,8 @@ import { SaleDialogComponent } from './dialog/sale-dialog/sale-dialog.component'
 
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ResultDialogComponent } from './dialog/result-dialog/result-dialog.component';
-import { WorkFlowComponent } from './work-flow/work-flow.component';
+import { WorkFlowComponent, WfStatusPipe } from './work-flow/work-flow.component';
+import { WorkFlowActDialogComponent } from './dialog/work-flow-act-dialog/work-flow-act-dialog.component';
 
 @NgModule({
   imports: [
@@ -32,11 +33,12 @@ import { WorkFlowComponent } from './work-flow/work-flow.component';
     GroupCodeStrPipe,
     CustomerFullnamePipe,
     WorkFlowComponent,
-
+    WorkFlowActDialogComponent,
+    WfStatusPipe,
     // MasterDataComponent,
   ],
   providers: [DatePipe],
-  entryComponents: [  SaleDialogComponent, ResultDialogComponent],
+  entryComponents: [  SaleDialogComponent, ResultDialogComponent, WorkFlowActDialogComponent],
 })
 export class TradeModule {}
 

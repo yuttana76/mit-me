@@ -107,6 +107,7 @@ exports.CreateCustomer = (req, res, next) => {
   const pool1 = new sql.ConnectionPool(config, err => {
 
   executeQueryList.forEach(function(element) {
+
     // Start Account Info Transaction 1
     var accInfoTransaction = new sql.Transaction(pool1);
     accInfoTransaction.begin(function(err) {
@@ -131,6 +132,7 @@ exports.CreateCustomer = (req, res, next) => {
       });
     });
     // End Account Info Transaction 1
+
   }); // ENd loop
 
 

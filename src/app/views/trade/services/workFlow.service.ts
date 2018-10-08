@@ -9,6 +9,8 @@ import { environment } from '../../../../environments/environment';
 import { CustomerCond } from '../model/customerCond.model';
 import { CustAddress } from '../model/custAddress.model';
 import { WorkFlowTrans } from '../model/workFlowTrans.model';
+import { MailService } from './mail.service';
+import { Mail } from '../model/mail.model';
 
 const BACKEND_URL = environment.apiURL + '/workFlow/';
 
@@ -16,10 +18,10 @@ const BACKEND_URL = environment.apiURL + '/workFlow/';
 export class WorkFlowService {
 
 
-  constructor(private http: HttpClient , private router: Router) { }
+  constructor(private http: HttpClient , private router: Router, private mailService: MailService) { }
 
-  getWorkFlow(id: string) {
-    return this.http.get<{result: any }>(BACKEND_URL + id )
+  getWorkFlow(appRef: string) {
+    return this.http.get<{result: any }>(BACKEND_URL + appRef )
     .pipe(map( fundtData => {
       return fundtData.result.map(data => {
         return {
@@ -41,33 +43,51 @@ export class WorkFlowService {
     }));
   }
 
-
-  upWorkFlow(wfRef: string, SeqNo: string, WFStatus: string, Comment: string, ActionBy: string) {
-
-    const workFlowTrans: WorkFlowTrans = { wfRef: wfRef,
-      Method: null,
-      SeqNo: Number(SeqNo),
-      Flow: null,
-      Level: null,
-      WFStatus: WFStatus,
-      Comment: Comment,
-      CreateBy: null,
-      CreateDate: null,
-      ActionBy: ActionBy,
-      ActionDate: null,
-      AppRef: null,
-      AppId: null};
+    updateWorkFlow(workFlowTrans: WorkFlowTrans) {
 
     this.http
-        .put(BACKEND_URL + wfRef, workFlowTrans)
+        .put(BACKEND_URL + workFlowTrans.wfRef, workFlowTrans)
         .subscribe(response => {
-            // const updatedPosts = [...this.posts];
-            // const oldPostIndex = updatedPosts.findIndex(p => p.id === post.id);
-            // updatedPosts[oldPostIndex] = post;
-            // this.posts = updatedPosts;
-            // this.postUpdated.next([...this.posts]);
-            // this.router.navigate(['/']);
+
+            console.log('RS>>' + JSON.stringify(response) );
+
+            if (workFlowTrans.WFStatus === 'R') {
+              // SEND MAIL
+
+            } else {
+
+              this.workFLowGoNext(workFlowTrans.AppRef);
+            }
+
         });
-}
+  }
+
+  workFLowGoNext(appRef: string) {
+
+     let workFlowTransList: WorkFlowTrans[];
+     let workFlowTrans: WorkFlowTrans;
+     this.getWorkFlow(appRef).subscribe(data => {
+      workFlowTransList = data;
+      // Check for Reject
+      workFlowTrans = workFlowTransList.filter(function (i, n) {
+              return i.WFStatus === 'R';
+            })[0];
+      if (workFlowTrans) {
+        console.log('THIS CODE REJECTED.');
+      }
+
+      // Check for next
+      workFlowTrans = workFlowTransList.filter(function (i, n) {
+                return i.WFStatus === 'N';
+              })[0];
+        if (workFlowTrans) {
+          console.log('NEXT IS >>' , JSON.stringify(workFlowTrans));
+        } else {
+          // COMPLETE
+
+        }
+    });
+
+  }
 
 }

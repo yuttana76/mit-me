@@ -1,40 +1,27 @@
-mat-panel-description span {
-font-size: 14px;
-margin-left: 20px;
-}
-
 mat-card {
   margin-top: 10px;
 }
 
-mat-expansion-panel {
-  margin-top: 1rem;
+table {
+  width: 100%;
 }
 
-mat-divider {
-  margin-top: 10px;
+.div-margin10{
+  margin-top: 15px;
 }
 
-.wfStatus-Y-icon {
-  color:LimeGreen;
-}
-.wfStatus-N-icon {
-  color:CornflowerBlue;
-}
-.wfStatus-R-icon {
-  color:OrangeRed;
+.mat-column-position .mat-column-action, .mat-column-status {
+  max-width: 10%;
+  text-align: center  ;
 }
 
-.wfComment{
-  width: 50%;
-  right: 10px;
-  // position: absolute;
+.mat-column-created {
+  max-width: 25%;
+  text-align: left;
 }
 
-.wfComment-edit{
-  width: 50%;
-}
+.mat-column-comment {
+  max-width: 30%;
+  text-align: left;
 
-.content-block{
-  margin-top: 10px;
 }

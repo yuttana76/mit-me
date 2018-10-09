@@ -88,18 +88,17 @@ export class WorkFlowService {
 
         if (workFlowTrans) {
           // NEXT STEP Send mail to next approver
+          // tslint:disable-next-line:max-line-length
           this.wfMsgListtener.next({msgType: 'info' , msg: ' Work Flow will process to next step(User level ' + workFlowTrans.SeqNo + ').'});
 
         } else {
           // COMPLETE  Send mail to Owner
-
           this.wfMsgListtener.next({msgType: 'success' , msg: appRef + ' Work Flow complete will send mail to owner'});
         }
 
       }
 
     });
-
   }
 
 }

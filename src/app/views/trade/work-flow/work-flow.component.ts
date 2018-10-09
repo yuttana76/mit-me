@@ -7,6 +7,7 @@ import { MatDialogRef, MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 
 @Pipe({name: 'wfStatusPipe'})
@@ -19,7 +20,7 @@ export class WfStatusPipe implements PipeTransform {
     } else if (value === 'R') {
       newStr = 'REJECTED';
     } else {
-      newStr = 'N/A';
+      newStr = '-';
     }
 
     return newStr;
@@ -43,7 +44,7 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['position', 'action', 'flow', 'status', 'create','comment'];
   dataSource ;
-
+  isReject: boolean = false;
 
   // Dialog
   workFlowActDialogRef: MatDialogRef<WorkFlowActDialogComponent>;
@@ -51,6 +52,7 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
   constructor(
     private workFlowService: WorkFlowService,
     public dialog: MatDialog,
+    private authService: AuthService,
     private router: Router) { }
 
   ngOnInit() {
@@ -69,6 +71,7 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
 
   }
 
+
   ngOnDestroy() {
     this.wfMsgListtener.unsubscribe();
   }
@@ -83,6 +86,13 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
     this.workFlowService.getWorkFlow(this.form.value.refNo).subscribe(data => {
       this.spinnerLoading = false;
       this.dataSource = data;
+
+      if ( this.dataSource ) {
+          const  workFlowTrans = this.dataSource.filter(function (i, n) {
+              return i.WFStatus === 'R';
+            })[0];
+            this.isReject = workFlowTrans ? true : false;
+          }
     });
 
   }
@@ -91,19 +101,9 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
     this.dataSource = null;
   }
 
-  TestForm() {
-
-    console.log('TestForm >>', this.form.value.refNo);
-    console.log('RETURN FN()>>', this.workFlowService.workFLowGoNext(this.form.value.refNo));
-
-  }
-
-  // onAction(row) {
-  //   console.log("Action >>", JSON.stringify(row));
-  // }
-
   onAction(row) {
 
+  row.ActionBy = this.authService.getUserData();
   this.workFlowActDialogRef = this.dialog.open(WorkFlowActDialogComponent, {
     width: '600px',
     data: row
@@ -111,31 +111,37 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
 
   this.workFlowActDialogRef.afterClosed().subscribe(result => {
 
-    // console.log('Result Dialog>>', JSON.stringify(this.dataSource));
-
-    // if ( result && result !== 'close' ) {
-    //   // const saleObj = result;
-    //   // this.customer.MktId = saleObj.Id;
-    // }
-
   });
 }
 
-openDialog(alertTypeStr: string, alertHeaderStr: string, alertMsgStr: string): void {
-  const dialogRef = this.dialog.open(ResultDialogComponent, {
-    width: '450px',
-    // tslint:disable-next-line:max-line-length
-    data: {alertType: alertTypeStr , alertHeader: alertHeaderStr , alertMsg: alertMsgStr}
-  });
+  openDialog(alertTypeStr: string, alertHeaderStr: string, alertMsgStr: string): void {
+    const dialogRef = this.dialog.open(ResultDialogComponent, {
+      width: '450px',
+      // tslint:disable-next-line:max-line-length
+      data: {alertType: alertTypeStr , alertHeader: alertHeaderStr , alertMsg: alertMsgStr}
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
-    // console.log('The dialog was closed');
-    // this.animal = result;
-    // if (this.saveCustomerComplete) {
-      this.router.navigate(['/']);
-    // }
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log('The dialog was closed');
+      // this.animal = result;
+      // if (this.saveCustomerComplete) {
+        this.router.navigate(['/']);
+      // }
 
-  });
-}
+    });
+  }
+
+  canApprove() {
+    // Get current level
+    const _workFlowTrans = this.dataSource.filter(function (i, n) {
+      return i.WFStatus === 'N';
+    })[0];
+
+    // Get User Level by AppId
+    // _workFlowTrans.Level
+    // _workFlowTrans.AppId
+    // this.authService.getUserData();
+
+  }
 }
 

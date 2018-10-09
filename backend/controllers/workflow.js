@@ -55,8 +55,6 @@ AND wfRef =  '${req.body.wfRef}'
 AND seqNo= ${req.body.SeqNo}
   `;
 
-  console.log('QUERY>>', updateQuery );
-
   const sql = require("mssql");
   const pool1 = new sql.ConnectionPool(config, err => {
 

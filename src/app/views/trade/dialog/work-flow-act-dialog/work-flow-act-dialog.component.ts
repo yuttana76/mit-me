@@ -14,19 +14,17 @@ export class WorkFlowActDialogComponent implements OnInit {
   workFlowTrans: WorkFlowTrans;
   constructor(
     private workFlowService: WorkFlowService,
-    private authService: AuthService,
+    // private authService: AuthService,
     public dialogRef: MatDialogRef<WorkFlowActDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: WorkFlowTrans
   ) {
-
     this.workFlowTrans = data;
-    console.log('Dialog data>>' , this.workFlowTrans);
    }
 
   ngOnInit() {
   }
 
   onSave(): void {
-    this.workFlowTrans.ActionBy = this.authService.getUserData();
+    // this.workFlowTrans.ActionBy = this.authService.getUserData();
     this.workFlowService.updateWorkFlow(this.workFlowTrans);
 
     this.dialogRef.close('save');

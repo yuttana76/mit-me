@@ -18,9 +18,6 @@ export class AmcService {
   constructor(private http: HttpClient , private router: Router) { }
 
   getAmc() {
-
-    console.log(' Amc service getAmc():');
-
     this.http.get<{ message: string, result: any }>(BACKEND_URL + '/amc')
     .pipe(map((fundtData) => {
         return fundtData.result.map(amc => {

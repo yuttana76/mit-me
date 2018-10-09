@@ -12,34 +12,27 @@ exports.getAMC = (req, res, next) => {
   WHERE Active_Flag=1
   ORDER  BY Amc_Code`;
 
-  var sql = require("mssql");
-
-  sql.connect(config, err => {
-    // ... error checks
-
-    // Callbacks
-    new sql.Request().query(queryStr, (err, result) => {
-
-      // ... error checks
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
         if(err){
-          console.log('Was err !!!' + err);
+          console.log( fncName +' Quey db. Was err !!!' + err);
           res.status(201).json({
             message: err,
           });
-          sql.close();
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
         }
-
-        res.status(200).json({
-          message: "Connex  successfully!",
-          result: result.recordset
-        });
-        sql.close();
     })
-  });
+  })
 
-  sql.on("error", err => {
+  pool1.on('error', err => {
     // ... error handler
-    console.log('sql.on !!!' + err);
-    sql.close();
-  });
+    console.log("EROR>>"+err);
+  })
 }

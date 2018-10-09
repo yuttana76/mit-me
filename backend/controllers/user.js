@@ -12,12 +12,15 @@ const TOKEN_SECRET_STRING = process.env.JWT_KEY;
 const TOKEN_EXPIRES = dbConfig.TOKEN_EXPIRES;
 
 exports.createUser = (req,res,next)=>{
-  // console.log('API /register>>', req.body.email,' ;pwd>>', req.body.password);
+  console.log('API /register>>', req.body.email,' ;pwd>>', req.body.password);
+
   var _userName = req.body.email
   bcrypt.hash(req.body.password, SALT_WORK_FACTOR)
   .then(hash =>{
 
-      var queryStr = `INSERT INTO   [MFTS].[dbo].[MIT_USERS] VALUES('${_userName}','${hash}');`;
+      var queryStr = `INSERT INTO   [MFTS].[dbo].[MIT_USERS] (USERID,PASSWD,EMAIL,STATUS,CREATEBY,CREATEDATE)
+                      VALUES('${_userName}','${hash}','${_userName}','A','WEB-APP',GETDATE());`;
+
       var sql = require("mssql");
 
       sql.connect(config, err => {
@@ -49,11 +52,13 @@ exports.createUser = (req,res,next)=>{
 }
 
 exports.userLogin = (req, res, next) => {
-  console.log('API /login>>', req.body.email,' ;pwd>>', req.body.password);
+  // console.log('API /login>>', req.body.email,' ;pwd>>', req.body.password);
 
  let fetchedUser;
  let _userName = req.body.email
- let queryStr = `select * FROM [MFTS].[dbo].[MIT_USERS] WHERE EMAIL='${_userName}'`;
+ let queryStr = `select * FROM [MFTS].[dbo].[MIT_USERS]
+                WHERE STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
+                AND USERID='${_userName}'`;
  const sql = require('mssql')
 
 sql.connect(config).then(pool => {
@@ -112,4 +117,43 @@ sql.connect(config).then(pool => {
    });
 
  });
+}
+
+
+exports.getUserLevel = (req, res, next) => {
+
+  var _userId = req.query.userId || '';
+  var _appId = req.query.appId || '';
+
+  var fncName = 'getUserLevel';
+  var queryStr = `
+    SELECT * from MIT_Users_Level
+    WHERE STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
+    AND USERID = '${_userId}'
+    AND APPID = '${_appId}'
+    `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    // ... error handler
+    console.log("EROR>>"+err);
+  })
 }

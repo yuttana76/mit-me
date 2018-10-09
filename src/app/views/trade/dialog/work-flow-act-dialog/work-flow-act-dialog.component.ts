@@ -29,13 +29,6 @@ export class WorkFlowActDialogComponent implements OnInit {
     this.workFlowTrans.ActionBy = this.authService.getUserData();
     this.workFlowService.updateWorkFlow(this.workFlowTrans);
 
-    // this.workFlowService.upWorkFlow(
-    //   this.workFlowTrans.wfRef,
-    //   this.workFlowTrans.SeqNo,
-    //   this.workFlowTrans.WFStatus,
-    //   this.workFlowTrans.Comment,
-    //   this.authService.getUserData());
-
     this.dialogRef.close('save');
   }
 

@@ -1,7 +1,7 @@
 
 import { Injectable } from '../../../../../node_modules/@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import {Customer} from '../model/customer.model';
@@ -14,11 +14,19 @@ import { Mail } from '../model/mail.model';
 
 const BACKEND_URL = environment.apiURL + '/workFlow/';
 
+
 @Injectable({ providedIn: 'root' })
 export class WorkFlowService {
 
+  private WF_REJECTED = 'REJECTED';
+  private wfMsgListtener = new Subject<{msgType: string , msg: string}>();
 
   constructor(private http: HttpClient , private router: Router, private mailService: MailService) { }
+
+  getWfMsgListener() {
+    return this.wfMsgListtener.asObservable();
+}
+
 
   getWorkFlow(appRef: string) {
     return this.http.get<{result: any }>(BACKEND_URL + appRef )
@@ -43,49 +51,53 @@ export class WorkFlowService {
     }));
   }
 
-    updateWorkFlow(workFlowTrans: WorkFlowTrans) {
+  updateWorkFlow(workFlowTrans: WorkFlowTrans) {
 
+    // Update WF Status
     this.http
         .put(BACKEND_URL + workFlowTrans.wfRef, workFlowTrans)
         .subscribe(response => {
 
-            console.log('RS>>' + JSON.stringify(response) );
-
-            if (workFlowTrans.WFStatus === 'R') {
-              // SEND MAIL
-
-            } else {
-
-              this.workFLowGoNext(workFlowTrans.AppRef);
-            }
-
+            // console.log('RS>>' + JSON.stringify(response) );
+          this.workFLowGoNext(workFlowTrans.AppRef);
         });
   }
-
+// *********************************
   workFLowGoNext(appRef: string) {
 
      let workFlowTransList: WorkFlowTrans[];
      let workFlowTrans: WorkFlowTrans;
-     this.getWorkFlow(appRef).subscribe(data => {
+
+    this.getWorkFlow(appRef).subscribe(data => {
       workFlowTransList = data;
-      // Check for Reject
+      // Step #1  Check for Reject
       workFlowTrans = workFlowTransList.filter(function (i, n) {
               return i.WFStatus === 'R';
             })[0];
+
       if (workFlowTrans) {
-        console.log('THIS CODE REJECTED.');
+        // console.log('REJECTED Send mail to owner');
+        this.wfMsgListtener.next({msgType: 'danger' , msg: workFlowTrans.AppRef + ' Work Flow rejected will send mail to owner'});
+
+      } else {
+
+        // Step #2 Check for next
+        workFlowTrans = workFlowTransList.filter(function (i, n) {
+          return i.WFStatus === 'N';
+        })[0];
+
+        if (workFlowTrans) {
+          // NEXT STEP Send mail to next approver
+          this.wfMsgListtener.next({msgType: 'info' , msg: ' Work Flow will process to next step(User level ' + workFlowTrans.SeqNo + ').'});
+
+        } else {
+          // COMPLETE  Send mail to Owner
+
+          this.wfMsgListtener.next({msgType: 'success' , msg: appRef + ' Work Flow complete will send mail to owner'});
+        }
+
       }
 
-      // Check for next
-      workFlowTrans = workFlowTransList.filter(function (i, n) {
-                return i.WFStatus === 'N';
-              })[0];
-        if (workFlowTrans) {
-          console.log('NEXT IS >>' , JSON.stringify(workFlowTrans));
-        } else {
-          // COMPLETE
-
-        }
     });
 
   }

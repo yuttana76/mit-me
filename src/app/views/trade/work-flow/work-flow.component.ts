@@ -1,9 +1,12 @@
-import { Component, OnInit, PipeTransform, Pipe } from '@angular/core';
+import { Component, OnInit, PipeTransform, Pipe, OnDestroy } from '@angular/core';
 import { WorkFlowTrans } from '../model/workFlowTrans.model';
 import { WorkFlowService } from '../services/workFlow.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { WorkFlowActDialogComponent } from '../dialog/work-flow-act-dialog/work-flow-act-dialog.component';
 import { MatDialogRef, MatDialog } from '@angular/material';
+import { Subscription } from 'rxjs';
+import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
+import { Router } from '@angular/router';
 
 
 @Pipe({name: 'wfStatusPipe'})
@@ -28,11 +31,13 @@ export class WfStatusPipe implements PipeTransform {
   templateUrl: './work-flow.component.html',
   styleUrls: ['./work-flow.component.scss']
 })
-export class WorkFlowComponent implements OnInit {
+export class WorkFlowComponent implements OnInit, OnDestroy {
+
 
   form: FormGroup;
 
   spinnerLoading = false;
+  private wfMsgListtener: Subscription;
   // WorkFlowTrans;
   // wfcomment = '';
 
@@ -45,7 +50,8 @@ export class WorkFlowComponent implements OnInit {
 
   constructor(
     private workFlowService: WorkFlowService,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog,
+    private router: Router) { }
 
   ngOnInit() {
 
@@ -55,6 +61,16 @@ export class WorkFlowComponent implements OnInit {
       }),
     });
 
+    this.wfMsgListtener = this.workFlowService.getWfMsgListener().subscribe(({msgType, msg}) => {
+      // this.spinnerLoading = false;
+      this.openDialog(msgType, 'Thank you',  msg );
+
+    });
+
+  }
+
+  ngOnDestroy() {
+    this.wfMsgListtener.unsubscribe();
   }
 
   searchWorkFlow() {
@@ -63,13 +79,9 @@ export class WorkFlowComponent implements OnInit {
       console.log('form.invalid() ' + this.form.invalid);
       return true;
     }
-
-    console.log('RefNo>>', this.form.value.refNo);
-
     // Load customer(Account) info.
     this.workFlowService.getWorkFlow(this.form.value.refNo).subscribe(data => {
       this.spinnerLoading = false;
-      console.log('WK RS >>' , JSON.stringify(data));
       this.dataSource = data;
     });
 
@@ -82,8 +94,7 @@ export class WorkFlowComponent implements OnInit {
   TestForm() {
 
     console.log('TestForm >>', this.form.value.refNo);
-
-    this.workFlowService.workFLowGoNext(this.form.value.refNo);
+    console.log('RETURN FN()>>', this.workFlowService.workFLowGoNext(this.form.value.refNo));
 
   }
 
@@ -100,23 +111,31 @@ export class WorkFlowComponent implements OnInit {
 
   this.workFlowActDialogRef.afterClosed().subscribe(result => {
 
-    console.log('Result Dialog>>', JSON.stringify(this.dataSource));
+    // console.log('Result Dialog>>', JSON.stringify(this.dataSource));
 
     // if ( result && result !== 'close' ) {
     //   // const saleObj = result;
     //   // this.customer.MktId = saleObj.Id;
     // }
+
   });
 }
 
-  // onApprove(wfRef: string, SeqNo: string) {
-  //   console.log('On Approve>>' + wfRef +  ' ;SeqNo:' + SeqNo  + ' ;Comment=' + this.wfcomment);
+openDialog(alertTypeStr: string, alertHeaderStr: string, alertMsgStr: string): void {
+  const dialogRef = this.dialog.open(ResultDialogComponent, {
+    width: '450px',
+    // tslint:disable-next-line:max-line-length
+    data: {alertType: alertTypeStr , alertHeader: alertHeaderStr , alertMsg: alertMsgStr}
+  });
 
-  //   this.workFlowService.upWorkFlow(this.form.value.refNo, SeqNo, 'Y', this.wfcomment, 'BOM');
-  // }
+  dialogRef.afterClosed().subscribe(result => {
+    // console.log('The dialog was closed');
+    // this.animal = result;
+    // if (this.saveCustomerComplete) {
+      this.router.navigate(['/']);
+    // }
 
-  // onReject(wfRef: string, SeqNo: string) {
-  //   console.log('On Reject>>' + wfRef +  ' ;SeqNo:' + SeqNo  + ' ;Comment=' + this.wfcomment);
-  // }
+  });
+}
 }
 

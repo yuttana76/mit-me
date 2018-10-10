@@ -8,6 +8,7 @@ const BACKEND_URL = environment.apiURL;
 
 @Injectable({ providedIn: 'root' })
 export class MasterDataService {
+
   constructor(private http: HttpClient) {}
 
   getClientTypes() {

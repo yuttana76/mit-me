@@ -9,7 +9,7 @@ var sql = require("mssql");
 var config = dbConfig.dbParameters;
 
 
-exports.ExeWIPCustomer = (req, res, next) => {
+exports.ExeInsertWIPCustomer = (req, res, next) => {
 
   // console.log("ExeWIPCustomer>> ");
   var o2x = require('object-to-xml');
@@ -55,6 +55,48 @@ exports.ExeWIPCustomer = (req, res, next) => {
           });
         }
       });
+  });
+  pool1.on("error", err => {
+    // ... error handler
+    console.log("EROR>>" + err);
+  });
+};
+
+
+
+exports.ExeRestoreWIPCustomer = (req, res, next) => {
+
+  console.log("ExeRestoreWIPCustomer>> id=" + req.params.id);
+  // +" ;UpdateBy=" + JSON.stringify(req.body) );
+
+  console.log('UpdateBy >>',req.body.UpdateBy)
+
+  var fncName = "ExeRestoreWIPCustomer";
+
+  const sql = require("mssql");
+  const pool1 = new sql.ConnectionPool(config, err => {
+    // pool1.request()
+    //   .input('wfRef', sql.VarChar(100),  req.params.id)
+    //   .input('UpdateBy', sql.VarChar(250),  req.body.UpdateBy)
+    //   .execute('[dbo].[MIT_WIP_CUSTOMER_RESTORE]', (err, result) => {
+
+    //    console.log('err>>',JSON.stringify(err));
+
+    //     if (err) {
+    //       console.log(fncName + " Quey db. Was err !!!" + JSON.stringify(result));
+
+    //       res.status(201).json({
+    //         message: err
+    //         // result: result.output
+    //       });
+    //     } else {
+    //       console.log(fncName + " Result>>" + JSON.stringify(result));
+    //       res.status(200).json({
+    //         message: fncName + "Quey db. successfully!",
+    //         result: result
+    //       });
+    //     }
+    //   });
   });
   pool1.on("error", err => {
     // ... error handler

@@ -32,6 +32,7 @@ export class WorkFlowService {
     return this.http.get<{result: any }>(BACKEND_URL + appRef )
     .pipe(map( fundtData => {
       return fundtData.result.map(data => {
+        const vCanAction = false;
         return {
             wfRef: data.wfRef,
             Method: data.Method,
@@ -46,6 +47,7 @@ export class WorkFlowService {
             ActionDate: data.ActionDate,
             AppRef: data.AppRef,
             AppId: data.AppId,
+            CanAction: vCanAction,
         };
       });
     }));

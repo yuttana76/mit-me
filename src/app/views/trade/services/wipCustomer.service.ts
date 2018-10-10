@@ -16,23 +16,6 @@ export class WipCustomerService {
 
   constructor(private http: HttpClient , private router: Router) { }
 
-  // createCustomer(customer: Customer, ceAddress: CustAddress, ofAddress: CustAddress, maAddress: CustAddress) {
-  //   console.log('Service WIP  createCustomer() !');
-  //   const data = {
-  //     'customer': JSON.stringify(customer),
-  //     'ceAddress': JSON.stringify(ceAddress),
-  //     'ofAddress': JSON.stringify(ofAddress),
-  //     'maAddress': JSON.stringify(maAddress)
-  //     };
-
-  //   this.http
-  //       .post<{ message: string, data: any }>(BACKEND_URL, data)
-  //       .subscribe(responseData => {
-  //         console.log('Result>>', JSON.stringify(responseData));
-  //           //this.router.navigate(['/']);
-  //       });
-  // }
-
 
   createCustomer(customer: Customer, ceAddress: CustAddress, ofAddress: CustAddress, maAddress: CustAddress): Observable<any> {
     // console.log('Service WIP  createCustomer() !');
@@ -46,5 +29,13 @@ export class WipCustomerService {
     return this.http
         .post<{ message: string, result: string }>(BACKEND_URL, data);
   }
+
+  restoreWIPCustomer(wfRef: String, updateBy: String): Observable<any> {
+
+    console.log('Service WIP  restoreWIPCustomer() wfRef>' + wfRef + ' ;updateBy>' + updateBy );
+    return this.http
+        .put(BACKEND_URL + wfRef, {UpdateBy: updateBy});
+  }
+
 
 }

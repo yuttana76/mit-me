@@ -8,19 +8,21 @@ import { Subscription } from 'rxjs';
 import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { UserService } from '../services/user.service';
+import { WipCustomerService } from '../services/wipCustomer.service';
 
 
 @Pipe({name: 'wfStatusPipe'})
 export class WfStatusPipe implements PipeTransform {
   transform(value: string): string {
 
-    let newStr: string = '';
+    let newStr = '';
     if (value === 'Y') {
       newStr = 'APPROVED';
     } else if (value === 'R') {
       newStr = 'REJECTED';
     } else {
-      newStr = '-';
+      newStr = '';
     }
 
     return newStr;
@@ -42,9 +44,11 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
   // WorkFlowTrans;
   // wfcomment = '';
 
-  displayedColumns: string[] = ['position', 'action', 'flow', 'status', 'create','comment'];
+  // displayedColumns: string[] = ['position', 'action', 'flow', 'status', 'create','comment'];
+  displayedColumns: string[] = ['position', 'flow', 'status', 'create', 'comment'];
   dataSource ;
-  isReject: boolean = false;
+  isReject = false;
+  userLevelDb;
 
   // Dialog
   workFlowActDialogRef: MatDialogRef<WorkFlowActDialogComponent>;
@@ -53,7 +57,10 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
     private workFlowService: WorkFlowService,
     public dialog: MatDialog,
     private authService: AuthService,
-    private router: Router) { }
+    private userService: UserService,
+    private wipCustomerService: WipCustomerService,
+    private router: Router
+    ) { }
 
   ngOnInit() {
 
@@ -71,9 +78,14 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
 
   }
 
-
   ngOnDestroy() {
     this.wfMsgListtener.unsubscribe();
+  }
+
+  onRestoreWIP() {
+    this.wipCustomerService.restoreWIPCustomer(this.form.value.refNo, this.authService.getUserData() || '123' ).subscribe(data => {
+      console.log('restoreWIPCustomer(RS)>>', JSON.stringify(data));
+    });
   }
 
   searchWorkFlow() {
@@ -86,14 +98,21 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
     this.workFlowService.getWorkFlow(this.form.value.refNo).subscribe(data => {
       this.spinnerLoading = false;
       this.dataSource = data;
+    }, error => () => {
+      console.log('Was error', error);
+  }, () => {
 
-      if ( this.dataSource ) {
-          const  workFlowTrans = this.dataSource.filter(function (i, n) {
-              return i.WFStatus === 'R';
-            })[0];
-            this.isReject = workFlowTrans ? true : false;
-          }
-    });
+    // Find Reject status
+    if ( this.dataSource ) {
+      const  workFlowTrans = this.dataSource.filter(function (i, n) {
+          return i.WFStatus === 'R';
+        })[0];
+        this.isReject = workFlowTrans ? true : false;
+    }
+
+    this.CanApprove();
+
+  });
 
   }
 
@@ -131,17 +150,31 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
     });
   }
 
-  canApprove() {
+  CanApprove() {
     // Get current level
+    if ( this.isReject ) {
+       return null;
+    }
+
     const _workFlowTrans = this.dataSource.filter(function (i, n) {
       return i.WFStatus === 'N';
     })[0];
 
-    // Get User Level by AppId
-    // _workFlowTrans.Level
-    // _workFlowTrans.AppId
-    // this.authService.getUserData();
+    if ( this.authService.getUserData()) {
 
+      // Get User Level by AppId
+      if ( _workFlowTrans) {
+        this.userService.getUserLevel( this.authService.getUserData(), _workFlowTrans.AppId ).subscribe(result => {
+          this.userLevelDb = result[0];
+
+          if ( this.userLevelDb.Level === _workFlowTrans.Level ) {
+            _workFlowTrans.CanAction = true;
+          }
+
+        });
+
+    }
   }
 }
 
+}

@@ -16,6 +16,7 @@
     <mat-card-actions>
       <button mat-stroked-button color="primary" type='submit' (click)="searchWorkFlow()">Search</button>&nbsp;
       <button mat-stroked-button color="warn" type='reset' (click)="resetForm()" >Reset</button>
+      <button mat-stroked-button color="warn" (click)="onRestoreWIP()" >RESTORE</button>
     </mat-card-actions>
   </form>
 </mat-card>
@@ -33,14 +34,14 @@
           <td mat-cell *matCellDef="let element"> {{element.SeqNo}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="action">
+        <!-- <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef> - </th>
             <td mat-cell *matCellDef="let element">
             <a *ngIf="element.WFStatus ==='N' && !isReject " mat-button color="primary" (click)="onAction(element)">
                 <i class="fas fa-pencil-alt"></i> ACTION
             </a>
             </td>
-        </ng-container>
+        </ng-container> -->
 
         <!-- Name Column -->
         <ng-container matColumnDef="flow">
@@ -54,6 +55,11 @@
           <td mat-cell *matCellDef="let element">
               <i *ngIf="element.WFStatus === 'R' " class="far fa-times-circle fa-lg wfStatus-reject-icon"></i>
               {{element.WFStatus | wfStatusPipe}}
+
+              <a *ngIf="element.WFStatus ==='N' && !isReject && element.CanAction " mat-button color="primary" (click)="onAction(element)">
+                  <i class="fas fa-pencil-alt"></i> ACTION
+              </a>
+
             </td>
         </ng-container>
 

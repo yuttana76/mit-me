@@ -125,6 +125,8 @@ exports.getUserLevel = (req, res, next) => {
   var _userId = req.query.userId || '';
   var _appId = req.query.appId || '';
 
+  console.log('_userId>>' + _userId + ' ;_appId>>' + _appId );
+
   var fncName = 'getUserLevel';
   var queryStr = `
     SELECT * from MIT_Users_Level

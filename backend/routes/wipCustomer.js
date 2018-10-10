@@ -7,8 +7,8 @@ const wipCustomerController = require('../controllers/wipCustomer')
 // router.get("", checkAuth, fundController.getFunds);
 // router.get("", customerController.getCustomers);
 
-router.post("",wipCustomerController.ExeWIPCustomer);
+router.post("",wipCustomerController.ExeInsertWIPCustomer);
 
-// router.put("/:id",customerController.UpdateCustomer);
+router.put("/:id",wipCustomerController.ExeRestoreWIPCustomer);
 
 module.exports = router;

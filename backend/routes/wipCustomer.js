@@ -9,6 +9,6 @@ const wipCustomerController = require('../controllers/wipCustomer')
 
 router.post("",wipCustomerController.ExeInsertWIPCustomer);
 
-router.put("/:id",wipCustomerController.ExeRestoreWIPCustomer);
+router.put("/restore/:id",wipCustomerController.ExeRestoreWIPCustomer);
 
 module.exports = router;

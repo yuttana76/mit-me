@@ -10,9 +10,13 @@ exports.getWorkFlow = (req, res, next) => {
   var fncName = 'getCustomer';
   var appRef = req.params.appRef;
 
-  var queryStr = `select *
-  FROM [MFTS].[dbo].[MIT_WorkFlowTrans]
-  WHERE AppRef='${appRef}'`;
+  var queryStr = `select * from MIT_WorkFlowTrans
+                    WHERE wfRef IN (
+                        SELECT TOP 1 wfRef FROM MIT_WorkFlowTrans
+                    WHERE AppRef = '${appRef}'
+                    ORDER BY CreateDate DESC
+                    )
+                    ORDER BY SeqNo `;
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {
@@ -40,57 +44,57 @@ exports.getWorkFlow = (req, res, next) => {
 }
 
 
-exports.updateWorkFlow = (req, res, next) => {
+// exports.updateWorkFlow = (req, res, next) => {
 
-  var updateQuery = `
-  UPDATE MIT_WorkFlowTrans
-  SET WFStatus= '${req.body.WFStatus}'
-  ,Comment='${req.body.Comment}'
-  ,ActionDate=GETDATE()
-  ,ActionBy='${req.body.ActionBy}'
-where AppRef='${req.body.AppRef}'
-AND wfRef =  '${req.body.wfRef}'
-AND seqNo= ${req.body.SeqNo}
-  `;
+//   var updateQuery = `
+//   UPDATE MIT_WorkFlowTrans
+//   SET WFStatus= '${req.body.WFStatus}'
+//   ,Comment='${req.body.Comment}'
+//   ,ActionDate=GETDATE()
+//   ,ActionBy='${req.body.ActionBy}'
+// where AppRef='${req.body.AppRef}'
+// AND wfRef =  '${req.body.wfRef}'
+// AND seqNo= ${req.body.SeqNo}
+//   `;
 
-  const sql = require("mssql");
-  const pool1 = new sql.ConnectionPool(config, err => {
+//   const sql = require("mssql");
+//   const pool1 = new sql.ConnectionPool(config, err => {
 
-     // Start Account Info Transaction 1
-     var transaction = new sql.Transaction(pool1);
-     transaction.begin(function(err) {
-       var requestQuery = new sql.Request(transaction);
+//      // Start Account Info Transaction 1
+//      var transaction = new sql.Transaction(pool1);
+//      transaction.begin(function(err) {
+//        var requestQuery = new sql.Request(transaction);
 
-       requestQuery.query(updateQuery, function(err, recordset) {
-         if (err) {
-           console.log("Was error !!", err);
-           transaction.rollback(err => {
-              res.status(400).json({
-                 message: 'Create Customer fail'
-               });
-           });
-         } else {
-           transaction.commit(err => {
-             // console.log("Cmmited !");
-              res.status(201).json({
-               message: 'Customer create successfully',
-               recordset:recordset
+//        requestQuery.query(updateQuery, function(err, recordset) {
+//          if (err) {
+//            console.log("Was error !!", err);
+//            transaction.rollback(err => {
+//               res.status(400).json({
+//                  message: 'Create Customer fail'
+//                });
+//            });
+//          } else {
+//            transaction.commit(err => {
+//              // console.log("Cmmited !");
+//               res.status(201).json({
+//                message: 'Customer create successfully',
+//                recordset:recordset
 
-             });
-           });
-         }
-       });
-     });
-     // End Account Info Transaction 1
+//              });
+//            });
+//          }
+//        });
+//      });
+//      // End Account Info Transaction 1
 
-  });
+//   });
 
-  pool1.on("error", err => {
-    // ... error handler
-    console.log("EROR>>" + err);
-  });
+//   pool1.on("error", err => {
+//     // ... error handler
+//     console.log("EROR>>" + err);
+//   });
 
-};
+// };
 
 
 exports.ExeWFAccountUpdate = (req, res, next) => {

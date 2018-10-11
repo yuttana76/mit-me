@@ -11,6 +11,7 @@ import { CustAddress } from '../model/custAddress.model';
 import { WorkFlowTrans } from '../model/workFlowTrans.model';
 import { MailService } from './mail.service';
 import { Mail } from '../model/mail.model';
+import { WipCustomerService } from './wipCustomer.service';
 
 const BACKEND_URL = environment.apiURL + '/workFlow/';
 
@@ -21,7 +22,12 @@ export class WorkFlowService {
   private WF_REJECTED = 'REJECTED';
   private wfMsgListtener = new Subject<{msgType: string , msg: string}>();
 
-  constructor(private http: HttpClient , private router: Router, private mailService: MailService) { }
+  constructor(
+    private http: HttpClient ,
+    private router: Router,
+    private mailService: MailService,
+    private wipCustomerService: WipCustomerService
+    ) { }
 
   getWfMsgListener() {
     return this.wfMsgListtener.asObservable();
@@ -62,18 +68,12 @@ export class WorkFlowService {
     this.http
         .put(BACKEND_URL + workFlowTrans.wfRef, data)
         .subscribe(response => {
-          this.workFLowGoNext(workFlowTrans.AppRef);
+          this.workFLowGoNext(workFlowTrans.AppRef, workFlowTrans.wfRef, workFlowTrans.ActionBy);
         });
 
-    // Update WF Status
-    // this.http
-    //     .put(BACKEND_URL + workFlowTrans.wfRef, workFlowTrans)
-    //     .subscribe(response => {
-    //       this.workFLowGoNext(workFlowTrans.AppRef);
-    //     });
   }
 // *********************************
-  workFLowGoNext(appRef: string) {
+  workFLowGoNext(appRef: string, wfRef: string, actionBy: string) {
 
      let workFlowTransList: WorkFlowTrans[];
      let workFlowTrans: WorkFlowTrans;
@@ -86,6 +86,7 @@ export class WorkFlowService {
             })[0];
 
       if (workFlowTrans) {
+        // # REJECTED ! Send mail to owner
         // console.log('REJECTED Send mail to owner');
         this.wfMsgListtener.next({msgType: 'danger' , msg: workFlowTrans.AppRef + ' Work Flow rejected will send mail to owner'});
 
@@ -98,11 +99,17 @@ export class WorkFlowService {
 
         if (workFlowTrans) {
           // NEXT STEP Send mail to next approver
+
           // tslint:disable-next-line:max-line-length
           this.wfMsgListtener.next({msgType: 'info' , msg: ' Work Flow will process to next step(User level ' + workFlowTrans.SeqNo + ').'});
 
         } else {
-          // COMPLETE  Send mail to Owner
+          // COMPLETE  RESTORE here !  & Send mail to Owner
+          this.wipCustomerService.restoreWIPCustomer(wfRef, actionBy).subscribe(result => {
+              console.log('workFlow.service  COMPLETE>>' + JSON.stringify(result));
+          });
+
+          // Call RESTORE function
           this.wfMsgListtener.next({msgType: 'success' , msg: appRef + ' Work Flow complete will send mail to owner'});
         }
 

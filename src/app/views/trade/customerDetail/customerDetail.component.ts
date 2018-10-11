@@ -32,12 +32,14 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   CLIENT_TYPE_PERSION = '1';
   TRADE_FORMAT_DATE = 'yyyy-MM-dd';
+  MODE_CREATE = 'create';
+  MODE_EDIT = 'edit';
 
   formScreen = 'N';
   form: FormGroup;
   spinnerLoading = false;
   saveCustomerComplete = false;
-  private mode = 'create';
+  private mode = this.MODE_CREATE;
   private custCode: string;
 
   clientTypeList: ClientType[] = [];
@@ -320,7 +322,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
       if (paramMap.has('cust_Code')) {
 
-        this.mode = 'edit';
+        this.mode = this.MODE_EDIT;
         this.custCode = paramMap.get('cust_Code');
         // this.spinnerLoading = true;
         // console.log('Edit Mode. >>', this.custCode );
@@ -397,9 +399,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
         });
 
       } else {
-        this.mode = 'create';
+        this.mode = this.MODE_CREATE;
         this.custCode = null;
-        console.log('Create New Mode. >>');
 
       }
     });
@@ -477,7 +478,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     this.maAddress.Addr_Seq = '2';
 
     //   console.log('AFTER SAVE', JSON.stringify(data));
-    this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress)
+    this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress, this.mode)
     .subscribe((data: any ) => {
 
       // console.log('AFTER SAVE', JSON.stringify(data));

@@ -19,6 +19,7 @@ exports.ExeInsertWIPCustomer = (req, res, next) => {
   var ceAddressObj = JSON.parse(req.body.ceAddress);
   var ofAddressObj = JSON.parse(req.body.ofAddress);
   var maAddressObj = JSON.parse(req.body.maAddress);
+  var mode = req.body.mode;
 
   // console.log('XML>>',o2x(customerObj));
   // console.log("customerObj>> ", JSON.stringify(customerObj));
@@ -34,6 +35,7 @@ exports.ExeInsertWIPCustomer = (req, res, next) => {
       .input('ceAddressXML', sql.Xml,  o2x(ceAddressObj))
       .input('ofAddressXML', sql.Xml,  o2x(ofAddressObj))
       .input('maAddressXML', sql.Xml,  o2x(maAddressObj))
+      .input('mode', sql.VarChar(20),  mode)
       .output('wfRef', sql.VarChar(20))
       // .output('message', sql.VarChar(500))
       .execute('[dbo].[MIT_Insert_WIP_customer]', (err, result) => {

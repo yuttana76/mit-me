@@ -17,13 +17,14 @@ export class WipCustomerService {
   constructor(private http: HttpClient , private router: Router) { }
 
 
-  createCustomer(customer: Customer, ceAddress: CustAddress, ofAddress: CustAddress, maAddress: CustAddress): Observable<any> {
+  createCustomer(customer: Customer, ceAddress: CustAddress, ofAddress: CustAddress, maAddress: CustAddress, mode: string): Observable<any> {
     // console.log('Service WIP  createCustomer() !');
     const data = {
       'customer': JSON.stringify(customer),
       'ceAddress': JSON.stringify(ceAddress),
       'ofAddress': JSON.stringify(ofAddress),
-      'maAddress': JSON.stringify(maAddress)
+      'maAddress': JSON.stringify(maAddress),
+      'mode': mode
       };
 
     return this.http

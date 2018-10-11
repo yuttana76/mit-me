@@ -21,7 +21,7 @@ const saleAgentRoutes = require('./routes/saleAgent');
 const wipCustomerRoutes = require('./routes/wipCustomer');
 const custAddressRoutes = require('./routes/custAddress');
 const workFlowRoutes = require('./routes/workFlow');
-
+const mailRoutes = require('./routes/mail');
 const app = express();
 
 app.use(bodyParser.json());
@@ -63,5 +63,6 @@ app.use("/api/saleAgent",saleAgentRoutes);
 app.use("/api/wipcustomer",wipCustomerRoutes);
 app.use("/api/custAddress",custAddressRoutes);
 app.use("/api/workFlow",workFlowRoutes);
+app.use("/api/mail",mailRoutes);
 
 module.exports = app;

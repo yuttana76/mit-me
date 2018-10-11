@@ -58,6 +58,7 @@
     "ng2-charts": "^1.6.0",
     "ngx-bootstrap": "^3.0.1",
     "ngx-perfect-scrollbar": "^6.3.0",
+    "nodemailer": "^4.6.8",
     "object-to-xml": "^2.0.0",
     "rxjs": "^6.3.0",
     "rxjs-compat": "^6.3.0",

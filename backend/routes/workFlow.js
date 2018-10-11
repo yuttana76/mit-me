@@ -9,6 +9,7 @@ router.get("/:appRef", workflowController.getWorkFlow);
 
 // router.post("",customerController.CreateCustomer);
 
-router.put("/:appRef",workflowController.updateWorkFlow);
+// router.put("/:appRef",workflowController.updateWorkFlow);
+router.put("/:appRef",workflowController.ExeWFAccountUpdate);
 
 module.exports = router;

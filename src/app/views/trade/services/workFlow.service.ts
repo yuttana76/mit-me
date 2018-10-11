@@ -55,14 +55,22 @@ export class WorkFlowService {
 
   updateWorkFlow(workFlowTrans: WorkFlowTrans) {
 
-    // Update WF Status
+    const data = {
+      'workFlowTrans': JSON.stringify(workFlowTrans)
+      };
+       // Update WF Status
     this.http
-        .put(BACKEND_URL + workFlowTrans.wfRef, workFlowTrans)
+        .put(BACKEND_URL + workFlowTrans.wfRef, data)
         .subscribe(response => {
-
-            // console.log('RS>>' + JSON.stringify(response) );
           this.workFLowGoNext(workFlowTrans.AppRef);
         });
+
+    // Update WF Status
+    // this.http
+    //     .put(BACKEND_URL + workFlowTrans.wfRef, workFlowTrans)
+    //     .subscribe(response => {
+    //       this.workFLowGoNext(workFlowTrans.AppRef);
+    //     });
   }
 // *********************************
   workFLowGoNext(appRef: string) {

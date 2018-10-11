@@ -41,8 +41,6 @@ exports.getWorkFlow = (req, res, next) => {
 
 
 exports.updateWorkFlow = (req, res, next) => {
-  // console.log('cusCode>>', req.params.cusCode);
-  // console.log('BODY>>', req.body );
 
   var updateQuery = `
   UPDATE MIT_WorkFlowTrans
@@ -93,3 +91,44 @@ AND seqNo= ${req.body.SeqNo}
   });
 
 };
+
+
+exports.ExeWFAccountUpdate = (req, res, next) => {
+
+  var o2x = require('object-to-xml');
+  var fncName = "ExeWFAccountUpdate";
+  var workFlowTransObj = JSON.parse(req.body.workFlowTrans);
+
+  console.log("appRef>> ", req.params.appRef);
+  console.log("workFlowTransObj>> ", JSON.stringify(workFlowTransObj));
+
+  const sql = require("mssql");
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request()
+      .input('WorkFlowTransXML', sql.Xml,  o2x(workFlowTransObj))
+      .execute('[dbo].[MIT_WorkFlowTrans_accountUpdate]', (err, result) => {
+
+       console.log('err>>',JSON.stringify(err));
+
+        if (err) {
+          console.log(fncName + " Quey db. Was err !!!" + JSON.stringify(result));
+
+          res.status(201).json({
+            message: err
+            // result: result.output
+          });
+        } else {
+          console.log(fncName + " Result>>" + JSON.stringify(result));
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result
+          });
+        }
+      });
+  });
+  pool1.on("error", err => {
+    // ... error handler
+    console.log("EROR>>" + err);
+  });
+};
+

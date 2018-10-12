@@ -10,6 +10,23 @@ export class UserService {
 
   constructor(private http: HttpClient ) { }
 
+  getUserInfo(userId: string) {
+
+    const queryParams = `?userId=${userId}`;
+    return this.http
+      .get<{ message: string; result: any }>(BACKEND_URL + '/userInfo' + queryParams)
+      .pipe(map((rsData) => {
+          return rsData.result.map(mapData => {
+            return {
+              USERID: mapData.USERID,
+              EMAIL: mapData.EMAIL,
+              DEP_CODE: mapData.DEP_CODE
+            };
+          });
+        })
+      );
+  }
+
   getUserLevel(userId: string, appId: string) {
 
     const queryParams = `?userId=${userId}&appId=${appId}`;

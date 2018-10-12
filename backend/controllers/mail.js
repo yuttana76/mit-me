@@ -4,7 +4,7 @@ const config = require('./config');
 
 //reference https://nodemailer.com/about/
 exports.sendMail = (req, res, next) =>{
-
+    console.log('sendMail()>>' + JSON.stringify(req.body));
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport(config.mailParameters);
 

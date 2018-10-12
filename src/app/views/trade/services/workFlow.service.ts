@@ -1,17 +1,14 @@
-
 import { Injectable } from '../../../../../node_modules/@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import {Customer} from '../model/customer.model';
 import { environment } from '../../../../environments/environment';
-import { CustomerCond } from '../model/customerCond.model';
-import { CustAddress } from '../model/custAddress.model';
 import { WorkFlowTrans } from '../model/workFlowTrans.model';
 import { MailService } from './mail.service';
 import { Mail } from '../model/mail.model';
 import { WipCustomerService } from './wipCustomer.service';
+import { UserService } from './user.service';
 
 const BACKEND_URL = environment.apiURL + '/workFlow/';
 
@@ -19,14 +16,15 @@ const BACKEND_URL = environment.apiURL + '/workFlow/';
 @Injectable({ providedIn: 'root' })
 export class WorkFlowService {
 
-  private WF_REJECTED = 'REJECTED';
+  // private WF_REJECTED = 'REJECTED';
   private wfMsgListtener = new Subject<{msgType: string , msg: string}>();
 
   constructor(
     private http: HttpClient ,
     private router: Router,
     private mailService: MailService,
-    private wipCustomerService: WipCustomerService
+    private wipCustomerService: WipCustomerService,
+    private userService: UserService
     ) { }
 
   getWfMsgListener() {
@@ -35,7 +33,10 @@ export class WorkFlowService {
 
 
   getWorkFlow(appRef: string) {
-    return this.http.get<{result: any }>(BACKEND_URL + appRef )
+
+    const queryParams = `?appRef=${appRef}`;
+
+    return this.http.get<{result: any }>(BACKEND_URL + '/wfByAppRef' + queryParams )
     .pipe(map( fundtData => {
       return fundtData.result.map(data => {
         const vCanAction = false;
@@ -87,7 +88,35 @@ export class WorkFlowService {
 
       if (workFlowTrans) {
         // # REJECTED ! Send mail to owner
-        // console.log('REJECTED Send mail to owner');
+
+        console.log('REJECTED Send mail to (OWNER)' + JSON.stringify(workFlowTrans));
+
+
+        // // SEND MAIL TO OWNER
+        this.userService.getUserInfo(workFlowTrans.CreateBy).subscribe( data => {
+
+          if (data[0]) {
+            const _mail: Mail = new Mail();
+            _mail.form = 'MitSystem@Merchantasset.co.th';
+            _mail.to = data[0].EMAIL;
+            _mail.subject = `Work Flow ${workFlowTrans.AppRef} was rejected`;
+            _mail.msg = `
+            <p>
+              Work Flow ${workFlowTrans.AppRef} was rejected.
+            </p>
+            <p>
+              Comment ${workFlowTrans.Comment}
+            </p>
+            <p>
+              Action by ${workFlowTrans.ActionBy}
+            </p>
+            `;
+            this.mailService.sendMail(_mail);
+          } else {
+            console.log('REJECT Not found mail of creator.');
+          }
+        });
+
         this.wfMsgListtener.next({msgType: 'danger' , msg: workFlowTrans.AppRef + ' Work Flow rejected will send mail to owner'});
 
       } else {
@@ -101,7 +130,7 @@ export class WorkFlowService {
           // NEXT STEP Send mail to next approver
 
           // tslint:disable-next-line:max-line-length
-          this.wfMsgListtener.next({msgType: 'info' , msg: ' Work Flow will process to next step(User level ' + workFlowTrans.SeqNo + ').'});
+          this.wfMsgListtener.next({msgType: 'info' , msg: ' Work Flow will process to next step(User level ' + workFlowTrans.Level + ').'});
 
         } else {
           // COMPLETE  RESTORE here !  & Send mail to Owner

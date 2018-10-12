@@ -5,10 +5,10 @@ const dbConfig = require("./config");
 var config = dbConfig.dbParameters;
 
 
-exports.getWorkFlow = (req, res, next) => {
+exports.getWorkFlowByAppRef = (req, res, next) => {
 
   var fncName = 'getCustomer';
-  var appRef = req.params.appRef;
+  var appRef = req.query.appRef;
 
   var queryStr = `select * from MIT_WorkFlowTrans
                     WHERE wfRef IN (
@@ -96,7 +96,6 @@ exports.getWorkFlow = (req, res, next) => {
 
 // };
 
-
 exports.ExeWFAccountUpdate = (req, res, next) => {
 
   var o2x = require('object-to-xml');
@@ -136,3 +135,64 @@ exports.ExeWFAccountUpdate = (req, res, next) => {
   });
 };
 
+
+exports.getCurrentLevel = (req, res, next) => {
+    console.log('Welcome getCurrentLevel()');
+  var fncName = 'getCurrentLevel()';
+  var _wfRef = req.query.wfRef || '';
+  console.log('_wfRef>>' + _wfRef );
+
+//   var queryStr = `
+//   SELECT TOP 1 a.AppId,a.Flow ,a.[Level]
+// FROM MIT_WorkFlowTrans a
+// WHERE WfRef= '${_wfRef}'
+// AND WFStatus = 'N'
+// ORDER BY SeqNo ASC
+//     `;
+
+var queryStr = `
+BEGIN
+    DECLARE @level NUMERIC;
+    DECLARE @AppId VARCHAR(10);
+    DECLARE @Flow VARCHAR(20);
+
+    select TOP 1
+    @level =[Level],@AppId = AppId,@Flow = Flow
+    from MIT_WorkFlowTrans
+    where WfRef= '${_wfRef}'
+    AND WFStatus = 'N'
+
+    SELECT a.AppId,@Flow AS Flow,a.[Level],b.USERID,b.EMAIL
+    FROM MIT_Users_Level a LEFT JOIN MIT_USERS b ON a.USERID = b.USERID
+    WHERE a.[Level] = @level
+    AND a.AppId=@AppId
+    AND a.[STATUS]='A'  AND CURRENT_TIMESTAMP < ISNULL(a.EXPIRE_DATE,CURRENT_TIMESTAMP+1)
+
+    END
+`;
+    console.log('queryStr>>' + queryStr );
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    // ... error handler
+    console.log("EROR>>"+err);
+  })
+}

@@ -11,4 +11,6 @@ export class User {
   CREATEDATE: string;
   UPDATEBY: string;
   UPDATEDATE: string;
+  EMAIL: string;
+  DEP_CODE: string;
 }

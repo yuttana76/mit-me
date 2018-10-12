@@ -1,5 +1,7 @@
 export class Mail {
+
   constructor() {}
+
   form: string;
   to: string;
   cc: string;

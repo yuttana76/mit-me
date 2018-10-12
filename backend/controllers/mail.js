@@ -1,30 +1,19 @@
 const nodemailer = require('nodemailer');
 
-// var MAIL_SMTP = 'smtp.inetmail.cloud';//process.env.SMTP;
-// var MAIL_PORT = process.env.PORT;
-// var MAIL_USER = 'italert@merchantasset.co.th';//process.env.USER;
-// var MAIL_PASS = 'Merchant@2018**';//process.env.PASS;
+const config = require('./config');
 
 //reference https://nodemailer.com/about/
 exports.sendMail = (req, res, next) =>{
-console.log('Welcome send mail()');
+
     // create reusable transporter object using the default SMTP transport
-    let transporter = nodemailer.createTransport({
-      host: "smtp.inetmail.cloud",
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-          user: "italert@merchantasset.co.th", // generated ethereal user
-          pass: "Merchant@2018**" // generated ethereal password
-      }
-    });
+    let transporter = nodemailer.createTransport(config.mailParameters);
 
     // setup email data with unicode symbols
     let mailOptions = {
       from: req.body.from, // sender address
       to: req.body.to, // list of receivers
       subject: req.body.subject , // Subject line
-      text: 'Text here', // plain text body
+      // text: 'Text here', // plain text body
       html: `<b> ${req.body.msg}</b>` // html body
     };
 

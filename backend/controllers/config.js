@@ -20,3 +20,13 @@ exports.mssql_db_database= process.env.AUTH_SRV_db;
 
 exports.SALT_WORK_FACTOR = 10;
 exports.TOKEN_EXPIRES = '1h';
+
+exports.mailParameters = {
+  host: process.env.MAIL_SMTP,
+  port: process.env.MAIL_PORT,
+  secure: false, // true for 465, false for other ports
+  auth: {
+      user: process.env.MAIL_USER, // generated ethereal user
+      pass: process.env.MAIL_PASS // generated ethereal password
+  }
+}

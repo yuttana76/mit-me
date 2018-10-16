@@ -9,11 +9,11 @@ const BACKEND_URL = environment.apiURL + '/mail/merchant';
 @Injectable({ providedIn: 'root' })
 export class MailService {
 
-
   constructor(private http: HttpClient , private router: Router) { }
 
   sendMail(mail: Mail) {
         // console.log('Form:' + mail.form + ' ;TO:' +  mail.to + ' ;MSG:' + mail.subject);
+
         const data = {
           form: mail.form,
           to: mail.to,

@@ -17,7 +17,7 @@ const BACKEND_URL = environment.apiURL + '/workFlow/';
 export class WorkFlowService {
 
   private wfMsgListtener = new Subject<{msgType: string , msg: string}>();
-  private MAIL_FORM = 'MitSystem@Merchantasset.co.th';
+  // private MAIL_FORM = 'it@Merchantasset.co.th';
 
   constructor(
     private http: HttpClient ,
@@ -159,7 +159,7 @@ export class WorkFlowService {
 
         if (data[0]) {
           const _mail: Mail = new Mail();
-          _mail.form = this.MAIL_FORM;
+          // _mail.form = this.MAIL_FORM;
           _mail.to = data[0].EMAIL;
           _mail.subject = subject;
           _mail.msg = `
@@ -188,7 +188,7 @@ export class WorkFlowService {
 
     console.log('mail2Next() >> ', data[0].EMAIL);
           const _mail: Mail = new Mail();
-          _mail.form = this.MAIL_FORM;
+          // _mail.form = this.MAIL_FORM;
           _mail.to = data[0].EMAIL;
           _mail.subject = subject;
           _mail.msg = `

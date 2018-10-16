@@ -30,3 +30,5 @@ exports.mailParameters = {
       pass: process.env.MAIL_PASS // generated ethereal password
   }
 }
+
+exports.mail_form ='it2@merchantasset.co.th';

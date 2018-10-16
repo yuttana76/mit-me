@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dbConfig = require('./config');
 
+var logger = require('../config/winston');
+
 var config = dbConfig.dbParameters;
 
 // const SALT_WORK_FACTOR = 10;
@@ -54,6 +56,8 @@ exports.createUser = (req,res,next)=>{
 exports.userLogin = (req, res, next) => {
   // console.log('API /login>>', req.body.email,' ;pwd>>', req.body.password);
 
+  logger.info(`userLogin() ${req.body.email} - ${req.originalUrl} - ${req.ip}`);
+
  let fetchedUser;
  let _userName = req.body.email
  let queryStr = `select * FROM [MFTS].[dbo].[MIT_USERS]
@@ -89,7 +93,7 @@ sql.connect(config).then(pool => {
 
      //Generate token
      const token = jwt.sign(
-       {email: fetchedUser.recordset[0].EMAIL},
+       {USERID: fetchedUser.recordset[0].USERID},
        TOKEN_SECRET_STRING,
        { expiresIn: TOKEN_EXPIRES},
      );
@@ -97,7 +101,7 @@ sql.connect(config).then(pool => {
      res.status(200).json({
        token: token,
        expiresIn: 3600,//3600 = 1h
-       userData: fetchedUser.recordset[0].EMAIL,
+       userData: fetchedUser.recordset[0].USERID,
      });
      sql.close();
    })

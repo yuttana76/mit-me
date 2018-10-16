@@ -4,13 +4,13 @@ const config = require('./config');
 
 //reference https://nodemailer.com/about/
 exports.sendMail = (req, res, next) =>{
-    console.log('sendMail()>>' + JSON.stringify(req.body));
+    // console.log('sendMail()>>' + JSON.stringify(req.body));
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport(config.mailParameters);
 
     // setup email data with unicode symbols
     let mailOptions = {
-      from: req.body.from, // sender address
+      from: config.mail_form,//req.body.from, // sender address
       to: req.body.to, // list of receivers
       subject: req.body.subject , // Subject line
       // text: 'Text here', // plain text body

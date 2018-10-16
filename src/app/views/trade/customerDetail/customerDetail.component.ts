@@ -21,6 +21,8 @@ import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.com
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomerService } from '../services/customer.service';
 import { AddressService } from '../services/address.service';
+import { WorkFlowService } from '../services/workFlow.service';
+import { WorkFlowTrans } from '../model/workFlowTrans.model';
 
 @Component({
   selector: 'app-customer',
@@ -89,7 +91,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     public dialog: MatDialog,
-    public route: ActivatedRoute) { }
+    public route: ActivatedRoute,
+    private workFlowService: WorkFlowService) { }
 
   ngOnInit() {
     this.spinnerLoading = true;
@@ -466,7 +469,6 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
     }
     this.customer.Create_By = this.authService.getUserData() || 'NONE';
-    // this.customerService.createCustomer(this.customer, this.ceAddress, this.maAddress);
 
     this.ceAddress.Cust_Code = this.customer.Cust_Code;
     this.ceAddress.Addr_Seq = '1';
@@ -481,16 +483,19 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     this.wipCustomerService.createCustomer(this.customer, this.ceAddress, this.ofAddress, this.maAddress, this.mode)
     .subscribe((data: any ) => {
 
-      // console.log('AFTER SAVE', JSON.stringify(data));
-      // Show result message
-      // if (  result.result !== 'undefined' &&  result.result.wfRef !== 'undefined') {
       if ( data.result && data.result.wfRef !== 'undefined') {
+
+        // SEND MAIL TO APPROVER
+        this.workFlowService.getCurrentLevel(data.result.wfRef).subscribe(levelData => {
+          this.workFlowService.mail2Next(this.customer.Cust_Code, levelData);
+
+        });
+
         this.openDialog('success', 'Create customer was successful.', 'The refference number is ' +  data.result.wfRef);
         this.saveCustomerComplete = true;
 
-      } else {
 
-        // tslint:disable-next-line:max-line-length
+      } else {
         this.openDialog('danger', 'Create customer was error',  data.message.originalError.info.message + '!  Please contact IT staff.' );
       }
 

@@ -4,6 +4,7 @@ var config = dbConfig.dbParameters;
 
 exports.getAMC = (req, res, next) => {
 
+  var fncName = 'getAMC()';
   var queryStr = `select [Amc_Id]
   ,[Amc_Code]
   ,[Amc_Name]

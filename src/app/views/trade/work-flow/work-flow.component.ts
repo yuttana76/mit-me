@@ -82,11 +82,11 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
     this.wfMsgListtener.unsubscribe();
   }
 
-  onRestoreWIP() {
-    this.wipCustomerService.restoreWIPCustomer(this.form.value.refNo, this.authService.getUserData() || '123' ).subscribe(data => {
-      console.log('restoreWIPCustomer(RS)>>', JSON.stringify(data));
-    });
-  }
+  // onRestoreWIP() {
+  //   this.wipCustomerService.restoreWIPCustomer(this.form.value.refNo, this.authService.getUserData() || '123' ).subscribe(data => {
+  //     console.log('restoreWIPCustomer(RS)>>', JSON.stringify(data));
+  //   });
+  // }
 
   searchWorkFlow() {
 

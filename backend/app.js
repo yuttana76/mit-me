@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require("path");
 
 const connexRoutes = require('./routes/connex');
 const fundRoutes = require('./routes/fund');
@@ -26,6 +27,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/", express.static(path.join(__dirname, "angular")));
 
 app.use((req, res, next) => {
   res.setHeader(
@@ -65,4 +67,7 @@ app.use("/api/custAddress",custAddressRoutes);
 app.use("/api/workFlow",workFlowRoutes);
 app.use("/api/mail",mailRoutes);
 
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, "angular", "index.html"));
+});
 module.exports = app;

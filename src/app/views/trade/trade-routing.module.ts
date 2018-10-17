@@ -5,8 +5,25 @@ import { SummaryRepComponent } from './summary-rep/summary-rep.component';
 import { CustomerListComponent } from './customer-list/customer-list.component';
 import { CustomerDetailComponent } from './customerDetail/customerDetail.component';
 import { WorkFlowComponent } from './work-flow/work-flow.component';
+import { TradeDashComponent } from './trade-dash/trade-dash.component';
 
 const routes: Routes = [
+
+  {
+    path: '',
+    // component: SummaryRepComponent,
+    data: {
+      title: 'Trade Dashboard'
+    },
+    children: [
+      {
+        path: 'TradeDash',
+        component: TradeDashComponent,
+        data: {
+          title: 'Trade Dashboard'
+        }
+      }]
+  },
   {
     path: '',
     // component: SummaryRepComponent,
@@ -22,6 +39,7 @@ const routes: Routes = [
         }
       }]
   },
+
   {
     path: '',
     data: {

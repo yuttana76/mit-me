@@ -137,10 +137,10 @@ exports.ExeWFAccountUpdate = (req, res, next) => {
 
 
 exports.getCurrentLevel = (req, res, next) => {
-    console.log('Welcome getCurrentLevel()');
+    // console.log('Welcome getCurrentLevel()');
   var fncName = 'getCurrentLevel()';
   var _wfRef = req.query.wfRef || '';
-  console.log('_wfRef>>' + _wfRef );
+  // console.log('_wfRef>>' + _wfRef );
 
 //   var queryStr = `
 //   SELECT TOP 1 a.AppId,a.Flow ,a.[Level]
@@ -170,7 +170,6 @@ BEGIN
 
     END
 `;
-    console.log('queryStr>>' + queryStr );
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {

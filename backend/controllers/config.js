@@ -32,3 +32,26 @@ exports.mailParameters = {
 }
 
 exports.mail_form ='it2@merchantasset.co.th';
+
+
+// "MAIL_SMTP":"smtp.gmail.com",
+// "MAIL_PORT":"587",
+// "MAIL_USER":"yuttana76@gmail.com",
+// "MAIL_PASS":"41121225"
+
+
+
+// {
+//   "env": {
+//   "NODE_ENV":"production",
+//   "JWT_KEY":"secret_this_should_be_longer",
+//   "AUTH_SRV_USER": "mftsuser",
+//   "AUTH_SRV_PWD": "P@ssw0rd",
+//   "AUTH_SRV_IP": "192.168.10.48",
+//   "AUTH_SRV_db": "MFTS",
+//   "MAIL_SMTP":"smtp.gmail.com",
+//   "MAIL_PORT":"587",
+//   "MAIL_USER":"yuttana76@gmail.com",
+//   "MAIL_PASS":"41121225"
+//   }
+// }

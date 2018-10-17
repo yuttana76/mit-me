@@ -8,6 +8,62 @@ export const navItems = [
       text: 'NEW'
     }
   },
+  {
+    name: 'Trade Dashboard',
+    url: '/trade/TradeDash',
+    icon: 'icon-speedometer',
+    // badge: {
+    //   variant: 'info',
+    //   text: 'NEW'
+    // }
+  },
+
+  // {
+  //   name: 'News',
+  //   url: '/trade/TradeDash',
+  //   icon: 'icon-bell '
+  //   // badge: {
+  //   //   variant: 'info',
+  //   //   text: 'NEW'
+  //   // }
+  // },
+
+  {
+    name: 'Anoucement',
+    url: '/trade/TradeDash',
+    icon: 'icon-bell',
+    // children: [
+    //   {
+    //     name: 'News',
+    //     url: '/trade/SummaryRepport',
+    //     icon: 'icon-sapace'
+    //   },
+    //   {
+    //     name: 'Company',
+    //     url: '/base/carousels',
+    //     icon: 'icon-sapace'
+    //   },
+    // ]
+  },
+
+
+  {
+    name: 'Documents',
+    url: '',
+    icon: 'icon-briefcase',
+    // children: [
+    //   {
+    //     name: 'File 1',
+    //     url: '/trade/SummaryRepport',
+    //     icon: 'icon-sapace'
+    //   },
+    //   {
+    //     name: 'File 2',
+    //     url: '/base/carousels',
+    //     icon: 'icon-sapace'
+    //   },
+    // ]
+  },
   // {
   //   title: true,
   //   name: 'Theme'
@@ -22,41 +78,41 @@ export const navItems = [
   //   url: '/theme/typography',
   //   icon: 'icon-pencil'
   // },
-  {
-    divider: true
-  },
+  // {
+  //   divider: true
+  // },
   // {
   //   title: true,
   //   name: 'AppCtrl'
   // },
   {
-    name: 'User/Group Management',
+    name: 'User/Group',
     url: '/trade',
     icon: 'icon-user',
-    children: [
-      {
-        name: 'User',
-        url: '/trade/SummaryRepport',
-        icon: 'icon-sapace'
-      },
-      {
-        name: 'Group',
-        url: '/base/carousels',
-        icon: 'icon-sapace'
-      },
-    ]
+    // children: [
+    //   {
+    //     name: 'User',
+    //     url: '/trade/SummaryRepport',
+    //     icon: 'icon-sapace'
+    //   },
+    //   {
+    //     name: 'Group',
+    //     url: '/base/carousels',
+    //     icon: 'icon-sapace'
+    //   },
+    // ]
   },
-  {
-    divider: true
-  },
+  // {
+  //   divider: true
+  // },
   // {
   //   title: true,
   //   name: 'Mutual Fund Trading System',
   // },
   {
-    name: 'Account Management',
+    name: 'Applications ',
     url: '/trade',
-    icon: 'icon-briefcase',
+    icon: 'icon-layers',
     children: [
       {
         name: 'Customer Information',
@@ -80,31 +136,31 @@ export const navItems = [
     url: '/trade',
     icon: 'icon-pie-chart',
     children: [
-      {
-        name: 'Summary Trans Info.',
-        url: '/trade/SummaryRepport',
-        icon: 'icon-sapace'
-      },
-      {
-        name: 'Client Portfolio',
-        url: '/base/carousels',
-        icon: 'icon-sapace'
-      },
-      {
-        name: 'Account Info.',
-        url: '/base/collapses',
-        icon: 'icon-sapace'
-      },
-      {
-        name: 'Transaction Info.',
-        url: '/base/forms',
-        icon: 'icon-sapace'
-      }
+      // {
+      //   name: 'Summary Trans Info.',
+      //   url: '/trade/SummaryRepport',
+      //   icon: 'icon-sapace'
+      // },
+      // {
+      //   name: 'Client Portfolio',
+      //   url: '/base/carousels',
+      //   icon: 'icon-sapace'
+      // },
+      // {
+      //   name: 'Account Info.',
+      //   url: '/base/collapses',
+      //   icon: 'icon-sapace'
+      // },
+      // {
+      //   name: 'Transaction Info.',
+      //   url: '/base/forms',
+      //   icon: 'icon-sapace'
+      // }
     ]
   },
-  {
-    divider: true
-  },
+  // {
+  //   divider: true
+  // },
   {
     name: 'ขอความช่วยเหลือ',
     url: 'http://coreui.io/angular/',

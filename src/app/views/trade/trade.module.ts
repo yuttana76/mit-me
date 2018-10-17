@@ -14,6 +14,7 @@ import { AlertModule } from 'ngx-bootstrap/alert';
 import { ResultDialogComponent } from './dialog/result-dialog/result-dialog.component';
 import { WorkFlowComponent, WfStatusPipe } from './work-flow/work-flow.component';
 import { WorkFlowActDialogComponent } from './dialog/work-flow-act-dialog/work-flow-act-dialog.component';
+import { TradeDashComponent } from './trade-dash/trade-dash.component';
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { WorkFlowActDialogComponent } from './dialog/work-flow-act-dialog/work-f
     WorkFlowComponent,
     WorkFlowActDialogComponent,
     WfStatusPipe,
+    TradeDashComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],

@@ -13,7 +13,8 @@ import { AuthGuard } from './views/services/auth/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'trade/TradeDash',
+    // redirectTo: 'dashboard',
     pathMatch: 'full',
   },
   {

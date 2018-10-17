@@ -14,7 +14,8 @@ const TOKEN_SECRET_STRING = process.env.JWT_KEY;
 const TOKEN_EXPIRES = dbConfig.TOKEN_EXPIRES;
 
 exports.createUser = (req,res,next)=>{
-  console.log('API /register>>', req.body.email,' ;pwd>>', req.body.password);
+
+  logger.info( `API /register - ${req.originalUrl} - ${req.ip} - ${req.body.email}`);
 
   var _userName = req.body.email
   bcrypt.hash(req.body.password, SALT_WORK_FACTOR)
@@ -45,6 +46,9 @@ exports.createUser = (req,res,next)=>{
       });
 
       sql.on("error", err => {
+
+        logger.error( `API /register - ${err}`);
+
         sql.close();
         res.status(500).json({
           error:err
@@ -56,9 +60,7 @@ exports.createUser = (req,res,next)=>{
 exports.userLogin = (req, res, next) => {
   // console.log('API /login>>', req.body.email,' ;pwd>>', req.body.password);
 
-  const env = process.env.NODE_ENV || 'development';
-  const val = req.body.email;
-  logger.info( `userLogin() ENV ${env} - ${req.originalUrl} - ${req.ip} - ${val}`);
+  logger.info( `API /Login - ${req.originalUrl} - ${req.ip} - ${req.body.email}`);
 
  let fetchedUser;
  let _userName = req.body.email

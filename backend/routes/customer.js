@@ -7,10 +7,10 @@ const customerController = require('../controllers/customer')
 // router.get("", checkAuth, fundController.getFunds);
 router.get("", customerController.searchCustomers);
 
-router.get("/:cusCode", customerController.getCustomer);
+router.get("/:cusCode", checkAuth, customerController.getCustomer);
 
-router.post("",customerController.CreateCustomer);
+router.post("", checkAuth, customerController.CreateCustomer);
 
-router.put("/:cusCode",customerController.UpdateCustomer);
+router.put("/:cusCode", checkAuth, customerController.UpdateCustomer);
 
 module.exports = router;

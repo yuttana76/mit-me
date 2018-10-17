@@ -1,5 +1,5 @@
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dbConfig = require('./config');
 
@@ -56,7 +56,9 @@ exports.createUser = (req,res,next)=>{
 exports.userLogin = (req, res, next) => {
   // console.log('API /login>>', req.body.email,' ;pwd>>', req.body.password);
 
-  logger.info(`userLogin() ${req.body.email} - ${req.originalUrl} - ${req.ip}`);
+  const env = process.env.NODE_ENV || 'development';
+  const val = req.body.email;
+  logger.info( `userLogin() ENV ${env} - ${req.originalUrl} - ${req.ip} - ${val}`);
 
  let fetchedUser;
  let _userName = req.body.email

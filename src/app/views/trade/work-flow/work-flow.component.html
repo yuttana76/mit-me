@@ -56,8 +56,12 @@
               <i *ngIf="element.WFStatus === 'R' " class="far fa-times-circle fa-lg wfStatus-reject-icon"></i>
               {{element.WFStatus | wfStatusPipe}}
 
-              <a *ngIf="element.WFStatus ==='N' && !isReject && element.CanAction " mat-button color="primary" (click)="onAction(element)">
-                  <i class="fas fa-pencil-alt"></i> ACTION
+              <a *ngIf="element.WFStatus ==='N' && !isReject && element.CanAction " class ='btn-action' mat-stroked-button color="primary" (click)="onAction(element)">
+                  <i class="fas fa-pencil-alt"></i> Action
+              </a>
+
+              <a *ngIf="element.WFStatus ==='N' && !isReject && element.CanAction " class ='btn-action' mat-stroked-button color="primary" (click)="onAction(element)">
+                <i class="far fa-eye"></i>View
               </a>
 
             </td>

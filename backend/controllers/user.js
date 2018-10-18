@@ -57,15 +57,59 @@ exports.createUser = (req,res,next)=>{
   });
 }
 
-exports.userLogin = (req, res, next) => {
-  // console.log('API /login>>', req.body.email,' ;pwd>>', req.body.password);
 
-  logger.info( `API /Login - ${req.originalUrl} - ${req.ip} - ${req.body.email}`);
+exports.resetPassword = (req,res,next)=>{
+
+  logger.info( `API /resetPassword - ${req.originalUrl} - ${req.ip} - ${req.body.userid}`);
+
+  bcrypt.hash(req.body.password, SALT_WORK_FACTOR)
+  .then(hash =>{
+
+      var queryStr = `UPDATE [MFTS].[dbo].[MIT_USERS]
+                      SET PASSWD='${hash}',UPDATEBY='WEB-APP',UPDATEDATE=GETDATE()
+                      WHERE USERID='${req.body.userid}'`;
+
+      var sql = require("mssql");
+
+      sql.connect(config, err => {
+        new sql.Request().query(queryStr, (err, result) => {
+          sql.close();
+            if(err){
+              res.status(500).json({
+                error:err
+              });
+
+            } else {
+              res.status(200).json({
+                message: 'User updated',
+                result: result
+              });
+            }
+
+        })
+      });
+
+      sql.on("error", err => {
+
+        logger.error( `API /register - ${err}`);
+
+        sql.close();
+        res.status(500).json({
+          error:err
+        });
+      });
+  });
+}
+
+exports.userLogin = (req, res, next) => {
 
  let fetchedUser;
  let _userName = req.body.email
+ logger.info( `API /Login - ${req.originalUrl} - ${req.ip} - ${_userName}`);
+
  let queryStr = `select * FROM [MFTS].[dbo].[MIT_USERS]
                 WHERE STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
+                AND MIT_GROUP NOT like'C%'
                 AND USERID='${_userName}'`;
  const sql = require('mssql')
 
@@ -76,6 +120,7 @@ sql.connect(config).then(pool => {
    .then(user => {
 
      if(!user){
+      logger.error( `API /Login Auth failed. 1 - ${req.originalUrl} - ${req.ip} `);
       sql.close();
        return res.status(401).json({
          message: 'Auth failed. 1'
@@ -90,8 +135,9 @@ sql.connect(config).then(pool => {
    .then(result =>{
     // INCORRECT PWD.
      if(!result){
+       logger.info( `API /Login Auth failed by incorrect password - ${req.originalUrl} - ${req.ip} - ${_userName} `);
        return res.status(401).json({
-         message: 'Auth failed. 2'
+         message: 'Auth failed. by incorrect password'
        });
      }
 
@@ -111,15 +157,18 @@ sql.connect(config).then(pool => {
    })
    .catch(err => {
        // NOT FOUND USER
+       logger.warn( `API /Login Auth failed by no user - ${req.originalUrl} - ${req.ip} - ${_userName} `);
        sql.close();
        return res.status(401).json({
-         message: 'Auth failed. 3'
+         message: 'Auth failed. by user'
        });
    })
 
  sql.on("error", err => {
+  err.message
    // ... error handler
    sql.close();
+   logger.error( `API /Login error - ${req.originalUrl} - ${req.ip} - ${err} `);
    return res.status(401).json({
      message: 'Auth failed. 4'
    });
@@ -133,7 +182,8 @@ exports.getUserLevel = (req, res, next) => {
   var _userId = req.query.userId || '';
   var _appId = req.query.appId || '';
 
-  console.log(' getUserLevel() _userId>>' + _userId + ' ;_appId>>' + _appId );
+  // console.log(' getUserLevel() _userId>>' + _userId + ' ;_appId>>' + _appId );
+  logger.info( `API /UserLevel - ${req.originalUrl} - ${req.ip} - ;USERID=${_userId}  ;APPID=${_appId}`);
 
   var fncName = 'getUserLevel';
   var queryStr = `

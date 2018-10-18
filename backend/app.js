@@ -5,6 +5,9 @@ const path = require("path");
 const connexRoutes = require('./routes/connex');
 const fundRoutes = require('./routes/fund');
 const userRoutes = require('./routes/user');
+
+const utilityRoutes = require('./routes/utility');
+
 const amcRoutes = require('./routes/amc');
 const transRoutes = require('./routes/transaction');
 const customerRoutes = require('./routes/customer');
@@ -46,6 +49,7 @@ app.use((req, res, next) => {
 app.use("/api/connex",connexRoutes);
 app.use("/api/fund",fundRoutes);
 app.use("/api/user",userRoutes);
+
 app.use("/api/amc",amcRoutes);
 app.use("/api/trans",transRoutes);
 app.use("/api/customer",customerRoutes);
@@ -66,6 +70,8 @@ app.use("/api/wipcustomer",wipCustomerRoutes);
 app.use("/api/custAddress",custAddressRoutes);
 app.use("/api/workFlow",workFlowRoutes);
 app.use("/api/mail",mailRoutes);
+
+app.use("/api/util",utilityRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

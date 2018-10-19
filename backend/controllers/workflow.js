@@ -10,7 +10,15 @@ exports.getWorkFlowByAppRef = (req, res, next) => {
   var fncName = 'getCustomer';
   var appRef = req.query.appRef;
 
-  var queryStr = `select * from MIT_WorkFlowTrans
+  // var queryStr = `select * from MIT_WorkFlowTrans
+  //                   WHERE wfRef IN (
+  //                       SELECT TOP 1 wfRef FROM MIT_WorkFlowTrans
+  //                   WHERE AppRef = '${appRef}'
+  //                   ORDER BY CreateDate DESC
+  //                   )
+  //                   ORDER BY SeqNo `;
+
+  var queryStr = `select a.* ,b.AppLink,b.AppGroup,b.AppName from MIT_WorkFlowTrans a LEFT JOIN MIT_ApplicationInfo b ON a.AppId = b.AppId
                     WHERE wfRef IN (
                         SELECT TOP 1 wfRef FROM MIT_WorkFlowTrans
                     WHERE AppRef = '${appRef}'

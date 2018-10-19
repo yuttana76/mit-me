@@ -321,7 +321,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('source')) {
-        console.log('SOURCE>>', paramMap.get('source'));
+        // console.log('SOURCE>>', paramMap.get('source'));
         this.formScreen = paramMap.get('source');
       }
 
@@ -343,11 +343,12 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
         });
 
         if (this.formScreen === 'WORKFLOW_SCR' ) {
-
-          this.isDisableFields = true;
           /*
-          Disable all controls
-          */
+          Load from Work Flow page.
+           */
+
+          // Disable all controls
+          this.isDisableFields = true;
           const controlLiss = new Array('groupCode', 'bf_title_th', 'firstName_th', 'lastName_th', 'bf_title_en',
           'firstName_en', 'lastName_en', 'nationality',
           'sex', 'dobDate', 'custType', 'custId', 'Card_IssueDate', 'Card_ExpDate', 'mobile', 'email', 'MktId',
@@ -360,42 +361,43 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
             this.form.controls[ controlLiss[i]].disable();
           }
 
-          // Load customer(Account) WIP info.
+          // Load customer(Account) WIP info.(START)
+          // wipCustomerService
+          this.wipCustomerService.getWipCustomer(this.custCode).subscribe(custData => {
+            this.spinnerLoading = false;
+            this.customer = {
+              Cust_Code: custData[0].Cust_Code,
+              Card_Type: custData[0].Card_Type,
+              Card_IssueDate: custData[0].Birth_Day, // custData.Card_IssueDate,
+              Card_ExpDate: custData[0].Card_ExpDate,
+              Group_Code: custData[0].Group_Code,
+              Title_Name_T: custData[0].Title_Name_T,
+              First_Name_T: custData[0].First_Name_T,
+              Last_Name_T: custData[0].Last_Name_T,
+              Title_Name_E: custData[0].Title_Name_E,
+              First_Name_E: custData[0].First_Name_E,
+              Last_Name_E: custData[0].Last_Name_E,
+              Birth_Day: custData[0].Birth_Day,
+              Nation_Code: custData[0].Nation_Code,
+              Sex: custData[0].Sex,
+              Tax_No: custData[0].Tax_No,
+              Mobile: custData[0].Mobile,
+              Email: custData[0].Email,
+              MktId: custData[0].MktId,
+              Create_By: custData[0].Create_By,
+              Create_Date: custData[0].Create_Date,
+              Modify_By: custData[0].Modify_By,
+              Modify_Date: custData[0].Modify_Date,
+              IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
+            };
+            this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Group_Code);
+          });
+          // Load customer(Account) WIP info.(END)
 
-        }
-        // Load customer(Account) info.
-        this.customerService.getCustomer(this.custCode).subscribe(custData => {
-          this.spinnerLoading = false;
-          this.customer = {
-            Cust_Code: custData[0].Cust_Code,
-            Card_Type: custData[0].Card_Type,
-            Card_IssueDate: custData[0].Birth_Day, // custData.Card_IssueDate,
-            Card_ExpDate: custData[0].Card_ExpDate,
-            Group_Code: custData[0].Group_Code,
-            Title_Name_T: custData[0].Title_Name_T,
-            First_Name_T: custData[0].First_Name_T,
-            Last_Name_T: custData[0].Last_Name_T,
-            Title_Name_E: custData[0].Title_Name_E,
-            First_Name_E: custData[0].First_Name_E,
-            Last_Name_E: custData[0].Last_Name_E,
-            Birth_Day: custData[0].Birth_Day,
-            Nation_Code: custData[0].Nation_Code,
-            Sex: custData[0].Sex,
-            Tax_No: custData[0].Tax_No,
-            Mobile: custData[0].Mobile,
-            Email: custData[0].Email,
-            MktId: custData[0].MktId,
-            Create_By: custData[0].Create_By,
-            Create_Date: custData[0].Create_Date,
-            Modify_By: custData[0].Modify_By,
-            Modify_Date: custData[0].Modify_Date,
-            IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
-          };
-          this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Group_Code);
-        });
+          // Loading Wip Addresses(START)
+          this.wipCustomerService.getWipAddress(this.custCode).subscribe(addrData => {
 
-        // Loading Addresses
-        this.addressService.getAddress(this.custCode).subscribe(addrData => {
+            // console.log('Wip Addr>>',JSON.stringify(addrData));
 
             // CE ADDRESS
             const ceAddr = addrData.filter(function (i, n) {
@@ -424,6 +426,74 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
               this.of_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ofAddress.Country_Id);
             }
         });
+        // Loading Wip Addresses(END)
+
+        } else {
+            // Load customer(Account) info. (START)
+            this.customerService.getCustomer(this.custCode).subscribe(custData => {
+              this.spinnerLoading = false;
+              this.customer = {
+                Cust_Code: custData[0].Cust_Code,
+                Card_Type: custData[0].Card_Type,
+                Card_IssueDate: custData[0].Birth_Day, // custData.Card_IssueDate,
+                Card_ExpDate: custData[0].Card_ExpDate,
+                Group_Code: custData[0].Group_Code,
+                Title_Name_T: custData[0].Title_Name_T,
+                First_Name_T: custData[0].First_Name_T,
+                Last_Name_T: custData[0].Last_Name_T,
+                Title_Name_E: custData[0].Title_Name_E,
+                First_Name_E: custData[0].First_Name_E,
+                Last_Name_E: custData[0].Last_Name_E,
+                Birth_Day: custData[0].Birth_Day,
+                Nation_Code: custData[0].Nation_Code,
+                Sex: custData[0].Sex,
+                Tax_No: custData[0].Tax_No,
+                Mobile: custData[0].Mobile,
+                Email: custData[0].Email,
+                MktId: custData[0].MktId,
+                Create_By: custData[0].Create_By,
+                Create_Date: custData[0].Create_Date,
+                Modify_By: custData[0].Modify_By,
+                Modify_Date: custData[0].Modify_Date,
+                IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
+              };
+              this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Group_Code);
+            });
+            // Load customer(Account) info. (END)
+
+            // Loading Addresses(START)
+            this.addressService.getAddress(this.custCode).subscribe(addrData => {
+
+                // CE ADDRESS
+                const ceAddr = addrData.filter(function (i, n) {
+                          return i.Addr_Seq === 1;
+                      })[0];
+                if (ceAddr) {
+                  this.ceAddress = ceAddr;
+                  this.ce_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ceAddress.Country_Id);
+                }
+
+                // Mail Address
+                  const maAddr = addrData.filter(function (i, n) {
+                  return i.Addr_Seq === 2;
+                      })[0];
+                  if (maAddr) {
+                    this.maAddress = maAddr;
+                    this.ma_provinceList = this.getProvinceByCountry( this.provinceMasList, this.maAddress.Country_Id);
+                  }
+
+                // // Office Address
+                const offAddr =  addrData.filter(function (i, n) {
+                  return i.Addr_Seq === 3;
+                      })[0];
+                if ( offAddr) {
+                  this.ofAddress = offAddr;
+                  this.of_provinceList = this.getProvinceByCountry( this.provinceMasList, this.ofAddress.Country_Id);
+                }
+            });
+            // Loading Addresses(END)
+        }
+
 
       } else {
         this.mode = this.MODE_CREATE;
@@ -539,7 +609,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      // console.log('The dialog was closed');
       // this.animal = result;
       if (this.saveCustomerComplete) {
         this.router.navigate(['/']);
@@ -571,7 +641,7 @@ ceAmphurChange(event: MatSelectChange) {
 
 }
 ceTambonChange(event: MatSelectChange) {
-  console.log('ceTambonChange>>', event.value);
+  // console.log('ceTambonChange>>', event.value);
 }
 
 
@@ -588,7 +658,7 @@ ofAmphurChange(event: MatSelectChange) {
 
 }
 ofTambonChange(event: MatSelectChange) {
-  console.log('maTambonChange>>', event.value);
+  // console.log('maTambonChange>>', event.value);
 }
 
 maCountryChange(event: MatSelectChange) {
@@ -604,7 +674,7 @@ maAmphurChange(event: MatSelectChange) {
 
 }
 maTambonChange(event: MatSelectChange) {
-  console.log('maTambonChange>>', event.value);
+  // console.log('maTambonChange>>', event.value);
 }
 
 
@@ -671,7 +741,7 @@ copyAddr (A_Addr: AccountAddress  ): AccountAddress {
   return B_Addr;
   }
 
-  goBack(){
+  goBack() {
     this.location.back();
   }
 }

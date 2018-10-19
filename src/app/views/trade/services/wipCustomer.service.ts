@@ -72,7 +72,7 @@ export class WipCustomerService {
   }
 
   getWipAddress(id: string) {
-    return this.http.get<{result: any }>(BACKEND_URL + id )
+    return this.http.get<{result: any }>(BACKEND_URL + 'wipAddress/' +  id )
     .pipe(map( fundtData => {
       return fundtData.result.map(data => {
         return {

@@ -52,6 +52,9 @@ export class WorkFlowService {
             AppRef: data.AppRef,
             AppId: data.AppId,
             CanAction: vCanAction,
+            AppLink: data.AppLink,
+            AppGroup: data.AppGroup,
+            AppName: data.AppName
         };
       });
     }));

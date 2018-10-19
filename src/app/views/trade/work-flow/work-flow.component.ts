@@ -80,6 +80,7 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.wfMsgListtener.unsubscribe();
+    console.log('WF. ngOnDestroy() ');
   }
 
   // onRestoreWIP() {
@@ -96,6 +97,9 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
     }
     // Load customer(Account) info.
     this.workFlowService.getWorkFlow(this.form.value.refNo).subscribe(data => {
+
+      console.log('WF. RS>>',data);
+
       this.spinnerLoading = false;
       this.dataSource = data;
     }, error => () => {
@@ -131,6 +135,11 @@ export class WorkFlowComponent implements OnInit, OnDestroy {
   this.workFlowActDialogRef.afterClosed().subscribe(result => {
 
   });
+}
+
+
+onView(row) {
+  console.log('VIEW>>', JSON.stringify(row));
 }
 
   openDialog(alertTypeStr: string, alertHeaderStr: string, alertMsgStr: string): void {

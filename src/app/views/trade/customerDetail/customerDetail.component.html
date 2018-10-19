@@ -8,12 +8,12 @@
   </div> -->
   <form [formGroup]="form" (submit)="onSubmit()" #custForm="ngForm" >
 
-    <mat-card-title>Customer Detail</mat-card-title>
+    <mat-card-title>Customer Detail {{isFieldReadonly}}</mat-card-title>
     <div class="border border-primary">
       <div class="row">
         <!-- <mat-radio-group class="custTyperadio-group" formControlName="custType" [(ngModel)]="customer.Card_Type"> -->
-            <mat-radio-group class="custTyperadio-group" formControlName="groupCdoe" [(ngModel)]="customer.Group_Code">
-          <mat-radio-button class="example-radio-button" *ngFor="let clientType of clientTypeList" [value]="clientType.ClientType_Code"
+          <mat-radio-group class="custTyperadio-group" formControlName="groupCode" [(ngModel)]="customer.Group_Code">
+          <mat-radio-button  class="example-radio-button" *ngFor="let clientType of clientTypeList" [value]="clientType.ClientType_Code"
             (change)="clientTypeChange($event)">
             {{clientType.ClientType_Desc}}
           </mat-radio-button>
@@ -23,9 +23,9 @@
       <div class='person_div'>
         <!-- Thai info -->
         <div class="row">
-          <mat-form-field class="col-md-4">
-            <mat-select formControlName="bf_title_th" placeholder="Before Title(TH)" [(ngModel)]="customer.Title_Name_T">
-              <mat-option *ngFor="let obj of thaiTitleList" [value]="obj.Title_Name">
+          <mat-form-field class="col-md-4" >
+            <mat-select  formControlName="bf_title_th" placeholder="Before Title(TH)" [(ngModel)]="customer.Title_Name_T">
+              <mat-option  *ngFor="let obj of thaiTitleList" [value]="obj.Title_Name">
                 {{obj.Prefix_Name}}
               </mat-option>
             </mat-select>
@@ -34,12 +34,12 @@
         </div>
         <div class="row">
           <mat-form-field class="col-md-4">
-            <input matInput formControlName="firstName_th" placeholder="First name(TH)" [(ngModel)]="customer.First_Name_T">
+            <input   matInput formControlName="firstName_th" placeholder="First name(TH)" [(ngModel)]="customer.First_Name_T">
             <mat-error *ngIf="form.get('firstName_th').invalid">Please enter a first name.</mat-error>
           </mat-form-field>
 
           <mat-form-field class="col-md-4">
-            <input matInput formControlName="lastName_th" placeholder="Last name(TH)" [(ngModel)]="customer.Last_Name_T">
+            <input  matInput formControlName="lastName_th" placeholder="Last name(TH)" [(ngModel)]="customer.Last_Name_T">
             <mat-error *ngIf="form.get('lastName_th').invalid">Please enter a first name.</mat-error>
           </mat-form-field>
         </div>
@@ -80,12 +80,9 @@
           </mat-form-field>
         </div>
       </div>
-
-
     </div>
 
     <div class="border border-primary section-2">
-
       <div class="row sex-div" *ngIf="customer.Group_Code == CLIENT_TYPE_PERSION ">
         <mat-radio-group class="sex-radio-group" formControlName="sex" [(ngModel)]="customer.Sex" >
           <mat-radio-button class="example-radio-button" value="M">Male</mat-radio-button>
@@ -157,7 +154,8 @@
       <div class="row">
         <mat-form-field class="col-md-4">
           <input matInput formControlName="MktId" placeholder="FC (IPFG)" [(ngModel)]="customer.MktId">
-            <i class="fas fa-search find-right"  (click)="openSaleDialog()"></i>
+
+            <i class="fas fa-search find-right"  (click)="openSaleDialog()" *ngIf="!isDisableFields" ></i>
           <mat-error *ngIf="form.get('MktId').invalid">Please enter FC (IPFG).</mat-error>
         </mat-form-field>
 
@@ -274,7 +272,7 @@
         <div class="border border-primary addr-border">
           <div class="row">
             <section style="margin-top: 20px;margin-left: 30px">
-              <mat-checkbox #asRegisterAddr (click)="ofSameAsRegister()">Same as register address</mat-checkbox>
+              <mat-checkbox #asRegisterAddr (click)="ofSameAsRegister()" *ngIf="!isDisableFields" >Same as register address</mat-checkbox>
             </section>
           </div>
 
@@ -375,8 +373,8 @@
         <div class="border border-primary addr-border">
           <div class="row">
             <section style="margin-top: 20px;margin-left: 30px">
-              <mat-checkbox #asRegisterAddr (click)="maSameAsRegister()" >Same as Register address</mat-checkbox>
-              <mat-checkbox #asOfficerAddr (click)="maSameAsOffice()">Same as Office address</mat-checkbox>
+              <mat-checkbox #asRegisterAddr (click)="maSameAsRegister()" *ngIf="!isDisableFields">Same as Register address</mat-checkbox>
+              <mat-checkbox #asOfficerAddr (click)="maSameAsOffice()" *ngIf="!isDisableFields" >Same as Office address</mat-checkbox>
             </section>
 
           </div>
@@ -472,8 +470,12 @@
 
 
     <mat-card-actions>
-      <button mat-stroked-button color="primary" type='submit' >Submit</button>
-      <button mat-stroked-button color="warn" type='reset' >Reset</button>
+      <button mat-flat-button class="button_card_action" color="primary" type='submit' *ngIf="!isDisableFields">Submit</button>
+      <button mat-flat-button class="button_card_action"color="warn" type='reset' *ngIf="!isDisableFields">Reset</button>
+
+      <a *ngIf="isDisableFields" class="button_card_action" mat-flat-button color="primary"  (click)="goBack()">
+        Back
+      </a>
     </mat-card-actions>
 
 

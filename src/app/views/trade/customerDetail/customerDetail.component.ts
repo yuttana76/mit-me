@@ -12,7 +12,7 @@ import { Tambons } from '../model/ref_tambons.model';
 import { Nation } from '../model/ref_nation.model';
 import { Customer } from '../model/customer.model';
 import { CustAddress } from '../model/custAddress.model';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { SaleDialogComponent } from '../dialog/sale-dialog/sale-dialog.component';
 import { AccountAddress } from '../model/accountAddress.model';
@@ -22,7 +22,6 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomerService } from '../services/customer.service';
 import { AddressService } from '../services/address.service';
 import { WorkFlowService } from '../services/workFlow.service';
-import { WorkFlowTrans } from '../model/workFlowTrans.model';
 
 @Component({
   selector: 'app-customer',
@@ -41,6 +40,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   form: FormGroup;
   spinnerLoading = false;
   saveCustomerComplete = false;
+  isDisableFields = false;
+
   private mode = this.MODE_CREATE;
   private custCode: string;
 
@@ -92,7 +93,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     public dialog: MatDialog,
     public route: ActivatedRoute,
-    private workFlowService: WorkFlowService) { }
+    private workFlowService: WorkFlowService,
+    private location: Location) { }
 
   ngOnInit() {
     this.spinnerLoading = true;
@@ -102,7 +104,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
     // Initial Form fields
     this.form = new FormGroup({
-      groupCdoe: new FormControl(null, {
+      groupCode: new FormControl(null, {
         validators: [Validators.required]
       }),
       custType: new FormControl(null, {
@@ -315,7 +317,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line:use-life-cycle-interface
   ngAfterViewInit() {
-
+  this.spinnerLoading = true;
 
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('source')) {
@@ -327,7 +329,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
         this.mode = this.MODE_EDIT;
         this.custCode = paramMap.get('cust_Code');
-        // this.spinnerLoading = true;
+
+
         // console.log('Edit Mode. >>', this.custCode );
         this.masterDataService.getCountry().subscribe((data: any[]) => {
           this.countryMasList = data;
@@ -339,6 +342,27 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
           this.of_countryList = this.getCountryByNation( this.countryMasList, this.customer.Nation_Code);
         });
 
+        if (this.formScreen === 'WORKFLOW_SCR' ) {
+
+          this.isDisableFields = true;
+          /*
+          Disable all controls
+          */
+          const controlLiss = new Array('groupCode', 'bf_title_th', 'firstName_th', 'lastName_th', 'bf_title_en',
+          'firstName_en', 'lastName_en', 'nationality',
+          'sex', 'dobDate', 'custType', 'custId', 'Card_IssueDate', 'Card_ExpDate', 'mobile', 'email', 'MktId',
+          'ce_addr_No', 'ce_place', 'ce_road', 'ce_country', 'ce_province', 'ce_amphure', 'ce_tambon', 'ce_zip_Code', 'ce_tel', 'ce_fax',
+          'of_addr_No',
+           'of_place', 'of_road', 'of_country', 'of_province', 'of_amphur', 'of_tambon', 'of_zip_Code', 'of_tel', 'of_fax',
+          'ma_addr_No', 'ma_place', 'ma_road', 'ma_country', 'ma_province', 'ma_amphur', 'ma_tambon', 'ma_zip_Code', 'ma_tel', 'ma_fax'
+          );
+          for (let i = 0; i < controlLiss.length; i++) {
+            this.form.controls[ controlLiss[i]].disable();
+          }
+
+          // Load customer(Account) WIP info.
+
+        }
         // Load customer(Account) info.
         this.customerService.getCustomer(this.custCode).subscribe(custData => {
           this.spinnerLoading = false;
@@ -645,5 +669,9 @@ copyAddr (A_Addr: AccountAddress  ): AccountAddress {
   B_Addr.Fax = A_Addr.Fax;
 
   return B_Addr;
+  }
+
+  goBack(){
+    this.location.back();
   }
 }

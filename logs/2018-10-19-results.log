@@ -1,0 +1,382 @@
+2018-10-19 09:37:22 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 09:37:27 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:37:27 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:37:27 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:37:27 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:37:27 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:37:27 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:38:47 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 09:38:50 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:38:50 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:38:50 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:38:50 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:38:50 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:38:50 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:40:04 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 09:40:07 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:40:07 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:40:07 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:40:07 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:40:07 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:40:07 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:40:10 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 09:40:39 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=1100200072371 - ::1 
+2018-10-19 09:40:39 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=1100200072371 - ::1 
+2018-10-19 09:40:47 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:40:47 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:40:47 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:40:47 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:40:47 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:40:47 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:40:48 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 09:41:56 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 09:41:59 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:41:59 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 09:41:59 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:41:59 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:41:59 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 09:41:59 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 09:42:01 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:18:53 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:18:56 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:18:56 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:18:56 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:18:56 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:18:56 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:18:56 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:18:58 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:20:34 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:20:40 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:20:40 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:20:40 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:20:40 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:20:40 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:20:40 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:20:41 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:22:22 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:22:25 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:22:25 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:22:26 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:22:26 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:22:26 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:22:26 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:22:27 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:24:51 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:24:54 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:24:54 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:24:54 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:24:54 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:24:54 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:24:54 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:24:55 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:28:33 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:28:40 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:28:40 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:28:40 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:28:40 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:28:40 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:28:40 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:28:41 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:29:45 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:29:49 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:29:49 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:29:49 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:29:49 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:29:49 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:29:49 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:29:50 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:31:04 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:31:07 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:31:07 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:31:07 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:31:07 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:31:07 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:31:07 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:31:08 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:34:27 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:34:30 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:34:30 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:34:30 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:34:30 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:34:30 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:34:30 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:34:32 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:37:51 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:37:54 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:37:54 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:37:54 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:37:54 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:37:54 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:37:54 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:37:55 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:38:24 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:38:27 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:38:27 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:38:27 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:38:27 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:38:27 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:38:27 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:38:29 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:39:00 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:39:02 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:39:03 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:39:03 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:39:03 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:39:03 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:39:03 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:39:04 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:42:29 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:42:32 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:42:32 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:42:33 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:42:33 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:42:33 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:42:33 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:42:34 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:43:52 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:43:55 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:43:55 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:43:55 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:43:55 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:43:55 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:43:55 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:43:56 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:45:05 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:45:08 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:45:08 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:45:08 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:45:08 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:45:08 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:45:08 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:45:09 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:49:31 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:49:35 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:49:35 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:49:35 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:49:35 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:49:35 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:49:35 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:49:36 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 10:50:14 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 10:50:17 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:50:17 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 10:50:17 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:50:17 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:50:17 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 10:50:17 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 10:50:19 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:00:57 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:01:00 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:01:00 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:01:00 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:01:00 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:01:00 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:01:00 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:06:53 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:06:56 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:06:56 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:06:56 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:06:56 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:06:56 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:06:56 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:06:57 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:17:34 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:17:37 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:17:37 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:17:37 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:17:37 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:17:37 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:17:37 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:17:39 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:20:36 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:20:40 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:20:40 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:20:40 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:20:40 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:20:40 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:20:40 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:20:41 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:26:59 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:27:02 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:27:02 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:27:02 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:27:02 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:27:02 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:27:02 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:28:08 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:28:11 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:28:11 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:28:11 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:28:11 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:28:11 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:28:11 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:28:12 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:28:49 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:28:52 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:28:52 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:28:52 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:28:52 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:28:52 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:28:52 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:28:53 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:29:33 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:29:37 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:29:37 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:29:37 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:29:37 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:29:37 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:29:37 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:29:38 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:30:06 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:30:08 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:30:08 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:30:08 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:30:08 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:30:08 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:30:08 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:30:42 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:30:45 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:30:45 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:30:45 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:30:45 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:30:45 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:30:45 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:30:47 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:31:55 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:31:58 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:31:58 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:31:58 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:31:58 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:31:58 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:31:58 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:31:59 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:34:52 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:34:55 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:34:55 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:34:55 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:34:55 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:34:55 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:34:55 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:34:57 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:35:28 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:35:30 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:35:30 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:35:30 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:35:30 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:35:30 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:35:30 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:35:32 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:38:40 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:38:43 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:38:43 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:38:43 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:38:43 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:38:43 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:38:43 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:38:45 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:41:57 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:42:00 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:42:00 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:42:00 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:42:00 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:42:00 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:42:00 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:42:01 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:45:14 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:45:17 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:45:17 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:45:17 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:45:17 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:45:17 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:45:17 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:45:18 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:46:27 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 11:46:29 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:46:29 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 11:46:30 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:46:30 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:46:30 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:46:30 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:46:31 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:46:56 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 11:47:22 info: API /check-auth - /api/customer/0105495001124 - ::1 
+2018-10-19 11:47:51 info: API /check-auth - /api/wipcustomer/ - ::1 
+2018-10-19 11:47:51 info: API /check-auth - /api/workFlow//currentLevel?wfRef=2018-10-19-114118910 - ::1 
+2018-10-19 11:48:02 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105495001124 - ::1 
+2018-10-19 11:48:02 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105495001124 - ::1 
+2018-10-19 11:48:02 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:48:02 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:48:03 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:48:03 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:48:04 info: API /check-auth - /api/customer/0105495001124 - ::1 
+2018-10-19 11:48:21 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105495001124 - ::1 
+2018-10-19 11:48:21 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105495001124 - ::1 
+2018-10-19 11:48:21 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:48:21 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:48:21 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 11:48:21 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 11:48:24 info: API /check-auth - /api/customer/0105495001124 - ::1 
+2018-10-19 13:02:55 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 13:02:58 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:02:58 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:02:58 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:02:58 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:02:58 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:02:58 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:02:59 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:03:03 info: API /check-auth - /api/wipcustomer/ - ::1 
+2018-10-19 13:05:03 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 13:05:06 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:05:06 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:05:06 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:05:06 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:05:06 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:05:06 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:05:08 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:05:43 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 13:05:46 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:05:46 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:05:46 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:05:46 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:05:46 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:05:46 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:05:47 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:07:21 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 13:07:24 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:07:24 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:07:24 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:07:24 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:07:24 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:07:24 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:07:25 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:08:07 info: API /check-auth - /api/customer/0105495001124 - ::1 
+2018-10-19 13:09:03 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 13:09:06 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:09:06 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:09:06 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:09:06 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:09:06 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:09:06 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:09:09 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:09:22 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:10:28 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 13:10:31 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:10:31 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:10:31 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:10:31 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:10:31 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:10:31 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:10:33 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:10:41 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:13:30 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 13:13:39 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:16:09 info: API /Login - /api/user/login - ::1 - yuttana76@gmail.com
+2018-10-19 13:16:14 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:16:27 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:16:27 info: API /check-auth - /api/workFlow//wfByAppRef?appRef=0105541011867 - ::1 
+2018-10-19 13:16:27 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:16:27 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:16:27 info: API /check-auth - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 
+2018-10-19 13:16:27 info: API /UserLevel - /api/user//userLevel?userId=yuttana76@gmail.com&appId=App1 - ::1 - ;USERID=yuttana76@gmail.com  ;APPID=App1
+2018-10-19 13:16:30 info: API /check-auth - /api/customer/0105541011867 - ::1 
+2018-10-19 13:24:51 info: API /check-auth - /api/wipcustomer/0105541011867 - ::1 

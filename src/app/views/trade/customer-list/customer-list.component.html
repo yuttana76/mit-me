@@ -6,8 +6,10 @@
 
   <form [formGroup]="form" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading">
     <mat-card-title>Customer Information
-      <a mat-button routerLink="/trade/customerDetail" routerLinkActive="mat-accent" matTooltip="Info about the action">
-        <i class="fas fa-user-alt"></i></a>
+      <a mat-button routerLink="/trade/customerDetail" routerLinkActive="mat-accent" matTooltip="Add new customer">
+        <!-- <i class="fas fa-user-alt"></i> -->
+        <i class="fas fa-user-plus fa-2x" ></i>
+      </a>
     </mat-card-title>
     <mat-card-content>
       <div class="condition-div">

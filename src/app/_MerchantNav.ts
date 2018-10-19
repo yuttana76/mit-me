@@ -30,7 +30,7 @@ export const navItems = [
 
   {
     name: 'Anoucement',
-    url: '/trade/TradeDash',
+    url: '',
     icon: 'icon-bell',
     // children: [
     //   {
@@ -87,7 +87,7 @@ export const navItems = [
   // },
   {
     name: 'User/Group',
-    url: '/trade',
+    url: '',
     icon: 'icon-user',
     // children: [
     //   {

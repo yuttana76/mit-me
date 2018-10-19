@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 })
 export class DefaultLayoutComponent implements OnInit, OnDestroy {
 
-  userHasNew = false;
+  userHasNew = true;
   userAuthenticated = false;
   public userData = null;
 

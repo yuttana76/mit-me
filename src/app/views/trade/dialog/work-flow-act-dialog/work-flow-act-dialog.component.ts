@@ -25,9 +25,15 @@ export class WorkFlowActDialogComponent implements OnInit {
 
   onSave(): void {
     // this.workFlowTrans.ActionBy = this.authService.getUserData();
-    this.workFlowService.updateWorkFlow(this.workFlowTrans);
+    // console.log('WFStatus>>',this.workFlowTrans.WFStatus);
+    if ( this.workFlowTrans.WFStatus !== 'N' ) {
+      this.workFlowService.updateWorkFlow(this.workFlowTrans);
 
-    this.dialogRef.close('save');
+      this.dialogRef.close('save');
+
+    } else {
+
+    }
   }
 
   onClose(): void {

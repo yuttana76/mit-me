@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../services/user.service';
 import { WipCustomerService } from '../services/wipCustomer.service';
-
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @Pipe({name: 'wfStatusPipe'})
 export class WfStatusPipe implements PipeTransform {

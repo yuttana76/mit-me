@@ -8,6 +8,7 @@ import { PageEvent, MatTableDataSource } from '@angular/material';
 import { CustomerCond } from '../model/customerCond.model';
 
 import { Pipe, PipeTransform } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Pipe({name: 'customerFullname'})
 export class CustomerFullnamePipe implements PipeTransform {
@@ -65,7 +66,7 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   rowsPerPage = 20;
   totalRecords = 10;
   pageSizeOptions = [10, 20, 50, 100];
-  constructor(public customerService: CustomerService, private authService: AuthService) { }
+  constructor(public customerService: CustomerService, private authService: AuthService, private toastr: ToastrService) { }
 
   displayedColumns: string[] = ['Cust_Code', 'First_Name_T', 'Group_Code', 'Birth_Day', 'Action'];
 
@@ -113,6 +114,12 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   }
 
   onSerachCust() {
+
+      this.toastr.success('Hello world!', 'Toastr fun!');
+      this.toastr.error('everything is broken', 'Major Error');
+      this.toastr.info('info is broken', 'Major Error');
+      this.toastr.warning('warning is broken', 'Major Error');
+
     // console.log('onSerachCust ! ');
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);
@@ -135,5 +142,6 @@ export class CustomerListComponent implements OnInit, OnDestroy {
           this.dataSource.next(this.customers);
       });
   }
+
 
 }

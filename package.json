@@ -28,7 +28,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^6.1.7",
+    "@angular/animations": "^6.1.10",
     "@angular/cdk": "^6.4.7",
     "@angular/common": "^6.1.6",
     "@angular/compiler": "^6.1.6",
@@ -59,6 +59,7 @@
     "ng2-charts": "^1.6.0",
     "ngx-bootstrap": "^3.0.1",
     "ngx-perfect-scrollbar": "^6.3.0",
+    "ngx-toastr": "^9.1.1",
     "nodemailer": "^4.6.8",
     "object-to-xml": "^2.0.0",
     "rxjs": "^6.3.0",

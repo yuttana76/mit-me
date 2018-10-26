@@ -23,6 +23,7 @@ import { P500Component } from './views/error/500.component';
 import { LoginComponent } from './views/login/login.component';
 import { RegisterComponent } from './views/register/register.component';
 
+import { ToastrModule } from 'ngx-toastr';
 const APP_CONTAINERS = [
   DefaultLayoutComponent
 ];
@@ -62,6 +63,13 @@ import { AngularMaterialModule } from './angular-material.module';
     PerfectScrollbarModule,
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
+    ToastrModule.forRoot({
+      // timeOut: 0,
+      // tapToDismiss: false,
+      // positionClass: 'toast-top-center',
+      // positionClass: 'toast-top-right',
+      // preventDuplicates: true,
+    }), // ToastrModule added
     ChartsModule,
     HttpClientModule,
     FormsModule,

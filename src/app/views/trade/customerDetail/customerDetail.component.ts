@@ -249,6 +249,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
         console.log('Was error', error);
     }, () => {
        console.log('Loading complete');
+
     });
 
     this.masterDataService.getPIDTypes().subscribe((data: any[]) => {
@@ -498,7 +499,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       } else {
         this.mode = this.MODE_CREATE;
         this.custCode = null;
-
+        this.spinnerLoading = false;
       }
     });
 

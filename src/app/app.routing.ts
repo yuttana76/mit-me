@@ -48,7 +48,7 @@ export const routes: Routes = [
   {
     path: '',
     component: DefaultLayoutComponent,
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     data: {
       title: 'Home'
     },
@@ -88,9 +88,10 @@ export const routes: Routes = [
       {
         path: 'trade',
         loadChildren: './views/trade/trade.module#TradeModule'
-      }
+      },
     ]
-  }
+  },
+  {path: '**', redirectTo: '/404'}
 ];
 
 @NgModule({

@@ -6,6 +6,7 @@ import { CustomerListComponent } from './customer-list/customer-list.component';
 import { CustomerDetailComponent } from './customerDetail/customerDetail.component';
 import { WorkFlowComponent } from './work-flow/work-flow.component';
 import { TradeDashComponent } from './trade-dash/trade-dash.component';
+import { P404Component } from '../error/404.component';
 
 const routes: Routes = [
 
@@ -39,7 +40,6 @@ const routes: Routes = [
         }
       }]
   },
-
   {
     path: '',
     data: {
@@ -76,6 +76,7 @@ const routes: Routes = [
       },
     ]
   },
+  {path: '**', redirectTo: '/404'}
 ];
 
 @NgModule({

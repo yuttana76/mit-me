@@ -10,7 +10,7 @@ var config = dbConfig.dbParameters;
 // const SALT_WORK_FACTOR = 10;
 const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
 
-const TOKEN_SECRET_STRING = process.env.JWT_KEY;
+const TOKEN_SECRET_STRING = dbConfig.TOKEN_SECRET_STRING;
 const TOKEN_EXPIRES = dbConfig.TOKEN_EXPIRES;
 
 exports.createUser = (req,res,next)=>{

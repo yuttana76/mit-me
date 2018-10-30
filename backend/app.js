@@ -26,6 +26,9 @@ const wipCustomerRoutes = require('./routes/wipCustomer');
 const custAddressRoutes = require('./routes/custAddress');
 const workFlowRoutes = require('./routes/workFlow');
 const mailRoutes = require('./routes/mail');
+const departmentRoutes = require('./routes/department');
+const employeeRoutes = require('./routes/employee');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -53,6 +56,8 @@ app.use("/api/user",userRoutes);
 app.use("/api/amc",amcRoutes);
 app.use("/api/trans",transRoutes);
 app.use("/api/customer",customerRoutes);
+app.use("/api/dep",departmentRoutes);
+app.use("/api/emp",employeeRoutes);
 
 // ***** Master data
 app.use("/api/clientType",clientTypeRoutes);
@@ -71,7 +76,9 @@ app.use("/api/custAddress",custAddressRoutes);
 app.use("/api/workFlow",workFlowRoutes);
 app.use("/api/mail",mailRoutes);
 
+// Utility
 app.use("/api/util",utilityRoutes);
+
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

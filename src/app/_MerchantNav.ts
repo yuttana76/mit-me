@@ -119,11 +119,11 @@ export const navItems = [
         url: '/trade/customerList',
         icon: 'icon-sapace'
       }
-      // , {
-      //   name: 'Customer Detail',
-      //   url: '/trade/customerDetail',
-      //   icon: 'icon-sapace'
-      // }
+      , {
+        name: 'Employee Information',
+        url: '/trade/employeeList',
+        icon: 'icon-sapace'
+      }
       , {
         name: 'Work Flow',
         url: '/trade/workflow',

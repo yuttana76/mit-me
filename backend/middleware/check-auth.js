@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 var logger = require('../config/winston');
+const dbConfig = require('../controllers/config');
 
-const TOKEN_SECRET_STRING = 'secret_this_should_be_longer';
+const TOKEN_SECRET_STRING = dbConfig.TOKEN_SECRET_STRING;
 
 module.exports = (req,res,next)=>{
 

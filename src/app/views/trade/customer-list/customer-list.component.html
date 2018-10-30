@@ -6,7 +6,7 @@
 
   <form [formGroup]="form" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading">
     <mat-card-title>Customer Information
-      <a mat-button routerLink="/trade/customerDetail" routerLinkActive="mat-accent" matTooltip="Add new customer">
+      <a mat-button routerLink="/trade/customerDetail" routerLinkActive="mat-accent" matTooltip="New customer">
         <!-- <i class="fas fa-user-alt"></i> -->
         <i class="fas fa-user-plus fa-2x" ></i>
       </a>
@@ -41,7 +41,6 @@
   <mat-card-content>
 
       <table mat-table [dataSource]="dataSource">
-
           <!-- Position Column -->
           <ng-container matColumnDef="position">
             <th mat-header-cell *matHeaderCellDef> No. </th>

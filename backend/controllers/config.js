@@ -19,6 +19,7 @@ exports.mssql_db_server = process.env.AUTH_SRV_IP;
 exports.mssql_db_database= process.env.AUTH_SRV_db;
 
 exports.SALT_WORK_FACTOR = 10;
+exports.TOKEN_SECRET_STRING = process.env.JWT_KEY;
 exports.TOKEN_EXPIRES = '1h';
 
 exports.mailParameters = {

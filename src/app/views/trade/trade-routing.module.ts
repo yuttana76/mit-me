@@ -7,6 +7,8 @@ import { CustomerDetailComponent } from './customerDetail/customerDetail.compone
 import { WorkFlowComponent } from './work-flow/work-flow.component';
 import { TradeDashComponent } from './trade-dash/trade-dash.component';
 import { P404Component } from '../error/404.component';
+import { EmployeeListComponent } from './employee-list/employee-list.component';
+import { EmployeeDetailComponent } from './employee-detail/employee-detail.component';
 
 const routes: Routes = [
 
@@ -43,9 +45,23 @@ const routes: Routes = [
   {
     path: '',
     data: {
-      title: 'Account Management'
+      title: 'Application'
     },
     children: [
+      {
+        path: 'employeeList',
+        component: EmployeeListComponent,
+        data: {
+          title: 'Seach Employee'
+        }
+      },
+      {
+        path: 'employeeDetail',
+        component: EmployeeDetailComponent,
+        data: {
+          title: 'Employee Detail'
+        }
+      },
       {
         path: 'customerList',
         component: CustomerListComponent,
@@ -76,7 +92,7 @@ const routes: Routes = [
       },
     ]
   },
-  {path: '**', redirectTo: '/404'}
+  // {path: '**', redirectTo: '/404'}
 ];
 
 @NgModule({

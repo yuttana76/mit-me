@@ -1,6 +1,6 @@
 {
   "env": {
-  "PORT":"3000",
+  "PORT":"3100",
   "JWT_KEY":"secret_this_should_be_longer",
   "AUTH_SRV_USER": "mftsuser",
   "AUTH_SRV_PWD": "P@ssw0rd",

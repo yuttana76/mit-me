@@ -114,14 +114,14 @@ export const navItems = [
     url: '/trade',
     icon: 'icon-layers',
     children: [
+      // {
+      //   name: 'Employee Information',
+      //   url: '/trade/employeeList',
+      //   icon: 'icon-sapace'
+      // },
       {
         name: 'Customer Information',
         url: '/trade/customerList',
-        icon: 'icon-sapace'
-      }
-      , {
-        name: 'Employee Information',
-        url: '/trade/employeeList',
         icon: 'icon-sapace'
       }
       , {

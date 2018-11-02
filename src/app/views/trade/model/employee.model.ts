@@ -1,8 +1,12 @@
-export interface Employee {
+export class Employee {
+
+    constructor() {}
+
     empID: string;
     UserId: string;
     First_Name: string;
     Last_Name: string;
+    Birth_Day: string;
     status: string;
     Position: string;
     Division: string;

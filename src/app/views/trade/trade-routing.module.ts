@@ -9,6 +9,8 @@ import { TradeDashComponent } from './trade-dash/trade-dash.component';
 import { P404Component } from '../error/404.component';
 import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { EmployeeDetailComponent } from './employee-detail/employee-detail.component';
+import { UserListComponent } from './user-list/user-list.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
 
 const routes: Routes = [
 
@@ -48,6 +50,21 @@ const routes: Routes = [
       title: 'Application'
     },
     children: [
+      {
+        path: 'userList',
+        component: UserListComponent,
+        data: {
+          title: 'Seach User'
+        }
+      },
+      {
+        path: 'userDetail',
+        component: UserDetailComponent,
+        data: {
+          title: 'User Detail'
+        }
+      },
+
       {
         path: 'employeeList',
         component: EmployeeListComponent,

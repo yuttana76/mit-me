@@ -17,6 +17,8 @@ import { WorkFlowActDialogComponent } from './dialog/work-flow-act-dialog/work-f
 import { TradeDashComponent } from './trade-dash/trade-dash.component';
 import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { EmployeeDetailComponent } from './employee-detail/employee-detail.component';
+import { UserListComponent } from './user-list/user-list.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
 
 @NgModule({
   imports: [
@@ -41,6 +43,8 @@ import { EmployeeDetailComponent } from './employee-detail/employee-detail.compo
     TradeDashComponent,
     EmployeeListComponent,
     EmployeeDetailComponent,
+    UserListComponent,
+    UserDetailComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],

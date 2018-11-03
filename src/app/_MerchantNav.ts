@@ -89,7 +89,12 @@ export const navItems = [
     name: 'User/Group',
     url: '',
     icon: 'icon-user',
-    // children: [
+    children: [
+      {
+        name: 'User Information',
+        url: '/trade/userList',
+        icon: 'icon-sapace'
+      },
     //   {
     //     name: 'User',
     //     url: '/trade/SummaryRepport',
@@ -100,7 +105,7 @@ export const navItems = [
     //     url: '/base/carousels',
     //     icon: 'icon-sapace'
     //   },
-    // ]
+    ]
   },
   // {
   //   divider: true

@@ -1,3 +1,49 @@
-<p>
-  user-detail works!
-</p>
+
+<mat-card class="cust-container" >
+
+  <form [formGroup]="form"  #custForm="ngForm" >
+      <mat-card-title>{{userFormService.from_title}} </mat-card-title>
+
+      <div class="row">
+          <mat-form-field class="col-md-4">
+            <input   matInput formControlName="firstName" placeholder="First name(TH)"
+            [(ngModel)]="user.First_Name">
+            <mat-error *ngIf="form.get('firstName').invalid">Please enter a first name.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="col-md-4">
+            <input  matInput formControlName="lastName" placeholder="Last name(TH)"
+            [(ngModel)]="user.Last_Name">
+            <mat-error *ngIf="form.get('lastName').invalid">Please enter a first name.</mat-error>
+          </mat-form-field>
+        </div>
+
+
+
+        <div class="row"  >
+            <mat-form-field class="col-md-4">
+              <input matInput [matDatepicker]="dobDate" formControlName="dobDate"
+                [placeholder]="userFormService.Birth_Day_label"
+               [(ngModel)]="user.Birth_Day" >
+              <mat-datepicker-toggle matSuffix [for]="dobDate"></mat-datepicker-toggle>
+              <mat-datepicker #dobDate></mat-datepicker>
+              <mat-error *ngIf="form.get('dobDate').invalid ">Please correct date of birth /Register date</mat-error>
+            </mat-form-field>
+        </div>
+
+
+        <mat-card-actions>
+          <!-- <button mat-flat-button class="button_card_action" color="primary" type='submit' *ngIf="!isDisableFields">Submit</button> -->
+
+          <!-- <button mat-flat-button color="primary" (click)="onSubmit()" > SUBMIT</button>
+          <button mat-flat-button color="primary" (click)="onSubmit2()" > SUBMIT2</button> -->
+          <a mat-flat-button color="primary" (click)="onSubmit3()"  >CLICK 3</a>
+          <button mat-flat-button class="button_card_action" color="warn" type='reset' *ngIf="!isDisableFields">Reset</button>
+    
+          <a *ngIf="isDisableFields" class="button_card_action" mat-flat-button color="primary"  (click)="goBack()">
+            Back
+          </a>
+        </mat-card-actions>
+
+    </form>
+</mat-card>

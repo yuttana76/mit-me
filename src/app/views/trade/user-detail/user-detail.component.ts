@@ -6,6 +6,8 @@ import { UserFormService } from './userForm.service';
 import { DATE_REGEX, TIME_REGEX, stringsToDate } from '../trade.factory';
 import { DatePipe, Location } from '@angular/common';
 import { DISABLED } from '@angular/forms/src/model';
+import { Department } from '../model/department.model';
+import { DepartmentService } from '../services/department.service';
 
 @Component({
   selector: 'app-user-detail',
@@ -19,13 +21,24 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   formChangeSub: Subscription;
   isDisableFields = false;
 
+  private mode = this.userFormService.MODE_CREATE;
+
+  public statusList = this.userFormService.statusList;
+  departmentList: Department[] = [];
+
   constructor(
     public userFormService: UserFormService,
+    private departmentService: DepartmentService,
     private location: Location
   ) { }
 
   ngOnInit() {
+
     this._buildForm();
+
+    this.departmentService.getDepartment().subscribe((data: any[]) => {
+      this.departmentList = data;
+    });
   }
 
   goBack() {
@@ -38,17 +51,45 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     loginName: new FormControl(null, {
       validators: [Validators.required]
     }),
-    firstName: new FormControl(null, {
+    email: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    status: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    empDate: new FormControl(null, {
       // validators: [Validators.required]
     }),
-    lastName: new FormControl(null, {
+    expDate: new FormControl(null, {
       // validators: [Validators.required]
+    }),
+    firstName: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    lastName: new FormControl(null, {
+      validators: [Validators.required]
     }),
     dobDate: new FormControl(null, {
       validators: [Validators.required
-         , //Validators.pattern(DATE_REGEX)
+        //  , Validators.pattern(DATE_REGEX)
       ]
     }),
+    department: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    position: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    officePhone: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    mobPhone: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    othEmail: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
    });
 
     // Subscribe to form value changes

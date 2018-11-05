@@ -102,7 +102,7 @@
             <ng-container matColumnDef="Action">
               <th mat-header-cell *matHeaderCellDef> Action </th>
               <td mat-cell *matCellDef="let element">
-                <i class="far fa-edit"  [routerLink]="['/trade/userEdit',element.LoginName,'SEARCH_USER_SCR']"></i>
+                <i class="far fa-edit"  [routerLink]="['/trade/userEdit',element.LoginName,'SEARCH_USER_SCR']" matTooltip="Edit"></i>
               </td>
             </ng-container>
 

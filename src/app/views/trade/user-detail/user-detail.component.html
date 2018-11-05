@@ -6,21 +6,99 @@
 
       <div class="row">
           <mat-form-field class="col-md-4">
-            <input   matInput formControlName="firstName" placeholder="First name(TH)"
+            <input   matInput formControlName="loginName" placeholder={{userFormService.user_name_label}}
+            [(ngModel)]="user.LoginName">
+            <mat-error *ngIf="form.get('loginName').invalid">Please enter  User name.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="col-md-4">
+              <input   matInput formControlName="email" placeholder={{userFormService.email_label}}
+              [(ngModel)]="user.EMAIL">
+              <mat-error *ngIf="form.get('email').invalid">Please enter  EMAIL.</mat-error>
+          </mat-form-field>
+      </div>
+
+      <div class="row">
+          <mat-form-field class="col-md-4">
+              <mat-select  formControlName="status" [placeholder]="userFormService.status_label"
+              [(ngModel)]="user.STATUS">
+                  <mat-option  *ngFor="let obj of statusList" [value]="obj.code">
+                    {{obj.desc}}
+                  </mat-option>
+                </mat-select>
+              <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error>
+          </mat-form-field>
+      </div>
+
+      <div class="row">
+          <mat-form-field class="col-md-4">
+              <input matInput [matDatepicker]="empDate" formControlName="empDate"
+                [placeholder]="userFormService.empDate_label"
+                [readonly]="true"
+                [(ngModel)]="user.empDate">
+              <mat-datepicker-toggle matSuffix [for]="empDate"></mat-datepicker-toggle>
+              <mat-datepicker #empDate disabled="false"></mat-datepicker>
+              <mat-error *ngIf="form.get('empDate').invalid ">Please correct date expire date</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="col-md-4">
+            <input matInput [matDatepicker]="expDate" formControlName="expDate"
+              [placeholder]="userFormService.expDate_label"
+              [readonly]="true"
+              [(ngModel)]="user.quitDate">
+            <mat-datepicker-toggle matSuffix [for]="expDate"></mat-datepicker-toggle>
+            <mat-datepicker #expDate disabled="false"></mat-datepicker>
+            <mat-error *ngIf="form.get('expDate').invalid ">Please correct date expire date</mat-error>
+          </mat-form-field>
+      </div>
+
+      <div class="row">
+          <mat-form-field class="col-md-4">
+            <input   matInput formControlName="firstName" placeholder="{{userFormService.firstName_label}}"
             [(ngModel)]="user.First_Name">
             <mat-error *ngIf="form.get('firstName').invalid">Please enter a first name.</mat-error>
           </mat-form-field>
 
           <mat-form-field class="col-md-4">
-            <input  matInput formControlName="lastName" placeholder="Last name(TH)"
+            <input  matInput formControlName="lastName" placeholder="{{userFormService.lastName_label}}"
             [(ngModel)]="user.Last_Name">
-            <mat-error *ngIf="form.get('lastName').invalid">Please enter a first name.</mat-error>
+            <mat-error *ngIf="form.get('lastName').invalid">Please enter a last name.</mat-error>
           </mat-form-field>
         </div>
 
+        <div class="row">
+            <mat-form-field class="col-md-4">
+                <mat-select formControlName="department" placeholder="{{userFormService.department_label}}"  [(ngModel)]="user.DEP_CODE" >
+                    <mat-option *ngFor="let obj of departmentList" [value]="obj.DEP_CODE">
+                      {{obj.NAME}}
+                    </mat-option>
+                  </mat-select>
+              <mat-error *ngIf="form.get('department').invalid">Please choose department.</mat-error>
+            </mat-form-field>
 
+            <mat-form-field class="col-md-4">
+              <input  matInput formControlName="position" placeholder="{{userFormService.position_label}}"
+              [(ngModel)]="user.Position">
+              <mat-error *ngIf="form.get('position').invalid">Please enter position.</mat-error>
+            </mat-form-field>
 
-        <div class="row"  >
+          </div>
+
+          <div class="row">
+              <mat-form-field class="col-md-4">
+                <input  matInput formControlName="officePhone" placeholder="{{userFormService.officePhone_label}}"
+                [(ngModel)]="user.officePhone">
+                <mat-error *ngIf="form.get('officePhone').invalid">Please enter office telephone.</mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="col-md-4">
+                  <input  matInput formControlName="mobPhone" placeholder="{{userFormService.mobPhone_label}}"
+                  [(ngModel)]="user.mobPhone">
+                  <mat-error *ngIf="form.get('mobPhone').invalid">Please enter mobile phone.</mat-error>
+              </mat-form-field>
+            </div>
+
+        <!-- <div class="row"  >
             <mat-form-field class="col-md-4">
               <input matInput [matDatepicker]="dobDate" formControlName="dobDate"
                 [placeholder]="userFormService.Birth_Day_label"
@@ -30,16 +108,48 @@
               <mat-datepicker #dobDate disabled="false"></mat-datepicker>
               <mat-error *ngIf="form.get('dobDate').invalid ">Please correct date of birth /Register date</mat-error>
             </mat-form-field>
-        </div>
-
-<!--
-        <div class="row"  >
-            <mat-form-field>
-              <input matInput [matDatepicker]="dp3" placeholder="Input disabled" disabled>
-              <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
-              <mat-datepicker #dp3 disabled="false"></mat-datepicker>
-            </mat-form-field>
         </div> -->
+
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                  {{userFormService.user_level_title}}
+              </mat-panel-title>
+              <!-- <mat-panel-description>
+                Type your name and age
+              </mat-panel-description> -->
+            </mat-expansion-panel-header>
+
+            <mat-form-field>
+              <input matInput placeholder="First name">
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput placeholder="Age">
+            </mat-form-field>
+          </mat-expansion-panel>
+
+
+          <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{userFormService.user_authority_title}}
+                </mat-panel-title>
+                <!-- <mat-panel-description>
+                  Type your name and age
+                </mat-panel-description> -->
+              </mat-expansion-panel-header>
+
+              <mat-form-field>
+                <input matInput placeholder="First name">
+              </mat-form-field>
+
+              <mat-form-field>
+                <input matInput placeholder="Age">
+              </mat-form-field>
+            </mat-expansion-panel>
+
 
 
         <mat-card-actions>

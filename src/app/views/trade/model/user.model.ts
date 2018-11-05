@@ -12,7 +12,10 @@ export class User {
   UPDATEBY: string;
   UPDATEDATE: string;
   EMAIL: string;
+  imageProfile: string;
+  MIT_GROUP: string;
   // Employee
+  EmpId: string;
   First_Name: string;
   Last_Name: string;
   DEP_CODE: string;
@@ -20,4 +23,10 @@ export class User {
   Position: string;
   Branch: string;
   Birth_Day: string;
+  officePhone: string;
+  mobPhone: string;
+  othEmail: string;
+  empDate: string;
+  quitDate: string;
+
 }

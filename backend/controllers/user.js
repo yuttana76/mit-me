@@ -286,20 +286,17 @@ exports.searchUser = (req, res, next) => {
   if (firstName !== false) {
     whereCond = whereCond + `AND First_Name like N'%${firstName}%'`;
   }
-
   if (lastName !== false) {
     whereCond = whereCond +`AND Last_Name like N'%${lastName}%'`;
   }
-
   if (email !== false) {
     whereCond =  whereCond + `AND EMAIL = N'${email}'`;
   }
-
   if (depCode !== false) {
     whereCond = whereCond + `AND B.DEP_CODE ='${depCode}'`;
   }
 
-  console.log('whereCond>>' ,whereCond);
+  // console.log('whereCond>>' ,whereCond);
 
   var queryStr = `  SELECT * FROM (
         SELECT  ROW_NUMBER() OVER(ORDER BY First_Name) AS NUMBER
@@ -331,6 +328,56 @@ exports.searchUser = (req, res, next) => {
           res.status(200).json({
             message: fncName + "Quey db. successfully!",
             result: result.recordset
+          });
+        }
+      });
+  });
+  pool1.on("error", err => {
+    // ... error handler
+    console.log("EROR>>" + err);
+  });
+};
+
+
+
+exports.ExeInsertUser = (req, res, next) => {
+
+  // console.log("ExeWIPCustomer>> ");
+  var o2x = require('object-to-xml');
+  var fncName = "ExeInsertUser";
+
+  var userObj = JSON.parse(req.body.user);
+  // var ceAddressObj = JSON.parse(req.body.ceAddress);
+  // var ofAddressObj = JSON.parse(req.body.ofAddress);
+  // var maAddressObj = JSON.parse(req.body.maAddress);
+  var mode = req.body.mode;
+
+  const sql = require("mssql");
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request()
+      .input('userXML', sql.Xml,  o2x(userObj))
+      // .input('ceAddressXML', sql.Xml,  o2x(ceAddressObj))
+      // .input('ofAddressXML', sql.Xml,  o2x(ofAddressObj))
+      // .input('maAddressXML', sql.Xml,  o2x(maAddressObj))
+      .input('mode', sql.VarChar(20),  mode)
+      .output('empID', sql.VarChar(20))
+      // .output('message', sql.VarChar(500))
+      .execute('[dbo].[MIT_Insert_User_EMP]', (err, result) => {
+
+       console.log('err>>',JSON.stringify(err));
+
+        if (err) {
+          console.log(fncName + " Quey db. Was err !!!" + JSON.stringify(result));
+
+          res.status(201).json({
+            message: err
+            // result: result.output
+          });
+        } else {
+          console.log(fncName + " Result>>" + JSON.stringify(result));
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.output
           });
         }
       });

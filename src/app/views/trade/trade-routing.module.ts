@@ -64,6 +64,13 @@ const routes: Routes = [
           title: 'User Detail'
         }
       },
+      {
+        path: 'userEdit/:LoginName/:source',
+        component: UserDetailComponent,
+        data: {
+          title: 'Edit User '
+        }
+      },
 
       {
         path: 'employeeList',

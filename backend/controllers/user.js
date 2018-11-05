@@ -284,28 +284,30 @@ exports.searchUser = (req, res, next) => {
   var whereCond = "";
 
   if (firstName !== false) {
-    whereCond = `AND First_Name like N'%${firstName}%'`;
+    whereCond = whereCond + `AND First_Name like N'%${firstName}%'`;
   }
 
   if (lastName !== false) {
-    whereCond = `AND Last_Name like N'%${lastName}%'`;
+    whereCond = whereCond +`AND Last_Name like N'%${lastName}%'`;
   }
 
   if (email !== false) {
-    whereCond = `AND EMAIL = N'${email}'`;
+    whereCond =  whereCond + `AND EMAIL = N'${email}'`;
   }
 
   if (depCode !== false) {
-    whereCond = `AND B.DEP_CODE ='${depCode}'`;
+    whereCond = whereCond + `AND B.DEP_CODE ='${depCode}'`;
   }
 
   console.log('whereCond>>' ,whereCond);
 
   var queryStr = `  SELECT * FROM (
         SELECT  ROW_NUMBER() OVER(ORDER BY First_Name) AS NUMBER
-        ,A.LoginName,A.[STATUS]
+        ,A.LoginName,A.[STATUS],A.EMAIL
         ,B.First_Name,B.Last_Name,B.DEP_CODE ,B.Position,B.Branch
+        , C.NAME AS DEP_NAME
         FROM MIT_USERS A,MIT_EMPLOYEE B
+        LEFT JOIN MIT_DEPARTMENT C ON B.DEP_CODE=c.DEP_CODE
         WHERE  A.USERID=B.UserId
         ${whereCond}
     ) AS TBL

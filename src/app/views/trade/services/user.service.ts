@@ -2,11 +2,17 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { environment } from '../../../../environments/environment';
+import { User } from "../model/user.model";
+import { Subject } from "rxjs";
+import { UserCond } from "../model/userCond.model";
 
 const BACKEND_URL = environment.apiURL + '/user/';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
+
+  private userList: User[] = [];
+  private userUpdated = new Subject<User[]>();
 
   constructor(private http: HttpClient ) { }
 
@@ -50,6 +56,53 @@ export class UserService {
           });
         })
       );
+  }
+
+  getSearchUser(rowPerPage: number, currentPage: number, userCond: UserCond) {
+
+    let queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
+
+    if (userCond.firstName) {
+      queryParams += `&firstName=${userCond.firstName}`;
+    }
+
+    if (userCond.lastName) {
+      queryParams += `&lastName=${userCond.lastName}`;
+    }
+
+    if (userCond.email) {
+      queryParams += `&email=${userCond.email}`;
+    }
+
+    if (userCond.department) {
+      queryParams += `&depCode=${userCond.department}`;
+    }
+
+
+    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/searchUser' + queryParams)
+    .pipe(map((resultData) => {
+        return resultData.result.map(data => {
+            return {
+              NUMBER: data.NUMBER,
+              LoginName: data.LoginName,
+              STATUS: data.STATUS,
+              First_Name: data.First_Name,
+              Last_Name: data.Last_Name,
+              EMAIL: data.EMAIL,
+              Department: data.DEP_NAME,
+              Position: data.Position,
+              Branch: data.Branch,
+            };
+        });
+    }))
+    .subscribe((transformed) => {
+        this.userList = transformed;
+        this.userUpdated.next([...this.userList]);
+    });
+  }
+
+  getUserUpdateListener() {
+    return this.userUpdated.asObservable();
   }
 
 }

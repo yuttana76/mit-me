@@ -16,5 +16,8 @@ export class User {
   First_Name: string;
   Last_Name: string;
   DEP_CODE: string;
+  Department: string;
+  Position: string;
+  Branch: string;
   Birth_Day: string;
 }

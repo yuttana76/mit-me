@@ -12,4 +12,6 @@ router.get("/userInfo", checkAuth,userController.getUserInfo);
 router.get("/userLevel", checkAuth,userController.getUserLevel);
 
 
+router.get("/searchUser",userController.searchUser);
+
 module.exports = router;

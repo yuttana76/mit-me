@@ -15,6 +15,10 @@ export class UserFormService {
   from_title = 'User Detail';
   Birth_Day_label = 'Birth Day (' + this.dateFormat + ') ';
 
+  // Label Action
+  submit_btn = 'SAVE';
+  back_btn = 'BACK';
+
   constructor() { }
 
 }

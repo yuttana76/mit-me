@@ -5,11 +5,13 @@ import { Department } from '../model/department.model';
 import { DepartmentService } from '../services/department.service';
 import { UserCond } from '../model/usrCond.model';
 import { PageEvent } from '@angular/material';
+import { UserListFormService } from './userListForm.service';
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
+
 })
 export class UserListComponent implements OnInit {
 
@@ -25,9 +27,10 @@ export class UserListComponent implements OnInit {
   pageSizeOptions = [10, 20, 50, 100];
 
   departmentList: Department[];
-  
-  constructor(private departmentService: DepartmentService) { }
-
+  constructor(
+    public userListFormService: UserListFormService,
+    private departmentService: DepartmentService
+    ) { }
 
   ngOnInit() {
 
@@ -44,13 +47,12 @@ export class UserListComponent implements OnInit {
       name: new FormControl(null, {
         // validators: [Validators.required]
       }),
-
+      email: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
       department: new FormControl(null, {
         // validators: [Validators.required]
       }),
-      // custType: new FormControl(null, {
-      //   validators: [Validators.required]
-      // }),
     });
   }
 
@@ -62,4 +64,11 @@ export class UserListComponent implements OnInit {
 
   }
 
+  onSerach() {
+    console.log('onSerach ! ');
+    if (this.form.invalid) {
+      console.log('form.invalid() ' + this.form.invalid);
+      return true;
+    }
+  }
 }

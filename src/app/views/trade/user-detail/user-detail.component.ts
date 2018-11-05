@@ -4,6 +4,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { UserFormService } from './userForm.service';
 import { DATE_REGEX, TIME_REGEX, stringsToDate } from '../trade.factory';
+import { DatePipe, Location } from '@angular/common';
+import { DISABLED } from '@angular/forms/src/model';
 
 @Component({
   selector: 'app-user-detail',
@@ -15,15 +17,20 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   user: User = new User();
   form: FormGroup;
   formChangeSub: Subscription;
+  isDisableFields = false;
 
   constructor(
-    public userFormService: UserFormService
+    public userFormService: UserFormService,
+    private location: Location
   ) { }
 
   ngOnInit() {
     this._buildForm();
   }
 
+  goBack() {
+    this.location.back();
+  }
 
   private _buildForm() {
    // Initial Form fields
@@ -39,7 +46,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     }),
     dobDate: new FormControl(null, {
       validators: [Validators.required
-         , Validators.pattern(DATE_REGEX)
+         , //Validators.pattern(DATE_REGEX)
       ]
     }),
    });
@@ -62,14 +69,11 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     console.log('SUBMITED ! ');
-  }
+    if (this.form.invalid) {
+      console.log('form.invalid() ' + this.form.invalid);
+      return true;
+    }
 
-  onSubmit2() {
-    console.log('SUBMITED 2! ');
-  }
-
-  onSubmit3() {
-    console.log('SUBMITED 3! ');
   }
 
 }

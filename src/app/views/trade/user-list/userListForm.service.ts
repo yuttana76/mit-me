@@ -14,7 +14,8 @@ export class UserListFormService {
   // Label
   from_title = 'Search User';
   login_label = 'Login';
-  fullName_label = 'Name';
+  firstName_label = 'First Name';
+  lastName_label = 'Last Name';
   email_label = 'Email';
   department_label = 'Department';
 

@@ -13,8 +13,8 @@ export class User {
   UPDATEDATE: string;
   EMAIL: string;
   // Employee
-  DEP_CODE: string;
   First_Name: string;
   Last_Name: string;
+  DEP_CODE: string;
   Birth_Day: string;
 }

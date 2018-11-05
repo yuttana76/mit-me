@@ -267,3 +267,74 @@ exports.getUserInfo = (req, res, next) => {
     console.log("EROR>>"+err);
   })
 }
+
+
+exports.searchUser = (req, res, next) => {
+
+  logger.info( `API /searchUser - ${req.originalUrl} - ${req.ip}`);
+
+  var fncName ='searchUser';
+  var numPerPage = parseInt(req.query.pagesize, 10) || 10;
+  var page = parseInt(req.query.page, 10) || 1;
+
+  var firstName = req.query.firstName || false;
+  var lastName = req.query.lastName || false;
+  var email = req.query.email || false;
+  var depCode = req.query.depCode || false;
+  var whereCond = "";
+
+  if (firstName !== false) {
+    whereCond = `AND First_Name like N'%${firstName}%'`;
+  }
+
+  if (lastName !== false) {
+    whereCond = `AND Last_Name like N'%${lastName}%'`;
+  }
+
+  if (email !== false) {
+    whereCond = `AND EMAIL = N'${email}'`;
+  }
+
+  if (depCode !== false) {
+    whereCond = `AND B.DEP_CODE ='${depCode}'`;
+  }
+
+  console.log('whereCond>>' ,whereCond);
+
+  var queryStr = `  SELECT * FROM (
+        SELECT  ROW_NUMBER() OVER(ORDER BY First_Name) AS NUMBER
+        ,A.LoginName,A.[STATUS]
+        ,B.First_Name,B.Last_Name,B.DEP_CODE ,B.Position,B.Branch
+        FROM MIT_USERS A,MIT_EMPLOYEE B
+        WHERE  A.USERID=B.UserId
+        ${whereCond}
+    ) AS TBL
+    WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+    ORDER BY First_Name`;
+
+  console.log('whereCond>>' ,queryStr);
+
+  const sql = require("mssql");
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1
+      .request() // or: new sql.Request(pool1)
+      .query(queryStr, (err, result) => {
+        // ... error checks
+        if (err) {
+          console.log(fncName + " Quey db. Was err !!!" + err);
+          res.status(201).json({
+            message: err
+          });
+        } else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+      });
+  });
+  pool1.on("error", err => {
+    // ... error handler
+    console.log("EROR>>" + err);
+  });
+};

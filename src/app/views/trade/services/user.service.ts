@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { environment } from '../../../../environments/environment';
 import { User } from "../model/user.model";
-import { Subject } from "rxjs";
+import { Subject, Observable } from "rxjs";
 import { UserCond } from "../model/userCond.model";
 
 const BACKEND_URL = environment.apiURL + '/user/';
@@ -103,6 +103,21 @@ export class UserService {
 
   getUserUpdateListener() {
     return this.userUpdated.asObservable();
+  }
+
+
+  createUserEmp(user: User,
+    mode: string): Observable<any> {
+    // console.log('Service WIP  createCustomer() !');
+    const data = {
+      'user': JSON.stringify(user),
+      'mode': mode
+      };
+
+      console.log('createUserEmp >>', JSON.stringify(data));
+
+    return this.http
+        .post<{ message: string, result: string }>(BACKEND_URL + '/exeUserEmp', data);
   }
 
 }

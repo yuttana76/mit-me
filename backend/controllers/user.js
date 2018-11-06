@@ -25,7 +25,7 @@ exports.userLogin = (req, res, next) => {
                   FROM [MFTS].[dbo].[MIT_USERS] a
                   LEFT JOiN MIT_EMPLOYEE b ON a.USERID = b.USERID
                  WHERE a.STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
-                 AND MIT_GROUP NOT like'C%'
+                 AND MIT_GROUP <>'C1'
                  AND LoginName='${_userName}'`;
   const sql = require('mssql')
 
@@ -296,8 +296,6 @@ exports.searchUser = (req, res, next) => {
     whereCond = whereCond + `AND B.DEP_CODE ='${depCode}'`;
   }
 
-  // console.log('whereCond>>' ,whereCond);
-
   var queryStr = `  SELECT * FROM (
         SELECT  ROW_NUMBER() OVER(ORDER BY First_Name) AS NUMBER
         ,A.LoginName,A.[STATUS],A.EMAIL
@@ -310,8 +308,6 @@ exports.searchUser = (req, res, next) => {
     ) AS TBL
     WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
     ORDER BY First_Name`;
-
-  console.log('whereCond>>' ,queryStr);
 
   const sql = require("mssql");
   const pool1 = new sql.ConnectionPool(config, err => {
@@ -340,11 +336,14 @@ exports.searchUser = (req, res, next) => {
 
 
 
-exports.ExeInsertUser = (req, res, next) => {
+exports.ExeInsertUserEmp = (req, res, next) => {
 
   // console.log("ExeWIPCustomer>> ");
   var o2x = require('object-to-xml');
-  var fncName = "ExeInsertUser";
+  var fncName = "ExeInsertUserEmp";
+
+  console.log('Welcome ' +fncName );
+  console.log('USER>>',JSON.stringify(req.body.user));
 
   var userObj = JSON.parse(req.body.user);
   // var ceAddressObj = JSON.parse(req.body.ceAddress);
@@ -352,38 +351,55 @@ exports.ExeInsertUser = (req, res, next) => {
   // var maAddressObj = JSON.parse(req.body.maAddress);
   var mode = req.body.mode;
 
-  const sql = require("mssql");
-  const pool1 = new sql.ConnectionPool(config, err => {
-    pool1.request()
-      .input('userXML', sql.Xml,  o2x(userObj))
-      // .input('ceAddressXML', sql.Xml,  o2x(ceAddressObj))
-      // .input('ofAddressXML', sql.Xml,  o2x(ofAddressObj))
-      // .input('maAddressXML', sql.Xml,  o2x(maAddressObj))
-      .input('mode', sql.VarChar(20),  mode)
-      .output('empID', sql.VarChar(20))
-      // .output('message', sql.VarChar(500))
-      .execute('[dbo].[MIT_Insert_User_EMP]', (err, result) => {
+  // var PASSWD = userObj.PASSWD;
+  // userObj.EmpId = userObj.LoginName
+  // userObj.userId = userObj.LoginName
+  // userObj.PASSWD = userObj.LoginName
 
-       console.log('err>>',JSON.stringify(err));
+  // console.log('PASSWD>>', userObj.PASSWD);
 
-        if (err) {
-          console.log(fncName + " Quey db. Was err !!!" + JSON.stringify(result));
+  bcrypt.hash(userObj.PASSWD, SALT_WORK_FACTOR)
+  .then(hash =>{
 
-          res.status(201).json({
-            message: err
-            // result: result.output
+      userObj.PASSWD =hash;
+      // console.log('PASSWD (hash)>>',userObj.PASSWD);
+
+      const sql = require("mssql");
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request()
+          .input('userXML', sql.Xml,  o2x(userObj))
+          // .input('ceAddressXML', sql.Xml,  o2x(ceAddressObj))
+          // .input('ofAddressXML', sql.Xml,  o2x(ofAddressObj))
+          // .input('maAddressXML', sql.Xml,  o2x(maAddressObj))
+          .input('mode', sql.VarChar(20),  mode)
+          .output('empID', sql.VarChar(20))
+          // .output('message', sql.VarChar(500))
+          .execute('[dbo].[MIT_EXEC_User_EMP]', (err, result) => {
+
+          console.log('err>>',JSON.stringify(err));
+
+            if (err) {
+              console.log(fncName + " Quey db. Was err !!!" + JSON.stringify(result));
+
+              res.status(201).json({
+                message: err
+                // result: result.output
+              });
+            } else {
+              console.log(fncName + " Result>>" + JSON.stringify(result));
+              res.status(200).json({
+                message: fncName + "Quey db. successfully!",
+                result: result.output
+              });
+            }
           });
-        } else {
-          console.log(fncName + " Result>>" + JSON.stringify(result));
-          res.status(200).json({
-            message: fncName + "Quey db. successfully!",
-            result: result.output
-          });
-        }
       });
+      pool1.on("error", err => {
+        // ... error handler
+        console.log("EROR>>" + err);
+      });
+
   });
-  pool1.on("error", err => {
-    // ... error handler
-    console.log("EROR>>" + err);
-  });
+
+
 };

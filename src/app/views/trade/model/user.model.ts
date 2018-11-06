@@ -1,6 +1,7 @@
 export class User {
   constructor() {}
   LoginName: string;
+  PASSWD: string;
   USERID: string;
   AppId: string;
   Level: number;
@@ -18,6 +19,7 @@ export class User {
   EmpId: string;
   First_Name: string;
   Last_Name: string;
+  EMP_STATUS: string;
   DEP_CODE: string;
   Department: string;
   Position: string;

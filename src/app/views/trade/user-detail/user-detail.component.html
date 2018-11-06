@@ -20,40 +20,6 @@
 
       <div class="row">
           <mat-form-field class="col-md-4">
-              <mat-select  formControlName="status" [placeholder]="userFormService.status_label"
-              [(ngModel)]="user.STATUS">
-                  <mat-option  *ngFor="let obj of statusList" [value]="obj.code">
-                    {{obj.desc}}
-                  </mat-option>
-                </mat-select>
-              <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error>
-          </mat-form-field>
-      </div>
-
-      <div class="row">
-          <mat-form-field class="col-md-4">
-              <input matInput [matDatepicker]="empDate" formControlName="empDate"
-                [placeholder]="userFormService.empDate_label"
-                [readonly]="true"
-                [(ngModel)]="user.empDate">
-              <mat-datepicker-toggle matSuffix [for]="empDate"></mat-datepicker-toggle>
-              <mat-datepicker #empDate disabled="false"></mat-datepicker>
-              <mat-error *ngIf="form.get('empDate').invalid ">Please correct date expire date</mat-error>
-          </mat-form-field>
-
-          <mat-form-field class="col-md-4">
-            <input matInput [matDatepicker]="expDate" formControlName="expDate"
-              [placeholder]="userFormService.expDate_label"
-              [readonly]="true"
-              [(ngModel)]="user.quitDate">
-            <mat-datepicker-toggle matSuffix [for]="expDate"></mat-datepicker-toggle>
-            <mat-datepicker #expDate disabled="false"></mat-datepicker>
-            <mat-error *ngIf="form.get('expDate').invalid ">Please correct date expire date</mat-error>
-          </mat-form-field>
-      </div>
-
-      <div class="row">
-          <mat-form-field class="col-md-4">
             <input   matInput formControlName="firstName" placeholder="{{userFormService.firstName_label}}"
             [(ngModel)]="user.First_Name">
             <mat-error *ngIf="form.get('firstName').invalid">Please enter a first name.</mat-error>
@@ -65,6 +31,18 @@
             <mat-error *ngIf="form.get('lastName').invalid">Please enter a last name.</mat-error>
           </mat-form-field>
         </div>
+
+      <div class="row">
+          <mat-form-field class="col-md-4">
+              <mat-select  formControlName="status" [placeholder]="userFormService.status_label"
+              [(ngModel)]="user.STATUS">
+                  <mat-option  *ngFor="let obj of statusList" [value]="obj.code">
+                    {{obj.desc}}
+                  </mat-option>
+                </mat-select>
+              <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error>
+          </mat-form-field>
+      </div>
 
         <div class="row">
             <mat-form-field class="col-md-4">
@@ -81,7 +59,28 @@
               [(ngModel)]="user.Position">
               <mat-error *ngIf="form.get('position').invalid">Please enter position.</mat-error>
             </mat-form-field>
+          </div>
 
+          <div class="row">
+              <mat-form-field class="col-md-4">
+                  <input matInput [matDatepicker]="empDate" formControlName="empDate"
+                    [placeholder]="userFormService.empDate_label"
+                    [readonly]="true"
+                    [(ngModel)]="user.empDate">
+                  <mat-datepicker-toggle matSuffix [for]="empDate"></mat-datepicker-toggle>
+                  <mat-datepicker #empDate disabled="false"></mat-datepicker>
+                  <mat-error *ngIf="form.get('empDate').invalid ">Please correct date expire date</mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="col-md-4">
+                <input matInput [matDatepicker]="expDate" formControlName="expDate"
+                  [placeholder]="userFormService.expDate_label"
+                  [readonly]="true"
+                  [(ngModel)]="user.quitDate">
+                <mat-datepicker-toggle matSuffix [for]="expDate"></mat-datepicker-toggle>
+                <mat-datepicker #expDate disabled="false"></mat-datepicker>
+                <mat-error *ngIf="form.get('expDate').invalid ">Please correct date expire date</mat-error>
+              </mat-form-field>
           </div>
 
           <div class="row">

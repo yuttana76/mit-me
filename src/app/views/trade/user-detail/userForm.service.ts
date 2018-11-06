@@ -23,6 +23,8 @@ export class UserFormService {
   // tslint:disable-next-line:whitespace
   statusList: MasObj[] = [{code:'A',desc:'Active'},{code:'I',desc:'Inactive'}];
 
+  MIT_GROUP = 'INT';  // Internal
+
   // Label
   from_title = 'User Detail';
   user_name_label = 'User Name';

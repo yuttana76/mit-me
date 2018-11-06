@@ -8,6 +8,7 @@ import { DatePipe, Location } from '@angular/common';
 import { DISABLED } from '@angular/forms/src/model';
 import { Department } from '../model/department.model';
 import { DepartmentService } from '../services/department.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-user-detail',
@@ -20,6 +21,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   form: FormGroup;
   formChangeSub: Subscription;
   isDisableFields = false;
+  isNewUser = true;
 
   private mode = this.userFormService.MODE_CREATE;
 
@@ -27,6 +29,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   departmentList: Department[] = [];
 
   constructor(
+    public userService: UserService,
     public userFormService: UserFormService,
     private departmentService: DepartmentService,
     private location: Location
@@ -39,10 +42,16 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     this.departmentService.getDepartment().subscribe((data: any[]) => {
       this.departmentList = data;
     });
+
+    this._bindValue();
   }
 
   goBack() {
     this.location.back();
+  }
+  private _bindValue() {
+    // Set default value
+    this.user.STATUS = 'A';
   }
 
   private _buildForm() {
@@ -110,10 +119,29 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     console.log('SUBMITED ! ');
-    if (this.form.invalid) {
-      console.log('form.invalid() ' + this.form.invalid);
-      return true;
-    }
+    // if (this.form.invalid) {
+    //   console.log('form.invalid() ' + this.form.invalid);
+    //   return true;
+    // }
+
+    this.user.EmpId = this.user.LoginName;
+    this.user.USERID = this.user.LoginName;
+    this.user.PASSWD = this.user.LoginName;
+    this.user.EMP_STATUS = this.user.STATUS;
+    this.user.MIT_GROUP = this.userFormService.MIT_GROUP;
+
+    const _mode = this.isNewUser ? 'NEW' : 'EDIT';
+
+    this.userService.createUserEmp(this.user, _mode).subscribe((data: any ) => {
+      console.log('CreateUserEmp return data >>', JSON.stringify(data));
+
+    }, error => () => {
+      console.log('CreateUserEmp Was error', error);
+
+    }, () => {
+     console.log('CreateUserEmp  complete');
+
+    });
 
   }
 

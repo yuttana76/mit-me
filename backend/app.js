@@ -7,6 +7,7 @@ const fundRoutes = require('./routes/fund');
 const userRoutes = require('./routes/user');
 
 const utilityRoutes = require('./routes/utility');
+const riskSuitRoutes = require('./routes/riskSuit');
 
 const amcRoutes = require('./routes/amc');
 const transRoutes = require('./routes/transaction');
@@ -78,6 +79,7 @@ app.use("/api/mail",mailRoutes);
 
 // Utility
 app.use("/api/util",utilityRoutes);
+app.use("/api/risk",riskSuitRoutes);
 
 
 app.use((req, res, next) => {

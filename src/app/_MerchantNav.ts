@@ -95,16 +95,22 @@ export const navItems = [
         url: '/trade/userList',
         icon: 'icon-sapace'
       },
-    //   {
-    //     name: 'User',
-    //     url: '/trade/SummaryRepport',
-    //     icon: 'icon-sapace'
-    //   },
-    //   {
-    //     name: 'Group',
-    //     url: '/base/carousels',
-    //     icon: 'icon-sapace'
-    //   },
+      {
+        name: 'Applications',
+        url: '/trade/mitApplication',
+        icon: 'icon-sapace'
+      },
+      {
+        name: 'Group',
+        url: '/trade/mitGroup',
+        icon: 'icon-sapace'
+      },
+          {
+        name: 'Authority',
+        url: '/trade/authority',
+        icon: 'icon-sapace'
+      },
+
     ]
   },
   // {

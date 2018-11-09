@@ -19,6 +19,9 @@ import { TradeDashComponent } from './trade-dash/trade-dash.component';
 // import { EmployeeDetailComponent } from './employee-detail/employee-detail.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
+import { AuthorityComponent } from './authority/authority.component';
+import { MitGroupComponent } from './mit-group/mit-group.component';
+import { MitApplicationComponent } from './mit-application/mit-application.component';
 
 @NgModule({
   imports: [
@@ -45,6 +48,9 @@ import { UserDetailComponent } from './user-detail/user-detail.component';
     // EmployeeDetailComponent,
     UserListComponent,
     UserDetailComponent,
+    AuthorityComponent,
+    MitGroupComponent,
+    MitApplicationComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],

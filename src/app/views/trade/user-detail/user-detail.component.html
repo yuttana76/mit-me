@@ -108,16 +108,13 @@
               <mat-error *ngIf="form.get('dobDate').invalid ">Please correct date of birth /Register date</mat-error>
             </mat-form-field>
         </div> -->
-
+<!--
 
         <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
                   {{userFormService.user_level_title}}
               </mat-panel-title>
-              <!-- <mat-panel-description>
-                Type your name and age
-              </mat-panel-description> -->
             </mat-expansion-panel-header>
 
             <mat-form-field>
@@ -127,36 +124,13 @@
             <mat-form-field>
               <input matInput placeholder="Age">
             </mat-form-field>
-          </mat-expansion-panel>
-
-
-          <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                    {{userFormService.user_authority_title}}
-                </mat-panel-title>
-                <!-- <mat-panel-description>
-                  Type your name and age
-                </mat-panel-description> -->
-              </mat-expansion-panel-header>
-
-              <mat-form-field>
-                <input matInput placeholder="First name">
-              </mat-form-field>
-
-              <mat-form-field>
-                <input matInput placeholder="Age">
-              </mat-form-field>
-            </mat-expansion-panel>
-
+          </mat-expansion-panel> -->
 
 
         <mat-card-actions>
           <!-- <button mat-flat-button class="button_card_action" color="primary" type='submit' *ngIf="!isDisableFields">Submit</button> -->
-
           <a mat-flat-button class="button_card_action" color="primary" (click)="onSubmit()"  >{{this.userFormService.submit_btn}}</a>
           <!-- <button mat-flat-button class="button_card_action" color="warn" type='reset' *ngIf="!isDisableFields">Reset</button> -->
-
           <a *ngIf="isDisableFields" class="button_card_action" mat-flat-button color="primary"  (click)="goBack()">
               {{this.userFormService.back_btn}}
           </a>

@@ -1,3 +1,39 @@
-<p>
-  authority works!
-</p>
+
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+<mat-card class="example-card" *ngIf="!spinnerLoading">
+    <mat-card-title>{{formService.from_title}}
+        <a mat-button routerLink="/trade/ApplicationDetail"
+        routerLinkActive="mat-accent"
+        matTooltip="{{formService.addNewBtn}} ">
+      <i class="fas fa-plus-square fa-2x"></i>
+    </a>
+      </mat-card-title>
+
+      <mat-card-content>
+
+          <mat-accordion>
+              <mat-expansion-panel *ngFor="let authority of authorityList">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{authority.AppId}}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{authority.MIT_GROUP}}
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <mat-form-field>
+                  <input matInput placeholder="First name">
+                </mat-form-field>
+
+                <mat-form-field>
+                  <input matInput placeholder="Age">
+                </mat-form-field>
+
+              </mat-expansion-panel>
+
+            </mat-accordion>
+
+      </mat-card-content>
+
+    </mat-card>

@@ -31,6 +31,7 @@ const departmentRoutes = require('./routes/department');
 const employeeRoutes = require('./routes/employee');
 const applicationRoutes = require('./routes/application');
 const groupRoutes = require('./routes/group');
+const authorityRoutes = require('./routes/authority');
 
 const app = express();
 
@@ -80,6 +81,7 @@ app.use("/api/workFlow",workFlowRoutes);
 app.use("/api/mail",mailRoutes);
 app.use("/api/application",applicationRoutes);
 app.use("/api/group",groupRoutes);
+app.use("/api/authority",authorityRoutes);
 
 // Utility
 app.use("/api/util",utilityRoutes);

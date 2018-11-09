@@ -29,6 +29,7 @@ const workFlowRoutes = require('./routes/workFlow');
 const mailRoutes = require('./routes/mail');
 const departmentRoutes = require('./routes/department');
 const employeeRoutes = require('./routes/employee');
+const applicationRoutes = require('./routes/application');
 
 const app = express();
 
@@ -76,6 +77,7 @@ app.use("/api/wipcustomer",wipCustomerRoutes);
 app.use("/api/custAddress",custAddressRoutes);
 app.use("/api/workFlow",workFlowRoutes);
 app.use("/api/mail",mailRoutes);
+app.use("/api/application",applicationRoutes);
 
 // Utility
 app.use("/api/util",utilityRoutes);

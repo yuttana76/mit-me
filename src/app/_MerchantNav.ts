@@ -105,11 +105,11 @@ export const navItems = [
         url: '/trade/mitGroup',
         icon: 'icon-sapace'
       },
-          {
-        name: 'Authority',
-        url: '/trade/authority',
-        icon: 'icon-sapace'
-      },
+      // {
+      //   name: 'Authority',
+      //   url: '/trade/authority',
+      //   icon: 'icon-sapace'
+      // },
 
     ]
   },

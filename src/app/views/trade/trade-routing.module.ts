@@ -12,6 +12,7 @@ import { UserDetailComponent } from './user-detail/user-detail.component';
 import { MitApplicationComponent } from './mit-application/mit-application.component';
 import { MitGroupComponent } from './mit-group/mit-group.component';
 import { AuthorityComponent } from './authority/authority.component';
+import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.component';
 
 const routes: Routes = [
 
@@ -85,6 +86,20 @@ const routes: Routes = [
         component: MitGroupComponent,
         data: {
           title: 'Groups'
+        }
+      },
+      {
+        path: 'newGroup',
+        component: MitGroupDetailComponent,
+        data: {
+          title: 'New Group'
+        }
+      },
+      {
+        path: 'editGroup/:GroupId/:source',
+        component: MitGroupDetailComponent,
+        data: {
+          title: 'Group Detail'
         }
       },
       {

@@ -22,6 +22,7 @@ import { UserDetailComponent } from './user-detail/user-detail.component';
 import { AuthorityComponent } from './authority/authority.component';
 import { MitGroupComponent } from './mit-group/mit-group.component';
 import { MitApplicationComponent } from './mit-application/mit-application.component';
+import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.component';
 
 @NgModule({
   imports: [
@@ -51,6 +52,7 @@ import { MitApplicationComponent } from './mit-application/mit-application.compo
     AuthorityComponent,
     MitGroupComponent,
     MitApplicationComponent,
+    MitGroupDetailComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],

@@ -7,7 +7,7 @@ export class GroupFormService {
 
   // Label
   from_title = 'Group information';
-  addNewBtn = 'Add new group';
+  addNewBtn = 'Add new ';
   editAction = 'Edit';
 
   tbNo = 'No';

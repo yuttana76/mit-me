@@ -2,7 +2,7 @@
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 <mat-card class="example-card" *ngIf="!spinnerLoading">
     <mat-card-title>{{formService.from_title}}
-        <a mat-button routerLink="/trade/ApplicationDetail"
+        <a mat-button routerLink="/trade/newGroup"
         routerLinkActive="mat-accent"
         matTooltip="{{formService.addNewBtn}} ">
       <i class="fas fa-plus-square fa-2x"></i>
@@ -36,7 +36,7 @@
                 <ng-container matColumnDef="Action">
                     <th mat-header-cell *matHeaderCellDef> {{formService.tbAction}} </th>
                     <td mat-cell *matCellDef="let element">
-                      <i class="far fa-edit"  [routerLink]="['/trade/userEdit',element.LoginName,'SEARCH_USER_SCR']" matTooltip="{{formService.editAction}}"></i>
+                      <i class="far fa-edit"  [routerLink]="['/trade/editGroup',element.GroupId,'MASTER_SCREEN']" matTooltip="{{formService.editAction}}"></i>
                     </td>
                   </ng-container>
 

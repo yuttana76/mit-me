@@ -1,42 +1,39 @@
-
 import { Injectable } from '../../../../../node_modules/@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import {Application} from '../model/application.model';
 import { environment } from '../../../../environments/environment';
+import { Group } from '../model/group.model';
 
 const BACKEND_URL = environment.apiURL ;
 
 @Injectable({ providedIn: 'root' })
-export class ApplicationService {
+export class GroupService {
 
-  private application: Application[] = [];
-  private applicationUpdated = new Subject<Application[]>();
+  private groupList: Group[] = [];
+  private groupUpdated = new Subject<Group[]>();
 
   constructor(private http: HttpClient , private router: Router) { }
 
-  getApplication() {
-    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/application')
+  getGroup() {
+    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/group')
     .pipe(map((fundtData) => {
         return fundtData.result.map(amc => {
             return {
-              AppId: amc.AppId,
-              AppName: amc.AppName,
-              AppGroup: amc.AppGroup,
-              AppLink: amc.AppLink,
+              GroupId: amc.GroupId,
+              GroupName: amc.GroupName,
             };
         });
     }))
     .subscribe((transformedData) => {
-        this.application = transformedData;
-        this.applicationUpdated.next([...this.application]);
+        this.groupList = transformedData;
+        this.groupUpdated.next([...this.groupList]);
     });
   }
 
-  getApplicationListener() {
-    return this.applicationUpdated.asObservable();
+  getGroupListener() {
+    return this.groupUpdated.asObservable();
   }
 
 }

@@ -91,7 +91,7 @@ export const navItems = [
     icon: 'icon-user',
     children: [
       {
-        name: 'User Information',
+        name: 'User',
         url: '/trade/userList',
         icon: 'icon-sapace'
       },
@@ -120,15 +120,15 @@ export const navItems = [
     icon: 'icon-layers',
     children: [
       {
-        name: 'Customer Information',
+        name: 'Customer',
         url: '/trade/customerList',
         icon: 'icon-sapace'
       }
-      , {
-        name: 'Employee Information',
-        url: '/trade/employeeList',
-        icon: 'icon-sapace'
-      }
+      // , {
+      //   name: 'Employee Information',
+      //   url: '/trade/employeeList',
+      //   icon: 'icon-sapace'
+      // }
       , {
         name: 'Work Flow',
         url: '/trade/workflow',

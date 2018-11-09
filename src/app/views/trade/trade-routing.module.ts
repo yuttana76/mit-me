@@ -72,20 +72,21 @@ const routes: Routes = [
         }
       },
 
-      {
-        path: 'employeeList',
-        component: EmployeeListComponent,
-        data: {
-          title: 'Seach Employee'
-        }
-      },
-      {
-        path: 'employeeDetail',
-        component: EmployeeDetailComponent,
-        data: {
-          title: 'Employee Detail'
-        }
-      },
+      // {
+      //   path: 'employeeList',
+      //   component: EmployeeListComponent,
+      //   data: {
+      //     title: 'Seach Employee'
+      //   }
+      // },
+      // {
+      //   path: 'employeeDetail',
+      //   component: EmployeeDetailComponent,
+      //   data: {
+      //     title: 'Employee Detail'
+      //   }
+      // },
+
       {
         path: 'customerList',
         component: CustomerListComponent,

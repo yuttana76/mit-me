@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Department } from '../model/department.model';
@@ -15,7 +15,7 @@ import { UserService } from '../services/user.service';
   styleUrls: ['./user-list.component.scss'],
 
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit , OnDestroy {
 
 
   spinnerLoading = false;
@@ -52,6 +52,10 @@ export class UserListComponent implements OnInit {
       this.userList = userList;
   });
 
+  }
+
+  ngOnDestroy() {
+    this.userSub.unsubscribe();
   }
 
   _buildForm() {

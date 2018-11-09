@@ -3,18 +3,16 @@ import { Injectable } from "@angular/core";
 @Injectable({
   providedIn: 'root'
 })
-export class MitApplicationFormService {
+export class GroupFormService {
 
   // Label
-  from_title = 'Applications';
-  addNewBtn = 'Add new application';
+  from_title = 'Group information';
+  addNewBtn = 'Add new group';
   editAction = 'Edit';
 
   tbNo = 'No';
   tbId = 'ID';
-  tbName = 'Name';
-  tbGroup = 'Group';
-  tbLink = 'Link';
+  tbGroupName = 'Group Name';
   tbAction = 'Action';
 
   constructor() { }

@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import {Authority} from '../model/authority.model';
 import { environment } from '../../../../environments/environment';
 
-const BACKEND_URL = environment.apiURL ;
+const BACKEND_URL = environment.apiURL + '/authority';
 
 @Injectable({ providedIn: 'root' })
 export class AuthorityService {
@@ -18,7 +18,7 @@ export class AuthorityService {
   constructor(private http: HttpClient , private router: Router) { }
 
   getAuthority() {
-    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/authority')
+    this.http.get<{ message: string, result: any }>(BACKEND_URL)
     .pipe(map((fundtData) => {
         return fundtData.result.map(data => {
             return {
@@ -41,5 +41,28 @@ export class AuthorityService {
 
   getAuthorityListener() {
     return this.authorityUpdated.asObservable();
+  }
+
+  getAuthorityByGroupId(id: string) {
+    console.log('getAuthorityByGroupId() >>' + id );
+    return this.http
+      .get<{ message: string; result: any }>(BACKEND_URL + '/' + id)
+      .pipe(
+        map(fundtData => {
+          return fundtData.result.map(data => {
+            return {
+              AppId: data.AppId,
+              MIT_GROUP: data.MIT_GROUP,
+              Status: data.Status,
+              mcreate: data.mcreate,
+              medit: data.medit,
+              mview: data.mview,
+              mdelete: data.mdelete,
+              EXPIRE_DATE: data.EXPIRE_DATE,
+              AppName: data.AppName,
+            };
+          });
+        })
+      );
   }
 }

@@ -11,7 +11,7 @@ export class GroupDetailFormService {
 
   // Label
   from_title = 'Group information';
-  g_id_label = 'Group ID';
+  g_id_label = 'Group Code';
   g_name_label = 'Group Name';
   submit_btn = 'Save';
 
@@ -27,6 +27,6 @@ export class GroupDetailFormService {
   tbDelete = 'Delete';
   tbView = 'View';
   tbAction = 'Action';
-  del_tip = 'Delete';
+  del_tip = 'Remove';
 
 }

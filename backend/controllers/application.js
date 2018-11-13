@@ -6,7 +6,7 @@ var config = dbConfig.dbParameters;
 exports.getApplication = (req, res, next) => {
 
   var fncName = 'getApplication()';
-  var queryStr = `select * FROM MIT_ApplicationInfo`;
+  var queryStr = `SELECT * FROM MIT_ApplicationInfo  WHERE STATUS='A'  order by AppName `;
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {

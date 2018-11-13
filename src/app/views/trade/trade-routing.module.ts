@@ -102,13 +102,13 @@ const routes: Routes = [
           title: 'Group Detail'
         }
       },
-      {
-        path: 'authority',
-        component: AuthorityComponent,
-        data: {
-          title: 'Authority'
-        }
-      },
+      // {
+      //   path: 'authority',
+      //   component: AuthorityComponent,
+      //   data: {
+      //     title: 'Authority'
+      //   }
+      // },
       {
         path: 'customerList',
         component: CustomerListComponent,

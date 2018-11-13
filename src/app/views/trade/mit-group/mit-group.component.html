@@ -32,7 +32,13 @@
                     <td mat-cell *matCellDef="let element"> {{element.GroupName}} </td>
                 </ng-container>
 
-                    <!-- Action  -->
+                <!-- tbAuthority -->
+                <ng-container matColumnDef="Authority">
+                  <th mat-header-cell *matHeaderCellDef> {{formService.tbAuthority}} </th>
+                  <td mat-cell *matCellDef="let element"> </td>
+                </ng-container>
+
+                <!-- Action  -->
                 <ng-container matColumnDef="Action">
                     <th mat-header-cell *matHeaderCellDef> {{formService.tbAction}} </th>
                     <td mat-cell *matCellDef="let element">

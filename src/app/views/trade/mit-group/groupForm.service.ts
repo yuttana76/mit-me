@@ -13,6 +13,7 @@ export class GroupFormService {
   tbNo = 'No';
   tbId = 'ID';
   tbGroupName = 'Group Name';
+  tbAuthority = 'Authority';
   tbAction = 'Action';
 
   constructor() { }

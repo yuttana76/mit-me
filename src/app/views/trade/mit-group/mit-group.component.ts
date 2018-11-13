@@ -13,7 +13,7 @@ export class MitGroupComponent implements OnInit , OnDestroy {
 
   spinnerLoading = false;
 
-  displayedColumns: string[] = ['index', 'Id', 'Name',  'Action'];
+  displayedColumns: string[] = ['index', 'Id', 'Name', 'Authority' , 'Action'];
   dataSource = new BehaviorSubject([]);
   groupList: Group[];
   private groupSub: Subscription;

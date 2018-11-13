@@ -6,6 +6,9 @@ import { GroupDetailFormService } from './groupDetail.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location } from '@angular/common';
+import { GroupService } from '../services/group.service';
+import { AuthorityService } from '../services/authority.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-mit-group-detail',
@@ -16,9 +19,10 @@ export class MitGroupDetailComponent implements OnInit {
 
   form: FormGroup;
   spinnerLoading = false;
-  isNewGroup = true;
+  public isNewGroup = true;
   formScreen = 'N';
-  group: Group = new Group();
+  public groupId: string;
+  groupData: Group = new Group();
 
   groupAuthority: Authority[];
 
@@ -26,23 +30,21 @@ export class MitGroupDetailComponent implements OnInit {
   authDisplayedColumns: string[] = ['index','application', 'status', 'expire','create','edit','delete','view','action'];
   authDataSource = new BehaviorSubject([]);
 
-  groupList: Group[];
+  // groupList: Group[];
   private groupSub: Subscription;
 
   constructor(
     public formService: GroupDetailFormService,
     public route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private groupService: GroupService,
+    private authorityService: AuthorityService,
+    private toastr: ToastrService
     ) { }
 
-
-
   ngOnInit() {
-
     this._buildForm();
-
     this._bindValue();
-
   }
 
   // tslint:disable-next-line:use-life-cycle-interface
@@ -50,15 +52,31 @@ export class MitGroupDetailComponent implements OnInit {
 
     this.spinnerLoading = true;
 
+    // Get parameter from link
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('source')) {
-        console.log('SOURCE>>', paramMap.get('source'));
         this.formScreen = paramMap.get('source');
-
       }
 
       if (paramMap.has('GroupId')) {
-        console.log('GroupId>>', paramMap.get('GroupId'));
+
+        this.groupId = paramMap.get('GroupId');
+        this.isNewGroup = false;
+
+      // Get data Group data & Authority data
+      this.groupService.getGroupById(this.groupId).subscribe(groupData => {
+        this.groupData = groupData[0];
+      }
+      );
+
+      this.authorityService.getAuthorityByGroupId(this.groupId).subscribe(authData => {
+        console.log( 'RTN authData>>' , authData);
+
+        this.groupAuthority = authData;
+        this.authDataSource.next(this.groupAuthority);
+
+      });
+
       }
     });
 
@@ -80,7 +98,7 @@ export class MitGroupDetailComponent implements OnInit {
   });
 }
 
-onSubmit() {
+onAddUser() {
   console.log('SUBMITED ! ');
   if (this.form.invalid) {
     console.log('form.invalid() ' + this.form.invalid);
@@ -89,16 +107,20 @@ onSubmit() {
 
   const _mode = this.isNewGroup ? 'NEW' : 'EDIT';
 
-  // this.userService.createUserEmp(this.user, _mode).subscribe((data: any ) => {
-  //   console.log('CreateUserEmp return data >>', JSON.stringify(data));
+  this.groupService.addGroup(this.groupData.GroupId, this.groupData.GroupName).subscribe( (data: any) => {
+    console.log('Create Group >>', JSON.stringify(data));
 
-  // }, error => () => {
-  //   console.log('CreateUserEmp Was error', error);
+    this.toastr.success( 'Add group successful' , 'Successful', {
+      timeOut: 0,
+      positionClass: 'toast-top-center',
+    });
 
-  // }, () => {
-  //  console.log('CreateUserEmp  complete');
+  }, error => () => {
+    console.log('Create Group  Was error', error);
+  }, () => {
+   console.log('Create Group   complete');
+  });
 
-  // });
   this.isNewGroup = false;
 
 }

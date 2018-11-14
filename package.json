@@ -43,6 +43,7 @@
     "@coreui/coreui": "^2.0.4",
     "@coreui/coreui-plugin-chartjs-custom-tooltips": "^1.2.0",
     "@coreui/icons": "0.3.0",
+    "@ng-bootstrap/ng-bootstrap": "^4.0.0",
     "bcrypt": "^3.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",

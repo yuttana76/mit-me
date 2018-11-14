@@ -552,10 +552,9 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     // console.log('ON SUBMIT !');
-
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);
-      return true;
+      return false;
     }
 
     // CONVERT VALUES

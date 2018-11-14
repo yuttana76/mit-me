@@ -14,6 +14,7 @@ export class GroupDetailFormService {
   g_id_label = 'Group Code';
   g_name_label = 'Group Name';
   submit_btn = 'Save';
+  deleteAction = 'Remove';
 
   authority_title = 'Authority';
   AddAuthority_btn = 'Add Authority';

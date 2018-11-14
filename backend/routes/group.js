@@ -9,5 +9,7 @@ router.get("", groupController.getGroup);
 router.get("/:groupId", groupController.getGroupById);
 
 router.post("", groupController.createGroup);
+router.delete("/:groupId", groupController.deleteGroup);
+router.put("/:groupId", groupController.updateGroup);
 
 module.exports = router;

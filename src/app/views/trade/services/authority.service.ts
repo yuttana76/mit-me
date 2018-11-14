@@ -1,7 +1,7 @@
 
 import { Injectable } from '../../../../../node_modules/@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import {Authority} from '../model/authority.model';
@@ -44,7 +44,9 @@ export class AuthorityService {
   }
 
   getAuthorityByGroupId(id: string) {
+
     console.log('getAuthorityByGroupId() >>' + id );
+
     return this.http
       .get<{ message: string; result: any }>(BACKEND_URL + '/' + id)
       .pipe(
@@ -63,6 +65,30 @@ export class AuthorityService {
             };
           });
         })
-      );
+      )
+      .subscribe((transformedData) => {
+        this.authority = transformedData;
+        this.authorityUpdated.next([...this.authority]);
+    });
   }
+
+  deleteAuthrity(groupId: string, appId: string): Observable<any> {
+
+    return new Observable((observer) => {
+        this.http
+        .delete<{ message: string, result: string }>( BACKEND_URL + '/' + groupId + '/' + appId)
+        .subscribe((data) => {
+                    console.log('Deleted  Authorityservice >' + JSON.stringify(data));
+                    const updatedGroup = this.authority.filter(authority => authority.AppId !== appId);
+                    this.authority = updatedGroup;
+                    this.authorityUpdated.next([...this.authority]);
+
+                    // observable execution
+                    observer.next(data);
+                    // observer.complete();
+
+                });
+      });
+}
+
 }

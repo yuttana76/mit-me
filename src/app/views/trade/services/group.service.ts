@@ -23,6 +23,7 @@ export class GroupService {
             return {
               GroupId: data.GroupId,
               GroupName: data.GroupName,
+              status: data.status,
             };
         });
     }))
@@ -48,6 +49,7 @@ export class GroupService {
             return {
               GroupId: data.GroupId,
               GroupName: data.GroupName,
+              status: data.status,
             };
           });
         })
@@ -64,5 +66,61 @@ export class GroupService {
     return this.http
         .post<{ message: string, result: string }>(BACKEND_URL , data);
   }
+
+
+  deleteGroup(groupId: string): Observable<any> {
+
+              return new Observable((observer) => {
+                  this.http
+                  .delete<{ message: string, result: string }>( BACKEND_URL + '/' + groupId)
+                  .subscribe((data) => {
+                              console.log('Deleted service >' + JSON.stringify(data));
+                              const updatedGroup = this.groupList.filter(group => group.GroupId !== groupId);
+                              this.groupList = updatedGroup;
+                              this.groupUpdated.next([...this.groupList]);
+
+                              // observable execution
+                              observer.next(data);
+                              // observer.complete();
+
+                          });
+                });
+    }
+
+  updateGroup(groupId: string, groupName: string, status: string): Observable<any> {
+    const groupData = {
+      'groupId': groupId,
+      'groupName': groupName,
+      'status': status
+      };
+
+      console.log('Group updateGroup>', JSON.stringify(groupData) );
+    return new Observable((observer) => {
+        this.http
+        .put<{ message: string, result: string }>( BACKEND_URL + '/' + groupId, groupData)
+        .subscribe((data) => {
+                    // console.log('Deleted service >' + JSON.stringify(data));
+                    const updatedGroup = this.groupList.filter(group => group.GroupId !== groupId);
+                    this.groupList = updatedGroup;
+                    this.groupUpdated.next([...this.groupList]);
+
+                    // observable execution
+                    observer.next(data);
+                    // observer.complete();
+
+                });
+      });
+}
+
+  // deleteGroup(groupId: string) {
+  //   console.log('deleteGroup  groupId>' + groupId);
+  //   this.http.delete( BACKEND_URL + '/' + groupId)
+  //       .subscribe(() => {
+  //           console.log('Deleted!');
+  //           const updatedGroup = this.groupList.filter(group => group.GroupId !== groupId);
+  //           this.groupList = updatedGroup;
+  //           this.groupUpdated.next([...this.groupList]);
+  //       });
+  // }
 
 }

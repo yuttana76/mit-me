@@ -20,10 +20,13 @@ import { TradeDashComponent } from './trade-dash/trade-dash.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { AuthorityComponent } from './authority/authority.component';
-import { MitGroupComponent } from './mit-group/mit-group.component';
+import { MitGroupComponent, StatusTransform } from './mit-group/mit-group.component';
 import { MitApplicationComponent } from './mit-application/mit-application.component';
 import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.component';
+import { ConfirmationDialogComponent } from './dialog/confirmation-dialog/confirmation-dialog.component';
 
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { AddAuthorityDialogComponent } from './dialog/add-authority-dialog/add-authority-dialog.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -31,7 +34,8 @@ import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.com
     AngularMaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    AlertModule.forRoot()
+    AlertModule.forRoot(),
+    NgbModule
   ],
   declarations: [
     SummaryRepComponent,
@@ -41,6 +45,7 @@ import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.com
     ResultDialogComponent,
     GroupCodeStrPipe,
     CustomerFullnamePipe,
+    StatusTransform,
     WorkFlowComponent,
     WorkFlowActDialogComponent,
     WfStatusPipe,
@@ -53,10 +58,17 @@ import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.com
     MitGroupComponent,
     MitApplicationComponent,
     MitGroupDetailComponent,
+    ConfirmationDialogComponent,
+    AddAuthorityDialogComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],
-  entryComponents: [  SaleDialogComponent, ResultDialogComponent, WorkFlowActDialogComponent],
+  entryComponents: [
+    SaleDialogComponent,
+    ResultDialogComponent,
+    WorkFlowActDialogComponent,
+    ConfirmationDialogComponent,
+    AddAuthorityDialogComponent],
 })
 export class TradeModule {}
 

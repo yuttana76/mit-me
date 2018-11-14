@@ -8,4 +8,7 @@ const authorityController = require('../controllers/authority')
 router.get("", authorityController.getAuthority);
 router.get("/:groupId", authorityController.getAuthorityByGroup);
 
+router.post("", authorityController.addAuthority);
+router.delete("/:groupId/:AppId", authorityController.deleteAuthority);
+
 module.exports = router;

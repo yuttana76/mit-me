@@ -107,7 +107,7 @@ export class UserService {
   }
 
 
-  createUserEmp(user: User,
+  execUserEmp(user: User,
     mode: string): Observable<any> {
     // console.log('Service WIP  createCustomer() !');
     const data = {
@@ -115,7 +115,7 @@ export class UserService {
       'mode': mode
       };
 
-      console.log('createUserEmp >>', JSON.stringify(data));
+      // console.log('createUserEmp >>', JSON.stringify(data));
 
     return this.http
         .post<{ message: string, result: string }>(BACKEND_URL + '/exeUserEmp', data);

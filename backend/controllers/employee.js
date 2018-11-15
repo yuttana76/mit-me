@@ -58,5 +58,44 @@ exports.searchEmployee = (req, res, next) => {
       console.log("EROR>>" + err);
     });
   }
-
 };
+
+
+exports.getEmployeeByUserId = (req, res, next) => {
+
+  var fncName = 'getEmployee()';
+  var userId = req.params.userId;
+
+  console.log('getEmployeeByUserId()' + req.params.userId);
+
+  var queryStr = `SELECT
+  A.LoginName,A.EMAIL,A.imageProfile,
+  B.*
+  FROM MIT_USERS A ,MIT_EMPLOYEE B
+  WHERE A.USERID=B.UserId
+  AND A.USERID='${userId}'`;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    // ... error handler
+    console.log("EROR>>"+err);
+  })
+}

@@ -11,6 +11,7 @@ import { DepartmentService } from '../services/department.service';
 import { UserService } from '../services/user.service';
 import { ParamMap, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { EmployeeService } from '../services/employee.service';
 
 @Component({
   selector: 'app-user-detail',
@@ -34,6 +35,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     public userService: UserService,
+    private employeeService: EmployeeService,
     public userFormService: UserFormService,
     private departmentService: DepartmentService,
     private location: Location,
@@ -58,7 +60,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   private _bindValue() {
     // Set default value
-    this.user.STATUS = 'A';
+    // this.user.STATUS = 'A';
 
     // Get parameter from link
 
@@ -73,8 +75,34 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       if (paramMap.has('userid')) {
 
         this.userId = paramMap.get('userid');
+
+        this.employeeService.getEmployeebyUserId(this.userId).subscribe((data: any) => {
+
+          console.log('RTN EMP>>' , JSON.stringify(data));
+          this.user = data[0];
+          // this.user.LoginName = data[0].LoginName;
+          // this.user.EMAIL = data[0].EMAIL;
+          // data[0].imageProfile;
+          // data[0].empID
+          // data[0].UserId
+          // data[0].First_Name
+          // data[0].Last_Name
+          // data[0].status
+          // data[0].Position
+          // data[0].Division
+          // data[0].Branch
+          // data[0].DEP_CODE
+          // data[0].mobPhone
+          // data[0].officePhone
+          // data[0].othEmail
+          // data[0].empDate
+          // data[0].quitDate
+
+        })
       }
       console.log('User Id:' + this.userId + '  ;From:' + this.formScreen);
+
+
     });
 
 
@@ -151,7 +179,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     //   return true;
     // }
 
-    this.user.EmpId = this.user.LoginName;
+    // this.user.EmpId = this.user.LoginName;
     this.user.USERID = this.user.LoginName;
     this.user.PASSWD = this.user.LoginName;
     this.user.EMP_STATUS = this.user.STATUS;
@@ -164,8 +192,8 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       _mode =  this.userFormService.MODE_EDIT;
     }
 
-    this.userService.createUserEmp(this.user, _mode).subscribe((data: any ) => {
-      console.log('CreateUserEmp return data >>', JSON.stringify(data));
+    this.userService.execUserEmp(this.user, _mode).subscribe((data: any ) => {
+      console.log('execUserEmp return data >>', JSON.stringify(data));
 
       this.userId = this.user.LoginName;
 

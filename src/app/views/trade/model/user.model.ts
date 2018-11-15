@@ -7,6 +7,7 @@ export class User {
   Level: number;
   Remark: string;
   STATUS: string;
+  // status: string;
   EXPIRE_DATE: string;
   CREATEBY: string;
   CREATEDATE: string;
@@ -16,7 +17,7 @@ export class User {
   imageProfile: string;
   MIT_GROUP: string;
   // Employee
-  EmpId: string;
+  empID: string;
   First_Name: string;
   Last_Name: string;
   EMP_STATUS: string;

@@ -39,8 +39,6 @@ export class GroupService {
 
   getGroupById(id: string) {
 
-    console.log('getGroupById() >> ' + id);
-
     return this.http
       .get<{ message: string; result: any }>(BACKEND_URL + '/' + id)
       .pipe(

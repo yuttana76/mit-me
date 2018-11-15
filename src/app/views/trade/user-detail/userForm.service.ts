@@ -16,8 +16,8 @@ export class UserFormService {
   // Formats
   dateFormat = 'dd/mm/yyyy';
   timeFormat = 'h:mm AM/PM';
-  MODE_CREATE = 'create';
-  MODE_EDIT = 'edit';
+  MODE_NEW = 'NEW';
+  MODE_EDIT = 'EDIT';
 
   // DATA
   // tslint:disable-next-line:whitespace
@@ -45,8 +45,12 @@ export class UserFormService {
   user_authority_title = 'Authority Setting';
   Birth_Day_label = 'Birth Day (' + this.dateFormat + ') ';
 
+  user_level_tab = 'User Level'
+  user_group_tab = 'Groups'
+
   // Label Action
-  submit_btn = 'SAVE';
+  save_btn = 'SAVE';
+  update_btn = 'UPDATE';
   back_btn = 'BACK';
 
   constructor() { }

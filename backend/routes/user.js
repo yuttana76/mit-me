@@ -13,6 +13,6 @@ router.get("/userLevel", checkAuth,userController.getUserLevel);
 
 
 router.get("/searchUser",userController.searchUser);
-router.post("/exeUserEmp",userController.ExeInsertUserEmp);
+router.post("/exeUserEmp",userController.ExeUserEmp);
 
 module.exports = router;

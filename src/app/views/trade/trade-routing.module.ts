@@ -67,7 +67,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'userEdit/:LoginName/:source',
+        path: 'userEdit/:userid/:source',
         component: UserDetailComponent,
         data: {
           title: 'Edit User '

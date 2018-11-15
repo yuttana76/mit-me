@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, PipeTransform, Pipe } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Group } from '../model/group.model';
 import { Authority } from '../model/authority.model';
@@ -12,6 +12,24 @@ import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { AddAuthorityDialogComponent } from '../dialog/add-authority-dialog/add-authority-dialog.component';
 import { MatDialogRef, MatDialog } from '@angular/material';
+
+
+@Pipe({name: 'authorityFlagPipe'})
+export class AuthorityFlagPipe implements PipeTransform {
+  transform(value: string): string {
+
+    let newStr: string = '';
+    if (value.toUpperCase( ) === 'Y'  ) {
+      newStr = 'Yes';
+    } else if (value.toUpperCase( ) === 'N') {
+      newStr = 'No';
+    } else {
+      newStr = 'N/A';
+    }
+
+    return newStr;
+  }
+}
 
 @Component({
   selector: 'app-mit-group-detail',
@@ -149,9 +167,7 @@ export class MitGroupDetailComponent implements OnInit, OnDestroy {
 }
 
 onSubmit() {
-  console.log('SUBMITED ! ');
   if (this.form.invalid) {
-    console.log('form.invalid() ' + this.form.invalid);
     return true;
   }
 
@@ -167,9 +183,9 @@ onSubmit() {
 
       this.isNewGroup = false;
     }, error => () => {
-      console.log('Create Group  Was error', error);
+      // console.log('Create Group  Was error', error);
     }, () => {
-     console.log('Create Group   complete');
+    //  console.log('Create Group   complete');
     });
 
   } else {
@@ -182,16 +198,15 @@ onSubmit() {
 
       this.isNewGroup = false;
     }, error => () => {
-      console.log('Was error', error);
+      // console.log('Was error', error);
     }, () => {
-     console.log(' complete');
+    //  console.log(' complete');
     });
 
   }
 }
 
 onDelAuthority(appId: string, appName: string ) {
-  console.log('Deleting Authority' + this.groupId + ' ;App ID:' + appId + ' ;App Name:' + appName);
 
   this.confirmationDialogService.confirm('Please confirm..', `Do you really want to delete authority for ${appName} ?`)
   .then((confirmed) => {
@@ -211,15 +226,13 @@ onDelAuthority(appId: string, appName: string ) {
 
   addAuthority() {
 
-    console.log('addAuthority for>> ' + this.groupId);
-
     this.addAuthorityDialogComponent = this.dialog.open(AddAuthorityDialogComponent, {
       width: '600px',
       data: this.groupId
     });
 
     this.addAuthorityDialogComponent.afterClosed().subscribe(result => {
-        console.log('Dialog result => ', result);
+        // console.log('Dialog result => ', result);
     });
   }
 

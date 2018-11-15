@@ -129,12 +129,27 @@
 
         <mat-card-actions>
           <!-- <button mat-flat-button class="button_card_action" color="primary" type='submit' *ngIf="!isDisableFields">Submit</button> -->
-          <a mat-flat-button class="button_card_action" color="primary" (click)="onSubmit()"  >{{this.userFormService.submit_btn}}</a>
-          <!-- <button mat-flat-button class="button_card_action" color="warn" type='reset' *ngIf="!isDisableFields">Reset</button> -->
-          <a *ngIf="isDisableFields" class="button_card_action" mat-flat-button color="primary"  (click)="goBack()">
+
+          <a mat-flat-button class="button_card_action" color="primary" (click)="onSubmit()"  *ngIf="userId ==='' " >{{this.userFormService.save_btn}}</a>
+          <a mat-flat-button class="button_card_action" color="primary" (click)="onSubmit()"  *ngIf="userId !=='' ">{{this.userFormService.update_btn}}</a>
+
+          <a  class="button_card_action" mat-flat-button color="primary"  (click)="goBack()">
               {{this.userFormService.back_btn}}
           </a>
         </mat-card-actions>
-
     </form>
+</mat-card>
+
+<mat-card class='card_option' *ngIf="userId !=='' " >
+<mat-tab-group>
+    <mat-tab label="{{userFormService.user_level_tab}}">
+        <app-user-level [userId]="userId" ></app-user-level>
+
+      </mat-tab>
+    <mat-tab label="{{userFormService.user_group_tab}}">
+        <app-user-group [userId]="userId" ></app-user-group>
+
+    </mat-tab>
+
+  </mat-tab-group>
 </mat-card>

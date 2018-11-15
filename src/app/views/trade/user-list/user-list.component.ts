@@ -98,6 +98,7 @@ export class UserListComponent implements OnInit , OnDestroy {
           this.spinnerLoading = false;
           this.userList = userList;
 
+          // console.log('Search User List >>' , JSON.stringify(this.userList));
           this.dataSource.next(this.userList);
       });
   }

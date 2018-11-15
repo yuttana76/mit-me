@@ -85,6 +85,7 @@ export class UserService {
             return {
               NUMBER: data.NUMBER,
               LoginName: data.LoginName,
+              USERID: data.USERID,
               STATUS: data.STATUS,
               First_Name: data.First_Name,
               Last_Name: data.Last_Name,

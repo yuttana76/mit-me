@@ -6,6 +6,7 @@ import { ApplicationService } from '../../services/application.service';
 import { Subscription } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Authority } from '../../model/authority.model';
+import { AuthorityService } from '../../services/authority.service';
 
 @Component({
   selector: 'app-add-authority-dialog',
@@ -27,7 +28,8 @@ export class AddAuthorityDialogComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<AddAuthorityDialogComponent> ,
     @Inject(MAT_DIALOG_DATA) public grouptId: string,
     public formService: AddAuthorityFormService,
-    private applicationService: ApplicationService
+    private applicationService: ApplicationService,
+    private authorityService: AuthorityService
 
   ) {
     this.groupId = grouptId;
@@ -73,10 +75,17 @@ export class AddAuthorityDialogComponent implements OnInit, OnDestroy {
       console.log('form.invalid() ' + this.form.invalid);
       return false;
     }
+
       this.authority.GroupId = this.groupId;
+      this.authority.Status = 'A';
       console.log('Authority Data>>' + JSON.stringify(this.authority));
 
-      this.dialogRef.close('save');
+      // addAuthrity
+      this.authorityService.addAuthrity(this.authority).subscribe((data: any) => {
+          console.log('Return addAuthrity()', JSON.stringify(data));
+
+          this.dialogRef.close('save');
+      });
 
   }
 
@@ -84,4 +93,11 @@ export class AddAuthorityDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.close('close');
   }
 
+  OnAuthorityChange($event) {
+    this.form.controls['mCreate'].setValue($event.checked);
+    this.form.controls['mEdit'].setValue($event.checked);
+    this.form.controls['mView'].setValue($event.checked);
+    this.form.controls['mDelete'].setValue($event.checked);
+
+  }
 }

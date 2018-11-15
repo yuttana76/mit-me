@@ -9,6 +9,8 @@ import { DISABLED } from '@angular/forms/src/model';
 import { Department } from '../model/department.model';
 import { DepartmentService } from '../services/department.service';
 import { UserService } from '../services/user.service';
+import { ParamMap, ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-user-detail',
@@ -18,12 +20,14 @@ import { UserService } from '../services/user.service';
 export class UserDetailComponent implements OnInit, OnDestroy {
   validationMessages: any;
   user: User = new User();
+  userId: string = '';
+  formScreen: string;
+  // isNewUser = true;
+
   form: FormGroup;
   formChangeSub: Subscription;
-  isDisableFields = false;
-  isNewUser = true;
 
-  private mode = this.userFormService.MODE_CREATE;
+  // private mode = this.userFormService.MODE_CREATE;
 
   public statusList = this.userFormService.statusList;
   departmentList: Department[] = [];
@@ -32,7 +36,9 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     public userService: UserService,
     public userFormService: UserFormService,
     private departmentService: DepartmentService,
-    private location: Location
+    private location: Location,
+    public route: ActivatedRoute,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
@@ -49,9 +55,29 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   goBack() {
     this.location.back();
   }
+
   private _bindValue() {
     // Set default value
     this.user.STATUS = 'A';
+
+    // Get parameter from link
+
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+
+      console.log('LINK paramMap >>', JSON.stringify(paramMap));
+
+      if (paramMap.has('source')) {
+        this.formScreen = paramMap.get('source');
+      }
+
+      if (paramMap.has('userid')) {
+
+        this.userId = paramMap.get('userid');
+      }
+      console.log('User Id:' + this.userId + '  ;From:' + this.formScreen);
+    });
+
+
   }
 
   private _buildForm() {
@@ -119,6 +145,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     console.log('SUBMITED ! ');
+
     // if (this.form.invalid) {
     //   console.log('form.invalid() ' + this.form.invalid);
     //   return true;
@@ -130,18 +157,30 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     this.user.EMP_STATUS = this.user.STATUS;
     this.user.MIT_GROUP = this.userFormService.MIT_GROUP;
 
-    const _mode = this.isNewUser ? 'NEW' : 'EDIT';
+    // const _mode = this.isNewUser ? 'NEW' : 'EDIT';
+
+    let _mode = this.userFormService.MODE_NEW;
+    if (this.userId !== '' ) {
+      _mode =  this.userFormService.MODE_EDIT;
+    }
 
     this.userService.createUserEmp(this.user, _mode).subscribe((data: any ) => {
       console.log('CreateUserEmp return data >>', JSON.stringify(data));
 
+      this.userId = this.user.LoginName;
+
+      this.toastr.success( `Add user ${this.user.First_Name} ${this.user.Last_Name} successful`, 'Successful', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+      });
+
+
     }, error => () => {
       console.log('CreateUserEmp Was error', error);
-
     }, () => {
-     console.log('CreateUserEmp  complete');
-
+      console.log('CreateUserEmp  complete');
     });
+
 
   }
 

@@ -89,6 +89,34 @@ export class AuthorityService {
 
                 });
       });
-}
+  }
+
+  addAuthrity(authority: Authority): Observable<any> {
+
+    console.log('Authority Service>>' + JSON.stringify(authority));
+
+    const data = {
+      AppId: authority.AppId,
+      MIT_GROUP: authority.GroupId,
+      mCreate: authority.mCreate,
+      mEdit: authority.mEdit,
+      mView: authority.mView,
+      mDelete: authority.mDelete,
+      Status: authority.Status,
+      EXPIRE_DATE: authority.EXPIRE_DATE
+      };
+
+    return new Observable((observer) => {
+         this.http
+        .post<{ message: string, result: string }>(BACKEND_URL , data)
+        .subscribe((_data) => {
+          console.log('addAuthrity  Authorityservice >' + JSON.stringify(_data));
+
+          this.getAuthorityByGroupId(authority.GroupId);
+           observer.next(data);
+
+        });
+    });
+  }
 
 }

@@ -298,7 +298,7 @@ exports.searchUser = (req, res, next) => {
 
   var queryStr = `  SELECT * FROM (
         SELECT  ROW_NUMBER() OVER(ORDER BY First_Name) AS NUMBER
-        ,A.LoginName,A.[STATUS],A.EMAIL
+        ,A.LoginName,A.[STATUS],A.EMAIL,A.USERID
         ,B.First_Name,B.Last_Name,B.DEP_CODE ,B.Position,B.Branch
         , C.NAME AS DEP_NAME
         FROM MIT_USERS A,MIT_EMPLOYEE B
@@ -336,20 +336,23 @@ exports.searchUser = (req, res, next) => {
 
 
 
-exports.ExeInsertUserEmp = (req, res, next) => {
+exports.ExeUserEmp = (req, res, next) => {
 
   // console.log("ExeWIPCustomer>> ");
   var o2x = require('object-to-xml');
   var fncName = "ExeInsertUserEmp";
+  var mode = req.body.mode || 'NEW';
 
-  console.log('Welcome ' +fncName );
+  console.log('Welcome ' +fncName + '  ;mode=' + mode);
   console.log('USER>>',JSON.stringify(req.body.user));
+
+  // logger.info();
 
   var userObj = JSON.parse(req.body.user);
   // var ceAddressObj = JSON.parse(req.body.ceAddress);
   // var ofAddressObj = JSON.parse(req.body.ofAddress);
   // var maAddressObj = JSON.parse(req.body.maAddress);
-  var mode = req.body.mode;
+
 
   // var PASSWD = userObj.PASSWD;
   // userObj.EmpId = userObj.LoginName

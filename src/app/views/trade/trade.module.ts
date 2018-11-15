@@ -22,11 +22,13 @@ import { UserDetailComponent } from './user-detail/user-detail.component';
 import { AuthorityComponent } from './authority/authority.component';
 import { MitGroupComponent, StatusTransform } from './mit-group/mit-group.component';
 import { MitApplicationComponent } from './mit-application/mit-application.component';
-import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.component';
+import { MitGroupDetailComponent, AuthorityFlagPipe } from './mit-group-detail/mit-group-detail.component';
 import { ConfirmationDialogComponent } from './dialog/confirmation-dialog/confirmation-dialog.component';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { AddAuthorityDialogComponent } from './dialog/add-authority-dialog/add-authority-dialog.component';
+import { UserLevelComponent } from './user-level/user-level.component';
+import { UserGroupComponent } from './user-group/user-group.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -44,6 +46,7 @@ import { AddAuthorityDialogComponent } from './dialog/add-authority-dialog/add-a
     SaleDialogComponent,
     ResultDialogComponent,
     GroupCodeStrPipe,
+    AuthorityFlagPipe,
     CustomerFullnamePipe,
     StatusTransform,
     WorkFlowComponent,
@@ -60,6 +63,8 @@ import { AddAuthorityDialogComponent } from './dialog/add-authority-dialog/add-a
     MitGroupDetailComponent,
     ConfirmationDialogComponent,
     AddAuthorityDialogComponent,
+    UserLevelComponent,
+    UserGroupComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],

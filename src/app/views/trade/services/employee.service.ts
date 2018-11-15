@@ -15,12 +15,14 @@ export class EmployeeService {
 
   getEmployeebyUserId(id: string) {
 
-    console.log('Service getEmployeebyUserId() ' + id);
+    // console.log('Service getEmployeebyUserId() ' + id);
+
     return this.http
       .get<{ message: string; result: any }>(BACKEND_URL + '/byUserId/' + id)
       .pipe(
         map(fundtData => {
           return fundtData.result.map(data => {
+            console.log('RTN getEmployeebyUserId()', JSON.stringify(data));
             return {
               LoginName: data.LoginName,
               EMAIL: data.EMAIL,

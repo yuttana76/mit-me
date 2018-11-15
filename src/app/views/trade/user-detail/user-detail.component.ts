@@ -179,7 +179,11 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     //   return true;
     // }
 
-    // this.user.EmpId = this.user.LoginName;
+    console.log('empID>>', this.user.empID );
+    if ( !this.user.empID || this.user.empID === '') {
+      this.user.empID = this.user.LoginName;
+    }
+
     this.user.USERID = this.user.LoginName;
     this.user.PASSWD = this.user.LoginName;
     this.user.EMP_STATUS = this.user.STATUS;
@@ -193,8 +197,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     }
 
     this.userService.execUserEmp(this.user, _mode).subscribe((data: any ) => {
-      console.log('execUserEmp return data >>', JSON.stringify(data));
-
+      // console.log('execUserEmp return data >>', JSON.stringify(data));
       this.userId = this.user.LoginName;
 
       this.toastr.success( `Add user ${this.user.First_Name} ${this.user.Last_Name} successful`, 'Successful', {

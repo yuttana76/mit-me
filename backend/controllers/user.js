@@ -346,13 +346,13 @@ exports.ExeUserEmp = (req, res, next) => {
   console.log('Welcome ' +fncName + '  ;mode=' + mode);
   console.log('USER>>',JSON.stringify(req.body.user));
 
-  // logger.info();
 
   var userObj = JSON.parse(req.body.user);
   // var ceAddressObj = JSON.parse(req.body.ceAddress);
   // var ofAddressObj = JSON.parse(req.body.ofAddress);
   // var maAddressObj = JSON.parse(req.body.maAddress);
 
+  console.log(` empDate=${userObj.empDate}   ;quitDate=${userObj.quitDate}`);
 
   // var PASSWD = userObj.PASSWD;
   // userObj.EmpId = userObj.LoginName
@@ -365,6 +365,8 @@ exports.ExeUserEmp = (req, res, next) => {
   .then(hash =>{
 
       userObj.PASSWD =hash;
+
+
       // console.log('PASSWD (hash)>>',userObj.PASSWD);
 
       const sql = require("mssql");
@@ -379,7 +381,7 @@ exports.ExeUserEmp = (req, res, next) => {
           // .output('message', sql.VarChar(500))
           .execute('[dbo].[MIT_EXEC_User_EMP]', (err, result) => {
 
-          console.log('err>>',JSON.stringify(err));
+            console.log('err>>',JSON.stringify(err));
 
             if (err) {
               console.log(fncName + " Quey db. Was err !!!" + JSON.stringify(result));

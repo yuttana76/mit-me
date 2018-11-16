@@ -78,26 +78,8 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
         this.employeeService.getEmployeebyUserId(this.userId).subscribe((data: any) => {
 
-          console.log('RTN EMP>>' , JSON.stringify(data));
+          // console.log('RTN EMP>>' , JSON.stringify(data));
           this.user = data[0];
-          // this.user.LoginName = data[0].LoginName;
-          // this.user.EMAIL = data[0].EMAIL;
-          // data[0].imageProfile;
-          // data[0].empID
-          // data[0].UserId
-          // data[0].First_Name
-          // data[0].Last_Name
-          // data[0].status
-          // data[0].Position
-          // data[0].Division
-          // data[0].Branch
-          // data[0].DEP_CODE
-          // data[0].mobPhone
-          // data[0].officePhone
-          // data[0].othEmail
-          // data[0].empDate
-          // data[0].quitDate
-
         })
       }
       console.log('User Id:' + this.userId + '  ;From:' + this.formScreen);
@@ -172,14 +154,13 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log('SUBMITED ! ');
 
     // if (this.form.invalid) {
     //   console.log('form.invalid() ' + this.form.invalid);
     //   return true;
     // }
 
-    console.log('empID>>', this.user.empID );
+    // console.log('empID>>', this.user.empID );
     if ( !this.user.empID || this.user.empID === '') {
       this.user.empID = this.user.LoginName;
     }

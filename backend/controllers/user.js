@@ -185,8 +185,6 @@ exports.resetPassword = (req,res,next)=>{
   });
 }
 
-
-
 exports.getUserLevel = (req, res, next) => {
 
   var _userId = req.query.userId || '';
@@ -227,7 +225,6 @@ exports.getUserLevel = (req, res, next) => {
     console.log("EROR>>"+err);
   })
 }
-
 
 
 exports.getUserInfo = (req, res, next) => {
@@ -405,6 +402,238 @@ exports.ExeUserEmp = (req, res, next) => {
       });
 
   });
-
-
 };
+
+
+
+exports.getUserLevelByUserId = (req, res, next) => {
+
+  var _userId = req.query.userId || '';
+
+  // console.log(' getUserLevel() _userId>>' + _userId + ' ;_appId>>' + _appId );
+  logger.info( `API /userLevelByUserId - ${req.originalUrl} - ${req.ip} - ;USERID=${_userId} `);
+
+  var fncName = 'getUserLevel';
+  var queryStr = `
+    SELECT B.AppName,A.*
+    FROM MIT_USERS_LEVEL A
+    LEFT JOIN MIT_ApplicationInfo  B ON A.AppId=B.AppId
+    WHERE A.USERID = '${_userId}'
+    `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    // ... error handler
+    console.log("EROR>>"+err);
+  })
+}
+
+
+exports.deleteUserLevelByAppId = (req, res, next) => {
+
+  var fncName = 'deleteUserLevelByAppId';
+  var _userId = req.params.userId || '';
+  var _appId = req.params.appId || '';
+
+  logger.info( `API /deleteUserLevelByAppId - ${req.originalUrl} - ${req.ip} - ;USERID=${_userId}  ;APPID=${_appId}`);
+
+  var queryStr = `  DELETE FROM MIT_USERS_LEVEL
+                    WHERE USERID = '${_userId}' AND AppId ='${_appId}'
+    `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+
+exports.addUserLevel = (req,res,next)=>{
+
+  logger.info( `API /addUserLevel - ${req.originalUrl} - ${req.ip} - ${req.body.email}`);
+
+  var userId = req.body.userId;
+  var appId = req.body.appId;
+  var level = req.body.level;
+  var remark = req.body.remark;
+  var status = req.body.status;
+  var expireDate = req.body.expireDate || '';
+  var createBy = req.body.createBy || 'SYS';
+
+      var queryStr = `INSERT INTO  MIT_USERS_LEVEL (USERID,AppId,Level,Remark,STATUS,EXPIRE_DATE,CREATEBY,CREATEDATE)
+                      VALUES('${userId}','${appId}','${level}','${remark}','${status}','${expireDate}','${createBy}',GETDATE());`;
+
+      var sql = require("mssql");
+      sql.connect(config, err => {
+        new sql.Request().query(queryStr, (err, result) => {
+          sql.close();
+            if(err){
+              res.status(500).json({
+                error:err
+              });
+
+            } else {
+              res.status(200).json({
+                message: 'User created',
+                result: result
+              });
+            }
+        })
+      });
+
+      sql.on("error", err => {
+        logger.error( `API /register - ${err}`);
+        sql.close();
+        res.status(500).json({
+          error:err
+        });
+      });
+}
+
+//******************* */
+
+exports.getUserGroupByUserId = (req, res, next) => {
+
+  var _userId = req.query.userId || '';
+  logger.info( `API /userGroupByUserId - ${req.originalUrl} - ${req.ip} - ;USERID=${_userId} `);
+  var fncName = 'getUserGroupByUserId';
+  var queryStr = `
+    SELECT B.GroupName,A.*
+    FROM MIT_USERS_GROUP A
+    LEFT JOIN MIT_GROUP  B ON A.GroupId = B.GroupId
+    WHERE A.USERID = '${_userId}'
+    `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+exports.deleteUserGroupByGroupId = (req, res, next) => {
+
+  var fncName = 'deleteUserGroupByGroupId';
+  var _userId = req.params.userId || '';
+  var _groupId = req.params.groupId || '';
+  logger.info( `API /deleteUserGroupByGroupId - ${req.originalUrl} - ${req.ip} - ;USERID=${_userId}  ;_groupId=${_groupId}`);
+
+  var queryStr = `  DELETE FROM MIT_USERS_GROUP
+                    WHERE USERID = '${_userId}' AND GroupId ='${_groupId}'
+    `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+
+exports.addUserGroup = (req,res,next)=>{
+
+  logger.info( `API /addUserGroup - ${req.originalUrl} - ${req.ip} - ${req.body.email}`);
+
+  var userId = req.body.userId;
+  var groupId = req.body.groupId;
+  var remark = req.body.remark;
+  var status = req.body.status;
+  var expireDate = req.body.expireDate || '';
+  var createBy = req.body.createBy || 'SYS';
+
+      var queryStr = `INSERT INTO  MIT_USERS_GROUP (USERID,GroupId,Remark,STATUS,EXPIRE_DATE,CREATEBY,CREATEDATE)
+                      VALUES('${userId}','${groupId}','${remark}','${status}','${expireDate}','${createBy}',GETDATE());`;
+
+      var sql = require("mssql");
+      sql.connect(config, err => {
+        new sql.Request().query(queryStr, (err, result) => {
+          sql.close();
+            if(err){
+              res.status(500).json({
+                error:err
+              });
+
+            } else {
+              res.status(200).json({
+                message: 'User created',
+                result: result
+              });
+            }
+        })
+      });
+
+      sql.on("error", err => {
+        logger.error( `API /register - ${err}`);
+        sql.close();
+        res.status(500).json({
+          error:err
+        });
+      });
+}

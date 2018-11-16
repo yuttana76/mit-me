@@ -61,7 +61,7 @@ export class AddAuthorityDialogComponent implements OnInit, OnDestroy {
       // this.spinnerLoading = false;
       this.applicationList = data;
       // this.dataSource.next(this.applicationList);
-    }
+      }
     );
   }
 

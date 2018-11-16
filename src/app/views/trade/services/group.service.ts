@@ -72,7 +72,6 @@ export class GroupService {
                   this.http
                   .delete<{ message: string, result: string }>( BACKEND_URL + '/' + groupId)
                   .subscribe((data) => {
-                              console.log('Deleted service >' + JSON.stringify(data));
                               const updatedGroup = this.groupList.filter(group => group.GroupId !== groupId);
                               this.groupList = updatedGroup;
                               this.groupUpdated.next([...this.groupList]);

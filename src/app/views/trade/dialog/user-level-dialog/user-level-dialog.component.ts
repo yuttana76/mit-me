@@ -39,8 +39,6 @@ export class UserLevelDialogComponent implements OnInit, OnDestroy {
         },
   ];
 
-
-
   constructor(
     public dialogRef: MatDialogRef<UserLevelDialogComponent> ,
     @Inject(MAT_DIALOG_DATA) public userId: string,

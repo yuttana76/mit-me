@@ -9,6 +9,7 @@ export class MitApplicationFormService {
   from_title = 'Applications';
   addNewBtn = 'Add new application';
   editAction = 'Edit';
+  removeAction = 'Remove';
 
   tbNo = 'No';
   tbId = 'ID';

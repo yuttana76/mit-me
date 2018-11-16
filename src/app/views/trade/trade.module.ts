@@ -31,6 +31,7 @@ import { UserLevelComponent } from './user-level/user-level.component';
 import { UserGroupComponent } from './user-group/user-group.component';
 import { UserLevelDialogComponent } from './dialog/user-level-dialog/user-level-dialog.component';
 import { UserGroupDialogComponent } from './dialog/user-group-dialog/user-group-dialog.component';
+import { ApplicationDialogComponent } from './dialog/application-dialog/application-dialog.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -69,6 +70,7 @@ import { UserGroupDialogComponent } from './dialog/user-group-dialog/user-group-
     UserGroupComponent,
     UserLevelDialogComponent,
     UserGroupDialogComponent,
+    ApplicationDialogComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],
@@ -79,7 +81,8 @@ import { UserGroupDialogComponent } from './dialog/user-group-dialog/user-group-
     ConfirmationDialogComponent,
     AddAuthorityDialogComponent,
     UserLevelDialogComponent,
-    UserGroupDialogComponent
+    UserGroupDialogComponent,
+    ApplicationDialogComponent
   ],
 })
 export class TradeModule {}

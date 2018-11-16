@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../services/user.service';
@@ -15,7 +15,7 @@ import { GroupService } from '../../services/group.service';
   templateUrl: './user-group-dialog.component.html',
   styleUrls: ['./user-group-dialog.component.scss']
 })
-export class UserGroupDialogComponent implements OnInit {
+export class UserGroupDialogComponent implements OnInit,OnDestroy {
 
   form: FormGroup;
   userGroup: UserGroup = new UserGroup();
@@ -54,7 +54,10 @@ export class UserGroupDialogComponent implements OnInit {
     this.groupSub = this.groupService.getGroupListener().subscribe((data: Group[]) => {
       this.groupList = data;
     });
+  }
 
+  ngOnDestroy() {
+    this.groupSub.unsubscribe();
   }
 
   onSave() {

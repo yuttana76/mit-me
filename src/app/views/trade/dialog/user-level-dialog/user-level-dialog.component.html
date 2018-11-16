@@ -1,0 +1,62 @@
+<mat-card>
+
+    <mat-card-title>{{formService.userlevelDialog_title}} </mat-card-title>
+    <mat-card-content>
+          <form [formGroup]="form" (submit)="onSave()" #custForm="ngForm" >
+
+              <div class="row">
+                  <mat-form-field class="col-md-4">
+                    <mat-select formControlName="AppId" placeholder="{{formService.application_label}}" [(ngModel)]="userLevel.AppId">
+                      <mat-option *ngFor="let obj of applicationList" [value]="obj.AppId">
+                        {{obj.AppName}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('AppId').invalid">{{formService.application_label}}</mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="row">
+                    <mat-form-field class="col-md-4">
+                      <mat-select formControlName="Level" placeholder="{{formService.level_label}}" [(ngModel)]="userLevel.Level">
+                        <mat-option *ngFor="let obj of levelList" [value]="obj.level">
+                          {{obj.desc}}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="form.get('Level').invalid">{{formService.level_label}}</mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="row">
+                      <mat-form-field class="col-md-4">
+                        <mat-select formControlName="STATUS" placeholder="{{formService.status_label}}" [(ngModel)]="userLevel.STATUS">
+                          <mat-option *ngFor="let obj of shareDataService.statusList" [value]="obj.code">
+                            {{obj.desc}}
+                          </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('STATUS').invalid">{{formService.status_label}}</mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="row" >
+                        <mat-form-field class="col-md-4">
+                          <input matInput [matDatepicker]="EXPIRE_DATE" formControlName="EXPIRE_DATE" placeholder="{{formService.expire_label}}"
+                           [(ngModel)]="userLevel.EXPIRE_DATE" >
+                          <mat-datepicker-toggle matSuffix [for]="EXPIRE_DATE"></mat-datepicker-toggle>
+                          <mat-datepicker #EXPIRE_DATE></mat-datepicker>
+                          <mat-error *ngIf="form.get('EXPIRE_DATE').invalid ">Please correct EXPIRE_DATE date</mat-error>
+                        </mat-form-field>
+                      </div>
+
+                    <div class="row">
+                        <mat-form-field class="col-md-4">
+                          <textarea matInput  formControlName="Remark"  [(ngModel)]="userLevel.Remark" placeholder="{{formService.remark_label}}"></textarea>
+                        </mat-form-field>
+                    </div>
+          </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button class="button" mat-stroked-button color="primary" (click)="onSave()"><i class="far fa-save"></i> {{formService.save_btn}}</button>
+      <button class="button" mat-stroked-button color="warn" (click)="onClose()"> <i class="fas fa-ban"></i> {{formService.close_btn}} </button>
+    </mat-card-actions>
+  </mat-card>

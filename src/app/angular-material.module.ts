@@ -21,7 +21,8 @@ import {
   MatCheckboxModule,
   MatListModule,
   MatTooltipModule,
-  MatTreeModule
+  MatTreeModule,
+  MatRippleModule
 
 } from '@angular/material';
 
@@ -48,7 +49,8 @@ import {
     MatCheckboxModule,
     MatListModule,
     MatTooltipModule,
-    MatTreeModule
+    MatTreeModule,
+    MatRippleModule
   ]
 })
 export class AngularMaterialModule {}

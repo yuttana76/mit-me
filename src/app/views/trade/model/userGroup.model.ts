@@ -7,7 +7,7 @@ export class UserGroup {
   GroupId: string;
   groupName: string;
   Remark: string;
-  Status: string;
+  STATUS: string;
   EXPIRE_DATE: string;
   createBy: string;
   CreateDate: string;

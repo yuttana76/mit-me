@@ -7,7 +7,8 @@ export class UserLevel {
   AppName: string;
   Level: string;
   Remark: string;
-  Status: string;
+  // Status: string;
+  STATUS: string;
   EXPIRE_DATE: string;
   createBy: string;
   CreateDate: string;

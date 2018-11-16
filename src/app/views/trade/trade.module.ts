@@ -29,6 +29,8 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { AddAuthorityDialogComponent } from './dialog/add-authority-dialog/add-authority-dialog.component';
 import { UserLevelComponent } from './user-level/user-level.component';
 import { UserGroupComponent } from './user-group/user-group.component';
+import { UserLevelDialogComponent } from './dialog/user-level-dialog/user-level-dialog.component';
+import { UserGroupDialogComponent } from './dialog/user-group-dialog/user-group-dialog.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -65,6 +67,8 @@ import { UserGroupComponent } from './user-group/user-group.component';
     AddAuthorityDialogComponent,
     UserLevelComponent,
     UserGroupComponent,
+    UserLevelDialogComponent,
+    UserGroupDialogComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],
@@ -73,7 +77,10 @@ import { UserGroupComponent } from './user-group/user-group.component';
     ResultDialogComponent,
     WorkFlowActDialogComponent,
     ConfirmationDialogComponent,
-    AddAuthorityDialogComponent],
+    AddAuthorityDialogComponent,
+    UserLevelDialogComponent,
+    UserGroupDialogComponent
+  ],
 })
 export class TradeModule {}
 

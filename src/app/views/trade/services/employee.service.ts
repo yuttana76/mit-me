@@ -22,7 +22,7 @@ export class EmployeeService {
       .pipe(
         map(fundtData => {
           return fundtData.result.map(data => {
-            console.log('RTN getEmployeebyUserId()', JSON.stringify(data));
+            // console.log('RTN getEmployeebyUserId()', JSON.stringify(data));
             return {
               LoginName: data.LoginName,
               EMAIL: data.EMAIL,

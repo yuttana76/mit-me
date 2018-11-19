@@ -5,4 +5,5 @@ export class Application {
   AppName: string;
   AppGroup: string;
   AppLink: string;
+  status: string;
 }

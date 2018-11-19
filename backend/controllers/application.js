@@ -6,7 +6,7 @@ var config = dbConfig.dbParameters;
 exports.getApplication = (req, res, next) => {
 
   var fncName = 'getApplication()';
-  var queryStr = `SELECT * FROM MIT_ApplicationInfo  WHERE STATUS='A'  order by AppName `;
+  var queryStr = `SELECT * FROM MIT_ApplicationInfo  order by AppName `;
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {
@@ -66,7 +66,7 @@ exports.deleteApplication = (req, res, next) => {
 }
 
 exports.updateApplication = (req, res, next) => {
-  var appId = req.body.appId;
+  var appId = req.body.AppId;
   var appName = req.body.AppName;
   var appGroup = req.body.AppGroup;
   var appLink = req.body.AppLink;
@@ -103,7 +103,7 @@ exports.updateApplication = (req, res, next) => {
 }
 
 exports.addApplication = (req, res, next) => {
-  var appId = req.body.appId;
+  var appId = req.body.AppId;
   var appName = req.body.AppName;
   var appGroup = req.body.AppGroup;
   var appLink = req.body.AppLink;
@@ -111,7 +111,7 @@ exports.addApplication = (req, res, next) => {
 
   var fncName = 'addApplication()';
   var queryStr = `INSERT INTO MIT_ApplicationInfo  (AppId,AppName,AppGroup,AppLink,status)
-                  VALUES( '${appId}','${appName}', '${appGroup}', '${appLink}', '${status}'`;
+                  VALUES( '${appId}','${appName}', '${appGroup}', '${appLink}', '${status}')`;
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {

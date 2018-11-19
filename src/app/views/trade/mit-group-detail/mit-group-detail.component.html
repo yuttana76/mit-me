@@ -11,7 +11,6 @@
               [(ngModel)]="groupData.GroupId">
               <mat-error *ngIf="form.get('groupId').invalid">Please enter  group ID.</mat-error>
             </mat-form-field>
-
         </div>
 
         <div class="row">
@@ -35,9 +34,7 @@
 
         <mat-card-actions>
             <a mat-flat-button class="button_card_action" color="primary" (click)="onSubmit()"  >{{formService.submit_btn}}</a>
-            <!-- <a *ngIf="isDisableFields" class="button_card_action" mat-flat-button color="primary"  (click)="goBack()">
-                {{this.userFormService.back_btn}}
-            </a> -->
+            <a class="button_card_action" mat-flat-button color="primary"  (click)="goBack()"> Back </a>
         </mat-card-actions>
 
     </form>
@@ -103,8 +100,6 @@
 
 
 
-    <a class="button_card_action" mat-flat-button color="primary"  (click)="goBack()">
-        Back
-      </a>
+
 </mat-card>
 

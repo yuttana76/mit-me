@@ -14,6 +14,7 @@ export class MitApplicationFormService {
   tbNo = 'No';
   tbId = 'ID';
   tbName = 'Name';
+  tbStatus = 'Status';
   tbGroup = 'Group';
   tbLink = 'Link';
   tbAction = 'Action';

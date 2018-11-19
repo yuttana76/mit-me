@@ -155,10 +155,10 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   onSubmit() {
 
-    // if (this.form.invalid) {
-    //   console.log('form.invalid() ' + this.form.invalid);
-    //   return true;
-    // }
+    if (this.form.invalid) {
+      console.log('form.invalid() ' + this.form.invalid);
+      return true;
+    }
 
     // console.log('empID>>', this.user.empID );
     if ( !this.user.empID || this.user.empID === '') {

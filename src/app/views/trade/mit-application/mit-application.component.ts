@@ -18,7 +18,7 @@ export class MitApplicationComponent implements OnInit , OnDestroy {
 
   spinnerLoading = false;
 
-  displayedColumns: string[] = ['index', 'AppId', 'AppName' , 'Status', 'AppGroup', 'AppLink', 'Action'];
+  displayedColumns: string[] = ['index', 'AppId', 'AppName' , 'Status', 'AppGroup', 'AppLink', 'MenuOrder', 'MenuGroup', 'Action'];
   dataSource = new BehaviorSubject([]);
   applicationList: Application[];
   private applicationSub: Subscription;
@@ -37,7 +37,6 @@ export class MitApplicationComponent implements OnInit , OnDestroy {
   ngOnInit() {
 
     this.spinnerLoading = true;
-
     this.applicationService.getApplication();
     this.applicationSub = this.applicationService.getApplicationListener().subscribe((data: Application[]) => {
       this.spinnerLoading = false;
@@ -52,7 +51,6 @@ export class MitApplicationComponent implements OnInit , OnDestroy {
   }
 
   public onDelete(appId: string, appName: string) {
-
     this.confirmationDialogService.confirm('Please confirm..', `Do you really want to delete  ${appName}  application?`)
     .then((confirmed) => {
       if ( confirmed ) {
@@ -65,12 +63,9 @@ export class MitApplicationComponent implements OnInit , OnDestroy {
         });
       }
     }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
-
   }
 
-
   onEdit(app: Application) {
-    console.log('Edit>>' , JSON.stringify(app));
     this.applicationDialogComponent = this.dialog.open(ApplicationDialogComponent, {
       width: '600px',
       data: app
@@ -82,7 +77,6 @@ export class MitApplicationComponent implements OnInit , OnDestroy {
   }
 
   onAddNew() {
-    console.log('Add New');
     this.applicationDialogComponent = this.dialog.open(ApplicationDialogComponent, {
       width: '600px',
       data: new Application()

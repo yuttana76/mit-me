@@ -1,4 +1,14 @@
-export const navItems = [
+import { Injectable } from '../../../node_modules/@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Subject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import {Application} from './trade/model/application.model';
+import { environment } from '../../environments/environment';
+
+const BACKEND_URL = environment.apiURL + '/application' ;
+
+const navItems = [
   {
     name: 'Trade Dashboard',
     url: '/trade/TradeDash',
@@ -110,11 +120,20 @@ export const navItems = [
       }
     ]
   },
-  {
-    name: 'ขอความช่วยเหลือ',
-    url: 'http://coreui.io/angular/',
-    icon: 'icon-cloud-download',
-    class: 'mt-auto',
-    variant: 'success'
-  },
+  // {
+  //   name: 'ขอความช่วยเหลือ',
+  //   url: 'http://coreui.io/angular/',
+  //   icon: 'icon-cloud-download',
+  //   class: 'mt-auto',
+  //   variant: 'success'
+  // },
 ];
+
+
+@Injectable({ providedIn: 'root' })
+export class MitDynaNavService {
+
+  public getMitDynaNav() {
+    return navItems;
+  }
+}

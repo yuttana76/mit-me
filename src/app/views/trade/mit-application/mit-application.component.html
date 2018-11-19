@@ -38,18 +38,31 @@
 
                 <!-- AppLink -->
                 <ng-container matColumnDef="AppLink">
-                    <th mat-header-cell *matHeaderCellDef> {{formService.tbLink}} </th>
-                    <td mat-cell *matCellDef="let element"> {{element.AppLink}} </td>
-                </ng-container>
+                  <th mat-header-cell *matHeaderCellDef> {{formService.tbLink}} </th>
+                  <td mat-cell *matCellDef="let element"> {{element.AppLink}} </td>
+              </ng-container>
 
-                    <!-- Action  -->
-                <ng-container matColumnDef="Action">
-                    <th mat-header-cell *matHeaderCellDef> {{formService.tbAction}} </th>
-                    <td mat-cell *matCellDef="let element">
-                      <i class="far fa-edit"  (click)="onEdit(element)"  matTooltip="{{formService.editAction}}"></i>
-                      <i class="fas fa-trash-alt"    (click)="onDelete(element.AppId,element.AppName)"  matTooltip="{{formService.removeAction}}"></i>
-                    </td>
-                  </ng-container>
+                <!-- MenuOrder -->
+                <ng-container matColumnDef="MenuOrder">
+                  <th mat-header-cell *matHeaderCellDef> {{formService.tbMenuOrder}} </th>
+                  <td mat-cell *matCellDef="let element"> {{element.menuOrder}} </td>
+              </ng-container>
+
+              <!-- MenuGroup -->
+              <ng-container matColumnDef="MenuGroup">
+                <th mat-header-cell *matHeaderCellDef> {{formService.tbMenuGroup}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.menuGroup}} </td>
+              </ng-container>
+
+
+              <!-- Action  -->
+              <ng-container matColumnDef="Action">
+                  <th mat-header-cell *matHeaderCellDef> {{formService.tbAction}} </th>
+                  <td mat-cell *matCellDef="let element">
+                    <i class="far fa-edit"  (click)="onEdit(element)"  matTooltip="{{formService.editAction}}"></i>
+                    <i class="fas fa-trash-alt"    (click)="onDelete(element.AppId,element.AppName)"  matTooltip="{{formService.removeAction}}"></i>
+                  </td>
+              </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

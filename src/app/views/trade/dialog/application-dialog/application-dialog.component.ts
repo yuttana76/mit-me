@@ -36,6 +36,8 @@ export class ApplicationDialogComponent implements OnInit {
       this.insertMode = true;
     } else {
       this.insertMode = false;
+
+      this.form.controls['id'].disable();
     }
 
   }
@@ -50,13 +52,19 @@ export class ApplicationDialogComponent implements OnInit {
      name: new FormControl(null, {
        validators: [Validators.required]
      }),
+     status: new FormControl(null, {
+      //  validators: [Validators.required]
+     }),
      group: new FormControl(null, {
       //  validators: [Validators.required]
      }),
      appLink: new FormControl(null, {
       //  validators: [Validators.required]
      }),
-     status: new FormControl(null, {
+     menuOrder: new FormControl(null, {
+      //  validators: [Validators.required]
+     }),
+     menuGroup: new FormControl(null, {
       //  validators: [Validators.required]
      }),
    });

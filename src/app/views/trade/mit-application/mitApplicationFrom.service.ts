@@ -17,6 +17,8 @@ export class MitApplicationFormService {
   tbStatus = 'Status';
   tbGroup = 'Group';
   tbLink = 'Link';
+  tbMenuOrder = 'Menu Order';
+  tbMenuGroup = 'Menu Group';
   tbAction = 'Action';
 
   constructor() { }

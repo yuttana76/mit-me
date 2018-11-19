@@ -20,22 +20,6 @@
     </mat-form-field>
   </div>
 
-  <div class="row">
-    <mat-form-field class="col-md-4">
-      <input   matInput formControlName="group" placeholder="{{formService.group_label}}"
-      [(ngModel)]="application.AppGroup">
-      <mat-error *ngIf="form.get('group').invalid">Please enter  application group name.</mat-error>
-    </mat-form-field>
-  </div>
-
-
-  <div class="row">
-    <mat-form-field class="col-md-4">
-      <input   matInput formControlName="appLink" placeholder="{{formService.app_link_label}}"
-      [(ngModel)]="application.AppLink">
-      <mat-error *ngIf="form.get('appLink').invalid">Please enter  application link.</mat-error>
-    </mat-form-field>
-  </div>
 
   <div class="row">
     <mat-form-field class="col-md-4">
@@ -48,6 +32,38 @@
         <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error>
     </mat-form-field>
 </div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <input   matInput formControlName="group" placeholder="{{formService.group_label}}"
+      [(ngModel)]="application.AppGroup">
+      <mat-error *ngIf="form.get('group').invalid">Please enter  application group name.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <input   matInput formControlName="appLink" placeholder="{{formService.app_link_label}}"
+      [(ngModel)]="application.AppLink">
+      <mat-error *ngIf="form.get('appLink').invalid">Please enter  application link.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <input   matInput formControlName="menuOrder" placeholder="{{formService.menuOrder_label}}"
+      [(ngModel)]="application.menuOrder">
+      <mat-error *ngIf="form.get('menuOrder').invalid">Please enter menu sequence.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <input   matInput formControlName="menuGroup" placeholder="{{formService.menuGroup_label}}"
+      [(ngModel)]="application.menuGroup">
+      <mat-error *ngIf="form.get('menuGroup').invalid">Please enter  menu group.</mat-error>
+    </mat-form-field>
+  </div>
 
 <mat-card-actions>
   <a  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >{{formService.submit_btn}}</a>

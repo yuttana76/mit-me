@@ -27,6 +27,8 @@ export class ApplicationService {
               AppGroup: data.AppGroup,
               AppLink: data.AppLink,
               status: data.status,
+              menuOrder: data.menuOrder,
+              menuGroup: data.menuGroup,
             };
         });
     }))
@@ -48,7 +50,9 @@ export class ApplicationService {
       'AppName': insertApplication.AppName,
       'AppGroup': insertApplication.AppGroup,
       'AppLink': insertApplication.AppLink,
-      'status': insertApplication.status
+      'status': insertApplication.status,
+      'menuOrder': insertApplication.menuOrder,
+      'menuGroup': insertApplication.menuGroup
       };
 
     return new Observable((observer) => {
@@ -67,7 +71,9 @@ export class ApplicationService {
       'AppName': updateApplication.AppName,
       'AppGroup': updateApplication.AppGroup,
       'AppLink': updateApplication.AppLink,
-      'status': updateApplication.status
+      'status': updateApplication.status,
+      'menuOrder': updateApplication.menuOrder,
+      'menuGroup': updateApplication.menuGroup
       };
     // return this.http.post<{ message: string, result: string }>(BACKEND_URL , appData);
     return new Observable((observer) => {

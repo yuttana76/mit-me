@@ -6,4 +6,6 @@ export class Application {
   AppGroup: string;
   AppLink: string;
   status: string;
+  menuOrder: string;
+  menuGroup: string;
 }

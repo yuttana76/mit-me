@@ -22,7 +22,7 @@ exports.userLogin = (req, res, next) => {
   logger.info( `API /Login - ${req.originalUrl} - ${req.ip} - ${_userName}`);
 
   let queryStr = `SELECT a.* ,b.FIRST_NAME + ' ' + b.LAST_NAME AS FULLNAME
-                  FROM [MFTS].[dbo].[MIT_USERS] a
+                  FROM [MIT_USERS] a
                   LEFT JOiN MIT_EMPLOYEE b ON a.USERID = b.USERID
                  WHERE a.STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
                  AND MIT_GROUP <>'C1'
@@ -34,6 +34,8 @@ exports.userLogin = (req, res, next) => {
     return pool.request()
     .query(queryStr)})
     .then(user => {
+
+      console.log();
 
       if(!user){
        logger.error( `API /Login Auth failed. 1 - ${req.originalUrl} - ${req.ip} `);
@@ -141,11 +143,9 @@ exports.createUser = (req,res,next)=>{
   });
 }
 
-
 exports.resetPassword = (req,res,next)=>{
 
   logger.info( `API /resetPassword - ${req.originalUrl} - ${req.ip} - ${req.body.LoginName}`);
-
   bcrypt.hash(req.body.password, SALT_WORK_FACTOR)
   .then(hash =>{
 

@@ -78,12 +78,8 @@ export class AddAuthorityDialogComponent implements OnInit, OnDestroy {
 
       this.authority.GroupId = this.groupId;
       this.authority.Status = 'A';
-      console.log('Authority Data>>' + JSON.stringify(this.authority));
-
       // addAuthrity
       this.authorityService.addAuthrity(this.authority).subscribe((data: any) => {
-          console.log('Return addAuthrity()', JSON.stringify(data));
-
           this.dialogRef.close('save');
       });
 

@@ -66,8 +66,6 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
 
-      console.log('LINK paramMap >>', JSON.stringify(paramMap));
-
       if (paramMap.has('source')) {
         this.formScreen = paramMap.get('source');
       }
@@ -82,9 +80,6 @@ export class UserDetailComponent implements OnInit, OnDestroy {
           this.user = data[0];
         })
       }
-      console.log('User Id:' + this.userId + '  ;From:' + this.formScreen);
-
-
     });
 
 

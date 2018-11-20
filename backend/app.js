@@ -33,6 +33,8 @@ const applicationRoutes = require('./routes/application');
 const groupRoutes = require('./routes/group');
 const authorityRoutes = require('./routes/authority');
 
+const navRoutes = require('./routes/nav');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -82,6 +84,8 @@ app.use("/api/mail",mailRoutes);
 app.use("/api/application",applicationRoutes);
 app.use("/api/group",groupRoutes);
 app.use("/api/authority",authorityRoutes);
+
+app.use("/api/nav",navRoutes);
 
 // Utility
 app.use("/api/util",utilityRoutes);

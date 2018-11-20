@@ -6,7 +6,7 @@ import { navItems } from './../../_MerchantNav';
 import { AuthService } from '../../views/services/auth.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { MitDynaNavService } from '../../views/_mitDynaNav.service';
+import { MitDynaNavService } from '../../views/trade/services/_mitDynaNav.service';
 
 
 @Component({
@@ -27,7 +27,11 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
   private changes: MutationObserver;
   public element: HTMLElement = document.body;
 
-  constructor(private authService: AuthService,  private router: Router , private dynaNav: MitDynaNavService) {
+  constructor(
+    private authService: AuthService,
+    private router: Router ,
+    private dynaNav: MitDynaNavService
+    ) {
 
     this.changes = new MutationObserver((mutations) => {
       this.sidebarMinimized = document.body.classList.contains('sidebar-minimized');
@@ -49,7 +53,60 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
     });
 
   // NAV
-  this.navItems =  this.dynaNav.getMitDynaNav();
+  // this.navItems =  this.dynaNav.getMitDynaNav();
+
+  this.dynaNav.getMitNav2U(this.userData).subscribe( menuDyna => {
+
+    let appArray = new Array();
+    let repArray = new Array();
+    let settingArray = new Array();
+
+    for (var x in menuDyna) {
+      if ( menuDyna[x].menuGroup === 'Applications') {
+        appArray.push(menuDyna[x]);
+
+      } else if (menuDyna[x].menuGroup === 'Report & Enquiry') {
+        repArray.push(menuDyna[x]);
+
+      } else if (menuDyna[x].menuGroup === 'Setting') {
+        settingArray.push(menuDyna[x]);
+      }
+    }
+
+    const navDyna = [
+
+      { name: 'Trade Dashboard',
+        url: '/trade/TradeDash',
+        icon: 'icon-speedometer',
+      } ,
+      { name: 'Anoucement',
+        url: '',
+        icon: 'icon-bell',
+      },
+      {
+        name: 'Documents',
+        url: '',
+        icon: 'icon-briefcase',
+      },
+      {name: 'Applications ',
+      url: '/trade',
+      icon: 'icon-layers',
+      children: appArray},
+
+      {name: 'Report & Enquiry',
+      url: '/trade',
+      icon: 'icon-pie-chart',
+      children: repArray},
+      {name: 'Setting',
+      url: '',
+      icon: 'icon-user',
+      children:  settingArray }
+    ];
+
+    // console.log( 'dynaNav(Trans)>>' , JSON.stringify(navDyna));
+    this.navItems = navDyna;
+  });
+
   }
 
   onLogout() {

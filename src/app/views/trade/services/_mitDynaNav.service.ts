@@ -1,12 +1,11 @@
-import { Injectable } from '../../../node_modules/@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import {Application} from './trade/model/application.model';
-import { environment } from '../../environments/environment';
-
-const BACKEND_URL = environment.apiURL + '/application' ;
+import {Application} from '../model/application.model';
+import { environment } from '../../../../environments/environment';
+import { ThemeRoutingModule } from '../../theme/theme-routing.module';
 
 const navItems = [
   {
@@ -129,11 +128,42 @@ const navItems = [
   // },
 ];
 
+const BACKEND_URL = environment.apiURL + '/nav';
 
 @Injectable({ providedIn: 'root' })
 export class MitDynaNavService {
 
+  constructor(private http: HttpClient , private router: Router) { }
+
   public getMitDynaNav() {
+
     return navItems;
+  }
+
+  // this.getMitNav2U('yuttana76@gmail.com');
+  public getMitNav2U(userId: string) {
+
+    const queryParams = `?userId=${userId}`;
+
+    return this.http.get<{result: any }>(BACKEND_URL + queryParams )
+    .pipe(
+      map(data => {
+        return data.result.map(rtnData => {
+          return {
+            AppId: rtnData.AppId,
+            AppName: rtnData.AppName,
+            AppGroup: rtnData.AppGroup,
+            AppLink: rtnData.AppLink,
+            status: rtnData.status,
+            menuOrder: rtnData.menuOrder,
+            menuGroup: rtnData.menuGroup,
+            name: rtnData.AppName,
+            url: rtnData.AppLink,
+            icon: 'icon-sapace'
+
+          };
+        });
+      })
+    );
   }
 }

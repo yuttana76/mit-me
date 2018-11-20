@@ -112,4 +112,26 @@ export class AuthorityService {
     });
   }
 
+  getPermissionByAppId(userId: string, appId: string) {
+
+    return this.http
+      .get<{ message: string; result: any }>(BACKEND_URL + '/permis/' + userId + '/' + appId)
+      .pipe(
+        map(fundtData => {
+          return fundtData.result.map(data => {
+            return {
+              AppId: data.AppId,
+              MIT_GROUP: data.MIT_GROUP,
+              Status: data.Status,
+              mCreate: data.mcreate,
+              mEdit: data.medit,
+              mView: data.mview,
+              mDelete: data.mdelete,
+              EXPIRE_DATE: data.EXPIRE_DATE
+            };
+          });
+        })
+      );
+  }
+
 }

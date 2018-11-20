@@ -45,8 +45,6 @@ export class AuthorityService {
 
   getAuthorityByGroupId(id: string) {
 
-    console.log('getAuthorityByGroupId() >>' + id );
-
     return this.http
       .get<{ message: string; result: any }>(BACKEND_URL + '/' + id)
       .pipe(
@@ -78,7 +76,6 @@ export class AuthorityService {
         this.http
         .delete<{ message: string, result: string }>( BACKEND_URL + '/' + groupId + '/' + appId)
         .subscribe((data) => {
-                    console.log('Deleted  Authorityservice >' + JSON.stringify(data));
                     const updatedGroup = this.authority.filter(authority => authority.AppId !== appId);
                     this.authority = updatedGroup;
                     this.authorityUpdated.next([...this.authority]);
@@ -92,8 +89,6 @@ export class AuthorityService {
   }
 
   addAuthrity(authority: Authority): Observable<any> {
-
-    console.log('Authority Service>>' + JSON.stringify(authority));
 
     const data = {
       AppId: authority.AppId,
@@ -110,8 +105,6 @@ export class AuthorityService {
          this.http
         .post<{ message: string, result: string }>(BACKEND_URL , data)
         .subscribe((_data) => {
-          console.log('addAuthrity  Authorityservice >' + JSON.stringify(_data));
-
           this.getAuthorityByGroupId(authority.GroupId);
            observer.next(data);
 

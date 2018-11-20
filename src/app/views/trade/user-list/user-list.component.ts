@@ -76,7 +76,6 @@ export class UserListComponent implements OnInit , OnDestroy {
   }
 
   onSerach() {
-    console.log('onSerach ! ');
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);
       return true;

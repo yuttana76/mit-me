@@ -8,6 +8,9 @@ import { AmcService } from '../services/amc.service';
 
 import { Subscription } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AuthorityService } from '../services/authority.service';
+import { AuthService } from '../../services/auth.service';
+import { Authority } from '../model/authority.model';
 
 
 @Component({
@@ -20,6 +23,9 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
 
   spinnerLoading = false;
   form: FormGroup;
+  public authority: Authority = new Authority();
+  private appId = 'sumRep';
+  public YES_VAL = 'Y';
 
   funds: Fund[] = [];
   amcs: Amc[] = [];
@@ -28,10 +34,23 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
 
   constructor(
     private fundService: FundService,
-    private amcService: AmcService
+    private amcService: AmcService,
+    private authorityService: AuthorityService,
+    private authService: AuthService,
     ) { }
 
+
   ngOnInit() {
+
+    // Permission
+    this.authorityService.getPermissionByAppId(this.authService.getUserData(), this.appId).subscribe( (auth: Authority[]) => {
+
+      auth.forEach( (element) => {
+        this.authority = element;
+      });
+
+    });
+
     this.spinnerLoading = true;
     this.form = new FormGroup({
       startDate: new FormControl(null, {
@@ -77,13 +96,11 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
     this.fundService.getFunds(1, 5);
     this.fundsSub = this.fundService.getFundUpdateListener().subscribe((funds: Fund[]) => {
       this.funds = funds;
-      console.log('Final Fund>>' + JSON.stringify(this.funds) );
     });
 
   }
 
   onExecute() {
-    console.log(' onExecute()');
 
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);

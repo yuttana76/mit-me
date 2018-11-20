@@ -36,16 +36,10 @@
       <mat-error *ngIf="form.get('fund').invalid">Please choose fund.</mat-error>
     </mat-form-field>
 
-
-    <button
-      mat-raised-button
-      color ="primary"
-    type='submit' >Execute</button>&nbsp;
-
-  <button
-    mat-raised-button
-    color ="warn"
-  type='reset' (click)="reset()" >Reset</button>
+    <div *ngIf="authority.mView == YES_VAL ">
+      <button    mat-raised-button     color ="primary"   type='submit' >Execute</button>&nbsp;
+      <button    mat-raised-button    color ="warn"  type='reset' (click)="reset()" >Reset</button>
+    </div>
 
   </form>
 

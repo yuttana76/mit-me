@@ -1,6 +1,7 @@
 {
   "env": {
   "BE_PORT":"3000",
+  "BE_URL":"http://localhost:3000/api",
   "JWT_KEY":"secret_this_should_be_longer",
   "AUTH_SRV_USER": "mftsuser",
   "AUTH_SRV_PWD": "P@ssw0rd",

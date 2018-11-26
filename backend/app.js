@@ -34,6 +34,7 @@ const groupRoutes = require('./routes/group');
 const authorityRoutes = require('./routes/authority');
 
 const navRoutes = require('./routes/nav');
+const reportRoutes = require('./routes/report');
 
 const app = express();
 
@@ -91,6 +92,8 @@ app.use("/api/nav",navRoutes);
 app.use("/api/util",utilityRoutes);
 app.use("/api/risk",riskSuitRoutes);
 
+// Reports
+app.use("/api/rep",reportRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

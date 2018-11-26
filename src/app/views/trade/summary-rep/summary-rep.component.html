@@ -5,21 +5,24 @@
   <mat-card-content>
   <form  [formGroup]="form" (submit)="onExecute()" #postForm="ngForm" *ngIf="!spinnerLoading">
 
-    <mat-form-field>
-      <input matInput [matDatepicker]="picker" formControlName="startDate" placeholder="Start date.">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-      <mat-error *ngIf="form.get('startDate').invalid ">Please correct start date.</mat-error>
-    </mat-form-field>
+    <div class="row" >
+      <mat-form-field class="col-md-4">
+        <input matInput [matDatepicker]="picker" formControlName="startDate" placeholder="Start date.">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="form.get('startDate').invalid ">Please correct start date.</mat-error>
+      </mat-form-field>
 
-    <mat-form-field>
-        <input matInput [matDatepicker]="endpicker" formControlName="endDate" placeholder="End date.">
-        <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
-        <mat-datepicker #endpicker></mat-datepicker>
-        <mat-error *ngIf="form.get('endDate').invalid ">Please correct end date.</mat-error>
-    </mat-form-field>
+      <mat-form-field class="col-md-4">
+          <input matInput [matDatepicker]="endpicker" formControlName="endDate" placeholder="End date.">
+          <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
+          <mat-datepicker #endpicker></mat-datepicker>
+          <mat-error *ngIf="form.get('endDate').invalid ">Please correct end date.</mat-error>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field>
+    <div class="row" >
+    <mat-form-field class="col-md-4">
       <mat-select placeholder="AMC" formControlName="amc">
           <mat-option *ngFor="let option of amcs" [value]="option.amcCode">
               {{ option.amcCode }}
@@ -29,20 +32,89 @@
       <mat-error *ngIf="form.get('amc').invalid">Please choose AMC.</mat-error>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="col-md-4">
       <mat-select placeholder="Fund" formControlName="fund">
         <mat-option value="option">Option</mat-option>
       </mat-select>
       <mat-error *ngIf="form.get('fund').invalid">Please choose fund.</mat-error>
     </mat-form-field>
 
+    </div>
+
     <div *ngIf="authority.mView == YES_VAL ">
       <button    mat-raised-button     color ="primary"   type='submit' >Execute</button>&nbsp;
       <button    mat-raised-button    color ="warn"  type='reset' (click)="reset()" >Reset</button>
+
     </div>
-
   </form>
-
 </mat-card-content>
+</mat-card>
 
+
+<mat-card class="repContent">
+    <mat-card-title>
+        <a mat-button  routerLinkActive="mat-accent" matTooltip="Print" (click)="onPrint()">
+          Print
+            <i class="fas fa-print" ></i>
+          </a>
+    </mat-card-title>
+<mat-card-content >
+    <div #repContent>
+
+      <table>
+        <tr><td>Summary of Subscription, Redemption and Switching Form</td></tr>
+        <tr
+      </table>
+
+      <table id="tab_customers" class="table table-striped">
+          <colgroup>
+              <col width="20%">
+                  <col width="20%">
+                      <col width="20%">
+                          <col width="20%">
+          </colgroup>
+          <thead>
+              <tr class='warning'>
+                  <th>Country</th>
+                  <th>Population</th>
+                  <th>Date</th>
+                  <th>Age</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <td>Chinna</td>
+                  <td>1,363,480,000</td>
+                  <td>March 24, 2014</td>
+                  <td>19.1</td>
+              </tr>
+              <tr>
+                  <td>India</td>
+                  <td>1,241,900,000</td>
+                  <td>March 24, 2014</td>
+                  <td>17.4</td>
+              </tr>
+              <tr>
+                  <td>United States</td>
+                  <td>317,746,000</td>
+                  <td>March 24, 2014</td>
+                  <td>4.44</td>
+              </tr>
+              <tr>
+                  <td>Indonesia</td>
+                  <td>249,866,000</td>
+                  <td>July 1, 2013</td>
+                  <td>3.49</td>
+              </tr>
+              <tr>
+                  <td>Brazil</td>
+                  <td>201,032,714</td>
+                  <td>July 1, 2013</td>
+                  <td>2.81</td>
+              </tr>
+          </tbody>
+      </table>
+
+    </div>
+  </mat-card-content>
 </mat-card>

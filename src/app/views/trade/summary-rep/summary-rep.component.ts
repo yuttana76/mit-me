@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 
 import { Fund } from '../model/fund.model';
 import { FundService } from '../services/fund.service';
@@ -12,6 +12,7 @@ import { AuthorityService } from '../services/authority.service';
 import { AuthService } from '../../services/auth.service';
 import { Authority } from '../model/authority.model';
 
+import * as jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-summary-rep',
@@ -20,6 +21,8 @@ import { Authority } from '../model/authority.model';
 })
 
 export class SummaryRepComponent implements OnInit, OnDestroy {
+
+  @ViewChild('repContent') content: ElementRef;
 
   spinnerLoading = false;
   form: FormGroup;
@@ -97,7 +100,6 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
     this.fundsSub = this.fundService.getFundUpdateListener().subscribe((funds: Fund[]) => {
       this.funds = funds;
     });
-
   }
 
   onExecute() {
@@ -113,4 +115,72 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
     console.log('Reset()');
 
   }
+
+  public onPrint() {
+
+    // let doc = new jsPDF();
+    let doc = new jsPDF('p', 'pt', 'letter');
+
+    doc.text(100, 225, 'Summary Report');
+
+    let specialElementHandlers = {
+      '#editor' : function(element, renderer) {
+        return true;
+      }
+    }
+
+    let content = this.content.nativeElement;
+
+    doc.fromHTML(content.innerHTML, 15, 15, {
+      'width': 190,
+      'elementHandlers': specialElementHandlers
+    });
+
+    doc.save('test.pdf');
+
+  }
+
+
+//   public onPrint2() {
+//     var pdf = new jsPDF('p', 'pt', 'letter');
+//     // var text = document.getElementById("Text1").value;
+//     pdf.text(100, 225, 'Summary Report');
+//     // source can be HTML-formatted string, or a reference
+//     // to an actual DOM element from which the text will be scraped.
+//     source = $('#customers')[0];
+
+//     // we support special element handlers. Register them with jQuery-style
+//     // ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
+//     // There is no support for any other type of selectors
+//     // (class, of compound) at this time.
+//     specialElementHandlers = {
+//         // element with id of "bypass" - jQuery style selector
+//         '#bypassme': function (element, renderer) {
+//             // true = "handled elsewhere, bypass text extraction"
+//             return true
+//         }
+//     };
+//     margins = {
+//         top: 80,
+//         bottom: 60,
+//         left: 40,
+//         width: 522
+//     };
+//     // all coords and widths are in jsPDF instance's declared units
+//     // 'inches' in this case
+//     pdf.fromHTML(
+//     source, // HTML string or DOM elem ref.
+//     margins.left, // x coord
+//     margins.top, { // y coord
+//         'width': margins.width, // max width of content on PDF
+//         'elementHandlers': specialElementHandlers
+//     },
+
+//     function (dispose) {
+//         // dispose: object with X, Y of the last line add to the PDF
+//         //          this allow the insertion of new lines after html
+//         pdf.save('Test.pdf');
+//     }, margins);
+// }
+
 }

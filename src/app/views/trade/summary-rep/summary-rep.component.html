@@ -25,8 +25,8 @@
 
     <div class="row" >
     <mat-form-field class="col-md-4">
-      <mat-select placeholder="AMC" formControlName="amc" [(ngModel)]="reportGeneral.amc">
-          <mat-option *ngFor="let option of amcs" [value]="option.amcCode" >
+      <mat-select placeholder="AMC" formControlName="amc" [(ngModel)]="reportGeneral.amc" (selectionChange) ="amcChange($event)">
+          <mat-option *ngFor="let option of amcs" [value]="option.amcid" >
               {{ option.amcCode }}
             </mat-option>
 
@@ -35,7 +35,7 @@
     </mat-form-field>
 
     <mat-form-field class="col-md-4">
-      <mat-select placeholder="Fund" formControlName="fund" [(ngModel)]="reportGeneral.fund">
+      <mat-select placeholder="Fund" formControlName="fund" [(ngModel)]="reportGeneral.fund"  >
         <mat-option *ngFor="let option of funds" [value]="option.fundCode" >
           <!-- {{ option.thaiName }} -->
           {{ option.engName }}

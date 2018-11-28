@@ -21,14 +21,13 @@ function getDATA(req) {
   return new Promise(function(resolve, reject) {
 
     request.get(options, function(err, resp, body) {
-
-        console.log('***STEP 2-2');
+      if (resp.statusCode == '200'){
         resolve(JSON.parse(body));
-          // if (err) {
-          //     reject(err);
-          // } else {
-          //     resolve(JSON.parse(body));
-          // }
+      }else{
+        reject(resp);
+      }
+
+
       })
   })
 }
@@ -46,7 +45,7 @@ exports.repSummary = (req, res, next) => {
   'use strict';
 
   var getData = getDATA(req);
-  console.log('***STEP 3');
+  // console.log('***STEP 3');
 
   getData.then(function(result) { // PROMISE
 
@@ -139,38 +138,49 @@ exports.repSummary = (req, res, next) => {
         {data: data.Contact_Fax, width: 50 ,underline:true}
       ]);
       rpt.newLine();
-
+      rpt.newLine();
 
     // Contact Info
     // contactInfo(rpt, data);
       // nameheader(rpt, data);
 
-    rpt.newline();
-    rpt.newline();
-    rpt.newline();
+    // rpt.newline();
+    // rpt.newline();
+    // rpt.newline();
 
     // Message
     // message(rpt,data);
 
-    rpt.newline();
-    rpt.newline();
-    rpt.newline();
+    // rpt.newline();
+    // rpt.newline();
+    // rpt.newline();
 
     // Detail Header
     rpt.fontBold();
+
     rpt.band([
-      {data: 'Invoice #', width: 60},
-      {data: 'Cust PO'},
-      {data: 'Invoice Date', width: 60},
-      {data: 'Current', align: 3, width: 60},
-      {data: '31-60 Days', width: 60, align: 3},
-      {data: '61-90 Days', width: 60, align: 3},
-      {data: '91-120 Days', width: 65, align: 3},
-      {data: '>120 Days', width: 60, align: 3},
-      {data: 'Total Due', width: 60, align: 3}
+      {data: 'subscription-baht', width: 220,align: 3,x:440},
+      {data: 'redemtion', width: 180, align: 3},
+      {data: 'switchng', width: 180, align: 3},
     ]);
-    rpt.fontNormal();
     rpt.bandLine();
+
+    rpt.band([
+      {data: 'NO #', width: 60},
+      {data: 'Unit Holder', width: 60},
+      {data: 'Holder name', width: 60},
+      {data: 'Sales name', align: 3, width: 60},
+      {data: 'cash-baht', width: 60, align: 3},
+      {data: 'check-baht', width: 60, align: 3},
+      {data: 'check no/bank/branch', width: 100, align: 3},
+      {data: 'baht', width: 60, align: 3},
+      {data: 'unit', width: 60, align: 3},
+      {data: 'baht', width: 60, align: 3},
+      {data: 'unit', width: 60, align: 3},
+    ]);
+    rpt.bandLine();
+
+    rpt.fontNormal();
   };
 
     var detail = function(rpt, data) {
@@ -203,7 +213,6 @@ exports.repSummary = (req, res, next) => {
     rpt.newline();
     rpt.print('Thank You for Choosing us!', {align: 'right'});
   };
-
       var totalFormatter = function(data, callback) {
 
           for (var key in data) {
@@ -240,6 +249,7 @@ exports.repSummary = (req, res, next) => {
     resultReport
       .fontsize(9)
       .margins(40)
+      .landscape(true)
         // .detail(detail)
         // .groupBy('id')
         // .sum('current')
@@ -263,15 +273,15 @@ exports.repSummary = (req, res, next) => {
         console.timeEnd("Rendered");
 
         res.download(rptName); // Set disposition and send it.
-
       //   res.status(200).json({
       //     report: name
       // });
-
     });
 
 }, function(err) {
-    console.log(err);
+  res.status(204).json({
+    message: "Not found data"
+  });
 })
 
 }

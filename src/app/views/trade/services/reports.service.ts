@@ -17,9 +17,9 @@ export class ReportsService {
   constructor(private http: HttpClient) {}
 
   getSummaryReport(startDate: string, endDate: string, amcCode: string, fundCode: string) {
+
     const queryParams = `?startDate=${startDate}&endDate=${endDate}&amcCode=${amcCode}&fundCode=${fundCode}`;
     console.log('getSummaryReport()>>' + BACKEND_URL + '/rep/summary' + queryParams );
-
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
 

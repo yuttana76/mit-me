@@ -1,6 +1,7 @@
 const dbConfig = require('./config');
 
 var config = dbConfig.dbParameters;
+var logger = require('../config/winston');
 
 exports.getTransactionByParams = (req, res, next) => {
 
@@ -47,7 +48,8 @@ exports.getTransactionsRep = (req, res, next) => {
   var amcCode = req.query.amcCode || '';
   var fundCode = req.query.fundCode || '';
 
-  console.log( 'Welcome getTransactionsRep()' + fundCode);
+  logger.info( `Query /getTransactionsRep - ${req.originalUrl} - ${req.ip} `);
+
 
   var queryStr = `
   BEGIN
@@ -71,6 +73,8 @@ exports.getTransactionsRep = (req, res, next) => {
     END
    `;
 
+  //  logger.info( `Query /getTransactionsRep - QUERY >> ${queryStr} `);
+
   var sql = require("mssql");
   sql.connect(config, err => {
     // Callbacks
@@ -86,10 +90,17 @@ exports.getTransactionsRep = (req, res, next) => {
 
         // console.log('getTransactionsRep()>>',JSON.stringify(result.recordset));
         // return result.recordset;
-        res.status(200).json({
-          message: "Connex  successfully!",
-          result: result.recordset
-        });
+        if(result){
+          res.status(200).json({
+            message: "Connex  successfully!",
+            result: result.recordset || null
+          });
+        }else {
+          res.status(400).json({
+            message: "Bad Request "
+          });
+        }
+
         sql.close();
 
     })
@@ -97,6 +108,7 @@ exports.getTransactionsRep = (req, res, next) => {
 
   sql.on("error", err => {
     console.log('sql.on !!!' + err);
+    logger.error(err);
     sql.close();
   });
 }

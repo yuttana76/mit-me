@@ -1,18 +1,10 @@
-const demoSummaryReport = require('./demoSummary')
 var Report = require('fluentReports' ).Report;
 var request = require("request");
 var Report = require('fluentReports' ).Report;
-
-exports.repSummary = (req, res, next) => {
-  var fncName = 'repSummary';
-  console.log('Welcome ' + fncName);
-
-  createSummaryReport(req, res, next);
-
-}
+var logger = require('../../config/winston');
 
 // ***************************************************
-function initialize(req) {
+function getDATA(req) {
   var options = {
       url: process.env.BE_URL +'/trans/report',
       headers: {
@@ -27,23 +19,25 @@ function initialize(req) {
   };
   // Return new promise
   return new Promise(function(resolve, reject) {
-    // Do async job
-    // ({url:url, qs:propertiesObject},
-      request.get(options, function(err, resp, body) {
-          if (err) {
-              reject(err);
-          } else {
-              resolve(JSON.parse(body));
-          }
+
+    request.get(options, function(err, resp, body) {
+
+        console.log('***STEP 2-2');
+        resolve(JSON.parse(body));
+          // if (err) {
+          //     reject(err);
+          // } else {
+          //     resolve(JSON.parse(body));
+          // }
       })
   })
-
 }
 
+exports.repSummary = (req, res, next) => {
+  var fncName = 'repSummary';
+  console.log('Welcome ' + fncName);
 
-createSummaryReport = (req, res, next) => {
-
-  console.log('demoSummary func.');
+  logger.info('API repSummary ');
 
   // Optional -- If you don't pass a report name, it will default to "report.pdf"
   var prefix ='001';
@@ -51,13 +45,12 @@ createSummaryReport = (req, res, next) => {
 
   'use strict';
 
+  var getData = getDATA(req);
+  console.log('***STEP 3');
 
-  var getData = initialize(req);
+  getData.then(function(result) { // PROMISE
 
-  getData.then(function(result) {
     console.log("Initialized user details");
-    // Use user details from here
-    //  console.log(result)
     var mydata = result.result;
 
     var contactInfo = function(rpt, data) {
@@ -281,6 +274,7 @@ createSummaryReport = (req, res, next) => {
     console.log(err);
 })
 
-
 }
+
+
 

@@ -115,11 +115,6 @@ export class CustomerListComponent implements OnInit, OnDestroy {
 
   onSerachCust() {
 
-      // this.toastr.success('Hello world!', 'Toastr fun!');
-      // this.toastr.error('everything is broken', 'Major Error');
-      // this.toastr.info('info is broken', 'Major Error');
-      // this.toastr.warning('warning is broken', 'Major Error');
-
     // console.log('onSerachCust ! ');
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);

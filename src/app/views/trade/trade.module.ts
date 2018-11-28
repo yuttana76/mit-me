@@ -85,5 +85,7 @@ import { ApplicationDialogComponent } from './dialog/application-dialog/applicat
     ApplicationDialogComponent
   ],
 })
-export class TradeModule {}
+export class TradeModule {
+
+}
 

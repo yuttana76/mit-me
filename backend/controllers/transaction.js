@@ -81,23 +81,30 @@ exports.getTransactionsRep = (req, res, next) => {
     new sql.Request().query(queryStr, (err, result) => {
         if(err){
           console.log('Was err !!!' + err);
-          res.status(201).json({
+          res.status(400).json({
             message: err,
           });
           sql.close();
         }
         sql.close();
 
-        // console.log('getTransactionsRep()>>',JSON.stringify(result.recordset));
-        // return result.recordset;
-        if(result){
+        // console.log(result.recordsets.length) // count of recordsets returned by the procedure
+        // console.log(result.recordsets[0].length) // count of rows contained in first recordset
+
+        if(result.recordsets[0].length > 0){
+
+          // var dataResult = JSON.parse(result)
+          // if (dataResult.recordset)
+
           res.status(200).json({
             message: "Connex  successfully!",
             result: result.recordset || null
           });
+
+
         }else {
-          res.status(400).json({
-            message: "Bad Request "
+          res.status(404).json({
+            message: "Not found data"
           });
         }
 

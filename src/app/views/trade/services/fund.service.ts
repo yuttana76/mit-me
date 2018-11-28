@@ -22,7 +22,6 @@ export class FundService {
     console.log(' Fund service get:' + rowPerPage);
 
     const queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
-    console.log('queryParams>' + queryParams);
 
     this.http.get<{ message: string, result: any }>(BACKEND_URL + '/fund')
     .pipe(map((fundtData) => {
@@ -31,6 +30,7 @@ export class FundService {
               fundCode: fund.Fund_Code,
               thaiName: fund.Thai_Name,
               engName: fund.Eng_Name,
+              Amc_Id: fund.Amc_Id,
             };
         });
     }))
@@ -42,6 +42,25 @@ export class FundService {
 
   getFundUpdateListener() {
     return this.fundUpdated.asObservable();
+  }
+
+  getFundByAMC(amcCode: string) {
+    const queryParams = `?amcCode=${amcCode}`;
+    this.http.get<{ message: string, result: any }>(BACKEND_URL + '/fund/amc' + queryParams)
+    .pipe(map((fundtData) => {
+        return fundtData.result.map(fund => {
+            return {
+              fundCode: fund.Fund_Code,
+              thaiName: fund.Thai_Name,
+              engName: fund.Eng_Name,
+              Amc_Id: fund.Amc_Id,
+            };
+        });
+    }))
+    .subscribe((transformedFunds) => {
+        this.funds = transformedFunds;
+        this.fundUpdated.next([...this.funds]);
+    });
   }
 
 }

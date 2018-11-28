@@ -4,8 +4,15 @@ var config = dbConfig.dbParameters;
 
 exports.getFunds = (req, res, next) => {
 
+  console.log('Welcome getFunds()');
+
   var fncName = 'getFunds()';
-  var queryStr = `select * FROM [MFTS].[dbo].[MFTS_Fund] ORDER  BY Amc_Id ,Thai_Name`;
+
+  var queryStr = `SELECT * FROM [MFTS_Fund]
+  WHERE CURRENT_TIMESTAMP < ISNULL(End_Date,CURRENT_TIMESTAMP+1)
+  ORDER  BY Amc_Id ,Thai_Name`;
+
+  console.log('Query Str>>' + queryStr);
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {
@@ -27,7 +34,46 @@ exports.getFunds = (req, res, next) => {
   })
 
   pool1.on('error', err => {
-    // ... error handler
+    console.log("EROR>>"+err);
+  })
+}
+
+exports.getFundsByAMC = (req, res, next) => {
+
+  console.log('Welcome getFundsByAMC()');
+
+  var fncName = 'getFunds()';
+  var amcCode = req.query.amcCode || '';
+
+  if (amcCode != ''){
+    whereCond = whereCond + ` AND Amc_Id= ${amcCode} `
+  }
+
+  var queryStr = `SELECT * FROM [MFTS_Fund]
+  WHERE CURRENT_TIMESTAMP < ISNULL(End_Date,CURRENT_TIMESTAMP+1) ${whereCond}
+  ORDER  BY Amc_Id ,Thai_Name
+   `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+
+  pool1.on('error', err => {
     console.log("EROR>>"+err);
   })
 }
@@ -66,6 +112,8 @@ exports.getFunds = (req, res, next) => {
 
 
 exports.getFundByCode = (req, res, next) => {
+
+  console.log('Welcome getFundByCode()');
 
   var fncName = 'getFundByCode()';
   var _fundCode = req.params.code;

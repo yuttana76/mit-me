@@ -15,6 +15,10 @@ import { Authority } from '../model/authority.model';
 import { ReportsService } from '../services/reports.service';
 import fileSaver from 'file-saver';
 import { ReportGeneral } from '../model/reportGeneral.model';
+import * as moment from 'moment';
+import { ShareDataService } from '../services/shareData.service';
+import { ToastrService } from 'ngx-toastr';
+import { MatSelectChange } from '@angular/material';
 
 @Component({
   selector: 'app-summary-rep',
@@ -33,8 +37,9 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
   public YES_VAL = 'Y';
 
   reportGeneral: ReportGeneral = new ReportGeneral();
-  funds: Fund[] = [];
   amcs: Amc[] = [];
+  fundsMaster: Fund[] = [];
+  funds: Fund[] = [];
 
 
   private fundsSub: Subscription;
@@ -46,7 +51,9 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
     private amcService: AmcService,
     private authorityService: AuthorityService,
     private authService: AuthService,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private shareDataService: ShareDataService,
+    private toastr: ToastrService,
     ) { }
 
 
@@ -81,7 +88,7 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
 */
     this.fundService.getFunds(1, 5);
     this.fundsSub = this.fundService.getFundUpdateListener().subscribe((funds: Fund[]) => {
-      this.funds = funds;
+      this.fundsMaster = funds;
       // console.log('Final Fund>>' + JSON.stringify(this.funds) );
     });
 
@@ -105,13 +112,12 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
     }
   }
 
-  onGetFund() {
-
-    this.fundService.getFunds(1, 5);
-    this.fundsSub = this.fundService.getFundUpdateListener().subscribe((funds: Fund[]) => {
-      this.funds = funds;
-    });
-  }
+  // onGetFund() {
+  //   this.fundService.getFunds(1, 5);
+  //   this.fundsSub = this.fundService.getFundUpdateListener().subscribe((funds: Fund[]) => {
+  //     this.fundsMaster = funds;
+  //   });
+  // }
 
   onExecute() {
 
@@ -122,17 +128,28 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
     // console.log( 'NEXT FORM VALUES>>' + this.form.value.amc);
     // const result = this.reportsService.getSummaryReport('2018-02-01', '2018-03-30', 'TMBAM', 'TMBPIPF-X');
 
+    const start_dateValue  = moment(this.reportGeneral.startDate).format(this.shareDataService.DB_DATE_FORMAT);
+    const end_dateValue  = moment(this.reportGeneral.endDate).format(this.shareDataService.DB_DATE_FORMAT);
+
+    const _amcs: Amc[] = this.amcs.filter(element => element.amcid === this.reportGeneral.amc);
     const result = this.reportsService.getSummaryReport(
-        this.reportGeneral.startDate,
-        this.reportGeneral.endDate,
-        this.reportGeneral.amc,
+      start_dateValue,
+      end_dateValue,
+      _amcs[0].amcCode,
         this.reportGeneral.fund);
 
     result.subscribe(fileData => {
-        fileSaver.saveAs(fileData, 'summaryReport.pdf');  // Save file to download folder
-    },
-      err => {
-          alert('Server error while downloading file.');
+
+        if ( fileData) {
+          fileSaver.saveAs(fileData, 'summaryReport.pdf');  // Save file to download folder
+        } else {
+          this.toastr.error( `Not found data for summary report`, 'Not found data', {
+            timeOut: 5000,
+            positionClass: 'toast-top-center',
+          });
+        }
+    }, err => {
+          //alert('Server error while downloading file.');
       }
   );
   }
@@ -142,4 +159,8 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
 
   }
 
+  amcChange(event: MatSelectChange) {
+    // this.funds = this.getAmphursByProvince( this.amphursMasList, event.value);
+    this.funds = this.fundsMaster.filter(element => element.Amc_Id === event.value);
+  }
 }

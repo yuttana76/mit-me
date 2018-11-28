@@ -5,6 +5,9 @@ import { Injectable } from '@angular/core';
 })
 export class ShareDataService {
 
+   DATE_FORMAT = 'DD/MM/YYYY';
+   DB_DATE_FORMAT = 'YYYY-MM-DD';
+
   statusList = [
     {
     code: 'A',

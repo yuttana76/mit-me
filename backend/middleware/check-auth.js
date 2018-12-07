@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 var logger = require('../config/winston');
-const dbConfig = require('../controllers/config');
+const dbConfig = require('../config/db-config');
 
 const TOKEN_SECRET_STRING = dbConfig.TOKEN_SECRET_STRING;
 

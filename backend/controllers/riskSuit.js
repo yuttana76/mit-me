@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcryptjs');
-const dbConfig = require('./config');
+const dbConfig = require('../config/db-config');
 var logger = require('../config/winston');
 var config = dbConfig.dbParameters;
 

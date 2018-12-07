@@ -1,7 +1,7 @@
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const dbConfig = require('./config');
+const dbConfig = require('../config/db-config');
 
 var logger = require('../config/winston');
 

@@ -158,10 +158,15 @@ exports.repSummary = (req, res, next) => {
     // Detail Header
     rpt.fontBold();
 
+    // rpt.bandLine();
     rpt.band([
-      {data: 'subscription-baht', width: 220,align: 3,x:440},
-      {data: 'redemtion', width: 180, align: 3},
-      {data: 'switchng', width: 180, align: 3},
+      {data: '', width: 60},
+      {data: '', width: 60},
+      {data: '', width: 60},
+      {data: '', width: 60},
+      {data: 'subscription-baht', width: 220, align: 'center',border: {left: 1, right: 1, top: 2, bottom: 0}},
+      {data: 'redemtion', width: 120, align: 'center' ,border: {left: 1, right: 1, top: 2, bottom: 0}},
+      {data: 'switching', width: 120, align: 'center' ,border: {left: 1, right: 1, top: 2, bottom: 0}},
     ]);
     rpt.bandLine();
 

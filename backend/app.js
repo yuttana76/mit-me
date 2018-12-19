@@ -35,6 +35,8 @@ const authorityRoutes = require('./routes/authority');
 
 const navRoutes = require('./routes/nav');
 const reportRoutes = require('./routes/report');
+const downloadRoutes = require('./routes/download');
+const fatcaRoutes = require('./routes/fatca');
 
 const app = express();
 
@@ -58,6 +60,7 @@ app.use((req, res, next) => {
 
 app.use("/api/connex",connexRoutes);
 app.use("/api/fund",fundRoutes);
+
 app.use("/api/user",userRoutes);
 
 app.use("/api/amc",amcRoutes);
@@ -88,9 +91,23 @@ app.use("/api/authority",authorityRoutes);
 
 app.use("/api/nav",navRoutes);
 
+//External apps
+app.use("/api/fatca",fatcaRoutes);
+
 // Utility
 app.use("/api/util",utilityRoutes);
 app.use("/api/risk",riskSuitRoutes);
+
+app.use("/api/download",downloadRoutes);
+// download a file
+// app.get('/api/download/:file(*)',(req, res) => {
+//   var file = req.params.file;
+
+//   var fileLocation = path.join('./backend/uploadFiles',file);
+//   console.log(fileLocation);
+//   res.download(fileLocation, file);
+// });
+
 
 // Reports
 app.use("/api/rep",reportRoutes);

@@ -86,10 +86,6 @@ import { AngularMaterialModule } from './angular-material.module';
     RegisterComponent,
     CustomErrorComponent,
   ],
-  // providers: [{
-  //   provide: LocationStrategy,
-  //   useClass: HashLocationStrategy
-  // }],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
@@ -98,4 +94,5 @@ import { AngularMaterialModule } from './angular-material.module';
   entryComponents: [CustomErrorComponent]
 })
 export class AppModule {
+
 }

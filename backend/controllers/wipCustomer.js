@@ -4,7 +4,7 @@
   // Boolean -> sql.Bit
   // Date -> sql.DateTime
 
-const dbConfig = require("./config");
+const dbConfig = require('../config/db-config');
 var sql = require("mssql");
 var config = dbConfig.dbParameters;
 

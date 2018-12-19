@@ -6,6 +6,7 @@ const fundController = require('../controllers/fund')
 
 router.get("", fundController.getFunds);
 router.get("/amc/:amcCode", fundController.getFundsByAMC);
-router.get("/:code", fundController.getFundByCode); //http://localhost:3000/api/fund/ACFIF2
+router.get("/:code", fundController.getFundByCode);
+router.get("/uploadNAV/:fineName", fundController.UploadFoundNAV);
 
 module.exports = router;

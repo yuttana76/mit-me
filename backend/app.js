@@ -44,19 +44,22 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/", express.static(path.join(__dirname, "angular")));
 
-app.use((req, res, next) => {
-  res.setHeader(
-      "Access-Control-Allow-Origin",
-      "*");
-  res.setHeader(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-Width, Content-Type, Accept, Authorization");
-  res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PATCH, PUT,  DELETE, OPTIONS"
-  );
-  next();
-});
+/*
+Config for separate Banckend and Frontend servers
+*/
+// app.use((req, res, next) => {
+//   res.setHeader(
+//       "Access-Control-Allow-Origin",
+//       "*");
+//   res.setHeader(
+//       "Access-Control-Allow-Headers",
+//       "Origin, X-Requested-Width, Content-Type, Accept, Authorization");
+//   res.setHeader(
+//       "Access-Control-Allow-Methods",
+//       "GET, POST, PATCH, PUT,  DELETE, OPTIONS"
+//   );
+//   next();
+// });
 
 app.use("/api/connex",connexRoutes);
 app.use("/api/fund",fundRoutes);
@@ -99,15 +102,6 @@ app.use("/api/util",utilityRoutes);
 app.use("/api/risk",riskSuitRoutes);
 
 app.use("/api/download",downloadRoutes);
-// download a file
-// app.get('/api/download/:file(*)',(req, res) => {
-//   var file = req.params.file;
-
-//   var fileLocation = path.join('./backend/uploadFiles',file);
-//   console.log(fileLocation);
-//   res.download(fileLocation, file);
-// });
-
 
 // Reports
 app.use("/api/rep",reportRoutes);

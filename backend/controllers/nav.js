@@ -7,7 +7,7 @@ exports.getNavMenu = (req, res, next) => {
 
   var userId = req.query.userId;
 
-  console.log('userId>>' ,userId);
+  // console.log('userId>>' ,userId);
 
   var fncName = 'getNavMenu()';
   var queryStr = `    SELECT C.*

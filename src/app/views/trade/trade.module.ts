@@ -32,6 +32,11 @@ import { UserGroupComponent } from './user-group/user-group.component';
 import { UserLevelDialogComponent } from './dialog/user-level-dialog/user-level-dialog.component';
 import { UserGroupDialogComponent } from './dialog/user-group-dialog/user-group-dialog.component';
 import { ApplicationDialogComponent } from './dialog/application-dialog/application-dialog.component';
+import { ConnextCalendarComponent } from './connext-calendar/connext-calendar.component';
+
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -40,7 +45,11 @@ import { ApplicationDialogComponent } from './dialog/application-dialog/applicat
     FormsModule,
     ReactiveFormsModule,
     AlertModule.forRoot(),
-    NgbModule
+    NgbModule,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory
+    })
   ],
   declarations: [
     SummaryRepComponent,
@@ -71,6 +80,7 @@ import { ApplicationDialogComponent } from './dialog/application-dialog/applicat
     UserLevelDialogComponent,
     UserGroupDialogComponent,
     ApplicationDialogComponent,
+    ConnextCalendarComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],

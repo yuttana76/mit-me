@@ -86,7 +86,7 @@ exports.addAuthority = (req, res, next) => {
   (AppId ,MIT_GROUP ,Status  ,mcreate  ,medit ,mview ,mdelete  ,EXPIRE_DATE)
   VALUES ('${AppId}' ,'${MIT_GROUP}' ,'${Status}'  ,'${mCreate}'  ,'${mEdit}' ,'${mView}' ,'${mDelete}'  , ${EXPIRE_DATE} ) `;
 
-  // console.log('INSERT QUERY>>' , queryStr);
+  console.log('INSERT QUERY>>' , queryStr);
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {

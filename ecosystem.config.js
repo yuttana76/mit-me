@@ -40,17 +40,17 @@ module.exports = {
     },
     env_production : {
        "NODE_ENV":"production",
-"PORT":"3100",
-"JWT_KEY":"secret_this_should_be_longer",
-"AUTH_SRV_USER": "mftsuser",
-"AUTH_SRV_PWD": "P@ssw0rd",
-"AUTH_SRV_IP": "192.168.10.48",
-"AUTH_SRV_db": "MFTS",
-"MAIL_SMTP":"smtp.inetmail.cloud",
-"MAIL_PORT":"587",
-"MAIL_USER":"italert@merchantasset.co.th",
-"MAIL_PASS":"Merchant@2018**",
-apiURL: 'http://192.168.10.58:31000/api',
+        "PORT":"3100",
+        "JWT_KEY":"secret_this_should_be_longer",
+        "AUTH_SRV_USER": "mftsuser",
+        "AUTH_SRV_PWD": "P@ssw0rd",
+        "AUTH_SRV_IP": "192.168.10.48",
+        "AUTH_SRV_db": "MFTS",
+        "MAIL_SMTP":"smtp.inetmail.cloud",
+        "MAIL_PORT":"587",
+        "MAIL_USER":"italert@merchantasset.co.th",
+        "MAIL_PASS":"Merchant@2018**",
+        apiURL: 'http://192.168.10.58:31000/api',
     }
   }]
 }

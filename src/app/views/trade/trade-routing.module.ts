@@ -13,6 +13,7 @@ import { MitApplicationComponent } from './mit-application/mit-application.compo
 import { MitGroupComponent } from './mit-group/mit-group.component';
 import { AuthorityComponent } from './authority/authority.component';
 import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.component';
+import { ConnextCalendarComponent } from './connext-calendar/connext-calendar.component';
 
 const routes: Routes = [
 
@@ -135,6 +136,13 @@ const routes: Routes = [
         component: WorkFlowComponent,
         data: {
           title: 'Work flow '
+        }
+      },
+      {
+        path: 'connextCalendar',
+        component: ConnextCalendarComponent,
+        data: {
+          title: 'Fund Connext Calendar'
         }
       },
     ]

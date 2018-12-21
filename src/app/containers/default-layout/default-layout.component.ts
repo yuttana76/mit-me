@@ -20,8 +20,7 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
   public userData = null;
 
   private authListenerSubs: Subscription;
-  // public navItems = navItems;
-  public navItems =  null;
+  public navItems = navItems;
 
   public sidebarMinimized = true;
   private changes: MutationObserver;
@@ -52,60 +51,66 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
       this.userAuthenticated = isAuthenticated;
     });
 
-  // NAV
-  // this.navItems =  this.dynaNav.getMitDynaNav();
+  // ***************************   Dynamic NAV
 
-  this.dynaNav.getMitNav2U(this.userData).subscribe( menuDyna => {
+  this.navItems =  null;
 
-    let appArray = new Array();
-    let repArray = new Array();
-    let settingArray = new Array();
+  if ( this.navItems == null ) {
 
-    for (var x in menuDyna) {
-      if ( menuDyna[x].menuGroup === 'Applications') {
-        appArray.push(menuDyna[x]);
+      this.dynaNav.getMitNav2U(this.userData).subscribe( menuDyna => { // Load menu setting from db.
 
-      } else if (menuDyna[x].menuGroup === 'Report & Enquiry') {
-        repArray.push(menuDyna[x]);
+        const appArray = new Array();
+        const repArray = new Array();
+        const settingArray = new Array();
 
-      } else if (menuDyna[x].menuGroup === 'Setting') {
-        settingArray.push(menuDyna[x]);
-      }
-    }
+        for (const x in menuDyna) {
+          if ( menuDyna[x].menuGroup === 'Applications') {
+            appArray.push(menuDyna[x]);
 
-    const navDyna = [
+          } else if (menuDyna[x].menuGroup === 'Report & Enquiry') {
+            repArray.push(menuDyna[x]);
 
-      { name: 'Trade Dashboard',
-        url: '/trade/TradeDash',
-        icon: 'icon-speedometer',
-      } ,
-      { name: 'Anoucement',
-        url: '',
-        icon: 'icon-bell',
-      },
-      {
-        name: 'Documents',
-        url: '',
-        icon: 'icon-briefcase',
-      },
-      {name: 'Applications ',
-      url: '/trade',
-      icon: 'icon-layers',
-      children: appArray},
+          } else if (menuDyna[x].menuGroup === 'Setting') {
+            settingArray.push(menuDyna[x]);
+          }
+        }
 
-      {name: 'Report & Enquiry',
-      url: '/trade',
-      icon: 'icon-pie-chart',
-      children: repArray},
-      {name: 'Setting',
-      url: '',
-      icon: 'icon-user',
-      children:  settingArray }
-    ];
+        const navDyna = [
 
-    // console.log( 'dynaNav(Trans)>>' , JSON.stringify(navDyna));
-    this.navItems = navDyna;
-  });
+          { name: 'Trade Dashboard',
+            url: '/trade/TradeDash',
+            icon: 'icon-speedometer',
+          } ,
+          { name: 'Anoucement',
+            url: '',
+            icon: 'icon-bell',
+          },
+          {
+            name: 'Documents',
+            url: '',
+            icon: 'icon-briefcase',
+          },
+          {name: 'Applications ',
+          url: '/trade',
+          icon: 'icon-layers',
+          children: appArray},
+
+          {name: 'Report & Enquiry',
+          url: '/trade',
+          icon: 'icon-pie-chart',
+          children: repArray},
+          {name: 'Setting',
+          url: '',
+          icon: 'icon-user',
+          children:  settingArray }
+        ];
+
+        this.navItems = navDyna;
+      });
+
+  }
+// ***************************   Dynamic NAV
+
 
   }
 

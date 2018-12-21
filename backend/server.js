@@ -53,5 +53,6 @@ server.on("listening", onListening);
 
 server.listen(port, function(){
   console.log('Listening on port ' + port); //Listening on port 8888
-  console.log( 'process.env' + JSON.stringify(process.env))
+  console.log( '(process.NODE_ENV' + JSON.stringify(process.NODE_ENV))
+  console.log( 'process.apiURL' + JSON.stringify(process.apiURL))
 });

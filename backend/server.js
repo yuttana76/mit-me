@@ -30,7 +30,7 @@ const onError = error => {
       process.exit(1);
       break;
     case "EADDRINUSE":
-      console.error(bind + " is already in use");q
+      console.error(bind + " is already in use");
       process.exit(1);
       break;
     default:
@@ -45,14 +45,13 @@ const onListening = () => {
 };
 
 const port = normalizePort(process.env.PORT || "3000");
+
+console.log('PORT=' +process.env.PORT +';->'+port);
+console.log('API URL=' + process.env.apiURL);
+
 app.set("port", port);
 
 const server = http.createServer(app);
 server.on("error", onError);
 server.on("listening", onListening);
-
-server.listen(port, function(){
-  console.log('Listening on port ' + port); //Listening on port 8888
-  console.log( '(process.env.NODE_ENV' + JSON.stringify(process.env.NODE_ENV))
-  console.log( 'process.env.apiURL' + JSON.stringify(process.env.apiURL))
-});
+server.listen(port);

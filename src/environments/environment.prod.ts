@@ -1,6 +1,4 @@
-
-
 export const environment = {
   production: true,
-  apiURL: process.env.apiURL
+  apiURL: 'http://192.168.10.58:3100'
 };

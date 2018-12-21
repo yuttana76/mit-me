@@ -1,6 +1,7 @@
 {
   "env": {
-  "NODE_ENV":"dev"
+  "NODE_ENV":"dev",
+  "apiURL": "http://localhost:3000/api"
   }
 }
 

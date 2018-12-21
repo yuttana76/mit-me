@@ -42,7 +42,7 @@ module.exports = {
     env_production : {
        NODE_ENV:"production",
         PORT:"3100",
-        apiURL: 'http://192.168.10.58:31000/api',
+        apiURL: 'http://192.168.10.58:3100/api',
     }
   }]
 }

@@ -44,10 +44,14 @@ const onListening = () => {
   debug("Listening on " + bind);
 };
 
-const port = normalizePort(process.env.BE_PORT || "3000");
+const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
 const server = http.createServer(app);
 server.on("error", onError);
 server.on("listening", onListening);
-server.listen(port);
+
+server.listen(port, function(){
+  console.log('Listening on port ' + port); //Listening on port 8888
+  console.log( 'process.env' + JSON.stringify(process.env))
+});

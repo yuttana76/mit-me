@@ -19,6 +19,6 @@ callTransactions  = (req, res, next) => {
 router.get("", transController.getTransactionByParams);
 
 // **** Reports API no need authentication
-router.get("/report", transController.getTransactionsRep);
+router.get("/report/transaction", transController.getTransactionsRep);
 
 module.exports = router;

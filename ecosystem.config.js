@@ -38,13 +38,11 @@ module.exports = {
     watch       : true,
     env: {
       NODE_ENV: "development",
-      PORT:"3000",
-      apiURL: 'http://localhost:3000/api',
+
     },
     env_production : {
        NODE_ENV:"production",
-        PORT:"3100",
-        apiURL: 'http://192.168.10.58:3100/api',
+
     }
   }]
 }

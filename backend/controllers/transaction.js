@@ -50,22 +50,33 @@ exports.getTransactionsRep = (req, res, next) => {
 
   logger.info( `Query /getTransactionsRep - ${req.originalUrl} - ${req.ip} `);
 
+  // logger.info( `Param >> ${startDate} - ${endDate} - ${amcCode}  - ${fundCode} `);
 
   var queryStr = `
   BEGIN
     Declare @startDate VARCHAR(30) = '${startDate}';
     Declare @endDate VARCHAR(30) = '${endDate}';
 
-    SELECT  @startDate AS StartDate, @endDate AS EndDate,C.Amc_Code,C.Agent_Code,'Merchant' as Agent_Name
+    SELECT
+    ROW_NUMBER() OVER(ORDER BY a.ExecuteDate ASC) AS _row
+    ,@startDate AS StartDate, @endDate AS EndDate,C.Amc_Code,C.Agent_Code,'Merchant' as Agent_Name
     ,C.Attend_Name, C.Attend_Tel,C.Attend_Fax
     ,B.Fund_Code,B.Eng_Name,C.Contact_Name,C.Contact_Tel,C.Contact_Fax
-    ,A.*
-      FROM [MFTS_Transaction] A
+
+    ,x.Ref_No,x.Holder_Id,x.Title_Name_T+' '+ x.First_Name_T + ' ' +x.Last_Name_T AS fullName
+    ,y.User_Name ,yy.License_Code
+    ,a.TranType_Code,a.Tran_Date,a.Amount_Baht,a.Amount_Unit,a.Nav_Price,a.Status_Id
+      FROM MFTS_Transaction A
+      LEFT JOIN IT_User y ON MK_Code= A.MktId
+      LEFT JOIN MFTS_SalesCode yy ON Id= A.MktId
+      LEFT JOIN MFTS_Account x ON X.Ref_No = A.Ref_No
       , MFTS_Fund B
       , MFTS_Amc C
-      where  A.Fund_Id=B.Fund_Id
+      where A.Fund_Id = B.Fund_Id
       AND B.Amc_Id = C.Amc_Id
       AND C.Active_Flag =1
+      AND A.Status_Id =7
+
       AND Tran_Date between @startDate and @endDate
       AND C.Amc_Code='${amcCode}'
       AND B.Fund_Code ='${fundCode}'

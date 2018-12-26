@@ -49,9 +49,6 @@ export class ConnextCalendarComponent implements OnInit {
 
   // constructor() { }
 
-
-
-
   @ViewChild('modalContent')
   modalContent: TemplateRef<any>;
 
@@ -101,7 +98,7 @@ export class ConnextCalendarComponent implements OnInit {
     {
       start: startOfDay(new Date()),
       title: 'An event with no end date',
-      color: colors.yellow,
+      color: colors.red,
       // actions: this.actions
     },
     // {

@@ -3,10 +3,12 @@ var request = require("request");
 var Report = require('fluentReports' ).Report;
 var logger = require('../../config/winston');
 
+var rptPATH = './backend/downloadFiles/reports/';
+
 // ***************************************************
 function getDATA(req) {
   var options = {
-      url: process.env.BE_URL +'/trans/report',
+      url: process.env.apiURL +'/trans/report/transaction',
       headers: {
           'User-Agent': 'request'
       },
@@ -35,71 +37,58 @@ function getDATA(req) {
 exports.repSummary = (req, res, next) => {
   var fncName = 'repSummary';
   console.log('Welcome ' + fncName);
-
   logger.info('API repSummary ');
-
-  // Optional -- If you don't pass a report name, it will default to "report.pdf"
   var prefix ='001';
-  var rptName =  `./backend/reports/${prefix}_summaryReport.pdf`
-
+  var rptName =  rptPATH+`${prefix}_summaryReport.pdf`
   'use strict';
-
   var getData = getDATA(req);
-  // console.log('***STEP 3');
 
   getData.then(function(result) { // PROMISE
-
     console.log("Initialized user details");
     var mydata = result.result;
+    var pageHeader = function(rpt, data) {
+      rpt.printedAt({fontSize: 5, align: 'right'});
+      rpt.pageNumber({align :'right',footer:true,text:'Page {0} of {1}'});
+      rpt.newline();
+      rpt.print('Summary of Subscription, Redemption and Switching Form', {fontBold: true, fontSize: 14, align: 'center'});// Report Title
 
-    var contactInfo = function(rpt, data) {
+      // rpt.print(' To AMC ' + data.Amc_Code, {fontSize: 8, align: 'center'} );
 
-      rpt.print([
-        data.name,
-        data.add1,
-        data.add2,
-        [data.city, data.state.abbr, data.zip].join(' ')
-      ], {x:80});
+      // rpt.print([' Trade date ' + data.StartDate , ' to ' + data.EndDate ].join(' '), {fontSize: 8,align: 'center'} );
+      rpt.newLine();
 
-    };
+      // rpt.band([
+      //   {data: 'Agent ', width: 30},
+      //   {data: data.Agent_Code, width: 30 ,underline:true},
+      //   {data: ' ', width: 5},
+      //   {data: data.Agent_Name, width: 60 ,underline:true},
+      //   {data: 'Attn. to:', width: 30},
+      //   {data: data.Attend_Name, width: 100 ,underline:true, font: 'thaiFron',x: 100, addY: 2},
+      //   {data: 'Tel:', width: 20},
+      //   {data: data.Attend_Tel, width: 100 ,underline:true},
+      //   {data: 'Fax:', width: 20},
+      //   {data: data.Attend_Fax, width: 70 ,underline:true}
+      // ]);
+      // rpt.newLine();
 
-    // var message = function(rpt, data) {
-
-    //   var msg = [
-    //        'Dear '+ (data.person ? data.person : 'Valued Customer') + ',',
-    //        ' ',
-    //        'Our records indicate that you have invoices that have not been paid and are overdue or you have credits that have not been applied.',
-    //        'You are receiving this statement as a reminder of invoices or credits that haven\'t been resolved.',
-    //        'If you have questions or comments concerning your statement please call 555-1212 and speak to someone in our billing department.',
-    //        '',
-    //        'Thank you in advance for your cooperation in this matter.'];
-
-    //     rpt.print(msg, {textColor: 'blue'});
-    // };
-
-
-  //   var nameheader = function ( rpt, data ) {
-
-  //     rpt.print(' To AMC ' + data.Amc_Code, {fontSize: 8, align: 'center'} );
-  //     rpt.print([' Trade date ' + data.StartDate , ' to ' + data.EndDate ].join(' '), {fontSize: 8,align: 'center'} );
-
-
-  //     // rpt.band([
-  //     //   {data: 'To AMC'},
-  //     //   {data: data.Amc_Code, align: 'center'}
-  //     // ]);
-
-  //   rpt.newLine();
-
-  // };
+      // rpt.band([
+      //   {data: 'Fund:', width: 30},
+      //   {data: data.Eng_Name, width: 150,underline:true},
+      //   {data: 'Contact ', width: 40},
+      //   {data: data.Contact_Name, width: 100, underline:true, font: 'thaiFron'},
+      //   {data: 'Tel ', width: 20},
+      //   {data: data.Contact_Tel, width: 70 ,underline:true},
+      //   {data: 'Fax ', width: 20},
+      //   {data: data.Contact_Fax, width: 50 ,underline:true}
+      // ]);
+      // rpt.newLine();
+      // rpt.newLine();
+    }
 
     var header = function(rpt, data) {
-
       // if(!data.id) {return;}
-
       // Company Info - Top Left
       //rpt.setCurrentY(14);
-
       // Date Printed - Top Right
       // rpt.fontSize(9);
       // rpt.print('print date'+ new Date().toString('MM/dd/yyyy'), {y: 10, fontSize: 6, align: 'right'});
@@ -109,183 +98,128 @@ exports.repSummary = (req, res, next) => {
       // Report Title
       rpt.print('Summary of Subscription, Redemption and Switching Form', {fontBold: true, fontSize: 14, align: 'center'});
 
-      rpt.print(' To AMC ' + data.Amc_Code, {fontSize: 8, align: 'center'} );
-      rpt.print([' Trade date ' + data.StartDate , ' to ' + data.EndDate ].join(' '), {fontSize: 8,align: 'center'} );
-      rpt.newLine();
-
-      rpt.band([
-        {data: 'Agent ', width: 30},
-        {data: data.Agent_Code, width: 30 ,underline:true},
-        {data: ' ', width: 5},
-        {data: data.Agent_Name, width: 60 ,underline:true},
-        {data: 'Attn. to:', width: 30},
-        {data: data.Attend_Name, width: 100 ,underline:true, font: 'ARIALUNI',x: 100, addY: 2},
-        {data: 'Tel:', width: 20},
-        {data: data.Attend_Tel, width: 100 ,underline:true},
-        {data: 'Fax:', width: 20},
-        {data: data.Attend_Fax, width: 70 ,underline:true}
-      ]);
-      rpt.newLine();
-
-      rpt.band([
-        {data: 'Fund:', width: 30},
-        {data: data.Eng_Name, width: 150,underline:true},
-        {data: 'Contact ', width: 40},
-        {data: data.Contact_Name, width: 100, underline:true, font: 'ARIALUNI'},
-        {data: 'Tel ', width: 20},
-        {data: data.Contact_Tel, width: 70 ,underline:true},
-        {data: 'Fax ', width: 20},
-        {data: data.Contact_Fax, width: 50 ,underline:true}
-      ]);
-      rpt.newLine();
-      rpt.newLine();
-
-    // Contact Info
-    // contactInfo(rpt, data);
-      // nameheader(rpt, data);
-
-    // rpt.newline();
-    // rpt.newline();
-    // rpt.newline();
-
-    // Message
-    // message(rpt,data);
-
-    // rpt.newline();
-    // rpt.newline();
-    // rpt.newline();
-
-    // Detail Header
-    rpt.fontBold();
-
-    // rpt.bandLine();
-    rpt.band([
-      {data: '', width: 60},
-      {data: '', width: 60},
-      {data: '', width: 60},
-      {data: '', width: 60},
-      {data: 'subscription-baht', width: 220, align: 'center',border: {left: 1, right: 1, top: 2, bottom: 0}},
-      {data: 'redemtion', width: 120, align: 'center' ,border: {left: 1, right: 1, top: 2, bottom: 0}},
-      {data: 'switching', width: 120, align: 'center' ,border: {left: 1, right: 1, top: 2, bottom: 0}},
-    ]);
-    rpt.bandLine();
-
-    rpt.band([
-      {data: 'NO #', width: 60},
-      {data: 'Unit Holder', width: 60},
-      {data: 'Holder name', width: 60},
-      {data: 'Sales name', align: 3, width: 60},
-      {data: 'cash-baht', width: 60, align: 3},
-      {data: 'check-baht', width: 60, align: 3},
-      {data: 'check no/bank/branch', width: 100, align: 3},
-      {data: 'baht', width: 60, align: 3},
-      {data: 'unit', width: 60, align: 3},
-      {data: 'baht', width: 60, align: 3},
-      {data: 'unit', width: 60, align: 3},
-    ]);
-    rpt.bandLine();
-
-    rpt.fontNormal();
   };
+
+  var nameheader = function(rpt, data) {
+    rpt.print(' To AMC ' + data.Amc_Code, {fontSize: 8, align: 'center'} );
+    rpt.print([' Trade date ' + data.StartDate , ' to ' + data.EndDate ].join(' '), {fontSize: 8,align: 'center'} );
+    rpt.newLine();
+    rpt.band([
+      {data: 'Agent ', width: 30},
+      {data: data.Agent_Code, width: 30 ,underline:true},
+      {data: ' ', width: 5},
+      {data: data.Agent_Name, width: 60 ,underline:true},
+      {data: 'Attn. to:', width: 30},
+      {data: data.Attend_Name, width: 100 ,underline:true, font: 'thaiFron',x: 100, addY: 2},
+      {data: 'Tel:', width: 20},
+      {data: data.Attend_Tel, width: 100 ,underline:true},
+      {data: 'Fax:', width: 20},
+      {data: data.Attend_Fax, width: 70 ,underline:true}
+    ]);
+    rpt.newLine();
+
+    rpt.band([
+      {data: 'Fund:', width: 30},
+      {data: data.Eng_Name, width: 150,underline:true},
+      {data: 'Contact ', width: 40},
+      {data: data.Contact_Name, width: 100, underline:true, font: 'thaiFron'},
+      {data: 'Tel ', width: 20},
+      {data: data.Contact_Tel, width: 70 ,underline:true},
+      {data: 'Fax ', width: 20},
+      {data: data.Contact_Fax, width: 50 ,underline:true}
+    ]);
+    rpt.newLine();
+    rpt.newLine();
+
+     // Detail Header
+     rpt.fontBold();
+
+     rpt.band([
+       {data: 'NO #', width: 60},
+       {data: 'Type', width: 60},
+       {data: 'Unit Holder', width: 60},
+       {data: 'Holder name', width: 100},
+       {data: 'Sales name', align: 3, width: 60},
+       {data: 'check-baht', width: 60, align: 3},
+       {data: 'check no/bank/branch', width: 60, align: 3},
+       {data: 'cash-baht', width: 65, align: 3},
+       {data: 'Unit', width: 60, align: 3},
+       {data: 'To fund', width: 60, align: 2},
+     ]);
+     rpt.bandLine();
+  }
 
     var detail = function(rpt, data) {
-    // Detail Body
+      rpt.fontNormal();
+
+      // Format number
+      _Amount_Baht= number_format(data.Amount_Baht,2);
+      _Amount_Unit= number_format(data.Amount_Unit,4);
+
+      // Detail Body
       rpt.band([
-       {data: data.sale.no, width: 60, align: 1},
-       {data: data.sale.purchase_order},
-       {data: data.sale.invoice_date, width: 60},
-       {data: data.current, align: 3, width: 60},
-       {data: data.thirty, width: 60, align: 3},
-       {data: data.sixty, width: 60, align: 3},
-       {data: data.ninety, width: 65, align: 3},
-       {data: data.hundredtwenty, width: 60, align: 3},
-       {data: data.sale.balance_due, width: 60, align: 3}
-      ], {border: 1, width: 0});
+       {data: data._row, width: 60, align: 2},
+       {data: data.TranType_Code, width: 60, align: 2},
+       {data: data.Holder_Id, width: 60, align: 2},
+       {data: data.fullName, width: 100},
+       {data: data.User_Name, align: 3, width: 60},
+       {data: '', width: 60, align: 3},
+       {data: '', width: 60, align: 3},
+       {data: _Amount_Baht, width: 80, align: 3},
+       {data: _Amount_Unit, width: 60, align: 3},
+       {data: '', width: 60, align: 2}
+      ], {border: 0, width: 0, height: 100,font:'thaiFron'});
   };
 
-    var finalSummary = function(rpt, data) {
+  var namefooter = function ( rpt, data, state ) {
+    rpt.newLine();
+    rpt.bandLine();
+    // console.log('namefooter>>' + JSON.stringify(data) );
 
-    rpt.standardFooter([
-      ['sale.no',1,3],
-      ['current', 4, 3],
-      ['thirty', 5, 3],
-      ['sixty', 6, 3],
-      ['ninety', 7, 3],
-      ['hundredtwenty', 8, 3],
-      ['sale.balance_due', 9, 3]
-    ]);
-    rpt.newline();
-    rpt.newline();
-    rpt.print('Thank You for Choosing us!', {align: 'right'});
-  };
-      var totalFormatter = function(data, callback) {
+    rpt.newLine();
 
-          for (var key in data) {
-              if (data.hasOwnProperty(key)) {
-                  if (key === 'sale.no') { continue; }
-                  // Simple Stupid Money formatter.  It is fairly dumb.  ;-)
-                  var money = data[key].toString();
-                  var idx = money.indexOf('.');
-                  if (idx === -1) {
-                      money += ".00";
-                  } else if (idx === money.length-2) {
-                      money += "0";
-                  }
-                  for (var i=6;i<money.length;i+=4) {
-                      money = money.substring(0,money.length-i) + "," + money.substring(money.length-i);
-                  }
+    _total = number_format(rpt.totals.Amount_Baht,2);
+    rpt.band([
+        ["Totals for " + data.Amc_Code  + ` - ${data.Eng_Name} (${data.Fund_Code})`, 300],
+        [_total, 100, 3]
+    ], {addY: 1});
+    rpt.bandLine();
+    rpt.newLine();
+};
 
-                  data[key] = '$ '+money;
-
-              }
-          }
-
-          callback(null, data);
-      };
+// var formatterFnc = function(data){
+//   // console.log('******************* Formatter here !' );
+//   data.Amount_Unit =0;
+// }
 
     var resultReport = new Report(rptName)
         .data(mydata)
-        // .totalFormatter(totalFormatter)
-        ;
-
-      // You can Chain these directly after the above like I did or as I have shown below; use the resultReport variable and continue chain the report commands off of it.  Your choice.
-
-    // Settings
-    resultReport
-      .fontsize(9)
-      .margins(40)
-      .landscape(true)
-        // .detail(detail)
-        // .groupBy('id')
-        // .sum('current')
-        // .sum('thirty')
-        // .sum('sixty')
-        // .sum('ninety')
-        // .sum('hundredtwenty')
-        // .sum('sale.balance_due')
-        // .count('sale.no')
-        // .footer(finalSummary)
-        .header(header, {pageBreakBefore: true} )
-          .registerFont ( 'ARIALUNI',  {normal: './backend/reports/ARIALUNI.ttf'} )
-        // .font('Times-Roman')
+        .fontsize(9)
+        .margins(40)
+        .pageHeader( pageHeader )// Optional
+        .landscape(true)
+        .detail(detail)
+        .registerFont ( 'thaiFron',  {normal: rptPATH +'THSarabun.ttf'} )
     ;
+
+    resultReport.groupBy( "Amc_Code" )
+          .sum('Amount_Baht')
+          .header( nameheader)
+          .footer( namefooter )
+          .groupBy( "Fund_Code" );
 
     // Hey, everyone needs to debug things occasionally -- creates debug output so that you can see how the report is built.
     resultReport.printStructure();
 
-    console.time("Rendered");
     resultReport.render(function(err, name) {
-        console.timeEnd("Rendered");
-
         res.download(rptName); // Set disposition and send it.
-      //   res.status(200).json({
-      //     report: name
-      // });
     });
 
 }, function(err) {
+
+  console.log('ERROR >>' + JSON.stringify(err));
   res.status(204).json({
-    message: "Not found data"
+    message: "Report error " + JSON.stringify(err)
   });
 })
 
@@ -293,3 +227,17 @@ exports.repSummary = (req, res, next) => {
 
 
 
+
+// *************************************
+function number_format (number, decimals) {
+  number = Number(number).toFixed(decimals);
+  var parts = number.toString().split(".");
+  number = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");
+
+  return number;
+}
+
+/**
+*	Usage: 	number_format(123456.789, 2);
+*	result:	123,456.79
+**/

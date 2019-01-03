@@ -50,17 +50,26 @@
   </div>
 
   <div class="row">
-    <mat-form-field class="col-md-4">
-      <input   matInput formControlName="menuOrder" placeholder="{{formService.menuOrder_label}}"
-      [(ngModel)]="application.menuOrder">
-      <mat-error *ngIf="form.get('menuOrder').invalid">Please enter menu sequence.</mat-error>
-    </mat-form-field>
-  </div>
+      <mat-form-field class="col-md-4">
+          <mat-select  formControlName="menuOrder" placeholder="{{formService.menuOrder_label}}"
+          [(ngModel)]="application.menuOrder">
+              <mat-option  *ngFor="let obj of shareDataService.menuSequence" [value]="obj.code">
+                {{obj.desc}}
+              </mat-option>
+          </mat-select>
+        <mat-error *ngIf="form.get('menuOrder').invalid">Please enter menu sequence.</mat-error>
+      </mat-form-field>
+    </div>
+
 
   <div class="row">
     <mat-form-field class="col-md-4">
-      <input   matInput formControlName="menuGroup" placeholder="{{formService.menuGroup_label}}"
-      [(ngModel)]="application.menuGroup">
+      <mat-select  formControlName="menuGroup" placeholder="{{formService.menuGroup_label}}"
+        [(ngModel)]="application.menuGroup">
+            <mat-option  *ngFor="let obj of shareDataService.menuGroupList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+      </mat-select>
       <mat-error *ngIf="form.get('menuGroup').invalid">Please enter  menu group.</mat-error>
     </mat-form-field>
   </div>

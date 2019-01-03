@@ -19,6 +19,44 @@ export class ShareDataService {
       },
   ];
 
+  menuGroupList = [
+    {
+      code: 'Applications',
+      desc: 'Applications'
+    },
+    {
+      code: 'Report & Enquiry',
+      desc: 'Report & Enquiry'
+    },
+    {
+      code: 'Setting',
+      desc: 'Setting'
+     }
+  ];
+
+  menuSequence = [
+    {
+      code: 1,
+      desc: '1'
+    },
+    {
+      code: 2,
+      desc: '2'
+    },
+    {
+      code: 3,
+      desc: '3'
+     },
+     {
+      code: 4,
+      desc: '4'
+     },
+     {
+      code: 5,
+      desc: '5'
+     }
+  ];
+
 
   constructor() { }
 

@@ -27,7 +27,9 @@ export class ApplicationDialogComponent implements OnInit {
     public shareDataService: ShareDataService,
     public applicationService: ApplicationService,
     private toastr: ToastrService,
-  ) { }
+  ) {
+    console.log('application>>' + JSON.stringify(application));
+  }
 
   ngOnInit() {
     this._buildForm();

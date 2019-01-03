@@ -40,7 +40,7 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
   amcs: Amc[] = [];
   fundsMaster: Fund[] = [];
   funds: Fund[] = [];
-
+  all_FundItem = new Fund('0', 'All', 'All', '0');
 
   private fundsSub: Subscription;
   private amcSub: Subscription;
@@ -74,7 +74,7 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
         validators: [Validators.required]
       }),
       endDate: new FormControl(null, {
-        validators: [Validators.required]
+        // validators: [Validators.required]
       }),
       amc: new FormControl(null, {
         validators: [Validators.required]
@@ -122,14 +122,15 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
   onExecute() {
 
     if (this.form.invalid) {
-      console.log('form.invalid() ' + this.form.invalid);
+      // console.log('endDate>> ' + this.reportGeneral.endDate);
       return true;
     }
-    // console.log( 'NEXT FORM VALUES>>' + this.form.value.amc);
-    // const result = this.reportsService.getSummaryReport('2018-02-01', '2018-03-30', 'TMBAM', 'TMBPIPF-X');
 
     const start_dateValue  = moment(this.reportGeneral.startDate).format(this.shareDataService.DB_DATE_FORMAT);
-    const end_dateValue  = moment(this.reportGeneral.endDate).format(this.shareDataService.DB_DATE_FORMAT);
+    let end_dateValue ;
+    if ( this.reportGeneral.endDate ) {
+      end_dateValue  = moment(this.reportGeneral.endDate).format(this.shareDataService.DB_DATE_FORMAT);
+    }
 
     const _amcs: Amc[] = this.amcs.filter(element => element.amcid === this.reportGeneral.amc);
     const result = this.reportsService.getSummaryReport(
@@ -149,7 +150,11 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
           });
         }
     }, err => {
-          //alert('Server error while downloading file.');
+          // alert('Server error while downloading file.');
+          this.toastr.error( `Server error while downloading file`, err, {
+            timeOut: 5000,
+            positionClass: 'toast-top-center',
+          });
       }
   );
   }
@@ -160,7 +165,12 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
   }
 
   amcChange(event: MatSelectChange) {
-    // this.funds = this.getAmphursByProvince( this.amphursMasList, event.value);
+
+    // this.funds = this.fundsMaster.filter(element => element.Amc_Id === event.value);
     this.funds = this.fundsMaster.filter(element => element.Amc_Id === event.value);
+    this.funds.unshift(this.all_FundItem);  // Add all description item to the beginning of an array
+    this.reportGeneral.fund = '0';
+    // console.log('FUND >>' + JSON.stringify(this.funds));
   }
+
 }

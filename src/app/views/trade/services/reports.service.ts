@@ -10,6 +10,8 @@ import {Fund} from '../model/fund.model';
 import { environment } from '../../../../environments/environment';
 
 const BACKEND_URL = environment.apiURL ;
+// const SUMMARY_REP_URL = BACKEND_URL + '/rep/summary';
+const SUMMARY_REP_URL = BACKEND_URL + '/rep/summaryByTransType';
 
 @Injectable({ providedIn: 'root' })
 export class ReportsService {
@@ -23,7 +25,7 @@ export class ReportsService {
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
 
-    return this.http.get(BACKEND_URL + '/rep/summary' + queryParams, { headers: headers, responseType: 'blob' });
+    return this.http.get(SUMMARY_REP_URL + queryParams, { headers: headers, responseType: 'blob' });
   }
 
 }

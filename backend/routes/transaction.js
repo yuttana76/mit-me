@@ -20,5 +20,7 @@ router.get("", transController.getTransactionByParams);
 
 // **** Reports API no need authentication
 router.get("/report/transaction", transController.getTransactionsRep);
+router.get("/report/transactionHeader", transController.getTransactionsHeader);
+router.get("/report/transactionByTransType", transController.getTransactionsByTransType);
 
 module.exports = router;

@@ -14,6 +14,7 @@ import { MitGroupComponent } from './mit-group/mit-group.component';
 import { AuthorityComponent } from './authority/authority.component';
 import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.component';
 import { ConnextCalendarComponent } from './connext-calendar/connext-calendar.component';
+import { AnoucementComponent } from './anoucement/anoucement.component';
 
 const routes: Routes = [
 
@@ -74,7 +75,6 @@ const routes: Routes = [
           title: 'Edit User '
         }
       },
-
       {
         path: 'mitApplication',
         component: MitApplicationComponent,
@@ -143,6 +143,20 @@ const routes: Routes = [
         component: ConnextCalendarComponent,
         data: {
           title: 'Fund Connext Calendar'
+        }
+      },
+      {
+        path: 'connextCalendar',
+        component: ConnextCalendarComponent,
+        data: {
+          title: 'Fund Connext Calendar'
+        }
+      },
+      {
+        path: 'anoucementr',
+        component: AnoucementComponent,
+        data: {
+          title: 'Anoucement'
         }
       },
     ]

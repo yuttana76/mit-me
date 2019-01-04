@@ -36,6 +36,7 @@ import { ConnextCalendarComponent } from './connext-calendar/connext-calendar.co
 
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { AnoucementComponent } from './anoucement/anoucement.component';
 
 @NgModule({
   imports: [
@@ -81,6 +82,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
     UserGroupDialogComponent,
     ApplicationDialogComponent,
     ConnextCalendarComponent,
+    AnoucementComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],

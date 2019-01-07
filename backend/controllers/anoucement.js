@@ -2,7 +2,6 @@ const dbConfig = require('../config/db-config');
 var config = dbConfig.dbParameters;
 
 exports.getAnoucement = (req, res, next) => {
-
   var fncName = 'getAnoucement()';
   var queryStr = `SELECT * FROM MIT_ANOUCEMENT  order by AnouceDate `;
 
@@ -24,7 +23,38 @@ exports.getAnoucement = (req, res, next) => {
         }
     })
   })
+  pool1.on('error', err => {
+    // ... error handler
+    console.log("EROR>>"+err);
+  })
+}
 
+
+exports.getActiveAnoucement = (req, res, next) => {
+  var fncName = 'getAnoucement()';
+  var queryStr = `SELECT * FROM MIT_ANOUCEMENT
+                  WHERE status='A'
+                  and AnouceDate <= GETDATE()
+                  order by AnouceDate `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
   pool1.on('error', err => {
     // ... error handler
     console.log("EROR>>"+err);

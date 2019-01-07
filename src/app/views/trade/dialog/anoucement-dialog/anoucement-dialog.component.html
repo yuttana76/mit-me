@@ -1,0 +1,105 @@
+<mat-card class="example-card" >
+  <form [formGroup]="form"  #custForm="ngForm" >
+    <mat-card-title>{{formService.from_title}}</mat-card-title>
+
+  <div class="row">
+      <mat-form-field class="col-md-4">
+      <input   matInput formControlName="topic" placeholder="{{formService.topic_label}}"
+        [(ngModel)]="anoucement.Topic">
+        <mat-error *ngIf="form.get('topic').invalid">Please enter topic.</mat-error>
+      </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+        <mat-select  formControlName="category" placeholder="{{formService.category_label}}"
+        [(ngModel)]="anoucement.Catgory">
+            <mat-option  *ngFor="let obj of shareDataService.anouceCategory" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+        </mat-select>
+      <mat-error *ngIf="form.get('category').invalid">Please enter content.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+        <mat-select  formControlName="status" placeholder="{{formService.status_label}}"
+        [(ngModel)]="anoucement.status">
+            <mat-option  *ngFor="let obj of shareDataService.statusList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+        <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error>
+    </mat-form-field>
+</div>
+
+<div class="row">
+  <mat-form-field class="col-md-4">
+    <input   matInput formControlName="from" placeholder="{{formService.from_label}}"
+    [(ngModel)]="anoucement.AnouceFrom">
+    <mat-error *ngIf="form.get('from').invalid">Please enter  source from.</mat-error>
+  </mat-form-field>
+</div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+        <mat-select  formControlName="type" placeholder="{{formService.type_label}}"
+        [(ngModel)]="anoucement.SourceType">
+            <mat-option  *ngFor="let obj of shareDataService.anouceSourceType" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+        </mat-select>
+      <mat-error *ngIf="form.get('content').invalid">Please enter content.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <input   matInput formControlName="path" placeholder="{{formService.path_label}}"
+      [(ngModel)]="anoucement.SourcePath">
+      <mat-error *ngIf="form.get('path').invalid">Please enter  path.</mat-error>
+    </mat-form-field>
+  </div>
+<!--
+  <div class="row">
+      <mat-form-field class="col-md-4">
+          <mat-select  formControlName="content" placeholder="{{formService.content_label}}"
+          [(ngModel)]="anoucement.SourceContent">
+              <mat-option  *ngFor="let obj of shareDataService.menuSequence" [value]="obj.code">
+                {{obj.desc}}
+              </mat-option>
+          </mat-select>
+        <mat-error *ngIf="form.get('content').invalid">Please enter content.</mat-error>
+      </mat-form-field>
+    </div> -->
+
+    <div class="row">
+      <mat-form-field class="col-md-4">
+      <input   matInput formControlName="content" placeholder="{{formService.content_label}}"
+        [(ngModel)]="anoucement.SourceContent">
+        <mat-error *ngIf="form.get('content').invalid">Please enter content</mat-error>
+      </mat-form-field>
+  </div>
+
+<!--
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <mat-select  formControlName="menuGroup" placeholder="{{formService.menuGroup_label}}"
+        [(ngModel)]="anoucement.menuGroup">
+            <mat-option  *ngFor="let obj of shareDataService.menuGroupList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('menuGroup').invalid">Please enter  menu group.</mat-error>
+    </mat-form-field>
+  </div> -->
+
+<mat-card-actions>
+  <a  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >{{formService.submit_btn}}</a>
+  <a class="button_card_action" mat-flat-button color="accent"  (click)="onClose()"> {{formService.close_btn}} </a>
+
+</mat-card-actions>
+
+    </form>
+</mat-card>

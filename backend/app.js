@@ -32,6 +32,7 @@ const employeeRoutes = require('./routes/employee');
 const applicationRoutes = require('./routes/application');
 const groupRoutes = require('./routes/group');
 const authorityRoutes = require('./routes/authority');
+const anoucementRoutes = require('./routes/anoucement');
 
 const navRoutes = require('./routes/nav');
 const reportRoutes = require('./routes/report');
@@ -91,6 +92,7 @@ app.use("/api/mail",mailRoutes);
 app.use("/api/application",applicationRoutes);
 app.use("/api/group",groupRoutes);
 app.use("/api/authority",authorityRoutes);
+app.use("/api/anoucement",anoucementRoutes);
 
 app.use("/api/nav",navRoutes);
 

@@ -78,7 +78,6 @@ export class ApplicationService {
     // return this.http.post<{ message: string, result: string }>(BACKEND_URL , appData);
     return new Observable((observer) => {
       this.http.put<{ message: string, result: string }>(BACKEND_URL , appData).subscribe ((data) => {
-        console.log('addApplication()>>', JSON.stringify(data));
 
         // this.getApplication();
         const updateData = this.application.find(item => item.AppId === updateApplication.AppId);
@@ -92,9 +91,7 @@ export class ApplicationService {
     });
   }
 
-
   deleteApplication(appId: string): Observable<any> {
-
     return new Observable((observer) => {
         this.http
         .delete<{ message: string, result: string }>( BACKEND_URL + '/' + appId)
@@ -105,10 +102,9 @@ export class ApplicationService {
                     // observable execution
                     observer.next(data);
                     // observer.complete();
-
                 });
       });
-}
+  }
 
 
 }

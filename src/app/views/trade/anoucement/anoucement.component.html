@@ -8,32 +8,31 @@
           <table mat-table [dataSource]="dataSource">
               <ng-container matColumnDef="date">
                   <th mat-header-cell *matHeaderCellDef> {{formService.tb_date}} </th>
-                  <td mat-cell *matCellDef="let element; let i = index;"> {{i+1}} </td>
+                  <td mat-cell *matCellDef="let element"> {{element.AnouceDate | date:"dd/MM/yyyy"}} </td>
                 </ng-container>
 
-                <!-- AppId -->
                 <ng-container matColumnDef="category">
                     <th mat-header-cell *matHeaderCellDef> {{formService.tb_category}} </th>
-                    <td mat-cell *matCellDef="let element"> {{element.AppId}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element.Catgory}} </td>
                 </ng-container>
 
                 <!-- AppName -->
                 <ng-container matColumnDef="from">
                     <th mat-header-cell *matHeaderCellDef> {{formService.tb_from}} </th>
-                    <td mat-cell *matCellDef="let element"> {{element.AppName}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element.AnouceFrom}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="topic">
                   <th mat-header-cell *matHeaderCellDef> {{formService.tb_topic }} </th>
-                  <td mat-cell *matCellDef="let element"> {{element.status | statusTransform}} </td>
+                  <td mat-cell *matCellDef="let element"> {{element.Topic}} </td>
               </ng-container>
 
               <!-- Action  -->
               <ng-container matColumnDef="action">
                   <th mat-header-cell *matHeaderCellDef> {{formService.tb_action}} </th>
                   <td mat-cell *matCellDef="let element">
-                    <!-- <i class="far fa-edit"  (click)="onEdit(element)"  matTooltip="{{formService.editAction}}"></i>
-                    <i class="fas fa-trash-alt"    (click)="onDelete(element.AppId,element.AppName)"  matTooltip="{{formService.removeAction}}"></i> -->
+                    <i class="far fa-edit"  (click)="onEdit(element)"  matTooltip="{{formService.editAction}}"></i>
+                    <i class="fas fa-trash-alt"    (click)="onDelete(element.id,element.Topic)"  matTooltip="{{formService.removeAction}}"></i>
                   </td>
               </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

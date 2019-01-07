@@ -37,6 +37,7 @@ import { ConnextCalendarComponent } from './connext-calendar/connext-calendar.co
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { AnoucementComponent } from './anoucement/anoucement.component';
+import { AnoucementDialogComponent } from './dialog/anoucement-dialog/anoucement-dialog.component';
 
 @NgModule({
   imports: [
@@ -83,6 +84,7 @@ import { AnoucementComponent } from './anoucement/anoucement.component';
     ApplicationDialogComponent,
     ConnextCalendarComponent,
     AnoucementComponent,
+    AnoucementDialogComponent,
     // MasterDataComponent,
   ],
   providers: [DatePipe],
@@ -94,7 +96,8 @@ import { AnoucementComponent } from './anoucement/anoucement.component';
     AddAuthorityDialogComponent,
     UserLevelDialogComponent,
     UserGroupDialogComponent,
-    ApplicationDialogComponent
+    ApplicationDialogComponent,
+    AnoucementDialogComponent
   ],
 })
 export class TradeModule {

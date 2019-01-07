@@ -1,7 +1,11 @@
 const dbConfig = require('../config/db-config');
 var config = dbConfig.dbParameters;
+var logger = require('../config/winston');
 
 exports.getAnoucement = (req, res, next) => {
+
+  logger.info('Welcome getAnoucement()');
+
   var fncName = 'getAnoucement()';
   var queryStr = `SELECT * FROM MIT_ANOUCEMENT  order by AnouceDate `;
 
@@ -31,6 +35,7 @@ exports.getAnoucement = (req, res, next) => {
 
 
 exports.getActiveAnoucement = (req, res, next) => {
+
   var fncName = 'getAnoucement()';
   var queryStr = `SELECT * FROM MIT_ANOUCEMENT
                   WHERE status='A'

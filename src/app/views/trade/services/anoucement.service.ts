@@ -22,9 +22,11 @@ export class AnoucementService {
   constructor(private http: HttpClient , private router: Router) { }
 
   getAnoucements() {
+
     this.http.get<{ message: string, result: any }>(BACKEND_URL )
     .pipe(map((fundtData) => {
         return fundtData.result.map(data => {
+
             return {
               id: data.id,
               Topic: data.Topic,
@@ -54,6 +56,7 @@ export class AnoucementService {
 
 
   getActiveAnoucements() {
+
     this.http.get<{ message: string, result: any }>(BACKEND_URL + '/active' )
     .pipe(map((fundtData) => {
         return fundtData.result.map(data => {

@@ -1,4 +1,22 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Pipe, PipeTransform } from '@angular/core';
+
+
+// @Pipe({name: 'statusTransform'})
+// export class StatusTransform implements PipeTransform {
+//   transform(value: string): string {
+
+//     let newStr: string = '';
+//     if (value === 'A') {
+//       newStr = 'Active';
+//     } else if (value === 'I') {
+//       newStr = 'Inactive';
+//     } else {
+//       newStr = 'N/A';
+//     }
+
+//     return newStr;
+//   }
+// }
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +75,40 @@ export class ShareDataService {
      }
   ];
 
+// Anoucement value
+  anouceCategory = [
+    {
+      code: 'Invest',
+      desc: 'Invest'
+    },
+    {
+      code: 'Law',
+      desc: 'Law'
+    },
+    {
+      code: 'Info',
+      desc: 'Info'
+     }
+  ];
+
+  anouceSourceType = [
+    {
+      code: 'link',
+      desc: 'link'
+    },
+    {
+      code: 'pdf',
+      desc: 'pdf'
+    },
+    {
+      code: 'doc',
+      desc: 'doc'
+     },
+     {
+      code: 'content',
+      desc: 'content'
+     }
+  ];
 
   constructor() { }
 

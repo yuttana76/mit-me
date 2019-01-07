@@ -6,8 +6,10 @@ import { Injectable } from '@angular/core';
 export class AnoucementFormService {
   // Label
   from_title = 'Anoucement';
-
   addNewBtn = 'Add New ';
+  editAction = 'Edit';
+  removeAction = 'Remove';
+
 
   tb_date = 'Date';
   tb_category = 'Category';

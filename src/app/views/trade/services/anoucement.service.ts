@@ -89,19 +89,33 @@ export class AnoucementService {
 
 
 
-  addApplication(model: Anoucement): Observable<any> {
-    // console.log( 'Service addGroup()' + groupId + ' ;groupName:' + groupName);
-    const appData = {
-      'Topic': model.Topic,
-      'AnouceFrom': model.AnouceFrom,
-      'Catgory': model.Catgory,
-      'status': model.status,
-      'AnouceDate': model.AnouceDate,
-      'SourceType': model.SourceType,
-      'SourcePath': model.SourcePath,
-      'SourceContent': model.SourceContent,
-      'CreateBy': model.CreateBy
-      };
+  addApplication(model: Anoucement, image: File): Observable<any> {
+
+    //  console.log( 'Service addApplication()' + image );
+    // const appData = {
+    //   'Topic': model.Topic,
+    //   'AnouceFrom': model.AnouceFrom,
+    //   'Catgory': model.Catgory,
+    //   'status': model.status,
+    //   'AnouceDate': model.AnouceDate,
+    //   'SourceType': model.SourceType,
+    //   'SourcePath': model.SourcePath,
+    //   'SourceContent': model.SourceContent,
+    //   'CreateBy': model.CreateBy,
+    //   'image': image
+    //   };
+
+      const appData = new FormData();
+      appData.append('Topic', model.Topic);
+      appData.append('AnouceFrom', model.AnouceFrom);
+      appData.append('Catgory', model.Catgory);
+      appData.append('status', model.status);
+      appData.append('AnouceDate', model.AnouceDate || '');
+      appData.append('SourceType', model.SourceType || '');
+      appData.append('SourcePath', model.SourcePath || '');
+      appData.append('SourceContent', model.SourceContent || '');
+      appData.append('CreateBy', model.CreateBy);
+      appData.append('image', image);
 
     return new Observable((observer) => {
       this.http.post<{ message: string, result: string }>(BACKEND_URL , appData).subscribe ((data) => {
@@ -111,7 +125,14 @@ export class AnoucementService {
     });
   }
 
-  updateApplication(model: Anoucement): Observable<any> {
+  updateApplication(model: Anoucement, image: File | string): Observable<any> {
+
+    if ( typeof(image) === 'object' ) {
+
+    } else {
+
+    }
+
     const appData = {
       'Id': model.id,
       'Topic': model.Topic,

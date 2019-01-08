@@ -82,7 +82,7 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
             icon: 'icon-speedometer',
           } ,
           { name: 'Anoucement',
-            url: '',
+            url: '/trade/anoucementr',
             icon: 'icon-bell',
           },
           {

@@ -44,6 +44,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/", express.static(path.join(__dirname, "angular")));
+app.use("/images",express.static(path.join("backend/images")));
+
 
 /*
 Config for separate Banckend and Frontend servers

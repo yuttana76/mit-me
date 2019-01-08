@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ShareDataService } from '../../services/shareData.service';
 import { AnoucementDialogFormService } from './anoucementDialogForm.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { mimeType } from './mime-type.validator';
 
 @Component({
   selector: 'app-anoucement-dialog',
@@ -15,6 +16,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class AnoucementDialogComponent implements OnInit {
 
   form: FormGroup;
+  imagePreview: string;
   spinnerLoading = false;
   appId: string;
   insertMode: boolean;
@@ -27,7 +29,10 @@ export class AnoucementDialogComponent implements OnInit {
     public shareDataService: ShareDataService,
     public anoucementService: AnoucementService,
     private toastr: ToastrService,
-  ) { }
+  ) {
+
+    console.log('CONS DATA>>' + JSON.stringify(this.anoucement));
+  }
 
   ngOnInit() {
     this._buildForm();
@@ -35,6 +40,12 @@ export class AnoucementDialogComponent implements OnInit {
       this.insertMode = true;
     } else {
       this.insertMode = false;
+
+      // Set form value
+      this.form.setValue({
+        image : this.anoucement.SourcePath,
+      });
+
     }
   }
 
@@ -62,6 +73,10 @@ export class AnoucementDialogComponent implements OnInit {
      path: new FormControl(null, {
       //  validators: [Validators.required]
      }),
+     image: new FormControl(null, {
+      // validators: [Validators.required],
+      // asyncValidators: [mimeType]
+    }),
      content: new FormControl(null, {
       //  validators: [Validators.required]
      }),
@@ -78,14 +93,58 @@ export class AnoucementDialogComponent implements OnInit {
 
   if (this.insertMode) {
      console.log('Is new mode');
+
+     this.anoucementService.addApplication(this.anoucement, this.form.value.image).subscribe((data: any ) => {
+      this.toastr.success( `Add  ${this.anoucement.Topic} successful`, 'Successful', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+      });
+
+      this.dialogRef.close('close');
+    }, error => () => {
+      console.log('Add appliation was error ', error);
+    }, () => {
+      console.log(` Add appliation complete` );
+    });
+
   } else {
     console.log('Is edit mode');
+    this.anoucementService.updateApplication(this.anoucement, this.form.value.image).subscribe((data: any) => {
+
+      this.toastr.success( `Update  ${this.anoucement.Topic} successful`, 'Successful', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+      });
+
+      this.dialogRef.close('close');
+    }, error => () => {
+      console.log('Update appliation was error ', error);
+    }, () => {
+      console.log(` Update appliation complete` );
+    });
 
   }
 }
 
- onClose(): void {
-  this.dialogRef.close('close');
-}
+  onClose(): void {
+    this.dialogRef.close('close');
+  }
+
+  onFilePicked(event: Event) {
+
+    const file = (event.target as HTMLInputElement).files[0];
+    this.form.patchValue({ image: file });
+    this.form.get('image').updateValueAndValidity();
+
+    console.log(file);
+    console.log(this.form);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+     this.imagePreview = reader.result;
+
+    };
+    reader.readAsDataURL(file);
+  }
 
 }

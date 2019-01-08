@@ -1,6 +1,10 @@
+// import { inspect } from 'util' // or directly
+var util = require('util')
+
 const dbConfig = require('../config/db-config');
 var config = dbConfig.dbParameters;
 var logger = require('../config/winston');
+
 
 exports.getAnoucement = (req, res, next) => {
 
@@ -69,16 +73,22 @@ exports.getActiveAnoucement = (req, res, next) => {
 exports.addAnoucement = (req, res, next) => {
   var fncName = 'addAnoucement()';
 
+  // console.log('Welcome addAnoucement()' + util.inspect(req))
+  console.log('Welcome addAnoucement()  req.file>>');
+  const url = req.protocol + '://' + req.get('host');
+  const _Path = url + '/images/' + req.file.filename;
+
+  console.log('_Path>>' + _Path);
+
   var _Topic = req.body.Topic;
   var _AnouceFrom = req.body.AnouceFrom || '';
   var _Catgory = req.body.Catgory || '';
   var _status = req.body.status || '';
-  var _AnouceDate = req.body.AnouceDate;
-  var _SourceType = req.body.SourceType;
-  var _SourcePath = req.body.SourcePath || '';
+  var _AnouceDate = req.body.AnouceDate || '';
+  var _SourceType = req.body.SourceType || '';
+  var _SourcePath = req.body.SourcePath || _Path;
   var _SourceContent = req.body.SourceContent || '';
   var _CreateBy = req.body.CreateBy || '';
-
 
   var queryStr = `INSERT INTO MIT_ANOUCEMENT  (Topic,AnouceFrom,Catgory,status,AnouceDate,SourceType,SourcePath,SourceContent,CreateBy,CreateDate)
                   VALUES( '${_Topic}','${_AnouceFrom}', '${_Catgory}', '${_status}', '${_AnouceDate}' ,'${_SourceType}', '${_SourcePath}', '${_SourceContent}' , '${_CreateBy}' , GETDATE() )`;
@@ -113,15 +123,17 @@ exports.addAnoucement = (req, res, next) => {
 exports.updateAnoucement = (req, res, next) => {
 
   var fncName = 'updateAnoucement()';
+  const url = req.protocol + '://' + req.get('host');
+  const _Path = url + '/images/' + req.file.filename;
 
   var _Id = req.body.Id;
   var _Topic = req.body.Topic;
   var _AnouceFrom = req.body.AnouceFrom || '';
   var _Catgory = req.body.Catgory || '';
   var _status = req.body.status || '';
-  var _AnouceDate = req.body.AnouceDate;
-  var _SourceType = req.body.SourceType;
-  var _SourcePath = req.body.SourcePath || '';
+  var _AnouceDate = req.body.AnouceDate || '';
+  var _SourceType = req.body.SourceType || '';
+  var _SourcePath = req.body.SourcePath || _Path;
   var _SourceContent = req.body.SourceContent || '';
   var _UpdateBy = req.body.UpdateBy || '';
 

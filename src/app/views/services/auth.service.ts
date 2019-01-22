@@ -59,6 +59,8 @@ export class AuthService {
       .post<{ token: string, expiresIn: number, userData: string }>( BACKEND_URL + 'login', authData)
       .subscribe(response => {
 
+        console.log(' **** auth.service >>' + JSON.stringify(response));
+
         const token = response.token;
         this.token = token;
         if (token) {

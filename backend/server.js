@@ -45,6 +45,10 @@ const onListening = () => {
 };
 
 const port = normalizePort(process.env.PORT || "3000");
+
+console.log('PORT=' +process.env.PORT +';->'+port);
+console.log('API URL=' + process.env.apiURL);
+
 app.set("port", port);
 
 const server = http.createServer(app);

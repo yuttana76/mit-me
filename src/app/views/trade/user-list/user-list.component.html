@@ -1,0 +1,121 @@
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+<mat-card class="example-card" *ngIf="!spinnerLoading">
+
+    <form [formGroup]="form"  #custForm="ngForm" >
+        <mat-card-title>{{userListFormService.from_title}}
+            <a mat-button routerLink="/trade/userDetail"
+                routerLinkActive="mat-accent"
+                matTooltip="New User">
+              <i class="fas fa-user-plus fa-2x" ></i>
+            </a>
+          </mat-card-title>
+          <mat-card-content>
+
+            <div class="condition-div">
+              <mat-form-field>
+                <input matInput formControlName="firstName" placeholder="{{userListFormService.firstName_label}}">
+                <mat-error *ngIf="form.get('firstName').invalid">Please enter a condition.</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="condition-div">
+                <mat-form-field>
+                  <input matInput formControlName="lastName" placeholder="{{userListFormService.lastName_label}}">
+                  <mat-error *ngIf="form.get('lastName').invalid">Please enter a condition.</mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="condition-div">
+                  <mat-form-field>
+                    <input matInput formControlName="email" placeholder="{{userListFormService.email_label}}">
+                    <mat-error *ngIf="form.get('email').invalid">Please enter a condition.</mat-error>
+                  </mat-form-field>
+                </div>
+
+            <div class="condition-div row">
+                <mat-form-field class="col-sm-12 col-md-4">
+                  <mat-select formControlName="department" placeholder="{{userListFormService.department_label}}"  >
+                    <mat-option *ngFor="let obj of departmentList" [value]="obj.DEP_CODE">
+                      {{obj.NAME}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('department').invalid">Choose department.</mat-error>
+                </mat-form-field>
+              </div>
+
+          </mat-card-content>
+          <mat-card-actions>
+
+            <!-- <button mat-flat-button color="primary" type='submit'>Search</button>&nbsp; -->
+            <a mat-flat-button class="button_card_action" color="primary" (click)="onSerach()"  >{{userListFormService.search_btn}}</a>
+            <button mat-flat-button class="button_card_action"  color="warn" type='reset'>Reset</button>
+
+          </mat-card-actions>
+      </form>
+</mat-card>
+
+<div class="mat-elevation-z8" *ngIf="!spinnerLoading">
+    <mat-card class="resultDiv">
+      <mat-card-title>{{userListFormService.Result_label}}</mat-card-title>
+      <mat-card-content>
+
+        <table mat-table [dataSource]="dataSource">
+
+            <ng-container matColumnDef="index">
+                <th mat-header-cell *matHeaderCellDef> No </th>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{i+1}} </td>
+              </ng-container>
+
+              <!-- First Name -->
+              <ng-container matColumnDef="First_Name">
+                  <th mat-header-cell *matHeaderCellDef> First Name </th>
+                  <td mat-cell *matCellDef="let element"> {{element.First_Name}} </td>
+              </ng-container>
+
+              <!-- Last Name -->
+              <ng-container matColumnDef="Last_Name">
+                  <th mat-header-cell *matHeaderCellDef> Last Name </th>
+                  <td mat-cell *matCellDef="let element"> {{element.Last_Name}} </td>
+              </ng-container>
+
+
+              <!--Department -->
+              <ng-container matColumnDef="Department">
+                  <th mat-header-cell *matHeaderCellDef>Department </th>
+                  <td mat-cell *matCellDef="let element"> {{element.Department}} </td>
+              </ng-container>
+
+              <!--Position -->
+              <ng-container matColumnDef="Position">
+                  <th mat-header-cell *matHeaderCellDef>Position </th>
+                  <td mat-cell *matCellDef="let element"> {{element.Position}} </td>
+              </ng-container>
+
+
+              <!--officeEmail -->
+              <ng-container matColumnDef="Email">
+                  <th mat-header-cell *matHeaderCellDef>Email </th>
+                  <td mat-cell *matCellDef="let element"> {{element.EMAIL}} </td>
+              </ng-container>
+
+                <!-- Action  -->
+            <ng-container matColumnDef="Action">
+              <th mat-header-cell *matHeaderCellDef> Action </th>
+              <td mat-cell *matCellDef="let element">
+                <i class="far fa-edit"  [routerLink]="['/trade/userEdit',element.USERID,'SEARCH_USER_SCR']" MatRippleModule  matTooltip="Edit"></i>
+              </td>
+            </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator [length]="totalRecords"
+          [pageSize]="rowsPerPage"
+          [pageSizeOptions]="pageSizeOptions" (page)="onChangedPage($event)">
+        </mat-paginator>
+
+      </mat-card-content>
+
+    </mat-card>
+  </div>

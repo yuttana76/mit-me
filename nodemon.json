@@ -1,5 +1,6 @@
 {
   "env": {
+<<<<<<< HEAD
   "PORT":"3100",
   "JWT_KEY":"secret_this_should_be_longer",
   "AUTH_SRV_USER": "mftsuser",
@@ -11,5 +12,10 @@
   "MAIL_USER":"italert@merchantasset.co.th",
   "MAIL_PASS":"Merchant@2018**"
   }
+=======
+  "NODE_ENV":"dev",
+  "apiURL": "http://localhost:3000/api"
+   }
+>>>>>>> dev1
 }
 

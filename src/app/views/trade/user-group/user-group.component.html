@@ -1,0 +1,53 @@
+<mat-card >
+    <mat-card-title>{{formService.userGroup_title}}
+
+    <a mat-button (click)="addUserGroup()"
+          routerLinkActive="mat-accent"
+          matTooltip="{{formService.add_label}}">
+        <i class="fas fa-plus-square fa-2x"></i>
+        </a>
+
+
+    </mat-card-title>
+    <mat-card-content>
+
+      <table mat-table [dataSource]="dataSource">
+
+          <ng-container matColumnDef="index">
+              <th mat-header-cell *matHeaderCellDef> {{formService.tbNo_label}} </th>
+              <td mat-cell *matCellDef="let element; let i = index;"> {{i+1}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="Group">
+                <th mat-header-cell *matHeaderCellDef> {{formService.tbGroupName_label}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.groupName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="Status">
+                <th mat-header-cell *matHeaderCellDef> {{formService.tbStatus_label}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.STATUS | statusTransform }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="Expire">
+                <th mat-header-cell *matHeaderCellDef> {{formService.tbExpDate_label}} </th>
+                <td mat-cell *matCellDef="let element"> {{element.EXPIRE_DATE | date:"dd/MM/yyyy" }} </td>
+            </ng-container>
+
+              <!-- Action  -->
+          <ng-container matColumnDef="Action">
+            <th mat-header-cell *matHeaderCellDef> {{formService.tbAction_label}} </th>
+            <td mat-cell *matCellDef="let element">
+
+              <i class="fas fa-trash-alt"    (click)="onDeleteGroup(element.GroupId,element.groupName)"   matTooltip="{{formService.remove_label}}"></i>
+
+            </td>
+          </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+
+    </mat-card-content>
+
+  </mat-card>

@@ -1,0 +1,52 @@
+<mat-card>
+
+    <mat-card-title>{{formService.userGroupDialog_title}} </mat-card-title>
+    <mat-card-content>
+          <form [formGroup]="form" (submit)="onSave()" #custForm="ngForm" >
+
+              <div class="row">
+                  <mat-form-field class="col-md-4">
+
+                    <mat-select formControlName="GroupId" placeholder="{{formService.group_label}}" [(ngModel)]="userGroup.GroupId">
+                      <mat-option *ngFor="let obj of groupList" [value]="obj.GroupId">
+                        {{obj.GroupName}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('GroupId').invalid">{{formService.group_label}}</mat-error>
+                  </mat-form-field>
+                </div>
+
+                  <div class="row">
+                      <mat-form-field class="col-md-4">
+                        <mat-select formControlName="STATUS" placeholder="{{formService.status_label}}" [(ngModel)]="userGroup.STATUS">
+                          <mat-option *ngFor="let obj of shareDataService.statusList" [value]="obj.code">
+                            {{obj.desc}}
+                          </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('STATUS').invalid">{{formService.status_label}}</mat-error>
+                      </mat-form-field>
+                    </div>
+
+                     <div class="row" >
+                        <mat-form-field class="col-md-4">
+                          <input matInput [matDatepicker]="EXPIRE_DATE" formControlName="EXPIRE_DATE" placeholder="{{formService.expire_label}}"
+                           [(ngModel)]="userGroup.EXPIRE_DATE" >
+                          <mat-datepicker-toggle matSuffix [for]="EXPIRE_DATE"></mat-datepicker-toggle>
+                          <mat-datepicker #EXPIRE_DATE></mat-datepicker>
+                          <mat-error *ngIf="form.get('EXPIRE_DATE').invalid ">Please correct EXPIRE_DATE date</mat-error>
+                        </mat-form-field>
+                      </div>
+
+                    <div class="row">
+                        <mat-form-field class="col-md-4">
+                          <textarea matInput  formControlName="Remark"  [(ngModel)]="userGroup.Remark" placeholder="{{formService.remark_label}}"></textarea>
+                        </mat-form-field>
+                    </div>
+          </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button class="button" mat-stroked-button color="primary" (click)="onSave()"><i class="far fa-save"></i> {{formService.save_btn}}</button>
+      <button class="button" mat-stroked-button color="warn" (click)="onClose()"> <i class="fas fa-ban"></i> {{formService.close_btn}} </button>
+    </mat-card-actions>
+  </mat-card>

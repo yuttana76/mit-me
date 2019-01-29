@@ -86,15 +86,13 @@ import { AngularMaterialModule } from './angular-material.module';
     RegisterComponent,
     CustomErrorComponent,
   ],
-  // providers: [{
-  //   provide: LocationStrategy,
-  //   useClass: HashLocationStrategy
-  // }],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
   ],
   bootstrap: [ AppComponent ],
   entryComponents: [CustomErrorComponent]
 })
-export class AppModule { }
+export class AppModule {
+
+}

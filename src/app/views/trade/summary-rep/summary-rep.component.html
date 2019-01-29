@@ -5,23 +5,28 @@
   <mat-card-content>
   <form  [formGroup]="form" (submit)="onExecute()" #postForm="ngForm" *ngIf="!spinnerLoading">
 
-    <mat-form-field>
-      <input matInput [matDatepicker]="picker" formControlName="startDate" placeholder="Start date.">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-      <mat-error *ngIf="form.get('startDate').invalid ">Please correct start date.</mat-error>
-    </mat-form-field>
+    <div class="row" >
+      <mat-form-field class="col-md-4">
+        <input matInput [matDatepicker]="picker" formControlName="startDate" placeholder="Start date."
+        [(ngModel)]="reportGeneral.startDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="form.get('startDate').invalid ">Please correct start date.</mat-error>
+      </mat-form-field>
 
-    <mat-form-field>
-        <input matInput [matDatepicker]="endpicker" formControlName="endDate" placeholder="End date.">
-        <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
-        <mat-datepicker #endpicker></mat-datepicker>
-        <mat-error *ngIf="form.get('endDate').invalid ">Please correct end date.</mat-error>
-    </mat-form-field>
+      <mat-form-field class="col-md-4">
+          <input matInput [matDatepicker]="endpicker" formControlName="endDate" placeholder="End date."
+          [(ngModel)]="reportGeneral.endDate">
+          <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
+          <mat-datepicker #endpicker></mat-datepicker>
+          <mat-error *ngIf="form.get('endDate').invalid ">Please correct end date.</mat-error>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field>
-      <mat-select placeholder="AMC" formControlName="amc">
-          <mat-option *ngFor="let option of amcs" [value]="option.amcCode">
+    <div class="row" >
+    <mat-form-field class="col-md-4">
+      <mat-select placeholder="AMC" formControlName="amc" [(ngModel)]="reportGeneral.amc" (selectionChange) ="amcChange($event)">
+          <mat-option *ngFor="let option of amcs" [value]="option.amcid" >
               {{ option.amcCode }}
             </mat-option>
 
@@ -29,26 +34,24 @@
       <mat-error *ngIf="form.get('amc').invalid">Please choose AMC.</mat-error>
     </mat-form-field>
 
-    <mat-form-field>
-      <mat-select placeholder="Fund" formControlName="fund">
-        <mat-option value="option">Option</mat-option>
+    <mat-form-field class="col-md-4">
+      <mat-select placeholder="Fund" formControlName="fund" [(ngModel)]="reportGeneral.fund"  >
+        <mat-option *ngFor="let option of funds" [value]="option.fundCode" >
+          <!-- {{ option.thaiName }} -->
+          {{ option.engName }}
+        </mat-option>
+
       </mat-select>
       <mat-error *ngIf="form.get('fund').invalid">Please choose fund.</mat-error>
     </mat-form-field>
 
+    </div>
 
-    <button
-      mat-raised-button
-      color ="primary"
-    type='submit' >Execute</button>&nbsp;
+    <div *ngIf="authority.mView == YES_VAL ">
+      <button    mat-raised-button     color ="primary"   type='submit' >Execute</button>&nbsp;
+      <button    mat-raised-button    color ="warn"  type='reset' (click)="reset()" >Reset</button>
 
-  <button
-    mat-raised-button
-    color ="warn"
-  type='reset' (click)="reset()" >Reset</button>
-
+    </div>
   </form>
-
 </mat-card-content>
-
 </mat-card>

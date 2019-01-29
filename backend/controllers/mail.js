@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-const config = require('./config');
+const config = require('../config/db-config');
 
 //reference https://nodemailer.com/about/
 exports.sendMail = (req, res, next) =>{

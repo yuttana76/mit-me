@@ -1,13 +1,13 @@
 // var Promise = require('bluebird');
 
-const dbConfig = require("./config");
+const dbConfig = require('../config/db-config');
 // var sql = require("mssql");
 var config = dbConfig.dbParameters;
 
 exports.searchCustomers = (req, res, next) => {
   var fncName = "searchCustomers";
 
-  var numPerPage = parseInt(req.query.pagesize, 10) || 1;
+  var numPerPage = parseInt(req.query.pagesize, 10) || 10;
   var page = parseInt(req.query.page, 10) || 1;
   var custId = req.query.cust_id || false;
   var cust_name = req.query.cust_name || false;

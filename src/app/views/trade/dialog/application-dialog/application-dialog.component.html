@@ -1,0 +1,84 @@
+
+
+<mat-card class="example-card" >
+  <form [formGroup]="form"  #custForm="ngForm" >
+    <mat-card-title>{{formService.from_title}}</mat-card-title>
+
+    <div class="row">
+      <mat-form-field class="col-md-4">
+      <input   matInput formControlName="id" placeholder="{{formService.id}}"
+        [(ngModel)]="application.AppId">
+        <mat-error *ngIf="form.get('id').invalid">Please enter application ID.</mat-error>
+      </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <input   matInput formControlName="name" placeholder="{{formService.name_label}}"
+      [(ngModel)]="application.AppName">
+      <mat-error *ngIf="form.get('name').invalid">Please enter  application name.</mat-error>
+    </mat-form-field>
+  </div>
+
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+        <mat-select  formControlName="status" placeholder="{{formService.status_label}}"
+        [(ngModel)]="application.status">
+            <mat-option  *ngFor="let obj of shareDataService.statusList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+        <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error>
+    </mat-form-field>
+</div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <input   matInput formControlName="group" placeholder="{{formService.group_label}}"
+      [(ngModel)]="application.AppGroup">
+      <mat-error *ngIf="form.get('group').invalid">Please enter  application group name.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <input   matInput formControlName="appLink" placeholder="{{formService.app_link_label}}"
+      [(ngModel)]="application.AppLink">
+      <mat-error *ngIf="form.get('appLink').invalid">Please enter  application link.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+      <mat-form-field class="col-md-4">
+          <mat-select  formControlName="menuOrder" placeholder="{{formService.menuOrder_label}}"
+          [(ngModel)]="application.menuOrder">
+              <mat-option  *ngFor="let obj of shareDataService.menuSequence" [value]="obj.code">
+                {{obj.desc}}
+              </mat-option>
+          </mat-select>
+        <mat-error *ngIf="form.get('menuOrder').invalid">Please enter menu sequence.</mat-error>
+      </mat-form-field>
+    </div>
+
+
+  <div class="row">
+    <mat-form-field class="col-md-4">
+      <mat-select  formControlName="menuGroup" placeholder="{{formService.menuGroup_label}}"
+        [(ngModel)]="application.menuGroup">
+            <mat-option  *ngFor="let obj of shareDataService.menuGroupList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('menuGroup').invalid">Please enter  menu group.</mat-error>
+    </mat-form-field>
+  </div>
+
+<mat-card-actions>
+  <a  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >{{formService.submit_btn}}</a>
+  <a class="button_card_action" mat-flat-button color="accent"  (click)="onClose()"> {{formService.close_btn}} </a>
+
+</mat-card-actions>
+
+    </form>
+</mat-card>

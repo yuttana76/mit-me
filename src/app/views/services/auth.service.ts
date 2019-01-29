@@ -14,6 +14,11 @@ export class AuthService {
   private token: string;
   private tokenTimer: any;
   private userData: string;
+  private userId: string;
+  private fullName: string;
+  private depCode: string;
+  private mitGroup: string;
+
   private authStatusListener = new Subject<boolean>();
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -24,6 +29,22 @@ export class AuthService {
 
   getUserData() {
     return this.userData;
+  }
+
+  getUserId() {
+    return this.userId;
+  }
+
+  getFullName() {
+    return this.fullName;
+  }
+
+  getDepCode() {
+    return this.depCode;
+  }
+
+  getMitGroup() {
+    return this.mitGroup;
   }
 
   getIsAuth() {
@@ -56,13 +77,20 @@ export class AuthService {
     const authData: AuthData = { email: email, password: password };
 
     this.http
-      .post<{ token: string, expiresIn: number, userData: string }>( BACKEND_URL + 'login', authData)
+      .post<{ token: string, expiresIn: number, userData: string, USERID: string
+            , FULLNAME: string, DEP_CODE: string, MIT_GROUP: string }>( BACKEND_URL + 'login', authData)
       .subscribe(response => {
+
+        // console.log('Auth Service LOGIN()>>', JSON.stringify(response));
 
         const token = response.token;
         this.token = token;
         if (token) {
           this.userData = response.userData;
+          this.userId = response.USERID;
+          this.fullName = response.FULLNAME;
+          this.depCode = response.DEP_CODE;
+          this.mitGroup = response.MIT_GROUP;
 
           const expiresInDuration = response.expiresIn;
           this.setAuthTimer(expiresInDuration);

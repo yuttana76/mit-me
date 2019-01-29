@@ -1,5 +1,5 @@
 
-const dbConfig = require('./config');
+const dbConfig = require('../config/db-config');
 
 var config = dbConfig.dbParameters;
 

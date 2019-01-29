@@ -7,6 +7,7 @@ const fundRoutes = require('./routes/fund');
 const userRoutes = require('./routes/user');
 
 const utilityRoutes = require('./routes/utility');
+const riskSuitRoutes = require('./routes/riskSuit');
 
 const amcRoutes = require('./routes/amc');
 const transRoutes = require('./routes/transaction');
@@ -28,13 +29,27 @@ const workFlowRoutes = require('./routes/workFlow');
 const mailRoutes = require('./routes/mail');
 const departmentRoutes = require('./routes/department');
 const employeeRoutes = require('./routes/employee');
+const applicationRoutes = require('./routes/application');
+const groupRoutes = require('./routes/group');
+const authorityRoutes = require('./routes/authority');
+const anoucementRoutes = require('./routes/anoucement');
+
+const navRoutes = require('./routes/nav');
+const reportRoutes = require('./routes/report');
+const downloadRoutes = require('./routes/download');
+const fatcaRoutes = require('./routes/fatca');
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/", express.static(path.join(__dirname, "angular")));
+app.use("/images",express.static(path.join("backend/images")));
 
+
+/*
+Config for separate Banckend and Frontend servers
+*/
 app.use((req, res, next) => {
   res.setHeader(
       "Access-Control-Allow-Origin",
@@ -51,6 +66,7 @@ app.use((req, res, next) => {
 
 app.use("/api/connex",connexRoutes);
 app.use("/api/fund",fundRoutes);
+
 app.use("/api/user",userRoutes);
 
 app.use("/api/amc",amcRoutes);
@@ -75,10 +91,24 @@ app.use("/api/wipcustomer",wipCustomerRoutes);
 app.use("/api/custAddress",custAddressRoutes);
 app.use("/api/workFlow",workFlowRoutes);
 app.use("/api/mail",mailRoutes);
+app.use("/api/application",applicationRoutes);
+app.use("/api/group",groupRoutes);
+app.use("/api/authority",authorityRoutes);
+app.use("/api/anoucement",anoucementRoutes);
+
+app.use("/api/nav",navRoutes);
+
+//External apps
+app.use("/api/fatca",fatcaRoutes);
 
 // Utility
 app.use("/api/util",utilityRoutes);
+app.use("/api/risk",riskSuitRoutes);
 
+app.use("/api/download",downloadRoutes);
+
+// Reports
+app.use("/api/rep",reportRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

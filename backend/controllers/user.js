@@ -104,83 +104,83 @@ exports.resetPassword = (req,res,next)=>{
 }
 
 //************************************************ */
-exports.userLogin = (req, res, next) => {
+// exports.userLogin = (req, res, next) => {
 
- let fetchedUser;
- let _userName = req.body.email
- logger.info( `API /Login - ${req.originalUrl} - ${req.ip} - ${_userName}`);
+//  let fetchedUser;
+//  let _userName = req.body.email
+//  logger.info( `API /Login - ${req.originalUrl} - ${req.ip} - ${_userName}`);
 
- let queryStr = `select * FROM [MFTS].[dbo].[MIT_USERS]
-                WHERE STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
-                AND MIT_GROUP NOT like'C%'
-                AND USERID='${_userName}'`;
- const sql = require('mssql')
+//  let queryStr = `select * FROM [MFTS].[dbo].[MIT_USERS]
+//                 WHERE STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
+//                 AND MIT_GROUP NOT like'C%'
+//                 AND USERID='${_userName}'`;
+//  const sql = require('mssql')
 
-sql.connect(config).then(pool => {
-   // Query
-   return pool.request()
-   .query(queryStr)})
-   .then(user => {
+// sql.connect(config).then(pool => {
+//    // Query
+//    return pool.request()
+//    .query(queryStr)})
+//    .then(user => {
 
-     if(!user){
-      logger.error( `API /Login Auth failed. 1 - ${req.originalUrl} - ${req.ip} `);
-      sql.close();
-       return res.status(401).json({
-         message: 'Auth failed. 1'
-       });
-     } else {
-        sql.close();
-        fetchedUser = user;
-        return bcrypt.compare(req.body.password,user.recordset[0].PASSWD);
-     }
+//      if(!user){
+//       logger.error( `API /Login Auth failed. 1 - ${req.originalUrl} - ${req.ip} `);
+//       sql.close();
+//        return res.status(401).json({
+//          message: 'Auth failed. 1'
+//        });
+//      } else {
+//         sql.close();
+//         fetchedUser = user;
+//         return bcrypt.compare(req.body.password,user.recordset[0].PASSWD);
+//      }
 
-   })
-   .then(result =>{
-    // INCORRECT PWD.
-     if(!result){
-       logger.info( `API /Login Auth failed by incorrect password - ${req.originalUrl} - ${req.ip} - ${_userName} `);
-       return res.status(401).json({
-         message: 'Auth failed. by incorrect password'
-       });
-     }
+//    })
+//    .then(result =>{
+//     // INCORRECT PWD.
+//      if(!result){
+//        logger.info( `API /Login Auth failed by incorrect password - ${req.originalUrl} - ${req.ip} - ${_userName} `);
+//        return res.status(401).json({
+//          message: 'Auth failed. by incorrect password'
+//        });
+//      }
 
-     //Generate token
-     const token = jwt.sign(
-       {USERID: fetchedUser.recordset[0].USERID},
-       TOKEN_SECRET_STRING,
-       { expiresIn: TOKEN_EXPIRES},
-     );
-     //Return
-     res.status(200).json({
-       token: token,
-       expiresIn: 3600,//3600 = 1h
-       userData: fetchedUser.recordset[0].USERID,
-     });
-     sql.close();
-   })
-   .catch(err => {
-       // NOT FOUND USER
-       logger.warn( `API /Login Auth failed by no user - ${req.originalUrl} - ${req.ip} - ${_userName} `);
-       sql.close();
-       return res.status(401).json({
-         message: 'Auth failed. by user'
-       });
-   })
+//      //Generate token
+//      const token = jwt.sign(
+//        {USERID: fetchedUser.recordset[0].USERID},
+//        TOKEN_SECRET_STRING,
+//        { expiresIn: TOKEN_EXPIRES},
+//      );
+//      //Return
+//      res.status(200).json({
+//        token: token,
+//        expiresIn: 3600,//3600 = 1h
+//        userData: fetchedUser.recordset[0].USERID,
+//      });
+//      sql.close();
+//    })
+//    .catch(err => {
+//        // NOT FOUND USER
+//        logger.warn( `API /Login Auth failed by no user - ${req.originalUrl} - ${req.ip} - ${_userName} `);
+//        sql.close();
+//        return res.status(401).json({
+//          message: 'Auth failed. by user'
+//        });
+//    })
 
- sql.on("error", err => {
-  err.message
-   // ... error handler
-   sql.close();
-   logger.error( `API /Login error - ${req.originalUrl} - ${req.ip} - ${err} `);
-   return res.status(401).json({
-     message: 'Auth failed. 4'
-   });
+//  sql.on("error", err => {
+//   err.message
+//    // ... error handler
+//    sql.close();
+//    logger.error( `API /Login error - ${req.originalUrl} - ${req.ip} - ${err} `);
+//    return res.status(401).json({
+//      message: 'Auth failed. 4'
+//    });
 
- });
-}
+//  });
+// }
 
 //************************************************ */
-exports.userLogin = (req, res, next) => {
+exports.userLoginByParam = (req, res, next) => {
 
   let fetchedUser;
   let _userName = req.body.email
@@ -192,19 +192,15 @@ exports.userLogin = (req, res, next) => {
                  LEFT JOiN MIT_Account_Profile b ON a.USERID = b.CUST_CODE
                  WHERE STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
                  AND MIT_GROUP NOT like'C%'
-                 AND LoginName='${_userName}'`;
-
-  // let queryStr = `select * FROM [MFTS].[dbo].[MIT_USERS]
-  //               WHERE STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
-  //               AND MIT_GROUP NOT like'C%'
-  //               AND USERID='${_userName}'`;
-
+                 AND LoginName=@input_userName
+                 `;
 
   const sql = require('mssql')
 
  sql.connect(config).then(pool => {
     // Query
     return pool.request()
+    .input('input_userName', sql.VarChar(50), _userName)
     .query(queryStr)})
     .then(user => {
 
@@ -413,7 +409,7 @@ function getLogiMsg(_code){
 
 function saveLoginLog(_userName,_loginCode,_ip,_url) {
 
-    console.log(`call function saveLoginLog ${_userName} -  ${_loginCode} - ${_ip} - ${_url}`);
+    // console.log(`call function saveLoginLog ${_userName} -  ${_loginCode} - ${_ip} - ${_url}`);
 
     const LOGIN_FAIL_LOCK_NO = mit_properties.LOGIN_FAIL_LOCK_NO;
 

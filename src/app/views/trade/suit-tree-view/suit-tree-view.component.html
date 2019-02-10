@@ -1,8 +1,20 @@
 <ul>
-    <div *ngFor="let ques of questions">
+    <div *ngFor="let ques of questions" class="questions" >
         <!-- <span class="iconButton" (click)="dir.toggle()">{{dir.getIcon()}}</span> -->
         <!-- <input type="checkbox" [checked]="dir.checked"
             (click)="dir.check()" /> {{ dir.name }} -->
+        <span *ngIf="ques.id==11" class="blue-txt"> 
+            <p> คำถามข้อ 11-12 ใช้เป็นข้อมูลเพิ่มเติมเพื่อประกอบการให้คำแนะนำ</p>
+        </span>
+
+        <span *ngIf="ques.id==11" class="blue-txt">
+            <p>ใช้เฉพาะที่จะมีการลงทุนในอนุพันธ์และหุ้นกู้อนุพันธ์โดยตรงเท่านั้น</p>
+        </span>
+
+        <span *ngIf="ques.id==12" class="blue-txt">
+            <p>ใช้เฉพาะที่จะมีการลงทุนในต่างประเทศ</p>
+        </span>
+
         <span>{{ ques.id }}. {{ ques.name }} </span>
         <div>
             <ul>
@@ -14,13 +26,11 @@
                        <div *ngIf="!ques.multilchoice">
                             <input name="{{ques.id}}" type="radio" value="{{choice.value}}" /> {{ choice.name }}
                        </div>
-                    
-
                 </div>
             </ul>
             <!-- <app-suit-tree-view [questions]="dir.questions"></app-suit-tree-view> -->
 
         </div>
-        <br>
+        <!-- <BR> -->
     </div>
 </ul>

@@ -4,6 +4,10 @@ mat-card-content {
   border: 0;
 }
 
+mat-spinner {
+  margin: auto;
+}
+
 .modal-dialog {
   margin-top: auto;
   margin-bottom: auto;
@@ -12,7 +16,11 @@ mat-card-content {
   overflow-y: auto;
 }
 
-mat-spinner {
-    margin: auto;
-  }
-  
+.button_card_action {
+  margin-left: 20px;
+}
+
+.blue-txt{
+  color: #1194F6;
+  font-size: 17px;
+}

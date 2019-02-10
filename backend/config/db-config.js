@@ -19,8 +19,8 @@ exports.dbParameters = {
 // exports.mssql_db_database= process.env.AUTH_SRV_db;
 
 exports.SALT_WORK_FACTOR = 10;
-exports.TOKEN_SECRET_STRING = 'secret_this_should_be_longer'//process.env.JWT_KEY;
-exports.TOKEN_EXPIRES = '1h';
+exports.JWT_SECRET_STRING = 'secret_this_should_be_longer'//process.env.JWT_KEY;
+exports.JWT_EXPIRES = '1h';
 
 exports.mailParameters = {
   host: 'smtp.inetmail.cloud',//process.env.MAIL_SMTP,

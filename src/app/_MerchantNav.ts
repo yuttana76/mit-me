@@ -4,6 +4,11 @@ export const navItems = [
     url: '/trade/connextCalendar',
     icon: 'icon-wrench',
   },
+  {
+    name: 'Suitability',
+    url: '/trade/suit',
+    icon: 'icon-wrench',
+  },
 ];
 
 // export const navItems = [

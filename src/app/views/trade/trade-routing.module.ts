@@ -146,19 +146,12 @@ const routes: Routes = [
         }
       },
       {
-        path: 'connextCalendar',
-        component: ConnextCalendarComponent,
-        data: {
-          title: 'Fund Connext Calendar'
-        }
-      },
-      {
         path: 'anoucementr',
         component: AnoucementComponent,
         data: {
           title: 'Anoucement'
         }
-      },
+      }
     ]
   },
   // {path: '**', redirectTo: '/404'}

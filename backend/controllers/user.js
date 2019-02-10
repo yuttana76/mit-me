@@ -10,8 +10,8 @@ var config = dbConfig.dbParameters;
 // const SALT_WORK_FACTOR = 10;
 const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
 
-const TOKEN_SECRET_STRING = dbConfig.TOKEN_SECRET_STRING;
-const TOKEN_EXPIRES = dbConfig.TOKEN_EXPIRES;
+const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
+const JWT_EXPIRES = dbConfig.JWT_EXPIRES;
 const TOKEN_EXPIRES_SEC = 3600;
 
 
@@ -62,8 +62,8 @@ exports.userLogin = (req, res, next) => {
       //Generate token
       const token = jwt.sign(
         {USERID: fetchedUser.recordset[0].USERID},
-        TOKEN_SECRET_STRING,
-        { expiresIn: TOKEN_EXPIRES},
+        JWT_SECRET_STRING,
+        { expiresIn: JWT_EXPIRES},
       );
       //Return
       res.status(200).json({

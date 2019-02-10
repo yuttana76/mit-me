@@ -1,0 +1,26 @@
+<ul>
+    <div *ngFor="let ques of questions">
+        <!-- <span class="iconButton" (click)="dir.toggle()">{{dir.getIcon()}}</span> -->
+        <!-- <input type="checkbox" [checked]="dir.checked"
+            (click)="dir.check()" /> {{ dir.name }} -->
+        <span>{{ ques.id }}. {{ ques.name }} </span>
+        <div>
+            <ul>
+                <div *ngFor="let choice of ques.choices">
+
+                       <div *ngIf="ques.multilchoice">
+                            <input type="checkbox" value="{{choice.value}}" /> {{ choice.name }}
+                       </div>
+                       <div *ngIf="!ques.multilchoice">
+                            <input name="{{ques.id}}" type="radio" value="{{choice.value}}" /> {{ choice.name }}
+                       </div>
+                    
+
+                </div>
+            </ul>
+            <!-- <app-suit-tree-view [questions]="dir.questions"></app-suit-tree-view> -->
+
+        </div>
+        <br>
+    </div>
+</ul>

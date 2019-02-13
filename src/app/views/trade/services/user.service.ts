@@ -270,4 +270,26 @@ addUserGroup(userGroup: UserGroup): Observable<any> {
     });
   });
 }
+
+
+
+verifyExtLink(_pid: string): Observable<any> {
+
+  return  new Observable((observer) => {
+    this.http
+    .post<{ message: string, result: string }>(BACKEND_URL + '/verifyExtLink', _pid)
+    .subscribe((_data) => {
+      const data = {
+        'userid': '000X',
+        'pid': _pid,
+        'fullName': 'XXX YYYY'
+        };
+       observer.next(data);
+
+    });
+  });
+}
+
+
+
 }

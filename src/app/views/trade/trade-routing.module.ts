@@ -15,6 +15,7 @@ import { AuthorityComponent } from './authority/authority.component';
 import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.component';
 import { ConnextCalendarComponent } from './connext-calendar/connext-calendar.component';
 import { AnoucementComponent } from './anoucement/anoucement.component';
+import { SuitComponent } from './suit/suit.component';
 
 const routes: Routes = [
 
@@ -151,7 +152,14 @@ const routes: Routes = [
         data: {
           title: 'Anoucement'
         }
-      }
+      },
+      {
+        path: 'suit',
+        component: SuitComponent,
+        data: {
+          title: 'Suitability'
+        }
+      },
     ]
   },
   // {path: '**', redirectTo: '/404'}

@@ -21,4 +21,6 @@ router.post("/addUserGroup",userController.addUserGroup);
 router.get("/searchUser",userController.searchUser);
 router.post("/exeUserEmp",userController.ExeUserEmp);
 
+router.post("/verifyExtLink",userController.verifyExtLink);
+
 module.exports = router;

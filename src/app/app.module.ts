@@ -51,6 +51,7 @@ import { CustomErrorComponent } from './views/error/customError.component';
 import { AngularMaterialModule } from './angular-material.module';
 import { SuitComponent } from './views/trade/suit/suit.component';
 import { SuitTreeViewComponent } from './views/trade/suit-tree-view/suit-tree-view.component';
+import { TradeModule } from './views/trade/trade.module';
 
 @NgModule({
   imports: [
@@ -77,7 +78,8 @@ import { SuitTreeViewComponent } from './views/trade/suit-tree-view/suit-tree-vi
     FormsModule,
 
     HttpClientModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    TradeModule
   ],
   declarations: [
     AppComponent,
@@ -87,8 +89,6 @@ import { SuitTreeViewComponent } from './views/trade/suit-tree-view/suit-tree-vi
     LoginComponent,
     RegisterComponent,
     CustomErrorComponent,
-    SuitComponent,
-    SuitTreeViewComponent,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

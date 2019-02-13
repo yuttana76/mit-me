@@ -2,6 +2,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dbConfig = require('../config/db-config');
+var prop = require('../config/backend-property');
 
 var logger = require('../config/winston');
 
@@ -637,4 +638,51 @@ exports.addUserGroup = (req,res,next)=>{
           error:err
         });
       });
+}
+
+
+exports.verifyExtLink = (req,res,next)=>{
+
+  logger.info( `API /verifyExtLink - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code ;
+
+  try{
+
+    const token = req.headers.authorization.split(" ")[1];
+    const pid = req.body.pid;
+
+    jwt.verify(token, JWT_SECRET_STRING, function(err, decoded) {
+      if (err) {
+       console.log(err);
+       res.status(401);
+      }
+
+      logger.info( `*** PID  - ${pid} `);
+
+      if (decoded.USERID===pid){
+        verify_msg = 'Correct user ' + pid;
+
+        rsp_code = '000';
+        res.status(200).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code)
+        });
+      }else{
+
+        rsp_code = '204';
+        res.status(500).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code)
+        });
+      }
+
+    });
+
+
+  }catch(error){
+    console.log(error);
+    res.status(401).json({message: 'Auth failed!'});
+  }
+
+
 }

@@ -39,7 +39,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { AnoucementComponent } from './anoucement/anoucement.component';
 import { AnoucementDialogComponent } from './dialog/anoucement-dialog/anoucement-dialog.component';
 import { SuitTreeViewComponent } from './suit-tree-view/suit-tree-view.component';
-// import { SuitComponent } from './suit/suit.component';
+import { SuitComponent } from './suit/suit.component';
 
 @NgModule({
   imports: [
@@ -87,9 +87,9 @@ import { SuitTreeViewComponent } from './suit-tree-view/suit-tree-view.component
     ConnextCalendarComponent,
     AnoucementComponent,
     AnoucementDialogComponent,
-    
-    // SuitComponent,
-    // MasterDataComponent,
+
+    SuitComponent,
+    SuitTreeViewComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

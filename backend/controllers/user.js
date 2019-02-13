@@ -14,8 +14,7 @@ const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
 const JWT_EXPIRES = dbConfig.JWT_EXPIRES;
 const TOKEN_EXPIRES_SEC = 3600;
 
-
-exports.userLogin = (req, res, next) => {
+exports.userLoginByParam = (req, res, next) => {
 
   let fetchedUser;
   let _userName = req.body.email
@@ -26,12 +25,14 @@ exports.userLogin = (req, res, next) => {
                   LEFT JOiN MIT_EMPLOYEE b ON a.USERID = b.USERID
                  WHERE a.STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
                  AND MIT_GROUP <>'C1'
-                 AND LoginName='${_userName}'`;
+                 AND LoginName=@input_userName
+                 `;
   const sql = require('mssql')
 
  sql.connect(config).then(pool => {
     // Query
     return pool.request()
+    .input('input_userName', sql.VarChar(50), _userName)
     .query(queryStr)})
     .then(user => {
 

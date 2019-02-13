@@ -21,6 +21,8 @@ exports.dbParameters = {
 exports.SALT_WORK_FACTOR = 10;
 exports.JWT_SECRET_STRING = 'secret_this_should_be_longer'//process.env.JWT_KEY;
 exports.JWT_EXPIRES = '1h';
+// exports.JWT_EXTERNAL_EXPIRES = '14 days';  // On production
+exports.JWT_EXTERNAL_EXPIRES = '60';
 
 exports.mailParameters = {
   host: 'smtp.inetmail.cloud',//process.env.MAIL_SMTP,

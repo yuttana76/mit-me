@@ -5,6 +5,7 @@ const checkAuth = require('../middleware/check-auth');
 const router = express.Router();
 
 router.post("/merchant",mailController.sendMail);
-router.post("/tsGmail",mailController.send_GMail);
+router.post("/surveyByMail",mailController.surveyByMail);
+router.post("/surveyByMailToken",mailController.surveyByMailToken);
 
 module.exports = router;

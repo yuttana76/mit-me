@@ -7,6 +7,7 @@ const dbConfig = require('../config/db-config');
 const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
 const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
 const JWT_EXPIRES = dbConfig.JWT_EXPIRES;
+const JWT_EXTERNAL_EXPIRES = dbConfig.JWT_EXTERNAL_EXPIRES;
 
 //reference https://nodemailer.com/about/
 exports.sendMail = (req, res, next) =>{
@@ -38,15 +39,10 @@ exports.sendMail = (req, res, next) =>{
     });
 }
 
-
-exports.send_GMail = (req, res, next) =>{
-
-  //Generate token
-  // const token = jwt.sign(
-  //   {USERID: _PID},
-  //   JWT_SECRET_STRING,
-  //   { expiresIn: JWT_EXPIRES},
-  // );
+/*
+Send mail  by encypt use bcrypt
+*/
+exports.surveyByMail = (req, res, next) =>{
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport(config.GmailParameters);
@@ -88,6 +84,55 @@ exports.send_GMail = (req, res, next) =>{
       });
 
   });
-  
+}
+
+/*
+Send mail  by token
+*/
+exports.surveyByMailToken = (req, res, next) =>{
+
+
+  // create reusable transporter object using the default SMTP transport
+  let transporter = nodemailer.createTransport(config.GmailParameters);
+
+  const _PID = '41121225';
+  let _from = config.mail_form;
+  let _to = 'yuttana76@gmail.com';
+  let _subject = 'Interview suit by MPAM.'
+  let _msg = '';
+
+
+  //Generate token
+  const token = jwt.sign(
+    {USERID: _PID},
+    JWT_SECRET_STRING,
+    { expiresIn: JWT_EXTERNAL_EXPIRES},
+  );
+
+        // setup email data with unicode symbols
+      let mailOptions = {
+        from: _from,
+        to: _to,
+        subject: _subject,
+        html: `${_msg}
+        <br>Click this link for risk intereview. <br>http://localhost:4200/suit?has=${token}` // html body
+      };
+
+      // send mail with defined transport object
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          // Keep log incase send was error
+            return console.log(error);
+        }
+        // Keep log incase send success
+
+        console.log('Message sent: %s', info.messageId);
+        // Preview only available when sending through an Ethereal account
+        // console.log('info: %s', JSON.stringify(info));
+
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+        res.status(200).json({ message: 'Send mail successful!' });
+      });
 
 }

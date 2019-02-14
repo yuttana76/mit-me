@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Choice, Question } from '../suit-tree-view/question';
 
+
 @Injectable({
   providedIn: 'root'
 })
-
 export class SuitFormService {
     from_title = 'Suitability';
+
+    pid_label = 'ID Card';
 
      q1 = new Question('1', 'ปัจจุบันท่านอายุ', false, [],
       [

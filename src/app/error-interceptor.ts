@@ -13,33 +13,33 @@ import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-
-  constructor(
-    private dialog: MatDialog,
-    private toastr: ToastrService) {}
+  constructor(private dialog: MatDialog, private toastr: ToastrService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-   return next.handle(req).pipe(
-     catchError((error: HttpErrorResponse) => {
+    return next.handle(req).pipe(
+      catchError((error: HttpErrorResponse) => {
 
-      console.log(JSON.stringify(error));
+        // console.log(JSON.stringify(error));
 
-       let errorMessage = 'An Unknown error occurred! XXX';
+        let errorMessage = 'An Unknown error occurred! XXX';
 
-       if (error.message) {
+        if (error.error.msg) {
+          errorMessage = error.error.msg;
+        } else if (error.message) {
           errorMessage = error.message;
-       } else  if (error.error.message) {
-        errorMessage = error.message;
-       }
+        } else if (error.error.message) {
+          errorMessage = error.message;
+        }
 
-       this.toastr.error( errorMessage , 'ERROR', {
-        timeOut: 0,
-        positionClass: 'toast-top-center',
-      });
-      // this.dialog.open(CustomErrorComponent, {data: {message: errorMessage}});
+        this.toastr.error(errorMessage, 'ERROR', {
+          timeOut: 0,
+          positionClass: 'toast-top-center'
+        });
 
-      return throwError(error);
-     })
-   );
+        // this.dialog.open(CustomErrorComponent, {data: {message: errorMessage}});
+
+        return throwError(error);
+      })
+    );
   }
 }

@@ -73,6 +73,13 @@ export class AuthService {
       });
   }
 
+  setUserExtlink(_token: string){
+    this.token = _token;
+    const now = new Date();
+    const expirationDate = new Date(now.getTime() + 10 * 1000);
+    this.saveAuthData(_token, expirationDate, 'NA');
+  }
+
   login(email: string, password: string) {
     const authData: AuthData = { email: email, password: password };
 

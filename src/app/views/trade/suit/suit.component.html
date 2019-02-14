@@ -1,22 +1,32 @@
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 <mat-card *ngIf="!spinnerLoading">
-      <form>
+
+  <form [formGroup]="form"  #custForm="ngForm" >
 
             <mat-card-title>
                   {{formService.from_title}}
 
-                  <input matInput fplaceholder="Fax number" >
+
+                  <div class="row">
+
+                      <mat-form-field class="col-md-4">
+                          <input   matInput formControlName="pid" placeholder={{formService.pid_label}}
+                          [(ngModel)]="survey.pid">
+                          <mat-error *ngIf="form.get('pid').invalid">Please enter  ID</mat-error>
+                      </mat-form-field>
+                  </div>
+
 
                   <a mat-flat-button color="primary"  (click)="verify()">
                               Verify
                             </a>
 
-            </mat-card-title> 
+            </mat-card-title>
 
-            <mat-card-content *ngIf="canDoSuit">
+            <mat-card-content *ngIf="canDoSurvey">
 
                   <app-suit-tree-view [questions]="questions"></app-suit-tree-view>
-                 
+
                   <mat-card-actions>
                         <button mat-flat-button class="button_card_action" color="primary" type='submit'>Submit</button>
                         <button mat-flat-button class="button_card_action" color="warn" type='reset'>Reset</button>

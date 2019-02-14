@@ -16,9 +16,13 @@ exports.verifyExtLink = (req,res,next)=>{
   let rsp_code ;
 
   try{
+    // logger.debug(`headers =` + JSON.stringify(req.headers));
 
     const token = req.headers.authorization.split(" ")[1];
     const pid = req.body.pid;
+
+    logger.debug(`pid = ${pid}`);
+    logger.debug(` token = ${token}`);
 
     // 1. Verify token till life
     jwt.verify(token, JWT_SECRET_STRING, function(err, decoded) {
@@ -42,7 +46,7 @@ exports.verifyExtLink = (req,res,next)=>{
 
         rsp_code = '204';
 
-       return res.status(500).json({
+       return res.status(405).json({
           code: rsp_code,
           msg: prop.getRespMsg(rsp_code)
         });

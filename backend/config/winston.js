@@ -5,7 +5,19 @@
 // logger.info('Hello world');
 // logger.warn('Warning message');
 // logger.error('Error info');
-
+/*
+Logging Levels
+{
+  emerg: 0,
+  alert: 1,
+  crit: 2,
+  error: 3,
+  warning: 4,
+  notice: 5,
+  info: 6,
+  debug: 7
+}
+*/
  // add this line to include winston logging
 //  winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
 
@@ -33,7 +45,7 @@ const dailyRotateFileTransport = new transports.DailyRotateFile({
 
 const logger = createLogger({
   // change level if in dev environment versus production
-  level: env === 'development' ? 'verbose' : 'info',
+  level: env === 'development' ? 'verbose' : 'debug',
   format: format.combine(
     format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss'
@@ -42,7 +54,7 @@ const logger = createLogger({
   ),
   transports: [
     new transports.Console({
-      level: 'info',
+      // level: 'info',
       format: format.combine(
         format.colorize(),
         format.printf(

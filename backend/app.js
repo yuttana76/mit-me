@@ -33,6 +33,7 @@ const applicationRoutes = require('./routes/application');
 const groupRoutes = require('./routes/group');
 const authorityRoutes = require('./routes/authority');
 const anoucementRoutes = require('./routes/anoucement');
+const verifyExtRoutes = require('./routes/verifyExt');
 
 const navRoutes = require('./routes/nav');
 const reportRoutes = require('./routes/report');
@@ -109,6 +110,10 @@ app.use("/api/download",downloadRoutes);
 
 // Reports
 app.use("/api/rep",reportRoutes);
+
+// Reports
+app.use("/api/verify",verifyExtRoutes);
+
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

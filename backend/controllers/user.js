@@ -641,48 +641,45 @@ exports.addUserGroup = (req,res,next)=>{
 }
 
 
-exports.verifyExtLink = (req,res,next)=>{
+// exports.verifyExtLink = (req,res,next)=>{
 
-  logger.info( `API /verifyExtLink - ${req.originalUrl} - ${req.ip} `);
-  let rsp_code ;
+//   logger.info( `API /verifyExtLink - ${req.originalUrl} - ${req.ip} `);
+//   let rsp_code ;
 
-  try{
+//   try{
 
-    const token = req.headers.authorization.split(" ")[1];
-    const pid = req.body.pid;
+//     const token = req.headers.authorization.split(" ")[1];
+//     const pid = req.body.pid;
 
-    jwt.verify(token, JWT_SECRET_STRING, function(err, decoded) {
-      if (err) {
-       console.log(err);
-       res.status(401);
-      }
+//     // 1. Verify token till life
+//     jwt.verify(token, JWT_SECRET_STRING, function(err, decoded) {
+//       if (err) {
+//        console.log(err);
+//        res.status(401);
+//       }
 
-      logger.info( `*** PID  - ${pid} `);
+//       logger.info( `*** PID  - ${pid} `);
+//       //2. Verify correct PID
+//       if (decoded.USERID===pid){
+//         rsp_code = '000';
+//         logger.info( `*** PID  - ${prop.getRespMsg(rsp_code)} `);
 
-      if (decoded.USERID===pid){
-        verify_msg = 'Correct user ' + pid;
+//         res.status(200).json({
+//           code: rsp_code,
+//           msg: prop.getRespMsg(rsp_code)
+//         });
+//       }else{
 
-        rsp_code = '000';
-        res.status(200).json({
-          code: rsp_code,
-          msg: prop.getRespMsg(rsp_code)
-        });
-      }else{
+//         rsp_code = '204';
+//         res.status(500).json({
+//           code: rsp_code,
+//           msg: prop.getRespMsg(rsp_code)
+//         });
+//       }
 
-        rsp_code = '204';
-        res.status(500).json({
-          code: rsp_code,
-          msg: prop.getRespMsg(rsp_code)
-        });
-      }
-
-    });
-
-
-  }catch(error){
-    console.log(error);
-    res.status(401).json({message: 'Auth failed!'});
-  }
-
-
-}
+//     });
+//   }catch(error){
+//     console.log(error);
+//     res.status(401).json({message: 'Auth failed!'});
+//   }
+// }

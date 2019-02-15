@@ -1,11 +1,11 @@
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 <mat-card *ngIf="!spinnerLoading">
 
-  <form [formGroup]="form"  #custForm="ngForm" >
+  <form [formGroup]="form" (submit)="onSubmit()" #custForm="ngForm" >
 
             <mat-card-title>
                   {{formService.from_title}}
-
+                  <i *ngIf="ADD_NEW" class="fas fa-plus-square fa-1x" matTooltip="{{formService.addNewBtn}}" (click)="onAddNew()"></i>
 
                   <div class="row">
 
@@ -16,10 +16,10 @@
                       </mat-form-field>
                   </div>
 
-
-                  <a mat-flat-button color="primary"  (click)="verify()">
-                              Verify
-                            </a>
+                  <mat-card-actions>
+                    <a *ngIf="!INTERNAL_USER" mat-flat-button color="primary"  (click)="verify()"> Verify</a>
+                    <a *ngIf="INTERNAL_USER" mat-flat-button color="primary"  (click)="searchCust()"> Search</a>
+                  </mat-card-actions>
 
             </mat-card-title>
 

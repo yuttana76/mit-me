@@ -25,6 +25,8 @@ export class SuitComponent implements OnInit {
 
   spinnerLoading = false;
   canDoSurvey = false;
+  ADD_NEW = false;
+  INTERNAL_USER = false;
 
   public survey : SurveyModel = new SurveyModel();
 
@@ -41,6 +43,15 @@ export class SuitComponent implements OnInit {
     public authService: AuthService
   ) {
 
+    console.log('*** getUserData>>' + this.authService.getUserData());
+    console.log('*** getUserId>>' + this.authService.getUserId());
+    console.log('*** getFullName>>' + this.authService.getFullName());
+    console.log('*** getDepCode>>' + this.authService.getDepCode());
+
+    if(this.authService.getUserId()!=null && this.authService.getDepCode() != null ){
+      this.ADD_NEW = true;
+      this.INTERNAL_USER = true;
+    }
 
 
   }
@@ -84,6 +95,18 @@ export class SuitComponent implements OnInit {
 
   public verify() {
 
+    if (this.form.invalid) {
+      console.log('form.invalid() ' + this.form.invalid);
+
+      this.toastr.error('Invalid require data', 'warning', {
+        timeOut: 5000,
+        closeButton: true,
+        positionClass: 'toast-top-center'
+      });
+
+      return false;
+    }
+
     this.spinnerLoading = true;
 
     this.verifyService.verifyExtLink(this.survey.pid , this.token)
@@ -103,9 +126,29 @@ export class SuitComponent implements OnInit {
       console.log('Verify  complete');
     });
 
+  }
 
-
+  public searchCust() {
+    this.canDoSurvey = !this.canDoSurvey;
   }
 
 
+  onSubmit() {
+    console.log('ON SUBMIT !');
+    if (this.form.invalid) {
+      return false;
+    }
+
+    // CONVERT VALUES
+    // if ( this.customer.Birth_Day) {
+    //   const d = new Date(this.customer.Birth_Day);
+    //   this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
+    // }
+    // this.customer.Create_By = this.authService.getUserData() || 'NONE';
+
+  }
+
+  onAddNew(){
+    this.canDoSurvey = false;
+  }
 }

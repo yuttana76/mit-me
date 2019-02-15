@@ -30,9 +30,19 @@ export class ErrorInterceptor implements HttpInterceptor {
         } else if (error.error.message) {
           errorMessage = error.message;
         }
+/*
+https://www.npmjs.com/package/ngx-toastr
+
+        error: 'toast-error',
+        info: 'toast-info',
+        success: 'toast-success',
+        warning: 'toast-warning'
+
+*/
 
         this.toastr.error(errorMessage, 'ERROR', {
           timeOut: 0,
+          closeButton: true,
           positionClass: 'toast-top-center'
         });
 

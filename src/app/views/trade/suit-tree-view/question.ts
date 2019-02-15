@@ -21,6 +21,7 @@ export class Question {
     constructor(
         public id: string,
         public name: string,
+        public image: string = '',
         public multilchoice: boolean,
         public questions: Array<Question>,
         public choices: Array<Choice>) {

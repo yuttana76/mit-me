@@ -19,7 +19,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
 
-        // console.log(JSON.stringify(error));
+        console.log(JSON.stringify(error));
 
         let errorMessage = 'An Unknown error occurred! XXX';
 
@@ -41,7 +41,7 @@ https://www.npmjs.com/package/ngx-toastr
 */
 
         this.toastr.error(errorMessage, 'ERROR', {
-          timeOut: 0,
+          timeOut: 5000,
           closeButton: true,
           positionClass: 'toast-top-center'
         });

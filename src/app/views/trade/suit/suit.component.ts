@@ -13,6 +13,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { SurveyModel } from '../model/survey.model';
 import { AuthService } from '../../services/auth.service';
 import 'rxjs/add/operator/finally';
+import { Customer } from '../model/customer.model';
 
 @Component({
   selector: 'app-suit',
@@ -27,6 +28,8 @@ export class SuitComponent implements OnInit {
   canDoSurvey = false;
   ADD_NEW = false;
   INTERNAL_USER = false;
+
+  public customer : Customer = new Customer();
 
   public survey : SurveyModel = new SurveyModel();
 
@@ -43,10 +46,10 @@ export class SuitComponent implements OnInit {
     public authService: AuthService
   ) {
 
-    console.log('*** getUserData>>' + this.authService.getUserData());
-    console.log('*** getUserId>>' + this.authService.getUserId());
-    console.log('*** getFullName>>' + this.authService.getFullName());
-    console.log('*** getDepCode>>' + this.authService.getDepCode());
+    // console.log('*** getUserData>>' + this.authService.getUserData());
+    // console.log('*** getUserId>>' + this.authService.getUserId());
+    // console.log('*** getFullName>>' + this.authService.getFullName());
+    // console.log('*** getDepCode>>' + this.authService.getDepCode());
 
     if(this.authService.getUserId()!=null && this.authService.getDepCode() != null ){
       this.ADD_NEW = true;
@@ -73,10 +76,6 @@ export class SuitComponent implements OnInit {
     });
   }
 
-  ngOnChanges(){
-    console.log('Key press**********');
-  }
-
   private _buildForm() {
     // Initial Form fields
     this.form = new FormGroup({
@@ -94,6 +93,9 @@ export class SuitComponent implements OnInit {
   }
 
   public verify() {
+
+    this.canDoSurvey = false;
+    this.customer = new Customer();
 
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);
@@ -116,11 +118,22 @@ export class SuitComponent implements OnInit {
       this.spinnerLoading = false;
     })
     .subscribe((data: any ) => {
-      console.log('HTTP return :' + JSON.stringify(data));
 
-      this.canDoSurvey = !this.canDoSurvey;
+      // console.log('HTTP return :' + JSON.stringify(data));
+
+      this.customer.First_Name_T = data.USERDATA.First_Name_T;
+      this.customer.Last_Name_T = data.USERDATA.Last_Name_T;
+
+      this.toastr.success(`Welcome ${this.customer.First_Name_T} ${this.customer.Last_Name_T}` , 'success', {
+        timeOut: 3000,
+        closeButton: true,
+        positionClass: 'toast-top-center'
+      });
+
+      this.canDoSurvey = true;
 
     }, error => () => {
+      
       console.log('Verify Was error', error);
     }, () => {
       console.log('Verify  complete');

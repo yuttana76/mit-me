@@ -1,3 +1,6 @@
+<mat-card>
+
+  <form  #kycForm="ngForm" >
 <ul>
   <div *ngFor="let ques of questions" class="questions">
     <!-- <span class="iconButton" (click)="dir.toggle()">{{dir.getIcon()}}</span> -->
@@ -22,8 +25,13 @@
     <div>
       <ul>
         <div *ngFor="let choice of ques.choices">
-          <div *ngIf="ques.multilchoice">
-            <input type="checkbox" value="{{ choice.value }}" />
+          <div *ngIf="ques.multilchoice"> 
+            <input type="checkbox"  
+            value=" {{ choice.value }}"  
+            id="{{ choice.id }}"
+            [(ngModel)]="choice.answer" 
+            [ngModelOptions]="{standalone: true}"
+            />
             {{ choice.name }}
           </div>
           <div *ngIf="!ques.multilchoice">
@@ -31,6 +39,7 @@
               name="{{ ques.id }}"
               type="radio"
               value="{{ choice.value }}"
+              [(ngModel)]="ques.answer" 
             />
             {{ choice.name }}
           </div>
@@ -41,3 +50,13 @@
     <!-- <BR> -->
   </div>
 </ul>
+
+  <mat-card-actions>
+        <!-- <button mat-flat-button class="button_card_action" color="primary" type='submit'>Submit</button> -->
+        <button mat-flat-button class="button_card_action" color="warn" type='reset'>Reset</button>
+
+        <a mat-flat-button color="primary"  (click)="calSuit()"> Calculate</a>
+  </mat-card-actions>
+
+</form>
+</mat-card>

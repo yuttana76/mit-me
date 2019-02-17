@@ -6,7 +6,10 @@
             <mat-card-title>
                   {{formService.from_title}}
                   <i *ngIf="ADD_NEW" class="fas fa-plus-square fa-1x" matTooltip="{{formService.addNewBtn}}" (click)="onAddNew()"></i>
-
+                  <div  *ngIf="customer.First_Name_T" id='cust_content' >
+                        <img  src="assets/img/avatars/noPerson.png" class="img-avatar box_img" alt="{{customer.First_Name_T}}"/>
+                        <span>{{customer.First_Name_T}} {{customer.Last_Name_T}}</span>
+                  </div>
                   <div class="row">
 
                       <mat-form-field class="col-md-4">

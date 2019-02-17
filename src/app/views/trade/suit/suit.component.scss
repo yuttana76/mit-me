@@ -24,3 +24,25 @@ mat-spinner {
   color: #1194F6;
   font-size: 17px;
 }
+
+//Customer info
+#cust_content {
+  position: absolute;
+
+  top: 10px;  
+  right: 50px;
+}
+#cust_content img {
+  position: absolute;
+ 
+  width: 60%;
+}
+#cust_content span {
+  position: relative;
+  font-size: 0.6em;
+  color: #6d6d6d;
+  top: 60px;
+  right: 25px;
+}
+
+

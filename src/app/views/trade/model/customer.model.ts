@@ -1,7 +1,6 @@
 export class Customer {
 
    constructor() {}
-
   Cust_Code: string;
   Card_Type: string;
   Card_IssueDate: string;

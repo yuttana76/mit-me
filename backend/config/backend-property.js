@@ -11,6 +11,7 @@ const resp_msg = {
   "203": "รหัสผ่านหมดอายุ กรุณาเปลี่ยนรหัสผ่านใหม่",
 
   "204": "Incorrect user",
+  "205": "Link was expire. Please contace to MPAM 02-xxx-yyyy",
 
   "901": "Reset password	"
 };

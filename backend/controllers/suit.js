@@ -67,12 +67,39 @@ exports.verifyExtLink = (req, res, next) => {
   }
 }
 
+exports.suitEvaluate = (req, res, next) => {
+
+  logger.info(`API /suitEvaluate - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var pid = req.body.pid;
+  var score = req.body.score || '0';
+  var ans = req.body.ans || '';
+
+  console.log(` PID:${pid}`)
+  console.log(` SCORE:${score}`)
+  console.log(` ANS->>:${ans}`)
+
+  try {
+
+    return res.status(200).json({
+      code: rsp_code,
+      msg: prop.getRespMsg(rsp_code),
+      USERDATA: {
+        Cust_Code: pid
+
+      }
+    });
+
+} catch (error) {
+  console.log('Suit Evaluate fail>>' + JSON.stringify(error));
+  return res.status(401).json({ message: 'Suit Evaluate failed!' });
+}
+
+}
+
 function getCustomerData(_pid) {
 
-  logger.info(`API /addUserGroup - ${req.originalUrl} - ${req.ip} - ${req.body.email}`);
-
-  let _userName = req.body.email
-  logger.info(`API /Login - ${req.originalUrl} - ${req.ip} - ${_userName}`);
+  logger.info(` getCustomerData - ${_pid} `);
 
   let queryStr = `SELECT a.* ,b.FIRST_NAME + ' ' + b.LAST_NAME AS FULLNAME
                   FROM [MIT_USERS] a

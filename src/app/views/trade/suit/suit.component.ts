@@ -5,15 +5,16 @@ import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
-import { Question, Choice } from '../suit-tree-view/question';
+// import { Question, Choice } from '../suit-tree-view/questionBAK';
 import { SuitTreeViewComponent } from '../suit-tree-view/suit-tree-view.component';
 import { UserService } from '../services/user.service';
-import { VerifyService } from '../services/verify.service';
+import { VerifyService } from '../services/suit.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { SurveyModel } from '../model/survey.model';
 import { AuthService } from '../../services/auth.service';
 import 'rxjs/add/operator/finally';
 import { Customer } from '../model/customer.model';
+import { Question } from '../model/question.model';
 
 @Component({
   selector: 'app-suit',
@@ -28,6 +29,10 @@ export class SuitComponent implements OnInit {
   canDoSurvey = false;
   ADD_NEW = false;
   INTERNAL_USER = false;
+
+  suitScore = 0;
+  suitLevel = '';
+  suitLevelDesc = '';
 
   public customer : Customer = new Customer();
 
@@ -55,7 +60,6 @@ export class SuitComponent implements OnInit {
       this.ADD_NEW = true;
       this.INTERNAL_USER = true;
     }
-
 
   }
 
@@ -133,7 +137,7 @@ export class SuitComponent implements OnInit {
       this.canDoSurvey = true;
 
     }, error => () => {
-      
+
       console.log('Verify Was error', error);
     }, () => {
       console.log('Verify  complete');
@@ -163,5 +167,84 @@ export class SuitComponent implements OnInit {
 
   onAddNew(){
     this.canDoSurvey = false;
+  }
+
+
+  calSuit() {
+    console.log('ON calSuit !');
+    this.suitScore = 0;
+
+    if (this.form.invalid) {
+      return false;
+    }
+
+    for (let i = 0; i < this.questions.length; i++) {
+
+      if (this.questions[i].multilchoice ) {
+        console.log(`multil `);
+        let _score = 0;
+        for (let y = 0; y < this.questions[i].choices.length - 1; y++) {
+          if (this.questions[i].choices[y].answer) {
+            console.log(`** ${this.questions[i].id} : ${this.questions[i].choices[y].score}`);
+            _score += this.questions[i].choices[y].score;
+          }
+        }
+
+        if(_score<=0 && this.questions[i].require){
+          console.log(' *** Suit not complete !!');
+
+          this.toastr.warning(this.formService.SUIT_ANS_INCOMPLETE, 'warning', {
+            timeOut: 5000,
+            closeButton: true,
+            positionClass: 'toast-top-center'
+          });
+
+          break
+
+        }
+        this.suitScore +=_score;
+
+      } else {
+        console.log(`* ${this.questions[i].id} : ${this.questions[i].answer}`);
+
+        if(!this.questions[i].answer && this.questions[i].require){
+
+          this.toastr.warning(this.formService.SUIT_ANS_INCOMPLETE, 'warning', {
+            timeOut: 5000,
+            closeButton: true,
+            positionClass: 'toast-top-center'
+          });
+
+          break
+
+        }else{
+          this.suitScore += Number(this.questions[i].answer);
+        }
+
+      }
+    }
+
+    console.log(`*** Suit score : ${this.suitScore}`);
+
+    this.verifyService.evaluateRiskLevel(this.survey.pid ,this.suitScore, this.questions)
+    .finally(() => {
+      // Execute after graceful or exceptionally termination
+      console.log('Handle logging logic...');
+      this.spinnerLoading = false;
+    })
+    .subscribe((data: any ) => {
+
+      console.log('HTTP return  evaluateRiskLevel :' + JSON.stringify(data));
+
+
+    }, error => () => {
+
+      console.log('Verify Was error', error);
+    }, () => {
+      console.log('Verify  complete');
+    });
+
+
+    // console.log(JSON.stringify(this.questions));
   }
 }

@@ -1,15 +1,16 @@
+import { Choice } from "../model/choice.model";
 
-export class Choice {
-    public answer = '';
-    constructor(
-        public id: string,
-        public name: string,
-        public value: number
-    ) {
-    }
-}
+// export class Choice {
+//     public answer = '';
+//     constructor(
+//         public id: string,
+//         public name: string,
+//         public score: number
+//     ) {
+//     }
+// }
 
-export class Question {
+export class QuestionBAK {
     constructor(
         public id: string,
         public name: string,

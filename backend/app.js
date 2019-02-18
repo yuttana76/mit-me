@@ -33,7 +33,7 @@ const applicationRoutes = require('./routes/application');
 const groupRoutes = require('./routes/group');
 const authorityRoutes = require('./routes/authority');
 const anoucementRoutes = require('./routes/anoucement');
-const verifyExtRoutes = require('./routes/verifyExt');
+const suitRoutes = require('./routes/suit');
 
 const navRoutes = require('./routes/nav');
 const reportRoutes = require('./routes/report');
@@ -111,8 +111,8 @@ app.use("/api/download",downloadRoutes);
 // Reports
 app.use("/api/rep",reportRoutes);
 
-// Reports
-app.use("/api/verify",verifyExtRoutes);
+// Suitability
+app.use("/api/suit",suitRoutes);
 
 
 app.use((req, res, next) => {

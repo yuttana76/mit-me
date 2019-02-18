@@ -31,8 +31,8 @@
                   <app-suit-tree-view [questions]="questions"></app-suit-tree-view>
 
                   <mat-card-actions>
-                        <button mat-flat-button class="button_card_action" color="primary" type='submit'>Submit</button>
                         <button mat-flat-button class="button_card_action" color="warn" type='reset'>Reset</button>
+                        <a mat-flat-button color="primary"  (click)="calSuit()"> Calculate</a>
                   </mat-card-actions>
 
             </mat-card-content>

@@ -1,47 +1,63 @@
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 <mat-card *ngIf="!spinnerLoading">
 
-  <form [formGroup]="form" (submit)="onSubmit()" #custForm="ngForm" >
+      <form [formGroup]="form" (submit)="onSubmit()" #custForm="ngForm">
 
             <mat-card-title>
                   {{formService.from_title}}
-                  <i *ngIf="ADD_NEW" class="fas fa-plus-square fa-1x" matTooltip="{{formService.addNewBtn}}" (click)="onAddNew()"></i>
-                  <div  *ngIf="customer.First_Name_T" id='cust_content' >
-                        <img  src="assets/img/avatars/noPerson.png" class="img-avatar box_img" alt="{{customer.First_Name_T}}"/>
+                  <i *ngIf="ADD_NEW" class="fas fa-plus-square fa-1x" matTooltip="{{formService.addNewBtn}}"
+                        (click)="onAddNew()"></i>
+                  <div *ngIf="customer.First_Name_T" id='cust_content'>
+                        <img src="assets/img/avatars/noPerson.png" class="img-avatar box_img"
+                              alt="{{customer.First_Name_T}}" />
                         <span>{{customer.First_Name_T}} {{customer.Last_Name_T}}</span>
                   </div>
                   <div class="row">
 
-                      <mat-form-field class="col-md-4">
-                          <input   matInput formControlName="pid" placeholder={{formService.pid_label}}
-                          [(ngModel)]="survey.pid">
-                          <mat-error *ngIf="form.get('pid').invalid">Please enter  ID</mat-error>
-                      </mat-form-field>
+                        <mat-form-field class="col-md-4">
+                              <input matInput formControlName="pid" placeholder={{formService.pid_label}}
+                                    [(ngModel)]="survey.pid">
+                              <mat-error *ngIf="form.get('pid').invalid">Please enter ID</mat-error>
+                        </mat-form-field>
                   </div>
 
                   <mat-card-actions>
-                    <a *ngIf="!INTERNAL_USER" mat-flat-button color="primary"  (click)="verify()"> Verify</a>
-                    <a *ngIf="INTERNAL_USER" mat-flat-button color="primary"  (click)="searchCust()"> Search</a>
+                        <a *ngIf="!INTERNAL_USER" mat-flat-button color="primary" (click)="verify()"> Verify</a>
+                        <a *ngIf="INTERNAL_USER" mat-flat-button color="primary" (click)="searchCust()"> Search</a>
                   </mat-card-actions>
 
             </mat-card-title>
       </form>
 
-      
-            <mat-card-content *ngIf="canDoSuit">
-                  <form>
+
+      <mat-card-content *ngIf="canDoSuit">
+
+            <form>
                   <app-suit-tree-view [questions]="questions"></app-suit-tree-view>
 
                   <mat-card-actions>
-                        <button mat-flat-button class="button_card_action" color="warn" type='reset'>Reset</button>
-                        <a mat-flat-button color="primary"  (click)="calSuit()"> Calculate</a>
-                  </mat-card-actions>
 
+                        <button mat-flat-button class="button_card_action" color="warn" (click)="suiteFormRESET(); "
+                              type="reset"> Suit Reset</button>
 
-                  <mat-card-actions *ngIf="canSaveSuit">
-                        <a mat-flat-button color="primary"  (click)="saveSuit()"> Save Suitability</a>
+                        <a mat-flat-button color="primary" (click)="calSuit()"> Calculate</a>
                   </mat-card-actions>
-                  </form>
-            </mat-card-content>
-     
+            </form>
+
+      </mat-card-content>
+
+      <mat-card-content *ngIf="canSaveSuit">
+            <div class="suitResult">
+                  <h4>Result</h4>
+                  <mat-slider class="example-margin" [disabled]="disabled" [invert]="invert" [max]="max" [min]="min"
+                        [step]="step" [thumbLabel]="thumbLabel" [tickInterval]="tickInterval" [(ngModel)]="riskLevel"
+                        [vertical]="vertical">
+                  </mat-slider>
+                  <h5>{{riskLevel}} - {{riskLevelTxt}}</h5>
+                  <p>{{riskLevelDesc}}</p>
+            
+                  <a mat-flat-button color="primary" (click)="saveSuit()"> Save Suitability</a>
+            </div>
+      </mat-card-content>
+
 </mat-card>

@@ -27,7 +27,7 @@ export class SuitComponent implements OnInit {
 
   spinnerLoading = false;
   canDoSuit = false;
-  canSaveSuit = false;
+  canSaveSuit = true;
 
   ADD_NEW = false;
   INTERNAL_USER = false;
@@ -37,6 +37,18 @@ export class SuitComponent implements OnInit {
   riskLevel = 0;
   riskLevelTxt = '';
   riskLevelDesc = '';
+
+  // at-slider
+  disabled = true;
+  invert = false;
+  max = 5;
+  min = 0;
+  showTicks = true;
+  step = 1;
+  thumbLabel = true;
+  value = 0;
+  vertical = false;
+
 
   public customer: Customer = new Customer();
 
@@ -271,7 +283,7 @@ export class SuitComponent implements OnInit {
   saveSuit() {
 
     this.verifyService.saveSuitability(
-      this.survey.pid, 
+      this.survey.pid,
       this.suitScore,
       this.riskLevel, this.riskLevelTxt, this.riskLevelDesc, this.questions)
       .finally(() => {
@@ -291,5 +303,15 @@ export class SuitComponent implements OnInit {
       });
 
     return null;
+  }
+
+  suiteFormRESET() {
+    console.log('Suite survey RESET !');
+
+    this.suitScore = 0;
+    this.riskLevel = 0;
+    this.riskLevelTxt = '';
+    this.riskLevelDesc = '';
+    this.canSaveSuit = false;
   }
 }

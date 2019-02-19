@@ -25,9 +25,11 @@
                   </mat-card-actions>
 
             </mat-card-title>
+      </form>
 
-            <mat-card-content *ngIf="canDoSurvey">
-
+      
+            <mat-card-content *ngIf="canDoSuit">
+                  <form>
                   <app-suit-tree-view [questions]="questions"></app-suit-tree-view>
 
                   <mat-card-actions>
@@ -35,6 +37,11 @@
                         <a mat-flat-button color="primary"  (click)="calSuit()"> Calculate</a>
                   </mat-card-actions>
 
+
+                  <mat-card-actions *ngIf="canSaveSuit">
+                        <a mat-flat-button color="primary"  (click)="saveSuit()"> Save Suitability</a>
+                  </mat-card-actions>
+                  </form>
             </mat-card-content>
-      </form>
+     
 </mat-card>

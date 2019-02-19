@@ -24,13 +24,13 @@ exports.verifyExtLink = (req, res, next) => {
 
       if (err) {
         //  logger.error(`${pid} was error: `+err);
-         rsp_code = '205';
+        rsp_code = '205';
         return res.status(401).json(
           {
             code: rsp_code,
             msg: prop.getRespMsg(rsp_code)
           }
-          );
+        );
       }
 
       logger.debug(` verify correct PID  - ${pid} `);
@@ -77,24 +77,79 @@ exports.suitEvaluate = (req, res, next) => {
 
   console.log(` PID:${pid}`)
   console.log(` SCORE:${score}`)
-  console.log(` ANS->>:${ans}`)
+  // console.log(` ANS->>:${JSON.stringify(ans)}`)
 
   try {
 
+    // var obj = JSON.parse(ans);
+    const riskLevel = calculateRiskLevel(score);
+
+    rsp_code = '000';
     return res.status(200).json({
       code: rsp_code,
       msg: prop.getRespMsg(rsp_code),
       USERDATA: {
-        Cust_Code: pid
-
+        Cust_Code: pid,
+        riskLevel: riskLevel.riskLevel,
+        riskLevelTxt: riskLevel.riskLevelTxt,
+        riskLevelDesc: riskLevel.riskDesc
       }
     });
 
-} catch (error) {
-  console.log('Suit Evaluate fail>>' + JSON.stringify(error));
-  return res.status(401).json({ message: 'Suit Evaluate failed!' });
+  } catch (error) {
+    console.log('Suit Evaluate fail>>' + JSON.stringify(error));
+    return res.status(401).json({ message: 'Suit Evaluate failed!' });
+  }
 }
 
+exports.suitSave = (req, res, next) => {
+
+  logger.info(`API /suitSave - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var pid = req.body.pid;
+  var score = req.body.score || '0';
+
+  var riskLevel = req.body.riskLevel;
+  var riskLevelTxt = req.body.riskLevelTxt;
+  var riskLevelDesc = req.body.riskLevelDesc;
+
+  var ans = req.body.ans || '';
+
+  try {
+    console.log(` PID:${pid}`)
+    console.log(` SCORE:${score}`)
+    console.log(` riskLevel:${riskLevel}`)
+    console.log(` riskLevelTxt:${riskLevelTxt}`)
+    console.log(` riskLevelDesc:${riskLevelDesc}`)
+
+    console.log(` ANS->>:${JSON.stringify(ans)}`)
+
+    rsp_code = '000';
+    return res.status(200).json({
+      code: rsp_code,
+      msg: prop.getRespMsg(rsp_code),
+    });
+
+
+  } catch (error) {
+    console.log('Suit Save fail>>' + JSON.stringify(error));
+    return res.status(401).json({ message: 'Suit Save failed!' });
+  }
+}
+
+function calculateRiskLevel(_score) {
+
+  if (_score > 40) {
+    return { riskLevel: 5,riskLevelTxt: 'Risk level 5' , riskDesc: 'Risk level 5' }
+  } else if (_score > 30) {
+    return { riskLevel: 4,riskLevelTxt: 'Risk level 4' , riskDesc: 'Risk level 4' }
+  } else if (_score > 20) {
+    return { riskLevel: 3,riskLevelTxt: 'Risk level 3' , riskDesc: 'Risk level 3' }
+  } else if (_score > 10) {
+    return { riskLevel: 2,riskLevelTxt: 'Risk level 2' , riskDesc: 'Risk level 2' }
+  } else {
+    return { riskLevel: 1,riskLevelTxt: 'Risk level 1' , riskDesc: 'Risk level 1' }
+  }
 }
 
 function getCustomerData(_pid) {

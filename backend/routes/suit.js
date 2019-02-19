@@ -6,6 +6,6 @@ const router = express.Router();
 
 // router.post("/verifyExtLink",checkAuth,userController.verifyExtLink);
 router.post("/verifyExtLink",suitController.verifyExtLink);
-
 router.post("/evaluate",suitController.suitEvaluate);
+router.post("/suitSave",suitController.suitSave);
 module.exports = router;

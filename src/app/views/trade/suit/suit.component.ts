@@ -26,17 +26,21 @@ export class SuitComponent implements OnInit {
   form: FormGroup;
 
   spinnerLoading = false;
-  canDoSurvey = false;
+  canDoSuit = false;
+  canSaveSuit = false;
+
   ADD_NEW = false;
   INTERNAL_USER = false;
 
   suitScore = 0;
-  suitLevel = '';
-  suitLevelDesc = '';
 
-  public customer : Customer = new Customer();
+  riskLevel = 0;
+  riskLevelTxt = '';
+  riskLevelDesc = '';
 
-  public survey : SurveyModel = new SurveyModel();
+  public customer: Customer = new Customer();
+
+  public survey: SurveyModel = new SurveyModel();
 
   private token: string;
 
@@ -56,7 +60,7 @@ export class SuitComponent implements OnInit {
     // console.log('*** getFullName>>' + this.authService.getFullName());
     // console.log('*** getDepCode>>' + this.authService.getDepCode());
 
-    if(this.authService.getUserId()!=null && this.authService.getDepCode() != null ){
+    if (this.authService.getUserId() != null && this.authService.getDepCode() != null) {
       this.ADD_NEW = true;
       this.INTERNAL_USER = true;
     }
@@ -83,11 +87,11 @@ export class SuitComponent implements OnInit {
   private _buildForm() {
     // Initial Form fields
     this.form = new FormGroup({
-     pid: new FormControl(null, {
-       validators: [Validators.required]
-     })
+      pid: new FormControl(null, {
+        validators: [Validators.required]
+      })
     });
-   }
+  }
 
   loadQuestions() {
 
@@ -98,7 +102,7 @@ export class SuitComponent implements OnInit {
 
   public verify() {
 
-    this.canDoSurvey = false;
+    this.canDoSuit = false;
     this.customer = new Customer();
 
     if (this.form.invalid) {
@@ -115,58 +119,58 @@ export class SuitComponent implements OnInit {
 
     this.spinnerLoading = true;
 
-    this.verifyService.verifyExtLink(this.survey.pid , this.token)
-    .finally(() => {
-      // Execute after graceful or exceptionally termination
-      console.log('Handle logging logic...');
-      this.spinnerLoading = false;
-    })
-    .subscribe((data: any ) => {
+    this.verifyService.verifyExtLink(this.survey.pid, this.token)
+      .finally(() => {
+        // Execute after graceful or exceptionally termination
+        console.log('Handle logging logic...');
+        this.spinnerLoading = false;
+      })
+      .subscribe((data: any) => {
 
-      // console.log('HTTP return :' + JSON.stringify(data));
+        // console.log('HTTP return :' + JSON.stringify(data));
 
-      this.customer.First_Name_T = data.USERDATA.First_Name_T;
-      this.customer.Last_Name_T = data.USERDATA.Last_Name_T;
+        this.customer.First_Name_T = data.USERDATA.First_Name_T;
+        this.customer.Last_Name_T = data.USERDATA.Last_Name_T;
 
-      this.toastr.success(`Welcome ${this.customer.First_Name_T} ${this.customer.Last_Name_T}` , 'success', {
-        timeOut: 3000,
-        closeButton: true,
-        positionClass: 'toast-top-center'
+        this.toastr.success(`Welcome ${this.customer.First_Name_T} ${this.customer.Last_Name_T}`, 'success', {
+          timeOut: 3000,
+          closeButton: true,
+          positionClass: 'toast-top-center'
+        });
+
+        this.canDoSuit = true;
+
+      }, error => () => {
+
+        console.log('Verify Was error', error);
+      }, () => {
+        console.log('Verify  complete');
       });
-
-      this.canDoSurvey = true;
-
-    }, error => () => {
-
-      console.log('Verify Was error', error);
-    }, () => {
-      console.log('Verify  complete');
-    });
 
   }
 
   public searchCust() {
-    this.canDoSurvey = !this.canDoSurvey;
+    this.canDoSuit = !this.canDoSuit;
   }
 
 
-  onSubmit() {
-    console.log('ON SUBMIT !');
-    if (this.form.invalid) {
-      return false;
-    }
+  // onSubmit() {
+  //   console.log('ON SUBMIT !');
+  //   if (this.form.invalid) {
+  //     return false;
+  //   }
 
-    // CONVERT VALUES
-    // if ( this.customer.Birth_Day) {
-    //   const d = new Date(this.customer.Birth_Day);
-    //   this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
-    // }
-    // this.customer.Create_By = this.authService.getUserData() || 'NONE';
+  //   // CONVERT VALUES
+  //   // if ( this.customer.Birth_Day) {
+  //   //   const d = new Date(this.customer.Birth_Day);
+  //   //   this.customer.Birth_Day = this.datePipe.transform(d, this.TRADE_FORMAT_DATE);
+  //   // }
+  //   // this.customer.Create_By = this.authService.getUserData() || 'NONE';
 
-  }
+  // }
 
-  onAddNew(){
-    this.canDoSurvey = false;
+  onAddNew() {
+    this.canDoSuit = false;
   }
 
 
@@ -180,7 +184,7 @@ export class SuitComponent implements OnInit {
 
     for (let i = 0; i < this.questions.length; i++) {
 
-      if (this.questions[i].multilchoice ) {
+      if (this.questions[i].multilchoice) {
         console.log(`multil `);
         let _score = 0;
         for (let y = 0; y < this.questions[i].choices.length - 1; y++) {
@@ -190,7 +194,7 @@ export class SuitComponent implements OnInit {
           }
         }
 
-        if(_score<=0 && this.questions[i].require){
+        if (_score <= 0 && this.questions[i].require) {
           console.log(' *** Suit not complete !!');
 
           this.toastr.warning(this.formService.SUIT_ANS_INCOMPLETE, 'warning', {
@@ -199,15 +203,15 @@ export class SuitComponent implements OnInit {
             positionClass: 'toast-top-center'
           });
 
-          break
+          return null;
 
         }
-        this.suitScore +=_score;
+        this.suitScore += _score;
 
       } else {
         console.log(`* ${this.questions[i].id} : ${this.questions[i].answer}`);
 
-        if(!this.questions[i].answer && this.questions[i].require){
+        if (!this.questions[i].answer && this.questions[i].require) {
 
           this.toastr.warning(this.formService.SUIT_ANS_INCOMPLETE, 'warning', {
             timeOut: 5000,
@@ -215,9 +219,9 @@ export class SuitComponent implements OnInit {
             positionClass: 'toast-top-center'
           });
 
-          break
+          return null;
 
-        }else{
+        } else {
           this.suitScore += Number(this.questions[i].answer);
         }
 
@@ -226,25 +230,66 @@ export class SuitComponent implements OnInit {
 
     console.log(`*** Suit score : ${this.suitScore}`);
 
-    this.verifyService.evaluateRiskLevel(this.survey.pid ,this.suitScore, this.questions)
-    .finally(() => {
-      // Execute after graceful or exceptionally termination
-      console.log('Handle logging logic...');
-      this.spinnerLoading = false;
-    })
-    .subscribe((data: any ) => {
-
-      console.log('HTTP return  evaluateRiskLevel :' + JSON.stringify(data));
-
-
-    }, error => () => {
-
-      console.log('Verify Was error', error);
-    }, () => {
-      console.log('Verify  complete');
-    });
-
-
+    if (this.suitScore > 0) {
+      this.riskEvaluate();
+    }
     // console.log(JSON.stringify(this.questions));
+
+  }
+
+  riskEvaluate() {
+
+    this.canSaveSuit = false;
+
+    this.verifyService.suitEvaluate(this.survey.pid, this.suitScore)
+      .finally(() => {
+        // Execute after graceful or exceptionally termination
+        console.log('riskEvaluate logging logic...');
+        this.spinnerLoading = false;
+      })
+      .subscribe((data: any) => {
+
+        console.log('HTTP return  evaluateRiskLevel :' + JSON.stringify(data));
+
+        if (data) {
+
+          this.riskLevel = data.USERDATA.riskLevel;
+          this.riskLevelTxt = data.USERDATA.riskLevelTxt;
+          this.riskLevelDesc = data.USERDATA.riskLevelDesc;
+
+          this.canSaveSuit = true;
+        }
+
+      }, error => () => {
+
+        console.log('riskEvaluate Was error', error);
+      }, () => {
+        console.log('riskEvaluate  complete');
+      });
+  }
+
+  saveSuit() {
+
+    this.verifyService.saveSuitability(
+      this.survey.pid, 
+      this.suitScore,
+      this.riskLevel, this.riskLevelTxt, this.riskLevelDesc, this.questions)
+      .finally(() => {
+        // Execute after graceful or exceptionally termination
+        console.log('saveSuit logging logic...');
+        this.spinnerLoading = false;
+      })
+      .subscribe((data: any) => {
+
+        console.log('HTTP return  saveSuit :' + JSON.stringify(data));
+
+      }, error => () => {
+
+        console.log('saveSuit Was error', error);
+      }, () => {
+        console.log('saveSuit  complete');
+      });
+
+    return null;
   }
 }

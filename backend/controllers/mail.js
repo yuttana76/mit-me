@@ -95,11 +95,13 @@ exports.surveyByMailToken = (req, res, next) =>{
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport(config.GmailParameters);
 
-  const _PID = '41121225';
+  // const _PID = '41121225';
+  const _PID = req.body.custCode ||'41121225'
+
   let _from = config.mail_form;
   let _to = 'yuttana76@gmail.com';
   let _subject = 'Interview suit by MPAM.'
-  let _msg = '';
+  let _msg = ' Mr. '+_PID ;
 
 
   //Generate token

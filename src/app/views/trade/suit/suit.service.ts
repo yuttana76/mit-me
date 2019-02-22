@@ -8,14 +8,31 @@ import { Choice } from '../model/choice.model';
   providedIn: 'root'
 })
 export class SuitFormService {
-  from_title = 'Suitability';
+
+  from_title = 'Customer Infomation Form';
+
+  from_suit_title = 'Suitability Form';
+
+  from_fatca_title = 'FATCA Form';
+
+
   addNewBtn = 'New survey';
+  suitSerieId = '2019-01';
+
+  setSuitSerieId(val){
+    this.suitSerieId = val;
+  }
 
   SUIT_ANS_INCOMPLETE = ' Suit survery not complete !';
 
+  SUIT_SAVE_COMPLETE = ' Save suitability complete';
+  SUIT_SAVE_INCOMPLETE = ' Save suitability incomplete';
+
   pid_label = 'ID Card';
 
-  q1 = new Question('1', 'ปัจจุบันท่านอายุ', '','', false,true,
+  // SUITABILITY QUESTIONS (START)
+  suit_q1 = new Question('1', 'ปัจจุบันท่านอายุ', '',''
+  , false,true,true,
     [
       new Choice('1', 'มากกว่า 55 ปี', 1),
       new Choice('2', '45 - 55 ปี', 2),
@@ -25,7 +42,8 @@ export class SuitFormService {
     );
 
   // tslint:disable-next-line:max-line-length
-  q2 = new Question('2', 'ปัจจุบันท่านมีภาระทางการเงินและค่าใช้จ่ายประจำ เช่น ค่าผ่อนบ้าน รถ ค่าใช้จ่ายส่วนตัว และค่าเลี้ยงดูครอบครัวเป็นสัดส่วนเท่าใด', '','', false,true,
+  suit_q2 = new Question('2', 'ปัจจุบันท่านมีภาระทางการเงินและค่าใช้จ่ายประจำ เช่น ค่าผ่อนบ้าน รถ ค่าใช้จ่ายส่วนตัว และค่าเลี้ยงดูครอบครัวเป็นสัดส่วนเท่าใด', '',''
+  , false,true,true,
     [
       new Choice('1', 'มากกว่าร้อยละ 75 ของรายได้ทั้งหมด', 1),
       new Choice('2', 'ระหว่างร้อยละ 50 ถึงร้อยละ 75 ของรายได้ทั้งหมด', 2),
@@ -36,7 +54,8 @@ export class SuitFormService {
 
 
   // tslint:disable-next-line:max-line-length
-  q3 = new Question('3', 'ท่านมีสถานภาพการเงินในปัจจุบันอย่างไร', '','', false,true,
+  suit_q3 = new Question('3', 'ท่านมีสถานภาพการเงินในปัจจุบันอย่างไร', '',''
+  , false,true,true,
     [
       new Choice('1', 'มีทรัพย์สินน้อยกว่าหนี้สิน', 1),
       new Choice('2', 'มีทรัพย์สินเท่ากับหนี้สิน', 2),
@@ -46,7 +65,8 @@ export class SuitFormService {
 
 
   // tslint:disable-next-line:max-line-length
-  q4 = new Question('4', 'ท่านเคยมีประสบการณ์ หรือมีความรู้ในการลงทุนในทรัพย์สินกลุ่มใดต่อไปนี้บ้าง (เลือกได้มากกว่า 1 ข้อ)', '','', true,true,
+  suit_q4 = new Question('4', 'ท่านเคยมีประสบการณ์ หรือมีความรู้ในการลงทุนในทรัพย์สินกลุ่มใดต่อไปนี้บ้าง (เลือกได้มากกว่า 1 ข้อ)', '',''
+  , true,true,true,
     [
       new Choice('1', 'เงินฝากธนาคาร ', 1),
       new Choice('2', 'พันธบัตรรัฐบาล หรือกองทุนรวมพันธบัตรรัฐบาล ', 2),
@@ -55,7 +75,8 @@ export class SuitFormService {
     ]);
 
   // tslint:disable-next-line:max-line-length
-  q5 = new Question('5', 'ระยะเวลาที่ท่านคาดว่าจะไม่มีความจำเป็นต้องใช้เงินลงทุนนี้', '','', false,true,
+  suit_q5 = new Question('5', 'ระยะเวลาที่ท่านคาดว่าจะไม่มีความจำเป็นต้องใช้เงินลงทุนนี้', '',''
+  , false,true,true,
     [
       new Choice('1', 'ไม่เกิน 1 ปี ', 1),
       new Choice('2', '1 ถึง 3 ปี', 2),
@@ -63,7 +84,8 @@ export class SuitFormService {
       new Choice('4', 'มากกว่า 5 ปี', 4),
     ]);
 
-  q6 = new Question('6', 'วัตถุประสงค์หลักในการลงทุนของท่าน คือ', '','', false,true,
+  suit_q6 = new Question('6', 'วัตถุประสงค์หลักในการลงทุนของท่าน คือ', '',''
+  , false,true,true,
     [
       new Choice('1', 'เน้นเงินต้นต้องปลอดภัยและได้รับผลตอบแทนสม่ำเสมอแต่ต่ำได้ ', 1),
       new Choice('2', 'เน้นโอกาสได้รับผลตอบแทนที่สม่ำเสมอ แต่อาจเสี่ยงที่จะสูญเสียเงินต้นได้บ้าง ', 2),
@@ -74,7 +96,8 @@ export class SuitFormService {
   // 'assets/img/mpam/S7.png'
   // 'assets/img/avatars/7.jpg'
   // tslint:disable-next-line:max-line-length
-  q7 = new Question('7', 'เมื่อพิจารณารูปแสดงตัวอย่างผลตอบแทนของกลุ่มการลงทุนที่อาจเกิดขึ้นด้านล่าง ท่านเต็มใจที่จะลงทุนในกลุ่มการลงทุนใดมากที่สุด', 'assets/img/mpam/S7.png','', false,true,
+  suit_q7 = new Question('7', 'เมื่อพิจารณารูปแสดงตัวอย่างผลตอบแทนของกลุ่มการลงทุนที่อาจเกิดขึ้นด้านล่าง ท่านเต็มใจที่จะลงทุนในกลุ่มการลงทุนใดมากที่สุด', 'assets/img/mpam/S7.png',''
+  , false,true,true,
     [
       new Choice('1', 'กลุ่มการลงทุนที่ 1 มีโอกาสได้รับผลตอบแทน 2.5% โดยไม่ขาดทุนเลย', 1),
       new Choice('2', 'กลุ่มการลงทุนที่ 2 มีโอกาสได้รับผลตอบแทนสูงสุด 7% แต่อาจมีผลขาดทุนได้ถึง 1%', 2),
@@ -83,7 +106,8 @@ export class SuitFormService {
     ]);
 
   // tslint:disable-next-line:max-line-length
-  q8 = new Question('8', 'ถ้าท่านเลือกลงทุนในทรัพย์สินที่มีโอกาสได้รับผลตอบแทนมาก แต่มีโอกาสขาดทุนสูงด้วยเช่นกัน ท่านรู้สึกอย่างไร', '','', false,true,
+  suit_q8 = new Question('8', 'ถ้าท่านเลือกลงทุนในทรัพย์สินที่มีโอกาสได้รับผลตอบแทนมาก แต่มีโอกาสขาดทุนสูงด้วยเช่นกัน ท่านรู้สึกอย่างไร', '',''
+  , false,true,true,
     [
       new Choice('1', 'กังวลและตื่นตระหนกกลัวขาดทุน ', 1),
       new Choice('2', 'ไม่สบายใจแต่พอเข้าใจได้บ้าง ', 2),
@@ -93,7 +117,8 @@ export class SuitFormService {
 
 
   // tslint:disable-next-line:max-line-length
-  q9 = new Question('9', 'ท่านจะรู้สึกกังวล/รับไม่ได้ เมื่อมูลค่าเงินทุนของท่านมีการปรับตัวลดลงในสัดส่วนเท่าใด', '','', false,true,
+  suit_q9 = new Question('9', 'ท่านจะรู้สึกกังวล/รับไม่ได้ เมื่อมูลค่าเงินทุนของท่านมีการปรับตัวลดลงในสัดส่วนเท่าใด', '',''
+  , false,true,true,
     [
       new Choice('1', '5% หรือน้อยกว่า ', 1),
       new Choice('2', 'มากกว่า 5%-10% ', 2),
@@ -102,7 +127,8 @@ export class SuitFormService {
     ]);
 
   // tslint:disable-next-line:max-line-length
-  q10 = new Question('10', 'หากปีที่แล้วท่านลงทุนไป 100,000 บาท ปีนี้ท่านพบว่ามูลค่าเงินลงทุนลดลงเหลือ 85,000 บาท ท่านจะทำอย่างไร', '','', false,true,
+  suit_q10 = new Question('10', 'หากปีที่แล้วท่านลงทุนไป 100,000 บาท ปีนี้ท่านพบว่ามูลค่าเงินลงทุนลดลงเหลือ 85,000 บาท ท่านจะทำอย่างไร', '',''
+  , false,true,true,
     [
       new Choice('1', 'ตกใจ และต้องการขายการลงทุนที่เหลือทิ้ง', 1),
       new Choice('2', 'กังวลใจ และจะปรับเปลี่ยนการลงทุนบางส่วนไปในทรัพย์สินที่เสี่ยงน้อยลง ', 2),
@@ -112,17 +138,87 @@ export class SuitFormService {
 
   // Special question
   // tslint:disable-next-line:max-line-length
-  s11 = new Question('11', 'หากการลงทุนในอนุพันธ์และหุ้นกู้อนุพันธ์ประสบความสำเร็จ ท่านจะได้รับผลตอบแทนในอัตราที่สูงมาก แต่หากการลงทุนล้มเหลว ท่านอาจจะสูญเงินลงทุนทั้งหมด และอาจต้องลงเงินชดเชยเพิ่มบางส่วน ท่านยอมรับได้เพียงใด', '','', false,true,
+  suit_s11 = new Question('11', 'หากการลงทุนในอนุพันธ์และหุ้นกู้อนุพันธ์ประสบความสำเร็จ ท่านจะได้รับผลตอบแทนในอัตราที่สูงมาก แต่หากการลงทุนล้มเหลว ท่านอาจจะสูญเงินลงทุนทั้งหมด และอาจต้องลงเงินชดเชยเพิ่มบางส่วน ท่านยอมรับได้เพียงใด', '',''
+  , false,true,false,
     [
       new Choice('1', 'ไม่ได้', 1),
       new Choice('2', 'ได้', 2),
     ]);
 
   // tslint:disable-next-line:max-line-length
-  s12 = new Question('12', 'นอกเหนือจากความเสี่ยงในการลงทุนแล้ว ท่านสามารถรับความเสี่ยงด้านอัตราแลกเปลี่ยนได้เพียงใด', '','', false,true,
+  suit_s12 = new Question('12', 'นอกเหนือจากความเสี่ยงในการลงทุนแล้ว ท่านสามารถรับความเสี่ยงด้านอัตราแลกเปลี่ยนได้เพียงใด', '',''
+  , false,true,false,
     [
       new Choice('1', 'ไม่ได้', 1),
       new Choice('2', 'ได้', 2),
     ]);
+// SUITABILITY QUESTIONS (END)
+
+
+// FATCA QUESTIONS (START)
+fatca_q1 = new Question('1', 'ท่านเป็นพลเมืองอเมริกัน ใช่หรือไม่', '',''
+  , false,true,false,
+    [
+      new Choice('1', 'ใช่', 1),
+      new Choice('2', 'ไม่ใช่', 2),
+    ]);
+
+fatca_q2 = new Question('2', 'ท่านเป็นผู้ถือบัตรประจำตัวผู้มีถิ่นที่อยู่ถาวรอย่างถูกต้องตามกฎหมายในสหรัฐอเมริกา (เช่น กรีนการ์ด) ใช่หรือไม่', '',''
+    , false,true,false,
+      [
+        new Choice('1', 'ใช่', 1),
+        new Choice('2', 'ไม่ใช่', 2),
+      ]);
+
+  fatca_q3 = new Question('3', 'ท่านมีสถานะเป็นผู้มีถิ่นที่อยู่ในสหรัฐอเมริกาเพื่อวัตถุประสงค์ในการเก็บภาษีอากรของสหรัฐอเมริกา ใช่หรือไม่', '',''
+  , false,true,false,
+    [
+      new Choice('1', 'ใช่', 1),
+      new Choice('2', 'ไม่ใช่', 2),
+    ]);
+
+
+        fatca_q4 = new Question('4', 'ท่านเกิดในสหรัฐอเมริกา (หรือดินแดนที่เป็นของสหรัฐอเมริกา) แต่ได้สละความเป็นพลเมืองอเมริกันอย่างสมบูรณ์ตามกฎหมายแล้ว ใช่หรือไม่', '',''
+        , false,true,false,
+          [
+            new Choice('1', 'ใช่', 1),
+            new Choice('2', 'ไม่ใช่', 2),
+          ]);
+
+          fatca_q5 = new Question('5', 'ท่านมีที่อยู่อาศัยในปัจจุบัน หรือที่อยู่เพื่อการติดต่อในสหรัฐอเมริกา สำหรับบัญชีที่เปิดไว้หรือมีอยู่กับ บริษัทจัดการ ใช่หรือไม่', '',''
+          , false,true,false,
+            [
+              new Choice('1', 'ใช่', 1),
+              new Choice('2', 'ไม่ใช่', 2),
+            ]);
+
+            fatca_q6 = new Question('6', 'ท่านมีหมายเลขโทรศัพท์ในสหรัฐอเมริกา เพื่อการติดต่อท่าน หรือบุคคลอื่นที่เกี่ยวข้องกับบัญชีที่เปิดไว้หรือมีอยู่กับ บริษัทจัดการ ใช่หรือไม่', '',''
+          , false,true,false,
+            [
+              new Choice('1', 'ใช่', 1),
+              new Choice('2', 'ไม่ใช่', 2),
+            ]);
+
+            fatca_q7 = new Question('7', 'ท่านมีที่อยู่สำหรับรับไปรษณีย์แทน หรือที่อยู่สำหรับการส่งต่อเพียงที่อยู่เดียว ในสหรัฐอเมริกา เพื่อการติดต่อหรือดำเนินการเกี่ยวกับบัญชีที่เปิดไว้หรือมีอยู่กับ บริษัทจัดการ ใช่หรือไม่', '',''
+            , false,true,false,
+              [
+                new Choice('1', 'ใช่', 1),
+                new Choice('2', 'ไม่ใช่', 2),
+              ]);
+
+              fatca_q8 = new Question('8', 'ท่านมีคำสั่งทำรายการโอนเงินเป็นประจำโดยอัตโนมัติ จากบัญชีที่เปิดไว้หรือที่มีอยู่กับ บริษัทจัดการ ไปยังบัญชีในสหรัฐอเมริกา ใช่หรือไม่', '',''
+              , false,true,false,
+                [
+                  new Choice('1', 'ใช่', 1),
+                  new Choice('2', 'ไม่ใช่', 2),
+                ]);
+
+                fatca_q9 = new Question('9', 'ท่านมีการมอบอำนาจหรือให้อำนาจในการลงลายมือชื่อแก่บุคคลที่มีที่อยู่ในสหรัฐอเมริกา เพื่อการใด ๆ ที่เกี่ยวข้องกับบัญชีที่เปิดไว้หรือมีอยู่กับ บริษัทจัดการ ใช่หรือไม่', '',''
+                , false,true,false,
+                  [
+                    new Choice('1', 'ใช่', 1),
+                    new Choice('2', 'ไม่ใช่', 2),
+                  ]);
+// FATCA QUESTIONS (END)
 
 }

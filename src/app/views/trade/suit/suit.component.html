@@ -1,63 +1,127 @@
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 <mat-card *ngIf="!spinnerLoading">
+  <form [formGroup]="form" #custForm="ngForm">
+    <mat-card-title>
+      {{ formService.from_suit_title }}
 
-      <form [formGroup]="form" (submit)="onSubmit()" #custForm="ngForm">
+      <i
+        *ngIf="ADD_NEW"
+        class="fas fa-plus-square fa-1x"
+        matTooltip="{{ formService.addNewBtn }}"
+        (click)="onAddNew()"
+      ></i>
+      <div *ngIf="customer.First_Name_T" id="cust_content">
+        <img
+          src="assets/img/avatars/noPerson.png"
+          class="img-avatar box_img"
+          alt="{{ customer.First_Name_T }}"
+        />
+        <span
+          >{{ customer.Title_Name_T }} {{ customer.First_Name_T }}
+          {{ customer.Last_Name_T }}</span
+        >
+      </div>
+      <div class="row">
+        <mat-form-field class="col-md-4">
+          <input
+            matInput
+            formControlName="pid"
+            placeholder="{{ formService.pid_label }}"
+            [(ngModel)]="survey.pid"
+          />
+          <mat-error *ngIf="form.get('pid').invalid">Please enter ID</mat-error>
+        </mat-form-field>
+      </div>
 
-            <mat-card-title>
-                  {{formService.from_title}}
-                  <i *ngIf="ADD_NEW" class="fas fa-plus-square fa-1x" matTooltip="{{formService.addNewBtn}}"
-                        (click)="onAddNew()"></i>
-                  <div *ngIf="customer.First_Name_T" id='cust_content'>
-                        <img src="assets/img/avatars/noPerson.png" class="img-avatar box_img"
-                              alt="{{customer.First_Name_T}}" />
-                        <span>{{customer.First_Name_T}} {{customer.Last_Name_T}}</span>
-                  </div>
-                  <div class="row">
+      <mat-card-actions>
+        <a
+          *ngIf="!INTERNAL_USER"
+          mat-flat-button
+          color="primary"
+          (click)="verify()"
+        >
+          Verify</a
+        >
+        <a
+          *ngIf="INTERNAL_USER"
+          mat-flat-button
+          color="primary"
+          (click)="searchCust()"
+        >
+          Search</a
+        >
+      </mat-card-actions>
+    </mat-card-title>
+  </form>
 
-                        <mat-form-field class="col-md-4">
-                              <input matInput formControlName="pid" placeholder={{formService.pid_label}}
-                                    [(ngModel)]="survey.pid">
-                              <mat-error *ngIf="form.get('pid').invalid">Please enter ID</mat-error>
-                        </mat-form-field>
-                  </div>
+  <mat-card-content *ngIf="canDoSuit">
+    <mat-card-title>
+      {{ formService.from_suit_title }}
+    </mat-card-title>
+    <form>
+      <app-suit-tree-view [questions]="suitQuestions"></app-suit-tree-view>
 
-                  <mat-card-actions>
-                        <a *ngIf="!INTERNAL_USER" mat-flat-button color="primary" (click)="verify()"> Verify</a>
-                        <a *ngIf="INTERNAL_USER" mat-flat-button color="primary" (click)="searchCust()"> Search</a>
-                  </mat-card-actions>
+      <mat-card-actions>
+        <button
+          mat-flat-button
+          class="button_card_action"
+          color="warn"
+          (click)="suiteFormRESET()"
+          type="reset"
+        >
+          Suit Reset
+        </button>
 
-            </mat-card-title>
-      </form>
+        <a mat-flat-button color="primary" (click)="calSuit()"> Calculate</a>
+      </mat-card-actions>
+    </form>
 
+    <div class="suitResult" *ngIf="canSaveSuit">
+      <h4>Result</h4>
+      <mat-slider
+        class="example-margin"
+        [disabled]="disabled"
+        [invert]="invert"
+        [max]="max"
+        [min]="min"
+        [step]="step"
+        [thumbLabel]="thumbLabel"
+        [(ngModel)]="riskLevel"
+        [vertical]="vertical"
+      >
+      </mat-slider>
+      <h5>{{ riskLevel }} - {{ riskLevelTxt }}</h5>
+      <p>{{ riskLevelDesc }}</p>
 
-      <mat-card-content *ngIf="canDoSuit">
+      <a mat-flat-button color="primary" (click)="saveSuit()">
+        Save Suitability</a
+      >
+    </div>
+  </mat-card-content>
+</mat-card>
 
-            <form>
-                  <app-suit-tree-view [questions]="questions"></app-suit-tree-view>
+<mat-card *ngIf="canDoFATCA">
+  <mat-card-content>
+    <mat-card-title>
+      {{ formService.from_fatca_title }}
+    </mat-card-title>
 
-                  <mat-card-actions>
+    <form>
+      <app-suit-tree-view [questions]="fatcaQuestions"></app-suit-tree-view>
 
-                        <button mat-flat-button class="button_card_action" color="warn" (click)="suiteFormRESET(); "
-                              type="reset"> Suit Reset</button>
+      <mat-card-actions>
+        <button
+          mat-flat-button
+          class="button_card_action"
+          color="warn"
+          (click)="fatcaFormRESET()"
+          type="reset"
+        >
+          FATCA Reset
+        </button>
 
-                        <a mat-flat-button color="primary" (click)="calSuit()"> Calculate</a>
-                  </mat-card-actions>
-            </form>
-
-      </mat-card-content>
-
-      <mat-card-content *ngIf="canSaveSuit">
-            <div class="suitResult">
-                  <h4>Result</h4>
-                  <mat-slider class="example-margin" [disabled]="disabled" [invert]="invert" [max]="max" [min]="min"
-                        [step]="step" [thumbLabel]="thumbLabel" [tickInterval]="tickInterval" [(ngModel)]="riskLevel"
-                        [vertical]="vertical">
-                  </mat-slider>
-                  <h5>{{riskLevel}} - {{riskLevelTxt}}</h5>
-                  <p>{{riskLevelDesc}}</p>
-            
-                  <a mat-flat-button color="primary" (click)="saveSuit()"> Save Suitability</a>
-            </div>
-      </mat-card-content>
-
+        <a mat-flat-button color="primary" (click)="saveFATCA()"> Save FATCA</a>
+      </mat-card-actions>
+    </form>
+  </mat-card-content>
 </mat-card>

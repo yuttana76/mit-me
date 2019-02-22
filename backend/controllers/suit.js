@@ -1,9 +1,9 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const dbConfig = require('../config/db-config');
-var prop = require('../config/backend-property');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const dbConfig = require("../config/db-config");
+var prop = require("../config/backend-property");
 
-var logger = require('../config/winston');
+var logger = require("../config/winston");
 
 var config = dbConfig.dbParameters;
 
@@ -11,7 +11,6 @@ var config = dbConfig.dbParameters;
 const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
 
 exports.verifyExtLink = (req, res, next) => {
-
   logger.info(`API /verifyExtLink - ${req.originalUrl} - ${req.ip} `);
   let rsp_code;
 
@@ -20,178 +19,365 @@ exports.verifyExtLink = (req, res, next) => {
     const pid = req.body.pid;
 
     // 1. Verify token till life
-    jwt.verify(token, JWT_SECRET_STRING, function (err, decoded) {
-
+    jwt.verify(token, JWT_SECRET_STRING, function(err, decoded) {
       if (err) {
         //  logger.error(`${pid} was error: `+err);
-        rsp_code = '205';
-        return res.status(401).json(
-          {
-            code: rsp_code,
-            msg: prop.getRespMsg(rsp_code)
-          }
-        );
-      }
-
-      logger.debug(` verify correct PID  - ${pid} `);
-      //2. Verify correct PID
-      if (decoded.USERID === pid) {
-        rsp_code = '000';
-        logger.info(`*** PID  - ${prop.getRespMsg(rsp_code)} `);
-
-        return res.status(200).json({
-          code: rsp_code,
-          msg: prop.getRespMsg(rsp_code),
-          USERDATA: {
-            Cust_Code: pid
-            , First_Name_T: 'Mr.' + pid
-            , Last_Name_T: 'XXX'
-
-            , accounts: [{ acc: pid + '_1' }, { acc: pid + '_2' }]
-          }
-        });
-      } else {
-
-        rsp_code = '204';
-
-        return res.status(405).json({
+        rsp_code = "205";
+        return res.status(401).json({
           code: rsp_code,
           msg: prop.getRespMsg(rsp_code)
         });
       }
 
+      logger.debug(` verify correct PID  ${decoded.USERID} - ${pid} `);
+      //2. Verify correct PID
+      if (decoded.USERID === pid) {
+
+        rsp_code = "000";
+        logger.info(`*** PID  - ${prop.getRespMsg(rsp_code)} `);
+
+        // Get customer info
+        getCustomerData(pid).then(
+          function(data) {
+            console.log("*** data  promise >>" + JSON.stringify(data));
+
+            if (!data){
+              rsp_code = "206"; //"ไม่พบข้อมูล",
+              return res.status(422).json({
+                code: rsp_code,
+                msg: prop.getRespMsg(rsp_code),
+              });
+
+            }else{
+              rsp_code = "000";
+              return res.status(200).json({
+                code: rsp_code,
+                msg: prop.getRespMsg(rsp_code),
+                USERDATA: data
+
+              });
+            }
+
+          },
+          function(err) {
+            console.log(' Error>>>' + err)
+            logger.error( ''+err );
+            rsp_code = 902;
+            return res.status(422).json({
+              code: rsp_code,
+              msg: prop.getRespMsg(rsp_code),
+            });
+
+          }
+        );
+      } else {
+
+        rsp_code = "204";
+        logger.error( `${rsp_code} - ${prop.getRespMsg(rsp_code)}` );
+        return res.status(422).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code)
+        });
+      }
     });
   } catch (error) {
-    console.log('verify fail>>' + JSON.stringify(error));
-    return res.status(401).json({ message: 'Auth failed!' });
+    console.log("verify fail>>" + JSON.stringify(error));
+    return res.status(401).json({ message: "Auth failed!" });
   }
-}
+};
+
 
 exports.suitEvaluate = (req, res, next) => {
-
   logger.info(`API /suitEvaluate - ${req.originalUrl} - ${req.ip} `);
   let rsp_code;
   var pid = req.body.pid;
-  var score = req.body.score || '0';
-  var ans = req.body.ans || '';
+  var suitSerieId = req.body.suitSerieId;
+  var score = req.body.score || "0";
+  console.log(` PID:${pid} ;suitSerieId:${suitSerieId} ;SCORE:${score}`);
 
-  console.log(` PID:${pid}`)
-  console.log(` SCORE:${score}`)
-  // console.log(` ANS->>:${JSON.stringify(ans)}`)
+  calculateRiskLevel(suitSerieId,score).then(
+    function(data) {
+      console.log("*** data  promise >>" + JSON.stringify(data));
 
-  try {
+      if (!data){
+        rsp_code = "206"; //"ไม่พบข้อมูล",
+        return res.status(422).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code),
+        });
 
-    // var obj = JSON.parse(ans);
-    const riskLevel = calculateRiskLevel(score);
+      }else{
+        rsp_code = "000";
+        return res.status(200).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code),
+          DATA: data
 
-    rsp_code = '000';
-    return res.status(200).json({
-      code: rsp_code,
-      msg: prop.getRespMsg(rsp_code),
-      USERDATA: {
-        Cust_Code: pid,
-        riskLevel: riskLevel.riskLevel,
-        riskLevelTxt: riskLevel.riskLevelTxt,
-        riskLevelDesc: riskLevel.riskDesc
+        });
       }
-    });
 
-  } catch (error) {
-    console.log('Suit Evaluate fail>>' + JSON.stringify(error));
-    return res.status(401).json({ message: 'Suit Evaluate failed!' });
-  }
+    },
+    function(err) {
+      console.log(' Error>>>' + err)
+      logger.error( ''+err );
+      rsp_code = 902;
+      return res.status(422).json({
+        code: rsp_code,
+        msg: prop.getRespMsg(rsp_code),
+      });
+    }
+  );
 }
+
+// exports.suitSave = (req, res, next) => {
+//   logger.info(`API /suitSave - ${req.originalUrl} - ${req.ip} `);
+//   let rsp_code;
+//   var pid = req.body.pid;
+//   var score = req.body.score || "0";
+
+//   var riskLevel = req.body.riskLevel;
+//   var riskLevelTxt = req.body.riskLevelTxt;
+//   var riskLevelDesc = req.body.riskLevelDesc;
+
+//   var ans = req.body.ans || "";
+
+//   try {
+//     console.log(` PID:${pid}`);
+//     console.log(` SCORE:${score}`);
+//     console.log(` riskLevel:${riskLevel}`);
+//     console.log(` riskLevelTxt:${riskLevelTxt}`);
+//     console.log(` riskLevelDesc:${riskLevelDesc}`);
+
+//     console.log(` ANS->>:${JSON.stringify(ans)}`);
+
+//     rsp_code = "000";
+//     return res.status(200).json({
+//       code: rsp_code,
+//       msg: prop.getRespMsg(rsp_code)
+//     });
+//   } catch (error) {
+//     console.log("Suit Save fail>>" + JSON.stringify(error));
+//     return res.status(401).json({ message: "Suit Save failed!" });
+//   }
+// };
+
 
 exports.suitSave = (req, res, next) => {
 
   logger.info(`API /suitSave - ${req.originalUrl} - ${req.ip} `);
-  let rsp_code;
-  var pid = req.body.pid;
-  var score = req.body.score || '0';
 
+  let rsp_code;
+  var userId = req.body.userId;
+  var pid = req.body.pid;
+  var suitSerieId = req.body.suitSerieId;
+  var score = req.body.score || "0";
   var riskLevel = req.body.riskLevel;
   var riskLevelTxt = req.body.riskLevelTxt;
-  var riskLevelDesc = req.body.riskLevelDesc;
+  var type_Investor = req.body.type_Investor;
+  var ans = req.body.ans ;
 
-  var ans = req.body.ans || '';
-
-  try {
-    console.log(` PID:${pid}`)
-    console.log(` SCORE:${score}`)
-    console.log(` riskLevel:${riskLevel}`)
-    console.log(` riskLevelTxt:${riskLevelTxt}`)
-    console.log(` riskLevelDesc:${riskLevelDesc}`)
-
-    console.log(` ANS->>:${JSON.stringify(ans)}`)
-
-    rsp_code = '000';
-    return res.status(200).json({
-      code: rsp_code,
-      msg: prop.getRespMsg(rsp_code),
-    });
+  // console.log(`suitSave() ans>> - ${JSON.stringify(ans)}`  );
+  // console.log(`suitSave() ans>> - ${ans}`  );
 
 
-  } catch (error) {
-    console.log('Suit Save fail>>' + JSON.stringify(error));
-    return res.status(401).json({ message: 'Suit Save failed!' });
-  }
-}
 
-function calculateRiskLevel(_score) {
+  var fncName = 'suitSave';
+  var queryStr = `
+  BEGIN
+  DECLARE @AccSuitId VARCHAR(50);
+  DECLARE @TranName VARCHAR(20);
 
-  if (_score > 40) {
-    return { riskLevel: 5,riskLevelTxt: 'Risk level 5' , riskDesc: 'Risk level 5' }
-  } else if (_score > 30) {
-    return { riskLevel: 4,riskLevelTxt: 'Risk level 4' , riskDesc: 'Risk level 4' }
-  } else if (_score > 20) {
-    return { riskLevel: 3,riskLevelTxt: 'Risk level 3' , riskDesc: 'Risk level 3' }
-  } else if (_score > 10) {
-    return { riskLevel: 2,riskLevelTxt: 'Risk level 2' , riskDesc: 'Risk level 2' }
-  } else {
-    return { riskLevel: 1,riskLevelTxt: 'Risk level 1' , riskDesc: 'Risk level 1' }
-  }
-}
+  SELECT @TranName = 'MyTransaction';
 
-function getCustomerData(_pid) {
+  BEGIN TRANSACTION @TranName;
 
-  logger.info(` getCustomerData - ${_pid} `);
+  -- Generate  AccSuitId
+  select  @AccSuitId = @CustCode+'-'+CONVERT(varchar(5), YEAR(getdate()))   +'-'+ CONVERT(varchar(5),(count(*)+1))  from MIT_SUIT_ACCOUNT_RISKLEVEL
+  where CustCode= @CustCode
+  and YEAR(CreateDate) =YEAR(getdate())
 
-  let queryStr = `SELECT a.* ,b.FIRST_NAME + ' ' + b.LAST_NAME AS FULLNAME
-                  FROM [MIT_USERS] a
-                  LEFT JOiN MIT_EMPLOYEE b ON a.USERID = b.USERID
-                 WHERE a.STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
-                 AND MIT_GROUP <>'C1'
-                 AND LoginName=@id
-                 `;
+  -- 1. Insert MIT_SUIT_ACCOUNT_RISKLEVEL
+      INSERT INTO MIT_SUIT_ACCOUNT_RISKLEVEL
+    ([AccSuitId],CustCode,SuitSerieId,Status,TotalScore,RiskLevel,RiskLevelTxt,Type_Investor,ANS_JSON,CreateBy,CreateDate)
+      VALUES
+      (@AccSuitId,@CustCode,@SuitSerieId,'A',@TotalScore,@RiskLevel,@RiskLevelTxt,@Type_Investor,@ANS_JSON,@CreateBy,GETDATE())
+
+
+  -- 2. Insert MIT_SUIT_ACCOUNT_SCORE
+
+  COMMIT TRANSACTION @TranName;
+
+
+  END;
+    `;
+
   const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input("CustCode", sql.VarChar(50), pid)
+    .input("SuitSerieId", sql.VarChar(10), suitSerieId)
+    .input("TotalScore", sql.Int, score)
+    .input("RiskLevel", sql.Int, riskLevel)
+    .input("RiskLevelTxt", sql.NVarChar(100), riskLevelTxt)
+    .input("Type_Investor", sql.NVarChar(1000), type_Investor)
+    .input("ANS_JSON", sql.NText, JSON.stringify(ans))
+    .input("CreateBy",sql.VarChar(100), userId)
 
-  sql.connect(config).then(pool => {
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          logger.error( '' + err );
+         rsp_code = "902"; //"ไม่พบข้อมูล",
+         res.status(422).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code),
+        });
 
-    // Query
-    return pool.request()
-      .input('id', sql.VarChar(50), _pid)
-      .query(queryStr)
-  })
-    .then(user => {
+        }else {
 
-      console.log();
+          rsp_code = "000";
+          res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
 
-      if (!user) {
-        logger.error(`API /Login Auth failed. 1 - ${req.originalUrl} - ${req.ip} `);
-        sql.close();
-
-        return { user: null };
-      } else {
-        sql.close();
-        return { user: user };
-      }
+        }
     })
+  })
+  pool1.on('error', err => {
+    // ... error handler
+    logger.error( '' + err );
+  })
+}
 
-  sql.on("error", err => {
-    err.message
-    sql.close();
-    logger.error(`API /Login error - ${req.originalUrl} - ${req.ip} - ${err} `);
-    return { error: err.message };
+
+function calculateRiskLevel(_suitSerieId,_score){
+
+  console.log("calculateRiskLevel _score>>" + _score);
+  var fncName = "calculateRiskLevel";
+  var queryStr = ` BEGIN
+
+  SELECT RiskLevel,RiskLevelTxt,Type_Investor
+  FROM [MIT_SUIT_RISK_LEVEL]
+  where @Score between min_value and max_value
+  and status ='A'
+  and SuitSerieId = @SuitSerieId
+
+  END
+    `;
+
+  const sql = require("mssql");
+
+  return new Promise(function(resolve, reject) {
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("SuitSerieId", sql.VarChar(50), _suitSerieId)
+        .input("Score", sql.Int, _score)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            resolve(result.recordset[0]);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("EROR>>" + err);
+      reject(err);
+    });
   });
 }
 
+
+function getCustomerData(_pid) {
+
+  console.log("getCustomerData _pid>>" + _pid);
+  var fncName = "getCustomerData";
+  var queryStr = ` BEGIN
+
+  select
+  a.Title_Name_T,a.First_Name_T,a.Last_Name_T
+  ,a.Birth_Day,a.Mobile,a.Email
+  from Account_Info a
+  where Cust_Code= @pid
+
+  END
+    `;
+
+  const sql = require("mssql");
+
+  return new Promise(function(resolve, reject) {
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("pid", sql.VarChar(50), _pid)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            resolve(result.recordset[0]);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("EROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+
+function saveSuitScore(_AccSuitId,_QuesNo,_ChoiceNo,_Score){
+
+  console.log("saveSuitScore _accSuitId>>" + _AccSuitId + "-"+ _QuesNo + "-"+_ChoiceNo + "-"+_Score);
+
+  var fncName = "calculateRiskLevel";
+  var queryStr = `
+  BEGIN
+  DECLARE @TranName VARCHAR(20);
+  SELECT @TranName = 'MyTransaction';
+
+  BEGIN TRANSACTION @TranName;
+
+  -- 2. Insert MIT_SUIT_ACCOUNT_SCORE
+  INSERT INTO MIT_SUIT_ACCOUNT_SCORE
+  (AccSuitId,QuesNo,ChoiceNo,Score)
+  VALUES(@AccSuitId,@QuesNo,@ChoiceNo,@Score)
+
+  COMMIT TRANSACTION @TranName;
+
+  END
+    `;
+  const sql = require("mssql");
+
+  return new Promise(function(resolve, reject) {
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("AccSuitId", sql.VarChar(50), _AccSuitId)
+        .input("QuesNo", sql.Int, _QuesNo)
+        .input("ChoiceNo", sql.Int, _ChoiceNo)
+        .input("Score", sql.Int, _Score)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            reject(err);
+
+          } else {
+            resolve({code:0});
+          }
+        });
+    });
+    pool1.on("error", err => {
+      reject(err);
+    });
+  });
+}

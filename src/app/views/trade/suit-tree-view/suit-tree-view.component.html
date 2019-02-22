@@ -37,11 +37,12 @@
           <div *ngIf="!ques.multilchoice">
             <input
               name="{{ ques.id }}"
+              id="{{ ques.id }}"
               type="radio"
               value="{{ choice.score }}"
               [(ngModel)]="ques.answer"
             />
-            {{ choice.name }}
+            {{ choice.name }}-{{ choice.score }}
           </div>
         </div>
       </ul>

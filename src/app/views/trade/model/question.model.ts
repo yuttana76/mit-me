@@ -8,6 +8,7 @@ export class Question {
         public answer: string = '',
         public multilchoice: boolean,
         public require: boolean,
+        public calculate: boolean,
         // public questions: Array<Question>,
         public choices: Array<Choice>
         ) {

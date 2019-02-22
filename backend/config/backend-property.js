@@ -12,10 +12,16 @@ const resp_msg = {
 
   "204": "Incorrect user",
   "205": "Link was expire. Please contace to MPAM 02-xxx-yyyy",
+  "206": "ไม่พบข้อมูล",
 
-  "901": "Reset password	"
+  "901": "Reset password	",
+  "902": " Was error"
 };
+
 
 exports.getRespMsg = (_code)=>{
   return resp_msg[_code];
 }
+
+// HTTP_RSP_422 =422  //422 Unprocessable Entity
+// HTTP_RSP_405 =405  // 405 Method Not Allowed

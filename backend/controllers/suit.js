@@ -175,13 +175,7 @@ exports.suitSave = (req, res, next) => {
   var riskLevelTxt = req.body.riskLevelTxt;
   var type_Investor = req.body.type_Investor;
   var ans = req.body.ans ;
-
-  // console.log(`suitSave() ans>> - ${JSON.stringify(ans)}`  );
-  // console.log(`suitSave() ans>> - ${ans}`  );
-
-
-
-  var fncName = 'suitSave';
+  // var fncName = 'suitSave';
   var queryStr = `
   BEGIN
   DECLARE @AccSuitId VARCHAR(50);
@@ -192,21 +186,18 @@ exports.suitSave = (req, res, next) => {
   BEGIN TRANSACTION @TranName;
 
   -- Generate  AccSuitId
-  select  @AccSuitId = @CustCode+'-'+CONVERT(varchar(5), YEAR(getdate()))   +'-'+ CONVERT(varchar(5),(count(*)+1))  from MIT_SUIT_ACCOUNT_RISKLEVEL
+  select  @AccSuitId = @CustCode+'-'+CONVERT(varchar(5), YEAR(getdate()))   +'-'+ CONVERT(varchar(5),(count(*)+1))
+  from MIT_CUSTOMER_SUIT
   where CustCode= @CustCode
   and YEAR(CreateDate) =YEAR(getdate())
 
-  -- 1. Insert MIT_SUIT_ACCOUNT_RISKLEVEL
-      INSERT INTO MIT_SUIT_ACCOUNT_RISKLEVEL
+  -- 1. Insert MIT_CUSTOMER_SUIT
+      INSERT INTO MIT_CUSTOMER_SUIT
     ([AccSuitId],CustCode,SuitSerieId,Status,TotalScore,RiskLevel,RiskLevelTxt,Type_Investor,ANS_JSON,CreateBy,CreateDate)
       VALUES
       (@AccSuitId,@CustCode,@SuitSerieId,'A',@TotalScore,@RiskLevel,@RiskLevelTxt,@Type_Investor,@ANS_JSON,@CreateBy,GETDATE())
 
-
-  -- 2. Insert MIT_SUIT_ACCOUNT_SCORE
-
   COMMIT TRANSACTION @TranName;
-
 
   END;
     `;
@@ -250,6 +241,72 @@ exports.suitSave = (req, res, next) => {
   })
 }
 
+
+exports.saveFATCA = (req, res, next) => {
+
+  logger.info(`API /suitSave - ${req.originalUrl} - ${req.ip} `);
+
+  let rsp_code;
+  var userId = req.body.userId;
+  var pid = req.body.pid;
+  var ans = req.body.ans ;
+
+  var queryStr = `
+  BEGIN
+
+  DECLARE @TranName VARCHAR(20);
+
+  SELECT @TranName = 'MyTransaction';
+
+  BEGIN TRANSACTION @TranName;
+
+  update MIT_CUSTOMER_INFO_EXT set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE()
+  where CustCode = @CustCode
+
+  if @@rowcount = 0
+  begin
+     insert into MIT_CUSTOMER_INFO_EXT(CustCode,FATCA_FLAG,FATCA_DATA,FATCA_BY,FATCA_DATE)
+     values (@CustCode,'A',@FATCA_DATA,@FATCA_BY,GETDATE()) ;
+  end
+
+  COMMIT TRANSACTION @TranName;
+
+  END;
+    `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input("CustCode", sql.VarChar(50), pid)
+    .input("FATCA_DATA", sql.NText, JSON.stringify(ans))
+    .input("FATCA_BY",sql.VarChar(100), userId)
+
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          logger.error( '' + err );
+         rsp_code = "902"; //"ไม่พบข้อมูล",
+         res.status(422).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code),
+        });
+
+        }else {
+
+          rsp_code = "000";
+          res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+
+        }
+    })
+  })
+  pool1.on('error', err => {
+    // ... error handler
+    logger.error( '' + err );
+  })
+}
 
 function calculateRiskLevel(_suitSerieId,_score){
 

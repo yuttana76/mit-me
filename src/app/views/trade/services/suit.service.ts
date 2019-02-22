@@ -50,5 +50,19 @@ export class SuiteService {
   }
 
 
+
+  saveFATCA(_userId: string,_pid: string, _ans: Array<Question>): Observable<any> {
+
+    console.log(`Service saveFATCA()  ${_pid} `);
+
+    const data = {
+      'userId': _userId,
+      'pid': _pid,
+      'ans': _ans
+    };
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/saveFATCA', data);
+  }
+
+
   // ************************
 }

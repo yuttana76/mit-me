@@ -28,6 +28,10 @@ export class SuitFormService {
   SUIT_SAVE_COMPLETE = ' Save suitability complete';
   SUIT_SAVE_INCOMPLETE = ' Save suitability incomplete';
 
+  FATCA_SAVE_COMPLETE = ' Save FATCA complete';
+  FATCA_SAVE_INCOMPLETE = ' Save FATCA incomplete';
+
+
   pid_label = 'ID Card';
 
   // SUITABILITY QUESTIONS (START)

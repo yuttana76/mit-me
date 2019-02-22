@@ -311,6 +311,7 @@ export class SuitComponent implements OnInit {
   }
 
   saveSuit() {
+
     this.suiteService
       .saveSuitabilityByPID(
         this.survey.pid,
@@ -356,7 +357,6 @@ export class SuitComponent implements OnInit {
         }
       );
 
-    return null;
   }
 
   suiteFormRESET() {
@@ -374,7 +374,46 @@ export class SuitComponent implements OnInit {
   }
 
   public saveFATCA(){
-    console.log('*** FATCA RESET ');
+    this.suiteService
+    .saveFATCA(
+      this.survey.pid,
+      this.survey.pid,
+      this.fatcaQuestions
+    )
+    .finally(() => {
+      // Execute after graceful or exceptionally termination
+      console.log("saveFATCA logging logic...");
+      this.spinnerLoading = false;
+    })
+    .subscribe(
+      (data: any) => {
+        console.log("HTTP return  saveFATCA :" + JSON.stringify(data));
+        if (data.code === "000") {
+          this.toastr.success(data.msg, this.formService.FATCA_SAVE_COMPLETE, {
+            timeOut: 5000,
+            closeButton: true,
+            positionClass: "toast-top-center"
+          });
+        } else {
+          this.toastr.warning(
+            data.msg,
+            this.formService.FATCA_SAVE_INCOMPLETE,
+            {
+              timeOut: 5000,
+              closeButton: true,
+              positionClass: "toast-top-center"
+              }
+            );
+        }
+      },
+      error => () => {
+        console.log("saveFATCA Was error", error);
+      },
+      () => {
+        console.log("saveFATCA  complete");
+      }
+    );
+
   }
 
 }

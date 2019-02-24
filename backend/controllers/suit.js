@@ -10,6 +10,54 @@ var config = dbConfig.dbParameters;
 // const SALT_WORK_FACTOR = 10;
 const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
 
+exports.verifyExtLink_TEST = (req, res, next) => {
+  logger.info(`API /verifyExtLink - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const pid = req.body.pid;
+
+    // 1. Verify token till life
+    jwt.verify(token, JWT_SECRET_STRING, function(err, decoded) {
+      if (err) {
+        //  logger.error(`${pid} was error: `+err);
+        rsp_code = "205";
+        return res.status(401).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code)
+        });
+      }
+
+      logger.debug(` verify correct PID  ${decoded.USERID} - ${pid} `);
+      //2. Verify correct PID
+      if (decoded.USERID === pid) {
+
+        rsp_code = "000";
+              return res.status(200).json({
+                code: rsp_code,
+                msg: prop.getRespMsg(rsp_code),
+                USERDATA: {Title_Name_T:'Mr.',First_Name_T:'XXX',Last_Name_T:'YYY'}
+
+              });
+
+      } else {
+
+        rsp_code = "204";
+        logger.error( `${rsp_code} - ${prop.getRespMsg(rsp_code)}` );
+        return res.status(422).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code)
+        });
+      }
+    });
+  } catch (error) {
+    console.log("verify fail>>" + JSON.stringify(error));
+    return res.status(401).json({ message: "Auth failed!" });
+  }
+};
+
+
 exports.verifyExtLink = (req, res, next) => {
   logger.info(`API /verifyExtLink - ${req.originalUrl} - ${req.ip} `);
   let rsp_code;
@@ -85,7 +133,6 @@ exports.verifyExtLink = (req, res, next) => {
     return res.status(401).json({ message: "Auth failed!" });
   }
 };
-
 
 exports.suitEvaluate = (req, res, next) => {
   logger.info(`API /suitEvaluate - ${req.originalUrl} - ${req.ip} `);

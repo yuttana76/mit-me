@@ -7,7 +7,7 @@ exports.getPIDTypes = (req, res, next) => {
 
   var sql = require("mssql");
   var queryStr = `select *
-  FROM [MFTS].[dbo].[REF_PIDTypes]
+  FROM [REF_PIDTypes]
   ORDER  BY [PIDType_Code],[PIDType_Desc]`;
 
   sql.connect(config, err => {

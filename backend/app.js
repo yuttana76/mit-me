@@ -34,6 +34,7 @@ const groupRoutes = require('./routes/group');
 const authorityRoutes = require('./routes/authority');
 const anoucementRoutes = require('./routes/anoucement');
 const suitRoutes = require('./routes/suit');
+const otpTokenRoutes = require('./routes/otpToken');
 
 const navRoutes = require('./routes/nav');
 const reportRoutes = require('./routes/report');
@@ -114,6 +115,8 @@ app.use("/api/rep",reportRoutes);
 // Suitability
 app.use("/api/suit",suitRoutes);
 
+// OTP
+app.use("/api/otp",otpTokenRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

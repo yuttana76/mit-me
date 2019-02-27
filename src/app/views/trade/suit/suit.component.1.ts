@@ -3,20 +3,18 @@ import { SuitFormService } from "./suit.service";
 
 import { ToastrService } from "ngx-toastr";
 import { ConfirmationDialogService } from "../dialog/confirmation-dialog/confirmation-dialog.service";
-import { MatDialog, MatRadioChange } from "@angular/material";
+import { MatDialog } from "@angular/material";
 import { ActivatedRoute } from "@angular/router";
 // import { Question, Choice } from '../suit-tree-view/questionBAK';
 import { SuitTreeViewComponent } from "../suit-tree-view/suit-tree-view.component";
 import { UserService } from "../services/user.service";
 import { SuiteService } from "../services/suit.service";
-import { FormGroup, FormControl, Validators, FormBuilder } from "@angular/forms";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { SurveyModel } from "../model/survey.model";
 import { AuthService } from "../../services/auth.service";
 import "rxjs/add/operator/finally";
 import { Customer } from "../model/customer.model";
 import { Question } from "../model/question.model";
-
-
 
 @Component({
   selector: "app-suit",
@@ -24,48 +22,37 @@ import { Question } from "../model/question.model";
   styleUrls: ["./suit.component.scss"]
 })
 export class SuitComponent implements OnInit {
-
-  riskData = [
-    {id: 1, name: "เสี่ยงต่ำ"},
-    {id: 2, name: "เสี่ยงปานกลางค่อนข้างต่ำ"},
-    {id: 3, name: "เสี่ยงปานกลางค่อนข้างต่ำ"},
-    {id: 4, name: "เสี่ยงสูง"},
-    {id: 5, name: "เสี่ยงสูงมาก"}
-  ];
-
   form: FormGroup;
 
-  firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
-  thirdFormGroup: FormGroup;
-
   spinnerLoading = false;
-
-  needVerify = false;
-  verifyFLag = false;
   canDoSuit = false;
   canSaveSuit = false;
+
   canDoFATCA = false;
-  showOtpEntry = false;
+
+
 
   ADD_NEW = false;
   INTERNAL_USER = false;
 
   suitScore = 0;
+
   riskLevel = 0;
   riskLevelTxt = "";
   riskLevelDesc = "";
 
+  // at-slider
+  disabled = true;
+  invert = false;
+  max = 5;
+  min = 0;
+  showTicks = true;
+  step = 1;
+  thumbLabel = true;
+  value = 0;
+  vertical = false;
+
   public customer: Customer = new Customer();
-  cust_RiskScore=0;
-  cust_RiskLevel=0;
-  cust_RiskLevelTxt='';
-  cust_RiskDate;
-  verifyBy;
-  verifyDOB_val;
-  otpToken_Date;
-  otpToken_Period;
-  otpToken_val = ""
 
   public survey: SurveyModel = new SurveyModel();
 
@@ -80,8 +67,7 @@ export class SuitComponent implements OnInit {
     public dialog: MatDialog,
     private activatedRoute: ActivatedRoute,
     private suiteService: SuiteService,
-    public authService: AuthService,
-    private _formBuilder: FormBuilder
+    public authService: AuthService
   ) {
     // console.log('*** getUserData>>' + this.authService.getUserData());
     // console.log('*** getUserId>>' + this.authService.getUserId());
@@ -98,18 +84,6 @@ export class SuitComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    this.firstFormGroup = this._formBuilder.group({
-      firstCtrl: ['', Validators.required]
-    });
-    this.secondFormGroup = this._formBuilder.group({
-      secondCtrl: ['', Validators.required]
-    });
-
-    this.thirdFormGroup = this._formBuilder.group({
-      thirdCtrl: ['', Validators.required]
-    });
-
     this.spinnerLoading = true;
 
     this.loadQuestions();
@@ -164,9 +138,9 @@ export class SuitComponent implements OnInit {
     ];
   }
 
-  public getCustomerData() {
-    // this.canDoSuit = false;
-    // this.canDoFATCA = false;
+  public verify() {
+    this.canDoSuit = false;
+    this.canDoFATCA = false;
 
     this.customer = new Customer();
 
@@ -195,134 +169,32 @@ export class SuitComponent implements OnInit {
         (data: any) => {
           console.log("HTTP return :" + JSON.stringify(data));
 
-          this.needVerify = true;
-          this.verifyFLag = false;
-
           this.customer.Title_Name_T = data.USERDATA.Title_Name_T;
           this.customer.First_Name_T = data.USERDATA.First_Name_T;
           this.customer.Last_Name_T = data.USERDATA.Last_Name_T;
-          this.customer.Birth_Day = data.USERDATA.DOB;
-          this.customer.Mobile = data.USERDATA.Mobile;
 
-          console.log(' MOBILE digit(1-2) >>' + this.customer.Mobile[0] + '' + this.customer.Mobile[1]);
-
-          this.cust_RiskScore = data.USERDATA.Suit_Score;
-          this.cust_RiskLevel = data.USERDATA.Risk_Level;
-          this.cust_RiskLevelTxt = data.USERDATA.Risk_Level_Txt;
-          this.cust_RiskDate = data.USERDATA.Risk_Date;
-
-          // this.toastr.success(
-          //   `Welcome ${this.customer.First_Name_T} ${
-          //     this.customer.Last_Name_T
-          //   }`,
-          //   "success",
-          //   {
-          //     timeOut: 3000,
-          //     closeButton: true,
-          //     positionClass: "toast-top-center"
-          //   }
-          // );
-
-        },
-        error => () => {
-          console.log("Verify Was error", error);
-        },
-        () => {
-          console.log("Verify  complete");
-        }
-      );
-  }
-
-  public requestOTP() {
-    this.spinnerLoading = true;
-    this.suiteService.verifyRequestOTP(this.survey.pid)
-      .finally(() => {
-        console.log("Handle logging logic...");
-        this.spinnerLoading = false;
-      })
-      .subscribe(
-        (data: any) => {
-          console.log("HTTP return : verifyRequestOTP()" + JSON.stringify(data));
-
-          this.showOtpEntry =true;
-          this.otpToken_Date = data.TOKEN_DATE;
-          this.otpToken_Period = data.TOKEN_PEROID;
-
-          // this.toastr.success(`Welcome ${this.customer.First_Name_T} ${
-          //     this.customer.Last_Name_T
-          //   }`,
-          //   "success",
-          //   {
-          //     timeOut: 3000,
-          //     closeButton: true,
-          //     positionClass: "toast-top-center"
-          //   }
-          // );
-
-        },
-        error => () => {
-          console.log("Verify Was error", error);
-        },
-        () => {
-          console.log("Verify  complete");
-        }
-      );
-  }
-
-  public verifyConfirmOTP() {
-    this.spinnerLoading = true;
-    this.suiteService.verifyConfirmOTP(this.survey.pid,this.otpToken_val)
-      .finally(() => {
-        console.log("Handle logging logic...");
-        this.spinnerLoading = false;
-      })
-      .subscribe(
-        (data: any) => {
-          console.log("HTTP return verifyConfirmOTP():" + JSON.stringify(data));
-
-          this.verifyFLag =true;
-          this.needVerify = false;
-
-          // this.toastr.success(`Welcome ${this.customer.First_Name_T} ${
-          //     this.customer.Last_Name_T
-          //   }`,
-          //   "success",
-          //   {
-          //     timeOut: 3000,
-          //     closeButton: true,
-          //     positionClass: "toast-top-center"
-          //   }
-          // );
-
-        },
-        error => () => {
-          console.log("Verify Was error", error);
-        },
-        () => {
-          console.log("Verify  complete");
-        }
-      );
-  }
-
-
-  public verifyDOB() {
-
-      if(this.customer.Birth_Day.replace(/[-]/g, "").toLowerCase() === this.verifyDOB_val){
-      this.verifyFLag = true;
-      this.needVerify = false;
-    } else {
-      this.verifyDOB_val='';
-      this.toastr.warning(` Incorrect data. `,
-            "Incorrect",
+          this.toastr.success(
+            `Welcome ${this.customer.First_Name_T} ${
+              this.customer.Last_Name_T
+            }`,
+            "success",
             {
               timeOut: 3000,
               closeButton: true,
               positionClass: "toast-top-center"
             }
           );
-    }
 
-
+          this.canDoSuit = true;
+          this.canDoFATCA = true;
+        },
+        error => () => {
+          console.log("Verify Was error", error);
+        },
+        () => {
+          console.log("Verify  complete");
+        }
+      );
   }
 
   public searchCust() {
@@ -361,6 +233,7 @@ export class SuitComponent implements OnInit {
         }
 
         // console.log('*** Multi Score is >>' + _score);
+
         if (_score <= 0 && this.suitQuestions[i].require) {
           // console.log(' *** Suit not complete !!');
 
@@ -414,7 +287,8 @@ export class SuitComponent implements OnInit {
         console.log("riskEvaluate logging logic...");
         this.spinnerLoading = false;
       })
-      .subscribe((data: any) => {
+      .subscribe(
+        (data: any) => {
           console.log(
             "HTTP return  evaluateRiskLevel :" + JSON.stringify(data)
           );
@@ -438,10 +312,6 @@ export class SuitComponent implements OnInit {
 
   saveSuit() {
 
-  this.cust_RiskLevel= this.riskLevel
-  this.cust_RiskLevelTxt= this.riskLevelTxt;
-  this.cust_RiskDate =  new Date();
-
     this.suiteService
       .saveSuitabilityByPID(
         this.survey.pid,
@@ -455,7 +325,7 @@ export class SuitComponent implements OnInit {
       )
       .finally(() => {
         // Execute after graceful or exceptionally termination
-        this.canDoSuit =false;
+        console.log("saveSuit logging logic...");
         this.spinnerLoading = false;
       })
       .subscribe(
@@ -543,12 +413,7 @@ export class SuitComponent implements OnInit {
         console.log("saveFATCA  complete");
       }
     );
+
   }
 
-
-  verifyByChange(event: MatRadioChange) {
-    console.log( 'verifyByChange()>>' + event.value);
-
-    this.showOtpEntry =false;
-  }
 }

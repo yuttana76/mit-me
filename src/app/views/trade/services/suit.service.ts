@@ -7,6 +7,9 @@ import { Question } from '../model/question.model';
 
 const BACKEND_URL = environment.apiURL + '/suit';
 
+const BACKEND_URL_OTP = environment.apiURL + '/otp';
+
+
 @Injectable({ providedIn: 'root' })
 export class SuiteService {
 
@@ -20,10 +23,26 @@ export class SuiteService {
   }
 
 
+  verifyRequestOTP(_pid: string): Observable<any> {
+    console.log(` verifyRequestOTP() ${_pid}`);
+
+    const data = {
+      'pid': _pid.trim()
+    };
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/getOTPtoken', data);
+  }
+
+  verifyConfirmOTP(_pid: string, token: string): Observable<any> {
+    const data = {
+      'pid': _pid.trim(),
+      'token': token.trim()
+    };
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/verityOTPtoken', data);
+  }
+
+
   suitEvaluate(_pid: string,_suitSerieId: string, _suitScore: number): Observable<any> {
-
-    console.log(`Service suitEvaluate()  ${_pid} - score: ${_suitScore}`);
-
+    // console.log(`Service suitEvaluate()  ${_pid} - score: ${_suitScore}`);
     const data = {
       'pid': _pid,
       'suitSerieId': _suitSerieId,
@@ -34,8 +53,7 @@ export class SuiteService {
 
   saveSuitabilityByPID(_userId: string,_pid: string,_suitSerieId: string,
     _suitScore: number, _riskLevel: number, _riskLevelTxt: string, _riskLevelDesc: string, _ans: Array<Question>): Observable<any> {
-
-    console.log(`Service saveSuitability()  ${_pid} `);
+    // console.log(`Service saveSuitability()  ${_pid} `);
     const data = {
       'userId': _userId,
       'pid': _pid,
@@ -48,7 +66,6 @@ export class SuiteService {
     };
     return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/suitSave', data);
   }
-
 
 
   saveFATCA(_userId: string,_pid: string, _ans: Array<Question>): Observable<any> {

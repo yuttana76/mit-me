@@ -23,7 +23,8 @@ import {
   MatTooltipModule,
   MatTreeModule,
   MatRippleModule,
-  MatSliderModule
+  MatSliderModule,
+  MatStepperModule,
 
 } from '@angular/material';
 
@@ -52,7 +53,8 @@ import {
     MatTooltipModule,
     MatTreeModule,
     MatRippleModule,
-    MatSliderModule
+    MatSliderModule,
+    MatStepperModule,
   ]
 })
 export class AngularMaterialModule {}

@@ -238,6 +238,8 @@ exports.suitSave = (req, res, next) => {
   where CustCode= @CustCode
   and YEAR(CreateDate) =YEAR(getdate())
 
+  UPDATE MIT_CUSTOMER_SUIT SET Status ='I' WHERE CustCode=@CustCode;
+
   -- 1. Insert MIT_CUSTOMER_SUIT
       INSERT INTO MIT_CUSTOMER_SUIT
     ([AccSuitId],CustCode,SuitSerieId,Status,TotalScore,RiskLevel,RiskLevelTxt,Type_Investor,ANS_JSON,CreateBy,CreateDate)
@@ -403,11 +405,46 @@ function getCustomerData(_pid) {
   var fncName = "getCustomerData";
   var queryStr = ` BEGIN
 
+  DECLARE @Risk_Date date;
+  DECLARE @Score int;
+  DECLARE @Risk_Level int;
+  DECLARE @Risk_Level_Txt VARCHAR(250);
+
+  SELECT @Risk_Date=[Document_Date]
+        ,@Score=[Score]
+    FROM [MFTS_Suit]
+    where Account_No = @pid
+    and Active_Flag='A'
+
+
+    select @Risk_Date=CreateDate
+    ,@Score = TotalScore
+    ,@Risk_Level = RiskLevel
+    ,@Risk_Level_Txt = RiskLevelTxt
+    from   MIT_CUSTOMER_SUIT
+    where CustCode='0105534033834'
+    and [Status]='A'
+
+
+  IF @Score >0 AND @Risk_Level_Txt = ''
+  BEGIN
+  SELECT @Risk_Level = RiskLevel,@Risk_Level_Txt= RiskLevelTxt
+    FROM [MIT_SUIT_RISK_LEVEL]
+    where @Score between min_value and max_value
+    and status ='A'
+  END;
+
   select
-  a.Title_Name_T,a.First_Name_T,a.Last_Name_T
-  ,a.Birth_Day,a.Mobile,a.Email
-  from Account_Info a
-  where Cust_Code= @pid
+    a.Title_Name_T,a.First_Name_T,a.Last_Name_T
+    ,  convert(varchar, a.Birth_Day, 105) as DOB
+    ,a.Mobile,a.Email
+    ,@Risk_Date AS Risk_Date
+    ,@Score AS Suit_Score
+    ,@Risk_Level AS Risk_Level
+    ,@Risk_Level_Txt AS Risk_Level_Txt
+    from Account_Info a
+    where Cust_Code= @pid
+
 
   END
     `;

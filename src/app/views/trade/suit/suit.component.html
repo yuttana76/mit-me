@@ -1,25 +1,23 @@
+
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+
 <mat-card *ngIf="!spinnerLoading">
-  <form [formGroup]="form" #custForm="ngForm">
+  <form [formGroup]="form" #custForm="ngForm" class="container" >
     <mat-card-title>
       {{ formService.from_suit_title }}
 
-      <i
-        *ngIf="ADD_NEW"
+      <i *ngIf="ADD_NEW"
         class="fas fa-plus-square fa-1x"
         matTooltip="{{ formService.addNewBtn }}"
         (click)="onAddNew()"
       ></i>
       <div *ngIf="customer.First_Name_T" id="cust_content">
-        <img
-          src="assets/img/avatars/noPerson.png"
-          class="img-avatar box_img"
-          alt="{{ customer.First_Name_T }}"
-        />
-        <span
-          >{{ customer.Title_Name_T }} {{ customer.First_Name_T }}
-          {{ customer.Last_Name_T }}</span
-        >
+        <img  src="assets/img/avatars/noPerson.png" class="img-avatar box_img"  alt="{{ customer.First_Name_T }}"  />
+        <span>{{ customer.Title_Name_T }} {{ customer.First_Name_T }}
+          {{ customer.Last_Name_T }}
+          </span>
+
       </div>
       <div class="row">
         <mat-form-field class="col-md-4">
@@ -28,135 +26,176 @@
             formControlName="pid"
             placeholder="{{ formService.pid_label }}"
             [(ngModel)]="survey.pid"
+
           />
           <mat-error *ngIf="form.get('pid').invalid">Please enter ID</mat-error>
         </mat-form-field>
       </div>
 
       <mat-card-actions>
-        <a
-          *ngIf="!INTERNAL_USER"
-          mat-flat-button
-          color="primary"
-          (click)="verify()"
-        >
-          Verify</a
-        >
-        <a
-          *ngIf="INTERNAL_USER"
-          mat-flat-button
-          color="primary"
-          (click)="searchCust()"
-        >
-          Search</a
-        >
+        <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="getCustomerData()">
+          OK</a>
+        <a *ngIf="INTERNAL_USER"  mat-flat-button  color="primary"  (click)="searchCust()">
+          Search</a >
       </mat-card-actions>
     </mat-card-title>
   </form>
 
-  <mat-card-content *ngIf="canDoSuit">
-    <mat-card-title>
-      {{ formService.from_suit_title }}
-    </mat-card-title>
-    <form>
-      <!-- <app-suit-tree-view [questions]="suitQuestions"></app-suit-tree-view> -->
-      <ul>
-          <div *ngFor="let ques of suitQuestions" class="questions">
-            <span>{{ ques.id }}. {{ ques.name }} </span>
+  <!-- VERIFY -->
+  <div *ngIf="needVerify" class="container ">
+      <div class="row ">
+          <!-- <h5>Request verify method.</h5> -->
+          <div class="row">
+              <mat-radio-group  [(ngModel)]="verifyBy" class="col-md-4" >
+                  <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >Verify by date of birth </mat-radio-button>
+                  <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == '02-' "  >Verify by OTP - {{ customer.Mobile }}</mat-radio-button>
+                </mat-radio-group>
+          </div>
+      </div>
+
+      <div id='div_DOB' *ngIf="verifyBy=='DOB'" >
+        <div class="row" >
+            <mat-form-field class="col-md-4">
+            <input  matInput   placeholder="Please verify your date of birth"    [(ngModel)]="verifyDOB_val"  />
+            </mat-form-field>
+            <p>Format:ddmmyyyyy  (example = 31011976)</p>
+        </div>
+        <div class="row" >
+            <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyDOB()" class="col-md-4"> Verify</a>
+        </div>
+
+      </div>
+
+      <div id='div_OTP' *ngIf="verifyBy=='OTP'">
+
+          <div class="row ">
+              <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="requestOTP()" class="col-md-4">Request OTP</a>
+          </div>
+
+         <div id='OTP_INTRY' *ngIf="showOtpEntry" >
+            <div class="row">
+                <mat-form-field class="col-md-4">
+                    <input  matInput   placeholder="Please input OTP"    [(ngModel)]="otpToken_val"  />
+                </mat-form-field>
+            </div>
+
+            <div class="row ">
+                <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyConfirmOTP()" class="col-md-4"> Verify</a>
+            </div>
+         </div>
+
+
+      </div>
+  </div>
+
+  <!-- ************* STEPPER  -->
+
+  <mat-horizontal-stepper labelPosition="bottom" #stepper *ngIf="verifyFLag" >
+    <!-- ***************** First step  Persional Information-->
+    <mat-step [stepControl]="firstFormGroup">
+        <form [formGroup]="firstFormGroup">
+            <ng-template matStepLabel>Persional Information</ng-template>
+            <mat-form-field>
+                <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
+            </mat-form-field>
             <div>
-              <ul>
-                <div *ngFor="let choice of ques.choices">
+                <button mat-button matStepperNext>Next</button>
+            </div>
+        </form>
+    </mat-step>
 
-                  <div *ngIf="ques.multilchoice">
-                    <input type="checkbox"
-                    value=" {{ choice.score }}"
-                    id="{{ choice.id }}"
-                    [(ngModel)]="choice.answer"
-                    [ngModelOptions]="{standalone: true}"
-                    />
-                    {{ choice.name }}
+  <!-- ***************** Second step  Suitability-->
+    <mat-step [stepControl]="secondFormGroup"   >
+        <form [formGroup]="secondFormGroup">
+            <ng-template matStepLabel>Suitability survey</ng-template>
+
+            <mat-card-content >
+              <div *ngIf="!canDoSuit" >
+                  <h5>Current suitability</h5>
+                  <h5>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }}</h5>
+                  <h5>Evaluated Date: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</h5>
+
+                  <a mat-flat-button color="primary" (click)="canDoSuit =true;"> New Survey</a>
+              </div>
+
+            <div *ngIf="canDoSuit" >
+            <form>
+            <ul>
+                <div *ngFor="let ques of suitQuestions" class="questions">
+                  <span>{{ ques.id }}. {{ ques.name }} </span>
+                  <div>
+                    <ul>
+                      <div *ngFor="let choice of ques.choices">
+
+                        <div *ngIf="ques.multilchoice">
+                          <input type="checkbox"
+                          value=" {{ choice.score }}"
+                          id="{{ choice.id }}"
+                          [(ngModel)]="choice.answer"
+                          [ngModelOptions]="{standalone: true}"
+                          />
+                          {{ choice.name }}
+                        </div>
+
+                        <div *ngIf="!ques.multilchoice">
+                          <input
+                            name="{{ ques.id }}"
+                            id="{{ ques.id }}"
+                            type="radio"
+                            value="{{ choice.score }}"
+                            [(ngModel)]="ques.answer"
+                          />
+                          {{ choice.name }}
+                        </div>
+
+                      </div>
+                    </ul>
                   </div>
-
-                  <div *ngIf="!ques.multilchoice">
-                    <input
-                      name="{{ ques.id }}"
-                      id="{{ ques.id }}"
-                      type="radio"
-                      value="{{ choice.score }}"
-                      [(ngModel)]="ques.answer"
-                    />
-                    {{ choice.name }}
-                  </div>
-
                 </div>
               </ul>
-              <!-- <app-suit-tree-view [questions]="dir.questions"></app-suit-tree-view> -->
+
+              <mat-card-actions>
+                  <button   mat-flat-button class="button_card_action"  color="warn"  (click)="suiteFormRESET()"  type="reset"  >
+                    Suit Reset
+                  </button>
+
+                  <a mat-flat-button color="primary" (click)="calSuit()"> Calculate</a>
+                  <a mat-flat-button color="accent" (click)="canDoSuit =false;"> Cancel</a>
+              </mat-card-actions>
+
+            <div class="suitResult" *ngIf="canSaveSuit">
+                <h4>Result</h4>
+
+                <h5>{{ riskLevel }} - {{ riskLevelTxt }}</h5>
+                <p>{{ riskLevelDesc }}</p>
+
+                <a mat-flat-button color="primary" (click)="saveSuit()">   Save Suitability</a>
+              </div>
+            </form>
             </div>
-            <!-- <BR> -->
-          </div>
-        </ul>
-<!-- /********************************/ -->
-      <mat-card-actions>
-        <button
-          mat-flat-button
-          class="button_card_action"
-          color="warn"
-          (click)="suiteFormRESET()"
-          type="reset"
-        >
-          Suit Reset
-        </button>
 
-        <a mat-flat-button color="primary" (click)="calSuit()"> Calculate</a>
-      </mat-card-actions>
-    </form>
+            </mat-card-content>
+        </form>
+    </mat-step>
 
-    <div class="suitResult" *ngIf="canSaveSuit">
-      <h4>Result</h4>
-      <mat-slider
-        class="example-margin"
-        [disabled]="disabled"
-        [invert]="invert"
-        [max]="max"
-        [min]="min"
-        [step]="step"
-        [thumbLabel]="thumbLabel"
-        [(ngModel)]="riskLevel"
-        [vertical]="vertical"
-      >
-      </mat-slider>
-      <h5>{{ riskLevel }} - {{ riskLevelTxt }}</h5>
-      <p>{{ riskLevelDesc }}</p>
+<!-- ***************** Third step  FATCA -->
+    <mat-step [stepControl]="thirdFormGroup" >
+        <form [formGroup]="thirdFormGroup">
+            <ng-template matStepLabel>FATCA</ng-template>
+            <mat-card-content >
+            <h5>{{ formService.from_fatca_title }}</h5>
+            <form>
 
-      <a mat-flat-button color="primary" (click)="saveSuit()">
-        Save Suitability</a
-      >
-    </div>
-  </mat-card-content>
-</mat-card>
+                  <app-suit-tree-view [questions]="fatcaQuestions"></app-suit-tree-view>
 
-<mat-card *ngIf="canDoFATCA">
-  <mat-card-content>
-    <mat-card-title>
-      {{ formService.from_fatca_title }}
-    </mat-card-title>
+                  <mat-card-actions>
+                      <button mat-flat-button  class="button_card_action"  color="warn"  (click)="fatcaFormRESET()" type="reset" >Reset</button>
+                        <a mat-flat-button color="primary" (click)="saveFATCA()"> Save</a>
+                  </mat-card-actions>
+            </form>
+          </mat-card-content>
+        </form>
+    </mat-step>
 
-    <form>
-      <app-suit-tree-view [questions]="fatcaQuestions"></app-suit-tree-view>
-
-      <mat-card-actions>
-        <button
-          mat-flat-button
-          class="button_card_action"
-          color="warn"
-          (click)="fatcaFormRESET()"
-          type="reset"
-        >
-          FATCA Reset
-        </button>
-
-        <a mat-flat-button color="primary" (click)="saveFATCA()"> Save FATCA</a>
-      </mat-card-actions>
-    </form>
-  </mat-card-content>
+</mat-horizontal-stepper>
 </mat-card>

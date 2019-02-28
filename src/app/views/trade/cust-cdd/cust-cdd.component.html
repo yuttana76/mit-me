@@ -1,0 +1,69 @@
+<form [formGroup]="cddFormGroup">
+  <div class="container ">
+
+      <div class='row'>
+              <mat-checkbox >Modify</mat-checkbox>
+      </div>
+
+    <div class='row'>
+        <mat-form-field class="col-md-4">
+            <input matInput [(ngModel)]="cddData.pid" placeholder="ID card"  formControlName="pid"  required>
+        </mat-form-field>
+    </div>
+
+    <div class='row'>
+        <mat-form-field class="col-md-4">
+            <input matInput [(ngModel)]="cddData.firstName" placeholder="First name"  formControlName="firstName" required>
+        </mat-form-field>
+        <mat-form-field class="col-md-4">
+            <input matInput [(ngModel)]="cddData.lastName" placeholder="Last name" formControlName="lastName"  required>
+        </mat-form-field>
+    </div>
+
+    <div class="row"  >
+        <mat-form-field class="col-md-4">
+            <input matInput [(ngModel)]="cddData.dob" [matDatepicker]="dobDatePicker" formControlName="dob" placeholder="date of birth ">
+            <mat-datepicker-toggle matSuffix [for]="dobDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #dobDatePicker></mat-datepicker>
+            <!-- <mat-error *ngIf="cddFormGroup.get('dobDate2').invalid ">Please correct date of birth</mat-error> -->
+          </mat-form-field>
+      </div>
+
+      <div class='row'>
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="cddData.mobile" placeholder="Mobile"  formControlName="mobile" required>
+          </mat-form-field>
+
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="cddData.email" placeholder="Email"  formControlName="email" required>
+          </mat-form-field>
+      </div>
+
+      <div class='row'>
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="cddData.typeBusiness" placeholder="Type business"  formControlName="typeBusiness" required>
+          </mat-form-field>
+      </div>
+
+      <div class='row'>
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="cddData.occupation" placeholder="Occupation"  formControlName="occupation" required>
+          </mat-form-field>
+
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="cddData.position" placeholder="Position"  formControlName="position" required>
+          </mat-form-field>
+      </div>
+
+      <div class='row'>
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="cddData.incomeLevel" placeholder="Income"  formControlName="incomeLevel" required>
+          </mat-form-field>
+
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="cddData.incomeSource" placeholder="Income source"  formControlName="incomeSource" required>
+          </mat-form-field>
+      </div>
+
+  </div>
+</form>

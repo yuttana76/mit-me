@@ -12,7 +12,8 @@
         matTooltip="{{ formService.addNewBtn }}"
         (click)="onAddNew()"
       ></i>
-      <div *ngIf="customer.First_Name_T" id="cust_content">
+
+      <div *ngIf="verifyFLag" id="cust_content">
         <img  src="assets/img/avatars/noPerson.png" class="img-avatar box_img"  alt="{{ customer.First_Name_T }}"  />
         <span>{{ customer.Title_Name_T }} {{ customer.First_Name_T }}
           {{ customer.Last_Name_T }}
@@ -48,7 +49,7 @@
           <div class="row">
               <mat-radio-group  [(ngModel)]="verifyBy" class="col-md-4" >
                   <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >Verify by date of birth </mat-radio-button>
-                  <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == '02-' "  >Verify by OTP - {{ customer.Mobile }}</mat-radio-button>
+                  <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == '02' "  >Verify by OTP - {{ customer.Mobile }}</mat-radio-button>
                 </mat-radio-group>
           </div>
       </div>
@@ -75,7 +76,7 @@
          <div id='OTP_INTRY' *ngIf="showOtpEntry" >
             <div class="row">
                 <mat-form-field class="col-md-4">
-                    <input  matInput   placeholder="Please input OTP"    [(ngModel)]="otpToken_val"  />
+                    <input  matInput   placeholder="Please input OTP"    [(ngModel)]="verifyOTP_val"  />
                 </mat-form-field>
             </div>
 
@@ -93,15 +94,10 @@
   <mat-horizontal-stepper labelPosition="bottom" #stepper *ngIf="verifyFLag" >
     <!-- ***************** First step  Persional Information-->
     <mat-step [stepControl]="firstFormGroup">
-        <form [formGroup]="firstFormGroup">
-            <ng-template matStepLabel>Persional Information</ng-template>
-            <mat-form-field>
-                <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
-            </mat-form-field>
-            <div>
-                <button mat-button matStepperNext>Next</button>
-            </div>
-        </form>
+        <ng-template matStepLabel>Persional Information</ng-template>
+
+        <app-cust-cdd [custCode]="survey.pid" ></app-cust-cdd>
+
     </mat-step>
 
   <!-- ***************** Second step  Suitability-->

@@ -40,6 +40,7 @@ import { AnoucementComponent } from './anoucement/anoucement.component';
 import { AnoucementDialogComponent } from './dialog/anoucement-dialog/anoucement-dialog.component';
 import { SuitTreeViewComponent } from './suit-tree-view/suit-tree-view.component';
 import { SuitComponent } from './suit/suit.component';
+import { CustCDDComponent } from './cust-cdd/cust-cdd.component';
 
 @NgModule({
   imports: [
@@ -90,6 +91,7 @@ import { SuitComponent } from './suit/suit.component';
 
     SuitComponent,
     SuitTreeViewComponent,
+    CustCDDComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

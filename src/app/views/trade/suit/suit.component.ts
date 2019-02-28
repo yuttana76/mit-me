@@ -15,6 +15,8 @@ import { AuthService } from "../../services/auth.service";
 import "rxjs/add/operator/finally";
 import { Customer } from "../model/customer.model";
 import { Question } from "../model/question.model";
+import { CddService } from "../services/cdd.service";
+// import { CDDModel } from "../model/cdd.model";
 
 
 
@@ -65,7 +67,7 @@ export class SuitComponent implements OnInit {
   verifyDOB_val;
   otpToken_Date;
   otpToken_Period;
-  otpToken_val = ""
+  verifyOTP_val = ""
 
   public survey: SurveyModel = new SurveyModel();
 
@@ -81,7 +83,8 @@ export class SuitComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private suiteService: SuiteService,
     public authService: AuthService,
-    private _formBuilder: FormBuilder
+    private _formBuilder: FormBuilder,
+    private cddService: CddService
   ) {
     // console.log('*** getUserData>>' + this.authService.getUserData());
     // console.log('*** getUserId>>' + this.authService.getUserId());
@@ -204,24 +207,10 @@ export class SuitComponent implements OnInit {
           this.customer.Birth_Day = data.USERDATA.DOB;
           this.customer.Mobile = data.USERDATA.Mobile;
 
-          console.log(' MOBILE digit(1-2) >>' + this.customer.Mobile[0] + '' + this.customer.Mobile[1]);
-
           this.cust_RiskScore = data.USERDATA.Suit_Score;
           this.cust_RiskLevel = data.USERDATA.Risk_Level;
           this.cust_RiskLevelTxt = data.USERDATA.Risk_Level_Txt;
           this.cust_RiskDate = data.USERDATA.Risk_Date;
-
-          // this.toastr.success(
-          //   `Welcome ${this.customer.First_Name_T} ${
-          //     this.customer.Last_Name_T
-          //   }`,
-          //   "success",
-          //   {
-          //     timeOut: 3000,
-          //     closeButton: true,
-          //     positionClass: "toast-top-center"
-          //   }
-          // );
 
         },
         error => () => {
@@ -248,17 +237,6 @@ export class SuitComponent implements OnInit {
           this.otpToken_Date = data.TOKEN_DATE;
           this.otpToken_Period = data.TOKEN_PEROID;
 
-          // this.toastr.success(`Welcome ${this.customer.First_Name_T} ${
-          //     this.customer.Last_Name_T
-          //   }`,
-          //   "success",
-          //   {
-          //     timeOut: 3000,
-          //     closeButton: true,
-          //     positionClass: "toast-top-center"
-          //   }
-          // );
-
         },
         error => () => {
           console.log("Verify Was error", error);
@@ -271,7 +249,7 @@ export class SuitComponent implements OnInit {
 
   public verifyConfirmOTP() {
     this.spinnerLoading = true;
-    this.suiteService.verifyConfirmOTP(this.survey.pid,this.otpToken_val)
+    this.suiteService.verifyConfirmOTP(this.survey.pid,this.verifyOTP_val)
       .finally(() => {
         console.log("Handle logging logic...");
         this.spinnerLoading = false;
@@ -280,19 +258,20 @@ export class SuitComponent implements OnInit {
         (data: any) => {
           console.log("HTTP return verifyConfirmOTP():" + JSON.stringify(data));
 
+          // Load CDD
+
           this.verifyFLag =true;
           this.needVerify = false;
 
-          // this.toastr.success(`Welcome ${this.customer.First_Name_T} ${
-          //     this.customer.Last_Name_T
-          //   }`,
-          //   "success",
-          //   {
-          //     timeOut: 3000,
-          //     closeButton: true,
-          //     positionClass: "toast-top-center"
-          //   }
-          // );
+
+          this.toastr.success(`Welcome ${this.customer.First_Name_T} ${this.customer.Last_Name_T }`,
+            "success",
+            {
+              timeOut: 3000,
+              closeButton: true,
+              positionClass: "toast-top-center"
+            }
+          );
 
         },
         error => () => {
@@ -308,19 +287,42 @@ export class SuitComponent implements OnInit {
   public verifyDOB() {
 
       if(this.customer.Birth_Day.replace(/[-]/g, "").toLowerCase() === this.verifyDOB_val){
-      this.verifyFLag = true;
-      this.needVerify = false;
-    } else {
-      this.verifyDOB_val='';
-      this.toastr.warning(` Incorrect data. `,
-            "Incorrect",
+        this.verifyFLag = true;
+        this.needVerify = false;
+        this.verifyDOB_val='';
+
+        // //Load CDD
+        //   this.cddService.getCustCDDInfo(this.survey.pid).subscribe(data => {
+        //     console.log('CDD >>' +JSON.stringify(data));
+
+        //   }, error => () => {
+        //       console.log('Was error', error);
+        //   }, () => {
+        //     console.log('Loading complete');
+
+        //   });
+
+        this.toastr.success(`Welcome ${this.customer.First_Name_T} ${this.customer.Last_Name_T}`,
+            "success",
             {
               timeOut: 3000,
               closeButton: true,
               positionClass: "toast-top-center"
             }
           );
-    }
+
+
+      } else {
+        this.verifyDOB_val='';
+        this.toastr.warning(` Incorrect data. `,
+              "Incorrect",
+              {
+                timeOut: 3000,
+                closeButton: true,
+                positionClass: "toast-top-center"
+              }
+            );
+      }
 
 
   }
@@ -547,8 +549,9 @@ export class SuitComponent implements OnInit {
 
 
   verifyByChange(event: MatRadioChange) {
-    console.log( 'verifyByChange()>>' + event.value);
-
+    // console.log( 'verifyByChange()>>' + event.value);
+    this.verifyDOB_val = '';
+    this.verifyOTP_val = '';
     this.showOtpEntry =false;
   }
 }

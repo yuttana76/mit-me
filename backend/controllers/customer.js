@@ -3,6 +3,7 @@
 const dbConfig = require('../config/db-config');
 // var sql = require("mssql");
 var config = dbConfig.dbParameters;
+var logger = require('../config/winston');
 
 exports.searchCustomers = (req, res, next) => {
   var fncName = "searchCustomers";
@@ -23,7 +24,7 @@ exports.searchCustomers = (req, res, next) => {
 
   var queryStr = `SELECT * FROM (
     SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,
-           * FROM [MFTS].[dbo].[Account_Info] WHERE ${whereCond}
+           * FROM [Account_Info] WHERE ${whereCond}
       ) AS TBL
 WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
 ORDER BY Cust_Code`;
@@ -60,7 +61,7 @@ exports.getCustomer = (req, res, next) => {
   var custCode = req.params.cusCode;
 
   var queryStr = `select *
-  FROM [MFTS].[dbo].[Account_Info]
+  FROM [Account_Info]
   WHERE Cust_Code='${custCode}'`;
 
   const sql = require('mssql')
@@ -152,7 +153,7 @@ function  accountInfoQuery(customerObj){
   var v_Cust_Code = customerObj.Cust_Code;
   var v_DOB = customerObj.Birth_Day;
 
-  return `INSERT INTO  [MFTS].[dbo].[Account_Info]
+  return `INSERT INTO  [Account_Info]
         VALUES(
         '${v_Cust_Code}'
         ,'${validStr(customerObj.Card_Type)}'
@@ -181,7 +182,7 @@ function  accountInfoQuery(customerObj){
 
 function  addressQuery(v_Cust_Code,v_Addr_Seq,ceAddressObj){
 
-  return  `INSERT INTO  [MFTS].[dbo].[Account_Address]
+  return  `INSERT INTO [Account_Address]
         VALUES(
         '${v_Cust_Code}'
         ,${v_Addr_Seq}
@@ -207,4 +208,56 @@ function validStr(val, defaultVal = "") {
     // v does not have a value
     return defaultVal;
   }
+}
+
+
+
+exports.getCDDinfo = (req, res, next) => {
+
+  var fncName = 'getCustomer';
+  var _custCode = req.params.cusCode;
+
+  logger.info( `API /cddInfo - ${req.originalUrl} - ${req.ip} - ${_custCode}`);
+
+  var queryStr = `
+  BEGIN
+
+  select top 1 a.Cust_Code,a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.Birth_Day,a.Mobile,a.Email
+  ,b.Account_No,b.Occupation_Code,b.Occupation_Desc
+,b.Position_Code,b.Position,b.Politician_Desc
+,b.BusinessType_Code
+,b.Income,b.Income_Code,b.Income_Source,b.Income_Source_Code
+,b.Modify_Date
+  FROM [Account_Info] a
+  left join MFTS_Account b on b.Account_No like a.Cust_Code
+  WHERE Cust_Code= @custCode
+  order by b.Modify_Date desc
+
+  END
+  `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input('custCode', sql.VarChar(50), _custCode)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    // ... error handler
+    console.log("EROR>>"+err);
+  })
 }

@@ -12,5 +12,5 @@ router.get("/:cusCode", checkAuth, customerController.getCustomer);
 router.post("", checkAuth, customerController.CreateCustomer);
 
 router.put("/:cusCode", checkAuth, customerController.UpdateCustomer);
-
+router.get("/cddInfo/:cusCode",  customerController.getCDDinfo);
 module.exports = router;

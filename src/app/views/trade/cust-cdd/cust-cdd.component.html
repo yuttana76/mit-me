@@ -1,9 +1,15 @@
-<form [formGroup]="cddFormGroup">
-  <div class="container ">
-
+<div class="container ">
+   <!-- <div class="container ">
       <div class='row'>
-              <mat-checkbox >Modify</mat-checkbox>
+          <section class="example-section">
+              <mat-checkbox [(ngModel)]="modifyFlag"  (change)="modifOnChange(modifyFlag)"  >Modify-{{modifyFlag}}</mat-checkbox>
+          </section>
+
       </div>
+    </div> -->
+
+<form [formGroup]="cddFormGroup">
+
 
     <div class='row'>
         <mat-form-field class="col-md-4">
@@ -12,19 +18,19 @@
     </div>
 
     <div class='row'>
-        <mat-form-field class="col-md-4">
+        <mat-form-field class="col-md-4" >
             <input matInput [(ngModel)]="cddData.firstName" placeholder="First name"  formControlName="firstName" required>
         </mat-form-field>
         <mat-form-field class="col-md-4">
-            <input matInput [(ngModel)]="cddData.lastName" placeholder="Last name" formControlName="lastName"  required>
+            <input matInput [(ngModel)]="cddData.lastName"  placeholder="Last name" formControlName="lastName"  required>
         </mat-form-field>
     </div>
 
     <div class="row"  >
         <mat-form-field class="col-md-4">
-            <input matInput [(ngModel)]="cddData.dob" [matDatepicker]="dobDatePicker" formControlName="dob" placeholder="date of birth ">
+            <input matInput [(ngModel)]="cddData.dob"  [matDatepicker]="dobDatePicker" formControlName="dob"  placeholder="date of birth " readonly=true>
             <mat-datepicker-toggle matSuffix [for]="dobDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #dobDatePicker></mat-datepicker>
+            <mat-datepicker #dobDatePicker ></mat-datepicker>
             <!-- <mat-error *ngIf="cddFormGroup.get('dobDate2').invalid ">Please correct date of birth</mat-error> -->
           </mat-form-field>
       </div>
@@ -40,30 +46,70 @@
       </div>
 
       <div class='row'>
+              <mat-form-field class="col-md-4">
+                  <mat-select [(ngModel)]="cddData.typeBusiness" formControlName="typeBusiness" placeholder="Business type" required >
+                    <mat-option *ngFor="let obj of businessTypeList" [value]="obj.Code">
+                      {{obj.Describe}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="cddFormGroup.get('typeBusiness').invalid">Please choose one.</mat-error>
+                </mat-form-field>
+      </div>
+
+      <div class='row'>
+
           <mat-form-field class="col-md-4">
-              <input matInput [(ngModel)]="cddData.typeBusiness" placeholder="Type business"  formControlName="typeBusiness" required>
-          </mat-form-field>
+              <mat-select [(ngModel)]="cddData.occupation" formControlName="occupation" placeholder="Occupation" required >
+                <mat-option *ngFor="let obj of occupationList" [value]="obj.Code">
+                  {{obj.Describe}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="cddFormGroup.get('occupation').invalid">Please choose one.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-4">
+                <mat-select [(ngModel)]="cddData.position" formControlName="position" placeholder="Position" required >
+                  <mat-option *ngFor="let obj of positionList" [value]="obj.Code">
+                    {{obj.Thai_Name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="cddFormGroup.get('occupation').invalid">Please choose one.</mat-error>
+              </mat-form-field>
       </div>
 
       <div class='row'>
           <mat-form-field class="col-md-4">
-              <input matInput [(ngModel)]="cddData.occupation" placeholder="Occupation"  formControlName="occupation" required>
-          </mat-form-field>
+              <mat-select [(ngModel)]="cddData.incomeLevel" formControlName="incomeLevel" placeholder="Income" required >
+                <mat-option *ngFor="let obj of incomeList" [value]="obj.Code">
+                  {{obj.Thai_Name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="cddFormGroup.get('incomeLevel').invalid">Please choose one.</mat-error>
+            </mat-form-field>
 
           <mat-form-field class="col-md-4">
-              <input matInput [(ngModel)]="cddData.position" placeholder="Position"  formControlName="position" required>
-          </mat-form-field>
+              <mat-select [(ngModel)]="cddData.incomeSource" formControlName="incomeSource" placeholder="Income source" required >
+                <mat-option *ngFor="let obj of incomeSourceList" [value]="obj.Code">
+                  {{obj.Thai_Name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="cddFormGroup.get('incomeSource').invalid">Please choose one.</mat-error>
+            </mat-form-field>
       </div>
 
-      <div class='row'>
-          <mat-form-field class="col-md-4">
-              <input matInput [(ngModel)]="cddData.incomeLevel" placeholder="Income"  formControlName="incomeLevel" required>
-          </mat-form-field>
+  </form>
 
-          <mat-form-field class="col-md-4">
-              <input matInput [(ngModel)]="cddData.incomeSource" placeholder="Income source"  formControlName="incomeSource" required>
-          </mat-form-field>
-      </div>
+  <div class='row'>
+      <section class="example-section">
+          <mat-checkbox [(ngModel)]="modifyFlag"  (change)="modifOnChange(modifyFlag)"  >To modify</mat-checkbox>
+      </section>
 
   </div>
-</form>
+
+  <div class='row'>
+      <mat-card-actions class="col-md-4">
+          <a mat-flat-button color="primary" (click)="savePersonInfo()" [disabled]="!modifyFlag"> Save</a>
+          <a mat-flat-button color="accent" (click)="cancelEdit()" [disabled]="!modifyFlag"> Cancel</a>
+          </mat-card-actions>
+  </div>
+</div>

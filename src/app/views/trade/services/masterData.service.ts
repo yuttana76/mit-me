@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { environment } from "../../../../environments/environment";
 
 const BACKEND_URL = environment.apiURL;
+const BACKEND_URL_MASTER = environment.apiURL + '/master';
 
 @Injectable({ providedIn: 'root' })
 export class MasterDataService {
@@ -183,4 +184,97 @@ export class MasterDataService {
       })
     );
   }
+
+
+  getOccupations() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/occupations')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(rtnData => {
+          return {
+            Amc_Id: rtnData.Amc_Id,
+            Code: rtnData.Code,
+            Describe: rtnData.Describe,
+            Describe_E: rtnData.Describe_E
+          };
+        });
+      })
+    );
+  }
+
+
+  getBusinessType() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/businessType')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(rtnData => {
+          return {
+            Amc_Id: rtnData.Amc_Id,
+            Code: rtnData.Code,
+            Describe: rtnData.Describe,
+            Describe_E: rtnData.Describe_E
+          };
+        });
+      })
+    );
+  }
+
+
+  getPosition() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/position')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(rtnData => {
+          return {
+            Amc_Id: rtnData.Amc_Id,
+            Code: rtnData.Code,
+            Thai_Name: rtnData.Thai_Name,
+            Eng_Name: rtnData.Eng_Name
+          };
+        });
+      })
+    );
+  }
+
+
+  getIncome() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/income')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(rtnData => {
+          return {
+            Amc_Id: rtnData.Amc_Id,
+            Code: rtnData.Code,
+            TypeHolder: rtnData.TypeHolder,
+            Thai_Name: rtnData.Thai_Name,
+            Eng_Name: rtnData.Eng_Name
+          };
+        });
+      })
+    );
+  }
+
+
+  getIncomeSource() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/incomeSource')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(rtnData => {
+          return {
+            Amc_Id: rtnData.Amc_Id,
+            Code: rtnData.Code,
+            TypeHolder: rtnData.TypeHolder,
+            Thai_Name: rtnData.Thai_Name,
+            Eng_Name: rtnData.Eng_Name
+          };
+        });
+      })
+    );
+  }
+  // *********************************
 }

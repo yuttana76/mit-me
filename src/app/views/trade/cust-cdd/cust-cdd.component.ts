@@ -2,6 +2,14 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { CDDModel } from '../model/cdd.model';
 import { CddService } from '../services/cdd.service';
+import { MasterDataService } from '../services/masterData.service';
+import { Occupation } from '../model/occupation.model';
+import { BusinessType } from '../model/businessType.model';
+import { Income } from '../model/income.model';
+import { IncomeSource } from '../model/incomeSource.model';
+import { Position } from '../model/position.model';
+import { ToastrService } from 'ngx-toastr';
+import { CustCddFormService } from './cust-cdd.service';
 
 @Component({
   selector: 'app-cust-cdd',
@@ -15,21 +23,26 @@ export class CustCDDComponent implements OnInit {
   cddFormGroup: FormGroup;
   public cddData = new CDDModel() ;
 
+  public modifyFlag = true;
+
+  businessTypeList: BusinessType[];
+  occupationList: Occupation[];
+  positionList: Position[];
+  incomeList: Income[];
+  incomeSourceList: IncomeSource[];
+
+
   constructor(private _formBuilder: FormBuilder,
-    private cddService: CddService
+    private cddService: CddService,
+    private masterDataService:MasterDataService,
+    private toastr: ToastrService,
+    public formService: CustCddFormService
+    // public datepipe: DatePipe
     ) { }
 
   ngOnInit() {
 
-    // this.cddFormGroup = this._formBuilder.group({
-    //   firstCtrl: ['', Validators.required],
-    //   dobDate2:['', Validators.required],
-    // });
-
    this.cddFormGroup = new FormGroup({
-    // firstCtrl: new FormControl(null, {
-    //   validators: [Validators.required]
-    // }),
     pid: new FormControl(null, {
       validators: [Validators.required]
     }),
@@ -66,37 +79,123 @@ export class CustCDDComponent implements OnInit {
     }),
   });
 
-     //Load CDD
-     this.cddService.getCustCDDInfo(this.custCode).subscribe(data => {
-      console.log('CDD >>' +JSON.stringify(data));
+   // Load master data
+   this.masterDataService.getOccupations().subscribe((data: any[]) => {
+      this.occupationList = data;
+   });
 
-      this.cddData.pid = data[0].pid;
-      this.cddData.firstName = data[0].firstName;
-      this.cddData.lastName = data[0].lastName;
-      this.cddData.dob = data[0].dob;
-      this.cddData.mobile = data[0].mobile;
-      this.cddData.email = data[0].email;
-      this.cddData.typeBusiness = data[0].typeBusiness;
-      this.cddData.occupation = data[0].occupation;
-      this.cddData.position = data[0].position;
-      this.cddData.incomeLevel = data[0].incomeLevel;
-      this.cddData.incomeSource = data[0].incomeSource;
+   this.masterDataService.getBusinessType().subscribe((data: any[]) => {
+    this.businessTypeList = data;
+  });
 
-      // this.cddFormGroup.setValue(pid:{});
+  this.masterDataService.getPosition().subscribe((data: any[]) => {
+    this.positionList = data;
+  });
 
-      this.cddFormGroup.patchValue({
-        pid: 'XXX',
-        // formControlName2: myValue2 (can be omitted)
-      });
+  this.masterDataService.getIncome().subscribe((data: any[]) => {
+    this.incomeList = data;
+  });
 
+  this.masterDataService.getIncomeSource().subscribe((data: any[]) => {
+    this.incomeSourceList = data;
+  });
 
-    }, error => () => {
-        console.log('Was error', error);
-    }, () => {
-      console.log('Loading complete');
+   //Initial data
+  this.getCustomerInfo(this.custCode);
 
-    });
+  this.modifOnChange(this.modifyFlag);
 
   }
+
+ getCustomerInfo(_id){
+  //Load CDD
+  this.cddService.getCustCDDInfo(_id).subscribe(data => {
+    // console.log('CDD >>' +JSON.stringify(data));
+
+    this.cddData.pid = data[0].pid;
+    this.cddData.firstName = data[0].firstName;
+    this.cddData.lastName = data[0].lastName;
+    this.cddData.dob = data[0].dob;
+    this.cddData.mobile = data[0].mobile;
+    this.cddData.email = data[0].email;
+    this.cddData.typeBusiness = data[0].typeBusiness;
+    this.cddData.occupation = data[0].occupation;
+    this.cddData.position = data[0].position;
+    this.cddData.incomeLevel = data[0].incomeLevel;
+    this.cddData.incomeSource = data[0].incomeSource;
+
+    // this.reloadData();
+
+  }, error => () => {
+      console.log('Was error', error);
+  }, () => {
+    console.log('Loading complete');
+  });
+ }
+
+//  reloadData(){
+//   this.cddFormGroup.patchValue({pid: this.cddData.pid})
+//   this.cddFormGroup.patchValue({firstName: this.cddData.firstName})
+//   this.cddFormGroup.patchValue({lastName: this.cddData.lastName})
+//   this.cddFormGroup.patchValue({dob: this.cddData.dob})
+//   this.cddFormGroup.patchValue({mobile: this.cddData.mobile})
+//   this.cddFormGroup.patchValue({email: this.cddData.email})
+//   this.cddFormGroup.patchValue({typeBusiness: this.cddData.typeBusiness})
+//   this.cddFormGroup.patchValue({occupation: this.cddData.occupation})
+//   this.cddFormGroup.patchValue({position: this.cddData.position})
+//   this.cddFormGroup.patchValue({incomeLevel: this.cddData.incomeLevel})
+//   this.cddFormGroup.patchValue({incomeSource: this.cddData.incomeSource})
+//  }
+
+ savePersonInfo(){
+   console.log('savePersonInfo()');
+
+   this.cddService.saveCustCDDInfo(this.custCode,this.custCode,this.cddData)
+   .subscribe((data: any ) => {
+    console.log('Successful', JSON.stringify(data));
+    if (data.code === "000") {
+      this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
+        timeOut: 5000,
+        closeButton: true,
+        positionClass: "toast-top-center"
+      });
+    } else {
+      this.toastr.warning(
+        data.msg,
+        this.formService.SAVE_INCOMPLETE,
+        {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        }
+      );
+    }
+
+  }, error => () => {
+      console.log('Was error', error);
+  }, () => {
+     console.log('Loading complete');
+  });
+ }
+
+ cancelEdit(){
+
+  this.getCustomerInfo(this.custCode);
+
+  this.cddFormGroup.disable();
+  this.modifyFlag =false;
+ }
+
+ modifOnChange(val){
+    if(val){
+      this.cddFormGroup.enable();
+
+     }else{
+      // this.reloadData();
+      this.cddFormGroup.disable();
+     }
+ }
+
+
 
 }

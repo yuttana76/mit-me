@@ -212,52 +212,105 @@ function validStr(val, defaultVal = "") {
 
 
 
-exports.getCDDinfo = (req, res, next) => {
+// exports.getCDDinfo = (req, res, next) => {
 
-  var fncName = 'getCustomer';
-  var _custCode = req.params.cusCode;
+//   var fncName = 'getCustomer';
+//   var _custCode = req.params.cusCode;
 
-  logger.info( `API /cddInfo - ${req.originalUrl} - ${req.ip} - ${_custCode}`);
+//   logger.info( `API /cddInfo - ${req.originalUrl} - ${req.ip} - ${_custCode}`);
 
-  var queryStr = `
-  BEGIN
+//   var queryStr = `
+//   BEGIN
 
-  select top 1 a.Cust_Code,a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.Birth_Day,a.Mobile,a.Email
-  ,b.Account_No,b.Occupation_Code,b.Occupation_Desc
-,b.Position_Code,b.Position,b.Politician_Desc
-,b.BusinessType_Code
-,b.Income,b.Income_Code,b.Income_Source,b.Income_Source_Code
-,b.Modify_Date
-  FROM [Account_Info] a
-  left join MFTS_Account b on b.Account_No like a.Cust_Code
-  WHERE Cust_Code= @custCode
-  order by b.Modify_Date desc
+//   select top 1 a.Cust_Code,a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.Birth_Day,a.Mobile,a.Email
+//   ,b.Account_No,b.Occupation_Code,b.Occupation_Desc
+// ,b.Position_Code,b.Position,b.Politician_Desc
+// ,b.BusinessType_Code
+// ,b.Income,b.Income_Code,b.Income_Source,b.Income_Source_Code
+// ,b.Modify_Date
+//   FROM [Account_Info] a
+//   left join MFTS_Account b on b.Account_No like a.Cust_Code
+//   WHERE Cust_Code= @custCode
+//   order by b.Modify_Date desc
 
-  END
-  `;
+//   END
+//   `;
 
-  const sql = require('mssql')
-  const pool1 = new sql.ConnectionPool(config, err => {
-    pool1.request() // or: new sql.Request(pool1)
-    .input('custCode', sql.VarChar(50), _custCode)
-    .query(queryStr, (err, result) => {
-        // ... error checks
-        if(err){
-          console.log( fncName +' Quey db. Was err !!!' + err);
-          res.status(201).json({
-            message: err,
-          });
-        }else {
-          res.status(200).json({
-            message: fncName + "Quey db. successfully!",
-            result: result.recordset
-          });
-        }
-    })
-  })
+//   const sql = require('mssql')
+//   const pool1 = new sql.ConnectionPool(config, err => {
+//     pool1.request() // or: new sql.Request(pool1)
+//     .input('custCode', sql.VarChar(50), _custCode)
+//     .query(queryStr, (err, result) => {
+//         // ... error checks
+//         if(err){
+//           console.log( fncName +' Quey db. Was err !!!' + err);
+//           res.status(201).json({
+//             message: err,
+//           });
+//         }else {
+//           res.status(200).json({
+//             message: fncName + "Quey db. successfully!",
+//             result: result.recordset
+//           });
+//         }
+//     })
+//   })
 
-  pool1.on('error', err => {
-    // ... error handler
-    console.log("EROR>>"+err);
-  })
-}
+//   pool1.on('error', err => {
+//     // ... error handler
+//     console.log("EROR>>"+err);
+//   })
+// }
+
+
+// exports.saveCDDInfo = (req, res, next) => {
+
+//   var fncName = 'saveCDDInfo';
+//   var custCode = req.body.custCode
+
+//   var actionBy = req.body.actionBy
+//   var pid = req.body.pid
+//   var title = req.body.title
+//   var firstName = req.body.firstName
+//   var lastName = req.body.lastName
+//   var dob = req.body.dob
+//   var email = req.body.email
+//   var occupation = req.body.occupation
+//   var position = req.body.position
+//   var typeBusiness = req.body.typeBusiness
+//   var incomeLevel = req.body.incomeLevel
+//   var incomeSource = req.body.incomeSource
+
+//   logger.info( `POST API /cddInfo - ${req.originalUrl} - ${req.ip} - ${custCode}`);
+
+
+//   var queryStr = `
+//   BEGIN
+//   END
+//   `;
+
+//   const sql = require('mssql')
+//   const pool1 = new sql.ConnectionPool(config, err => {
+//     pool1.request() // or: new sql.Request(pool1)
+//     // .input('custCode', sql.VarChar(50), _custCode)
+//     .query(queryStr, (err, result) => {
+//         // ... error checks
+//         if(err){
+//           console.log( fncName +' Quey db. Was err !!!' + err);
+//           res.status(201).json({
+//             message: err,
+//           });
+//         }else {
+//           res.status(200).json({
+//             message: fncName + "Quey db. successfully!",
+//             result: result.recordset
+//           });
+//         }
+//     })
+//   })
+
+//   pool1.on('error', err => {
+//     // ... error handler
+//     console.log("EROR>>"+err);
+//   })
+// }

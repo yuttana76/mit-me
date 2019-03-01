@@ -13,6 +13,7 @@ const amcRoutes = require('./routes/amc');
 const transRoutes = require('./routes/transaction');
 const customerRoutes = require('./routes/customer');
 
+const masterdataRoutes = require('./routes/masterdata');
 const clientTypeRoutes = require('./routes/clientType');
 const PIDTypesRoutes = require('./routes/PIDTypes');
 const thaiTitleRoutes = require('./routes/thaiTitle');
@@ -35,6 +36,7 @@ const authorityRoutes = require('./routes/authority');
 const anoucementRoutes = require('./routes/anoucement');
 const suitRoutes = require('./routes/suit');
 const otpTokenRoutes = require('./routes/otpToken');
+const cddRoutes = require('./routes/cdd');
 
 const navRoutes = require('./routes/nav');
 const reportRoutes = require('./routes/report');
@@ -78,6 +80,7 @@ app.use("/api/dep",departmentRoutes);
 app.use("/api/emp",employeeRoutes);
 
 // ***** Master data
+app.use("/api/master",masterdataRoutes);
 app.use("/api/clientType",clientTypeRoutes);
 app.use("/api/PIDType",PIDTypesRoutes);
 app.use("/api/thaiTitle",thaiTitleRoutes);
@@ -117,6 +120,8 @@ app.use("/api/suit",suitRoutes);
 
 // OTP
 app.use("/api/otp",otpTokenRoutes);
+
+app.use("/api/cdd",cddRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

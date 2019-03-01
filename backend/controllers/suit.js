@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dbConfig = require("../config/db-config");
 var prop = require("../config/backend-property");
-
 var logger = require("../config/winston");
 
 var config = dbConfig.dbParameters;
@@ -293,7 +292,7 @@ exports.suitSave = (req, res, next) => {
 
 exports.saveFATCA = (req, res, next) => {
 
-  logger.info(`API /suitSave - ${req.originalUrl} - ${req.ip} `);
+  logger.info(`API /saveFATCA - ${req.originalUrl} - ${req.ip} `);
 
   let rsp_code;
   var userId = req.body.userId;
@@ -305,20 +304,20 @@ exports.saveFATCA = (req, res, next) => {
 
   DECLARE @TranName VARCHAR(20);
 
-  SELECT @TranName = 'MyTransaction';
+  --SELECT @TranName = 'MyTransaction';
 
-  BEGIN TRANSACTION @TranName;
+  --BEGIN TRANSACTION @TranName;
 
-  update MIT_CUSTOMER_INFO_EXT set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE()
+  update MIT_CUSTOMER_FATCA set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE()
   where CustCode = @CustCode
 
   if @@rowcount = 0
   begin
-     insert into MIT_CUSTOMER_INFO_EXT(CustCode,FATCA_FLAG,FATCA_DATA,FATCA_BY,FATCA_DATE)
+     insert into MIT_CUSTOMER_FATCA(CustCode,FATCA_FLAG,FATCA_DATA,FATCA_BY,FATCA_DATE)
      values (@CustCode,'A',@FATCA_DATA,@FATCA_BY,GETDATE()) ;
   end
 
-  COMMIT TRANSACTION @TranName;
+  --COMMIT TRANSACTION @TranName;
 
   END;
     `;
@@ -334,7 +333,7 @@ exports.saveFATCA = (req, res, next) => {
         // ... error checks
         if(err){
           logger.error( '' + err );
-         rsp_code = "902"; //"ไม่พบข้อมูล",
+         rsp_code = "902"; // Was error
          res.status(422).json({
           code: rsp_code,
           msg: prop.getRespMsg(rsp_code),

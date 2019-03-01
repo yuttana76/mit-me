@@ -1,6 +1,6 @@
 export class CDDModel {
 
-      public modifyFlag: string;
+      // public modifyFlag: string;
       public pid: string;
       public title: string;
       public firstName: string;

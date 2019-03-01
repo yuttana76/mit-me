@@ -6,7 +6,7 @@ exports.getClientTypes = (req, res, next) => {
 
   var fncName = 'getAllClientType';
   var queryStr = `select *
-  FROM [MFTS].[dbo].[REF_ClientTypes]
+  FROM [REF_ClientTypes]
   ORDER  BY ClientType_Code`;
 
   const sql = require('mssql')

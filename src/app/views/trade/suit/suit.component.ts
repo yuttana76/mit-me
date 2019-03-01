@@ -2,12 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { SuitFormService } from "./suit.service";
 
 import { ToastrService } from "ngx-toastr";
-import { ConfirmationDialogService } from "../dialog/confirmation-dialog/confirmation-dialog.service";
 import { MatDialog, MatRadioChange } from "@angular/material";
 import { ActivatedRoute } from "@angular/router";
-// import { Question, Choice } from '../suit-tree-view/questionBAK';
-import { SuitTreeViewComponent } from "../suit-tree-view/suit-tree-view.component";
-import { UserService } from "../services/user.service";
 import { SuiteService } from "../services/suit.service";
 import { FormGroup, FormControl, Validators, FormBuilder } from "@angular/forms";
 import { SurveyModel } from "../model/survey.model";
@@ -264,8 +260,8 @@ export class SuitComponent implements OnInit {
           this.needVerify = false;
 
 
-          this.toastr.success(`Welcome ${this.customer.First_Name_T} ${this.customer.Last_Name_T }`,
-            "success",
+          this.toastr.success(` ${this.customer.First_Name_T} ${this.customer.Last_Name_T }`,
+            "Welcome",
             {
               timeOut: 3000,
               closeButton: true,
@@ -302,8 +298,8 @@ export class SuitComponent implements OnInit {
 
         //   });
 
-        this.toastr.success(`Welcome ${this.customer.First_Name_T} ${this.customer.Last_Name_T}`,
-            "success",
+        this.toastr.success(` ${this.customer.First_Name_T} ${this.customer.Last_Name_T}`,
+            "Welcome",
             {
               timeOut: 3000,
               closeButton: true,
@@ -315,7 +311,7 @@ export class SuitComponent implements OnInit {
       } else {
         this.verifyDOB_val='';
         this.toastr.warning(` Incorrect data. `,
-              "Incorrect",
+              "Fail",
               {
                 timeOut: 3000,
                 closeButton: true,
@@ -393,7 +389,7 @@ export class SuitComponent implements OnInit {
       }
     }
 
-    console.log(`*** Suit score : ${this.suitScore}`);
+    // console.log(`*** Suit score : ${this.suitScore}`);
 
     if (this.suitScore > 0) {
       this.riskEvaluate();
@@ -463,6 +459,7 @@ export class SuitComponent implements OnInit {
       .subscribe(
         (data: any) => {
           console.log("HTTP return  saveSuit :" + JSON.stringify(data));
+
           if (data.code === "000") {
             this.toastr.success(data.msg, this.formService.SUIT_SAVE_COMPLETE, {
               timeOut: 5000,
@@ -480,6 +477,7 @@ export class SuitComponent implements OnInit {
               }
             );
           }
+
         },
         error => () => {
           console.log("saveSuit Was error", error);

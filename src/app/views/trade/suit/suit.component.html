@@ -92,7 +92,7 @@
   <!-- ************* STEPPER  -->
 
   <mat-horizontal-stepper labelPosition="bottom" #stepper *ngIf="verifyFLag" >
-    <!-- ***************** First step  Persional Information-->
+    <!-- ***************** #1  Persional Information Step-->
     <mat-step [stepControl]="firstFormGroup">
         <ng-template matStepLabel>Persional Information</ng-template>
 
@@ -100,19 +100,71 @@
 
     </mat-step>
 
-  <!-- ***************** Second step  Suitability-->
+     <!-- ***************** #2 Information step-->
+     <mat-step [stepControl]="firstFormGroup">
+        <ng-template matStepLabel>Addresses</ng-template>
+        <div >
+          <h5>Residence Registration Address </h5>
+            <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
+
+        </div>
+
+        <div >
+            <h5>Workplace Address</h5>
+            <section class="example-section">
+                <mat-radio-group   [(ngModel)]="showWorkAddrAs"  (change)="workAddrOnChange(showWorkAddrAs)" >
+                  <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
+                  <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
+                </mat-radio-group>
+              </section>
+
+              <app-cust-addr *ngIf="showWorkAddrAs == 'O'" [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+          </div>
+
+          <div>
+              <h5>Current Address </h5>
+              <section class="example-section">
+                  <mat-radio-group [(ngModel)]="showCurrAddrAs"  (change)="cuurAddrOnChange(showCurrAddrAs)"  >
+                    <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
+                    <mat-radio-button class="example-margin" value="W">Same as Workplace Address </mat-radio-button>
+                    <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
+                  </mat-radio-group>
+                </section>
+                <app-cust-addr *ngIf="showCurrAddrAs=='O'" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+            </div>
+
+            <div class='row'>
+                <mat-card-actions class="col-md-4">
+                    <a mat-flat-button color="primary" (click)="saveAddrAll()"  > Save address.</a>
+                </mat-card-actions>
+            </div>
+
+
+    </mat-step>
+
+  <!-- ***************** #3  Suitability Step-->
     <mat-step [stepControl]="secondFormGroup"   >
         <form [formGroup]="secondFormGroup">
             <ng-template matStepLabel>Suitability survey</ng-template>
 
-            <mat-card-content >
-              <div *ngIf="!canDoSuit" >
-                  <h5>Current suitability</h5>
-                  <h5>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }}</h5>
-                  <h5>Evaluated Date: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</h5>
+            <mat-card-content  >
+
+              <div *ngIf="!canDoSuit"  class="container"  >
+                  <div class="row" class="col-md-4">
+                      <h5>Suitability</h5>
+                  </div>
+
+                  <div class="row" class="col-md-4">
+                          <h5>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </h5>
+                  </div>
+
+                  <div class="row" class="col-md-4">
+                      <p>Evaluated Date: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</p>
+                  </div>
 
                   <a mat-flat-button color="primary" (click)="canDoSuit =true;"> New Survey</a>
               </div>
+
 
             <div *ngIf="canDoSuit" >
             <form>
@@ -174,7 +226,7 @@
         </form>
     </mat-step>
 
-<!-- ***************** Third step  FATCA -->
+<!-- ***************** #4 FATCA  step -->
     <mat-step [stepControl]="thirdFormGroup" >
         <form [formGroup]="thirdFormGroup">
             <ng-template matStepLabel>FATCA</ng-template>

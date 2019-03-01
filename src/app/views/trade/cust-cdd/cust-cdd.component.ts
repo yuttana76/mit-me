@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { CDDModel } from '../model/cdd.model';
 import { CddService } from '../services/cdd.service';
 import { MasterDataService } from '../services/masterData.service';
@@ -32,12 +32,11 @@ export class CustCDDComponent implements OnInit {
   incomeSourceList: IncomeSource[];
 
 
-  constructor(private _formBuilder: FormBuilder,
+  constructor(
     private cddService: CddService,
     private masterDataService:MasterDataService,
     private toastr: ToastrService,
     public formService: CustCddFormService
-    // public datepipe: DatePipe
     ) { }
 
   ngOnInit() {
@@ -75,6 +74,9 @@ export class CustCDDComponent implements OnInit {
       validators: [Validators.required]
     }),
     incomeSource: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    workPlace: new FormControl(null, {
       validators: [Validators.required]
     }),
   });
@@ -123,6 +125,7 @@ export class CustCDDComponent implements OnInit {
     this.cddData.position = data[0].position;
     this.cddData.incomeLevel = data[0].incomeLevel;
     this.cddData.incomeSource = data[0].incomeSource;
+    this.cddData.workPlace = data[0].workPlace;
 
     // this.reloadData();
 

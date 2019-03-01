@@ -12,6 +12,7 @@ import "rxjs/add/operator/finally";
 import { Customer } from "../model/customer.model";
 import { Question } from "../model/question.model";
 import { CddService } from "../services/cdd.service";
+import { AddrCustModel } from "../model/addrCust.model";
 // import { CDDModel } from "../model/cdd.model";
 
 
@@ -37,6 +38,10 @@ export class SuitComponent implements OnInit {
   secondFormGroup: FormGroup;
   thirdFormGroup: FormGroup;
 
+  register_formGroup: FormGroup;
+  work_formGroup: FormGroup;
+  current_formGroup: FormGroup;
+
   spinnerLoading = false;
 
   needVerify = false;
@@ -55,6 +60,14 @@ export class SuitComponent implements OnInit {
   riskLevelDesc = "";
 
   public customer: Customer = new Customer();
+
+  public re_addrData: AddrCustModel = new AddrCustModel();
+  public cur_addrData: AddrCustModel = new AddrCustModel();
+  public work_addrData: AddrCustModel = new AddrCustModel();
+  showWorkAddrAs = '';
+  showCurrAddrAs = '';
+
+
   cust_RiskScore=0;
   cust_RiskLevel=0;
   cust_RiskLevelTxt='';
@@ -97,6 +110,21 @@ export class SuitComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.re_addrData.Addr_Seq = 1;
+    if(!this.re_addrData.Country_Id){
+      this.re_addrData.Country_Id = 0;
+    }
+
+    this.cur_addrData.Addr_Seq = 2;
+    if(!this.cur_addrData.Country_Id){
+      this.cur_addrData.Country_Id = 0;
+    }
+
+    this.work_addrData.Addr_Seq = 3;
+    if(!this.work_addrData.Country_Id){
+      this.work_addrData.Country_Id = 0;
+    }
 
     this.firstFormGroup = this._formBuilder.group({
       firstCtrl: ['', Validators.required]
@@ -503,6 +531,7 @@ export class SuitComponent implements OnInit {
     console.log('*** FATCA RESET ');
   }
 
+
   public saveFATCA(){
     this.suiteService
     .saveFATCA(
@@ -552,4 +581,152 @@ export class SuitComponent implements OnInit {
     this.verifyOTP_val = '';
     this.showOtpEntry =false;
   }
+
+
+  saveAddrAll(){
+  console.log('savePersonInfo()');
+     // if (this.register_formGroup.invalid) {
+    //   console.log('form.invalid() ' + this.register_formGroup.invalid);
+    //   return false;
+    // }
+
+    console.log(` Saving re_addrData>>${JSON.stringify(this.re_addrData)} ` );
+    console.log(` Saving work_addrData>>  -${JSON.stringify(this.work_addrData)} ` );
+    console.log(` Saving cur_addrData>>  -${JSON.stringify(this.cur_addrData)} ` );
+
+
+  // this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData,this.work_addrData,this.cur_addrData)
+  /*
+    this.re_addrData,
+    this.work_addrData,
+    this.cur_addrData
+   */
+
+  this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData)
+  .subscribe((data: any ) => {
+   console.log('Successful', JSON.stringify(data));
+  //  if (data.code === "000") {
+  //    this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
+  //      timeOut: 5000,
+  //      closeButton: true,
+  //      positionClass: "toast-top-center"
+  //    });
+  //  } else {
+  //    this.toastr.warning(
+  //      data.msg,
+  //      this.formService.SAVE_INCOMPLETE,
+  //      {
+  //        timeOut: 5000,
+  //        closeButton: true,
+  //        positionClass: "toast-top-center"
+  //      }
+  //    );
+  //  }
+
+ }, error => () => {
+     console.log('Was error', error);
+ }, () => {
+    console.log('Finish Addr register #1');
+// **************************
+    this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData)
+    .subscribe((data: any ) => {
+     console.log('Successful', JSON.stringify(data));
+    //  if (data.code === "000") {
+    //    this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
+    //      timeOut: 5000,
+    //      closeButton: true,
+    //      positionClass: "toast-top-center"
+    //    });
+    //  }
+    //  else {
+    //    this.toastr.warning(
+    //      data.msg,
+    //      this.formService.SAVE_INCOMPLETE,
+    //      {
+    //        timeOut: 5000,
+    //        closeButton: true,
+    //        positionClass: "toast-top-center"
+    //      }
+    //    );
+    //  }
+
+   }, error => () => {
+       console.log('Was error', error);
+   }, () => {
+      console.log('Finish Addr register #2');
+      // **************************
+            this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData)
+            .subscribe((data: any ) => {
+            console.log('Successful', JSON.stringify(data));
+            if (data.code === "000") {
+              this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
+                timeOut: 5000,
+                closeButton: true,
+                positionClass: "toast-top-center"
+              });
+            } else {
+              this.toastr.warning(
+                data.msg,
+                this.formService.SAVE_INCOMPLETE,
+                {
+                  timeOut: 5000,
+                  closeButton: true,
+                  positionClass: "toast-top-center"
+                }
+              );
+            }
+
+            }, error => () => {
+              console.log('Was error', error);
+            }, () => {
+              console.log('Finish Addr register #3');
+            // **************************
+
+            // **************************
+            });
+      // **************************
+
+   });
+// **************************
+ });
+
+
+
+}
+
+
+
+  workAddrOnChange(val){
+    console.log('workAddrOnChange >> ' + val);
+
+    if(val ==='R'){
+      console.log('Same register ***');
+      this.work_addrData = Object.assign({}, this.re_addrData);
+
+    }else { // Other
+      console.log('Other addr. *** ');
+    }
+
+    this.work_addrData.Addr_Seq = 3;
+  }
+
+  cuurAddrOnChange(val){
+    console.log('currAddrOnChange >> ' + val);
+
+    if(val ==='R'){
+      console.log('Same register ***');
+      this.cur_addrData = Object.assign({}, this.re_addrData);
+
+    }else if(val ==='W'){
+      console.log('Same work ***');
+      this.cur_addrData = Object.assign({}, this.work_addrData);
+
+    }else { // Other
+      console.log('Other addr. *** ');
+    }
+
+    this.cur_addrData.Addr_Seq = 2;
+  }
+
+
 }

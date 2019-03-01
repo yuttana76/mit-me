@@ -1,0 +1,96 @@
+<div class="container ">
+    <form [formGroup]="addrFormGroup">
+      <div class='row'>
+          <mat-form-field class="col-md-4" >
+              <input matInput [(ngModel)]="addrData.Addr_No" placeholder="Addr No"  formControlName="Addr_No" required>
+          </mat-form-field>
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="addrData.Moo"  placeholder="Moo" formControlName="Moo"  >
+          </mat-form-field>
+      </div>
+
+      <div class='row'>
+          <mat-form-field class="col-md-4" >
+              <input matInput [(ngModel)]="addrData.Place" placeholder="Place"  formControlName="Place" >
+          </mat-form-field>
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="addrData.Floor"  placeholder="Floor" formControlName="Floor"  >
+          </mat-form-field>
+      </div>
+
+      <div class='row'>
+          <mat-form-field class="col-md-4" >
+              <input matInput [(ngModel)]="addrData.Soi" placeholder="Soi"  formControlName="Soi" >
+          </mat-form-field>
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="addrData.Road"  placeholder="Road" formControlName="Road"  >
+          </mat-form-field>
+      </div>
+
+      <div class="row">
+          <mat-form-field class="col-md-4">
+            <mat-select formControlName="Country_Id" placeholder="Coutry" [(ngModel)]="addrData.Country_Id"
+            (selectionChange) ="countryChange($event)" required>
+              <mat-option *ngFor="let obj of sel_countryList" [value]="obj.Country_ID">
+                {{obj.Name_Thai}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addrFormGroup.get('Country_Id').invalid">Please choose Coutry.</mat-error>
+          </mat-form-field>
+
+        </div>
+
+        <div class="row">
+          <mat-form-field class="col-md-4">
+            <mat-select formControlName="Province_Id" placeholder="Province" [(ngModel)]="addrData.Province_Id"
+            (selectionChange) ="provinceChange($event)" required>
+              <mat-option *ngFor="let obj of sel_provinceList" [value]="obj.Province_ID">
+                {{obj.Name_Thai}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addrFormGroup.get('Province_Id').invalid">Please choose Province.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="row">
+            <mat-form-field class="col-md-4">
+              <mat-select formControlName="Amphur_Id" placeholder="Districe" [(ngModel)]="addrData.Amphur_Id"
+              (selectionChange) ="amphurChange($event)" required>
+                <mat-option *ngFor="let obj of sel_amphursList" [value]="obj.Amphur_ID">
+                  {{obj.Name_Thai}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="addrFormGroup.get('Amphur_Id').invalid">Please choose Districe.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-4">
+              <mat-select formControlName="Tambon_Id" placeholder="Sub District" [(ngModel)]="addrData.Tambon_Id"
+              (selectionChange) ="tambonChange($event)" required>
+                <mat-option *ngFor="let obj of sel_tambonsList" [value]="obj.Tambon_ID">
+                  {{obj.Name_Thai}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="addrFormGroup.get('Tambon_Id').invalid">Please choose Sub District.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="row">
+            <mat-form-field class="col-md-4">
+              <input matInput formControlName="Zip_Code" placeholder="Post code" [(ngModel)]="addrData.Zip_Code" required>
+              <mat-error *ngIf="addrFormGroup.get('Zip_Code').invalid">Please enter post code.</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="row">
+            <mat-form-field class="col-md-4">
+              <input matInput formControlName="Tel" placeholder="Telephone number" [(ngModel)]="addrData.Tel">
+              <mat-error *ngIf="addrFormGroup.get('Tel').invalid">Please enter telephone number.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-4">
+              <input matInput formControlName="Fax" placeholder="Fax number" [(ngModel)]="addrData.Fax">
+              <mat-error *ngIf="addrFormGroup.get('Fax').invalid">Please enter Fax number.</mat-error>
+            </mat-form-field>
+          </div>
+    </form>
+
+</div>

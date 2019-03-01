@@ -25,6 +25,9 @@ export class SuitFormService {
 
   SUIT_ANS_INCOMPLETE = ' Suit survery not complete !';
 
+  SAVE_COMPLETE = ' Save  complete';
+  SAVE_INCOMPLETE = ' Save  incomplete';
+
   SUIT_SAVE_COMPLETE = ' Save suitability complete';
   SUIT_SAVE_INCOMPLETE = ' Save suitability incomplete';
 

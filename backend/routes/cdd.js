@@ -8,4 +8,7 @@ const cddController = require('../controllers/cdd')
 router.get("/cddInfo/:cusCode",  cddController.getCDDinfo);
 router.post("/cddInfo", cddController.saveCDDInfo);
 
+router.get("/cddAddr", cddController.getCDDAddr);
+router.post("/cddAddr", cddController.saveCDDAddr);
+
 module.exports = router;

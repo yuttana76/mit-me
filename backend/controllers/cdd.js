@@ -73,6 +73,8 @@ exports.saveCDDInfo = (req, res, next) => {
   var typeBusiness = req.body.typeBusiness
   var incomeLevel = req.body.incomeLevel
   var incomeSource = req.body.incomeSource
+  var workPlace = req.body.workPlace
+
 
   logger.info( `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${custCode}`);
 
@@ -91,6 +93,7 @@ exports.saveCDDInfo = (req, res, next) => {
       ,[BusinessType_Code]=@BusinessType_Code
       ,[Income_Code]=@Income_Code
       ,[Income_Source_Code]=@Income_Source_Code
+      ,[WorkPlace]=@WorkPlace
       ,[UpdateBy]=@ActionBy
       ,[UpdateDate]=GETDATE()
     WHERE CustCode = @CustCode
@@ -98,9 +101,9 @@ exports.saveCDDInfo = (req, res, next) => {
     if @@rowcount = 0
         begin
         INSERT INTO MIT_CUSTOMER_INFO ([CustCode],[ID_CARD] ,[Title_Name_T],[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
-            ,[Occupation_Code] ,[Position_Code] ,[BusinessType_Code] ,[Income_Code] ,[Income_Source_Code],[CreateBy] ,[CreateDate] )
+            ,[Occupation_Code] ,[Position_Code] ,[BusinessType_Code] ,[Income_Code] ,[Income_Source_Code],WorkPlace,[CreateBy] ,[CreateDate] )
         VALUES(@CustCode,@ID_CARD ,@Title_Name_T,@First_Name_T ,@Last_Name_T ,'@Birth_Day' ,@Mobile ,@Email
-            ,@Occupation_Code ,@Position_Code ,@BusinessType_Code ,@Income_Code ,@Income_Source_Code ,@ActionBy ,GETDATE())
+            ,@Occupation_Code ,@Position_Code ,@BusinessType_Code ,@Income_Code ,@Income_Source_Code ,@WorkPlace,@ActionBy ,GETDATE())
         END
   END
 
@@ -122,7 +125,157 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('BusinessType_Code', sql.VarChar(3), typeBusiness)
     .input('Income_Code', sql.VarChar(3), incomeLevel)
     .input('Income_Source_Code', sql.VarChar(3), incomeSource)
+    .input('WorkPlace', sql.VarChar(500), workPlace)
     .input('ActionBy', sql.VarChar(50), actionBy)
+    .query(queryStr, (err, result) => {
+        if(err){
+          logger.error( '' + err );
+          rsp_code = "902"; // Was error
+          res.status(422).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+          });
+
+        }else {
+          rsp_code = "000";
+          res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    // ... error handler
+    console.log("EROR>>"+err);
+  })
+}
+
+
+
+exports.getCDDAddr = (req, res, next) => {
+
+  var fncName = 'getCustomer';
+  var _custCode = req.params.cusCode;
+
+  logger.info( `API /getCDDAddr - ${req.originalUrl} - ${req.ip} - ${_custCode}`);
+
+  var queryStr = `
+  BEGIN
+
+      select  *
+      from Account_Address
+      where Cust_Code = '0105541011867-'
+
+      if @@rowcount = 0
+      BEGIN
+      select  *
+      from Account_Address
+      where Cust_Code = '0105541011867-1'
+      END
+
+      if @@rowcount = 0
+      BEGIN
+      select  *
+      from Account_Address
+      where Cust_Code = '0105541011867-2'
+      END
+
+  END
+  `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input('custCode', sql.VarChar(50), _custCode)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          console.log( fncName +' Quey db. Was err !!!' + err);
+          res.status(201).json({
+            message: err,
+          });
+        }else {
+          res.status(200).json({
+            message: fncName + "Quey db. successfully!",
+            result: result.recordset
+          });
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    // ... error handler
+    console.log("EROR>>"+err);
+  })
+}
+
+
+exports.saveCDDAddr = (req, res, next) => {
+
+  var actionBy = req.body.actionBy
+  var custCode = req.body.custCode
+
+  var Addr_Seq = req.body.Addr_Seq
+  var Addr_No = req.body.Addr_No
+  var Moo = req.body.Moo
+  var Place = req.body.Place
+  var Floor = req.body.Floor
+  var Soi = req.body.Soi
+  var Road = req.body.Road
+  var Tambon_Id = req.body.Tambon_Id
+  var Amphur_Id = req.body.Amphur_Id
+  var Province_Id = req.body.Province_Id
+  var Country_Id = req.body.Country_Id
+  var Zip_Code = req.body.Zip_Code
+  var Tel = req.body.Tel
+  var Fax = req.body.Fax
+
+  logger.info( `POST API /saveCDDAddr - ${req.originalUrl} - ${req.ip} - ${custCode} - ${Addr_Seq}`);
+
+  var queryStr = `
+BEGIN
+
+  UPDATE MIT_CUSTOMER_ADDR SET
+  [Addr_No] =@Addr_No ,[Moo] =@Moo ,[Place]=@Place ,[Floor]=@Floor,[Soi]=@Soi ,[Road]=@Road ,[Tambon_Id]=@Tambon_Id ,[Amphur_Id]=@Amphur_Id ,[Province_Id]=@Province_Id ,
+  [Country_Id]=@Country_Id ,[Zip_Code]=@Zip_Code ,[Tel]=@Tel ,[Fax] =@Fax ,[UpdateBy]=@ActionBy ,[UpdateDate]=GETDATE()
+  WHERE
+  Cust_Code = @Cust_Code
+  AND Addr_Seq =@Addr_Seq
+
+    if @@rowcount = 0
+      BEGIN
+
+      INSERT INTO MIT_CUSTOMER_ADDR
+      ([Cust_Code] ,[Addr_Seq] ,[Addr_No] ,[Moo] ,[Place] ,[Floor],[Soi] ,[Road] ,[Tambon_Id] ,[Amphur_Id] ,[Province_Id] ,[Country_Id] ,[Zip_Code] ,[Tel] ,[Fax] ,[CreateBy] ,[CreateDate] )
+      VALUES
+      (@Cust_Code,@Addr_Seq,@Addr_No ,@Moo,@Place ,@Floor ,@Soi ,@Road ,@Tambon_Id ,@Amphur_Id ,@Province_Id ,@Country_Id,@Zip_Code ,@Tel ,@Fax ,@ActionBy ,GETDATE() )
+
+      END
+
+END
+  `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input('Cust_Code', sql.VarChar(50), custCode)
+    .input('Addr_Seq', sql.Int, Addr_Seq)
+    .input('Addr_No', sql.NVarChar(100), Addr_No)
+    .input('Moo', sql.NVarChar(50), Moo)
+    .input('Place', sql.NVarChar(100), Place)
+    .input('Floor', sql.NVarChar(50), Floor)
+    .input('Soi', sql.NVarChar(50), Soi)
+    .input('Road', sql.NVarChar(100), Road)
+    .input('Tambon_Id', sql.Int, Tambon_Id)
+    .input('Amphur_Id', sql.Int, Amphur_Id)
+    .input('Province_Id', sql.Int, Province_Id)
+    .input('Country_Id', sql.Int, Country_Id)
+    .input('Zip_Code', sql.VarChar(10), Zip_Code)
+    .input('Tel', sql.VarChar(50), Tel)
+    .input('Fax', sql.VarChar(50), Fax)
+    .input('ActionBy', sql.VarChar(10), actionBy)
     .query(queryStr, (err, result) => {
         if(err){
           logger.error( '' + err );

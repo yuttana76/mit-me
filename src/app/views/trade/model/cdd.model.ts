@@ -13,6 +13,7 @@ export class CDDModel {
       public typeBusiness: string;
       public incomeLevel: string;
       public incomeSource: string;
+      public workPlace: string;
 
       constructor(){}
 

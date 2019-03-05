@@ -108,17 +108,16 @@
 
   </form>
 
-  <div class='row'>
+  <!-- <div class='row'>
       <section class="example-section">
           <mat-checkbox [(ngModel)]="modifyFlag"  (change)="modifOnChange(modifyFlag)"  >To modify</mat-checkbox>
       </section>
-
-  </div>
+  </div> -->
 
   <div class='row'>
       <mat-card-actions class="col-md-4">
           <a mat-flat-button color="primary" (click)="savePersonInfo()" [disabled]="!modifyFlag"> Save</a>
-          <a mat-flat-button color="accent" (click)="cancelEdit()" [disabled]="!modifyFlag"> Cancel</a>
+          <!-- <a mat-flat-button color="accent" (click)="cancelEdit()" [disabled]="!modifyFlag"> Cancel</a> -->
           </mat-card-actions>
   </div>
 </div>

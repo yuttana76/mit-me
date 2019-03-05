@@ -782,8 +782,9 @@ export class SuitComponent implements OnInit {
       })
       .subscribe((data: any) => {
 
-          console.log(" *** loadFATCA()" + JSON.stringify(data));
-
+          if ( data.result.length > 0 ) {
+            this.fatcaQuestions = JSON.parse(data.result[0].FATCA_DATA);
+          }
 
         },
         error => () => {

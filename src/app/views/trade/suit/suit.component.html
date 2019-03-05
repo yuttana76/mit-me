@@ -87,6 +87,9 @@
   </div>
 
   <!-- ************* STEPPER  -->
+  <div class='row'>
+
+
 
   <mat-horizontal-stepper labelPosition="bottom" #stepper *ngIf="verifyFLag" >
     <!-- ***************** #1  Persional Information Step-->
@@ -99,13 +102,61 @@
      <mat-step [stepControl]="firstFormGroup">
         <ng-template matStepLabel>Addresses</ng-template>
         <div >
-          <h5>Residence Registration Address </h5>
-            <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
+
+            <mat-expansion-panel [expanded]='true'>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                      Residence Registration Address
+                  </mat-panel-title>
+                  <!-- <mat-panel-description>
+                      <section class="example-section">
+                          <mat-radio-group   [(ngModel)]="workAddrAs"  (change)="workAddrOnChange(workAddrAs)" >
+                            <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
+                            <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
+                          </mat-radio-group>
+                        </section>
+                  </mat-panel-description> -->
+                </mat-expansion-panel-header>
+
+                <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
+
+              </mat-expansion-panel>
+
+          <!-- <h5>Residence Registration Address </h5>
+            <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr> -->
 
         </div>
 
         <div >
-            <h5>Workplace Address</h5>
+
+            <mat-expansion-panel >
+                <mat-expansion-panel-header>
+                  <mat-panel-title >
+                      Workplace Address
+                  </mat-panel-title>
+                  <!-- <mat-panel-description>
+                      <section class="example-section">
+                          <mat-radio-group   [(ngModel)]="workAddrAs"  (change)="workAddrOnChange(workAddrAs)" >
+                            <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
+                            <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
+                          </mat-radio-group>
+                        </section>
+                  </mat-panel-description> -->
+                </mat-expansion-panel-header>
+
+                <div>
+                    <section class="example-section">
+                        <mat-radio-group   [(ngModel)]="workAddrAs"  (change)="workAddrOnChange(workAddrAs)" >
+                          <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
+                          <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
+                        </mat-radio-group>
+                      </section>
+                </div>
+
+                <app-cust-addr *ngIf="showWorkAddr" [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+
+              </mat-expansion-panel>
+            <!-- <h5>Workplace Address</h5>
             <section class="example-section">
                 <mat-radio-group   [(ngModel)]="workAddrAs"  (change)="workAddrOnChange(workAddrAs)" >
                   <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
@@ -113,10 +164,42 @@
                 </mat-radio-group>
               </section>
               <app-cust-addr *ngIf="showWorkAddr" [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+               -->
           </div>
 
           <div>
-              <h5>Current Address </h5>
+
+              <mat-expansion-panel >
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Current Address
+                    </mat-panel-title>
+                    <!-- <mat-panel-description  >
+                        <section class="example-section" >
+                            <mat-radio-group [(ngModel)]="currAddrAs"  (change)="cuurAddrOnChange(currAddrAs)"  >
+                                <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
+                                <mat-radio-button class="example-margin" value="W">Same as Workplace Address </mat-radio-button>
+                                <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
+                              </mat-radio-group>
+                          </section>
+                    </mat-panel-description> -->
+                  </mat-expansion-panel-header>
+
+                  <div class='row'>
+                      <section class="example-section" >
+                          <mat-radio-group [(ngModel)]="currAddrAs"  (change)="cuurAddrOnChange(currAddrAs)"  >
+                              <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
+                              <mat-radio-button class="example-margin" value="W">Same as Workplace Address </mat-radio-button>
+                              <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
+                            </mat-radio-group>
+                        </section>
+                  </div>
+                  <app-cust-addr *ngIf="showCurrentAddr" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+
+
+                </mat-expansion-panel>
+
+            <!-- <h5>Current Address </h5>
               <section class="example-section">
                   <mat-radio-group [(ngModel)]="currAddrAs"  (change)="cuurAddrOnChange(currAddrAs)"  >
                     <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
@@ -124,7 +207,8 @@
                     <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
                   </mat-radio-group>
                 </section>
-                <app-cust-addr *ngIf="showCurrentAddr" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+                <app-cust-addr *ngIf="showCurrentAddr" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr> -->
+
             </div>
 
             <div class='row'>
@@ -239,4 +323,6 @@
         </form>
     </mat-step>
 </mat-horizontal-stepper>
+</div>
+
 </mat-card>

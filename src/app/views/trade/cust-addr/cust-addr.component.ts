@@ -9,6 +9,7 @@ import { Country } from '../model/ref_country';
 import { Provinces } from '../model/ref_provinces.model';
 import { Amphurs } from '../model/ref_amphurs.model';
 import { Tambons } from '../model/ref_tambons.model';
+import { CddService } from '../services/cdd.service';
 
 @Component({
   selector: 'app-cust-addr',
@@ -46,10 +47,7 @@ export class CustAddrComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
-
-    console.log( 'Initial CustAddrComponent >>'+ JSON.stringify(this.addrData) )
-
+    // console.log( 'Initial CustAddrComponent >>'+ JSON.stringify(this.addrData) )
     this.addrFormGroup = new FormGroup({
       // Addr_Seq: new FormControl(null, {
       //   validators: [Validators.required]
@@ -101,8 +99,6 @@ export class CustAddrComponent implements OnInit {
     }, error => () => {
         console.log('Was error', error);
     }, () => {
-     // finish load
-
     //  this.sel_countryList = this.getCountryByNation( this.countryMasList, this.nation_Code);
         this.sel_countryList =this.countryMasList ;
 
@@ -136,6 +132,7 @@ export class CustAddrComponent implements OnInit {
     });
 
   }
+
 
   countryChange(event: MatSelectChange) {
 

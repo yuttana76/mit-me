@@ -7,6 +7,8 @@ import { Question } from '../model/question.model';
 
 const BACKEND_URL = environment.apiURL + '/suit';
 
+const BACKEND_URL_FATCA = environment.apiURL + '/fatca';
+
 const BACKEND_URL_OTP = environment.apiURL + '/otp';
 
 
@@ -23,13 +25,15 @@ export class SuiteService {
   }
 
 
-  verifyRequestOTP(_pid: string): Observable<any> {
+  verifyRequestOTP(_pid: string,_mobile: string): Observable<any> {
     console.log(` verifyRequestOTP() ${_pid}`);
 
     const data = {
-      'pid': _pid.trim()
+      'pid': _pid.trim(),
+      'm': _mobile.trim()
     };
-    return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/getOTPtoken', data);
+    // return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/getOTPtokenMail', data);
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/getOTPtokenSMS', data);
   }
 
   verifyConfirmOTP(_pid: string, token: string): Observable<any> {
@@ -67,19 +71,19 @@ export class SuiteService {
     return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/suitSave', data);
   }
 
-
-  saveFATCA(_userId: string,_pid: string, _ans: Array<Question>): Observable<any> {
-
-    console.log(`Service saveFATCA()  ${_pid} `);
-
+  saveFATCA(_id: string,_pid: string, _ans: Array<Question>): Observable<any> {
     const data = {
-      'userId': _userId,
+      'userId': _id,
       'pid': _pid,
       'ans': _ans
     };
-    return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/saveFATCA', data);
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_FATCA + '/saveFATCA', data);
   }
 
+
+  getFATCA(_id: string): Observable<any> {
+    return this.http.get<{ message: string, result: string }>(BACKEND_URL_FATCA + '/getfatca/'+_id);
+  }
 
   // ************************
 }

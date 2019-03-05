@@ -4,9 +4,11 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const config = require('../config/mail-conf');
 const dbConfig = require('../config/db-config');
+const smsConfig = require('../config/sms-conf');
 
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
+var request = require("request");
 
 /*
 https://www.npmjs.com/package/otpauth
@@ -15,6 +17,7 @@ https://hectorm.github.io/otpauth/index.html
 const OTPAuth = require('otpauth');
 
 const TOKEN_PERIOD = 300;
+
 let totp = new OTPAuth.TOTP({
   issuer: 'ACME',
   label: 'AzureDiamond',
@@ -27,26 +30,48 @@ let totp = new OTPAuth.TOTP({
 
 /*
 Send mail  by OTP
+// https://member.smsmkt.com/SMSLink/SendMsg/index.php?User=merchant&Password=123456&Msnlist=0897765331&Msg=Test MPAMxxx&Sender=MERCHANT
 */
+exports.OTPtokenToSMS = (req, res, next) => {
 
-exports.getOTPtokenToSMS = (req, res, next) => {
-var options = {
-  url: 'https://api.github.com/users/narenaryan',
-  headers: {
-      'User-Agent': 'request'
-  }
-};
-// Return new promise
-return new Promise(function(resolve, reject) {
-// Do async job
-  request.get(options, function(err, resp, body) {
-      if (err) {
-          reject(err);
-      } else {
-          resolve(JSON.parse(body));
-      }
-  })
-})
+  const _mobile = req.body.m
+
+  let token = totp.generate();
+  let token_date = new Date();
+
+  let _msg = `OTP = ${token}`;
+  var _url = smsConfig.SMSCompleteURL2(_mobile,_msg);
+
+  logger.info( `API /getOTPtokenSMS - ${req.originalUrl} - ${req.ip} - ${_mobile}`);
+  logger.info(`SMS URL: ${_url}`);
+
+  var options = {
+    url: _url,
+    headers: {
+        'User-Agent': 'request'
+    }
+  };
+
+  // Return new promise
+  // Do async job
+    request.get(options, function(err, resp, body) {
+        if (err) {
+            // reject(err);
+            console.log(err);
+            let rsp_code = "902";
+            res.status(200).json({
+              code: rsp_code,
+              msg: prop.getRespMsg(rsp_code),
+            });
+        } else {
+            // resolve(JSON.parse(body));
+            let rsp_code = "000";
+            res.status(200).json({
+              code: rsp_code,
+              msg: prop.getRespMsg(rsp_code),
+            });
+        }
+    })
 }
 
 
@@ -156,9 +181,7 @@ exports.verityOTPtoken = (req, res, next) => {
                 code: rsp_code,
                 msg: prop.getRespMsg(rsp_code),
               });
-
     }
-
 }
 
 
@@ -184,36 +207,6 @@ exports.verityByDOB = (req, res, next) => {
               code: rsp_code,
               msg: prop.getRespMsg(rsp_code),
             });
-
   }
-
-
-  // var sql = require("mssql");
-  // var queryStr = `select *
-  // FROM [REF_PIDTypes]
-  // ORDER  BY [PIDType_Code],[PIDType_Desc]`;
-
-  // sql.connect(config, err => {
-  //   new sql.Request().query(queryStr, (err, result) => {
-
-  //       if(err){
-  //         console.log( fncName +' Quey db. Was err !!!' + err);
-  //         res.status(201).json({
-  //           message: err,
-  //         });
-  //         sql.close();
-  //       }else {
-  //         res.status(200).json({
-  //           message: fncName + "Quey db. successfully!",
-  //           result: result.recordset
-  //         });
-  //         sql.close();
-  //       }
-  //   })
-  // });
-  // sql.on("error", err => {
-  //   console.log(fncName + 'Quey db. sql.on !!!' + err);
-  //   sql.close();
-  // });
 }
 

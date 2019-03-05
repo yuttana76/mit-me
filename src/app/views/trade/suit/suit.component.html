@@ -49,7 +49,8 @@
           <div class="row">
               <mat-radio-group  [(ngModel)]="verifyBy" class="col-md-4" >
                   <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >Verify by date of birth </mat-radio-button>
-                  <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == '02' "  >Verify by OTP - {{ customer.Mobile }}</mat-radio-button>
+                  <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == PREFIX_MOBILE_ALLOW_SEND_SMS "  >
+                    Verify by OTP - {{ customer.Mobile}}</mat-radio-button>
                 </mat-radio-group>
           </div>
       </div>
@@ -64,11 +65,10 @@
         <div class="row" >
             <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyDOB()" class="col-md-4"> Verify</a>
         </div>
-
       </div>
 
+      <!-- Verify OTP section -->
       <div id='div_OTP' *ngIf="verifyBy=='OTP'">
-
           <div class="row ">
               <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="requestOTP()" class="col-md-4">Request OTP</a>
           </div>
@@ -79,13 +79,10 @@
                     <input  matInput   placeholder="Please input OTP"    [(ngModel)]="verifyOTP_val"  />
                 </mat-form-field>
             </div>
-
             <div class="row ">
                 <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyConfirmOTP()" class="col-md-4"> Verify</a>
             </div>
          </div>
-
-
       </div>
   </div>
 
@@ -95,9 +92,7 @@
     <!-- ***************** #1  Persional Information Step-->
     <mat-step [stepControl]="firstFormGroup">
         <ng-template matStepLabel>Persional Information</ng-template>
-
         <app-cust-cdd [custCode]="survey.pid" ></app-cust-cdd>
-
     </mat-step>
 
      <!-- ***************** #2 Information step-->
@@ -112,25 +107,24 @@
         <div >
             <h5>Workplace Address</h5>
             <section class="example-section">
-                <mat-radio-group   [(ngModel)]="showWorkAddrAs"  (change)="workAddrOnChange(showWorkAddrAs)" >
+                <mat-radio-group   [(ngModel)]="workAddrAs"  (change)="workAddrOnChange(workAddrAs)" >
                   <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
                   <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
                 </mat-radio-group>
               </section>
-
-              <app-cust-addr *ngIf="showWorkAddrAs == 'O'" [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+              <app-cust-addr *ngIf="showWorkAddr" [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
           </div>
 
           <div>
               <h5>Current Address </h5>
               <section class="example-section">
-                  <mat-radio-group [(ngModel)]="showCurrAddrAs"  (change)="cuurAddrOnChange(showCurrAddrAs)"  >
+                  <mat-radio-group [(ngModel)]="currAddrAs"  (change)="cuurAddrOnChange(currAddrAs)"  >
                     <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
                     <mat-radio-button class="example-margin" value="W">Same as Workplace Address </mat-radio-button>
                     <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
                   </mat-radio-group>
                 </section>
-                <app-cust-addr *ngIf="showCurrAddrAs=='O'" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+                <app-cust-addr *ngIf="showCurrentAddr" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
             </div>
 
             <div class='row'>
@@ -149,10 +143,10 @@
 
             <mat-card-content  >
 
-              <div *ngIf="!canDoSuit"  class="container"  >
-                  <div class="row" class="col-md-4">
+              <div *ngIf="!canDoSuit"  class="container "  >
+                  <!-- <div class="row" class="col-md-4">
                       <h5>Suitability</h5>
-                  </div>
+                  </div> -->
 
                   <div class="row" class="col-md-4">
                           <h5>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </h5>
@@ -244,6 +238,5 @@
           </mat-card-content>
         </form>
     </mat-step>
-
 </mat-horizontal-stepper>
 </mat-card>

@@ -70,7 +70,7 @@
             <mat-form-field class="col-md-4">
                 <mat-select [(ngModel)]="cddData.position" formControlName="position" placeholder="Position" required >
                   <mat-option *ngFor="let obj of positionList" [value]="obj.Code">
-                    {{obj.Thai_Name}}
+                  {{obj.Thai_Name}}
                   </mat-option>
                 </mat-select>
                 <mat-error *ngIf="cddFormGroup.get('occupation').invalid">Please choose one.</mat-error>
@@ -78,19 +78,21 @@
       </div>
 
       <div class='row'>
+          <!-- {{cddData.incomeLevel}} -->
           <mat-form-field class="col-md-4">
               <mat-select [(ngModel)]="cddData.incomeLevel" formControlName="incomeLevel" placeholder="Income" required >
                 <mat-option *ngFor="let obj of incomeList" [value]="obj.Code">
-                  {{obj.Thai_Name}}
+                 {{obj.Thai_Name}}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="cddFormGroup.get('incomeLevel').invalid">Please choose one.</mat-error>
             </mat-form-field>
 
+            <!-- {{cddData.incomeSource}} -->
           <mat-form-field class="col-md-4">
               <mat-select [(ngModel)]="cddData.incomeSource" formControlName="incomeSource" placeholder="Income source" required >
                 <mat-option *ngFor="let obj of incomeSourceList" [value]="obj.Code">
-                  {{obj.Thai_Name}}
+                    {{obj.Thai_Name}}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="cddFormGroup.get('incomeSource').invalid">Please choose one.</mat-error>

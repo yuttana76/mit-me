@@ -290,71 +290,71 @@ exports.suitSave = (req, res, next) => {
 }
 
 
-exports.saveFATCA = (req, res, next) => {
+// exports.saveFATCA = (req, res, next) => {
 
-  logger.info(`API /saveFATCA - ${req.originalUrl} - ${req.ip} `);
+//   logger.info(`API /saveFATCA - ${req.originalUrl} - ${req.ip} `);
 
-  let rsp_code;
-  var userId = req.body.userId;
-  var pid = req.body.pid;
-  var ans = req.body.ans ;
+//   let rsp_code;
+//   var userId = req.body.userId;
+//   var pid = req.body.pid;
+//   var ans = req.body.ans ;
 
-  var queryStr = `
-  BEGIN
+//   var queryStr = `
+//   BEGIN
 
-  DECLARE @TranName VARCHAR(20);
+//   DECLARE @TranName VARCHAR(20);
 
-  --SELECT @TranName = 'MyTransaction';
+//   --SELECT @TranName = 'MyTransaction';
 
-  --BEGIN TRANSACTION @TranName;
+//   --BEGIN TRANSACTION @TranName;
 
-  update MIT_CUSTOMER_FATCA set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE()
-  where CustCode = @CustCode
+//   update MIT_CUSTOMER_FATCA set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE()
+//   where CustCode = @CustCode
 
-  if @@rowcount = 0
-  begin
-     insert into MIT_CUSTOMER_FATCA(CustCode,FATCA_FLAG,FATCA_DATA,FATCA_BY,FATCA_DATE)
-     values (@CustCode,'A',@FATCA_DATA,@FATCA_BY,GETDATE()) ;
-  end
+//   if @@rowcount = 0
+//   begin
+//      insert into MIT_CUSTOMER_FATCA(CustCode,FATCA_FLAG,FATCA_DATA,FATCA_BY,FATCA_DATE)
+//      values (@CustCode,'A',@FATCA_DATA,@FATCA_BY,GETDATE()) ;
+//   end
 
-  --COMMIT TRANSACTION @TranName;
+//   --COMMIT TRANSACTION @TranName;
 
-  END;
-    `;
+//   END;
+//     `;
 
-  const sql = require('mssql')
-  const pool1 = new sql.ConnectionPool(config, err => {
-    pool1.request() // or: new sql.Request(pool1)
-    .input("CustCode", sql.VarChar(50), pid)
-    .input("FATCA_DATA", sql.NText, JSON.stringify(ans))
-    .input("FATCA_BY",sql.VarChar(100), userId)
+//   const sql = require('mssql')
+//   const pool1 = new sql.ConnectionPool(config, err => {
+//     pool1.request() // or: new sql.Request(pool1)
+//     .input("CustCode", sql.VarChar(50), pid)
+//     .input("FATCA_DATA", sql.NText, JSON.stringify(ans))
+//     .input("FATCA_BY",sql.VarChar(100), userId)
 
-    .query(queryStr, (err, result) => {
-        // ... error checks
-        if(err){
-          logger.error( '' + err );
-         rsp_code = "902"; // Was error
-         res.status(422).json({
-          code: rsp_code,
-          msg: prop.getRespMsg(rsp_code),
-        });
+//     .query(queryStr, (err, result) => {
+//         // ... error checks
+//         if(err){
+//           logger.error( '' + err );
+//          rsp_code = "902"; // Was error
+//          res.status(422).json({
+//           code: rsp_code,
+//           msg: prop.getRespMsg(rsp_code),
+//         });
 
-        }else {
+//         }else {
 
-          rsp_code = "000";
-          res.status(200).json({
-            code: rsp_code,
-            msg: prop.getRespMsg(rsp_code)
-          });
+//           rsp_code = "000";
+//           res.status(200).json({
+//             code: rsp_code,
+//             msg: prop.getRespMsg(rsp_code)
+//           });
 
-        }
-    })
-  })
-  pool1.on('error', err => {
-    // ... error handler
-    logger.error( '' + err );
-  })
-}
+//         }
+//     })
+//   })
+//   pool1.on('error', err => {
+//     // ... error handler
+//     logger.error( '' + err );
+//   })
+// }
 
 function calculateRiskLevel(_suitSerieId,_score){
 

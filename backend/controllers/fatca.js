@@ -6,6 +6,9 @@ var builder = require('xmlbuilder');
 var file = "booksxml.xml";
 var dirPath = __dirname + "/../downloadFiles/xmlfiles/"+file;
 
+var logger = require("../config/winston");
+var prop = require("../config/backend-property");
+
 exports.getCustAM = (req, res, next) => {
 
   console.log('Welcome getCustAM()');
@@ -55,6 +58,125 @@ exports.getCustAM = (req, res, next) => {
         }
     })
 
+  })
+
+  pool1.on('recordset', columns => {
+    // Emitted once for each recordset in a query
+    console.log("recordset>>"+JSON.stringify(columns));
+  })
+
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+
+exports.saveFATCA = (req, res, next) => {
+
+  logger.info(`API /saveFATCA - ${req.originalUrl} - ${req.ip} `);
+
+  let rsp_code;
+  var userId = req.body.userId;
+  var pid = req.body.pid;
+  var ans = req.body.ans ;
+
+  var queryStr = `
+  BEGIN
+
+  DECLARE @TranName VARCHAR(20);
+
+  --SELECT @TranName = 'MyTransaction';
+
+  --BEGIN TRANSACTION @TranName;
+
+  update MIT_CUSTOMER_FATCA set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE()
+  where CustCode = @CustCode
+
+  if @@rowcount = 0
+  begin
+     insert into MIT_CUSTOMER_FATCA(CustCode,FATCA_FLAG,FATCA_DATA,FATCA_BY,FATCA_DATE)
+     values (@CustCode,'A',@FATCA_DATA,@FATCA_BY,GETDATE()) ;
+  end
+
+  --COMMIT TRANSACTION @TranName;
+
+  END;
+    `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input("CustCode", sql.VarChar(50), pid)
+    .input("FATCA_DATA", sql.NText, JSON.stringify(ans))
+    .input("FATCA_BY",sql.VarChar(100), userId)
+
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          logger.error( '' + err );
+         rsp_code = "902"; // Was error
+         res.status(422).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code),
+        });
+
+        }else {
+
+          rsp_code = "000";
+          res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+
+        }
+    })
+  })
+  pool1.on('error', err => {
+    // ... error handler
+    logger.error( '' + err );
+  })
+}
+
+
+
+
+exports.getFATCA = (req, res, next) => {
+
+  var _custCode = req.params.cusCode;
+
+  logger.info(`API /fatca - ${req.originalUrl} - ${req.ip} - ${_custCode} `);
+  var fncName = 'getFunds()';
+
+  var queryStr = `
+  BEGIN
+
+  select *
+  from MIT_CUSTOMER_FATCA
+  where CustCode =@CustCode
+
+  END
+  `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input("CustCode", sql.VarChar(50), _custCode)
+    .query(queryStr, (err, result) => {
+        if(err){
+          let rsp_code = "902"; // Was error
+          res.status(422).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+          });
+        }else {
+          let rsp_code = "000";
+          res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
   })
 
   pool1.on('recordset', columns => {

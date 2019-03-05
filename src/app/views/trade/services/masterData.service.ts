@@ -230,7 +230,7 @@ export class MasterDataService {
         return fundtData.result.map(rtnData => {
           return {
             Amc_Id: rtnData.Amc_Id,
-            Code: rtnData.Code,
+            Code: rtnData.Code.toString(),
             Thai_Name: rtnData.Thai_Name,
             Eng_Name: rtnData.Eng_Name
           };
@@ -248,7 +248,7 @@ export class MasterDataService {
         return fundtData.result.map(rtnData => {
           return {
             Amc_Id: rtnData.Amc_Id,
-            Code: rtnData.Code,
+            Code: rtnData.Code.toString(),
             TypeHolder: rtnData.TypeHolder,
             Thai_Name: rtnData.Thai_Name,
             Eng_Name: rtnData.Eng_Name
@@ -267,7 +267,7 @@ export class MasterDataService {
         return fundtData.result.map(rtnData => {
           return {
             Amc_Id: rtnData.Amc_Id,
-            Code: rtnData.Code,
+            Code: rtnData.Code.toString(),
             TypeHolder: rtnData.TypeHolder,
             Thai_Name: rtnData.Thai_Name,
             Eng_Name: rtnData.Eng_Name

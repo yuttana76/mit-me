@@ -32,6 +32,10 @@ export class SuitComponent implements OnInit {
     {id: 5, name: "เสี่ยงสูงมาก"}
   ];
 
+  PREFIX_MOBILE_ALLOW_SEND_SMS ='02';
+  SEQ_WORK_ADDR = 3;
+  SEQ_CURR_ADDR = 2;
+
   form: FormGroup;
 
   firstFormGroup: FormGroup;
@@ -51,6 +55,13 @@ export class SuitComponent implements OnInit {
   canDoFATCA = false;
   showOtpEntry = false;
 
+  showWorkAddr = false;
+  showCurrentAddr = false;
+
+  workAddrAs = '';
+  currAddrAs = '';
+
+
   ADD_NEW = false;
   INTERNAL_USER = false;
 
@@ -64,10 +75,9 @@ export class SuitComponent implements OnInit {
   public re_addrData: AddrCustModel = new AddrCustModel();
   public cur_addrData: AddrCustModel = new AddrCustModel();
   public work_addrData: AddrCustModel = new AddrCustModel();
-  showWorkAddrAs = '';
-  showCurrAddrAs = '';
 
 
+  // cust_mobile_disp;
   cust_RiskScore=0;
   cust_RiskLevel=0;
   cust_RiskLevelTxt='';
@@ -236,6 +246,7 @@ export class SuitComponent implements OnInit {
           this.cust_RiskLevelTxt = data.USERDATA.Risk_Level_Txt;
           this.cust_RiskDate = data.USERDATA.Risk_Date;
 
+
         },
         error => () => {
           console.log("Verify Was error", error);
@@ -246,9 +257,54 @@ export class SuitComponent implements OnInit {
       );
   }
 
+
+  getCDDAddress(_id,seqNo : number){
+
+    let _addrData: AddrCustModel = new AddrCustModel();
+    this.cddService.getCustCDDAddr(_id,seqNo).subscribe(data => {
+
+      if (data.length > 0){
+        // console.log('CDD-Address >>' + JSON.stringify(data));
+        _addrData.Addr_Seq = data[0].Addr_Seq;
+        _addrData.Addr_No = data[0].Addr_No;
+        _addrData.Moo = data[0].Moo;
+        _addrData.Place = data[0].Place;
+        _addrData.Floor = data[0].Floor;
+        _addrData.Soi = data[0].Soi;
+        _addrData.Road = data[0].Road;
+        _addrData.Tambon_Id = data[0].Tambon_Id;
+        _addrData.Amphur_Id = data[0].Amphur_Id;
+        _addrData.Province_Id = data[0].Province_Id;
+        _addrData.Country_Id = data[0].Country_Id;
+        _addrData.Zip_Code = data[0].Zip_Code;
+        _addrData.Print_Address = data[0].Print_Address;
+        _addrData.Tel = data[0].Tel;
+        _addrData.Fax = data[0].Fax;
+
+        if (seqNo === 1){
+          // console.log('Seting in RE ');
+          this.re_addrData = Object.assign({}, _addrData);
+
+        } else if (seqNo === 2 ) {
+          this.cur_addrData = Object.assign({}, _addrData);
+          this.showCurrentAddr = true;
+
+        } else if (seqNo === 3){
+          this.work_addrData = Object.assign({}, _addrData);
+          this.showWorkAddr = true;
+        }
+      }
+    }, error => () => {
+        console.log('Was error', error);
+    }, () => {
+      console.log('Loading complete');
+    });
+   }
+
   public requestOTP() {
     this.spinnerLoading = true;
-    this.suiteService.verifyRequestOTP(this.survey.pid)
+    const _mobile = this.customer.Mobile;
+    this.suiteService.verifyRequestOTP(this.survey.pid,_mobile)
       .finally(() => {
         console.log("Handle logging logic...");
         this.spinnerLoading = false;
@@ -283,6 +339,14 @@ export class SuitComponent implements OnInit {
           console.log("HTTP return verifyConfirmOTP():" + JSON.stringify(data));
 
           // Load CDD
+
+          // Load address
+          this.getCDDAddress(this.survey.pid, 1);
+          this.getCDDAddress(this.survey.pid, 2);
+          this.getCDDAddress(this.survey.pid, 3);
+
+          //FATCA
+          this.loadFATCA(this.survey.pid);
 
           this.verifyFLag =true;
           this.needVerify = false;
@@ -325,6 +389,15 @@ export class SuitComponent implements OnInit {
         //     console.log('Loading complete');
 
         //   });
+
+          // Load address
+          this.getCDDAddress(this.survey.pid, 1);
+          this.getCDDAddress(this.survey.pid, 2);
+          this.getCDDAddress(this.survey.pid, 3);
+
+          //FATCA
+          this.loadFATCA(this.survey.pid);
+
 
         this.toastr.success(` ${this.customer.First_Name_T} ${this.customer.Last_Name_T}`,
             "Welcome",
@@ -584,23 +657,6 @@ export class SuitComponent implements OnInit {
 
 
   saveAddrAll(){
-  console.log('savePersonInfo()');
-     // if (this.register_formGroup.invalid) {
-    //   console.log('form.invalid() ' + this.register_formGroup.invalid);
-    //   return false;
-    // }
-
-    console.log(` Saving re_addrData>>${JSON.stringify(this.re_addrData)} ` );
-    console.log(` Saving work_addrData>>  -${JSON.stringify(this.work_addrData)} ` );
-    console.log(` Saving cur_addrData>>  -${JSON.stringify(this.cur_addrData)} ` );
-
-
-  // this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData,this.work_addrData,this.cur_addrData)
-  /*
-    this.re_addrData,
-    this.work_addrData,
-    this.cur_addrData
-   */
 
   this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData)
   .subscribe((data: any ) => {
@@ -689,43 +745,54 @@ export class SuitComponent implements OnInit {
    });
 // **************************
  });
-
-
-
 }
 
-
-
   workAddrOnChange(val){
-    console.log('workAddrOnChange >> ' + val);
-
     if(val ==='R'){
-      console.log('Same register ***');
       this.work_addrData = Object.assign({}, this.re_addrData);
-
+      this.showWorkAddr = false;
     }else { // Other
-      console.log('Other addr. *** ');
+      // console.log('Other addr. *** ');
+      this.showWorkAddr = true;
     }
-
-    this.work_addrData.Addr_Seq = 3;
+    this.work_addrData.Addr_Seq = this.SEQ_WORK_ADDR;
   }
 
   cuurAddrOnChange(val){
-    console.log('currAddrOnChange >> ' + val);
-
     if(val ==='R'){
-      console.log('Same register ***');
       this.cur_addrData = Object.assign({}, this.re_addrData);
-
-    }else if(val ==='W'){
-      console.log('Same work ***');
+      this.showCurrentAddr = false;
+    } else if ( val === 'W'){
       this.cur_addrData = Object.assign({}, this.work_addrData);
-
-    }else { // Other
-      console.log('Other addr. *** ');
+      this.showCurrentAddr = false;
+    } else { // Other
+      // console.log('Other addr. *** ');
+      this.showCurrentAddr = true;
     }
+    this.cur_addrData.Addr_Seq = this.SEQ_CURR_ADDR;
+  }
 
-    this.cur_addrData.Addr_Seq = 2;
+
+  public loadFATCA(_id: string) {
+    this.spinnerLoading = true;
+    this.suiteService.getFATCA(_id)
+      .finally(() => {
+        console.log("Handle logging logic...");
+        this.spinnerLoading = false;
+      })
+      .subscribe((data: any) => {
+
+          console.log(" *** loadFATCA()" + JSON.stringify(data));
+
+
+        },
+        error => () => {
+          console.log("loadFATCA Was error", error);
+        },
+        () => {
+          console.log("loadFATCA  complete");
+        }
+      );
   }
 
 

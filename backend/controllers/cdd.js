@@ -56,10 +56,91 @@ exports.getCDDinfo = (req, res, next) => {
 }
 
 
+exports.getCDDinfo_MIT = (req, res, next) => {
+
+  var fncName = 'getCustomer';
+  var _custCode = req.params.cusCode;
+
+  logger.info( `API /cddInfo - ${req.originalUrl} - ${req.ip} - ${_custCode}`);
+
+  var queryStr = `
+  BEGIN
+
+  DECLARE @ROW_COUNT int=0;
+
+  SELECT @ROW_COUNT = count(*)
+  FROM MIT_CUSTOMER_INFO
+  WHERE Cust_Code= @custCode
+
+  IF  @ROW_COUNT> 0 BEGIN
+
+  SELECT *
+  FROM MIT_CUSTOMER_INFO
+  WHERE Cust_Code= @custCode
+
+  END ELSE
+    BEGIN
+      SELECT top 1 a.Cust_Code,a.Cust_Code AS ID_CARD, a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.Birth_Day,a.Mobile,a.Email
+      ,b.Account_No,b.Occupation_Code,b.Occupation_Desc
+      ,b.Position_Code,b.Position,b.Politician_Desc
+      ,b.BusinessType_Code
+      ,b.Income,b.Income_Code,b.Income_Source,b.Income_Source_Code
+      ,b.Modify_Date
+      FROM [Account_Info] a
+      left join MFTS_Account b on b.Account_No like a.Cust_Code
+      WHERE Cust_Code= @custCode
+      order by b.Modify_Date desc
+    END
+  END
+  `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input('custCode', sql.VarChar(50), _custCode)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+
+          let rsp_code = "902"; // Was error
+          res.status(422).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+          });
+
+          // console.log( fncName +' Quey db. Was err !!!' + err);
+          // res.status(201).json({
+          //   message: err,
+          // });
+
+        }else {
+
+          let rsp_code = "000";
+          res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+
+          // res.status(200).json({
+          //   message: fncName + "Quey db. successfully!",
+          //   result: result.recordset
+          // });
+
+        }
+    })
+  })
+  pool1.on('error', err => {
+    // ... error handler
+    console.log("EROR>>"+err);
+  })
+}
+
+
 exports.saveCDDInfo = (req, res, next) => {
 
-  var fncName = 'saveCDDInfo';
-  var custCode = req.body.custCode
+  // var fncName = 'saveCDDInfo';
+  var Cust_Code = req.body.Cust_Code
   var actionBy = req.body.actionBy
   var pid = req.body.pid
   var title = req.body.title
@@ -76,10 +157,11 @@ exports.saveCDDInfo = (req, res, next) => {
   var workPlace = req.body.workPlace
 
 
-  logger.info( `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${custCode}`);
+  logger.info( `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${dob}`);
 
   var queryStr = `
   BEGIN
+
     UPDATE MIT_CUSTOMER_INFO SET
       [ID_CARD]=@ID_CARD
       ,[Title_Name_T]=@Title_Name_T
@@ -96,23 +178,25 @@ exports.saveCDDInfo = (req, res, next) => {
       ,[WorkPlace]=@WorkPlace
       ,[UpdateBy]=@ActionBy
       ,[UpdateDate]=GETDATE()
-    WHERE CustCode = @CustCode
+    WHERE Cust_Code = @Cust_Code
 
     if @@rowcount = 0
         begin
-        INSERT INTO MIT_CUSTOMER_INFO ([CustCode],[ID_CARD] ,[Title_Name_T],[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
+        INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[Title_Name_T],[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
             ,[Occupation_Code] ,[Position_Code] ,[BusinessType_Code] ,[Income_Code] ,[Income_Source_Code],WorkPlace,[CreateBy] ,[CreateDate] )
-        VALUES(@CustCode,@ID_CARD ,@Title_Name_T,@First_Name_T ,@Last_Name_T ,'@Birth_Day' ,@Mobile ,@Email
+        VALUES(@Cust_Code,@ID_CARD ,@Title_Name_T,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
             ,@Occupation_Code ,@Position_Code ,@BusinessType_Code ,@Income_Code ,@Income_Source_Code ,@WorkPlace,@ActionBy ,GETDATE())
         END
   END
 
   `;
 
+  // console.log( 'saveCDDInfo() >>' + queryStr);
+
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {
     pool1.request() // or: new sql.Request(pool1)
-    .input('CustCode', sql.VarChar(50), custCode)
+    .input('Cust_Code', sql.VarChar(50), Cust_Code)
     .input('ID_CARD', sql.VarChar(50), pid)
     .input('Title_Name_T', sql.VarChar(200), title)
     .input('First_Name_T', sql.VarChar(200), firstName)
@@ -157,38 +241,28 @@ exports.saveCDDInfo = (req, res, next) => {
 exports.getCDDAddr = (req, res, next) => {
 
   var fncName = 'getCustomer';
-  var _custCode = req.params.cusCode;
 
-  logger.info( `API /getCDDAddr - ${req.originalUrl} - ${req.ip} - ${_custCode}`);
+  var _Cust_Code = req.params.cusCode;
+  var _Addr_Seq = req.query.Addr_Seq
+
+
+
+  logger.info( `API /getCDDAddr - ${req.originalUrl} - ${req.ip} - ${_Cust_Code} - ${_Addr_Seq}`);
 
   var queryStr = `
   BEGIN
-
-      select  *
-      from Account_Address
-      where Cust_Code = '0105541011867-'
-
-      if @@rowcount = 0
-      BEGIN
-      select  *
-      from Account_Address
-      where Cust_Code = '0105541011867-1'
-      END
-
-      if @@rowcount = 0
-      BEGIN
-      select  *
-      from Account_Address
-      where Cust_Code = '0105541011867-2'
-      END
-
+    SELECT *
+    FROM MIT_CUSTOMER_ADDR
+    Where Cust_Code = @Cust_Code
+    AND Addr_Seq = @Addr_Seq
   END
   `;
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {
     pool1.request() // or: new sql.Request(pool1)
-    .input('custCode', sql.VarChar(50), _custCode)
+    .input('Cust_Code', sql.VarChar(50), _Cust_Code)
+    .input('Addr_Seq', sql.Int, _Addr_Seq)
     .query(queryStr, (err, result) => {
         // ... error checks
         if(err){
@@ -215,7 +289,7 @@ exports.getCDDAddr = (req, res, next) => {
 exports.saveCDDAddr = (req, res, next) => {
 
   var actionBy = req.body.actionBy
-  var custCode = req.body.custCode
+  var Cust_Code = req.body.Cust_Code
 
   var Addr_Seq = req.body.Addr_Seq
   var Addr_No = req.body.Addr_No
@@ -232,7 +306,7 @@ exports.saveCDDAddr = (req, res, next) => {
   var Tel = req.body.Tel
   var Fax = req.body.Fax
 
-  logger.info( `POST API /saveCDDAddr - ${req.originalUrl} - ${req.ip} - ${custCode} - ${Addr_Seq}`);
+  logger.info( `POST API /saveCDDAddr - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${Addr_Seq}`);
 
   var queryStr = `
 BEGIN
@@ -260,7 +334,7 @@ END
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {
     pool1.request() // or: new sql.Request(pool1)
-    .input('Cust_Code', sql.VarChar(50), custCode)
+    .input('Cust_Code', sql.VarChar(50), Cust_Code)
     .input('Addr_Seq', sql.Int, Addr_Seq)
     .input('Addr_No', sql.NVarChar(100), Addr_No)
     .input('Moo', sql.NVarChar(50), Moo)

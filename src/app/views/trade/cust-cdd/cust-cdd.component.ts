@@ -22,7 +22,6 @@ export class CustCDDComponent implements OnInit {
 
   cddFormGroup: FormGroup;
   public cddData = new CDDModel() ;
-
   public modifyFlag = true;
 
   businessTypeList: BusinessType[];
@@ -92,7 +91,8 @@ export class CustCDDComponent implements OnInit {
 
   this.masterDataService.getPosition().subscribe((data: any[]) => {
     this.positionList = data;
-  });
+
+  })
 
   this.masterDataService.getIncome().subscribe((data: any[]) => {
     this.incomeList = data;
@@ -103,31 +103,32 @@ export class CustCDDComponent implements OnInit {
   });
 
    //Initial data
-  this.getCustomerInfo(this.custCode);
-
-  this.modifOnChange(this.modifyFlag);
+   this.getCustomerInfo(this.custCode);
+   this.modifOnChange(this.modifyFlag);
 
   }
 
  getCustomerInfo(_id){
   //Load CDD
   this.cddService.getCustCDDInfo(_id).subscribe(data => {
-    // console.log('CDD >>' +JSON.stringify(data));
+    if(data ){
+      this.cddData.pid = data[0].pid;
+      this.cddData.firstName = data[0].firstName;
+      this.cddData.lastName = data[0].lastName;
+      this.cddData.dob = data[0].dob;
+      this.cddData.mobile = data[0].mobile;
+      this.cddData.email = data[0].email;
+      this.cddData.typeBusiness = data[0].typeBusiness;
+      this.cddData.occupation = data[0].occupation;
+      this.cddData.position = data[0].position;
 
-    this.cddData.pid = data[0].pid;
-    this.cddData.firstName = data[0].firstName;
-    this.cddData.lastName = data[0].lastName;
-    this.cddData.dob = data[0].dob;
-    this.cddData.mobile = data[0].mobile;
-    this.cddData.email = data[0].email;
-    this.cddData.typeBusiness = data[0].typeBusiness;
-    this.cddData.occupation = data[0].occupation;
-    this.cddData.position = data[0].position;
-    this.cddData.incomeLevel = data[0].incomeLevel;
-    this.cddData.incomeSource = data[0].incomeSource;
-    this.cddData.workPlace = data[0].workPlace;
+      this.cddData.incomeLevel = data[0].incomeLevel;
+      this.cddData.incomeSource = data[0].incomeSource;
+      this.cddData.workPlace = data[0].workPlace;
 
-    // this.reloadData();
+      // this.reloadData();
+    }
+    // console.log('this.cddData >>' +JSON.stringify(this.cddData));
 
   }, error => () => {
       console.log('Was error', error);

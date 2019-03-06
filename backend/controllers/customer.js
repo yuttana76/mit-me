@@ -134,9 +134,6 @@ exports.CreateCustomer = (req, res, next) => {
 
   }); // ENd loop
 
-
-
-
   });
   pool1.on("error", err => {
     console.log("EROR>>" + err);

@@ -376,8 +376,7 @@ function calculateRiskLevel(_suitSerieId,_score){
   return new Promise(function(resolve, reject) {
 
     const pool1 = new sql.ConnectionPool(config, err => {
-      pool1
-        .request() // or: new sql.Request(pool1)
+      pool1.request() // or: new sql.Request(pool1)
         .input("SuitSerieId", sql.VarChar(50), _suitSerieId)
         .input("Score", sql.Int, _score)
         .query(queryStr, (err, result) => {

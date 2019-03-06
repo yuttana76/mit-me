@@ -46,6 +46,10 @@ export class SuitComponent implements OnInit {
   work_formGroup: FormGroup;
   current_formGroup: FormGroup;
 
+  register_expanded = true;
+  work_expanded = false;
+  current_expanded = false;
+
   spinnerLoading = false;
 
   needVerify = false;

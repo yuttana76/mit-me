@@ -241,11 +241,8 @@ exports.saveCDDInfo = (req, res, next) => {
 exports.getCDDAddr = (req, res, next) => {
 
   var fncName = 'getCustomer';
-
   var _Cust_Code = req.params.cusCode;
   var _Addr_Seq = req.query.Addr_Seq
-
-
 
   logger.info( `API /getCDDAddr - ${req.originalUrl} - ${req.ip} - ${_Cust_Code} - ${_Addr_Seq}`);
 
@@ -311,6 +308,8 @@ exports.saveCDDAddr = (req, res, next) => {
   var queryStr = `
 BEGIN
 
+  DECLARE @FULL_TXT VARCHAR(500);
+
   UPDATE MIT_CUSTOMER_ADDR SET
   [Addr_No] =@Addr_No ,[Moo] =@Moo ,[Place]=@Place ,[Floor]=@Floor,[Soi]=@Soi ,[Road]=@Road ,[Tambon_Id]=@Tambon_Id ,[Amphur_Id]=@Amphur_Id ,[Province_Id]=@Province_Id ,
   [Country_Id]=@Country_Id ,[Zip_Code]=@Zip_Code ,[Tel]=@Tel ,[Fax] =@Fax ,[UpdateBy]=@ActionBy ,[UpdateDate]=GETDATE()
@@ -326,8 +325,30 @@ BEGIN
       VALUES
       (@Cust_Code,@Addr_Seq,@Addr_No ,@Moo,@Place ,@Floor ,@Soi ,@Road ,@Tambon_Id ,@Amphur_Id ,@Province_Id ,@Country_Id,@Zip_Code ,@Tel ,@Fax ,@ActionBy ,GETDATE() )
 
-      END
+    END
 
+
+    SELECT @FULL_TXT=
+    ISNULL(Addr_No,'')
+    +' '  + ISNULL(Moo,'')
+    +' '  + ISNULL(Place,'')
+    +' '  + ISNULL(Floor,'')
+    +' '  + ISNULL(Soi,'')
+    +' '  + ISNULL(Road,'')
+    +' '+ ISNULL(e.Name_Thai,'')
+    +' '+ISNULL(d.Name_Thai,'')
+    +' '+ISNULL(c.Name_Thai,'')
+    +' '+ISNULL(Zip_Code,'')
+    from MIT_CUSTOMER_ADDR a
+    LEFT JOIN REF_Countrys b ON b.Country_Id = a.Country_ID
+    LEFT JOIN REF_Provinces c ON c.Province_Id = a.Province_ID and c.Country_ID = a.Country_ID
+    LEFT JOIN REF_Amphurs d ON d.Province_Id = a.Province_ID and d.Amphur_ID=a.Amphur_Id
+    LEFT JOIN REF_Tambons e ON e.Amphur_ID=a.Amphur_Id and e.Tambon_ID=a.Tambon_Id
+    where a.Cust_Code = @Cust_Code
+    and a.Addr_Seq = @Addr_Seq
+    and b.Nation=0
+
+    UPDATE MIT_CUSTOMER_ADDR SET  Print_Address = @FULL_TXT WHERE Cust_Code = @Cust_Code AND Addr_Seq = @Addr_Seq
 END
   `;
 

@@ -20,7 +20,8 @@ export class CustCDDComponent implements OnInit {
 
   @Input() custCode: string;
 
-  cddFormGroup: FormGroup;
+  @Input() cddFormGroup: FormGroup;
+  // cddFormGroup: FormGroup;
   public cddData = new CDDModel() ;
   public modifyFlag = true;
 
@@ -40,45 +41,45 @@ export class CustCDDComponent implements OnInit {
 
   ngOnInit() {
 
-   this.cddFormGroup = new FormGroup({
-    pid: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    firstName: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    lastName: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    dob: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    mobile: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    email: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    typeBusiness: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    occupation: new FormControl(null, {
-      validators: [Validators.required]
-    }),
+  //  this.cddFormGroup = new FormGroup({
+  //   pid: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   firstName: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   lastName: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   dob: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   mobile: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   email: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   typeBusiness: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   occupation: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
 
-    position: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    incomeLevel: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    incomeSource: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-    workPlace: new FormControl(null, {
-      validators: [Validators.required]
-    }),
-  });
+  //   position: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   incomeLevel: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   incomeSource: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   workPlace: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  // });
 
    // Load master data
    this.masterDataService.getOccupations().subscribe((data: any[]) => {

@@ -13,6 +13,7 @@ import { Customer } from "../model/customer.model";
 import { Question } from "../model/question.model";
 import { CddService } from "../services/cdd.service";
 import { AddrCustModel } from "../model/addrCust.model";
+import { ConfirmationDialogService } from "../dialog/confirmation-dialog/confirmation-dialog.service";
 // import { CDDModel } from "../model/cdd.model";
 
 
@@ -20,7 +21,8 @@ import { AddrCustModel } from "../model/addrCust.model";
 @Component({
   selector: "app-suit",
   templateUrl: "./suit.component.html",
-  styleUrls: ["./suit.component.scss"]
+  styleUrls: ["./suit.component.scss"],
+  providers: [ConfirmationDialogService]
 })
 export class SuitComponent implements OnInit {
 
@@ -41,11 +43,13 @@ export class SuitComponent implements OnInit {
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
   thirdFormGroup: FormGroup;
+  forthFormGroup: FormGroup;
 
   register_formGroup: FormGroup;
   work_formGroup: FormGroup;
   current_formGroup: FormGroup;
 
+  mobile = false;
   register_expanded = true;
   work_expanded = false;
   current_expanded = false;
@@ -68,6 +72,9 @@ export class SuitComponent implements OnInit {
 
   ADD_NEW = false;
   INTERNAL_USER = false;
+
+  // STEPER_isOptional = false;
+  isEditable = true;
 
   suitScore = 0;
   riskLevel = 0;
@@ -102,6 +109,7 @@ export class SuitComponent implements OnInit {
   constructor(
     public formService: SuitFormService,
     private toastr: ToastrService,
+    private confirmationDialogService: ConfirmationDialogService,
     public dialog: MatDialog,
     private activatedRoute: ActivatedRoute,
     private suiteService: SuiteService,
@@ -125,6 +133,10 @@ export class SuitComponent implements OnInit {
 
   ngOnInit() {
 
+    if (window.screen.width < 700 ) { // 768px portrait
+      this.mobile = true;
+    }
+
     this.re_addrData.Addr_Seq = 1;
     if(!this.re_addrData.Country_Id){
       this.re_addrData.Country_Id = 0;
@@ -140,16 +152,17 @@ export class SuitComponent implements OnInit {
       this.work_addrData.Country_Id = 0;
     }
 
-    this.firstFormGroup = this._formBuilder.group({
-      firstCtrl: ['', Validators.required]
-    });
-    this.secondFormGroup = this._formBuilder.group({
-      secondCtrl: ['', Validators.required]
-    });
+    // this.firstFormGroup = this._formBuilder.group({
+    //   firstCtrl: ['', Validators.required]
+    // });
 
-    this.thirdFormGroup = this._formBuilder.group({
-      thirdCtrl: ['', Validators.required]
-    });
+    // this.secondFormGroup = this._formBuilder.group({
+    //   secondCtrl: ['', Validators.required]
+    // });
+
+    // this.thirdFormGroup = this._formBuilder.group({
+    //   thirdCtrl: ['', Validators.required]
+    // });
 
     this.spinnerLoading = true;
 
@@ -166,6 +179,23 @@ export class SuitComponent implements OnInit {
     });
   }
 
+  onLogout(){
+
+
+    this.confirmationDialogService.confirm('Confirmation', `Do you really want to exit. ?`)
+    .then((confirmed) => {
+      if ( confirmed ) {
+
+        this.verifyFLag = false;
+        this.customer = null;
+        this.survey.pid = "";
+      }
+    }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
+
+
+
+  }
+
   private _buildForm() {
     // Initial Form fields
     this.form = new FormGroup({
@@ -173,6 +203,178 @@ export class SuitComponent implements OnInit {
         validators: [Validators.required]
       })
     });
+
+   // Initial  firstFormGroup
+   this.firstFormGroup = new FormGroup({
+    pid: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    firstName: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    lastName: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    dob: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    mobile: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    email: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    typeBusiness: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    occupation: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+
+    position: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    incomeLevel: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    incomeSource: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    workPlace: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+  });
+
+
+
+  //  Initial register_formGroup
+  this.register_formGroup = new FormGroup({
+    Addr_No: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Moo: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Place: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Floor: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Soi: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Road: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Tambon_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Amphur_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Province_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Country_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Zip_Code: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Tel: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Fax: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+  });
+
+  // this.register_formGroup = new FormGroup({ });
+  this.work_formGroup = new FormGroup({
+    Addr_No: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Moo: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Place: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Floor: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Soi: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Road: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Tambon_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Amphur_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Province_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Country_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Zip_Code: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Tel: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Fax: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+  });
+
+  this.current_formGroup = new FormGroup({
+    Addr_No: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Moo: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Place: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Floor: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Soi: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Road: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Tambon_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Amphur_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Province_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Country_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Zip_Code: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Tel: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Fax: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+  });
+
   }
 
   loadQuestions() {

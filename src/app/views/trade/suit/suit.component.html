@@ -1,53 +1,68 @@
 
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 
-
 <mat-card *ngIf="!spinnerLoading">
-  <form [formGroup]="form" #custForm="ngForm" class="container" >
-    <mat-card-title>
-      {{ formService.from_suit_title }}
+  <div class="container">
 
-      <i *ngIf="ADD_NEW"
-        class="fas fa-plus-square fa-1x"
-        matTooltip="{{ formService.addNewBtn }}"
-        (click)="onAddNew()"
-      ></i>
+      <nav class="navbar navbar-light bg-light">
+          <form class="form-inline" [formGroup]="form" #custForm="ngForm" >
+            <span *ngIf="!verifyFLag">
+                <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.pid_label }}" aria-label="Search"
+                formControlName="pid" [(ngModel)]="survey.pid"  >
+                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0"  (click)="getCustomerData()">Search</a>
+            </span>
 
-      <div *ngIf="verifyFLag" id="cust_content">
-        <img  src="assets/img/avatars/noPerson.png" class="img-avatar box_img"  alt="{{ customer.First_Name_T }}"  />
-        <span>{{ customer.Title_Name_T }} {{ customer.First_Name_T }}
-          {{ customer.Last_Name_T }}
-          </span>
+            <ul class="nav navbar-nav ml-auto" *ngIf="verifyFLag">
+                <li >
+                    <strong>Welcome</strong>
+                    <p> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
+                </li>
 
-      </div>
-      <div class="row">
-        <mat-form-field class="col-md-4">
-          <input
-            matInput
-            formControlName="pid"
-            placeholder="{{ formService.pid_label }}"
-            [(ngModel)]="survey.pid"
+                <!-- <a (click) = "onLogout()"><i class="fa fa-lock" ></i> Logout</a> -->
+                <a (click) = "onLogout()" class="btn btn-outline-success my-2 my-sm-0" ><span class=" cui-account-logout" aria-hidden="true"></span> Exit</a>
 
-          />
-          <mat-error *ngIf="form.get('pid').invalid">Please enter ID</mat-error>
-        </mat-form-field>
-      </div>
 
-      <mat-card-actions>
-        <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="getCustomerData()">
-          OK</a>
-        <a *ngIf="INTERNAL_USER"  mat-flat-button  color="primary"  (click)="searchCust()">
-          Search</a >
-      </mat-card-actions>
-    </mat-card-title>
-  </form>
+            </ul>
+          </form>
+        </nav>
+
+    <!-- <form [formGroup]="form" #custForm="ngForm"  >
+          <mat-card-title>
+              {{ formService.from_title }}
+              <div *ngIf="verifyFLag" id="cust_content">
+                <img  src="assets/img/avatars/noPerson.png" class="img-avatar box_img"  alt="{{ customer.First_Name_T }}"  />
+                <span>{{ customer.Title_Name_T }} {{ customer.First_Name_T }}
+                  {{ customer.Last_Name_T }}
+                  </span>
+
+              </div>
+              <div>
+              <div class="row">
+                <mat-form-field class="col-md-4 col-sm-4">
+                  <input  matInput  formControlName="pid"  placeholder="{{ formService.pid_label }}"
+                    [(ngModel)]="survey.pid"   />
+                  <mat-error *ngIf="form.get('pid').invalid">Please enter ID</mat-error>
+                </mat-form-field>
+              </div>
+
+              <mat-card-actions class="col-md-4 col-sm-4">
+                <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="getCustomerData()">
+                  OK</a>
+                <a *ngIf="INTERNAL_USER"  mat-flat-button  color="primary"  (click)="searchCust()">
+                  Search</a >
+              </mat-card-actions>
+            </div>
+            </mat-card-title>
+    </form> -->
+
+  </div>
 
   <!-- VERIFY -->
   <div *ngIf="needVerify" class="container ">
       <div class="row ">
           <!-- <h5>Request verify method.</h5> -->
           <div class="row">
-              <mat-radio-group  [(ngModel)]="verifyBy" class="col-md-4" >
+              <mat-radio-group  [(ngModel)]="verifyBy" class="col-lg-4 col-md-4 col-sm-4" >
                   <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >Verify by date of birth </mat-radio-button>
                   <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == PREFIX_MOBILE_ALLOW_SEND_SMS "  >
                     Verify by OTP to register</mat-radio-button>
@@ -57,29 +72,29 @@
 
       <div id='div_DOB' *ngIf="verifyBy=='DOB'" >
         <div class="row" >
-            <mat-form-field class="col-md-4">
+            <mat-form-field class="col-md-4 col-sm-4">
             <input  matInput   placeholder="Please verify your date of birth"    [(ngModel)]="verifyDOB_val"  />
             </mat-form-field>
             <p>Format:ddmmyyyyy  (example = 31011976)</p>
         </div>
-        <div class="row" >
+        <div class="row col-md-4 col-sm-4" >
             <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyDOB()" class="col-md-4"> Verify</a>
         </div>
       </div>
 
       <!-- Verify OTP section -->
       <div id='div_OTP' *ngIf="verifyBy=='OTP'">
-          <div class="row ">
+          <div class="row  col-md-4 col-sm-4" >
               <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="requestOTP()" class="col-md-4">Request OTP</a>
           </div>
 
          <div id='OTP_INTRY' *ngIf="showOtpEntry" >
-            <div class="row">
+            <div class="row col-md-4 col-sm-4">
                 <mat-form-field class="col-md-4">
                     <input  matInput   placeholder="Please input OTP"    [(ngModel)]="verifyOTP_val"  />
                 </mat-form-field>
             </div>
-            <div class="row ">
+            <div class="row col-md-4 col-sm-4 ">
                 <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyConfirmOTP()" class="col-md-4"> Verify</a>
             </div>
          </div>
@@ -89,31 +104,40 @@
   <!-- ************* STEPPER  -->
   <div class='row'>
 
-
-
-  <mat-horizontal-stepper labelPosition="bottom" #stepper *ngIf="verifyFLag" >
+  <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag" class="col" >
     <!-- ***************** #1  Persional Information Step-->
     <mat-step [stepControl]="firstFormGroup">
-        <ng-template matStepLabel>Persional Information</ng-template>
-        <app-cust-cdd [custCode]="survey.pid" ></app-cust-cdd>
+        <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>{{formService.STEPER_1}}</ng-template>
+        <div>
+            <button mat-button matStepperNext color="primary" >Next</button>
+        </div>
+
+        <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="firstFormGroup"></app-cust-cdd>
+        </form>
     </mat-step>
 
      <!-- ***************** #2 Information step-->
-     <mat-step [stepControl]="firstFormGroup">
-        <ng-template matStepLabel>Addresses</ng-template>
+     <mat-step [stepControl]="register_formGroup" >
+        <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
+        <div>
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button matStepperNext color="primary" >Next</button>
+        </div>
         <div >
             <mat-expansion-panel [(expanded)]='register_expanded'>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                       Residence Registration Address
                   </mat-panel-title>
-                  <mat-panel-description *ngIf="!register_expanded" >
-                      <div class='div_align_left'>
+                      <mat-panel-description *ngIf="!register_expanded && !mobile"  >
                           {{re_addrData.Print_Address}}
-                      </div>
                   </mat-panel-description>
+
                 </mat-expansion-panel-header>
-                <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
+                <form [formGroup]="register_formGroup">
+                    <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
+                </form>
               </mat-expansion-panel>
         </div>
 
@@ -123,11 +147,8 @@
                   <mat-panel-title >
                       Workplace Address
                   </mat-panel-title>
-                  <mat-panel-description *ngIf="!work_expanded" >
-                    <div class='div_align_left'>
+                  <mat-panel-description *ngIf="!work_expanded && !mobile" >
                         {{work_addrData.Print_Address}}
-                    </div>
-
                   </mat-panel-description>
                 </mat-expansion-panel-header>
 
@@ -139,7 +160,10 @@
                         </mat-radio-group>
                       </section>
                 </div>
-                <app-cust-addr *ngIf="showWorkAddr" [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+                <form [formGroup]="work_formGroup">
+                    <app-cust-addr *ngIf="showWorkAddr" [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+                </form>
+
               </mat-expansion-panel>
           </div>
 
@@ -149,10 +173,8 @@
                     <mat-panel-title>
                         Current Address
                     </mat-panel-title>
-                    <mat-panel-description *ngIf="!current_expanded" >
-                        <div class='div_align_left'>
+                    <mat-panel-description *ngIf="!current_expanded && !mobile" >
                             {{cur_addrData.Print_Address}}
-                        </div>
                     </mat-panel-description>
                   </mat-expansion-panel-header>
 
@@ -165,10 +187,12 @@
                             </mat-radio-group>
                         </section>
                   </div>
-                  <app-cust-addr *ngIf="showCurrentAddr" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+
+                  <form [formGroup]="current_formGroup">
+                      <app-cust-addr *ngIf="showCurrentAddr" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+                  </form>
 
                 </mat-expansion-panel>
-
             </div>
 
             <div class='row'>
@@ -181,11 +205,13 @@
     </mat-step>
 
   <!-- ***************** #3  Suitability Step-->
-    <mat-step [stepControl]="secondFormGroup"   >
-        <form [formGroup]="secondFormGroup">
-            <ng-template matStepLabel>Suitability survey</ng-template>
-
-            <mat-card-content  >
+    <mat-step [stepControl]="firstFormGroup"   >
+            <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
+            <div>
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-button matStepperNext  color="primary" >Next</button>
+            </div>
+            <!-- <mat-card-content  > -->
 
               <div *ngIf="!canDoSuit"  class="container "  >
                   <!-- <div class="row" class="col-md-4">
@@ -260,15 +286,17 @@
             </form>
             </div>
 
-            </mat-card-content>
-        </form>
+            <!-- </mat-card-content> -->
     </mat-step>
 
 <!-- ***************** #4 FATCA  step -->
-    <mat-step [stepControl]="thirdFormGroup" >
-        <form [formGroup]="thirdFormGroup">
-            <ng-template matStepLabel>FATCA</ng-template>
-            <mat-card-content >
+    <mat-step [stepControl]="firstFormGroup"  >
+            <ng-template matStepLabel>{{formService.STEPER_4}}</ng-template>
+            <div>
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-button (click)="stepper.reset()"  color="accent">Reset</button>
+              </div>
+            <!-- <mat-card-content > -->
             <h5>{{ formService.from_fatca_title }}</h5>
             <form>
 
@@ -279,8 +307,7 @@
                         <a mat-flat-button color="primary" (click)="saveFATCA()"> Save</a>
                   </mat-card-actions>
             </form>
-          </mat-card-content>
-        </form>
+          <!-- </mat-card-content>   -->
     </mat-step>
 </mat-horizontal-stepper>
 </div>

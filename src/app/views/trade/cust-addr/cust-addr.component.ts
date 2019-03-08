@@ -48,51 +48,51 @@ export class CustAddrComponent implements OnInit {
 
   ngOnInit() {
     // console.log( 'Initial CustAddrComponent >>'+ JSON.stringify(this.addrData) )
-    this.addrFormGroup = new FormGroup({
-      // Addr_Seq: new FormControl(null, {
-      //   validators: [Validators.required]
-      // }),
-      Addr_No: new FormControl(null, {
-        validators: [Validators.required]
-      }),
-      Moo: new FormControl(null, {
-        // validators: [Validators.required]
-      }),
-      Place: new FormControl(null, {
-        // validators: [Validators.required]
-      }),
-      Floor: new FormControl(null, {
-        // validators: [Validators.required]
-      }),
-      Soi: new FormControl(null, {
-        // validators: [Validators.required]
-      }),
-      Road: new FormControl(null, {
-        // validators: [Validators.required]
-      }),
-      Tambon_Id: new FormControl(null, {
-        validators: [Validators.required]
-      }),
-      Amphur_Id: new FormControl(null, {
-        validators: [Validators.required]
-      }),
-      Province_Id: new FormControl(null, {
-        validators: [Validators.required]
-      }),
-      Country_Id: new FormControl(null, {
-        validators: [Validators.required]
-      }),
-      Zip_Code: new FormControl(null, {
-        validators: [Validators.required]
-      }),
-      Tel: new FormControl(null, {
-        // validators: [Validators.required]
-      }),
-      Fax: new FormControl(null, {
-        // validators: [Validators.required]
-      }),
-    });
 
+    // this.addrFormGroup = new FormGroup({
+    //   // Addr_Seq: new FormControl(null, {
+    //   //   validators: [Validators.required]
+    //   // }),
+    //   Addr_No: new FormControl(null, {
+    //     validators: [Validators.required]
+    //   }),
+    //   Moo: new FormControl(null, {
+    //     // validators: [Validators.required]
+    //   }),
+    //   Place: new FormControl(null, {
+    //     // validators: [Validators.required]
+    //   }),
+    //   Floor: new FormControl(null, {
+    //     // validators: [Validators.required]
+    //   }),
+    //   Soi: new FormControl(null, {
+    //     // validators: [Validators.required]
+    //   }),
+    //   Road: new FormControl(null, {
+    //     // validators: [Validators.required]
+    //   }),
+    //   Tambon_Id: new FormControl(null, {
+    //     validators: [Validators.required]
+    //   }),
+    //   Amphur_Id: new FormControl(null, {
+    //     validators: [Validators.required]
+    //   }),
+    //   Province_Id: new FormControl(null, {
+    //     validators: [Validators.required]
+    //   }),
+    //   Country_Id: new FormControl(null, {
+    //     validators: [Validators.required]
+    //   }),
+    //   Zip_Code: new FormControl(null, {
+    //     validators: [Validators.required]
+    //   }),
+    //   Tel: new FormControl(null, {
+    //     // validators: [Validators.required]
+    //   }),
+    //   Fax: new FormControl(null, {
+    //     // validators: [Validators.required]
+    //   }),
+    // });
 
     this.masterDataService.getCountry().subscribe((data: any[]) => {
       this.countryMasList = data;

@@ -9,7 +9,7 @@ import { Choice } from '../model/choice.model';
 })
 export class SuitFormService {
 
-  from_title = 'Customer Infomation Form';
+  from_title = 'Customer Infomation';
 
   from_suit_title = 'Suitability Form';
 
@@ -22,6 +22,10 @@ export class SuitFormService {
   setSuitSerieId(val){
     this.suitSerieId = val;
   }
+  STEPER_1 = 'Persional Information';
+  STEPER_2 = 'Addresses';
+  STEPER_3 = 'Suitability survey';
+  STEPER_4 = 'FATCA';
 
   SUIT_ANS_INCOMPLETE = ' Suit survery not complete !';
 

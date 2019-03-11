@@ -14,8 +14,8 @@ import { Question } from "../model/question.model";
 import { CddService } from "../services/cdd.service";
 import { AddrCustModel } from "../model/addrCust.model";
 import { ConfirmationDialogService } from "../dialog/confirmation-dialog/confirmation-dialog.service";
+import { CDDModel } from "../model/cdd.model";
 // import { CDDModel } from "../model/cdd.model";
-
 
 
 @Component({
@@ -83,10 +83,10 @@ export class SuitComponent implements OnInit {
 
   public customer: Customer = new Customer();
 
+  public cddData = new CDDModel() ;
   public re_addrData: AddrCustModel = new AddrCustModel();
   public cur_addrData: AddrCustModel = new AddrCustModel();
   public work_addrData: AddrCustModel = new AddrCustModel();
-
 
   // cust_mobile_disp;
   cust_RiskScore=0;
@@ -244,7 +244,6 @@ export class SuitComponent implements OnInit {
       validators: [Validators.required]
     }),
   });
-
 
 
   //  Initial register_formGroup
@@ -464,6 +463,39 @@ export class SuitComponent implements OnInit {
   }
 
 
+ getCDD(_id){
+  //Load CDD
+  console.log(' getCDD() ');
+
+  this.cddService.getCustCDDInfo(_id).subscribe(data => {
+    console.log(' CDD data->>' + JSON.stringify(data));
+    if(data ){
+      this.cddData.pid = data[0].pid;
+      this.cddData.firstName = data[0].firstName;
+      this.cddData.lastName = data[0].lastName;
+      this.cddData.dob = data[0].dob;
+      this.cddData.mobile = data[0].mobile;
+      this.cddData.email = data[0].email;
+      this.cddData.typeBusiness = data[0].typeBusiness;
+      this.cddData.occupation = data[0].occupation;
+      this.cddData.position = data[0].position;
+
+      this.cddData.incomeLevel = data[0].incomeLevel;
+      this.cddData.incomeSource = data[0].incomeSource;
+      this.cddData.workPlace = data[0].workPlace;
+
+      // this.reloadData();
+    }
+    // console.log('this.cddData >>' +JSON.stringify(this.cddData));
+
+  }, error => () => {
+      console.log('Was error', error);
+  }, () => {
+    console.log('Loading complete');
+  });
+ }
+
+
   getCDDAddress(_id,seqNo : number){
 
     let _addrData: AddrCustModel = new AddrCustModel();
@@ -545,6 +577,7 @@ export class SuitComponent implements OnInit {
           console.log("HTTP return verifyConfirmOTP():" + JSON.stringify(data));
 
           // Load CDD
+          this.getCDD(this.survey.pid);
 
           // Load address
           this.getCDDAddress(this.survey.pid, 1);
@@ -585,16 +618,8 @@ export class SuitComponent implements OnInit {
         this.needVerify = false;
         this.verifyDOB_val='';
 
-        // //Load CDD
-        //   this.cddService.getCustCDDInfo(this.survey.pid).subscribe(data => {
-        //     console.log('CDD >>' +JSON.stringify(data));
-
-        //   }, error => () => {
-        //       console.log('Was error', error);
-        //   }, () => {
-        //     console.log('Loading complete');
-
-        //   });
+        // Load CDD
+          this.getCDD(this.survey.pid);
 
           // Load address
           this.getCDDAddress(this.survey.pid, 1);
@@ -741,60 +766,6 @@ export class SuitComponent implements OnInit {
       );
   }
 
-  saveSuit() {
-
-  this.cust_RiskLevel= this.riskLevel
-  this.cust_RiskLevelTxt= this.riskLevelTxt;
-  this.cust_RiskDate =  new Date();
-
-    this.suiteService
-      .saveSuitabilityByPID(
-        this.survey.pid,
-        this.survey.pid,
-        this.formService.suitSerieId,
-        this.suitScore,
-        this.riskLevel,
-        this.riskLevelTxt,
-        this.riskLevelDesc,
-        this.suitQuestions
-      )
-      .finally(() => {
-        // Execute after graceful or exceptionally termination
-        this.canDoSuit =false;
-        this.spinnerLoading = false;
-      })
-      .subscribe(
-        (data: any) => {
-          console.log("HTTP return  saveSuit :" + JSON.stringify(data));
-
-          if (data.code === "000") {
-            this.toastr.success(data.msg, this.formService.SUIT_SAVE_COMPLETE, {
-              timeOut: 5000,
-              closeButton: true,
-              positionClass: "toast-top-center"
-            });
-          } else {
-            this.toastr.warning(
-              data.msg,
-              this.formService.SUIT_SAVE_INCOMPLETE,
-              {
-                timeOut: 5000,
-                closeButton: true,
-                positionClass: "toast-top-center"
-              }
-            );
-          }
-
-        },
-        error => () => {
-          console.log("saveSuit Was error", error);
-        },
-        () => {
-          console.log("saveSuit  complete");
-        }
-      );
-
-  }
 
   suiteFormRESET() {
     console.log("Suite survey RESET !");
@@ -811,47 +782,47 @@ export class SuitComponent implements OnInit {
   }
 
 
-  public saveFATCA(){
-    this.suiteService
-    .saveFATCA(
-      this.survey.pid,
-      this.survey.pid,
-      this.fatcaQuestions
-    )
-    .finally(() => {
-      // Execute after graceful or exceptionally termination
-      console.log("saveFATCA logging logic...");
-      this.spinnerLoading = false;
-    })
-    .subscribe(
-      (data: any) => {
-        console.log("HTTP return  saveFATCA :" + JSON.stringify(data));
-        if (data.code === "000") {
-          this.toastr.success(data.msg, this.formService.FATCA_SAVE_COMPLETE, {
-            timeOut: 5000,
-            closeButton: true,
-            positionClass: "toast-top-center"
-          });
-        } else {
-          this.toastr.warning(
-            data.msg,
-            this.formService.FATCA_SAVE_INCOMPLETE,
-            {
-              timeOut: 5000,
-              closeButton: true,
-              positionClass: "toast-top-center"
-              }
-            );
-        }
-      },
-      error => () => {
-        console.log("saveFATCA Was error", error);
-      },
-      () => {
-        console.log("saveFATCA  complete");
-      }
-    );
-  }
+  // public saveFATCA(){
+  //   this.suiteService
+  //   .saveFATCA(
+  //     this.survey.pid,
+  //     this.survey.pid,
+  //     this.fatcaQuestions
+  //   )
+  //   .finally(() => {
+  //     // Execute after graceful or exceptionally termination
+  //     console.log("saveFATCA logging logic...");
+  //     this.spinnerLoading = false;
+  //   })
+  //   .subscribe(
+  //     (data: any) => {
+  //       console.log("HTTP return  saveFATCA :" + JSON.stringify(data));
+  //       if (data.code === "000") {
+  //         this.toastr.success(data.msg, this.formService.FATCA_SAVE_COMPLETE, {
+  //           timeOut: 5000,
+  //           closeButton: true,
+  //           positionClass: "toast-top-center"
+  //         });
+  //       } else {
+  //         this.toastr.warning(
+  //           data.msg,
+  //           this.formService.FATCA_SAVE_INCOMPLETE,
+  //           {
+  //             timeOut: 5000,
+  //             closeButton: true,
+  //             positionClass: "toast-top-center"
+  //             }
+  //           );
+  //       }
+  //     },
+  //     error => () => {
+  //       console.log("saveFATCA Was error", error);
+  //     },
+  //     () => {
+  //       console.log("saveFATCA  complete");
+  //     }
+  //   );
+  // }
 
 
   verifyByChange(event: MatRadioChange) {
@@ -862,96 +833,6 @@ export class SuitComponent implements OnInit {
   }
 
 
-  saveAddrAll(){
-
-  this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData)
-  .subscribe((data: any ) => {
-   console.log('Successful', JSON.stringify(data));
-  //  if (data.code === "000") {
-  //    this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
-  //      timeOut: 5000,
-  //      closeButton: true,
-  //      positionClass: "toast-top-center"
-  //    });
-  //  } else {
-  //    this.toastr.warning(
-  //      data.msg,
-  //      this.formService.SAVE_INCOMPLETE,
-  //      {
-  //        timeOut: 5000,
-  //        closeButton: true,
-  //        positionClass: "toast-top-center"
-  //      }
-  //    );
-  //  }
-
- }, error => () => {
-     console.log('Was error', error);
- }, () => {
-    console.log('Finish Addr register #1');
-// **************************
-    this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData)
-    .subscribe((data: any ) => {
-     console.log('Successful', JSON.stringify(data));
-    //  if (data.code === "000") {
-    //    this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
-    //      timeOut: 5000,
-    //      closeButton: true,
-    //      positionClass: "toast-top-center"
-    //    });
-    //  }
-    //  else {
-    //    this.toastr.warning(
-    //      data.msg,
-    //      this.formService.SAVE_INCOMPLETE,
-    //      {
-    //        timeOut: 5000,
-    //        closeButton: true,
-    //        positionClass: "toast-top-center"
-    //      }
-    //    );
-    //  }
-
-   }, error => () => {
-       console.log('Was error', error);
-   }, () => {
-      console.log('Finish Addr register #2');
-      // **************************
-            this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData)
-            .subscribe((data: any ) => {
-            console.log('Successful', JSON.stringify(data));
-            if (data.code === "000") {
-              this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
-                timeOut: 5000,
-                closeButton: true,
-                positionClass: "toast-top-center"
-              });
-            } else {
-              this.toastr.warning(
-                data.msg,
-                this.formService.SAVE_INCOMPLETE,
-                {
-                  timeOut: 5000,
-                  closeButton: true,
-                  positionClass: "toast-top-center"
-                }
-              );
-            }
-
-            }, error => () => {
-              console.log('Was error', error);
-            }, () => {
-              console.log('Finish Addr register #3');
-            // **************************
-
-            // **************************
-            });
-      // **************************
-
-   });
-// **************************
- });
-}
 
   workAddrOnChange(val){
     if(val ==='R'){
@@ -1002,5 +883,194 @@ export class SuitComponent implements OnInit {
       );
   }
 
+
+
+  savePersonInfo(){
+    console.log('savePersonInfo()');
+
+    this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData)
+    .subscribe((data: any ) => {
+     console.log('Successful', JSON.stringify(data));
+     if (data.code === "000") {
+       this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
+         timeOut: 5000,
+         closeButton: true,
+         positionClass: "toast-top-center"
+       });
+     } else {
+       this.toastr.warning(
+         data.msg,
+         this.formService.SAVE_INCOMPLETE,
+         {
+           timeOut: 5000,
+           closeButton: true,
+           positionClass: "toast-top-center"
+         }
+       );
+     }
+
+   }, error => () => {
+       console.log('Was error', error);
+   }, () => {
+      console.log('Loading complete');
+   });
+  }
+
+
+  public saveFATCA(){
+    this.suiteService
+    .saveFATCA(
+      this.survey.pid,
+      this.survey.pid,
+      this.fatcaQuestions
+    )
+    .finally(() => {
+      // Execute after graceful or exceptionally termination
+      console.log("saveFATCA logging logic...");
+      this.spinnerLoading = false;
+    })
+    .subscribe(
+      (data: any) => {
+        console.log("HTTP return  saveFATCA :" + JSON.stringify(data));
+        if (data.code === "000") {
+          this.toastr.success(data.msg, this.formService.FATCA_SAVE_COMPLETE, {
+            timeOut: 5000,
+            closeButton: true,
+            positionClass: "toast-top-center"
+          });
+        } else {
+          this.toastr.warning(
+            data.msg,
+            this.formService.FATCA_SAVE_INCOMPLETE,
+            {
+              timeOut: 5000,
+              closeButton: true,
+              positionClass: "toast-top-center"
+              }
+            );
+        }
+      },
+      error => () => {
+        console.log("saveFATCA Was error", error);
+      },
+      () => {
+        console.log("saveFATCA  complete");
+      }
+    );
+  }
+
+  saveAddrAll(){
+
+    this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData)
+    .subscribe((data: any ) => {
+     console.log('Successful', JSON.stringify(data));
+
+   }, error => () => {
+       console.log('Was error', error);
+   }, () => {
+      console.log('Finish Addr register #1');
+  // **************************
+      this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData)
+      .subscribe((data: any ) => {
+       console.log('Successful', JSON.stringify(data));
+
+     }, error => () => {
+         console.log('Was error', error);
+     }, () => {
+        console.log('Finish Addr register #2');
+        // **************************
+              this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData)
+              .subscribe((data: any ) => {
+              console.log('Successful', JSON.stringify(data));
+              if (data.code === "000") {
+                this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
+                  timeOut: 5000,
+                  closeButton: true,
+                  positionClass: "toast-top-center"
+                });
+              } else {
+                this.toastr.warning(
+                  data.msg,
+                  this.formService.SAVE_INCOMPLETE,
+                  {
+                    timeOut: 5000,
+                    closeButton: true,
+                    positionClass: "toast-top-center"
+                  }
+                );
+              }
+
+              }, error => () => {
+                console.log('Was error', error);
+              }, () => {
+                console.log('Finish Addr register #3');
+              // **************************
+
+              // **************************
+              });
+        // **************************
+
+     });
+  // **************************
+   });
+  }
+
+  saveSuit() {
+
+    this.cust_RiskLevel= this.riskLevel
+    this.cust_RiskLevelTxt= this.riskLevelTxt;
+    this.cust_RiskDate =  new Date();
+
+      this.suiteService
+        .saveSuitabilityByPID(
+          this.survey.pid,
+          this.survey.pid,
+          this.formService.suitSerieId,
+          this.suitScore,
+          this.riskLevel,
+          this.riskLevelTxt,
+          this.riskLevelDesc,
+          this.suitQuestions
+        )
+        .finally(() => {
+          // Execute after graceful or exceptionally termination
+          this.canDoSuit =false;
+          this.spinnerLoading = false;
+        })
+        .subscribe(
+          (data: any) => {
+            console.log("HTTP return  saveSuit :" + JSON.stringify(data));
+
+            if (data.code === "000") {
+              this.toastr.success(data.msg, this.formService.SUIT_SAVE_COMPLETE, {
+                timeOut: 5000,
+                closeButton: true,
+                positionClass: "toast-top-center"
+              });
+            } else {
+              this.toastr.warning(
+                data.msg,
+                this.formService.SUIT_SAVE_INCOMPLETE,
+                {
+                  timeOut: 5000,
+                  closeButton: true,
+                  positionClass: "toast-top-center"
+                }
+              );
+            }
+
+          },
+          error => () => {
+            console.log("saveSuit Was error", error);
+          },
+          () => {
+            console.log("saveSuit  complete");
+          }
+        );
+    }
+
+  finalSaveAll(){
+
+  }
 
 }

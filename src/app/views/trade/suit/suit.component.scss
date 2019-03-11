@@ -115,7 +115,34 @@ mat-form-field {
   margin: 0 10px;
 }
 
-// .div_align_left {
-//   // width: 100%;
-//   text-align: left;
-// }
+.stepper_action {
+  margin-bottom: 15px;
+  text-align: right;
+}
+.stepper_action button{
+  margin-left: 10px;
+}
+
+.branner {
+  margin-bottom: 15px;
+}
+
+.fatca_div {
+  margin-top: 20px;
+}
+
+.center-screen {
+width: 100%;
+height: 300px;
+margin-top: 100px;
+  align-items: center;
+  text-align: center;
+  display: inline-block;
+}
+.center-screen #finalText {
+  margin-top: 10px;
+}
+
+#mat-horizontal-stepper {
+  margin-top: 15px;
+}

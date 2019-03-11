@@ -19,10 +19,10 @@ import { CustCddFormService } from './cust-cdd.service';
 export class CustCDDComponent implements OnInit {
 
   @Input() custCode: string;
-
   @Input() cddFormGroup: FormGroup;
+  @Input() cddData: CDDModel;
   // cddFormGroup: FormGroup;
-  public cddData = new CDDModel() ;
+  // public cddData = new CDDModel() ;
   public modifyFlag = true;
 
   businessTypeList: BusinessType[];
@@ -104,12 +104,13 @@ export class CustCDDComponent implements OnInit {
   });
 
    //Initial data
-   this.getCustomerInfo(this.custCode);
+  //  this.getCDD(this.custCode);
+
    this.modifOnChange(this.modifyFlag);
 
   }
 
- getCustomerInfo(_id){
+  getCDD(_id){
   //Load CDD
   this.cddService.getCustCDDInfo(_id).subscribe(data => {
     if(data ){
@@ -185,7 +186,7 @@ export class CustCDDComponent implements OnInit {
 
  cancelEdit(){
 
-  this.getCustomerInfo(this.custCode);
+  // this.getCDD(this.custCode);
 
   this.cddFormGroup.disable();
   this.modifyFlag =false;

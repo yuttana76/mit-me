@@ -10,11 +10,8 @@ import { Choice } from '../model/choice.model';
 export class SuitFormService {
 
   from_title = 'Customer Infomation';
-
-  from_suit_title = 'Suitability Form';
-
-  from_fatca_title = 'FATCA Form';
-
+  from_suit_title = 'แบบมาตราฐานในการประเมินความเหมาะสมในการลงทุน';
+  from_fatca_title = 'U.S. National Identification';
 
   addNewBtn = 'New survey';
   suitSerieId = '2019-01';
@@ -25,16 +22,18 @@ export class SuitFormService {
   STEPER_1 = 'Persional Information';
   STEPER_2 = 'Addresses';
   STEPER_3 = 'Suitability survey';
-  STEPER_4 = 'FATCA';
+  STEPER_4 = 'Done';
 
-  SUIT_ANS_INCOMPLETE = ' Suit survery not complete !';
+  SUIT_ANS_INCOMPLETE = ' Suit survery incomplete !';
+
+  STEPPER_FINAL_CONGRA= 'Thank you.';
+
+
 
   SAVE_COMPLETE = ' Save  complete';
   SAVE_INCOMPLETE = ' Save  incomplete';
-
   SUIT_SAVE_COMPLETE = ' Save suitability complete';
   SUIT_SAVE_INCOMPLETE = ' Save suitability incomplete';
-
   FATCA_SAVE_COMPLETE = ' Save FATCA complete';
   FATCA_SAVE_INCOMPLETE = ' Save FATCA incomplete';
 

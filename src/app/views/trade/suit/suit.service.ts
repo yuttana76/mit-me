@@ -28,8 +28,6 @@ export class SuitFormService {
 
   STEPPER_FINAL_CONGRA= 'Thank you.';
 
-
-
   SAVE_COMPLETE = ' Save  complete';
   SAVE_INCOMPLETE = ' Save  incomplete';
   SUIT_SAVE_COMPLETE = ' Save suitability complete';
@@ -37,6 +35,8 @@ export class SuitFormService {
   FATCA_SAVE_COMPLETE = ' Save FATCA complete';
   FATCA_SAVE_INCOMPLETE = ' Save FATCA incomplete';
 
+  DATA_INCOMPLETE = 'Data incomplete';
+  DATA_INCOMPLETE_MSG = 'Please fill require (*) data';
 
   pid_label = 'ID Card';
 

@@ -26,6 +26,12 @@ export class ShareDataService {
    DATE_FORMAT = 'DD/MM/YYYY';
    DB_DATE_FORMAT = 'YYYY-MM-DD';
 
+   public OCCUPATION_FC_OTHER ='170';
+   public BUSINESSTYPE_FC_OTHER ='180';
+   public INCOMESOURCE_FC_OTHER ='OTHER';
+
+   public POSITION_OTHER ='999';
+
   statusList = [
     {
     code: 'A',

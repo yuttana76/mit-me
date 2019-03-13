@@ -29,10 +29,14 @@ export class CddService {
               mobile: data.Mobile,
               email: data.Email,
               occupation: data.Occupation_Code,
+              occupationOth: data.Occupation_Desc,
               position: data.Position_Code,
+              positionOth: data.Position_Desc,
               typeBusiness: data.BusinessType_Code,
+              typeBusinessOth: data.BusinessType_Desc,
               incomeLevel: data.Income_Code,
               incomeSource: data.Income_Source_Code,
+              incomeSourceOth: data.Income_Source_Desc,
               workPlace: data.WorkPlace
             };
           });
@@ -60,10 +64,14 @@ export class CddService {
       mobile: cdd.mobile,
       email: cdd.email,
       occupation: cdd.occupation,
+      occupation_Oth: cdd.occupation_Oth,
       position: cdd.position,
+      position_Oth: cdd.position_Oth,
       typeBusiness: cdd.typeBusiness,
+      typeBusiness_Oth: cdd.typeBusiness_Oth,
       incomeLevel: cdd.incomeLevel,
       incomeSource: cdd.incomeSource,
+      incomeSource_Oth: cdd.incomeSource_Oth,
       workPlace: cdd.workPlace
       };
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddInfo', data);

@@ -1,16 +1,18 @@
 <div class="container ">
-   <!-- <div class="container ">
-      <div class='row'>
+   <div class="row">
+      <div class='row '>
           <section class="example-section">
-              <mat-checkbox [(ngModel)]="modifyFlag"  (change)="modifOnChange(modifyFlag)"  >Modify-{{modifyFlag}}</mat-checkbox>
+              <mat-checkbox [(ngModel)]="modifyFlag"  (change)="modifOnChange(modifyFlag)"  >Modify data</mat-checkbox>
           </section>
 
       </div>
-    </div> -->
+    </div>
 
 <form [formGroup]="cddFormGroup">
 
-
+  <div class='row label_header'>
+    Personal Information
+  </div>
     <div class='row'>
         <mat-form-field class="col-md-4 col-sm-4">
             <input matInput [(ngModel)]="cddData.pid" placeholder="ID card"  formControlName="pid"  required>
@@ -45,15 +47,23 @@
           </mat-form-field>
       </div>
 
+      <div class='row label_header'>
+        Background
+      </div>
+
       <div class='row'>
               <mat-form-field class="col-md-4">
                   <mat-select [(ngModel)]="cddData.typeBusiness" formControlName="typeBusiness" placeholder="Business type" required >
                     <mat-option *ngFor="let obj of businessTypeList" [value]="obj.Code">
-                      {{obj.Describe}}
+                      {{obj.Thai_Name}}
                     </mat-option>
                   </mat-select>
                   <mat-error *ngIf="cddFormGroup.get('typeBusiness').invalid">Please choose one.</mat-error>
                 </mat-form-field>
+
+              <mat-form-field class="col-md-4" *ngIf="isBusinessTypeOther()">
+                  <input matInput [(ngModel)]="cddData.typeBusiness_Oth" placeholder="Other"  formControlName="typeBusinessOth" required>
+              </mat-form-field>
       </div>
 
       <div class='row'>
@@ -61,11 +71,18 @@
           <mat-form-field class="col-md-4">
               <mat-select [(ngModel)]="cddData.occupation" formControlName="occupation" placeholder="Occupation" required >
                 <mat-option *ngFor="let obj of occupationList" [value]="obj.Code">
-                  {{obj.Describe}}
+                  {{obj.Thai_Name}}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="cddFormGroup.get('occupation').invalid">Please choose one.</mat-error>
             </mat-form-field>
+
+          <mat-form-field class="col-md-4" *ngIf="isOccupationOther()" >
+              <input matInput [(ngModel)]="cddData.occupation_Oth" placeholder="Other"  formControlName="occupationOth" required>
+          </mat-form-field>
+       </div>
+
+       <div class='row'>
 
             <mat-form-field class="col-md-4">
                 <mat-select [(ngModel)]="cddData.position" formControlName="position" placeholder="Position" required >
@@ -74,7 +91,11 @@
                   </mat-option>
                 </mat-select>
                 <mat-error *ngIf="cddFormGroup.get('occupation').invalid">Please choose one.</mat-error>
-              </mat-form-field>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-4" *ngIf="isPositionOther()">
+                <input matInput [(ngModel)]="cddData.position_Oth" placeholder="Other"  formControlName="positionOth" required>
+            </mat-form-field>
       </div>
 
       <div class='row'>
@@ -87,7 +108,9 @@
               </mat-select>
               <mat-error *ngIf="cddFormGroup.get('incomeLevel').invalid">Please choose one.</mat-error>
             </mat-form-field>
+      </div>
 
+      <div class='row'>
             <!-- {{cddData.incomeSource}} -->
           <mat-form-field class="col-md-4">
               <mat-select [(ngModel)]="cddData.incomeSource" formControlName="incomeSource" placeholder="Income source" required >
@@ -97,6 +120,10 @@
               </mat-select>
               <mat-error *ngIf="cddFormGroup.get('incomeSource').invalid">Please choose one.</mat-error>
             </mat-form-field>
+
+          <mat-form-field class="col-md-4" *ngIf="isIncomeSource()">
+              <input matInput [(ngModel)]="cddData.incomeSource_Oth" placeholder="Other"  formControlName="incomeSourceOth" required>
+          </mat-form-field>
       </div>
 
       <div class='row'>
@@ -105,6 +132,8 @@
           </mat-form-field>
 
       </div>
+
+      <!-- <a mat-flat-button color="primary" (click)="checkFormInvalid()" > Check Invalid</a> -->
 
   </form>
 
@@ -120,4 +149,7 @@
           <a mat-flat-button color="accent" (click)="cancelEdit()" [disabled]="!modifyFlag"> Cancel</a>
           </mat-card-actions>
   </div> -->
+
+
+
 </div>

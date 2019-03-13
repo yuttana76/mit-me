@@ -146,3 +146,15 @@ margin-top: 100px;
 #mat-horizontal-stepper {
   margin-top: 15px;
 }
+
+.display_block {
+  margin-top: 30px;
+  margin-left: 20px;
+
+  display:block;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: 4em;
+}

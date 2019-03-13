@@ -31,17 +31,16 @@
   </div>
 
   <!-- VERIFY -->
-  <div *ngIf="needVerify" class="container center-screen ">
-      <div class="row ">
+  <div *ngIf="needVerify" class="container">
+
           <!-- <h5>Request verify method.</h5> -->
           <div class="row">
-              <mat-radio-group  [(ngModel)]="verifyBy" class="col-lg-4 col-md-4 col-sm-4" >
+              <mat-radio-group  [(ngModel)]="verifyBy" class="col-lg-4 col-md-4 col-sm-4 display_block" >
                   <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >Verify by date of birth </mat-radio-button>
                   <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == PREFIX_MOBILE_ALLOW_SEND_SMS "  >
                     Verify by OTP to register</mat-radio-button>
                 </mat-radio-group>
           </div>
-      </div>
 
       <div id='div_DOB' *ngIf="verifyBy=='DOB'" >
         <div class="row" >
@@ -76,8 +75,8 @@
 
   <!-- ************* STEPPER  -->
   <div class='container'>
-  <!-- <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag" class="col" > -->
-      <mat-horizontal-stepper id='mat-horizontal-stepper' labelPosition="bottom"  #stepper *ngIf="verifyFLag" class="col" >
+  <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag" class="col" >
+      <!-- <mat-horizontal-stepper id='mat-horizontal-stepper' labelPosition="bottom"  #stepper *ngIf="verifyFLag" class="col" > -->
     <!-- ***************** #1  Persional Information Step-->
     <mat-step [stepControl]="firstFormGroup">
 
@@ -85,7 +84,7 @@
         <form [formGroup]="firstFormGroup">
           <ng-template matStepLabel>{{formService.STEPER_1}}</ng-template>
           <div class="stepper_action" >
-              <button mat-flat-button  matStepperNext color="primary" >Next</button>
+              <button mat-flat-button  matStepperNext color="primary" (click)="checkCDD_FormInvalid()">Next</button>
           </div>
           <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="firstFormGroup" [cddData]="cddData"></app-cust-cdd>
         </form>
@@ -101,8 +100,8 @@
                   </mat-card-actions> -->
             </form>
         </div>
-
           <!-- FATCA -->
+          <a mat-flat-button color="primary" (click)="savePersonInfo()" [disabled]="!modifyFlag"> Save</a>
     </mat-step>
 
      <!-- ***************** #2 Information step-->

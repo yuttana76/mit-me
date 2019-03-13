@@ -276,5 +276,105 @@ export class MasterDataService {
       })
     );
   }
+
+
+  getFCbusinessType() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/FCbusinessType')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(data => {
+          return {
+            Code: data.Code,
+            Thai_Name: data.Thai_Name,
+            Eng_Name: data.Eng_Name
+          };
+        });
+      })
+    );
+  }
+
+
+  getFCoccupation() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/FCoccupation')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(data => {
+          return {
+            Code: data.Code,
+            Thai_Name: data.Thai_Name,
+            Eng_Name: data.Eng_Name
+          };
+        });
+      })
+    );
+  }
+
+
+  getFCincomeLevel() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/FCincomeLevel')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(data => {
+          return {
+            Code: data.Code,
+            Thai_Name: data.Thai_Name,
+            Eng_Name: data.Eng_Name
+          };
+        });
+      })
+    );
+  }
+
+
+  getFCincomeSource() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/FCincomeSource')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(data => {
+          return {
+            Code: data.Code,
+            Thai_Name: data.Thai_Name,
+            Eng_Name: data.Eng_Name
+          };
+        });
+      })
+    );
+  }
+
+
+  getFCnation() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/FCnation')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(data => {
+          return {
+            Code: data.Code,
+            Eng_Name: data.Eng_Name
+          };
+        });
+      })
+    );
+  }
+
+
+  getFCcountry() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/FCcountry')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(data => {
+          return {
+            Code: data.Code,
+            Eng_Name: data.Eng_Name
+          };
+        });
+      })
+    );
+  }
   // *********************************
 }

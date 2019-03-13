@@ -196,6 +196,9 @@ export class SuitComponent implements OnInit {
 
   }
 
+
+
+
   private _buildForm() {
     // Initial Form fields
     this.form = new FormGroup({
@@ -227,17 +230,30 @@ export class SuitComponent implements OnInit {
     typeBusiness: new FormControl(null, {
       validators: [Validators.required]
     }),
+    typeBusinessOth: new FormControl(null, {
+      validators: [Validators.required]
+    }),
     occupation: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    occupationOth: new FormControl(null, {
       validators: [Validators.required]
     }),
 
     position: new FormControl(null, {
       validators: [Validators.required]
     }),
+    positionOth: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+
     incomeLevel: new FormControl(null, {
       validators: [Validators.required]
     }),
     incomeSource: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    incomeSourceOth: new FormControl(null, {
       validators: [Validators.required]
     }),
     workPlace: new FormControl(null, {
@@ -464,11 +480,10 @@ export class SuitComponent implements OnInit {
 
 
  getCDD(_id){
-  //Load CDD
-  console.log(' getCDD() ');
-
   this.cddService.getCustCDDInfo(_id).subscribe(data => {
-    console.log(' CDD data->>' + JSON.stringify(data));
+
+// console.log(' getCDD()>> ' + JSON.stringify(data));
+
     if(data ){
       this.cddData.pid = data[0].pid;
       this.cddData.firstName = data[0].firstName;
@@ -477,12 +492,18 @@ export class SuitComponent implements OnInit {
       this.cddData.mobile = data[0].mobile;
       this.cddData.email = data[0].email;
       this.cddData.typeBusiness = data[0].typeBusiness;
+      this.cddData.typeBusiness_Oth = data[0].typeBusinessOth;
       this.cddData.occupation = data[0].occupation;
+      this.cddData.occupation_Oth = data[0].occupationOth;
       this.cddData.position = data[0].position;
+      this.cddData.position_Oth = data[0].positionOth;
 
       this.cddData.incomeLevel = data[0].incomeLevel;
       this.cddData.incomeSource = data[0].incomeSource;
+      this.cddData.incomeSource_Oth = data[0].incomeSourceOth;
       this.cddData.workPlace = data[0].workPlace;
+
+
 
       // this.reloadData();
     }
@@ -1068,6 +1089,33 @@ export class SuitComponent implements OnInit {
           }
         );
     }
+
+    checkCDD_FormInvalid(){
+
+      if(this.firstFormGroup.invalid){
+        const invalid = [];
+        const controls = this.firstFormGroup.controls;
+        for (const name in controls) {
+            if (controls[name].invalid) {
+                invalid.push(name);
+            }
+        }
+
+        if ( invalid.length > 0 ){
+          this.toastr.warning(
+            this.formService.DATA_INCOMPLETE_MSG,
+            this.formService.DATA_INCOMPLETE,
+            {
+              timeOut: 5000,
+              closeButton: true,
+              positionClass: "toast-top-center"
+            }
+          );
+        }
+
+      }
+
+     }
 
   finalSaveAll(){
 

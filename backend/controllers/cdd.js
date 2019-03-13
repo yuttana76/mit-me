@@ -150,10 +150,17 @@ exports.saveCDDInfo = (req, res, next) => {
   var mobile = req.body.mobile
   var email = req.body.email
   var occupation = req.body.occupation
+  var occupation_Oth = req.body.occupation_Oth
+
   var position = req.body.position
+  var position_Oth = req.body.position_Oth
+
   var typeBusiness = req.body.typeBusiness
+  var typeBusiness_Oth = req.body.typeBusiness_Oth
+
   var incomeLevel = req.body.incomeLevel
   var incomeSource = req.body.incomeSource
+  var incomeSource_Oth = req.body.incomeSource_Oth
   var workPlace = req.body.workPlace
 
 
@@ -171,10 +178,18 @@ exports.saveCDDInfo = (req, res, next) => {
       ,[Mobile]=@Mobile
       ,[Email]=@Email
       ,[Occupation_Code]=@Occupation_Code
+      ,[Occupation_Desc]=@Occupation_Oth
+
       ,[Position_Code]=@Position_Code
+      ,[Position_Desc]=@Position_Oth
+
       ,[BusinessType_Code]=@BusinessType_Code
+      ,[BusinessType_Desc]=@BusinessType_Oth
+
       ,[Income_Code]=@Income_Code
       ,[Income_Source_Code]=@Income_Source_Code
+      ,[Income_Source_Desc]=@Income_Source_Oth
+
       ,[WorkPlace]=@WorkPlace
       ,[UpdateBy]=@ActionBy
       ,[UpdateDate]=GETDATE()
@@ -183,9 +198,9 @@ exports.saveCDDInfo = (req, res, next) => {
     if @@rowcount = 0
         begin
         INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[Title_Name_T],[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
-            ,[Occupation_Code] ,[Position_Code] ,[BusinessType_Code] ,[Income_Code] ,[Income_Source_Code],WorkPlace,[CreateBy] ,[CreateDate] )
+          ,[Occupation_Code] ,[Occupation_Desc] ,[Position_Code],[Position_Desc] ,[BusinessType_Code],[BusinessType_Desc] ,[Income_Code] ,[Income_Source_Code],[Income_Source_Desc],WorkPlace,[CreateBy] ,[CreateDate] )
         VALUES(@Cust_Code,@ID_CARD ,@Title_Name_T,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
-            ,@Occupation_Code ,@Position_Code ,@BusinessType_Code ,@Income_Code ,@Income_Source_Code ,@WorkPlace,@ActionBy ,GETDATE())
+            ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ActionBy ,GETDATE())
         END
   END
 
@@ -205,10 +220,14 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('Mobile', sql.VarChar(50), mobile)
     .input('Email', sql.VarChar(200), email)
     .input('Occupation_Code', sql.VarChar(3), occupation)
+    .input('Occupation_Oth', sql.VarChar(100), occupation_Oth)
     .input('Position_Code', sql.VarChar(3), position)
+    .input('Position_Oth', sql.VarChar(100), position_Oth)
     .input('BusinessType_Code', sql.VarChar(3), typeBusiness)
-    .input('Income_Code', sql.VarChar(3), incomeLevel)
-    .input('Income_Source_Code', sql.VarChar(3), incomeSource)
+    .input('BusinessType_Oth', sql.VarChar(100), typeBusiness_Oth)
+    .input('Income_Code', sql.VarChar(6), incomeLevel)
+    .input('Income_Source_Code', sql.VarChar(100), incomeSource)
+    .input('Income_Source_Oth', sql.VarChar(100), incomeSource_Oth)
     .input('WorkPlace', sql.VarChar(500), workPlace)
     .input('ActionBy', sql.VarChar(50), actionBy)
     .query(queryStr, (err, result) => {

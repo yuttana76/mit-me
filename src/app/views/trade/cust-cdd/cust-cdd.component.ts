@@ -10,6 +10,11 @@ import { IncomeSource } from '../model/incomeSource.model';
 import { Position } from '../model/position.model';
 import { ToastrService } from 'ngx-toastr';
 import { CustCddFormService } from './cust-cdd.service';
+import { FCoccupation } from '../model/fcOccupation.model';
+import { FCbusinessType } from '../model/fcBusinessType.model';
+import { FCincomeLevel } from '../model/fcIncomeLevel.model';
+import { FCincomeSource } from '../model/fcIncomeSource.model';
+import { ShareDataService } from '../services/shareData.service';
 
 @Component({
   selector: 'app-cust-cdd',
@@ -23,70 +28,31 @@ export class CustCDDComponent implements OnInit {
   @Input() cddData: CDDModel;
   // cddFormGroup: FormGroup;
   // public cddData = new CDDModel() ;
-  public modifyFlag = true;
+  public modifyFlag = false;
 
-  businessTypeList: BusinessType[];
-  occupationList: Occupation[];
+  businessTypeList: FCbusinessType[];
+  occupationList: FCoccupation[];
   positionList: Position[];
-  incomeList: Income[];
-  incomeSourceList: IncomeSource[];
+  incomeList: FCincomeLevel[];
+  incomeSourceList: FCincomeSource[];
 
 
   constructor(
     private cddService: CddService,
     private masterDataService:MasterDataService,
     private toastr: ToastrService,
-    public formService: CustCddFormService
+    public formService: CustCddFormService,
+    public shareDataService: ShareDataService
     ) { }
+
 
   ngOnInit() {
 
-  //  this.cddFormGroup = new FormGroup({
-  //   pid: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   firstName: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   lastName: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   dob: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   mobile: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   email: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   typeBusiness: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   occupation: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
+  this.masterDataService.getFCoccupation().subscribe((data: any[]) => {
+    this.occupationList = data;
+  });
 
-  //   position: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   incomeLevel: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   incomeSource: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  //   workPlace: new FormControl(null, {
-  //     validators: [Validators.required]
-  //   }),
-  // });
-
-   // Load master data
-   this.masterDataService.getOccupations().subscribe((data: any[]) => {
-      this.occupationList = data;
-   });
-
-   this.masterDataService.getBusinessType().subscribe((data: any[]) => {
+   this.masterDataService.getFCbusinessType().subscribe((data: any[]) => {
     this.businessTypeList = data;
   });
 
@@ -95,113 +61,100 @@ export class CustCDDComponent implements OnInit {
 
   })
 
-  this.masterDataService.getIncome().subscribe((data: any[]) => {
+  this.masterDataService.getFCincomeLevel().subscribe((data: any[]) => {
     this.incomeList = data;
   });
 
-  this.masterDataService.getIncomeSource().subscribe((data: any[]) => {
+  this.masterDataService.getFCincomeSource().subscribe((data: any[]) => {
     this.incomeSourceList = data;
   });
 
-   //Initial data
-  //  this.getCDD(this.custCode);
+  console.log('Form invalid>>' + this.cddFormGroup.invalid);
 
-   this.modifOnChange(this.modifyFlag);
-
+    if (this.cddFormGroup.invalid) {
+      this.cddFormGroup.enable();
+      this.modifyFlag  = true;
+    }
   }
 
-  getCDD(_id){
-  //Load CDD
-  this.cddService.getCustCDDInfo(_id).subscribe(data => {
-    if(data ){
-      this.cddData.pid = data[0].pid;
-      this.cddData.firstName = data[0].firstName;
-      this.cddData.lastName = data[0].lastName;
-      this.cddData.dob = data[0].dob;
-      this.cddData.mobile = data[0].mobile;
-      this.cddData.email = data[0].email;
-      this.cddData.typeBusiness = data[0].typeBusiness;
-      this.cddData.occupation = data[0].occupation;
-      this.cddData.position = data[0].position;
-
-      this.cddData.incomeLevel = data[0].incomeLevel;
-      this.cddData.incomeSource = data[0].incomeSource;
-      this.cddData.workPlace = data[0].workPlace;
-
-      // this.reloadData();
-    }
-    // console.log('this.cddData >>' +JSON.stringify(this.cddData));
-
-  }, error => () => {
-      console.log('Was error', error);
-  }, () => {
-    console.log('Loading complete');
-  });
- }
-
-//  reloadData(){
-//   this.cddFormGroup.patchValue({pid: this.cddData.pid})
-//   this.cddFormGroup.patchValue({firstName: this.cddData.firstName})
-//   this.cddFormGroup.patchValue({lastName: this.cddData.lastName})
-//   this.cddFormGroup.patchValue({dob: this.cddData.dob})
-//   this.cddFormGroup.patchValue({mobile: this.cddData.mobile})
-//   this.cddFormGroup.patchValue({email: this.cddData.email})
-//   this.cddFormGroup.patchValue({typeBusiness: this.cddData.typeBusiness})
-//   this.cddFormGroup.patchValue({occupation: this.cddData.occupation})
-//   this.cddFormGroup.patchValue({position: this.cddData.position})
-//   this.cddFormGroup.patchValue({incomeLevel: this.cddData.incomeLevel})
-//   this.cddFormGroup.patchValue({incomeSource: this.cddData.incomeSource})
-//  }
-
- savePersonInfo(){
-   console.log('savePersonInfo()');
-
-   this.cddService.saveCustCDDInfo(this.custCode,this.custCode,this.cddData)
-   .subscribe((data: any ) => {
-    console.log('Successful', JSON.stringify(data));
-    if (data.code === "000") {
-      this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
-        timeOut: 5000,
-        closeButton: true,
-        positionClass: "toast-top-center"
-      });
-    } else {
-      this.toastr.warning(
-        data.msg,
-        this.formService.SAVE_INCOMPLETE,
-        {
-          timeOut: 5000,
-          closeButton: true,
-          positionClass: "toast-top-center"
-        }
-      );
-    }
-
-  }, error => () => {
-      console.log('Was error', error);
-  }, () => {
-     console.log('Loading complete');
-  });
- }
-
- cancelEdit(){
-
-  // this.getCDD(this.custCode);
-
-  this.cddFormGroup.disable();
-  this.modifyFlag =false;
- }
 
  modifOnChange(val){
+
+  console.log('*** Check from invalid >>' + this.cddFormGroup.valid);
+
     if(val){
       this.cddFormGroup.enable();
-
      }else{
-      // this.reloadData();
       this.cddFormGroup.disable();
      }
  }
 
+ checkFormInvalid(){
+  if(this.cddFormGroup.invalid){
+
+    const invalid = [];
+    const controls = this.cddFormGroup.controls;
+    for (const name in controls) {
+        if (controls[name].invalid) {
+            invalid.push(name);
+        }
+    }
+    console.log('Form invalid are>>' + JSON.stringify(invalid));
+  }
+
+ }
+
+ isBusinessTypeOther(){
+    if(this.cddData.typeBusiness === this.shareDataService.BUSINESSTYPE_FC_OTHER){
+      this.cddFormGroup.controls["typeBusinessOth"].setValidators(Validators.required);
+      this.cddFormGroup.controls["typeBusinessOth"].updateValueAndValidity();
+      return true;
+    }else{
+      this.cddFormGroup.controls["typeBusinessOth"].clearValidators();
+      this.cddFormGroup.controls["typeBusinessOth"].updateValueAndValidity();
+      this.cddData.typeBusiness_Oth = "";
+      return false;
+    }
+ }
+
+ isOccupationOther(){
+  if(this.cddData.occupation ===  this.shareDataService.OCCUPATION_FC_OTHER){
+    this.cddFormGroup.controls["occupationOth"].setValidators(Validators.required);
+    this.cddFormGroup.controls["occupationOth"].updateValueAndValidity();
+    return true;
+  }else{
+    this.cddFormGroup.controls["occupationOth"].clearValidators();
+    this.cddFormGroup.controls["occupationOth"].updateValueAndValidity();
+    this.cddData.occupation_Oth = "";
+    return false;
+  }
+ }
+
+ isPositionOther(){
+  if(this.cddData.position === this.shareDataService.POSITION_OTHER){
+    this.cddFormGroup.controls["positionOth"].setValidators(Validators.required);
+    this.cddFormGroup.controls["positionOth"].updateValueAndValidity();
+    return true;
+  }else{
+    this.cddFormGroup.controls["positionOth"].clearValidators();
+    this.cddFormGroup.controls["positionOth"].updateValueAndValidity();
+    this.cddData.position_Oth = "";
+    return false;
+  }
+ }
+
+ isIncomeSource(){
+  if(this.cddData.incomeSource === this.shareDataService.INCOMESOURCE_FC_OTHER){
+    this.cddFormGroup.controls["incomeSourceOth"].setValidators(Validators.required);
+    this.cddFormGroup.controls["incomeSourceOth"].updateValueAndValidity();
+    return true;
+  }else{
+    this.cddFormGroup.controls["incomeSourceOth"].clearValidators();
+    this.cddFormGroup.controls["incomeSourceOth"].updateValueAndValidity();
+    this.cddData.incomeSource_Oth = "";
+    return false;
+  }
+ }
 
 
 }

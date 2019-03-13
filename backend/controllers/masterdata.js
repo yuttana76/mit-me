@@ -192,3 +192,224 @@ exports.getIncomeSource = (req, res, next) => {
     console.log("EROR>>"+err);
   })
 }
+// ************** fundconnext
+
+exports.getFCbusinessType = (req, res, next) => {
+
+  logger.info(`API /getFcBusinessType - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var queryStr = `
+  select  [Code]
+  ,[Thai_Name]
+  ,[Eng_Name]
+from MIT_FC_BUSINESS_TYPE
+order by SEQ,Thai_Name
+
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          rsp_code = "205";
+          return res.status(401).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }else {
+          rsp_code = "000";
+          return res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+
+exports.getFCoccupation = (req, res, next) => {
+
+  logger.info(`API /getFCoccupation - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var queryStr = `
+  select  [Code]
+  ,[Thai_Name]
+  ,[Eng_Name]
+from MIT_FC_OCCUPATION
+order by SEQ,Thai_Name
+
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          rsp_code = "205";
+          return res.status(401).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }else {
+          rsp_code = "000";
+          return res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+
+exports.getFCincomeLevel = (req, res, next) => {
+  logger.info(`API /getFCincomeLevel - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var queryStr = `
+    select *
+    from MIT_FC_INCOME_LEVEL
+    order by Code
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          rsp_code = "205";
+          return res.status(401).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }else {
+          rsp_code = "000";
+          return res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+
+exports.getFCincomeSource = (req, res, next) => {
+  logger.info(`API /getFCincomeSource - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var queryStr = `
+  select  [Code]
+  ,[Thai_Name]
+  ,[Eng_Name]
+    from MIT_FC_INCOME_SOURCE
+    order by SEQ,Thai_Name
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          rsp_code = "205";
+          return res.status(401).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }else {
+          rsp_code = "000";
+          return res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+
+exports.getFCnation = (req, res, next) => {
+  logger.info(`API /getFCnation - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var queryStr = `
+  select *
+  from MIT_FC_NATION
+  order by Eng_Name
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          rsp_code = "205";
+          return res.status(401).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }else {
+          rsp_code = "000";
+          return res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+
+
+exports.getFCcountry = (req, res, next) => {
+  logger.info(`API /getFCcountry - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var queryStr = `
+  select *
+  from MIT_FC_COUNTRY
+  order by Eng_Name
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          rsp_code = "205";
+          return res.status(401).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }else {
+          rsp_code = "000";
+          return res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}

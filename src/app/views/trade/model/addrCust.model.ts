@@ -16,6 +16,9 @@ export class AddrCustModel {
   public Tel: string;
   public Fax: string;
 
+  public SameAs: string;
+  public ReqModifyFlag: boolean;
+
   public CreateBy: string;
   public CreateDate: string;
   public UpdateBy: string;

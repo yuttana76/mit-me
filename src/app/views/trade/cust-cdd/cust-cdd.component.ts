@@ -28,7 +28,7 @@ export class CustCDDComponent implements OnInit {
   @Input() cddData: CDDModel;
   // cddFormGroup: FormGroup;
   // public cddData = new CDDModel() ;
-  public modifyFlag = false;
+  // public modifyFlag = false;
 
   businessTypeList: FCbusinessType[];
   occupationList: FCoccupation[];
@@ -43,7 +43,9 @@ export class CustCDDComponent implements OnInit {
     private toastr: ToastrService,
     public formService: CustCddFormService,
     public shareDataService: ShareDataService
-    ) { }
+    ) {
+
+     }
 
 
   ngOnInit() {
@@ -69,18 +71,31 @@ export class CustCDDComponent implements OnInit {
     this.incomeSourceList = data;
   });
 
-  console.log('Form invalid>>' + this.cddFormGroup.invalid);
+  }
+
+  ngAfterViewInit(){
 
     if (this.cddFormGroup.invalid) {
       this.cddFormGroup.enable();
-      this.modifyFlag  = true;
+      // this.modifyFlag  = true;
+      this.cddData.ReqModifyFlag = true;
+
+      const controls = this.cddFormGroup.controls;
+      for (const name in controls) {
+          if (controls[name].invalid) {
+              this.cddFormGroup.controls[name].markAsTouched();
+          }
+      }
+
+    } else {
+      this.cddFormGroup.disable();
+      // this.modifyFlag  = false;
+      this.cddData.ReqModifyFlag = false;
     }
+
   }
 
-
  modifOnChange(val){
-
-  console.log('*** Check from invalid >>' + this.cddFormGroup.valid);
 
     if(val){
       this.cddFormGroup.enable();

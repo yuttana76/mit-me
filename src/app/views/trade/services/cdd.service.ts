@@ -53,6 +53,14 @@ export class CddService {
     let _DOB = year+"-"+month+"-"+day;
     // console.log('cdd.dob >>' + cdd.dob);
 
+    let _reqModifyFlag ;
+    if (cdd.ReqModifyFlag){
+      _reqModifyFlag = 1;
+    }else {
+      _reqModifyFlag = 0;
+    }
+
+
     const data = {
       actionBy: ActionBy,
       Cust_Code: custCode,
@@ -72,7 +80,8 @@ export class CddService {
       incomeLevel: cdd.incomeLevel,
       incomeSource: cdd.incomeSource,
       incomeSource_Oth: cdd.incomeSource_Oth,
-      workPlace: cdd.workPlace
+      workPlace: cdd.workPlace,
+      ReqModifyFlag: _reqModifyFlag,
       };
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddInfo', data);
   }
@@ -83,8 +92,18 @@ export class CddService {
     .get<{ message: string; result: any }>(BACKEND_URL + '/cddAddr/' + custCode + '?Addr_Seq=' + Addr_Seq )
     .pipe(
       map(fundtData => {
+
         return fundtData.result.map(data => {
-          // console.log(` Service getCustCDDInfo() >> ${JSON.stringify(data)}`);
+
+          try{
+            if (data.SameAs) {
+              data.SameAs = data.SameAs.toString();
+            }
+          }catch(err){
+            console.log('ERR >>' + err);
+          }
+
+
           return {
             Cust_Code: data.Cust_Code,
             Addr_Seq: data.Addr_Seq,
@@ -102,6 +121,7 @@ export class CddService {
             Print_Address: data.Print_Address,
             Tel: data.Tel,
             Fax: data.Fax,
+            SameAs: data.SameAs,
             CreateBy: data.CreateBy,
             CreateDate: data.CreateDate,
             UpdateBy: data.UpdateBy,
@@ -116,6 +136,12 @@ export class CddService {
 
   saveCustCDDAddr(ActionBy: string, custCode: string, _addr: AddrCustModel) {
 
+    let _reqModifyFlag ;
+    if (_addr.ReqModifyFlag){
+      _reqModifyFlag = 1;
+    }else {
+      _reqModifyFlag = 0;
+    }
     const data = {
       actionBy: ActionBy,
       Cust_Code: custCode,
@@ -132,7 +158,9 @@ export class CddService {
       Country_Id: _addr.Country_Id,
       Zip_Code: _addr.Zip_Code,
       Tel: _addr.Tel,
-      Fax: _addr.Fax
+      Fax: _addr.Fax,
+      SameAs: _addr.SameAs,
+      ReqModifyFlag: _reqModifyFlag,
       };
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddAddr', data);
   }

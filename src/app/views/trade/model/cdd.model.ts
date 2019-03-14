@@ -25,6 +25,8 @@ export class CDDModel {
       public incomeCountry_Oth: string;
       public workPlace: string;
 
+      public ReqModifyFlag: boolean;
+
       constructor(){}
 
 }

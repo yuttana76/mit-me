@@ -76,18 +76,21 @@
   <!-- ************* STEPPER  -->
   <div class='container'>
   <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag" class="col" >
-      <!-- <mat-horizontal-stepper id='mat-horizontal-stepper' labelPosition="bottom"  #stepper *ngIf="verifyFLag" class="col" > -->
     <!-- ***************** #1  Persional Information Step-->
-    <mat-step [stepControl]="firstFormGroup">
+    <mat-step [stepControl]="cddFormGroup">
 
       <!--Person information-->
-        <form [formGroup]="firstFormGroup">
+        <form [formGroup]="cddFormGroup">
           <ng-template matStepLabel>{{formService.STEPER_1}}</ng-template>
           <div class="stepper_action" >
-              <button mat-flat-button  matStepperNext color="primary" (click)="checkCDD_FormInvalid()">Next</button>
+              <button mat-flat-button  matStepperNext color="primary" (click)="checkCDD_FormInvalid(cddFormGroup)">Next</button>
           </div>
-          <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="firstFormGroup" [cddData]="cddData"></app-cust-cdd>
+          <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="cddFormGroup" [cddData]="cddData"></app-cust-cdd>
         </form>
+
+        <!-- <div class="row">
+            <a mat-flat-button color="primary" (click)="savePersonInfo()" [disabled]="!modifyFlag"> Save</a>
+        </div> -->
 
         <!-- FATCA -->
         <div class="fatca_div">
@@ -101,7 +104,7 @@
             </form>
         </div>
           <!-- FATCA -->
-          <a mat-flat-button color="primary" (click)="savePersonInfo()" [disabled]="!modifyFlag"> Save</a>
+
     </mat-step>
 
      <!-- ***************** #2 Information step-->
@@ -109,9 +112,16 @@
         <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
         <div class="stepper_action" >
             <button mat-flat-button  matStepperPrevious color="accent" >Back</button>
-            <button mat-flat-button  matStepperNext color="primary" >Next</button>
+            <button mat-flat-button  matStepperNext color="primary" (click)="checkCDD_FormInvalid(register_formGroup)">Next</button>
         </div>
 
+            <div class='row '>
+                <section class="example-section">
+                    <mat-checkbox [(ngModel)]="addrModifyFlag"  (change)="modifOnChange(addrModifyFlag)"  >{{formService.REQ_MODIFY}}</mat-checkbox>
+                </section>
+            </div>
+
+        <!-- 2.1 Register Address  (SEQ = 1)-->
         <div>
             <mat-expansion-panel [(expanded)]='register_expanded'>
                 <mat-expansion-panel-header>
@@ -129,6 +139,7 @@
               </mat-expansion-panel>
         </div>
 
+        <!-- 2.2 Work Address (SEQ = 3)-->
         <div >
             <mat-expansion-panel [(expanded)]='work_expanded'>
                 <mat-expansion-panel-header>
@@ -142,9 +153,9 @@
 
                 <div>
                     <section class="example-section">
-                        <mat-radio-group   [(ngModel)]="workAddrAs"  (change)="workAddrOnChange(workAddrAs)" >
-                          <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
-                          <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
+                        <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)" [(disabled)]="!addrModifyFlag" >
+                          <mat-radio-button class="example-margin" value="1">Same as Residence Registration Address</mat-radio-button>
+                          <mat-radio-button class="example-margin" value="9">Other (Please specify)</mat-radio-button>
                         </mat-radio-group>
                       </section>
                 </div>
@@ -155,6 +166,7 @@
               </mat-expansion-panel>
           </div>
 
+          <!-- 2.3 Current Address (SEQ = 2)-->
           <div>
               <mat-expansion-panel [(expanded)]='current_expanded' >
                   <mat-expansion-panel-header>
@@ -168,10 +180,10 @@
 
                   <div class='row'>
                       <section class="example-section" >
-                          <mat-radio-group [(ngModel)]="currAddrAs"  (change)="cuurAddrOnChange(currAddrAs)"  >
-                              <mat-radio-button class="example-margin" value="R">Same as Residence Registration Address</mat-radio-button>
-                              <mat-radio-button class="example-margin" value="W">Same as Workplace Address </mat-radio-button>
-                              <mat-radio-button class="example-margin" value="O">Other (Please specify)</mat-radio-button>
+                          <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="cuurAddrOnChange(cur_addrData.SameAs)"  [(disabled)]="!addrModifyFlag">
+                              <mat-radio-button class="example-margin" value="1">Same as Residence Registration Address</mat-radio-button>
+                              <mat-radio-button class="example-margin" value="3">Same as Workplace Address </mat-radio-button>
+                              <mat-radio-button class="example-margin" value="9">Other (Please specify)</mat-radio-button>
                             </mat-radio-group>
                         </section>
                   </div>
@@ -192,7 +204,8 @@
     </mat-step>
 
   <!-- ***************** #3  Suitability Step-->
-    <mat-step [stepControl]="firstFormGroup"   >
+    <!-- <mat-step [stepControl]="firstFormGroup"   > -->
+    <mat-step>
             <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
 
             <div class="stepper_action">
@@ -200,27 +213,13 @@
                 <button mat-flat-button  matStepperNext color="primary" >Next</button>
             </div>
 
-            <!-- <mat-card-content  > -->
-
-              <div *ngIf="!canDoSuit"  class="container center-screen "  >
-                      <h5>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </h5>
+              <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen "  >
+                  <h4>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </h4>
                   <p>Evaluated Date: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</p>
-<!--
-                  <div class="row" class="col-md-4">
-                          <h5>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </h5>
-                  </div>
-                  <div class="row" class="col-md-4">
-                      <p>Evaluated Date: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</p>
-                  </div>
-                -->
+                  <p>{{ cust_RiskTypeInvestor }}</p>
 
-                  <!-- <a mat-flat-button color="primary" (click)="canDoSuit =true;"> New Survey</a> -->
-
-                      <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" >
-                          <i class="fas fa-pencil-alt"></i> New Survey</a>
-
+                  <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> New Survey</a>
               </div>
-
 
             <div *ngIf="canDoSuit" >
             <form>
@@ -259,31 +258,36 @@
               </ul>
 
               <mat-card-actions>
-                  <button   mat-flat-button class="button_card_action"  color="warn"  (click)="suiteFormRESET()"  type="reset"  >
-                    Suit Reset
-                  </button>
-
-                  <a mat-flat-button color="primary" (click)="calSuit()"> Calculate</a>
-                  <a mat-flat-button color="accent" (click)="canDoSuit =false;"> Cancel</a>
+                  <button   mat-flat-button class="act_button"  color="warn"  (click)="suiteFormRESET()"  type="reset" >Suit Reset </button>
+                  <a mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> Calculate</a>
+                  <a mat-flat-button color="accent" (click)="canDoSuit =false;" class ="act_button"> Cancel</a>
               </mat-card-actions>
 
-            <div class="suitResult" *ngIf="canSaveSuit">
-                <h4>Result</h4>
-
-                <h5>{{ riskLevel }} - {{ riskLevelTxt }}</h5>
-                <p>{{ riskLevelDesc }}</p>
-
-                <!-- <a mat-flat-button color="primary" (click)="saveSuit()">   Save Suitability</a> -->
-                <button mat-flat-button  matStepperNext color="primary" >OK</button>
+              <div class ="row" *ngIf="onSuitCalculate">
+                  <mat-spinner></mat-spinner>
               </div>
+
+
             </form>
             </div>
 
+            <div *ngIf="canSaveSuit"  class="container center-screen suitResult"  >
+                <!-- <div class="suitResult" *ngIf="canSaveSuit"> -->
+                    <h4>Calculate Result</h4>
+                    <h4>{{ riskLevel }} - {{ riskLevelTxt }}</h4>
+                    <p>{{ riskLevelDesc }}</p>
+
+                    <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;" class ="act_button"> Cancel</a>
+                    <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;" class ="act_button" > Evaluate again</a>
+                    <button mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">OK</button>
+
+              </div>
             <!-- </mat-card-content> -->
     </mat-step>
 
 <!-- ***************** #4 Final  step -->
-    <mat-step [stepControl]="firstFormGroup"  >
+    <!-- <mat-step [stepControl]="firstFormGroup"  > -->
+    <mat-step >
             <ng-template matStepLabel>{{formService.STEPER_4}}</ng-template>
             <div class="center-screen">
 

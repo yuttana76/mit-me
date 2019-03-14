@@ -11,8 +11,12 @@ export class CustAddrFormService {
 
   from_title = 'Address Information';
 
+  // Action response
   SAVE_COMPLETE = ' Save complete';
   SAVE_INCOMPLETE = ' Save incomplete';
+
+  // Label
+  REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
 
 
 }

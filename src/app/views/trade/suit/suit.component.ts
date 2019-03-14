@@ -40,10 +40,11 @@ export class SuitComponent implements OnInit {
 
   form: FormGroup;
 
-  firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
-  thirdFormGroup: FormGroup;
-  forthFormGroup: FormGroup;
+  // firstFormGroup: FormGroup;
+  // secondFormGroup: FormGroup;
+  // thirdFormGroup: FormGroup;
+  // forthFormGroup: FormGroup;
+  cddFormGroup: FormGroup;
 
   register_formGroup: FormGroup;
   work_formGroup: FormGroup;
@@ -62,13 +63,14 @@ export class SuitComponent implements OnInit {
   canSaveSuit = false;
   canDoFATCA = false;
   showOtpEntry = false;
+  addrModifyFlag = false;
 
   showWorkAddr = false;
   showCurrentAddr = false;
+  onSuitCalculate = false;
 
-  workAddrAs = '';
-  currAddrAs = '';
-
+  // workAddrAs = '';
+  // currAddrAs = '';
 
   ADD_NEW = false;
   INTERNAL_USER = false;
@@ -92,6 +94,7 @@ export class SuitComponent implements OnInit {
   cust_RiskScore=0;
   cust_RiskLevel=0;
   cust_RiskLevelTxt='';
+  cust_RiskTypeInvestor='';
   cust_RiskDate;
   verifyBy;
   verifyDOB_val;
@@ -117,10 +120,6 @@ export class SuitComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private cddService: CddService
   ) {
-    // console.log('*** getUserData>>' + this.authService.getUserData());
-    // console.log('*** getUserId>>' + this.authService.getUserId());
-    // console.log('*** getFullName>>' + this.authService.getFullName());
-    // console.log('*** getDepCode>>' + this.authService.getDepCode());
 
     if (
       this.authService.getUserId() != null &&
@@ -152,18 +151,6 @@ export class SuitComponent implements OnInit {
       this.work_addrData.Country_Id = 0;
     }
 
-    // this.firstFormGroup = this._formBuilder.group({
-    //   firstCtrl: ['', Validators.required]
-    // });
-
-    // this.secondFormGroup = this._formBuilder.group({
-    //   secondCtrl: ['', Validators.required]
-    // });
-
-    // this.thirdFormGroup = this._formBuilder.group({
-    //   thirdCtrl: ['', Validators.required]
-    // });
-
     this.spinnerLoading = true;
 
     this.loadQuestions();
@@ -192,11 +179,7 @@ export class SuitComponent implements OnInit {
       }
     }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
 
-
-
   }
-
-
 
 
   private _buildForm() {
@@ -208,7 +191,7 @@ export class SuitComponent implements OnInit {
     });
 
    // Initial  firstFormGroup
-   this.firstFormGroup = new FormGroup({
+   this.cddFormGroup = new FormGroup({
     pid: new FormControl(null, {
       validators: [Validators.required]
     }),
@@ -445,7 +428,6 @@ export class SuitComponent implements OnInit {
     this.suiteService
       .verifyExtLink(this.survey.pid, this.token)
       .finally(() => {
-        // Execute after graceful or exceptionally termination
         console.log("Handle logging logic...");
         this.spinnerLoading = false;
       })
@@ -465,8 +447,10 @@ export class SuitComponent implements OnInit {
           this.cust_RiskScore = data.USERDATA.Suit_Score;
           this.cust_RiskLevel = data.USERDATA.Risk_Level;
           this.cust_RiskLevelTxt = data.USERDATA.Risk_Level_Txt;
-          this.cust_RiskDate = data.USERDATA.Risk_Date;
+          this.cust_RiskTypeInvestor = data.USERDATA.Type_Investor;
 
+
+          this.cust_RiskDate = data.USERDATA.Risk_Date;
 
         },
         error => () => {
@@ -503,7 +487,7 @@ export class SuitComponent implements OnInit {
       this.cddData.incomeSource_Oth = data[0].incomeSourceOth;
       this.cddData.workPlace = data[0].workPlace;
 
-
+      this.cddData.ReqModifyFlag = false;
 
       // this.reloadData();
     }
@@ -522,6 +506,8 @@ export class SuitComponent implements OnInit {
     let _addrData: AddrCustModel = new AddrCustModel();
     this.cddService.getCustCDDAddr(_id,seqNo).subscribe(data => {
 
+      // console.log(`***getCustCDDAddr() ${seqNo} >>` + JSON.stringify(data) );
+
       if (data.length > 0){
         // console.log('CDD-Address >>' + JSON.stringify(data));
         _addrData.Addr_Seq = data[0].Addr_Seq;
@@ -539,6 +525,8 @@ export class SuitComponent implements OnInit {
         _addrData.Print_Address = data[0].Print_Address;
         _addrData.Tel = data[0].Tel;
         _addrData.Fax = data[0].Fax;
+
+        _addrData.SameAs = data[0].SameAs;
 
         if (seqNo === 1){
           // console.log('Seting in RE ');
@@ -605,10 +593,10 @@ export class SuitComponent implements OnInit {
           this.getCDDAddress(this.survey.pid, 2);
           this.getCDDAddress(this.survey.pid, 3);
 
-          //FATCA
+          // FATCA
           this.loadFATCA(this.survey.pid);
 
-          this.verifyFLag =true;
+          this.verifyFLag = true;
           this.needVerify = false;
 
 
@@ -647,9 +635,8 @@ export class SuitComponent implements OnInit {
           this.getCDDAddress(this.survey.pid, 2);
           this.getCDDAddress(this.survey.pid, 3);
 
-          //FATCA
+          // FATCA
           this.loadFATCA(this.survey.pid);
-
 
         this.toastr.success(` ${this.customer.First_Name_T} ${this.customer.Last_Name_T}`,
             "Welcome",
@@ -659,10 +646,8 @@ export class SuitComponent implements OnInit {
               positionClass: "toast-top-center"
             }
           );
-
-
       } else {
-        this.verifyDOB_val='';
+        this.verifyDOB_val = '';
         this.toastr.warning(` Incorrect data. `,
               "Fail",
               {
@@ -672,8 +657,6 @@ export class SuitComponent implements OnInit {
               }
             );
       }
-
-
   }
 
   public searchCust() {
@@ -684,7 +667,9 @@ export class SuitComponent implements OnInit {
     this.canDoSuit = false;
   }
 
+
   calSuit() {
+
     // console.log('ON calSuit !');
     this.suitScore = 0;
 
@@ -742,17 +727,21 @@ export class SuitComponent implements OnInit {
       }
     }
 
-    // console.log(`*** Suit score : ${this.suitScore}`);
+     console.log(`*** Suit score : ${this.suitScore}`);
 
     if (this.suitScore > 0) {
       this.riskEvaluate();
     }
+
     // console.log(JSON.stringify(this.questions));
   }
 
   riskEvaluate() {
+    // this.canSaveSuit = false;
+    // this.spinnerLoading = true;
+
+    this.onSuitCalculate = true;
     this.canSaveSuit = false;
-    this.spinnerLoading = true;
 
     this.suiteService
       .suitEvaluate(
@@ -763,7 +752,8 @@ export class SuitComponent implements OnInit {
       .finally(() => {
         // Execute after graceful or exceptionally termination
         console.log("riskEvaluate logging logic...");
-        this.spinnerLoading = false;
+        // this.spinnerLoading = false;
+        this.onSuitCalculate = false;
       })
       .subscribe((data: any) => {
           console.log(
@@ -776,6 +766,7 @@ export class SuitComponent implements OnInit {
             this.riskLevelDesc = data.DATA.Type_Investor;
 
             this.canSaveSuit = true;
+            this.canDoSuit = false;
           }
         },
         error => () => {
@@ -803,49 +794,6 @@ export class SuitComponent implements OnInit {
   }
 
 
-  // public saveFATCA(){
-  //   this.suiteService
-  //   .saveFATCA(
-  //     this.survey.pid,
-  //     this.survey.pid,
-  //     this.fatcaQuestions
-  //   )
-  //   .finally(() => {
-  //     // Execute after graceful or exceptionally termination
-  //     console.log("saveFATCA logging logic...");
-  //     this.spinnerLoading = false;
-  //   })
-  //   .subscribe(
-  //     (data: any) => {
-  //       console.log("HTTP return  saveFATCA :" + JSON.stringify(data));
-  //       if (data.code === "000") {
-  //         this.toastr.success(data.msg, this.formService.FATCA_SAVE_COMPLETE, {
-  //           timeOut: 5000,
-  //           closeButton: true,
-  //           positionClass: "toast-top-center"
-  //         });
-  //       } else {
-  //         this.toastr.warning(
-  //           data.msg,
-  //           this.formService.FATCA_SAVE_INCOMPLETE,
-  //           {
-  //             timeOut: 5000,
-  //             closeButton: true,
-  //             positionClass: "toast-top-center"
-  //             }
-  //           );
-  //       }
-  //     },
-  //     error => () => {
-  //       console.log("saveFATCA Was error", error);
-  //     },
-  //     () => {
-  //       console.log("saveFATCA  complete");
-  //     }
-  //   );
-  // }
-
-
   verifyByChange(event: MatRadioChange) {
     // console.log( 'verifyByChange()>>' + event.value);
     this.verifyDOB_val = '';
@@ -854,9 +802,8 @@ export class SuitComponent implements OnInit {
   }
 
 
-
   workAddrOnChange(val){
-    if(val ==='R'){
+    if(val ==='1'){
       this.work_addrData = Object.assign({}, this.re_addrData);
       this.showWorkAddr = false;
     }else { // Other
@@ -864,19 +811,21 @@ export class SuitComponent implements OnInit {
       this.showWorkAddr = true;
     }
     this.work_addrData.Addr_Seq = this.SEQ_WORK_ADDR;
+    this.work_addrData.SameAs = val;
   }
 
   cuurAddrOnChange(val){
-    if(val ==='R'){
+    if(val ==='1'){
       this.cur_addrData = Object.assign({}, this.re_addrData);
       this.showCurrentAddr = false;
-    } else if ( val === 'W'){
+    } else if ( val === '3'){
       this.cur_addrData = Object.assign({}, this.work_addrData);
       this.showCurrentAddr = false;
     } else { // Other
       // console.log('Other addr. *** ');
       this.showCurrentAddr = true;
     }
+    this.cur_addrData.SameAs = val;
     this.cur_addrData.Addr_Seq = this.SEQ_CURR_ADDR;
   }
 
@@ -908,6 +857,8 @@ export class SuitComponent implements OnInit {
 
   savePersonInfo(){
     console.log('savePersonInfo()');
+
+    console.log('*** this.cddData.ReqModifyFlag>> ' + this.cddData.ReqModifyFlag);
 
     this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData)
     .subscribe((data: any ) => {
@@ -982,6 +933,10 @@ export class SuitComponent implements OnInit {
 
   saveAddrAll(){
 
+    this.re_addrData.ReqModifyFlag = this.addrModifyFlag;
+    this.work_addrData.ReqModifyFlag = this.addrModifyFlag;
+    this.cur_addrData.ReqModifyFlag = this.addrModifyFlag;
+
     this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData)
     .subscribe((data: any ) => {
      console.log('Successful', JSON.stringify(data));
@@ -1036,10 +991,21 @@ export class SuitComponent implements OnInit {
    });
   }
 
+  evaluateSuitOK(){
+    this.cust_RiskLevel = this.riskLevel;
+    this.cust_RiskLevelTxt = this.riskLevelTxt;
+    this.cust_RiskTypeInvestor = this.riskLevelDesc;
+
+    this.canDoSuit = false;
+    this.canSaveSuit = false;
+  }
+
   saveSuit() {
 
-    this.cust_RiskLevel= this.riskLevel
-    this.cust_RiskLevelTxt= this.riskLevelTxt;
+    this.cust_RiskLevel = this.riskLevel;
+    this.cust_RiskLevelTxt = this.riskLevelTxt;
+    this.cust_RiskTypeInvestor = this.riskLevelDesc;
+
     this.cust_RiskDate =  new Date();
 
       this.suiteService
@@ -1090,11 +1056,26 @@ export class SuitComponent implements OnInit {
         );
     }
 
-    checkCDD_FormInvalid(){
+    modifOnChange(val){
+      if(val){
+        // this.addrFormGroup.enable();
+        this.register_formGroup.enable();
+        this.work_formGroup.enable();
+        this.current_formGroup.enable();
+       }else{
+        // this.addrFormGroup.disable();
+        this.register_formGroup.disable();
+        this.work_formGroup.disable();
+        this.current_formGroup.disable();
 
-      if(this.firstFormGroup.invalid){
+       }
+   }
+
+    checkCDD_FormInvalid(_Form:FormGroup){
+
+      if(_Form.invalid){
         const invalid = [];
-        const controls = this.firstFormGroup.controls;
+        const controls = _Form.controls;
         for (const name in controls) {
             if (controls[name].invalid) {
                 invalid.push(name);
@@ -1118,6 +1099,7 @@ export class SuitComponent implements OnInit {
      }
 
   finalSaveAll(){
+    console.log('*** Welcome finalSaveAll()  ');
 
   }
 

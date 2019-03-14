@@ -38,6 +38,8 @@ export class SuitFormService {
   DATA_INCOMPLETE = 'Data incomplete';
   DATA_INCOMPLETE_MSG = 'Please fill require (*) data';
 
+  // Label
+  REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
   pid_label = 'ID Card';
 
   // SUITABILITY QUESTIONS (START)

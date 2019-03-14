@@ -2,13 +2,13 @@
    <div class="row">
       <div class='row '>
           <section class="example-section">
-              <mat-checkbox [(ngModel)]="modifyFlag"  (change)="modifOnChange(modifyFlag)"  >Modify data</mat-checkbox>
+              <mat-checkbox [(ngModel)]="cddData.ReqModifyFlag"  (change)="modifOnChange(cddData.ReqModifyFlag)"  >{{formService.REQ_MODIFY}}</mat-checkbox>
           </section>
 
       </div>
     </div>
 
-<form [formGroup]="cddFormGroup">
+<form [formGroup]="cddFormGroup" class="cddForm">
 
   <div class='row label_header'>
     Personal Information
@@ -33,7 +33,7 @@
             <input matInput [(ngModel)]="cddData.dob"  [matDatepicker]="dobDatePicker" formControlName="dob"  placeholder="date of birth " readonly=true>
             <mat-datepicker-toggle matSuffix [for]="dobDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #dobDatePicker ></mat-datepicker>
-            <!-- <mat-error *ngIf="cddFormGroup.get('dobDate2').invalid ">Please correct date of birth</mat-error> -->
+            <mat-error *ngIf="cddFormGroup.get('dob').invalid ">Please correct date of birth</mat-error>
           </mat-form-field>
       </div>
 

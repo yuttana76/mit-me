@@ -157,6 +157,7 @@ exports.saveCDDInfo = (req, res, next) => {
 
   var typeBusiness = req.body.typeBusiness
   var typeBusiness_Oth = req.body.typeBusiness_Oth
+  var reqModifyFlag = req.body.ReqModifyFlag
 
   var incomeLevel = req.body.incomeLevel
   var incomeSource = req.body.incomeSource
@@ -191,6 +192,8 @@ exports.saveCDDInfo = (req, res, next) => {
       ,[Income_Source_Desc]=@Income_Source_Oth
 
       ,[WorkPlace]=@WorkPlace
+      ,[ReqModifyFlag]=@ReqModifyFlag
+
       ,[UpdateBy]=@ActionBy
       ,[UpdateDate]=GETDATE()
     WHERE Cust_Code = @Cust_Code
@@ -198,9 +201,9 @@ exports.saveCDDInfo = (req, res, next) => {
     if @@rowcount = 0
         begin
         INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[Title_Name_T],[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
-          ,[Occupation_Code] ,[Occupation_Desc] ,[Position_Code],[Position_Desc] ,[BusinessType_Code],[BusinessType_Desc] ,[Income_Code] ,[Income_Source_Code],[Income_Source_Desc],WorkPlace,[CreateBy] ,[CreateDate] )
+          ,[Occupation_Code] ,[Occupation_Desc] ,[Position_Code],[Position_Desc] ,[BusinessType_Code],[BusinessType_Desc] ,[Income_Code] ,[Income_Source_Code],[Income_Source_Desc],WorkPlace,ReqModifyFlag,[CreateBy] ,[CreateDate] )
         VALUES(@Cust_Code,@ID_CARD ,@Title_Name_T,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
-            ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ActionBy ,GETDATE())
+            ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ReqModifyFlag,@ActionBy ,GETDATE())
         END
   END
 
@@ -229,6 +232,9 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('Income_Source_Code', sql.VarChar(100), incomeSource)
     .input('Income_Source_Oth', sql.VarChar(100), incomeSource_Oth)
     .input('WorkPlace', sql.VarChar(500), workPlace)
+    .input('ReqModifyFlag', sql.VarChar(1), reqModifyFlag)
+
+
     .input('ActionBy', sql.VarChar(50), actionBy)
     .query(queryStr, (err, result) => {
         if(err){
@@ -322,6 +328,10 @@ exports.saveCDDAddr = (req, res, next) => {
   var Tel = req.body.Tel
   var Fax = req.body.Fax
 
+  var SameAs = req.body.SameAs
+  var ReqModifyFlag = req.body.ReqModifyFlag
+
+
   logger.info( `POST API /saveCDDAddr - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${Addr_Seq}`);
 
   var queryStr = `
@@ -332,6 +342,7 @@ BEGIN
   UPDATE MIT_CUSTOMER_ADDR SET
   [Addr_No] =@Addr_No ,[Moo] =@Moo ,[Place]=@Place ,[Floor]=@Floor,[Soi]=@Soi ,[Road]=@Road ,[Tambon_Id]=@Tambon_Id ,[Amphur_Id]=@Amphur_Id ,[Province_Id]=@Province_Id ,
   [Country_Id]=@Country_Id ,[Zip_Code]=@Zip_Code ,[Tel]=@Tel ,[Fax] =@Fax ,[UpdateBy]=@ActionBy ,[UpdateDate]=GETDATE()
+  ,SameAs=@SameAs,ReqModifyFlag=@ReqModifyFlag
   WHERE
   Cust_Code = @Cust_Code
   AND Addr_Seq =@Addr_Seq
@@ -340,9 +351,11 @@ BEGIN
       BEGIN
 
       INSERT INTO MIT_CUSTOMER_ADDR
-      ([Cust_Code] ,[Addr_Seq] ,[Addr_No] ,[Moo] ,[Place] ,[Floor],[Soi] ,[Road] ,[Tambon_Id] ,[Amphur_Id] ,[Province_Id] ,[Country_Id] ,[Zip_Code] ,[Tel] ,[Fax] ,[CreateBy] ,[CreateDate] )
+      ([Cust_Code] ,[Addr_Seq] ,[Addr_No] ,[Moo] ,[Place] ,[Floor],[Soi] ,[Road] ,[Tambon_Id] ,[Amphur_Id] ,[Province_Id] ,[Country_Id] ,[Zip_Code] ,[Tel] ,[Fax] ,[CreateBy] ,[CreateDate]
+        ,SameAs,ReqModifyFlag)
       VALUES
-      (@Cust_Code,@Addr_Seq,@Addr_No ,@Moo,@Place ,@Floor ,@Soi ,@Road ,@Tambon_Id ,@Amphur_Id ,@Province_Id ,@Country_Id,@Zip_Code ,@Tel ,@Fax ,@ActionBy ,GETDATE() )
+      (@Cust_Code,@Addr_Seq,@Addr_No ,@Moo,@Place ,@Floor ,@Soi ,@Road ,@Tambon_Id ,@Amphur_Id ,@Province_Id ,@Country_Id,@Zip_Code ,@Tel ,@Fax ,@ActionBy ,GETDATE()
+      ,@SameAs,@ReqModifyFlag)
 
     END
 
@@ -389,6 +402,8 @@ END
     .input('Zip_Code', sql.VarChar(10), Zip_Code)
     .input('Tel', sql.VarChar(50), Tel)
     .input('Fax', sql.VarChar(50), Fax)
+    .input('SameAs', sql.VarChar(2), SameAs)
+    .input('ReqModifyFlag', sql.VarChar(2), ReqModifyFlag)
     .input('ActionBy', sql.VarChar(10), actionBy)
     .query(queryStr, (err, result) => {
         if(err){

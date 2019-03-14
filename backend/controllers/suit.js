@@ -290,72 +290,6 @@ exports.suitSave = (req, res, next) => {
 }
 
 
-// exports.saveFATCA = (req, res, next) => {
-
-//   logger.info(`API /saveFATCA - ${req.originalUrl} - ${req.ip} `);
-
-//   let rsp_code;
-//   var userId = req.body.userId;
-//   var pid = req.body.pid;
-//   var ans = req.body.ans ;
-
-//   var queryStr = `
-//   BEGIN
-
-//   DECLARE @TranName VARCHAR(20);
-
-//   --SELECT @TranName = 'MyTransaction';
-
-//   --BEGIN TRANSACTION @TranName;
-
-//   update MIT_CUSTOMER_FATCA set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE()
-//   where CustCode = @CustCode
-
-//   if @@rowcount = 0
-//   begin
-//      insert into MIT_CUSTOMER_FATCA(CustCode,FATCA_FLAG,FATCA_DATA,FATCA_BY,FATCA_DATE)
-//      values (@CustCode,'A',@FATCA_DATA,@FATCA_BY,GETDATE()) ;
-//   end
-
-//   --COMMIT TRANSACTION @TranName;
-
-//   END;
-//     `;
-
-//   const sql = require('mssql')
-//   const pool1 = new sql.ConnectionPool(config, err => {
-//     pool1.request() // or: new sql.Request(pool1)
-//     .input("CustCode", sql.VarChar(50), pid)
-//     .input("FATCA_DATA", sql.NText, JSON.stringify(ans))
-//     .input("FATCA_BY",sql.VarChar(100), userId)
-
-//     .query(queryStr, (err, result) => {
-//         // ... error checks
-//         if(err){
-//           logger.error( '' + err );
-//          rsp_code = "902"; // Was error
-//          res.status(422).json({
-//           code: rsp_code,
-//           msg: prop.getRespMsg(rsp_code),
-//         });
-
-//         }else {
-
-//           rsp_code = "000";
-//           res.status(200).json({
-//             code: rsp_code,
-//             msg: prop.getRespMsg(rsp_code)
-//           });
-
-//         }
-//     })
-//   })
-//   pool1.on('error', err => {
-//     // ... error handler
-//     logger.error( '' + err );
-//   })
-// }
-
 function calculateRiskLevel(_suitSerieId,_score){
 
   console.log("calculateRiskLevel _score>>" + _score);
@@ -407,6 +341,7 @@ function getCustomerData(_pid) {
   DECLARE @Score int;
   DECLARE @Risk_Level int;
   DECLARE @Risk_Level_Txt VARCHAR(250);
+  DECLARE @TypeInvestor VARCHAR(250);
 
   SELECT @Risk_Date=[Document_Date]
         ,@Score=[Score]
@@ -419,8 +354,9 @@ function getCustomerData(_pid) {
     ,@Score = TotalScore
     ,@Risk_Level = RiskLevel
     ,@Risk_Level_Txt = RiskLevelTxt
+    ,@TypeInvestor = Type_Investor
     from   MIT_CUSTOMER_SUIT
-    where CustCode='0105534033834'
+    where CustCode= @pid
     and [Status]='A'
 
 
@@ -440,6 +376,7 @@ function getCustomerData(_pid) {
     ,@Score AS Suit_Score
     ,@Risk_Level AS Risk_Level
     ,@Risk_Level_Txt AS Risk_Level_Txt
+    ,@TypeInvestor AS  Type_Investor
     from Account_Info a
     where Cust_Code= @pid
 

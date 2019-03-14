@@ -21,12 +21,10 @@ export class CustAddrComponent implements OnInit {
   @Input() custCode: string;
   @Input() addrData: AddrCustModel;
   @Input() addrFormGroup: FormGroup;
-  // @Output() addrFormGroup: FormGroup;
 
-  public modifyFlag = true;
+  public modifyFlag = false;
+
   nation_Code = '000';
-
-  // addrFormGroup: FormGroup;
 
   countryMasList: Country[];
   sel_countryList: Country[];
@@ -47,52 +45,6 @@ export class CustAddrComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // console.log( 'Initial CustAddrComponent >>'+ JSON.stringify(this.addrData) )
-
-    // this.addrFormGroup = new FormGroup({
-    //   // Addr_Seq: new FormControl(null, {
-    //   //   validators: [Validators.required]
-    //   // }),
-    //   Addr_No: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Moo: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Place: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Floor: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Soi: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Road: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Tambon_Id: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Amphur_Id: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Province_Id: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Country_Id: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Zip_Code: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Tel: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Fax: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    // });
 
     this.masterDataService.getCountry().subscribe((data: any[]) => {
       this.countryMasList = data;
@@ -130,9 +82,26 @@ export class CustAddrComponent implements OnInit {
       this.sel_tambonsList = this.getTambonsByAmphur( this.tambonsMasList, this.addrData.Amphur_Id);
 
     });
-
   }
 
+
+  ngAfterViewInit(){
+
+    if (this.addrFormGroup.invalid) {
+      this.addrFormGroup.enable();
+      this.modifyFlag  = true;
+
+      const controls = this.addrFormGroup.controls;
+      for (const name in controls) {
+          if (controls[name].invalid) {
+              this.addrFormGroup.controls[name].markAsTouched();
+          }
+      }
+    } else {
+      this.addrFormGroup.disable();
+      this.modifyFlag  = false;
+    }
+  }
 
   countryChange(event: MatSelectChange) {
 
@@ -184,5 +153,13 @@ export class CustAddrComponent implements OnInit {
     const filtered: any[] = tambonsList.filter(element => element.Amphur_ID === code);
     return filtered;
   }
+
+  modifOnChange(val){
+    if(val){
+      this.addrFormGroup.enable();
+     }else{
+      this.addrFormGroup.disable();
+     }
+ }
 
 }

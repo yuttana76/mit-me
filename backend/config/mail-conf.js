@@ -1,4 +1,4 @@
-exports.mailParameters = {
+exports.MPAM_MailParameters = {
     host: 'smtp.inetmail.cloud',//process.env.MAIL_SMTP,
     port: '587',//process.env.MAIL_PORT,
     secure: false, // true for 465, false for other ports
@@ -11,7 +11,7 @@ exports.mailParameters = {
   exports.GmailParameters = {
     host: 'smtp.gmail.com',
     port: '587',
-    secure: false, 
+    secure: false,
     auth: {
         user: 'yuttana76@gmail.com',
         pass: '41121225'

@@ -8,6 +8,7 @@ var dirPath = __dirname + "/../downloadFiles/xmlfiles/"+file;
 
 var logger = require("../config/winston");
 var prop = require("../config/backend-property");
+var mitLog = require('./mitLog');
 
 exports.getCustAM = (req, res, next) => {
 
@@ -73,12 +74,17 @@ exports.getCustAM = (req, res, next) => {
 
 exports.saveFATCA = (req, res, next) => {
 
-  logger.info(`API /saveFATCA - ${req.originalUrl} - ${req.ip} `);
 
+
+
+  var fncName = 'saveFATCA';
   let rsp_code;
   var userId = req.body.userId;
   var pid = req.body.pid;
   var ans = req.body.ans ;
+
+  var logMsg = `POST API /saveFATCA - ${req.originalUrl} - ${req.ip} - ${pid}`;
+  logger.info( logMsg);
 
   var queryStr = `
   BEGIN
@@ -86,7 +92,6 @@ exports.saveFATCA = (req, res, next) => {
   DECLARE @TranName VARCHAR(20);
 
   --SELECT @TranName = 'MyTransaction';
-
   --BEGIN TRANSACTION @TranName;
 
   update MIT_CUSTOMER_FATCA set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE()
@@ -113,9 +118,15 @@ exports.saveFATCA = (req, res, next) => {
     .query(queryStr, (err, result) => {
         // ... error checks
         if(err){
-          logger.error( '' + err );
          rsp_code = "902"; // Was error
+
+         logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
+         logger.error(logMsg);
+         logger.error(err);
+         mitLog.saveMITlog(pid,fncName,logMsg,req.ip,req.originalUrl,function(){});
+
          res.status(422).json({
+          module: fncName,
           code: rsp_code,
           msg: prop.getRespMsg(rsp_code),
         });
@@ -123,7 +134,12 @@ exports.saveFATCA = (req, res, next) => {
         }else {
 
           rsp_code = "000";
+          logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
+          logger.info(logMsg);
+          mitLog.saveMITlog(pid,fncName,logMsg,req.ip,req.originalUrl,function(){});
+
           res.status(200).json({
+            module: fncName,
             code: rsp_code,
             msg: prop.getRespMsg(rsp_code)
           });

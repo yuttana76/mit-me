@@ -18,6 +18,8 @@ export class CustCddFormService {
   // Label
   REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
 
+  LABEL_PERSON_INFO = 'ข้อมูลส่วนบุคคล';
+  LABEL_BACKGROUND = 'ข้อมูลเพิ่มเติม';
 
 
 }

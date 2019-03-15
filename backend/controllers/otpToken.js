@@ -9,6 +9,7 @@ const smsConfig = require('../config/sms-conf');
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
 var request = require("request");
+var mitLog = require('./mitLog');
 
 /*
 https://www.npmjs.com/package/otpauth
@@ -139,8 +140,7 @@ exports.verityOTPtoken = (req, res, next) => {
 
     const _token = req.body.token
     const _pid = req.body.pid
-    console.log(`Welcome /verityOTPtoken API. ${_token}  - pid: ${_pid}`);
-
+    logger.info(`Welcome /verityOTPtoken API. ${_token}  - pid: ${_pid}`);
     /*
     0: ok
     -1: token expired (1 period)
@@ -161,26 +161,31 @@ exports.verityOTPtoken = (req, res, next) => {
     });
 
     if (delta===0){
-      console.log('Verify successful ');
       let rsp_code = "000";
-              return res.status(200).json({
-                code: rsp_code,
-                msg: prop.getRespMsg(rsp_code),
-              });
+      let logMsg = `Result /verityOTPtoken -${prop.getRespMsg(rsp_code)} - ${_token}  - pid: ${_pid}`
+      logger.info(logMsg);
+      mitLog.saveMITlog(_pid,'VERIFY_OTP',logMsg,req.ip,req.originalUrl,function(){});
+
+        return res.status(200).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code),
+        });
 
     }else if(delta < 0 ){
       let rsp_code = "207";  //OTP  Expired
-              return res.status(422).json({
-                code: rsp_code,
-                msg: prop.getRespMsg(rsp_code),
-              });
+      logger.info(`Result /verityOTPtoken  -${prop.getRespMsg(rsp_code)} - ${_token}  - pid: ${_pid}`);
+        return res.status(422).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code),
+        });
 
     }else {
       let rsp_code = "206"; //"ไม่พบข้อมูล",
-              return res.status(422).json({
-                code: rsp_code,
-                msg: prop.getRespMsg(rsp_code),
-              });
+      logger.info(`Result /verityOTPtoken  -${prop.getRespMsg(rsp_code)} - ${_token}  - pid: ${_pid}`);
+        return res.status(422).json({
+          code: rsp_code,
+          msg: prop.getRespMsg(rsp_code),
+        });
     }
 }
 

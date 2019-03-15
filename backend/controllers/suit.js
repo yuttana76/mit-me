@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const dbConfig = require("../config/db-config");
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
+var mitLog = require('./mitLog');
 
 var config = dbConfig.dbParameters;
 
@@ -135,6 +136,7 @@ exports.verifyExtLink = (req, res, next) => {
 
 exports.suitEvaluate = (req, res, next) => {
   logger.info(`API /suitEvaluate - ${req.originalUrl} - ${req.ip} `);
+
   let rsp_code;
   var pid = req.body.pid;
   var suitSerieId = req.body.suitSerieId;
@@ -210,8 +212,8 @@ exports.suitEvaluate = (req, res, next) => {
 
 exports.suitSave = (req, res, next) => {
 
-  logger.info(`API /suitSave - ${req.originalUrl} - ${req.ip} `);
 
+  var fncName = 'suitSave';
   let rsp_code;
   var userId = req.body.userId;
   var pid = req.body.pid;
@@ -221,7 +223,11 @@ exports.suitSave = (req, res, next) => {
   var riskLevelTxt = req.body.riskLevelTxt;
   var type_Investor = req.body.type_Investor;
   var ans = req.body.ans ;
-  // var fncName = 'suitSave';
+
+  var logMsg = `API /suitSave - ${req.originalUrl} - ${req.ip} - pid=${pid} `
+  logger.info( logMsg);
+
+
   var queryStr = `
   BEGIN
   DECLARE @AccSuitId VARCHAR(50);
@@ -265,17 +271,26 @@ exports.suitSave = (req, res, next) => {
     .query(queryStr, (err, result) => {
         // ... error checks
         if(err){
-          logger.error( '' + err );
-         rsp_code = "902"; //"ไม่พบข้อมูล",
-         res.status(422).json({
-          code: rsp_code,
-          msg: prop.getRespMsg(rsp_code),
-        });
+          rsp_code = "902"; //"ไม่พบข้อมูล",
 
+          logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
+          logger.error(logMsg);
+          logger.error(err);
+          mitLog.saveMITlog(pid,fncName,logMsg,req.ip,req.originalUrl,function(){});
+
+          res.status(422).json({
+            module: fncName,
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+          });
         }else {
-
           rsp_code = "000";
+          logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
+          logger.info(logMsg);
+          mitLog.saveMITlog(pid,fncName,logMsg,req.ip,req.originalUrl,function(){});
+
           res.status(200).json({
+            module: fncName,
             code: rsp_code,
             msg: prop.getRespMsg(rsp_code)
           });

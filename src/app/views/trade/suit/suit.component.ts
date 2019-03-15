@@ -15,6 +15,7 @@ import { CddService } from "../services/cdd.service";
 import { AddrCustModel } from "../model/addrCust.model";
 import { ConfirmationDialogService } from "../dialog/confirmation-dialog/confirmation-dialog.service";
 import { CDDModel } from "../model/cdd.model";
+import { forkJoin } from "rxjs";
 // import { CDDModel } from "../model/cdd.model";
 
 
@@ -64,6 +65,7 @@ export class SuitComponent implements OnInit {
   canDoFATCA = false;
   showOtpEntry = false;
   addrModifyFlag = false;
+  suitModifyFlag = false;
 
   showWorkAddr = false;
   showCurrentAddr = false;
@@ -103,11 +105,10 @@ export class SuitComponent implements OnInit {
   verifyOTP_val = ""
 
   public survey: SurveyModel = new SurveyModel();
-
   private token: string;
-
   suitQuestions: Array<Question>;
   fatcaQuestions: Array<Question>;
+  resultMsg =[];
 
   constructor(
     public formService: SuitFormService,
@@ -433,7 +434,7 @@ export class SuitComponent implements OnInit {
       })
       .subscribe(
         (data: any) => {
-          console.log("HTTP return :" + JSON.stringify(data));
+          // console.log("HTTP return :" + JSON.stringify(data));
 
           this.needVerify = true;
           this.verifyFLag = false;
@@ -558,7 +559,7 @@ export class SuitComponent implements OnInit {
       })
       .subscribe(
         (data: any) => {
-          console.log("HTTP return : verifyRequestOTP()" + JSON.stringify(data));
+          // console.log("HTTP return : verifyRequestOTP()" + JSON.stringify(data));
 
           this.showOtpEntry =true;
           this.otpToken_Date = data.TOKEN_DATE;
@@ -578,12 +579,12 @@ export class SuitComponent implements OnInit {
     this.spinnerLoading = true;
     this.suiteService.verifyConfirmOTP(this.survey.pid,this.verifyOTP_val)
       .finally(() => {
-        console.log("Handle logging logic...");
+        // console.log("Handle logging logic...");
         this.spinnerLoading = false;
       })
       .subscribe(
         (data: any) => {
-          console.log("HTTP return verifyConfirmOTP():" + JSON.stringify(data));
+          // console.log("HTTP return verifyConfirmOTP():" + JSON.stringify(data));
 
           // Load CDD
           this.getCDD(this.survey.pid);
@@ -649,7 +650,7 @@ export class SuitComponent implements OnInit {
       } else {
         this.verifyDOB_val = '';
         this.toastr.warning(` Incorrect data. `,
-              "Fail",
+              "Verify fail",
               {
                 timeOut: 3000,
                 closeButton: true,
@@ -880,12 +881,12 @@ export class SuitComponent implements OnInit {
          }
        );
      }
-
    }, error => () => {
        console.log('Was error', error);
    }, () => {
       console.log('Loading complete');
    });
+
   }
 
 
@@ -931,65 +932,6 @@ export class SuitComponent implements OnInit {
     );
   }
 
-  saveAddrAll(){
-
-    this.re_addrData.ReqModifyFlag = this.addrModifyFlag;
-    this.work_addrData.ReqModifyFlag = this.addrModifyFlag;
-    this.cur_addrData.ReqModifyFlag = this.addrModifyFlag;
-
-    this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData)
-    .subscribe((data: any ) => {
-     console.log('Successful', JSON.stringify(data));
-
-   }, error => () => {
-       console.log('Was error', error);
-   }, () => {
-      console.log('Finish Addr register #1');
-  // **************************
-      this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData)
-      .subscribe((data: any ) => {
-       console.log('Successful', JSON.stringify(data));
-
-     }, error => () => {
-         console.log('Was error', error);
-     }, () => {
-        console.log('Finish Addr register #2');
-        // **************************
-              this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData)
-              .subscribe((data: any ) => {
-              console.log('Successful', JSON.stringify(data));
-              if (data.code === "000") {
-                this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
-                  timeOut: 5000,
-                  closeButton: true,
-                  positionClass: "toast-top-center"
-                });
-              } else {
-                this.toastr.warning(
-                  data.msg,
-                  this.formService.SAVE_INCOMPLETE,
-                  {
-                    timeOut: 5000,
-                    closeButton: true,
-                    positionClass: "toast-top-center"
-                  }
-                );
-              }
-
-              }, error => () => {
-                console.log('Was error', error);
-              }, () => {
-                console.log('Finish Addr register #3');
-              // **************************
-
-              // **************************
-              });
-        // **************************
-
-     });
-  // **************************
-   });
-  }
 
   evaluateSuitOK(){
     this.cust_RiskLevel = this.riskLevel;
@@ -998,6 +940,9 @@ export class SuitComponent implements OnInit {
 
     this.canDoSuit = false;
     this.canSaveSuit = false;
+
+    this.suitModifyFlag = true;
+
   }
 
   saveSuit() {
@@ -1026,7 +971,7 @@ export class SuitComponent implements OnInit {
         })
         .subscribe(
           (data: any) => {
-            console.log("HTTP return  saveSuit :" + JSON.stringify(data));
+            // console.log("HTTP return  saveSuit :" + JSON.stringify(data));
 
             if (data.code === "000") {
               this.toastr.success(data.msg, this.formService.SUIT_SAVE_COMPLETE, {
@@ -1093,14 +1038,169 @@ export class SuitComponent implements OnInit {
             }
           );
         }
-
       }
-
      }
 
-  finalSaveAll(){
-    console.log('*** Welcome finalSaveAll()  ');
 
+     saveAddrAll(){
+
+      this.re_addrData.ReqModifyFlag = this.addrModifyFlag;
+      this.work_addrData.ReqModifyFlag = this.addrModifyFlag;
+      this.cur_addrData.ReqModifyFlag = this.addrModifyFlag;
+
+      this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData)
+      .subscribe((data: any ) => {
+       console.log('Successful', JSON.stringify(data));
+
+     }, error => () => {
+         console.log('Was error', error);
+     }, () => {
+        console.log('Finish Addr register #1');
+    // **************************
+        this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData)
+        .subscribe((data: any ) => {
+         console.log('Successful', JSON.stringify(data));
+
+       }, error => () => {
+           console.log('Was error', error);
+       }, () => {
+          console.log('Finish Addr register #2');
+          // **************************
+                this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData)
+                .subscribe((data: any ) => {
+                console.log('Successful', JSON.stringify(data));
+                if (data.code === "000") {
+                  this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
+                    timeOut: 5000,
+                    closeButton: true,
+                    positionClass: "toast-top-center"
+                  });
+                } else {
+                  this.toastr.warning(
+                    data.msg,
+                    this.formService.SAVE_INCOMPLETE,
+                    {
+                      timeOut: 5000,
+                      closeButton: true,
+                      positionClass: "toast-top-center"
+                    }
+                  );
+                }
+
+                }, error => () => {
+                  console.log('Was error', error);
+                }, () => {
+                  console.log('Finish Addr register #3');
+                // **************************
+
+                // **************************
+                });
+          // **************************
+
+       });
+    // **************************
+     });
+    }
+
+  finalSaveAll(){
+    // Save CDD
+    // Save FATCA
+    // Save register Address
+    // Save work Address
+    // Save current Address
+    // Save Suit
+
+    this.re_addrData.ReqModifyFlag = this.addrModifyFlag;
+    this.work_addrData.ReqModifyFlag = this.addrModifyFlag;
+    this.cur_addrData.ReqModifyFlag = this.addrModifyFlag;
+
+    const observables = [];
+
+    if(this.cddData.ReqModifyFlag){
+      observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
+      observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
+    }
+
+    if(this.addrModifyFlag){
+      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData));
+      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData));
+      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
+    }
+
+    if(this.suitModifyFlag){
+      observables.push(this.suiteService.saveSuitabilityByPID(
+        this.survey.pid, this.survey.pid,
+        this.formService.suitSerieId,
+        this.suitScore,
+        this.riskLevel,
+        this.riskLevelTxt,
+        this.riskLevelDesc,
+        this.suitQuestions
+        )
+      );
+    }
+
+
+    if(observables.length > 0){
+      const example = forkJoin(observables);
+      const subscribe = example.subscribe(result => {
+          console.log(result)
+
+
+          for(let i in result){
+            let obj = result[i];
+            // #1
+            if(obj.module === 'saveCDDInfo'  ){
+              if(obj.code === '000'){
+                this.resultMsg.push('Save perional information : Complete');
+              }else{
+                this.resultMsg.push('Save perional information : Inomplete');
+              }
+            }
+
+            // #2
+            if(obj.module === 'saveFATCA'  ){
+              if(obj.code === '000'){
+                this.resultMsg.push('Save FATCA : Complete');
+              }else{
+                this.resultMsg.push('Save FATCA : Inomplete');
+              }
+            }
+
+             // #3
+             if(obj.module === 'suitSave'  ){
+              if(obj.code === '000'){
+                this.resultMsg.push('Save suitability : Complete');
+              }else{
+                this.resultMsg.push('Save suitability : Inomplete');
+              }
+            }
+
+            // #4-1
+            if(obj.module === 'saveCDDAddr'  ){
+              if(obj.code === '000'){
+                this.resultMsg.push(`Save address : Complete`);
+              }else{
+                this.resultMsg.push(`Save address : Incomplete`);
+              }
+            }
+          }
+
+            this.toastr.info(`Survey complete please see result below.`,
+              this.formService.SAVE_INFO,
+              {
+                timeOut: 8000,
+                closeButton: true,
+                positionClass: "toast-top-center"
+              }
+            );
+
+          this.cddData.ReqModifyFlag = false;
+          this.addrModifyFlag = false;
+          this.suitModifyFlag = false;
+
+        });
+    }
   }
 
 }

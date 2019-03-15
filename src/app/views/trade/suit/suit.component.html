@@ -40,33 +40,43 @@
                   <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == PREFIX_MOBILE_ALLOW_SEND_SMS "  >
                     Verify by OTP to register</mat-radio-button>
                 </mat-radio-group>
+
+                <a *ngIf="!INTERNAL_USER && verifyBy=='OTP'" mat-flat-button  color="primary"  (click)="requestOTP()" >Request OTP</a>
+
           </div>
 
       <div id='div_DOB' *ngIf="verifyBy=='DOB'" >
         <div class="row" >
-            <mat-form-field class="col-md-4 col-sm-4">
+
+            <!-- <mat-form-field >
             <input  matInput   placeholder="Please verify your date of birth"    [(ngModel)]="verifyDOB_val"  />
-            </mat-form-field>
-            <p>Format:ddmmyyyyy  (example = 31011976)</p>
+            </mat-form-field> -->
+
+            <!-- <form class="example-form"> -->
+              <mat-form-field class="example-full-width">
+                <!-- <input matInput placeholder="Favorite food" value="Sushi"> -->
+                <input matInput placeholder="Please verify your date of birth"  [(ngModel)]="verifyDOB_val" name="verifyDOB_val"  >
+              </mat-form-field>
+              <p>Format:ddmmyyyyy  (example = 31011976)</p>
+            <!-- </form> -->
+
         </div>
-        <div class="row col-md-4 col-sm-4" >
-            <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyDOB()" class="col-md-4"> Verify</a>
+
+        <div class="row">
+          <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyDOB()" class="col-md-4"> Verify</a>
         </div>
       </div>
 
       <!-- Verify OTP section -->
       <div id='div_OTP' *ngIf="verifyBy=='OTP'">
-          <div class="row  col-md-4 col-sm-4" >
-              <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="requestOTP()" class="col-md-4">Request OTP</a>
-          </div>
 
          <div id='OTP_INTRY' *ngIf="showOtpEntry" >
-            <div class="row col-md-4 col-sm-4">
-                <mat-form-field class="col-md-4">
+            <div class="row">
+                <mat-form-field >
                     <input  matInput   placeholder="Please input OTP"    [(ngModel)]="verifyOTP_val"  />
                 </mat-form-field>
             </div>
-            <div class="row col-md-4 col-sm-4 ">
+            <div class="row">
                 <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyConfirmOTP()" class="col-md-4"> Verify</a>
             </div>
          </div>
@@ -93,8 +103,10 @@
         </div> -->
 
         <!-- FATCA -->
-        <div class="fatca_div">
-            <h5>{{ formService.from_fatca_title }}</h5>
+        <div class='row'>
+            <h5 >
+              <span class="label_header">{{ formService.from_fatca_title }}</span>
+            </h5>
             <form>
                   <app-suit-tree-view [questions]="fatcaQuestions"></app-suit-tree-view>
                   <!-- <mat-card-actions>
@@ -133,9 +145,9 @@
                   </mat-panel-description>
 
                 </mat-expansion-panel-header>
-                <form [formGroup]="register_formGroup">
+                <!-- <form [formGroup]="register_formGroup"> -->
                     <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
-                </form>
+                <!-- </form> -->
               </mat-expansion-panel>
         </div>
 
@@ -159,9 +171,9 @@
                         </mat-radio-group>
                       </section>
                 </div>
-                <form [formGroup]="work_formGroup">
+                <!-- <form [formGroup]="work_formGroup"> -->
                     <app-cust-addr *ngIf="showWorkAddr" [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
-                </form>
+                <!-- </form> -->
 
               </mat-expansion-panel>
           </div>
@@ -188,9 +200,9 @@
                         </section>
                   </div>
 
-                  <form [formGroup]="current_formGroup">
+                  <!-- <form [formGroup]="current_formGroup"> -->
                       <app-cust-addr *ngIf="showCurrentAddr" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
-                  </form>
+                  <!-- </form> -->
 
                 </mat-expansion-panel>
             </div>
@@ -267,7 +279,6 @@
                   <mat-spinner></mat-spinner>
               </div>
 
-
             </form>
             </div>
 
@@ -277,8 +288,8 @@
                     <h4>{{ riskLevel }} - {{ riskLevelTxt }}</h4>
                     <p>{{ riskLevelDesc }}</p>
 
-                    <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;" class ="act_button"> Cancel</a>
-                    <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;" class ="act_button" > Evaluate again</a>
+                    <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;suitModifyFlag=false" class ="act_button"> Cancel</a>
+                    <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" > Evaluate again</a>
                     <button mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">OK</button>
 
               </div>
@@ -289,34 +300,44 @@
     <!-- <mat-step [stepControl]="firstFormGroup"  > -->
     <mat-step >
             <ng-template matStepLabel>{{formService.STEPER_4}}</ng-template>
-            <div class="center-screen">
+
+            <div *ngIf="resultMsg?.length <= 0" class="center-screen">
 
                 <span id='finalText'>
-                    <h5>{{formService.STEPPER_FINAL_CONGRA}}</h5>
+                    <h5>{{formService.STEPPER_FINAL_CONFIRM}}</h5>
                 </span>
 
+                <span *ngIf='cddData.ReqModifyFlag '>
+                    <li>Personal information was change.</li>
+                </span>
+                <span *ngIf='addrModifyFlag'>
+                    <li>Address was chnage.</li>
+                </span>
+                <span *ngIf='suitModifyFlag'>
+                    <li>Suitability was change.</li>
 
+                    <p>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </p>
 
+                </span>
                 <div>
-                    <!-- <button mat-button matStepperPrevious>Back</button> -->
-                    <!-- <button mat-button (click)="stepper.reset()"  color="accent">Reset</button> -->
                     <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px">Back</button>
-                    <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >Finish</button>
+                    <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}</button>
                   </div>
-
             </div>
-            <!-- <mat-card-content > -->
-            <!-- <h5>{{ formService.from_fatca_title }}</h5>
-            <form>
 
-                  <app-suit-tree-view [questions]="fatcaQuestions"></app-suit-tree-view>
+            <div *ngIf="resultMsg?.length > 0" class="center-screen">
 
-                  <mat-card-actions>
-                      <button mat-flat-button  class="button_card_action"  color="warn"  (click)="fatcaFormRESET()" type="reset" >Reset</button>
-                        <a mat-flat-button color="primary" (click)="saveFATCA()"> Save</a>
-                  </mat-card-actions>
-            </form> -->
-          <!-- </mat-card-content>   -->
+                <span id='finalText'>
+                    <h5>{{formService.STEPPER_FINAL_THANK}}</h5>
+                </span>
+
+                <!-- <ul>
+                    <div *ngFor="let msg of resultMsg" >
+                        <li>{{ msg }}</li>
+                    </div>
+                </ul> -->
+            </div>
+
     </mat-step>
 </mat-horizontal-stepper>
 </div>

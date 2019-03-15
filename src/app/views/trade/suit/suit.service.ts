@@ -26,10 +26,12 @@ export class SuitFormService {
 
   SUIT_ANS_INCOMPLETE = ' Suit survery incomplete !';
 
-  STEPPER_FINAL_CONGRA= 'Thank you.';
+  STEPPER_FINAL_CONFIRM= 'Please review and save your data.';
+  STEPPER_FINAL_THANK= 'Thank you, For you infomation.';
 
-  SAVE_COMPLETE = ' Save  complete';
-  SAVE_INCOMPLETE = ' Save  incomplete';
+  SAVE_INFO = 'Information';
+  SAVE_COMPLETE = 'Save complete';
+  SAVE_INCOMPLETE = 'Save  incomplete';
   SUIT_SAVE_COMPLETE = ' Save suitability complete';
   SUIT_SAVE_INCOMPLETE = ' Save suitability incomplete';
   FATCA_SAVE_COMPLETE = ' Save FATCA complete';
@@ -41,6 +43,13 @@ export class SuitFormService {
   // Label
   REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
   pid_label = 'ID Card';
+
+  LABEL_BACK = 'กลับ';
+  LABEL_NEXT = 'ต่อไป';
+  LABEL_SAVE = 'บันทึก';
+  LABEL_CANCEL = 'ยกเลิก';
+  LABEL_OK = 'ตกลง';
+  LABEL_EVA_AGAIN = 'ประเมินใหม่';
 
   // SUITABILITY QUESTIONS (START)
   suit_q1 = new Question('1', 'ปัจจุบันท่านอายุ', '',''

@@ -4,6 +4,7 @@ const dbConfig = require('../config/db-config');
 var config = dbConfig.dbParameters;
 var logger = require('../config/winston');
 var prop = require("../config/backend-property");
+var mitLog = require('./mitLog');
 
 exports.getCDDinfo = (req, res, next) => {
 
@@ -139,7 +140,7 @@ exports.getCDDinfo_MIT = (req, res, next) => {
 
 exports.saveCDDInfo = (req, res, next) => {
 
-  // var fncName = 'saveCDDInfo';
+  var fncName = 'saveCDDInfo';
   var Cust_Code = req.body.Cust_Code
   var actionBy = req.body.actionBy
   var pid = req.body.pid
@@ -165,7 +166,9 @@ exports.saveCDDInfo = (req, res, next) => {
   var workPlace = req.body.workPlace
 
 
-  logger.info( `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${dob}`);
+  var logMsg = `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${Cust_Code}`;
+  logger.info( logMsg);
+
 
   var queryStr = `
   BEGIN
@@ -233,21 +236,28 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('Income_Source_Oth', sql.VarChar(100), incomeSource_Oth)
     .input('WorkPlace', sql.VarChar(500), workPlace)
     .input('ReqModifyFlag', sql.VarChar(1), reqModifyFlag)
-
-
     .input('ActionBy', sql.VarChar(50), actionBy)
     .query(queryStr, (err, result) => {
         if(err){
-          logger.error( '' + err );
           rsp_code = "902"; // Was error
+          logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
+          logger.error(logMsg);
+          logger.error(err);
+          mitLog.saveMITlog(Cust_Code,fncName,logMsg,req.ip,req.originalUrl,function(){});
+
           res.status(422).json({
+            module: fncName,
             code: rsp_code,
             msg: prop.getRespMsg(rsp_code),
           });
 
         }else {
           rsp_code = "000";
+          logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
+          mitLog.saveMITlog(Cust_Code,fncName,logMsg,req.ip,req.originalUrl,function(){});
+
           res.status(200).json({
+            module: fncName,
             code: rsp_code,
             msg: prop.getRespMsg(rsp_code)
           });
@@ -257,7 +267,8 @@ exports.saveCDDInfo = (req, res, next) => {
 
   pool1.on('error', err => {
     // ... error handler
-    console.log("EROR>>"+err);
+    // console.log("EROR>>"+err);
+    logger.error(err);
   })
 }
 
@@ -310,6 +321,7 @@ exports.getCDDAddr = (req, res, next) => {
 
 exports.saveCDDAddr = (req, res, next) => {
 
+  var fncName = 'saveCDDAddr';
   var actionBy = req.body.actionBy
   var Cust_Code = req.body.Cust_Code
 
@@ -331,8 +343,8 @@ exports.saveCDDAddr = (req, res, next) => {
   var SameAs = req.body.SameAs
   var ReqModifyFlag = req.body.ReqModifyFlag
 
-
-  logger.info( `POST API /saveCDDAddr - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${Addr_Seq}`);
+  var logMsg = `POST API /saveCDDAddr - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${Addr_Seq}`;
+  logger.info( logMsg);
 
   var queryStr = `
 BEGIN
@@ -409,14 +421,28 @@ END
         if(err){
           logger.error( '' + err );
           rsp_code = "902"; // Was error
+
+          logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
+          logger.error(logMsg);
+          logger.error(err);
+          mitLog.saveMITlog(Cust_Code,fncName,logMsg,req.ip,req.originalUrl,function(){});
+
           res.status(422).json({
+            module: fncName,
+            seq: Addr_Seq,
             code: rsp_code,
             msg: prop.getRespMsg(rsp_code),
           });
 
         }else {
           rsp_code = "000";
+          logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
+          logger.info(logMsg);
+          mitLog.saveMITlog(Cust_Code,fncName,logMsg,req.ip,req.originalUrl,function(){});
+
           res.status(200).json({
+            module: fncName,
+            seq: Addr_Seq,
             code: rsp_code,
             msg: prop.getRespMsg(rsp_code)
           });

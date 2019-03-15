@@ -11,7 +11,7 @@
 <form [formGroup]="cddFormGroup" class="cddForm">
 
   <div class='row label_header'>
-    Personal Information
+    {{formService.LABEL_PERSON_INFO}}
   </div>
     <div class='row'>
         <mat-form-field class="col-md-4 col-sm-4">
@@ -48,7 +48,7 @@
       </div>
 
       <div class='row label_header'>
-        Background
+        {{formService.LABEL_BACKGROUND}}
       </div>
 
       <div class='row'>

@@ -90,7 +90,7 @@
     <mat-step [stepControl]="cddFormGroup">
 
       <!--Person information-->
-        <form [formGroup]="cddFormGroup">
+        <form [formGroup]="cddFormGroup" class="form_section">
           <ng-template matStepLabel>{{formService.STEPER_1}}</ng-template>
           <div class="stepper_action" >
               <button mat-flat-button  matStepperNext color="primary" (click)="checkCDD_FormInvalid(cddFormGroup)">Next</button>
@@ -108,12 +108,8 @@
             <h5 >
               <span class="label_header">{{ formService.from_fatca_title }}</span>
             </h5>
-            <form>
+            <form class="form_section">
                   <app-suit-tree-view [questions]="fatcaQuestions" [questionDisabled]="cddFormGroup.disabled"></app-suit-tree-view>
-                  <!-- <mat-card-actions>
-                      <button mat-flat-button  class="button_card_action"  color="warn"  (click)="fatcaFormRESET()" type="reset" >Reset</button>
-                      <a mat-flat-button color="primary" (click)="saveFATCA()"> Save</a>
-                  </mat-card-actions> -->
             </form>
         </div>
           <!-- FATCA -->
@@ -129,8 +125,8 @@
         </div>
 
             <div class='row '>
-                <section class="example-section">
-                    <mat-checkbox [(ngModel)]="addrModifyFlag"  (change)="modifOnChange(addrModifyFlag)"  >{{formService.REQ_MODIFY}}</mat-checkbox>
+                <section class="example-section" >
+                    <mat-checkbox [(ngModel)]="addrModifyFlag"  (change)="modifOnChange(addrModifyFlag)"  class="form_section" >{{formService.REQ_MODIFY}}</mat-checkbox>
                 </section>
             </div>
 
@@ -139,7 +135,7 @@
             <mat-expansion-panel [(expanded)]='register_expanded'>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
-                      Residence Registration Address
+                      <span class="label_header">{{ formService.register_addr_title }}</span>
                   </mat-panel-title>
                       <mat-panel-description *ngIf="!register_expanded && !mobile"  >
                           {{re_addrData.Print_Address}}
@@ -153,11 +149,11 @@
         </div>
 
         <!-- 2.2 Work Address (SEQ = 3)-->
-        <div >
+        <div>
             <mat-expansion-panel [(expanded)]='work_expanded'>
                 <mat-expansion-panel-header>
                   <mat-panel-title >
-                      Workplace Address
+                      <span class="label_header">{{ formService.work_addr_title }}</span>
                   </mat-panel-title>
                   <mat-panel-description *ngIf="!work_expanded && !mobile" >
                         {{work_addrData.Print_Address}}
@@ -184,7 +180,7 @@
               <mat-expansion-panel [(expanded)]='current_expanded' >
                   <mat-expansion-panel-header>
                     <mat-panel-title>
-                        Current Address
+                        <span class="label_header">{{ formService.contact_addr_title }}</span>
                     </mat-panel-title>
                     <mat-panel-description *ngIf="!current_expanded && !mobile" >
                             {{cur_addrData.Print_Address}}
@@ -218,7 +214,7 @@
 
   <!-- ***************** #3  Suitability Step-->
     <!-- <mat-step [stepControl]="firstFormGroup"   > -->
-    <mat-step>
+    <mat-step >
             <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
 
             <div class="stepper_action">
@@ -226,7 +222,8 @@
                 <button mat-flat-button  matStepperNext color="primary" >Next</button>
             </div>
 
-              <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen "  >
+
+              <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen form_section"  >
                   <h4>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </h4>
                   <p>Evaluated Date: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</p>
                   <p>{{ cust_RiskTypeInvestor }}</p>
@@ -236,7 +233,7 @@
 
              <!-- Show Suit question  -->
             <div *ngIf="canDoSuit" >
-            <form>
+            <form  class="form_section">
             <ul>
                 <div *ngFor="let ques of suitQuestions" class="questions">
 
@@ -303,7 +300,7 @@
             </div>
             <!-- Show Suit question  -->
 
-            <div *ngIf="canSaveSuit"  class="container center-screen suitResult"  >
+            <div *ngIf="canSaveSuit"  class="container center-screen suitResult form_section"  >
                 <!-- <div class="suitResult" *ngIf="canSaveSuit"> -->
                     <h4>Calculate Result</h4>
                     <h4>{{ riskLevel }} - {{ riskLevelTxt }}</h4>
@@ -322,7 +319,7 @@
     <mat-step >
             <ng-template matStepLabel>{{formService.STEPER_4}}</ng-template>
 
-            <div *ngIf="resultMsg?.length <= 0" class="center-screen">
+            <div *ngIf="resultMsg?.length <= 0" class="center-screen form_section">
 
                 <span id='finalText'>
                     <h5>{{formService.STEPPER_FINAL_CONFIRM}}</h5>
@@ -346,7 +343,7 @@
                   </div>
             </div>
 
-            <div *ngIf="resultMsg?.length > 0" class="center-screen">
+            <div *ngIf="resultMsg?.length > 0" class="center-screen form_section">
 
                 <span id='finalText'>
                     <h5>{{formService.STEPPER_FINAL_THANK}}</h5>

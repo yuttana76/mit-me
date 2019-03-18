@@ -269,7 +269,7 @@ exports.sendMailThankCust = (req, res, next) =>{
         if(data.Email){
 
           _msg =  `To ${data.fullName}
-          Thank you to finish survey.
+          <br>Thank you. to finish survey.
           <br>
           <br>
           ${_compInfo}

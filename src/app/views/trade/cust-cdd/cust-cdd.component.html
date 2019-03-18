@@ -15,22 +15,22 @@
   </div>
     <div class='row'>
         <mat-form-field class="col-md-4 col-sm-4">
-            <input matInput [(ngModel)]="cddData.pid" placeholder="ID card"  formControlName="pid"  required>
+            <input matInput [(ngModel)]="cddData.pid" placeholder={{formService.label_idCard}}  formControlName="pid"  required>
         </mat-form-field>
     </div>
 
     <div class='row'>
         <mat-form-field class="col-md-4" >
-            <input matInput [(ngModel)]="cddData.firstName" placeholder="First name"  formControlName="firstName" required>
+            <input matInput [(ngModel)]="cddData.firstName" placeholder={{formService.label_firstName_th}}  formControlName="firstName" required>
         </mat-form-field>
         <mat-form-field class="col-md-4">
-            <input matInput [(ngModel)]="cddData.lastName"  placeholder="Last name" formControlName="lastName"  required>
+            <input matInput [(ngModel)]="cddData.lastName"  placeholder={{formService.label_lastName_th}}  formControlName="lastName"  required>
         </mat-form-field>
     </div>
 
     <div class="row"  >
         <mat-form-field class="col-md-4">
-            <input matInput [(ngModel)]="cddData.dob"  [matDatepicker]="dobDatePicker" formControlName="dob"  placeholder="date of birth " readonly=true>
+            <input matInput [(ngModel)]="cddData.dob"  [matDatepicker]="dobDatePicker" formControlName="dob"  placeholder={{formService.label_DOB}} readonly=true>
             <mat-datepicker-toggle matSuffix [for]="dobDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #dobDatePicker ></mat-datepicker>
             <mat-error *ngIf="cddFormGroup.get('dob').invalid ">Please correct date of birth</mat-error>
@@ -39,11 +39,11 @@
 
       <div class='row'>
           <mat-form-field class="col-md-4">
-              <input matInput [(ngModel)]="cddData.mobile" placeholder="Mobile"  formControlName="mobile" required>
+              <input matInput [(ngModel)]="cddData.mobile" placeholder={{formService.label_mobile}}  formControlName="mobile" required>
           </mat-form-field>
 
           <mat-form-field class="col-md-4">
-              <input matInput [(ngModel)]="cddData.email" placeholder="Email"  formControlName="email" required>
+              <input matInput [(ngModel)]="cddData.email" placeholder={{formService.label_email}}  formControlName="email" required>
           </mat-form-field>
       </div>
 
@@ -53,7 +53,7 @@
 
       <div class='row'>
               <mat-form-field class="col-md-4">
-                  <mat-select [(ngModel)]="cddData.typeBusiness" formControlName="typeBusiness" placeholder="Business type" required >
+                  <mat-select [(ngModel)]="cddData.typeBusiness" formControlName="typeBusiness" placeholder={{formService.label_typeBusiness}} required >
                     <mat-option *ngFor="let obj of businessTypeList" [value]="obj.Code">
                       {{obj.Thai_Name}}
                     </mat-option>
@@ -62,14 +62,14 @@
                 </mat-form-field>
 
               <mat-form-field class="col-md-4" *ngIf="isBusinessTypeOther()">
-                  <input matInput [(ngModel)]="cddData.typeBusiness_Oth" placeholder="Other"  formControlName="typeBusinessOth" required>
+                  <input matInput [(ngModel)]="cddData.typeBusiness_Oth" placeholder= {{formService.label_other}}  formControlName="typeBusinessOth" required>
               </mat-form-field>
       </div>
 
       <div class='row'>
 
           <mat-form-field class="col-md-4">
-              <mat-select [(ngModel)]="cddData.occupation" formControlName="occupation" placeholder="Occupation" required >
+              <mat-select [(ngModel)]="cddData.occupation" formControlName="occupation" placeholder={{formService.label_occupation}} required >
                 <mat-option *ngFor="let obj of occupationList" [value]="obj.Code">
                   {{obj.Thai_Name}}
                 </mat-option>
@@ -78,14 +78,14 @@
             </mat-form-field>
 
           <mat-form-field class="col-md-4" *ngIf="isOccupationOther()" >
-              <input matInput [(ngModel)]="cddData.occupation_Oth" placeholder="Other"  formControlName="occupationOth" required>
+              <input matInput [(ngModel)]="cddData.occupation_Oth" placeholder={{formService.label_other}}  formControlName="occupationOth" required>
           </mat-form-field>
        </div>
 
        <div class='row'>
 
             <mat-form-field class="col-md-4">
-                <mat-select [(ngModel)]="cddData.position" formControlName="position" placeholder="Position" required >
+                <mat-select [(ngModel)]="cddData.position" formControlName="position" placeholder= {{formService.label_position}} required >
                   <mat-option *ngFor="let obj of positionList" [value]="obj.Code">
                   {{obj.Thai_Name}}
                   </mat-option>
@@ -94,14 +94,14 @@
             </mat-form-field>
 
             <mat-form-field class="col-md-4" *ngIf="isPositionOther()">
-                <input matInput [(ngModel)]="cddData.position_Oth" placeholder="Other"  formControlName="positionOth" required>
+                <input matInput [(ngModel)]="cddData.position_Oth" placeholder= {{formService.label_other}}  formControlName="positionOth" required>
             </mat-form-field>
       </div>
 
       <div class='row'>
           <!-- {{cddData.incomeLevel}} -->
           <mat-form-field class="col-md-4">
-              <mat-select [(ngModel)]="cddData.incomeLevel" formControlName="incomeLevel" placeholder="Income" required >
+              <mat-select [(ngModel)]="cddData.incomeLevel" formControlName="incomeLevel" placeholder= {{formService.label_incomeLevel}} required >
                 <mat-option *ngFor="let obj of incomeList" [value]="obj.Code">
                  {{obj.Thai_Name}}
                 </mat-option>
@@ -113,7 +113,7 @@
       <div class='row'>
             <!-- {{cddData.incomeSource}} -->
           <mat-form-field class="col-md-4">
-              <mat-select [(ngModel)]="cddData.incomeSource" formControlName="incomeSource" placeholder="Income source" required >
+              <mat-select [(ngModel)]="cddData.incomeSource" formControlName="incomeSource" placeholder={{formService.label_incomeSource}} required >
                 <mat-option *ngFor="let obj of incomeSourceList" [value]="obj.Code">
                     {{obj.Thai_Name}}
                 </mat-option>
@@ -122,34 +122,16 @@
             </mat-form-field>
 
           <mat-form-field class="col-md-4" *ngIf="isIncomeSource()">
-              <input matInput [(ngModel)]="cddData.incomeSource_Oth" placeholder="Other"  formControlName="incomeSourceOth" required>
+              <input matInput [(ngModel)]="cddData.incomeSource_Oth" placeholder={{formService.label_other}}  formControlName="incomeSourceOth" required>
           </mat-form-field>
       </div>
 
       <div class='row'>
           <mat-form-field class="col-md-4">
-              <input matInput [(ngModel)]="cddData.workPlace" placeholder="Work place"  formControlName="workPlace" required>
+              <input matInput [(ngModel)]="cddData.workPlace" placeholder= {{formService.label_workPlace}}  formControlName="workPlace" required>
           </mat-form-field>
 
       </div>
 
-      <!-- <a mat-flat-button color="primary" (click)="checkFormInvalid()" > Check Invalid</a> -->
-
   </form>
-
-  <!-- <div class='row'>
-      <section class="example-section">
-          <mat-checkbox [(ngModel)]="modifyFlag"  (change)="modifOnChange(modifyFlag)"  >To modify</mat-checkbox>
-      </section>
-  </div> -->
-
-  <!-- <div class='row'>
-      <mat-card-actions class="col-md-4">
-          <a mat-flat-button color="primary" (click)="savePersonInfo()" [disabled]="!modifyFlag"> Save</a>
-          <a mat-flat-button color="accent" (click)="cancelEdit()" [disabled]="!modifyFlag"> Cancel</a>
-          </mat-card-actions>
-  </div> -->
-
-
-
 </div>

@@ -19,10 +19,15 @@ export class SuitFormService {
   setSuitSerieId(val){
     this.suitSerieId = val;
   }
-  STEPER_1 = 'Persional Information';
-  STEPER_2 = 'Addresses';
-  STEPER_3 = 'Suitability survey';
+  STEPER_1 = 'ข้อมูลส่วนบุคคล';
+  STEPER_2 = 'ที่อยู่';
+  STEPER_3 = 'Suitability';
   STEPER_4 = 'Done';
+
+
+  register_addr_title ='ที่อยู่ตามทะเบียนบ้าน Residence Registration Address/Address in home country';
+  work_addr_title ='ที่อยู่ที่ทำงาน Workplace Address';
+  contact_addr_title = 'ที่อยู่ที่ติดต่อได้ Contact Address';
 
   SUIT_ANS_INCOMPLETE = ' Suit survery incomplete !';
 

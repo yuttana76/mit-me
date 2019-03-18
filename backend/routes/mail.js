@@ -8,4 +8,6 @@ router.post("/merchant",mailController.sendMail);
 router.post("/surveyByMail",mailController.surveyByMail);
 router.post("/surveyByMailToken",mailController.surveyByMailToken);
 
+router.post("/surveyThankCust",mailController.sendMailThankCust);
+
 module.exports = router;

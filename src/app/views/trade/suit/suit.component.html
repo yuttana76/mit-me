@@ -104,11 +104,12 @@
 
         <!-- FATCA -->
         <div class='row'>
+          <!-- {{cddFormGroup.disabled}} -->
             <h5 >
               <span class="label_header">{{ formService.from_fatca_title }}</span>
             </h5>
             <form>
-                  <app-suit-tree-view [questions]="fatcaQuestions"></app-suit-tree-view>
+                  <app-suit-tree-view [questions]="fatcaQuestions" [questionDisabled]="cddFormGroup.disabled"></app-suit-tree-view>
                   <!-- <mat-card-actions>
                       <button mat-flat-button  class="button_card_action"  color="warn"  (click)="fatcaFormRESET()" type="reset" >Reset</button>
                       <a mat-flat-button color="primary" (click)="saveFATCA()"> Save</a>
@@ -233,10 +234,29 @@
                   <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> New Survey</a>
               </div>
 
+             <!-- Show Suit question  -->
             <div *ngIf="canDoSuit" >
             <form>
             <ul>
                 <div *ngFor="let ques of suitQuestions" class="questions">
+
+                    <span *ngIf="ques.id == 11" class="blue-txt">
+                        <p>คำถามข้อ 11-12 ใช้เป็นข้อมูลเพิ่มเติมเพื่อประกอบการให้คำแนะนำ</p>
+                      </span>
+
+                      <span *ngIf="ques.id == 11" class="blue-txt">
+                        <p>ใช้เฉพาะที่จะมีการลงทุนในอนุพันธ์และหุ้นกู้อนุพันธ์โดยตรงเท่านั้น</p>
+                      </span>
+
+                      <span *ngIf="ques.id == 12" class="blue-txt">
+                        <p>ใช้เฉพาะที่จะมีการลงทุนในต่างประเทศ</p>
+                      </span>
+
+                      <span>{{ ques.id }}. {{ ques.name }} </span>
+                      <div *ngIf="!ques.image == ''" class="q_image">
+                        <img src="{{ ques.image }}" />
+                      </div>
+
                   <span>{{ ques.id }}. {{ ques.name }} </span>
                   <div>
                     <ul>
@@ -281,6 +301,7 @@
 
             </form>
             </div>
+            <!-- Show Suit question  -->
 
             <div *ngIf="canSaveSuit"  class="container center-screen suitResult"  >
                 <!-- <div class="suitResult" *ngIf="canSaveSuit"> -->
@@ -308,7 +329,7 @@
                 </span>
 
                 <span *ngIf='cddData.ReqModifyFlag '>
-                    <li>Personal information was change.</li>
+                    <li>Personal information OR FATCA was change.</li>
                 </span>
                 <span *ngIf='addrModifyFlag'>
                     <li>Address was chnage.</li>
@@ -331,11 +352,6 @@
                     <h5>{{formService.STEPPER_FINAL_THANK}}</h5>
                 </span>
 
-                <!-- <ul>
-                    <div *ngFor="let msg of resultMsg" >
-                        <li>{{ msg }}</li>
-                    </div>
-                </ul> -->
             </div>
 
     </mat-step>

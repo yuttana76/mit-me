@@ -6,11 +6,9 @@ import { Subject, Observable } from 'rxjs';
 import { Question } from '../model/question.model';
 
 const BACKEND_URL = environment.apiURL + '/suit';
-
 const BACKEND_URL_FATCA = environment.apiURL + '/fatca';
-
 const BACKEND_URL_OTP = environment.apiURL + '/otp';
-
+const BACKEND_URL_MAIL = environment.apiURL + '/mail';
 
 @Injectable({ providedIn: 'root' })
 export class SuiteService {
@@ -83,6 +81,14 @@ export class SuiteService {
 
   getFATCA(_id: string): Observable<any> {
     return this.http.get<{ message: string, result: string }>(BACKEND_URL_FATCA + '/getfatca/'+_id);
+  }
+
+
+  mailThankCust(_pid: string): Observable<any> {
+    const data = {
+      'custCode': _pid.trim()
+    };
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_MAIL + '/surveyThankCust', data);
   }
 
   // ************************

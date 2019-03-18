@@ -12,6 +12,7 @@ import { Question } from '../model/question.model';
 export class SuitTreeViewComponent  {
 
   @Input() questions: Array<Question>;
+  @Input() questionDisabled: true;
 
 
 }

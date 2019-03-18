@@ -6,7 +6,8 @@
     <!-- <span class="iconButton" (click)="dir.toggle()">{{dir.getIcon()}}</span> -->
     <!-- <input type="checkbox" [checked]="dir.checked"
             (click)="dir.check()" /> {{ dir.name }} -->
-    <span *ngIf="ques.id == 11" class="blue-txt">
+
+    <!-- <span *ngIf="ques.id == 11" class="blue-txt">
       <p>คำถามข้อ 11-12 ใช้เป็นข้อมูลเพิ่มเติมเพื่อประกอบการให้คำแนะนำ</p>
     </span>
 
@@ -16,28 +17,30 @@
 
     <span *ngIf="ques.id == 12" class="blue-txt">
       <p>ใช้เฉพาะที่จะมีการลงทุนในต่างประเทศ</p>
-    </span>
+    </span> -->
 
     <span>{{ ques.id }}. {{ ques.name }} </span>
-    <div *ngIf="!ques.image == ''" class="q_image">
+
+    <!-- <div *ngIf="!ques.image == ''" class="q_image">
       <img src="{{ ques.image }}" />
-    </div>
+    </div> -->
+
     <div>
       <ul>
         <div *ngFor="let choice of ques.choices">
+
           <div *ngIf="ques.multilchoice">
             <input type="checkbox"  value=" {{ choice.score }}"  id="{{ choice.id }}"  [(ngModel)]="choice.answer"  [ngModelOptions]="{standalone: true}" />
             {{ choice.name }}
           </div>
+
           <div *ngIf="!ques.multilchoice">
-            <input name="{{ ques.id }}"  id="{{ ques.id }}"  type="radio"   value="{{ choice.score }}"   [(ngModel)]="ques.answer" />
+            <input type="radio"  [(disabled)]="questionDisabled"  name="{{ ques.id }}"  id="{{ ques.id }}"   value="{{ choice.score }}"   [(ngModel)]="ques.answer" />
             {{ choice.name }}
           </div>
         </div>
       </ul>
-      <!-- <app-suit-tree-view [questions]="dir.questions"></app-suit-tree-view> -->
     </div>
-    <!-- <BR> -->
   </div>
 </ul>
 <!--

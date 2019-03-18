@@ -4,6 +4,10 @@ const bcrypt = require('bcryptjs');
 const mailConfig = require('../config/mail-conf');
 
 const dbConfig = require('../config/db-config');
+
+const utility = require('./utility');
+
+
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
 
@@ -137,7 +141,6 @@ function getCustomerInfo(Cust_Code) {
 }
 
 
-
 /*
 Send mail  by token
 */
@@ -147,10 +150,11 @@ exports.surveyByMailToken = (req, res, next) =>{
   let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
 
   const _PID = req.body.custCode ||'41121225'
+  const _compInfo = mailConfig.mailCompInfo_TH;
   let _from = mailConfig.mail_form;
   let _to ;//= 'yuttana76@gmail.com';
   let _subject = 'Interview suit by MPAM.'
-  let _msg = ' Mr. '+_PID ;
+  let _msg = '';
   var logMsg ;
 
   getCustomerInfo(_PID).then( (data) =>{
@@ -178,8 +182,9 @@ exports.surveyByMailToken = (req, res, next) =>{
             to: _to,
             subject: _subject,
             html: `${_msg}
-            <br> ${_PID}
-            <br>Click this link for risk intereview. <br>http://localhost:4200/suit?has=${token}` // html body
+            <br>Click this link to intereview. <br>http://localhost:4200/suit?has=${token}
+
+            ` // html body
           };
 
         /**
@@ -208,12 +213,130 @@ exports.surveyByMailToken = (req, res, next) =>{
 
           // Incase No Email
         }else{
-          logger.error(`API /surveyByMailToken -  Send mail was esrror NO E-mail`);
+          logger.error(`API /surveyByMailToken - NO E-mail`);
 
         }
     } catch (error) {
       res.status(400).json({ message: 'surveyByMailToken' });
 
+    }
+
+  },(err)=>{
+    if(err) {
+      console.log(' Error on send mail >>>' + err)
+      logger.error( ''+err );
+      rsp_code = 902;
+      return res.status(422).json({
+        code: rsp_code,
+        msg: prop.getRespMsg(rsp_code),
+      });
+    }
+
+  });
+
+}
+
+
+
+/*
+Send mail  to Whom related with this customer
+  1:Customer
+  2: RM
+*/
+exports.sendMailThankCust = (req, res, next) =>{
+
+  // let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
+  let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
+
+  const _PID = req.body.custCode;
+  let _from = mailConfig.mail_form;
+  let _to ;
+  let _toRM = mailConfig.mailRM;
+  let _subject = 'Thank you to do MPAM. survey.'
+  let _subjectRM = ''
+  let _msg = '';
+  let _msgRM = '';
+  const _compInfo = mailConfig.mailCompInfo_TH;
+  var logMsg ;
+
+  getCustomerInfo(_PID).then( (data) =>{
+
+    try {
+      logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
+      logger.info(`API /sendMailToRelated - ${logMsg}`);
+
+      // Incase has Email
+        if(data.Email){
+
+          _msg =  `To ${data.fullName}
+          Thank you to finish survey.
+          <br>
+          <br>
+          ${_compInfo}
+          `;
+          _to = data.Email;
+
+          // message to customer
+          let mailOptions = {
+            from: _from,
+            to: _to,
+            subject: _subject,
+            html: _msg
+          };
+
+          // message to RM.
+          _subjectRM += `MIT-survey customer finish to survey. (${data.fullName})`;
+          _msgRM = ` Customer  finsihed survey.
+          <br>
+          <br>Code: ${_PID}
+          <br>Name: ${data.fullName}
+          <br>${utility.getDateTime()}
+          `;
+
+          let mailOptions_RM = {
+            from: _from,
+            to: _toRM,
+            subject: _subjectRM,
+            html: _msgRM
+          };
+
+        /**
+         * SEND mail to suctomer
+         */
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              return logger.error(`API /sendMailToRelated - ${error} `);
+                // return console.log(error);
+            }
+              /*
+              Save MIT_LOG
+              */
+             mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+            logger.info(`API /sendMailToRelated -  Send mail successful!`);
+            res.status(200).json({ message: 'Send mail successful!' });
+          });
+
+           /**
+         * SEND mail RM.
+         */
+        transporter.sendMail(mailOptions_RM, (error, info) => {
+          if (error) {
+            return logger.error(`API /sendMailToRelated - ${error} `);
+              // return console.log(error);
+          }
+            /*
+            Save MIT_LOG
+            */
+          //  mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+          logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
+          res.status(200).json({ message: 'Send mail successful!' });
+        });
+          // Incase No Email
+        }else{
+          logger.error(`API /sendMailToRelated -   NO E-mail`);
+        }
+    } catch (error) {
+      res.status(400).json({ message: 'sendMailToRelated' });
     }
 
   },(err)=>{

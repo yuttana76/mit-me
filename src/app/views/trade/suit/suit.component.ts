@@ -835,15 +835,15 @@ export class SuitComponent implements OnInit {
     this.spinnerLoading = true;
     this.suiteService.getFATCA(_id)
       .finally(() => {
-        console.log("Handle logging logic...");
+        // console.log("Handle logging logic...");
         this.spinnerLoading = false;
       })
       .subscribe((data: any) => {
 
+
           if ( data.result.length > 0 ) {
             this.fatcaQuestions = JSON.parse(data.result[0].FATCA_DATA);
           }
-
         },
         error => () => {
           console.log("loadFATCA Was error", error);
@@ -854,83 +854,79 @@ export class SuitComponent implements OnInit {
       );
   }
 
+  // savePersonInfo(){
+  //   console.log('savePersonInfo()');
+  //   console.log('*** this.cddData.ReqModifyFlag>> ' + this.cddData.ReqModifyFlag);
+  //   this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData)
+  //   .subscribe((data: any ) => {
+  //    console.log('Successful', JSON.stringify(data));
+  //    if (data.code === "000") {
+  //      this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
+  //        timeOut: 5000,
+  //        closeButton: true,
+  //        positionClass: "toast-top-center"
+  //      });
+  //    } else {
+  //      this.toastr.warning(
+  //        data.msg,
+  //        this.formService.SAVE_INCOMPLETE,
+  //        {
+  //          timeOut: 5000,
+  //          closeButton: true,
+  //          positionClass: "toast-top-center"
+  //        }
+  //      );
+  //    }
+  //  }, error => () => {
+  //      console.log('Was error', error);
+  //  }, () => {
+  //     console.log('Loading complete');
+  //  });
+
+  // }
 
 
-  savePersonInfo(){
-    console.log('savePersonInfo()');
-
-    console.log('*** this.cddData.ReqModifyFlag>> ' + this.cddData.ReqModifyFlag);
-
-    this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData)
-    .subscribe((data: any ) => {
-     console.log('Successful', JSON.stringify(data));
-     if (data.code === "000") {
-       this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
-         timeOut: 5000,
-         closeButton: true,
-         positionClass: "toast-top-center"
-       });
-     } else {
-       this.toastr.warning(
-         data.msg,
-         this.formService.SAVE_INCOMPLETE,
-         {
-           timeOut: 5000,
-           closeButton: true,
-           positionClass: "toast-top-center"
-         }
-       );
-     }
-   }, error => () => {
-       console.log('Was error', error);
-   }, () => {
-      console.log('Loading complete');
-   });
-
-  }
-
-
-  public saveFATCA(){
-    this.suiteService
-    .saveFATCA(
-      this.survey.pid,
-      this.survey.pid,
-      this.fatcaQuestions
-    )
-    .finally(() => {
-      // Execute after graceful or exceptionally termination
-      console.log("saveFATCA logging logic...");
-      this.spinnerLoading = false;
-    })
-    .subscribe(
-      (data: any) => {
-        console.log("HTTP return  saveFATCA :" + JSON.stringify(data));
-        if (data.code === "000") {
-          this.toastr.success(data.msg, this.formService.FATCA_SAVE_COMPLETE, {
-            timeOut: 5000,
-            closeButton: true,
-            positionClass: "toast-top-center"
-          });
-        } else {
-          this.toastr.warning(
-            data.msg,
-            this.formService.FATCA_SAVE_INCOMPLETE,
-            {
-              timeOut: 5000,
-              closeButton: true,
-              positionClass: "toast-top-center"
-              }
-            );
-        }
-      },
-      error => () => {
-        console.log("saveFATCA Was error", error);
-      },
-      () => {
-        console.log("saveFATCA  complete");
-      }
-    );
-  }
+  // public saveFATCA(){
+  //   this.suiteService
+  //   .saveFATCA(
+  //     this.survey.pid,
+  //     this.survey.pid,
+  //     this.fatcaQuestions
+  //   )
+  //   .finally(() => {
+  //     // Execute after graceful or exceptionally termination
+  //     console.log("saveFATCA logging logic...");
+  //     this.spinnerLoading = false;
+  //   })
+  //   .subscribe(
+  //     (data: any) => {
+  //       console.log("HTTP return  saveFATCA :" + JSON.stringify(data));
+  //       if (data.code === "000") {
+  //         this.toastr.success(data.msg, this.formService.FATCA_SAVE_COMPLETE, {
+  //           timeOut: 5000,
+  //           closeButton: true,
+  //           positionClass: "toast-top-center"
+  //         });
+  //       } else {
+  //         this.toastr.warning(
+  //           data.msg,
+  //           this.formService.FATCA_SAVE_INCOMPLETE,
+  //           {
+  //             timeOut: 5000,
+  //             closeButton: true,
+  //             positionClass: "toast-top-center"
+  //             }
+  //           );
+  //       }
+  //     },
+  //     error => () => {
+  //       console.log("saveFATCA Was error", error);
+  //     },
+  //     () => {
+  //       console.log("saveFATCA  complete");
+  //     }
+  //   );
+  // }
 
 
   evaluateSuitOK(){
@@ -1186,14 +1182,35 @@ export class SuitComponent implements OnInit {
             }
           }
 
-            this.toastr.info(`Survey complete please see result below.`,
-              this.formService.SAVE_INFO,
-              {
-                timeOut: 8000,
-                closeButton: true,
-                positionClass: "toast-top-center"
-              }
-            );
+          // Send mail to who relate(Owner & RM)
+
+          // this.suiteService.mailThankCust(this.survey.pid)
+
+          this.suiteService.mailThankCust(this.survey.pid)
+          .finally(() => {
+            // Execute after graceful or exceptionally termination
+          })
+          .subscribe((data: any) => {
+              console.log("Send maill finalSaveAll:" + JSON.stringify(data));
+
+            },
+            error => () => {
+              console.log("Send maill finalSaveAll was error", error);
+            },
+            () => {
+              // console.log("saveFATCA  complete");
+            }
+          );
+
+
+          this.toastr.info(`Survey complete please see result below.`,
+            this.formService.SAVE_INFO,
+            {
+              timeOut: 8000,
+              closeButton: true,
+              positionClass: "toast-top-center"
+            }
+          );
 
           this.cddData.ReqModifyFlag = false;
           this.addrModifyFlag = false;

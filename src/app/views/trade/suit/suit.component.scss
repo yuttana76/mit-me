@@ -60,10 +60,6 @@ mat-form-field {
   overflow-y: auto;
 }
 
-.blue-txt{
-  color: #1194F6;
-  font-size: 150%;
-}
 
 //Customer info
 #cust_content {
@@ -168,15 +164,19 @@ margin-top: 10px;
 }
 
 .label_header {
-  font-size: 200%;
+  font-size: 120%;
   color: cornflowerblue;
   margin-top: 15px;
 }
 
 .form_section {
-  font-size: 150%;
+  font-size: 120%;
 }
 
+.blue-txt{
+  color: #1194F6;
+  font-size: 120%;
+}
 
 .q_image{
   img {

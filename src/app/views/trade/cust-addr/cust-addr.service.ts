@@ -18,5 +18,17 @@ export class CustAddrFormService {
   // Label
   REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
 
-
+  // Addr No
+  // Moo
+  // Place
+  // Floor
+  // Soi
+  // Road
+  // Coutry
+  // Please choose Coutry.
+  // Province
+  // Please choose Province.
+  // Districe
+  // Sub District
+  // Please choose Sub District.
 }

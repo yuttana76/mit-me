@@ -1,10 +1,20 @@
 export class CDDModel {
 
       // public modifyFlag: string;
+
+      public identificationCardType: string;
+      public passportCountry: string;
+
       public pid: string;
       public title: string;
+      public titleOther: string;
+
       public firstName: string;
       public lastName: string;
+
+      public firstNameE: string;
+      public lastNameE: string;
+
       public dob: string;
       public mobile: string;
       public email: string ;

@@ -193,13 +193,37 @@ export class SuitComponent implements OnInit {
 
    // Initial  firstFormGroup
    this.cddFormGroup = new FormGroup({
+
+    // identificationCardType: new FormControl(null, {
+    //   validators: [Validators.required]
+    // }),
+    // passportCountry: new FormControl(null, {
+    //   validators: [Validators.required]
+    // }),
+
     pid: new FormControl(null, {
       validators: [Validators.required]
     }),
+
+
+    title: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    titleOth: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+
+
     firstName: new FormControl(null, {
       validators: [Validators.required]
     }),
     lastName: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    firstNameE: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    lastNameE: new FormControl(null, {
       validators: [Validators.required]
     }),
     dob: new FormControl(null, {
@@ -470,6 +494,14 @@ export class SuitComponent implements OnInit {
 // console.log(' getCDD()>> ' + JSON.stringify(data));
 
     if(data ){
+
+      this.cddData.identificationCardType = data[0].identificationCardType;
+      this.cddData.passportCountry = data[0].passportCountry;
+      this.cddData.title = data[0].title;
+      this.cddData.titleOther = data[0].titleOther;
+      this.cddData.firstNameE = data[0].firstNameE;
+      this.cddData.lastNameE = data[0].lastNameE;
+
       this.cddData.pid = data[0].pid;
       this.cddData.firstName = data[0].firstName;
       this.cddData.lastName = data[0].lastName;

@@ -8,13 +8,14 @@ import { BusinessType } from '../model/businessType.model';
 import { Income } from '../model/income.model';
 import { IncomeSource } from '../model/incomeSource.model';
 import { Position } from '../model/position.model';
-import { ToastrService } from 'ngx-toastr';
+import { ToastrService, ToastrComponentlessModule } from 'ngx-toastr';
 import { CustCddFormService } from './cust-cdd.service';
 import { FCoccupation } from '../model/fcOccupation.model';
 import { FCbusinessType } from '../model/fcBusinessType.model';
 import { FCincomeLevel } from '../model/fcIncomeLevel.model';
 import { FCincomeSource } from '../model/fcIncomeSource.model';
 import { ShareDataService } from '../services/shareData.service';
+import { FCcountry } from '../model/fcContry.model';
 
 @Component({
   selector: 'app-cust-cdd',
@@ -30,12 +31,26 @@ export class CustCDDComponent implements OnInit {
   // public cddData = new CDDModel() ;
   // public modifyFlag = false;
 
+
+  countryList: FCcountry[];
+
   businessTypeList: FCbusinessType[];
   occupationList: FCoccupation[];
   positionList: Position[];
   incomeList: FCincomeLevel[];
   incomeSourceList: FCincomeSource[];
 
+  public cardTypeList = [
+    {Code : 'CITIZEN_CARD',Description:'บัตรประชาชน'}
+    ,{Code : 'PASSPORT',Description:'Passport'}
+  ];
+
+  public titleList = [
+    {Code : 'MR',Description:'นาย'}
+    ,{Code : 'MRS',Description:'นาง'}
+    ,{Code : 'MISS',Description:'นางสาว'}
+    ,{Code : 'OTHER',Description:'อื่นๆ'}
+  ];
 
   constructor(
     private cddService: CddService,
@@ -49,6 +64,10 @@ export class CustCDDComponent implements OnInit {
 
 
   ngOnInit() {
+
+    // this.masterDataService.getFCcountry().subscribe((data: any[]) => {
+    //   this.countryList = data;
+    // });
 
   this.masterDataService.getFCoccupation().subscribe((data: any[]) => {
     this.occupationList = data;
@@ -70,6 +89,7 @@ export class CustCDDComponent implements OnInit {
   this.masterDataService.getFCincomeSource().subscribe((data: any[]) => {
     this.incomeSourceList = data;
   });
+
 
   }
 
@@ -118,6 +138,27 @@ export class CustCDDComponent implements OnInit {
   }
 
  }
+
+ isTitleOther(){
+  if(this.cddData.title === 'OTHER'){
+    this.cddFormGroup.controls["titleOth"].setValidators(Validators.required);
+    this.cddFormGroup.controls["titleOth"].updateValueAndValidity();
+    return true;
+ }else{
+    this.cddFormGroup.controls["titleOth"].clearValidators();
+    this.cddFormGroup.controls["titleOth"].updateValueAndValidity();
+    this.cddData.titleOther = "";
+      return false;
+ }
+ }
+
+//  isPassportCard(){
+//    if(this.cddData.identificationCardType === 'PASSPORT'){
+//       return true;
+//    }else{
+//       return false;
+//    }
+//  }
 
  isBusinessTypeOther(){
     if(this.cddData.typeBusiness === this.shareDataService.BUSINESSTYPE_FC_OTHER){

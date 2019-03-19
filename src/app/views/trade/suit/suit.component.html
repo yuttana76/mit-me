@@ -11,20 +11,18 @@
       <nav class="navbar navbar-light bg-light">
           <form class="form-inline" [formGroup]="form" #custForm="ngForm" >
             <span *ngIf="!verifyFLag">
-                <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.pid_label }}" aria-label="Search"
+                <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
                 formControlName="pid" [(ngModel)]="survey.pid"  >
-                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0"  (click)="getCustomerData()">Search</a>
+                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0"  (click)="getCustomerData()">{{ formService.LABEL_SEARCH }}</a>
             </span>
 
             <ul class="nav navbar-nav ml-auto" *ngIf="verifyFLag">
                 <li >
-                    <strong>Welcome</strong>
+                    <strong>{{ formService.label_Welcome }}</strong>
                     <p> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
                 </li>
-
                 <!-- <a (click) = "onLogout()"><i class="fa fa-lock" ></i> Logout</a> -->
-                <a (click) = "onLogout()" class="btn btn-outline-success my-2 my-sm-0" ><span class=" cui-account-logout" aria-hidden="true"></span> Exit</a>
-
+                <a (click) = "onLogout()" class="btn btn-outline-success my-2 my-sm-0" ><span class=" cui-account-logout" aria-hidden="true"></span> {{ formService.LABEL_EXIT }}</a>
             </ul>
           </form>
         </nav>
@@ -34,41 +32,35 @@
   <div *ngIf="needVerify" class="container">
 
           <!-- <h5>Request verify method.</h5> -->
-          <div class="row">
+          <div class="row form_section">
               <mat-radio-group  [(ngModel)]="verifyBy" class="col-lg-4 col-md-4 col-sm-4 display_block" >
-                  <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >Verify by date of birth </mat-radio-button>
+                  <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >{{ formService.label_verify_dob }}</mat-radio-button>
                   <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == PREFIX_MOBILE_ALLOW_SEND_SMS "  >
-                    Verify by OTP to register</mat-radio-button>
+                      {{ formService.label_verify_otp }}</mat-radio-button>
                 </mat-radio-group>
 
-                <a *ngIf="!INTERNAL_USER && verifyBy=='OTP'" mat-flat-button  color="primary"  (click)="requestOTP()" >Request OTP</a>
+                <a *ngIf="!INTERNAL_USER && verifyBy=='OTP'" mat-flat-button  color="primary"  (click)="requestOTP()" >{{ formService.label_Request_otp }}</a>
 
           </div>
 
-      <div id='div_DOB' *ngIf="verifyBy=='DOB'" >
+      <div id='div_DOB' *ngIf="verifyBy=='DOB'" class="form_section">
         <div class="row" >
-
-            <!-- <mat-form-field >
-            <input  matInput   placeholder="Please verify your date of birth"    [(ngModel)]="verifyDOB_val"  />
-            </mat-form-field> -->
 
             <!-- <form class="example-form"> -->
               <mat-form-field class="example-full-width">
-                <!-- <input matInput placeholder="Favorite food" value="Sushi"> -->
-                <input matInput placeholder="Please verify your date of birth"  [(ngModel)]="verifyDOB_val" name="verifyDOB_val"  >
+                <input matInput placeholder={{formService.label_input_verify_dob}}  [(ngModel)]="verifyDOB_val" name="verifyDOB_val"  >
               </mat-form-field>
-              <p>Format:ddmmyyyyy  (example = 31011976)</p>
+              <p>{{formService.label_verify_dob_Format}}</p>
             <!-- </form> -->
-
         </div>
 
         <div class="row">
-          <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyDOB()" class="col-md-4"> Verify</a>
+          <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyDOB()" class="col-md-4"> {{formService.LABEL_Verify}}</a>
         </div>
       </div>
 
       <!-- Verify OTP section -->
-      <div id='div_OTP' *ngIf="verifyBy=='OTP'">
+      <div id='div_OTP' *ngIf="verifyBy=='OTP'" class="form_section">
 
          <div id='OTP_INTRY' *ngIf="showOtpEntry" >
             <div class="row">
@@ -77,7 +69,7 @@
                 </mat-form-field>
             </div>
             <div class="row">
-                <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyConfirmOTP()" class="col-md-4"> Verify</a>
+                <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyConfirmOTP()" class="col-md-4"> {{formService.LABEL_Verify}}</a>
             </div>
          </div>
       </div>
@@ -93,7 +85,7 @@
         <form [formGroup]="cddFormGroup" class="form_section">
           <ng-template matStepLabel>{{formService.STEPER_1}}</ng-template>
           <div class="stepper_action" >
-              <button mat-flat-button  matStepperNext color="primary" (click)="checkCDD_FormInvalid(cddFormGroup)">Next</button>
+              <button mat-flat-button  matStepperNext color="primary"  (click)=checkCDD_FormInvalid(cddFormGroup)>{{formService.LABEL_NEXT}}</button>
           </div>
           <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="cddFormGroup" [cddData]="cddData"></app-cust-cdd>
         </form>
@@ -120,8 +112,8 @@
      <mat-step [stepControl]="register_formGroup" >
         <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
         <div class="stepper_action" >
-            <button mat-flat-button  matStepperPrevious color="accent" >Back</button>
-            <button mat-flat-button  matStepperNext color="primary" (click)="checkCDD_FormInvalid(register_formGroup)">Next</button>
+            <button mat-flat-button  matStepperPrevious color="accent" >{{formService.LABEL_BACK}}</button>
+            <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) >{{formService.LABEL_NEXT}}</button>
         </div>
 
             <div class='row '>
@@ -135,9 +127,9 @@
             <mat-expansion-panel [(expanded)]='register_expanded'>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
-                      <span class="label_header">{{ formService.register_addr_title }}</span>
+                      <span>{{ formService.register_addr_title }}</span>
                   </mat-panel-title>
-                      <mat-panel-description *ngIf="!register_expanded && !mobile"  >
+                      <mat-panel-description *ngIf="!register_expanded && !mobile" class="form_section" >
                           {{re_addrData.Print_Address}}
                   </mat-panel-description>
 
@@ -153,9 +145,9 @@
             <mat-expansion-panel [(expanded)]='work_expanded'>
                 <mat-expansion-panel-header>
                   <mat-panel-title >
-                      <span class="label_header">{{ formService.work_addr_title }}</span>
+                      <span>{{ formService.work_addr_title }}</span>
                   </mat-panel-title>
-                  <mat-panel-description *ngIf="!work_expanded && !mobile" >
+                  <mat-panel-description *ngIf="!work_expanded && !mobile" class="form_section">
                         {{work_addrData.Print_Address}}
                   </mat-panel-description>
                 </mat-expansion-panel-header>
@@ -180,9 +172,9 @@
               <mat-expansion-panel [(expanded)]='current_expanded' >
                   <mat-expansion-panel-header>
                     <mat-panel-title>
-                        <span class="label_header">{{ formService.contact_addr_title }}</span>
+                        <span>{{ formService.contact_addr_title }}</span>
                     </mat-panel-title>
-                    <mat-panel-description *ngIf="!current_expanded && !mobile" >
+                    <mat-panel-description *ngIf="!current_expanded && !mobile" class="form_section">
                             {{cur_addrData.Print_Address}}
                     </mat-panel-description>
                   </mat-expansion-panel-header>
@@ -218,17 +210,18 @@
             <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
 
             <div class="stepper_action">
-                <button mat-flat-button  matStepperPrevious color="accent" >Back</button>
-                <button mat-flat-button  matStepperNext color="primary" >Next</button>
+                <button mat-flat-button  matStepperPrevious color="accent" >{{formService.LABEL_BACK}}</button>
+                <button mat-flat-button  matStepperNext color="primary" >{{formService.LABEL_NEXT}}</button>
             </div>
 
 
               <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen form_section"  >
-                  <h4>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </h4>
-                  <p>Evaluated Date: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</p>
+                  <h4>{{formService.label_RiskLevel}}  </h4>
+                  <h4><span>{{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </span></h4>
+                  <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</p>
                   <p>{{ cust_RiskTypeInvestor }}</p>
 
-                  <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> New Survey</a>
+                  <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a>
               </div>
 
              <!-- Show Suit question  -->
@@ -287,9 +280,9 @@
               </ul>
 
               <mat-card-actions>
-                  <button   mat-flat-button class="act_button"  color="warn"  (click)="suiteFormRESET()"  type="reset" >Suit Reset </button>
-                  <a mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> Calculate</a>
-                  <a mat-flat-button color="accent" (click)="canDoSuit =false;" class ="act_button"> Cancel</a>
+                  <button   mat-flat-button class="act_button"  color="warn"  (click)="suiteFormRESET()"  type="reset" >Reset </button>
+                  <a mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> {{formService.LABEL_CALCULATE}}</a>
+                  <a mat-flat-button color="accent" (click)="canDoSuit =false;" class ="act_button"> {{formService.LABEL_CANCEL}}</a>
               </mat-card-actions>
 
               <div class ="row" *ngIf="onSuitCalculate">
@@ -302,12 +295,12 @@
 
             <div *ngIf="canSaveSuit"  class="container center-screen suitResult form_section"  >
                 <!-- <div class="suitResult" *ngIf="canSaveSuit"> -->
-                    <h4>Calculate Result</h4>
+                    <h4>{{formService.label_RiskLevel}}</h4>
                     <h4>{{ riskLevel }} - {{ riskLevelTxt }}</h4>
                     <p>{{ riskLevelDesc }}</p>
 
-                    <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;suitModifyFlag=false" class ="act_button"> Cancel</a>
-                    <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" > Evaluate again</a>
+                    <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;suitModifyFlag=false" class ="act_button"> {{formService.LABEL_CANCEL}}</a>
+                    <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" > {{formService.LABEL_EVA_AGAIN}}</a>
                     <button mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">OK</button>
 
               </div>

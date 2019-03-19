@@ -141,85 +141,92 @@ exports.getCDDinfo_MIT = (req, res, next) => {
 exports.saveCDDInfo = (req, res, next) => {
 
   var fncName = 'saveCDDInfo';
-  var Cust_Code = req.body.Cust_Code
-  var actionBy = req.body.actionBy
-  var pid = req.body.pid
-  var title = req.body.title
-  var firstName = req.body.firstName
-  var lastName = req.body.lastName
-  var dob = req.body.dob
-  var mobile = req.body.mobile
-  var email = req.body.email
-  var occupation = req.body.occupation
-  var occupation_Oth = req.body.occupation_Oth
+  var Cust_Code = req.body.Cust_Code;
+  var actionBy = req.body.actionBy;
+  var pid = req.body.pid;
+  var title = req.body.title;
+  var firstName = req.body.firstName;
+  var lastName = req.body.lastName;
+  var dob = req.body.dob;
+  var mobile = req.body.mobile;
+  var email = req.body.email;
+  var occupation = req.body.occupation;
+  var occupation_Oth = req.body.occupation_Oth;
+  var position = req.body.position;
+  var position_Oth = req.body.position_Oth;
+  var typeBusiness = req.body.typeBusiness;
+  var typeBusiness_Oth = req.body.typeBusiness_Oth;
+  var reqModifyFlag = req.body.ReqModifyFlag;
+  var incomeLevel = req.body.incomeLevel;
+  var incomeSource = req.body.incomeSource;
+  var incomeSource_Oth = req.body.incomeSource_Oth;
+  var workPlace = req.body.workPlace;
 
-  var position = req.body.position
-  var position_Oth = req.body.position_Oth
-
-  var typeBusiness = req.body.typeBusiness
-  var typeBusiness_Oth = req.body.typeBusiness_Oth
-  var reqModifyFlag = req.body.ReqModifyFlag
-
-  var incomeLevel = req.body.incomeLevel
-  var incomeSource = req.body.incomeSource
-  var incomeSource_Oth = req.body.incomeSource_Oth
-  var workPlace = req.body.workPlace
-
+  var identificationCardType = req.body.identificationCardType;
+  var passportCountry = req.body.passportCountry;
+  var title = req.body.title;
+  var titleOther = req.body.titleOther;
+  var firstNameE = req.body.firstNameE;
+  var lastNameE = req.body.lastNameE;
 
   var logMsg = `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${Cust_Code}`;
   logger.info( logMsg);
 
-
   var queryStr = `
   BEGIN
 
-    UPDATE MIT_CUSTOMER_INFO SET
-      [ID_CARD]=@ID_CARD
-      ,[Title_Name_T]=@Title_Name_T
-      ,[First_Name_T]=@First_Name_T
-      ,[Last_Name_T]=@Last_Name_T
-      ,[Birth_Day]=@Birth_Day
-      ,[Mobile]=@Mobile
-      ,[Email]=@Email
-      ,[Occupation_Code]=@Occupation_Code
-      ,[Occupation_Desc]=@Occupation_Oth
+  UPDATE MIT_CUSTOMER_INFO SET
+   [ID_CARD]=@ID_CARD
+   ,[First_Name_T]=@First_Name_T
+   ,[Last_Name_T]=@Last_Name_T
+   ,[Birth_Day]=@Birth_Day
+   ,[Mobile]=@Mobile
+   ,[Email]=@Email
+   ,[Occupation_Code]=@Occupation_Code
+   ,[Occupation_Desc]=@Occupation_Oth
+   ,[Position_Code]=@Position_Code
+   ,[Position_Desc]=@Position_Oth
+   ,[BusinessType_Code]=@BusinessType_Code
+   ,[BusinessType_Desc]=@BusinessType_Oth
+   ,[Income_Code]=@Income_Code
+   ,[Income_Source_Code]=@Income_Source_Code
+   ,[Income_Source_Desc]=@Income_Source_Oth
+   ,[WorkPlace]=@WorkPlace
+   ,[ReqModifyFlag]=@ReqModifyFlag
+   ,[UpdateBy]=@ActionBy
+   ,[UpdateDate]=GETDATE()
 
-      ,[Position_Code]=@Position_Code
-      ,[Position_Desc]=@Position_Oth
+   ,[identificationCardType]=@identificationCardType
+   ,[passportCountry]=@passportCountry
+   ,[title]=@title
+   ,[titleOther]=@titleOther
+   ,[First_Name_E]=@First_Name_E
+   ,[Last_Name_E]=@Last_Name_E
+   WHERE Cust_Code = @Cust_Code;
 
-      ,[BusinessType_Code]=@BusinessType_Code
-      ,[BusinessType_Desc]=@BusinessType_Oth
-
-      ,[Income_Code]=@Income_Code
-      ,[Income_Source_Code]=@Income_Source_Code
-      ,[Income_Source_Desc]=@Income_Source_Oth
-
-      ,[WorkPlace]=@WorkPlace
-      ,[ReqModifyFlag]=@ReqModifyFlag
-
-      ,[UpdateBy]=@ActionBy
-      ,[UpdateDate]=GETDATE()
-    WHERE Cust_Code = @Cust_Code
 
     if @@rowcount = 0
-        begin
-        INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[Title_Name_T],[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
-          ,[Occupation_Code] ,[Occupation_Desc] ,[Position_Code],[Position_Desc] ,[BusinessType_Code],[BusinessType_Desc] ,[Income_Code] ,[Income_Source_Code],[Income_Source_Desc],WorkPlace,ReqModifyFlag,[CreateBy] ,[CreateDate] )
-        VALUES(@Cust_Code,@ID_CARD ,@Title_Name_T,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
-            ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ReqModifyFlag,@ActionBy ,GETDATE())
-        END
-  END
+    BEGIN
 
+    INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
+      ,[Occupation_Code] ,[Occupation_Desc] ,[Position_Code],[Position_Desc] ,[BusinessType_Code],[BusinessType_Desc] ,[Income_Code] ,[Income_Source_Code],[Income_Source_Desc],WorkPlace,ReqModifyFlag,[CreateBy] ,[CreateDate]
+      ,[identificationCardType],[passportCountry],[title],[titleOther],[First_Name_E],[Last_Name_E])
+    VALUES(@Cust_Code,@ID_CARD ,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
+        ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ReqModifyFlag,@ActionBy ,GETDATE()
+        ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E)
+
+    END
+
+  END
   `;
 
   // console.log( 'saveCDDInfo() >>' + queryStr);
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {
-    pool1.request() // or: new sql.Request(pool1)
+    pool1.request()
     .input('Cust_Code', sql.VarChar(50), Cust_Code)
     .input('ID_CARD', sql.VarChar(50), pid)
-    .input('Title_Name_T', sql.VarChar(200), title)
     .input('First_Name_T', sql.VarChar(200), firstName)
     .input('Last_Name_T', sql.VarChar(200), lastName)
     .input('Birth_Day', sql.VarChar(20), dob)
@@ -237,6 +244,13 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('WorkPlace', sql.VarChar(500), workPlace)
     .input('ReqModifyFlag', sql.VarChar(1), reqModifyFlag)
     .input('ActionBy', sql.VarChar(50), actionBy)
+
+    .input('identificationCardType', sql.VarChar(15), identificationCardType)
+    .input('passportCountry', sql.VarChar(2), passportCountry)
+    .input('title', sql.VarChar(5), title)
+    .input('titleOther', sql.NVarChar(50), titleOther)
+    .input('First_Name_E', sql.VarChar(200), firstNameE)
+    .input('Last_Name_E', sql.VarChar(200), lastNameE)
     .query(queryStr, (err, result) => {
         if(err){
           rsp_code = "902"; // Was error

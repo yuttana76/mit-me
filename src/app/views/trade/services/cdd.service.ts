@@ -19,10 +19,10 @@ export class CddService {
       .pipe(
         map(fundtData => {
           return fundtData.result.map(data => {
-            // console.log(` Service getCustCDDInfo() >> ${JSON.stringify(data)}`);
+            console.log(` Service getCustCDDInfo() >> ${JSON.stringify(data)}`);
             return {
               pid: data.ID_CARD,
-              title: data.Title_Name_T,
+              // title: data.Title_Name_T,
               firstName: data.First_Name_T,
               lastName: data.Last_Name_T,
               dob: data.Birth_Day,
@@ -37,7 +37,14 @@ export class CddService {
               incomeLevel: data.Income_Code,
               incomeSource: data.Income_Source_Code,
               incomeSourceOth: data.Income_Source_Desc,
-              workPlace: data.WorkPlace
+              workPlace: data.WorkPlace,
+
+              identificationCardType: data.identificationCardType,
+              passportCountry: data.passportCountry,
+              title: data.title,
+              titleOther: data.titleOther,
+              firstNameE: data.First_Name_E,
+              lastNameE: data.Last_Name_E
             };
           });
         })
@@ -59,13 +66,11 @@ export class CddService {
     }else {
       _reqModifyFlag = 0;
     }
-
-
     const data = {
       actionBy: ActionBy,
       Cust_Code: custCode,
       pid: cdd.pid,
-      title: cdd.title,
+      // title: cdd.title,
       firstName: cdd.firstName,
       lastName: cdd.lastName,
       dob: _DOB,
@@ -82,6 +87,13 @@ export class CddService {
       incomeSource_Oth: cdd.incomeSource_Oth,
       workPlace: cdd.workPlace,
       ReqModifyFlag: _reqModifyFlag,
+
+      identificationCardType: cdd.identificationCardType,
+      passportCountry: cdd.passportCountry,
+      title: cdd.title,
+      titleOther: cdd.titleOther,
+      firstNameE: cdd.firstNameE,
+      lastNameE: cdd.lastNameE
       };
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddInfo', data);
   }

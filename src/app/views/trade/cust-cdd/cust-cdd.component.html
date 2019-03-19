@@ -13,20 +13,67 @@
   <div class='row label_header'>
     {{formService.LABEL_PERSON_INFO}}
   </div>
+<!--
+  <div class='row'>
+          <mat-radio-group  [(ngModel)]="cddData.identificationCardType"  formControlName="identificationCardType" required>
+              <mat-radio-button *ngFor="let cardType of cardTypeList" [value]="cardType.Code">{{cardType.Description}}</mat-radio-button>
+          </mat-radio-group>
+  </div>
+
     <div class='row'>
         <mat-form-field class="col-md-4 col-sm-4">
-            <input matInput [(ngModel)]="cddData.pid" placeholder={{formService.label_idCard}}  formControlName="pid"  required>
+            <input matInput [(ngModel)]="cddData.pid" placeholder={{formService.label_idNumber}}  formControlName="pid"  required>
+        </mat-form-field>
+
+        <mat-form-field  *ngIf="isPassportCard()">
+                <mat-select [(ngModel)]="cddData.passportCountry" formControlName="passportCountry" placeholder={{formService.label_passCountry}} required >
+                  <mat-option *ngFor="let obj of countryList" [value]="obj.Code">
+                    {{obj.Eng_Name}}
+                  </mat-option>
+                </mat-select>
+        </mat-form-field>
+    </div> -->
+
+    <div class='row'>
+        <mat-form-field class="col-md-4 col-sm-4">
+            <input matInput [(ngModel)]="cddData.pid" placeholder={{formService.label_idNumber}}  formControlName="pid"  required>
+        </mat-form-field>
+
+    </div>
+
+    <div class='row'>
+        <mat-form-field class="col-md-4 col-sm-4">
+            <mat-select [(ngModel)]="cddData.title" formControlName="title" placeholder={{formService.label_title}} required >
+              <mat-option *ngFor="let obj of titleList" [value]="obj.Code">
+                  {{obj.Code}}-{{obj.Description}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="col-md-4 col-sm-4" *ngIf="isTitleOther()">
+            <input matInput [(ngModel)]="cddData.titleOther"  placeholder={{formService.label_other}}  formControlName="titleOth"  required>
+        </mat-form-field>
+    </div>
+
+
+    <div class='row'>
+        <mat-form-field class="col-md-4" >
+            <input matInput [(ngModel)]="cddData.firstName" placeholder="{{formService.label_firstName_th}}  ({{formService.LABEL_thai}})"  formControlName="firstName" required>
+        </mat-form-field>
+        <mat-form-field class="col-md-4">
+            <input matInput [(ngModel)]="cddData.lastName"  placeholder="{{formService.label_lastName_th}} ({{formService.LABEL_thai}})"  formControlName="lastName"  required>
         </mat-form-field>
     </div>
 
     <div class='row'>
         <mat-form-field class="col-md-4" >
-            <input matInput [(ngModel)]="cddData.firstName" placeholder={{formService.label_firstName_th}}  formControlName="firstName" required>
+            <input matInput [(ngModel)]="cddData.firstNameE" placeholder="{{formService.label_firstName_eng}} ({{formService.LABEL_eng}})"  formControlName="firstNameE" required>
         </mat-form-field>
         <mat-form-field class="col-md-4">
-            <input matInput [(ngModel)]="cddData.lastName"  placeholder={{formService.label_lastName_th}}  formControlName="lastName"  required>
+            <input matInput [(ngModel)]="cddData.lastNameE"  placeholder="{{formService.label_lastName_eng}} ({{formService.LABEL_eng}})"  formControlName="lastNameE"  required>
         </mat-form-field>
     </div>
+
 
     <div class="row"  >
         <mat-form-field class="col-md-4">

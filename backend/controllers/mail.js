@@ -116,6 +116,7 @@ function getCustomerInfo(Cust_Code) {
 
   SELECT Cust_Code
   ,[Title_Name_T] + ' ' +  [First_Name_T] + ' ' + [Last_Name_T] AS fullName
+  ,[Title_Name_E] + ' ' +  [First_Name_E] + ' ' + [Last_Name_E] AS fullName_Eng
   ,Email
   FROM [Account_Info]
   WHERE Cust_Code= @Cust_Code
@@ -163,7 +164,7 @@ exports.surveyByMailToken = (req, res, next) =>{
   let _from = mailConfig.mail_form;
   let _to ;//= 'yuttana76@gmail.com';
   let _subject = 'Interview suit by MPAM.'
-  let _msg = '';
+  let _msgTH = '';
   var logMsg ;
 
   let _target = req.body.target || 'test';
@@ -183,10 +184,6 @@ exports.surveyByMailToken = (req, res, next) =>{
 
       // Incase has Email
         if(data.Email){
-
-          _msg = ' To ' + data.fullName ;
-          _to = data.Email;
-
           //Generate token
           const token = jwt.sign(
             {USERID: _PID},
@@ -194,14 +191,56 @@ exports.surveyByMailToken = (req, res, next) =>{
             { expiresIn: JWT_EXTERNAL_EXPIRES},
           );
 
+          _to = data.Email;
+
+          // Thai message
+          _msgTH = `
+          เรียน ${data.fullName}
+          <br>
+          <br>
+          ด้วยทาง บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้มีการสำวจและตรวจสอบข้อมูลของลูกค้า
+          <br>
+          เพื่อให้มีความเป็นปัจจุบันและถูกต้องตามข้อกำหนดของหน่วยงาน
+          <br>
+          สามารถเข้าใช้ระบบตามลิงค์ด้านล่างนี้
+          <br>${_url}${token}
+          <br>
+          <br>
+          ขอแสดงความนับถือ
+          <br>
+          <p>
+          <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+          <p>
+          `;
+
+          // English message
+          if(data.fullName_Eng){
+          _msgTH += `
+          <br>
+          <br>
+          Dear ${data.fullName_Eng}
+          <br>
+          <br>
+          Access this link below.
+          <br>${_url}${token}
+          <br>
+          <br>
+          Yours Sincerely, 
+          <br>
+          <p>
+          <br>*** This is an automatically generated email, please do not reply. ***
+          </p>
+          `;
+          }
+
+          _msgTH +=_compInfo
+
           // setup email data with unicode symbols
           let mailOptions = {
             from: _from,
             to: _to,
             subject: _subject,
-            html: `${_msg}
-            <br>Click this link to intereview. <br> ${_url}${token}
-            ` // html body
+            html: _msgTH,
           };
 
         /**
@@ -285,13 +324,43 @@ exports.sendMailThankCust = (req, res, next) =>{
       // Incase has Email
         if(data.Email){
 
-          _msg =  `To ${data.fullName}
-          <br>Thank you. to finish survey.
+          _to = data.Email;
+          _msg =  `
+          เรียน ${data.fullName}
+          <br>
+          บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด  ได้รับข้อมูลและบันทึกข้อมูลเรียบร้อยแล้ว
+          บริษัท ขอขอบพระคุณที่ท่านใช้บริการจากเรา
+          <br>
+          ขอแสดงความนับถือ
+          <br>
+          <br>
+          <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
           <br>
           <br>
           ${_compInfo}
           `;
-          _to = data.Email;
+
+          if(data.fullName_Eng){
+            _msg += `
+            <br>
+            <br>
+            Dear ${data.fullName_Eng}
+            <br>
+            <br>
+              We got your data and saved.Thank you
+            <br>
+            <br>
+            Yours Sincerely, 
+            <br>
+            <br>
+            <p>
+            <br>*** This is an automatically generated email, please do not reply. ***
+            <br>
+            </p>
+            `;
+            }
+            _msg +=_compInfo
+
 
           // message to customer
           let mailOptions = {
@@ -303,11 +372,12 @@ exports.sendMailThankCust = (req, res, next) =>{
 
           // message to RM.
           _subjectRM += `MIT-survey customer finish to survey. (${data.fullName})`;
-          _msgRM = ` Customer  finsihed survey.
+          _msgRM = `
+          Customer  finsihed survey. on ${utility.getDateTime()}
           <br>
           <br>Code: ${_PID}
           <br>Name: ${data.fullName}
-          <br>${utility.getDateTime()}
+          <br>
           `;
 
           let mailOptions_RM = {

@@ -23,11 +23,15 @@ exports.MPAM_MailParameters = {
   // exports.mail_toRM ='PW@merchantasset.co.th'; //
   exports.mailRM ='yuttana@merchantasset.co.th';
 
-  exports.mailCompInfo_TH = `บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด<br>
+  exports.mailCompInfo_TH = `
+  <br>
+  <p>
+  บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด<br>
   942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4<br>
   แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500<br>
   โทร. 02 660 6677<br>
   แฟกซ์. 02 660 6678<br>
   เว็บไซต์ : www.merchantasset.co.th<br>
   อีเมล : info@merchantasset.co.th<br>
+  </p>
   `;

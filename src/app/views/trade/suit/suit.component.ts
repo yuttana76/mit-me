@@ -66,19 +66,13 @@ export class SuitComponent implements OnInit {
   showOtpEntry = false;
   addrModifyFlag = false;
   suitModifyFlag = false;
-
   showWorkAddr = false;
   showCurrentAddr = false;
   onSuitCalculate = false;
-
-  // workAddrAs = '';
-  // currAddrAs = '';
-
   ADD_NEW = false;
   INTERNAL_USER = false;
-
-  // STEPER_isOptional = false;
   isEditable = true;
+  saveAllComplete = false;
 
   suitScore = 0;
   riskLevel = 0;
@@ -1143,36 +1137,57 @@ export class SuitComponent implements OnInit {
 
     const observables = [];
 
-    if(this.cddData.ReqModifyFlag){
-      observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
-      observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
-    }
+    // if(this.cddData.ReqModifyFlag){
+    //   observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
+    //   observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
+    // }
 
-    if(this.addrModifyFlag){
-      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData));
+    // if(this.addrModifyFlag){
+    //   observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData));
+    //   observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData));
+    //   observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
+    // }
+
+    // if(this.suitModifyFlag){
+    //   observables.push(this.suiteService.saveSuitabilityByPID(
+    //     this.survey.pid, this.survey.pid,
+    //     this.formService.suitSerieId,
+    //     this.suitScore,
+    //     this.riskLevel,
+    //     this.riskLevelTxt,
+    //     this.riskLevelDesc,
+    //     this.suitQuestions
+    //     )
+    //   );
+    // }
+
+    // CDD
+    observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
+    observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
+
+    // Address
+    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData));
       observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData));
       observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
-    }
 
-    if(this.suitModifyFlag){
-      observables.push(this.suiteService.saveSuitabilityByPID(
-        this.survey.pid, this.survey.pid,
-        this.formService.suitSerieId,
-        this.suitScore,
-        this.riskLevel,
-        this.riskLevelTxt,
-        this.riskLevelDesc,
-        this.suitQuestions
-        )
-      );
-    }
-
+    // Suit
+    observables.push(this.suiteService.saveSuitabilityByPID(
+      this.survey.pid, this.survey.pid,
+      this.formService.suitSerieId,
+      this.suitScore,
+      this.riskLevel,
+      this.riskLevelTxt,
+      this.riskLevelDesc,
+      this.suitQuestions
+      )
+    );
 
     if(observables.length > 0){
+
       const example = forkJoin(observables);
       const subscribe = example.subscribe(result => {
-          console.log(result)
-
+          // console.log(result)
+         this.saveAllComplete = true;
 
           for(let i in result){
             let obj = result[i];
@@ -1216,7 +1231,6 @@ export class SuitComponent implements OnInit {
           // Send mail to who relate(Owner & RM)
 
           // this.suiteService.mailThankCust(this.survey.pid)
-
           this.suiteService.mailThankCust(this.survey.pid)
           .finally(() => {
             // Execute after graceful or exceptionally termination

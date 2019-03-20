@@ -76,9 +76,10 @@
   </div>
 
   <!-- ************* STEPPER  -->
-  <div class='container'>
+  <div class='container' *ngIf="!saveAllComplete">
   <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag" class="col" >
     <!-- ***************** #1  Persional Information Step-->
+
     <mat-step [stepControl]="cddFormGroup">
 
       <!--Person information-->
@@ -327,9 +328,7 @@
                 </span>
                 <span *ngIf='suitModifyFlag'>
                     <li>Suitability was change.</li>
-
                     <p>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </p>
-
                 </span>
                 <div>
 
@@ -338,16 +337,24 @@
                   </div>
             </div>
 
-            <div *ngIf="resultMsg?.length > 0" class="center-screen form_section">
+            <!-- <div *ngIf="resultMsg?.length > 0" class="center-screen form_section">
 
                 <span id='finalText'>
                     <h5>{{formService.STEPPER_FINAL_THANK}}</h5>
                 </span>
 
-            </div>
-
+            </div> -->
     </mat-step>
 </mat-horizontal-stepper>
 </div>
+
+<div *ngIf="saveAllComplete" class="row center-screen form_section">
+
+  <span id='finalText'>
+      <h5>{{formService.STEPPER_FINAL_THANK}}</h5>
+  </span>
+
+</div>
+
 
 </mat-card>

@@ -205,7 +205,6 @@ exports.surveyByMailToken = (req, res, next) =>{
           สามารถเข้าใช้ระบบตามลิงค์ด้านล่างนี้
           <br>${_url}${token}
           <br>
-          <br>
           ขอแสดงความนับถือ
           <br>
           <p>
@@ -220,10 +219,8 @@ exports.surveyByMailToken = (req, res, next) =>{
           <br>
           Dear ${data.fullName_Eng}
           <br>
-          <br>
           Access this link below.
           <br>${_url}${token}
-          <br>
           <br>
           Yours Sincerely, 
           <br>
@@ -333,11 +330,8 @@ exports.sendMailThankCust = (req, res, next) =>{
           <br>
           ขอแสดงความนับถือ
           <br>
-          <br>
           <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
           <br>
-          <br>
-          ${_compInfo}
           `;
 
           if(data.fullName_Eng){
@@ -346,12 +340,9 @@ exports.sendMailThankCust = (req, res, next) =>{
             <br>
             Dear ${data.fullName_Eng}
             <br>
-            <br>
               We got your data and saved.Thank you
             <br>
-            <br>
             Yours Sincerely, 
-            <br>
             <br>
             <p>
             <br>*** This is an automatically generated email, please do not reply. ***

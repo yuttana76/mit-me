@@ -138,10 +138,10 @@ margin-top: 10px;
   text-align: center;
   display: inline-block;
 }
-.center-screen #finalText {
-  height: 200px;
-  margin-top: 10%;
-}
+// .center-screen #finalText {
+//   height: 200px;
+//   margin-top: 10%;
+// }
 
 #mat-horizontal-stepper {
   margin-top: 15px;
@@ -168,22 +168,23 @@ margin-top: 10px;
   color: cornflowerblue;
   margin-top: 15px;
 }
-
 .form_section {
   font-size: 120%;
 }
-
 .blue-txt{
   color: #1194F6;
   font-size: 120%;
 }
-
 .q_image{
   img {
     width: 30%;
   }
 }
-
 .icon3x {
   size: 3em;
+}
+.Finish_section {
+  font-size: 200%;
+  height: 200px;
+  margin-top: 10%;
 }

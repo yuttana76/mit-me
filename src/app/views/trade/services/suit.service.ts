@@ -16,6 +16,9 @@ export class SuiteService {
   constructor(private http: HttpClient) { }
 
   verifyExtLink(_pid: string, _has: string): Observable<any> {
+
+    console.log(` verifyExtLink() URL= ${environment.apiURL}`);
+
     const data = {
       'pid': _pid.trim()
     };
@@ -24,7 +27,6 @@ export class SuiteService {
 
 
   verifyRequestOTP(_pid: string,_mobile: string): Observable<any> {
-    console.log(` verifyRequestOTP() ${_pid}`);
 
     const data = {
       'pid': _pid.trim(),

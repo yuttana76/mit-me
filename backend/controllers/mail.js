@@ -21,13 +21,13 @@ const JWT_EXTERNAL_EXPIRES = dbConfig.JWT_EXTERNAL_EXPIRES;
 
 var config = dbConfig.dbParameters;
 
-
+// let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
+let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
 
 //reference https://nodemailer.com/about/
 exports.sendMail = (req, res, next) =>{
-    // console.log('sendMail()>>' + JSON.stringify(req.body));
-    // create reusable transporter object using the default SMTP transport
-    let transporter = nodemailer.createTransport(mailConfig.mailParameters);
+
+  // let transporter = nodemailer.createTransport(mailConfig.mailParameters);
 
     // setup email data with unicode symbols
     let mailOptions = {
@@ -58,26 +58,35 @@ Send mail  by encypt use bcrypt
 */
 exports.surveyByMail = (req, res, next) =>{
 
-  // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
+  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
 
   const _PID = '41121225';
   let _from = mailConfig.mail_form;
   let _to = 'yuttana76@gmail.com';
   let _subject = 'Interview suit by MPAM.'
   let _msg = '';
+  let _target = req.body.target || 'test';
+  let _url='';
+
+  if (_target =='prod'){
+    _url = 'http://mit.wealth-merchant.com:3000/suit?has='
+  }else{
+    _url = 'http://localhost:4200/suit?has='
+  }
 
   //Encrypt token
   bcrypt.hash(_PID, SALT_WORK_FACTOR)
   .then(hash =>{
 
         // setup email data with unicode symbols
+
+
       let mailOptions = {
         from: _from,
         to: _to,
         subject: _subject,
         html: `${_msg}
-        <br>Click this link for risk intereview. <br>http://localhost:4200/suit?has=${hash}` // html body
+        <br>Click this link for risk intereview. <br> ${_url}${hash}` // html body
       };
 
       // send mail with defined transport object
@@ -147,7 +156,7 @@ Send mail  by token
 exports.surveyByMailToken = (req, res, next) =>{
 
   // let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
-  let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
+  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
 
   const _PID = req.body.custCode ||'41121225'
   const _compInfo = mailConfig.mailCompInfo_TH;
@@ -156,6 +165,15 @@ exports.surveyByMailToken = (req, res, next) =>{
   let _subject = 'Interview suit by MPAM.'
   let _msg = '';
   var logMsg ;
+
+  let _target = req.body.target || 'test';
+  let _url='';
+
+  if (_target =='prod'){
+    _url = 'http://mit.wealth-merchant.com:3000/suit?has='
+  }else{
+    _url = 'http://localhost:4200/suit?has='
+  }
 
   getCustomerInfo(_PID).then( (data) =>{
 
@@ -182,8 +200,7 @@ exports.surveyByMailToken = (req, res, next) =>{
             to: _to,
             subject: _subject,
             html: `${_msg}
-            <br>Click this link to intereview. <br>http://localhost:4200/suit?has=${token}
-
+            <br>Click this link to intereview. <br> ${_url}${token}
             ` // html body
           };
 
@@ -246,7 +263,7 @@ Send mail  to Whom related with this customer
 exports.sendMailThankCust = (req, res, next) =>{
 
   // let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
-  let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
+  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
 
   const _PID = req.body.custCode;
   let _from = mailConfig.mail_form;

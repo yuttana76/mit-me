@@ -169,8 +169,7 @@ export class SuitComponent implements OnInit {
 
   onLogout(){
 
-
-    this.confirmationDialogService.confirm('Confirmation', `Do you really want to exit. ?`)
+    this.confirmationDialogService.confirm(this.formService.label_Confirm, this.formService.label_Confirm_logout)
     .then((confirmed) => {
       if ( confirmed ) {
 

@@ -29,8 +29,10 @@ export class SuitFormService {
   work_addr_title ='ที่อยู่ที่ทำงาน Workplace Address';
   contact_addr_title = 'ที่อยู่ที่ติดต่อได้ Contact Address';
   SUIT_ANS_INCOMPLETE = ' Suit survery incomplete !';
-  STEPPER_FINAL_CONFIRM= 'Please review and save your data.';
+  STEPPER_FINAL_CONFIRM= 'โปรดตรวจสอบและ บันทึกข้อมูล \n Please review and save your data.';
   // STEPPER_FINAL_THANK= ' Thank you, For you infomation.';
+  FINAL_MSG = '';
+
   STEPPER_FINAL_THANK= ' ขอขอบคุณสำหรับข้อมูล และความไว้วางใจที่เลือกใช้บริการจากเรา.';
 
   SAVE_INFO = 'Information';
@@ -46,36 +48,37 @@ export class SuitFormService {
 
   // Label
   REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
-
   label_idCard = 'ID Card';
   label_Welcome = 'Welcome';
-
   label_verify_dob = 'ยืนยันโดย วันเดือนปีเกิด - Verify by date of birth';
   label_verify_otp = 'ยืนยันโดย OTP - Verify by OTP';
   label_Request_otp = 'ส่ง OTP';
   label_input_verify_dob =  'ระบุ วันเดือนปีเกิด - Please verify your date of birth';
   label_verify_dob_Format = 'รูปแบบ ddmmyyyyy  (ตัวอย่าง = 31011976)';
-
-
   label_RiskLevel = 'ผลประเมินความเสี่ยงระดับ';
   label_EvaluatedDate = 'วันที่ประเมิน';
 
+  label_addrAs_reg = 'ตามทะเบียนบ้าน Same as Residence Registration Address'
+  label_addrAs_work = 'ตามที่่ทำงาน Same as Workplace Address'
+  label_addr_oth = 'อื่นๆ (โปรดระบุ) Other (Please specify)'
+
     // Button
-    LABEL_SEARCH = 'ค้นหา';
-    LABEL_EXIT = 'ออกจากระบบ';
+    LABEL_SEARCH = 'ค้นหา Search';
+    LABEL_EXIT = 'ออกจากระบบ Logout';
+    LABEL_Verify = 'ยืนยัน ตัวตน Verify';
+    LABEL_BACK = 'กลับ Back';
+    LABEL_NEXT = 'ต่อไป Next';
+    LABEL_SAVE = 'บันทึก Save';
+    LABEL_CALCULATE = 'ประเมินผล Calculate';
+    LABEL_CANCEL = 'ยกเลิก Cancel';
+    LABEL_OK = 'ตกลง OK';
+    label_NewSurvey = 'ทำประเมิน ความเสี่ยง New Survey';
+    LABEL_EVA_AGAIN = 'ประเมินใหม่ Do again';
 
-    LABEL_Verify = 'ยืนยัน ตัวตน';
 
-    LABEL_BACK = 'กลับ';
-    LABEL_NEXT = 'ต่อไป';
-    LABEL_SAVE = 'บันทึก';
-
-    LABEL_CALCULATE = 'ประเมินผล';
-    LABEL_CANCEL = 'ยกเลิก';
-    LABEL_OK = 'ตกลง';
-    label_NewSurvey = 'ทำประเมิน ความเสี่ยง';
-    LABEL_EVA_AGAIN = 'ประเมินใหม่';
-
+  //Dialog
+  label_Confirm = 'โปรดยืนยัน Confirmation'
+  label_Confirm_logout = 'ยืนยันออกจากระบบกด OK  ยกเลิกกด Cancel  '
 
   // SUITABILITY QUESTIONS (START)
   suit_q1 = new Question('1', 'ปัจจุบันท่านอายุ', '',''

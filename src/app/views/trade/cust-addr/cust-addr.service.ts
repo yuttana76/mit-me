@@ -16,19 +16,22 @@ export class CustAddrFormService {
   SAVE_INCOMPLETE = ' Save incomplete';
 
   // Label
-  REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
+  // REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
 
-  // Addr No
-  // Moo
-  // Place
-  // Floor
-  // Soi
-  // Road
-  // Coutry
-  // Please choose Coutry.
-  // Province
-  // Please choose Province.
-  // Districe
-  // Sub District
-  // Please choose Sub District.
+  label_no = 'เลขที่ Address No.';
+  label_Moo = 'หมู่ที่ Moo No.';
+  label_Place = 'อาคาร/หมู่บ้าน Building/Mooban';
+  label_Floor = 'ชั้น Floor';
+  label_Soi = 'ซอย Soi';
+  label_Road = 'ถนน Road';
+  label_Sub_District = 'ตำบล Sub-district/Tambon';
+  label_District = 'อำเภอ District/Amphur';
+  label_Province = 'จังหวัด Province';
+  label_Postcode = 'รหัสไปรษณีย์ Postal Code';
+  label_Country = 'ประเทศ Country';
+  label_Pl_Choose = 'โปรดเลือก Please choose.';
+
+  label_Tel ='โทรศัพท์ Telephone';
+  label_Fax = 'Fax.';
+
 }

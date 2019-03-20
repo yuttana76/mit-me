@@ -13,7 +13,7 @@
             <span *ngIf="!verifyFLag">
                 <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
                 formControlName="pid" [(ngModel)]="survey.pid"  >
-                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0"  (click)="getCustomerData()">{{ formService.LABEL_SEARCH }}</a>
+                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0"  (click)="getCustomerData()">{{ formService.LABEL_SEARCH }} <i class="fas fa-search"></i> </a>
             </span>
 
             <ul class="nav navbar-nav ml-auto" *ngIf="verifyFLag">
@@ -85,7 +85,7 @@
         <form [formGroup]="cddFormGroup" class="form_section">
           <ng-template matStepLabel>{{formService.STEPER_1}}</ng-template>
           <div class="stepper_action" >
-              <button mat-flat-button  matStepperNext color="primary"  (click)=checkCDD_FormInvalid(cddFormGroup)>{{formService.LABEL_NEXT}}</button>
+              <button mat-flat-button  matStepperNext color="primary"  (click)=checkCDD_FormInvalid(cddFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
           </div>
           <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="cddFormGroup" [cddData]="cddData"></app-cust-cdd>
         </form>
@@ -112,8 +112,8 @@
      <mat-step [stepControl]="register_formGroup" >
         <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
         <div class="stepper_action" >
-            <button mat-flat-button  matStepperPrevious color="accent" >{{formService.LABEL_BACK}}</button>
-            <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) >{{formService.LABEL_NEXT}}</button>
+            <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+            <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
         </div>
 
             <div class='row '>
@@ -155,8 +155,9 @@
                 <div>
                     <section class="example-section">
                         <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)" [(disabled)]="!addrModifyFlag" >
-                          <mat-radio-button class="example-margin" value="1">Same as Residence Registration Address</mat-radio-button>
-                          <mat-radio-button class="example-margin" value="9">Other (Please specify)</mat-radio-button>
+                          <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
+                          <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
+
                         </mat-radio-group>
                       </section>
                 </div>
@@ -182,9 +183,9 @@
                   <div class='row'>
                       <section class="example-section" >
                           <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="cuurAddrOnChange(cur_addrData.SameAs)"  [(disabled)]="!addrModifyFlag">
-                              <mat-radio-button class="example-margin" value="1">Same as Residence Registration Address</mat-radio-button>
-                              <mat-radio-button class="example-margin" value="3">Same as Workplace Address </mat-radio-button>
-                              <mat-radio-button class="example-margin" value="9">Other (Please specify)</mat-radio-button>
+                              <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
+                              <mat-radio-button class="example-margin" value="3">{{formService.label_addrAs_work}}</mat-radio-button>
+                              <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
                             </mat-radio-group>
                         </section>
                   </div>
@@ -210,10 +211,9 @@
             <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
 
             <div class="stepper_action">
-                <button mat-flat-button  matStepperPrevious color="accent" >{{formService.LABEL_BACK}}</button>
-                <button mat-flat-button  matStepperNext color="primary" >{{formService.LABEL_NEXT}}</button>
+                <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button  matStepperNext color="primary" >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
             </div>
-
 
               <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen form_section"  >
                   <h4>{{formService.label_RiskLevel}}  </h4>
@@ -316,6 +316,7 @@
 
                 <span id='finalText'>
                     <h5>{{formService.STEPPER_FINAL_CONFIRM}}</h5>
+                    <p>{{formService.FINAL_MSG}}</p>
                 </span>
 
                 <span *ngIf='cddData.ReqModifyFlag '>
@@ -331,8 +332,9 @@
 
                 </span>
                 <div>
-                    <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px">Back</button>
-                    <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}</button>
+
+                    <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px"><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                    <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button>
                   </div>
             </div>
 

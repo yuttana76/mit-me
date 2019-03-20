@@ -19,7 +19,6 @@ export class CddService {
       .pipe(
         map(fundtData => {
           return fundtData.result.map(data => {
-            console.log(` Service getCustCDDInfo() >> ${JSON.stringify(data)}`);
             return {
               pid: data.ID_CARD,
               // title: data.Title_Name_T,
@@ -114,8 +113,6 @@ export class CddService {
           }catch(err){
             console.log('ERR >>' + err);
           }
-
-
           return {
             Cust_Code: data.Cust_Code,
             Addr_Seq: data.Addr_Seq,

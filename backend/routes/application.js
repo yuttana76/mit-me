@@ -5,10 +5,10 @@ const checkAuth = require('../middleware/check-auth');
 const applicationController = require('../controllers/application')
 
 // router.get("", checkAuth, fundController.getFunds);
-router.get("", applicationController.getApplication);
-router.post("", applicationController.addApplication);
-router.put("", applicationController.updateApplication);
-router.delete("/:appId", applicationController.deleteApplication);
+router.get("", checkAuth,applicationController.getApplication);
+router.post("", checkAuth,applicationController.addApplication);
+router.put("", checkAuth,applicationController.updateApplication);
+router.delete("/:appId", checkAuth,applicationController.deleteApplication);
 
 
 

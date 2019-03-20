@@ -25,17 +25,16 @@ const storage = multer.diskStorage({
       const name = file.originalname.toLowerCase().split(' ').join('-');
       const ext = MINE_TYPE_MAP[file.mimetype];
       cb(null, name + '-' + Date.now() + '.' + ext );
-
   }
 });
 
 // router.get("", checkAuth, fundController.getFunds);
-router.get("", anoucementController.getAnoucement);
-router.get("/active", anoucementController.getActiveAnoucement);
-router.post("",multer({storage: storage}).single('image') , anoucementController.addAnoucement);
+router.get("", checkAuth,anoucementController.getAnoucement);
+router.get("/active", checkAuth,anoucementController.getActiveAnoucement);
+router.post("",checkAuth,multer({storage: storage}).single('image') , anoucementController.addAnoucement);
 
-router.put("",multer({storage: storage}).single('image') , anoucementController.updateAnoucement);
-router.delete("/:id", anoucementController.delAnoucement);
+router.put("",checkAuth,multer({storage: storage}).single('image') , anoucementController.updateAnoucement);
+router.delete("/:id",checkAuth,anoucementController.delAnoucement);
 
 
 module.exports = router;

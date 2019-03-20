@@ -4,9 +4,9 @@ const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
 const fatcaController = require('../controllers/fatca')
 
-router.get("/custam", fatcaController.getCustAM);
+router.get("/custam", checkAuth,fatcaController.getCustAM);
 
-router.get("/getfatca/:cusCode",fatcaController.getFATCA);
-router.post("/saveFATCA",fatcaController.saveFATCA);
+router.get("/getfatca/:cusCode",checkAuth,fatcaController.getFATCA);
+router.post("/saveFATCA",checkAuth,fatcaController.saveFATCA);
 
 module.exports = router;

@@ -4,6 +4,6 @@ const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
 const tambonController = require('../controllers/tambon')
 
-router.get("", tambonController.getTambons);
+router.get("", checkAuth,tambonController.getTambons);
 
 module.exports = router;

@@ -5,6 +5,6 @@ const checkAuth = require('../middleware/check-auth');
 const amcController = require('../controllers/amc')
 
 // router.get("", checkAuth, fundController.getFunds);
-router.get("", amcController.getAMC);
+router.get("", checkAuth,amcController.getAMC);
 
 module.exports = router;

@@ -13,6 +13,7 @@
             <span *ngIf="!verifyFLag">
                 <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
                 formControlName="pid" [(ngModel)]="survey.pid"  >
+
                 <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0"  (click)="getCustomerData()">{{ formService.LABEL_SEARCH }} <i class="fas fa-search"></i> </a>
             </span>
 

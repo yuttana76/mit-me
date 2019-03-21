@@ -266,8 +266,9 @@ export class SuitComponent implements OnInit {
 
   this.suitFormGroup = new FormGroup({
     cust_RiskLevel: new FormControl(null, {
-      validators: [Validators.required]
+      validators: [Validators.required, Validators.minLength(1)]
     }),
+
   });
 
   //  Initial register_formGroup
@@ -963,10 +964,10 @@ export class SuitComponent implements OnInit {
     this.cust_RiskLevel = this.riskLevel;
     this.cust_RiskLevelTxt = this.riskLevelTxt;
     this.cust_RiskTypeInvestor = this.riskLevelDesc;
+    this.cust_RiskDate =  new Date();
 
     this.canDoSuit = false;
     this.canSaveSuit = false;
-
     this.suitModifyFlag = true;
 
   }
@@ -1045,17 +1046,22 @@ export class SuitComponent implements OnInit {
     checkCDD_FormInvalid(_Form:FormGroup){
 
       if(_Form.invalid){
+        let msg = '<ul>';
+
         const invalid = [];
         const controls = _Form.controls;
         for (const name in controls) {
             if (controls[name].invalid) {
                 invalid.push(name);
+                msg += `<li> ${controls[name]} </li>`;
             }
         }
+        msg += '</ul>';
 
         if ( invalid.length > 0 ){
+
           this.toastr.warning(
-            this.formService.DATA_INCOMPLETE_MSG,
+            this.formService.DATA_INCOMPLETE_MSG + msg,
             this.formService.DATA_INCOMPLETE,
             {
               timeOut: 5000,
@@ -1063,8 +1069,74 @@ export class SuitComponent implements OnInit {
               positionClass: "toast-top-center"
             }
           );
+
         }
       }
+     }
+
+
+     checkSuit_FormInvalid(_Form:FormGroup){
+
+      let alertMSG = "";
+
+      if(!this.cust_RiskDate  ){
+        alertMSG = this.formService.NO_SUIT_MSG; // `No suitability data. Please do suitability survey.`;
+      } else {
+
+          let _riskDate =  new Date(this.cust_RiskDate);
+          let diff = Math.abs(new Date().getTime() - _riskDate.getTime());
+          let diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+
+          console.log("diffDays="+diffDays);
+
+          if(diffDays > this.formService.SUIT_EXP_DAY){
+                alertMSG = this.formService.EXP_SUIT_MSG;//`Suitability evaluate data near expired(2 year.). Please do suitability survey.`;
+          }
+      }
+
+      if(alertMSG.length>0){
+
+        // this.cddFormGroup.controls["titleOth"].setValidators(Validators.required);
+        this.suitFormGroup.controls["cust_RiskLevel"].setValue(null);
+        this.suitFormGroup.controls["cust_RiskLevel"].updateValueAndValidity();
+
+        this.toastr.warning(
+          alertMSG ,
+          this.formService.DATA_INCOMPLETE,
+          {
+            timeOut: 5000,
+            closeButton: true,
+            positionClass: "toast-top-center"
+          }
+        );
+      }
+
+
+      // this.suitFormGroup.controls["titleOth"].setValidators(Validators.required);
+      // this.suitFormGroup.controls["titleOth"].updateValueAndValidity();
+
+      // if(_Form.invalid){
+      //   const invalid = [];
+      //   const controls = _Form.controls;
+      //   for (const name in controls) {
+      //       if (controls[name].invalid) {
+      //           invalid.push(name);
+      //       }
+      //   }
+      //   if ( invalid.length > 0 ){
+
+      //     this.toastr.warning(
+      //       this.formService.DO_SUIT_MSG,
+      //       this.formService.DATA_INCOMPLETE,
+      //       {
+      //         timeOut: 5000,
+      //         closeButton: true,
+      //         positionClass: "toast-top-center"
+      //       }
+      //     );
+
+      //   }
+      // }
      }
 
 

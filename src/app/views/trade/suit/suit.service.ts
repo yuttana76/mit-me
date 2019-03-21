@@ -46,6 +46,11 @@ export class SuitFormService {
   DATA_INCOMPLETE = 'Data incomplete';
   DATA_INCOMPLETE_MSG = 'Please fill require (*) data';
 
+  DO_SUIT_MSG='กรุณาทำแบบประเมินความเสี่ยง';
+  NO_SUIT_MSG='ไม่พบข้อมูลการทำประเมินความเสียง. กรุณาทำแบบประเมินความเสี่ยง';
+  EXP_SUIT_MSG='ข้อมูลประเมินความเสี่ยงใกล้ครบกำหนดเวลาต้องประเมินใหม่  กรุณาทำแบบประเมินความเสี่ยง';
+  SUIT_EXP_DAY = 700;
+
   // Label
   REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
   label_idCard = 'ID Card';
@@ -54,7 +59,7 @@ export class SuitFormService {
   label_verify_otp = 'ยืนยันโดย OTP - Verify by OTP';
   label_Request_otp = 'ส่ง OTP';
   label_input_verify_dob =  'ระบุ วันเดือนปีเกิด - Please verify your date of birth';
-  label_verify_dob_Format = 'รูปแบบ ddmmyyyyy  (ตัวอย่าง = 31011976)';
+  label_verify_dob_Format = 'รูปแบบ ddmmyyyyy  (ตัวอย่าง = 01012019)';
   label_RiskLevel = 'ผลประเมินความเสี่ยงระดับ';
   label_EvaluatedDate = 'วันที่ประเมิน';
 

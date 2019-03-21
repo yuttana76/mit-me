@@ -78,8 +78,8 @@
 
   <!-- ************* STEPPER  -->
   <div class='container' *ngIf="!saveAllComplete">
-  <!-- <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag" class="col" > -->
-  <mat-horizontal-stepper labelPosition="bottom"  #stepper *ngIf="verifyFLag" class="col" >
+  <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag" class="col" >
+  <!-- <mat-horizontal-stepper labelPosition="bottom"  #stepper *ngIf="verifyFLag" class="col" > -->
     <!-- ***************** #1  Persional Information Step-->
 
     <mat-step [stepControl]="cddFormGroup">
@@ -210,21 +210,22 @@
 
   <!-- ***************** #3  Suitability Step-->
     <mat-step [stepControl]="suitFormGroup"   >
+          <!--Person information-->
+          <form [formGroup]="suitFormGroup" >
 
             <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
             <div class="stepper_action">
                 <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperNext color="primary" (click)=checkCDD_FormInvalid(suitFormGroup) >
+                <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >
                   {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
             </div>
 
-            <!--Person information-->
-            <form [formGroup]="suitFormGroup" >
+
                 <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen form_section"  >
                     <h4>{{formService.label_RiskLevel}}  </h4>
-                    <h4><span>{{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </span></h4>
-
-                    <input matInput [(ngModel)]="cust_RiskLevel"  formControlName="cust_RiskLevel" >
+                    <h4>
+                      <span><input  matInput [(ngModel)]="cust_RiskLevel"  formControlName="cust_RiskLevel" readonly="true"> - {{ cust_RiskLevelTxt }} </span>
+                    </h4>
 
                     <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</p>
                     <p>{{ cust_RiskTypeInvestor }}</p>

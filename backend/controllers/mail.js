@@ -163,7 +163,7 @@ exports.surveyByMailToken = (req, res, next) =>{
   const _compInfo = mailConfig.mailCompInfo_TH;
   let _from = mailConfig.mail_form;
   let _to ;//= 'yuttana76@gmail.com';
-  let _subject = 'Interview suit by MPAM.'
+  let _subject = 'การสำรวจ และตรวจสอบข้อมูล บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
   let _msgTH = '';
   var logMsg ;
 
@@ -205,6 +205,7 @@ exports.surveyByMailToken = (req, res, next) =>{
           สามารถเข้าใช้ระบบตามลิงค์ด้านล่างนี้
           <br>${_url}${token}
           <br>
+          <br>
           ขอแสดงความนับถือ
           <br>
           <p>
@@ -219,8 +220,9 @@ exports.surveyByMailToken = (req, res, next) =>{
           <br>
           Dear ${data.fullName_Eng}
           <br>
-          Access this link below.
+          For review and update your information.Please access this link below.
           <br>${_url}${token}
+          <br>
           <br>
           Yours Sincerely, 
           <br>
@@ -305,8 +307,8 @@ exports.sendMailThankCust = (req, res, next) =>{
   let _from = mailConfig.mail_form;
   let _to ;
   let _toRM = mailConfig.mailRM;
-  let _subject = 'Thank you to do MPAM. survey.'
-  let _subjectRM = ''
+  let _subject = 'แจ้งผลการสำรวจ และตรวจสอบข้อมูล  บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
+  let _subjectRM = 'แจ้งผลการสำรวจ และตรวจสอบข้อมูล(MIT-survey) '
   let _msg = '';
   let _msgRM = '';
   const _compInfo = mailConfig.mailCompInfo_TH;
@@ -362,9 +364,9 @@ exports.sendMailThankCust = (req, res, next) =>{
           };
 
           // message to RM.
-          _subjectRM += `MIT-survey customer finish to survey. (${data.fullName})`;
+          _subjectRM += ` (${data.fullName})`;
           _msgRM = `
-          Customer  finsihed survey. on ${utility.getDateTime()}
+          ${data.fullName}  was finsih survey on ${utility.getDateTime()}
           <br>
           <br>Code: ${_PID}
           <br>Name: ${data.fullName}

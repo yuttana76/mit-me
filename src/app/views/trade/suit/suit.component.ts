@@ -46,6 +46,7 @@ export class SuitComponent implements OnInit {
   // thirdFormGroup: FormGroup;
   // forthFormGroup: FormGroup;
   cddFormGroup: FormGroup;
+  suitFormGroup: FormGroup;
 
   register_formGroup: FormGroup;
   work_formGroup: FormGroup;
@@ -263,6 +264,12 @@ export class SuitComponent implements OnInit {
   });
 
 
+  this.suitFormGroup = new FormGroup({
+    cust_RiskLevel: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+  });
+
   //  Initial register_formGroup
   this.register_formGroup = new FormGroup({
     Addr_No: new FormControl(null, {
@@ -451,7 +458,7 @@ export class SuitComponent implements OnInit {
       })
       .subscribe(
         (data: any) => {
-          // console.log("HTTP return :" + JSON.stringify(data));
+          // console.log("getCustomerData :" + JSON.stringify(data));
 
           this.needVerify = true;
           this.verifyFLag = false;
@@ -467,7 +474,6 @@ export class SuitComponent implements OnInit {
           this.cust_RiskLevelTxt = data.USERDATA.Risk_Level_Txt;
           this.cust_RiskTypeInvestor = data.USERDATA.Type_Investor;
 
-
           this.cust_RiskDate = data.USERDATA.Risk_Date;
 
         },
@@ -475,7 +481,7 @@ export class SuitComponent implements OnInit {
           console.log("Verify Was error", error);
         },
         () => {
-          console.log("Verify  complete");
+          // console.log("Verify  complete");
         }
       );
   }
@@ -530,13 +536,13 @@ export class SuitComponent implements OnInit {
   getCDDAddress(_id,seqNo : number){
 
     let _addrData: AddrCustModel = new AddrCustModel();
-    this.cddService.getCustCDDAddr(_id,seqNo).subscribe(data => {
+    this.cddService.getCustCDDAddr(_id, seqNo).subscribe(data => {
 
       // console.log(`***getCustCDDAddr() ${seqNo} >>` + JSON.stringify(data) );
-
+      _addrData.Addr_Seq = seqNo;
       if (data.length > 0){
         // console.log('CDD-Address >>' + JSON.stringify(data));
-        _addrData.Addr_Seq = data[0].Addr_Seq;
+        // _addrData.Addr_Seq = data[0].Addr_Seq;
         _addrData.Addr_No = data[0].Addr_No;
         _addrData.Moo = data[0].Moo;
         _addrData.Place = data[0].Place;
@@ -551,7 +557,6 @@ export class SuitComponent implements OnInit {
         _addrData.Print_Address = data[0].Print_Address;
         _addrData.Tel = data[0].Tel;
         _addrData.Fax = data[0].Fax;
-
         _addrData.SameAs = data[0].SameAs;
 
         if (seqNo === 1){
@@ -570,7 +575,7 @@ export class SuitComponent implements OnInit {
     }, error => () => {
         console.log('Was error', error);
     }, () => {
-      console.log('Loading complete');
+      // console.log('Loading complete');
     });
    }
 
@@ -1148,39 +1153,29 @@ export class SuitComponent implements OnInit {
     //   observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
     // }
 
-    // if(this.suitModifyFlag){
-    //   observables.push(this.suiteService.saveSuitabilityByPID(
-    //     this.survey.pid, this.survey.pid,
-    //     this.formService.suitSerieId,
-    //     this.suitScore,
-    //     this.riskLevel,
-    //     this.riskLevelTxt,
-    //     this.riskLevelDesc,
-    //     this.suitQuestions
-    //     )
-    //   );
-    // }
-
     // CDD
     observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
     observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
 
     // Address
     observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData));
-      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData));
-      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
+    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData));
+    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
 
-    // Suit
-    observables.push(this.suiteService.saveSuitabilityByPID(
-      this.survey.pid, this.survey.pid,
-      this.formService.suitSerieId,
-      this.suitScore,
-      this.riskLevel,
-      this.riskLevelTxt,
-      this.riskLevelDesc,
-      this.suitQuestions
-      )
-    );
+
+    if(this.suitModifyFlag){
+      observables.push(this.suiteService.saveSuitabilityByPID(
+        this.survey.pid, this.survey.pid,
+        this.formService.suitSerieId,
+        this.suitScore,
+        this.riskLevel,
+        this.riskLevelTxt,
+        this.riskLevelDesc,
+        this.suitQuestions
+        )
+      );
+    }
+
 
     if(observables.length > 0){
 

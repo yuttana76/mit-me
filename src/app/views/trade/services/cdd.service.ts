@@ -105,6 +105,7 @@ export class CddService {
       map(fundtData => {
 
         return fundtData.result.map(data => {
+          // console.log('Service getCustCDDAddr()>>' + JSON.stringify(data))
 
           try{
             if (data.SameAs) {
@@ -113,6 +114,7 @@ export class CddService {
           }catch(err){
             console.log('ERR >>' + err);
           }
+
           return {
             Cust_Code: data.Cust_Code,
             Addr_Seq: data.Addr_Seq,
@@ -151,6 +153,8 @@ export class CddService {
     }else {
       _reqModifyFlag = 0;
     }
+
+    // console.log('saveCustCDDAddr()>>'+ JSON.stringify(_addr))
     const data = {
       actionBy: ActionBy,
       Cust_Code: custCode,

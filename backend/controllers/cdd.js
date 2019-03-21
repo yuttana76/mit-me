@@ -298,10 +298,75 @@ exports.getCDDAddr = (req, res, next) => {
 
   var queryStr = `
   BEGIN
-    SELECT *
+
+    DECLARE @Addr_No [nvarchar](100);
+    DECLARE @Moo [nvarchar](50);
+    DECLARE @Place [nvarchar](100);
+    DECLARE @Floor [nvarchar](50) ;
+    DECLARE @Soi [nvarchar](50);
+    DECLARE @Road [nvarchar](100);
+    DECLARE @Tambon_Id [int];
+    DECLARE @Amphur_Id [int];
+    DECLARE @Province_Id [int];
+    DECLARE @Country_Id [int];
+    DECLARE @Zip_Code [varchar](10);
+    DECLARE @Print_Address [nvarchar](400);
+    DECLARE @Tel [varchar](50);
+    DECLARE @Fax [varchar](50);
+    DECLARE @SameAs [int];
+
+    -- MFTS
+    select @Addr_No=Addr_No
+    ,@Place=Place
+    ,@Road=Road
+    ,@Tambon_Id=[Tambon_Id]
+      ,@Amphur_Id=[Amphur_Id]
+      ,@Province_Id=[Province_Id]
+      ,@Country_Id=[Country_Id]
+      ,@Zip_Code=[Zip_Code]
+      ,@Print_Address=Print_Address
+      ,@Tel=Tel
+      ,@Fax=Fax
+    from Account_Address
+    where Cust_Code = @Cust_Code
+    And Addr_Seq = @Addr_Seq
+
+    -- MIT
+    SELECT @Addr_No =Addr_No
+    ,@Moo =Moo
+    ,@Place =Place
+    ,@Floor =Floor
+    ,@Soi =Soi
+    ,@Road =Road
+    ,@Tambon_Id=Tambon_Id
+    ,@Amphur_Id=Amphur_Id
+    ,@Province_Id=Province_Id
+    ,@Country_Id=Country_Id
+    ,@Zip_Code=Zip_Code
+    ,@Print_Address=Print_Address
+    ,@Tel=Tel
+    ,@Fax=Fax
+    ,@SameAs=SameAs
     FROM MIT_CUSTOMER_ADDR
     Where Cust_Code = @Cust_Code
     AND Addr_Seq = @Addr_Seq
+
+    select @Addr_No AS Addr_No
+    ,@Moo AS Moo
+    ,@Place AS Place
+    ,@Floor AS Floor
+    ,@Soi AS Soi
+    ,@Road AS Road
+    ,@Tambon_Id AS Tambon_Id
+    ,@Amphur_Id AS Amphur_Id
+    ,@Province_Id AS Province_Id
+    ,@Country_Id AS Country_Id
+    ,@Zip_Code AS Zip_Code
+    ,@Print_Address AS Print_Address
+    ,@Tel AS Tel
+    ,@Fax AS Fax
+    ,@SameAs AS SameAs
+
   END
   `;
 

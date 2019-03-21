@@ -40,30 +40,42 @@
                       {{ formService.label_verify_otp }}</mat-radio-button>
                 </mat-radio-group>
 
-                <a *ngIf="!INTERNAL_USER && verifyBy=='OTP'" mat-flat-button  color="primary"  (click)="requestOTP()" >{{ formService.label_Request_otp }}</a>
 
           </div>
 
-      <div id='div_DOB' *ngIf="verifyBy=='DOB'" class="form_section">
-        <div class="row" >
+          <div  *ngIf="!INTERNAL_USER && verifyBy=='OTP'" class=" bg-light ver-div">
+              <a  mat-flat-button  class="btn btn-outline-success my-2 my-sm-0" (click)="requestOTP()" >{{ formService.label_Request_otp }}
+                  <i class="fas fa-sms"></i>
+              </a>
+          </div>
 
-            <!-- <form class="example-form"> -->
-              <mat-form-field class="example-full-width">
-                <input matInput placeholder={{formService.label_input_verify_dob}}  [(ngModel)]="verifyDOB_val" name="verifyDOB_val"  >
-              </mat-form-field>
-              <p>{{formService.label_verify_dob_Format}}</p>
-            <!-- </form> -->
-        </div>
-
-        <div class="row">
-          <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyDOB()" class="col-md-4"> {{formService.LABEL_Verify}}</a>
-        </div>
+      <div id='div_DOB' *ngIf="verifyBy=='DOB'" class=" bg-light ver-div">
+        <form class="form-inline ">
+          <span>
+            <input class="form-control mr-sm-2" type="search"  [(ngModel)]="verifyDOB_val" placeholder={{formService.label_input_verify_dob}} name="verifyDOB_val" >
+            <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0" (click)="verifyDOB()" > {{formService.LABEL_Verify}}
+               <i class="fas fa-check"></i>
+            </a>
+            <p id='dob_format'>{{formService.label_verify_dob_Format}}</p>
+          </span>
+        </form>
       </div>
 
       <!-- Verify OTP section -->
-      <div id='div_OTP' *ngIf="verifyBy=='OTP'" class="form_section">
+      <div  *ngIf="verifyBy=='OTP' && showOtpEntry " class=" bg-light ver-div">
+          <form class="form-inline ">
+            <span>
+              <input class="form-control mr-sm-2" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
+              <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0" (click)="verifyConfirmOTP()" > {{formService.LABEL_Verify}}
+                 <i class="fas fa-check"></i>
+              </a>
+            </span>
+          </form>
+        </div>
 
-         <div id='OTP_INTRY' *ngIf="showOtpEntry" >
+      <!-- <div id='div_OTP' *ngIf="verifyBy=='OTP' && showOtpEntry " class=" bg-light ver-div">
+
+           <div id='OTP_INTRY' *ngIf="showOtpEntry" >
             <div class="row">
                 <mat-form-field >
                     <input  matInput   placeholder="Please input OTP"    [(ngModel)]="verifyOTP_val"  />
@@ -73,8 +85,9 @@
                 <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyConfirmOTP()" class="col-md-4"> {{formService.LABEL_Verify}}</a>
             </div>
          </div>
-      </div>
-  </div>
+      </div> -->
+
+    </div>
 
   <!-- ************* STEPPER  -->
   <div class='container' *ngIf="!saveAllComplete">

@@ -58,8 +58,9 @@ export class SuitFormService {
   label_verify_dob = 'ยืนยันโดย วันเดือนปีเกิด - Verify by date of birth';
   label_verify_otp = 'ยืนยันโดย OTP - Verify by OTP';
   label_Request_otp = 'ส่ง OTP';
-  label_input_verify_dob =  'ระบุ วันเดือนปีเกิด - Please verify your date of birth';
+  label_input_verify_dob =  'วันเดือนปีเกิด - Your date of birth';
   label_verify_dob_Format = 'รูปแบบ ddmmyyyyy  (ตัวอย่าง = 01012019)';
+  label_input_verify_OTP =  'OTP';
   label_RiskLevel = 'ผลประเมินความเสี่ยงระดับ';
   label_EvaluatedDate = 'วันที่ประเมิน';
 
@@ -70,7 +71,7 @@ export class SuitFormService {
     // Button
     LABEL_SEARCH = 'ค้นหา Search';
     LABEL_EXIT = 'ออกจากระบบ Logout';
-    LABEL_Verify = 'ยืนยัน ตัวตน Verify';
+    LABEL_Verify = 'ยืนยัน Verify';
     LABEL_BACK = 'กลับ Back';
     LABEL_NEXT = 'ต่อไป Next';
     LABEL_SAVE = 'บันทึก Save';

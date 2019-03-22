@@ -5,7 +5,7 @@
   <div class="container">
       <!-- <h5>Merchnat partner survey</h5> -->
       <div class='branner'>
-          <img src="assets/img/brand/MPAM-logo.png" />
+          <img  src="assets/img/brand/MPAM-logo.png" />
       </div>
 
       <nav class="navbar navbar-light bg-light">
@@ -14,7 +14,18 @@
                 <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
                 formControlName="pid" [(ngModel)]="survey.pid"  >
 
-                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0"  (click)="getCustomerData()">{{ formService.LABEL_SEARCH }} <i class="fas fa-search"></i> </a>
+                <!-- For mobile -->
+                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0 div-only-mobile"  (click)="getCustomerData()">
+                    <span class="div-only-mobile">{{ formService.LABEL_SEARCH }}</span>
+                       <i class="fas fa-search"></i> </a>
+
+                <!-- For desk -->
+                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0 desk"  (click)="getCustomerData()">
+                  <span class="desk">{{ formService.LABEL_SEARCH }} {{ formService.LABEL_SEARCH_ENG }}</span>
+                     <i class="fas fa-search"></i> </a>
+
+
+
             </span>
 
             <ul class="nav navbar-nav ml-auto" *ngIf="verifyFLag">
@@ -35,9 +46,13 @@
           <!-- <h5>Request verify method.</h5> -->
           <div class="row form_section">
               <mat-radio-group  [(ngModel)]="verifyBy" class="col-lg-4 col-md-4 col-sm-4 display_block" >
-                  <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >{{ formService.label_verify_dob }}</mat-radio-button>
+                  <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >{{ formService.label_verify_dob }}
+                      <span class="desk">-{{ formService.label_verify_dob_ENG }}</span>
+                  </mat-radio-button>
                   <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == PREFIX_MOBILE_ALLOW_SEND_SMS "  >
-                      {{ formService.label_verify_otp }}</mat-radio-button>
+                      {{ formService.label_verify_otp }}
+                      <span class="desk">-{{ formService.label_verify_otp_ENG }}</span>
+                    </mat-radio-button>
                 </mat-radio-group>
 
 
@@ -56,7 +71,7 @@
             <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0" (click)="verifyDOB()" > {{formService.LABEL_Verify}}
                <i class="fas fa-check"></i>
             </a>
-            <p id='dob_format'>{{formService.label_verify_dob_Format}}</p>
+            <p id='dob_format' class="desk">{{formService.label_verify_dob_Format}}</p>
           </span>
         </form>
       </div>
@@ -72,25 +87,11 @@
             </span>
           </form>
         </div>
-
-      <!-- <div id='div_OTP' *ngIf="verifyBy=='OTP' && showOtpEntry " class=" bg-light ver-div">
-           <div id='OTP_INTRY' *ngIf="showOtpEntry" >
-            <div class="row">
-                <mat-form-field >
-                    <input  matInput   placeholder="Please input OTP"    [(ngModel)]="verifyOTP_val"  />
-                </mat-form-field>
-            </div>
-            <div class="row">
-                <a *ngIf="!INTERNAL_USER" mat-flat-button  color="primary"  (click)="verifyConfirmOTP()" class="col-md-4"> {{formService.LABEL_Verify}}</a>
-            </div>
-         </div>
-      </div> -->
-
     </div>
 
   <!-- ************* STEPPER  -->
-  <div class='container' *ngIf="!saveAllComplete">
-  <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag" class="col" >
+  <!-- <div class='container' *ngIf="!saveAllComplete"> -->
+  <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag && !saveAllComplete" class="col" >
   <!-- <mat-horizontal-stepper labelPosition="bottom"  #stepper *ngIf="verifyFLag" class="col" > -->
     <!-- ***************** #1  Persional Information Step-->
 
@@ -131,37 +132,35 @@
             <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
         </div>
 
-            <div class='row '>
-                <section class="example-section" >
-                    <mat-checkbox [(ngModel)]="addrModifyFlag"  (change)="modifOnChange(addrModifyFlag)"  class="form_section" >{{formService.REQ_MODIFY}}</mat-checkbox>
-                </section>
-            </div>
+
+        <div class='row '>
+            <section class="example-section" >
+                <mat-checkbox [(ngModel)]="addrModifyFlag"  (change)="modifOnChange(addrModifyFlag)"  class="form_section" >{{formService.REQ_MODIFY}}</mat-checkbox>
+            </section>
+        </div>
 
         <!-- 2.1 Register Address  (SEQ = 1)-->
-        <div>
+        <!-- <div> -->
             <mat-expansion-panel [(expanded)]='register_expanded'>
                 <mat-expansion-panel-header>
-                  <mat-panel-title>
-                      <span>{{ formService.register_addr_title }}</span>
-                  </mat-panel-title>
-                      <mat-panel-description *ngIf="!register_expanded && !mobile" class="form_section" >
+                  <mat-panel-title>{{ formService.register_addr_title }}</mat-panel-title>
+
+                  <mat-panel-description *ngIf="!register_expanded && !mobile" class="form_section desk" >
                           {{re_addrData.Print_Address}}
                   </mat-panel-description>
 
                 </mat-expansion-panel-header>
                     <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
               </mat-expansion-panel>
-        </div>
+        <!-- </div> -->
 
         <!-- 2.2 Work Address (SEQ = 3)-->
-        <div>
+        <!-- <div> -->
           <!-- <mat-expansion-panel [(expanded)]='work_expanded'> -->
             <mat-expansion-panel _ngcontent-c0="" class="" hidetoggle="true" ng-reflect-hide-toggle="true" [(expanded)]='work_expanded'>
                 <mat-expansion-panel-header>
-                  <mat-panel-title >
-                      <span>{{ formService.work_addr_title }}</span>
-                  </mat-panel-title>
-                  <mat-panel-description *ngIf="!work_expanded && !mobile" class="form_section">
+                  <mat-panel-title >{{ formService.work_addr_title }}</mat-panel-title>
+                  <mat-panel-description *ngIf="!work_expanded && !mobile" class="form_section desk">
                         {{work_addrData.Print_Address}}
                   </mat-panel-description>
                 </mat-expansion-panel-header>
@@ -180,15 +179,13 @@
                 <!-- </form> -->
 
               </mat-expansion-panel>
-          </div>
+          <!-- </div> -->
 
           <!-- 2.3 Current Address (SEQ = 2)-->
               <mat-expansion-panel [(expanded)]='current_expanded' class='fullscreen'>
                   <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        <span>{{ formService.contact_addr_title }}</span>
-                    </mat-panel-title>
-                    <mat-panel-description *ngIf="!current_expanded && !mobile" class="form_section">
+                    <mat-panel-title>{{ formService.contact_addr_title }}</mat-panel-title>
+                    <mat-panel-description *ngIf="!current_expanded && !mobile" class="form_section desk">
                             {{cur_addrData.Print_Address}}
                     </mat-panel-description>
                   </mat-expansion-panel-header>
@@ -360,7 +357,7 @@
             </div> -->
     </mat-step>
 </mat-horizontal-stepper>
-</div>
+<!-- </div> -->
 
 <div *ngIf="saveAllComplete" class="row center-screen Finish_section">
 

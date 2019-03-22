@@ -1,5 +1,4 @@
 
-
 .spinner {
   width: 100%;
   height: 100%;
@@ -117,6 +116,10 @@ mat-form-field {
   color: gray;
 }
 
+#div_DOB span{
+  margin-top: 50px;
+}
+
 // // **********************
 .example-h2 {
   margin: 10px;
@@ -209,6 +212,7 @@ margin-top: 10px;
 .questions #ques{
   font-size: x-large;
 }
+
 // ***********************************
 .fullscreen {
   max-width: 100%;
@@ -217,3 +221,32 @@ margin-top: 10px;
   height: 100%;
   border-radius: 0;
 }
+
+
+    /* padding-right: 15px; */
+    /* padding-left: 15px; */
+
+// ***********************************
+    .desk{
+      // width:400px;
+      // height:200px;
+      // background:red;
+    }
+    .div-only-mobile{
+      // width:400px;
+      // height:200px;
+      // background:orange;
+    }
+    @media screen and (max-width : 1920px){
+      .div-only-mobile{
+      visibility:hidden;
+      }
+    }
+    @media screen and (max-width : 906px){
+     .desk{
+      visibility:hidden;
+      }
+     .div-only-mobile{
+      visibility:visible;
+      }
+    }

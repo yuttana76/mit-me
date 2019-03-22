@@ -25,9 +25,14 @@ export class SuitFormService {
   STEPER_4 = 'Done';
 
 
-  register_addr_title ='ที่อยู่ตามทะเบียนบ้าน Residence Registration Address/Address in home country';
-  work_addr_title ='ที่อยู่ที่ทำงาน Workplace Address';
-  contact_addr_title = 'ที่อยู่ที่ติดต่อได้ Contact Address';
+  register_addr_title ='ที่อยู่ตามทะเบียนบ้าน';
+  register_addr_title_ENG ='Residence Registration Address/Address in home country';
+
+  work_addr_title ='ที่อยู่ที่ทำงาน';
+  work_addr_title_ENG ='Workplace Address';
+  contact_addr_title = 'ที่อยู่ที่ติดต่อได้ ';
+  contact_addr_title_ENG = 'Contact Address';
+
   SUIT_ANS_INCOMPLETE = ' Suit survery incomplete !';
   STEPPER_FINAL_CONFIRM= 'โปรดตรวจสอบและ บันทึกข้อมูล \n Please review and save your data.';
   // STEPPER_FINAL_THANK= ' Thank you, For you infomation.';
@@ -55,8 +60,12 @@ export class SuitFormService {
   REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
   label_idCard = 'ID Card';
   label_Welcome = 'Welcome';
-  label_verify_dob = 'ยืนยันโดย วันเดือนปีเกิด - Verify by date of birth';
-  label_verify_otp = 'ยืนยันโดย OTP - Verify by OTP';
+  label_verify_dob = 'ยืนยันโดย วันเดือนปีเกิด ';
+  label_verify_dob_ENG = '- Verify by date of birth';
+
+  label_verify_otp = 'ยืนยันโดย OTP';
+  label_verify_otp_ENG = 'Verify by OTP';
+
   label_Request_otp = 'ส่ง OTP';
   label_input_verify_dob =  'วันเดือนปีเกิด - Your date of birth';
   label_verify_dob_Format = 'รูปแบบ ddmmyyyyy  (ตัวอย่าง = 01012019)';
@@ -64,12 +73,18 @@ export class SuitFormService {
   label_RiskLevel = 'ผลประเมินความเสี่ยงระดับ';
   label_EvaluatedDate = 'วันที่ประเมิน';
 
-  label_addrAs_reg = 'ตามทะเบียนบ้าน Same as Residence Registration Address'
-  label_addrAs_work = 'ตามที่่ทำงาน Same as Workplace Address'
-  label_addr_oth = 'อื่นๆ (โปรดระบุ) Other (Please specify)'
+  label_addrAs_reg = 'ตามทะเบียนบ้าน'
+  label_addrAs_reg_ENG = 'Same as Residence Registration Address'
+
+  label_addrAs_work = 'ตามที่่ทำงาน'
+  label_addrAs_work_ENG = 'Same as Workplace Address'
+  label_addr_oth = 'อื่นๆ (โปรดระบุ)'
+  label_addr_oth_ENG = 'Other (Please specify)'
 
     // Button
-    LABEL_SEARCH = 'ค้นหา Search';
+    LABEL_SEARCH = 'ค้นหา ';
+    LABEL_SEARCH_ENG = 'Search';
+
     LABEL_EXIT = 'ออกจากระบบ Logout';
     LABEL_Verify = 'ยืนยัน Verify';
     LABEL_BACK = 'กลับ Back';

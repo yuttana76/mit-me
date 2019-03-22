@@ -212,9 +212,9 @@ exports.suitEvaluate = (req, res, next) => {
 
 exports.suitSave = (req, res, next) => {
 
-
   var fncName = 'suitSave';
   let rsp_code;
+
   var userId = req.body.userId;
   var pid = req.body.pid;
   var suitSerieId = req.body.suitSerieId;
@@ -224,9 +224,12 @@ exports.suitSave = (req, res, next) => {
   var type_Investor = req.body.type_Investor;
   var ans = req.body.ans ;
 
-  var logMsg = `API /suitSave - ${req.originalUrl} - ${req.ip} - pid=${pid} `
-  logger.info( logMsg);
+  var logMsg = `API /suitSave - ${req.originalUrl} - ${req.ip} - pid=${pid}
+  ;userId=${userId}; suitSerieId=${suitSerieId}; score=${score}; riskLevel=${riskLevel}; riskLevelTxt=${riskLevelTxt}; type_Investor=${type_Investor}; ans=${ans}
 
+  `
+
+  logger.info( logMsg);
 
   var queryStr = `
   BEGIN

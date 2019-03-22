@@ -74,7 +74,6 @@
         </div>
 
       <!-- <div id='div_OTP' *ngIf="verifyBy=='OTP' && showOtpEntry " class=" bg-light ver-div">
-
            <div id='OTP_INTRY' *ngIf="showOtpEntry" >
             <div class="row">
                 <mat-form-field >
@@ -150,15 +149,14 @@
                   </mat-panel-description>
 
                 </mat-expansion-panel-header>
-                <!-- <form [formGroup]="register_formGroup"> -->
                     <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
-                <!-- </form> -->
               </mat-expansion-panel>
         </div>
 
         <!-- 2.2 Work Address (SEQ = 3)-->
         <div>
-            <mat-expansion-panel [(expanded)]='work_expanded'>
+          <!-- <mat-expansion-panel [(expanded)]='work_expanded'> -->
+            <mat-expansion-panel _ngcontent-c0="" class="" hidetoggle="true" ng-reflect-hide-toggle="true" [(expanded)]='work_expanded'>
                 <mat-expansion-panel-header>
                   <mat-panel-title >
                       <span>{{ formService.work_addr_title }}</span>
@@ -185,8 +183,7 @@
           </div>
 
           <!-- 2.3 Current Address (SEQ = 2)-->
-          <div>
-              <mat-expansion-panel [(expanded)]='current_expanded' >
+              <mat-expansion-panel [(expanded)]='current_expanded' class='fullscreen'>
                   <mat-expansion-panel-header>
                     <mat-panel-title>
                         <span>{{ formService.contact_addr_title }}</span>
@@ -211,19 +208,13 @@
                   <!-- </form> -->
 
                 </mat-expansion-panel>
-            </div>
-
-            <!-- <div class='row'>
-                <mat-card-actions class="col-md-4">
-                    <a mat-flat-button color="primary" (click)="saveAddrAll()"  > Save address.</a>
-                </mat-card-actions>
-            </div> -->
 
     </mat-step>
 
   <!-- ***************** #3  Suitability Step-->
     <mat-step [stepControl]="suitFormGroup"   >
           <!--Person information-->
+
           <form [formGroup]="suitFormGroup" >
 
             <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
@@ -253,7 +244,7 @@
             <ul>
                 <div *ngFor="let ques of suitQuestions" class="questions">
 
-                    <span *ngIf="ques.id == 11" class="blue-txt">
+                    <span  *ngIf="ques.id == 11" class="blue-txt">
                         <p>คำถามข้อ 11-12 ใช้เป็นข้อมูลเพิ่มเติมเพื่อประกอบการให้คำแนะนำ</p>
                       </span>
 
@@ -265,12 +256,13 @@
                         <p>ใช้เฉพาะที่จะมีการลงทุนในต่างประเทศ</p>
                       </span>
 
-                      <span>{{ ques.id }}. {{ ques.name }} </span>
+                      <span id='ques'>{{ ques.id }}. {{ ques.name }} </span>
+
                       <div *ngIf="!ques.image == ''" class="q_image">
                         <img src="{{ ques.image }}" />
                       </div>
 
-                  <span>{{ ques.id }}. {{ ques.name }} </span>
+                  <!-- <span>{{ ques.id }}. {{ ques.name }} </span> -->
                   <div>
                     <ul>
                       <div *ngFor="let choice of ques.choices">

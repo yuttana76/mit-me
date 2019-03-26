@@ -90,8 +90,8 @@
     </div>
 
   <!-- ************* STEPPER  -->
-  <!-- <div class='container' *ngIf="!saveAllComplete"> -->
-  <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag && !saveAllComplete" class="col" >
+  <div class='container' *ngIf="!saveAllComplete">
+  <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag " class="col" >
   <!-- <mat-horizontal-stepper labelPosition="bottom"  #stepper *ngIf="verifyFLag" class="col" > -->
     <!-- ***************** #1  Persional Information Step-->
 
@@ -357,7 +357,7 @@
             </div> -->
     </mat-step>
 </mat-horizontal-stepper>
-<!-- </div> -->
+</div>
 
 <div *ngIf="saveAllComplete" class="row center-screen Finish_section">
 

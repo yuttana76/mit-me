@@ -44,10 +44,12 @@ const onListening = () => {
   debug("Listening on " + bind);
 };
 
-const port = normalizePort(process.env.PORT || "3000");
+//Lode global environment
+const dotenv = require('dotenv');
+dotenv.config();
 
+const port = normalizePort(process.env.PORT || "3000");
 console.log('PORT=' +process.env.PORT +';->'+port);
-console.log('API URL=' + process.env.apiURL);
 
 app.set("port", port);
 

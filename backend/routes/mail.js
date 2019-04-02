@@ -6,9 +6,7 @@ const router = express.Router();
 
 router.post("/merchant",mailController.sendMail);
 
-// router.post("/surveyByMail",mailController.surveyByMail);
-
 router.post("/surveyByMailToken",mailController.surveyByMailToken);
 router.post("/surveyThankCust",mailController.sendMailThankCust);
-
+router.post("/surveyBulk",mailController.surveyByMailBulk);  // Not finish
 module.exports = router;

@@ -22,7 +22,7 @@ testMITlog : function(_userName,_module,log_msg,_ip,_url){
 
 saveMITlog : function(_userName,_module,log_msg,_ip,_url,callback){
 
-  // logger.info(`API /saveMITlog - ${log_msg}`);
+  logger.info(`API /saveMITlog - ;_userName= ${_userName} ;_module=${_module} ;log_msg=${log_msg} ;_ip=${_ip} ;_url=${_url}`);
 
   var queryStr = `
   BEGIN

@@ -53,10 +53,11 @@ exports.sendMail = (req, res, next) =>{
     });
 }
 
+
 /*
 Send mail  by encypt use bcrypt
 */
-exports.surveyByMail = (req, res, next) =>{
+exports.surveyByMailBulk = (req, res, next) =>{
 
   // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
 
@@ -224,7 +225,7 @@ exports.surveyByMailToken = (req, res, next) =>{
           <br>${_url}${token}
           <br>
           <br>
-          Yours Sincerely, 
+          Yours Sincerely,
           <br>
           <p>
           <br>*** This is an automatically generated email, please do not reply. ***
@@ -344,7 +345,7 @@ exports.sendMailThankCust = (req, res, next) =>{
             <br>
               We got your data and saved.Thank you
             <br>
-            Yours Sincerely, 
+            Yours Sincerely,
             <br>
             <p>
             <br>*** This is an automatically generated email, please do not reply. ***

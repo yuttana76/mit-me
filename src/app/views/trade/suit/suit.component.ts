@@ -219,6 +219,9 @@ export class SuitComponent implements OnInit {
     dob: new FormControl(null, {
       validators: [Validators.required]
     }),
+    PIDExpDate: new FormControl(null, {
+      validators: [Validators.required]
+    }),
     mobile: new FormControl(null, {
       validators: [Validators.required]
     }),
@@ -514,6 +517,7 @@ console.log(' getCDD()>> ' + JSON.stringify(data));
       this.cddData.firstName = data[0].firstName;
       this.cddData.lastName = data[0].lastName;
       this.cddData.dob = data[0].dob;
+      this.cddData.PIDExpDate = data[0].PIDExpDate;
       this.cddData.mobile = data[0].mobile;
       this.cddData.email = data[0].email;
       this.cddData.typeBusiness = data[0].typeBusiness;
@@ -1050,6 +1054,17 @@ console.log(' getCDD()>> ' + JSON.stringify(data));
 
        }
    }
+
+   cDDmodifOnChange(){
+
+    this.cddData.ReqModifyFlag = !this.cddData.ReqModifyFlag;
+
+    if(this.cddData.ReqModifyFlag){
+      this.cddFormGroup.enable();
+     }else{
+      this.cddFormGroup.disable();
+     }
+ }
 
     checkCDD_FormInvalid(_Form:FormGroup){
 

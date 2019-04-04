@@ -87,6 +87,7 @@ exports.getCDDinfo_MIT = (req, res, next) => {
       ,b.BusinessType_Code
       ,b.Income,b.Income_Code,b.Income_Source,b.Income_Source_Code
       ,b.Modify_Date
+      ,b.PID_ExpiryDate AS cardExpiryDate
       FROM [Account_Info] a
       left join MFTS_Account b on b.Account_No like a.Cust_Code
       WHERE Cust_Code= @custCode
@@ -148,6 +149,7 @@ exports.saveCDDInfo = (req, res, next) => {
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
   var dob = req.body.dob;
+  var cardExpiryDate = req.body.cardExpiryDate;
   var mobile = req.body.mobile;
   var email = req.body.email;
   var occupation = req.body.occupation;
@@ -180,6 +182,7 @@ exports.saveCDDInfo = (req, res, next) => {
    ,[First_Name_T]=@First_Name_T
    ,[Last_Name_T]=@Last_Name_T
    ,[Birth_Day]=@Birth_Day
+   ,[cardExpiryDate]=@cardExpiryDate
    ,[Mobile]=@Mobile
    ,[Email]=@Email
    ,[Occupation_Code]=@Occupation_Code
@@ -210,10 +213,10 @@ exports.saveCDDInfo = (req, res, next) => {
 
     INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
       ,[Occupation_Code] ,[Occupation_Desc] ,[Position_Code],[Position_Desc] ,[BusinessType_Code],[BusinessType_Desc] ,[Income_Code] ,[Income_Source_Code],[Income_Source_Desc],WorkPlace,ReqModifyFlag,[CreateBy] ,[CreateDate]
-      ,[identificationCardType],[passportCountry],[title],[titleOther],[First_Name_E],[Last_Name_E])
+      ,[identificationCardType],[passportCountry],[title],[titleOther],[First_Name_E],[Last_Name_E],cardExpiryDate)
     VALUES(@Cust_Code,@ID_CARD ,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
         ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ReqModifyFlag,@ActionBy ,GETDATE()
-        ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E)
+        ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E,@cardExpiryDate)
 
     END
 
@@ -230,6 +233,7 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('First_Name_T', sql.NVarChar(200), firstName)
     .input('Last_Name_T', sql.NVarChar(200), lastName)
     .input('Birth_Day', sql.VarChar(20), dob)
+    .input('cardExpiryDate', sql.VarChar(20), cardExpiryDate)
     .input('Mobile', sql.VarChar(50), mobile)
     .input('Email', sql.NVarChar(200), email)
     .input('Occupation_Code', sql.VarChar(3), occupation)

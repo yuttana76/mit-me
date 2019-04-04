@@ -25,6 +25,7 @@ export class CddService {
               firstName: data.First_Name_T,
               lastName: data.Last_Name_T,
               dob: data.Birth_Day,
+              PIDExpDate: data.cardExpiryDate,
               mobile: data.Mobile,
               email: data.Email,
               occupation: data.Occupation_Code,
@@ -37,7 +38,6 @@ export class CddService {
               incomeSource: data.Income_Source_Code,
               incomeSourceOth: data.Income_Source_Desc,
               workPlace: data.WorkPlace,
-
               identificationCardType: data.identificationCardType,
               passportCountry: data.passportCountry,
               title: data.title,
@@ -52,12 +52,21 @@ export class CddService {
 
 
     saveCustCDDInfo(ActionBy:string,custCode: string, cdd: CDDModel) {
+
     let newDate = new Date(cdd.dob)
     let day = newDate.getDate();
     let month = newDate.getMonth() + 1;
     let year = newDate.getFullYear()    ;
     let _DOB = year+"-"+month+"-"+day;
     // console.log('cdd.dob >>' + cdd.dob);
+
+
+     newDate = new Date(cdd.PIDExpDate)
+     day = newDate.getDate();
+     month = newDate.getMonth() + 1;
+     year = newDate.getFullYear()    ;
+    let _cardEXPDate = year+"-"+month+"-"+day;
+
 
     let _reqModifyFlag ;
     if (cdd.ReqModifyFlag){
@@ -73,6 +82,7 @@ export class CddService {
       firstName: cdd.firstName,
       lastName: cdd.lastName,
       dob: _DOB,
+      cardExpiryDate:_cardEXPDate,
       mobile: cdd.mobile,
       email: cdd.email,
       occupation: cdd.occupation,

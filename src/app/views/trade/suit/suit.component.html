@@ -106,6 +106,9 @@
           <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="cddFormGroup" [cddData]="cddData"></app-cust-cdd>
 
           <mat-card-actions class="stepper_action center-screen ">
+
+              <a  mat-flat-button color="accent" (click)="cDDmodifOnChange()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a>
+
               <button mat-flat-button  matStepperNext color="primary"  (click)=checkCDD_FormInvalid(cddFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
           </mat-card-actions>
         </form>
@@ -115,11 +118,6 @@
      <!-- ***************** #2 Information step-->
      <mat-step [stepControl]="register_formGroup" >
         <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
-        <!-- <div class="stepper_action" >
-            <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-            <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
-        </div> -->
-
 
         <div class='row '>
             <section class="example-section" >
@@ -246,7 +244,7 @@
                       <span><input  matInput [(ngModel)]="cust_RiskLevel"  formControlName="cust_RiskLevel" readonly="true"> - {{ cust_RiskLevelTxt }} </span>
                     </h4>
 
-                    <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</p>
+                    <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'dd/MM/yyyy' }}</p>
                     <p>{{ cust_RiskTypeInvestor }}</p>
 
                     <!-- <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a> -->

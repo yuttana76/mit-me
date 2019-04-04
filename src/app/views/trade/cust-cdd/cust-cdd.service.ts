@@ -32,6 +32,7 @@ label_lastName_th = 'นามสกุล';
 label_firstName_eng = 'Name';
 label_lastName_eng = 'Surname';
 label_DOB = 'วันเดือนปีเกิด(ค.ศ.) Date of Birth(A.D.)';
+label_PIDExpDate = 'วันหมดอายุ(ค.ศ.) Expiry Date(A.D.)';
 label_mobile = 'มือถือ (Mobile)';
 label_email = 'อีเมล์ E-mail';
 label_typeBusiness = 'ประเภทธุรกิจ Business Type';

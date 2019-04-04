@@ -1,9 +1,10 @@
 <div class="container ">
    <div class="row">
       <div class='row '>
-          <section class="example-section">
+
+          <!-- <section class="example-section">
               <mat-checkbox [(ngModel)]="cddData.ReqModifyFlag"  (change)="modifOnChange(cddData.ReqModifyFlag)"  >{{formService.REQ_MODIFY}}</mat-checkbox>
-          </section>
+          </section> -->
 
       </div>
     </div>
@@ -36,9 +37,15 @@
 
     <div class='row'>
         <mat-form-field class="col-md-4 col-sm-4">
-            <input matInput [(ngModel)]="cddData.pid" placeholder={{formService.label_idNumber}}  formControlName="pid"  required>
+            <input matInput [(ngModel)]="cddData.pid" placeholder={{formService.label_idNumber}}  formControlName="pid"  required readonly=true style="color: gray">
         </mat-form-field>
 
+        <mat-form-field class="col-md-4">
+            <input matInput [(ngModel)]="cddData.PIDExpDate"  [matDatepicker]="expDatePicker" formControlName="PIDExpDate"  placeholder={{formService.label_PIDExpDate}} readonly=true>
+            <mat-datepicker-toggle matSuffix [for]="expDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #expDatePicker ></mat-datepicker>
+            <mat-error *ngIf="cddFormGroup.get('PIDExpDate').invalid ">Please correct ID expire date</mat-error>
+        </mat-form-field>
     </div>
 
     <div class='row'>
@@ -75,7 +82,7 @@
     </div>
 
 
-    <div class="row"  >
+    <div class="row" >
         <mat-form-field class="col-md-4">
             <input matInput [(ngModel)]="cddData.dob"  [matDatepicker]="dobDatePicker" formControlName="dob"  placeholder={{formService.label_DOB}} readonly=true>
             <mat-datepicker-toggle matSuffix [for]="dobDatePicker"></mat-datepicker-toggle>
@@ -83,6 +90,16 @@
             <mat-error *ngIf="cddFormGroup.get('dob').invalid ">Please correct date of birth</mat-error>
           </mat-form-field>
       </div>
+
+      <!-- <div class="row" >
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="cddData.PIDExpDate"  [matDatepicker]="expDatePicker" formControlName="PIDExpDate"  placeholder={{formService.label_PIDExpDate}} readonly=true>
+              <mat-datepicker-toggle matSuffix [for]="expDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #expDatePicker ></mat-datepicker>
+              <mat-error *ngIf="cddFormGroup.get('PIDExpDate').invalid ">Please correct ID expire date</mat-error>
+            </mat-form-field>
+        </div> -->
+
 
       <div class='row'>
           <mat-form-field class="col-md-4">

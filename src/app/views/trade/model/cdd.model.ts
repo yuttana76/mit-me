@@ -36,6 +36,7 @@ export class CDDModel {
       public workPlace: string;
 
       public ReqModifyFlag: boolean;
+      public PIDExpDate: string;
 
       constructor(){}
 

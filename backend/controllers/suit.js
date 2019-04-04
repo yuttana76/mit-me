@@ -387,7 +387,7 @@ function getCustomerData(_pid) {
   END;
 
   select
-    a.Title_Name_T,a.First_Name_T,a.Last_Name_T
+    a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.First_Name_E,a.Last_Name_E
     ,  convert(varchar, a.Birth_Day, 105) as DOB
     ,a.Mobile,a.Email
     ,@Risk_Date AS Risk_Date

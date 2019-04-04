@@ -41,13 +41,9 @@ export class SuitComponent implements OnInit {
 
   form: FormGroup;
 
-  // firstFormGroup: FormGroup;
-  // secondFormGroup: FormGroup;
-  // thirdFormGroup: FormGroup;
-  // forthFormGroup: FormGroup;
   cddFormGroup: FormGroup;
   suitFormGroup: FormGroup;
-
+  FATCAGroup: FormGroup;
   register_formGroup: FormGroup;
   work_formGroup: FormGroup;
   current_formGroup: FormGroup;
@@ -61,7 +57,7 @@ export class SuitComponent implements OnInit {
 
   needVerify = false;
   verifyFLag = false;
-  canDoSuit = false;
+  canDoSuit = true;
   canSaveSuit = false;
   canDoFATCA = false;
   showOtpEntry = false;
@@ -271,6 +267,14 @@ export class SuitComponent implements OnInit {
 
   });
 
+
+  this.FATCAGroup = new FormGroup({
+    // cust_RiskLevel: new FormControl(null, {
+    //   validators: [Validators.required, Validators.minLength(1)]
+    // }),
+  });
+
+
   //  Initial register_formGroup
   this.register_formGroup = new FormGroup({
     Addr_No: new FormControl(null, {
@@ -467,6 +471,10 @@ export class SuitComponent implements OnInit {
           this.customer.Title_Name_T = data.USERDATA.Title_Name_T;
           this.customer.First_Name_T = data.USERDATA.First_Name_T;
           this.customer.Last_Name_T = data.USERDATA.Last_Name_T;
+          this.customer.First_Name_E = data.USERDATA.First_Name_E;
+          this.customer.Last_Name_E = data.USERDATA.Last_Name_E;
+
+
           this.customer.Birth_Day = data.USERDATA.DOB;
           this.customer.Mobile = data.USERDATA.Mobile;
 
@@ -491,7 +499,7 @@ export class SuitComponent implements OnInit {
  getCDD(_id){
   this.cddService.getCustCDDInfo(_id).subscribe(data => {
 
-// console.log(' getCDD()>> ' + JSON.stringify(data));
+console.log(' getCDD()>> ' + JSON.stringify(data));
 
     if(data ){
 
@@ -1046,34 +1054,45 @@ export class SuitComponent implements OnInit {
     checkCDD_FormInvalid(_Form:FormGroup){
 
       if(_Form.invalid){
-        let msg = '<ul>';
 
-        const invalid = [];
-        const controls = _Form.controls;
-        for (const name in controls) {
-            if (controls[name].invalid) {
-                invalid.push(name);
-                msg += `<li> ${controls[name]} </li>`;
-            }
-        }
-        msg += '</ul>';
+        // let msg = '<ul>';
+        // const invalid = [];
+        // const controls = _Form.controls;
+        // for (const name in controls) {
+        //     if (controls[name].invalid) {
+        //         invalid.push(name);
+        //         msg += `<li> ${controls[name]} </li>`;
+        //     }
+        // }
+        // msg += '</ul>';
 
-        if ( invalid.length > 0 ){
+        // if ( invalid.length > 0 ){
+        //   this.toastr.warning(
+        //     this.formService.DATA_INCOMPLETE_MSG + msg,
+        //     this.formService.DATA_INCOMPLETE,
+        //     {
+        //       timeOut: 5000,
+        //       closeButton: true,
+        //       positionClass: "toast-top-center"
+        //     }
+        //   );
+        // }
 
-          this.toastr.warning(
-            this.formService.DATA_INCOMPLETE_MSG + msg,
-            this.formService.DATA_INCOMPLETE,
-            {
-              timeOut: 5000,
-              closeButton: true,
-              positionClass: "toast-top-center"
-            }
-          );
+        this.toastr.warning(
+              this.formService.DATA_INCOMPLETE_MSG,
+              this.formService.DATA_INCOMPLETE,
+              {
+                timeOut: 5000,
+                closeButton: true,
+                positionClass: "toast-top-center"
+              }
+            );
 
-        }
       }
      }
 
+
+     fatch_FormInvalid(_Form:FormGroup){}
 
      checkSuit_FormInvalid(_Form:FormGroup){
 

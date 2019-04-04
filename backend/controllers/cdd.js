@@ -81,7 +81,7 @@ exports.getCDDinfo_MIT = (req, res, next) => {
 
   END ELSE
     BEGIN
-      SELECT top 1 a.Cust_Code,a.Cust_Code AS ID_CARD, a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.Birth_Day,a.Mobile,a.Email
+      SELECT top 1 a.Cust_Code,a.Cust_Code AS ID_CARD, a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.First_Name_E,a.Last_Name_E,a.Birth_Day,a.Mobile,a.Email
       ,b.Account_No,b.Occupation_Code,b.Occupation_Desc
       ,b.Position_Code,b.Position,b.Politician_Desc
       ,b.BusinessType_Code

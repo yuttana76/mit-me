@@ -55,13 +55,13 @@ console.log('PORT='+port);
 
 app.set("port", port);
 
-//HTTP
+// // HTTP
 // const server = http.createServer(app);
 // server.on("error", onError);
 // server.on("listening", onListening);
 // server.listen(port);
 
-// console.log('DIR>' + __dirname);
+console.log('DIR>' + __dirname);
 // ************************************** GET IP address
 var os = require('os');
 var ifaces = os.networkInterfaces();

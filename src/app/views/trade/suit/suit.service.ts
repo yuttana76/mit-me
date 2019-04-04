@@ -12,6 +12,8 @@ export class SuitFormService {
   from_title = 'Customer Infomation';
   from_suit_title = 'แบบมาตราฐานในการประเมินความเหมาะสมในการลงทุน';
   from_fatca_title = 'U.S. National Identification';
+  fatca_desc = 'แบบแจ้งสถานะความเป็นบุคคลอเมริกัน/ไม่เป็นบุคคลอเมริกัน';
+
 
   addNewBtn = 'New survey';
   suitSerieId = '2019-01';
@@ -21,6 +23,7 @@ export class SuitFormService {
   }
   STEPER_1 = 'ข้อมูลส่วนบุคคล';
   STEPER_2 = 'ที่อยู่';
+  STEPER_FATCA = 'FATCA';
   STEPER_3 = 'Suitability';
   STEPER_4 = 'Done';
 
@@ -48,8 +51,8 @@ export class SuitFormService {
   FATCA_SAVE_COMPLETE = ' Save FATCA complete';
   FATCA_SAVE_INCOMPLETE = ' Save FATCA incomplete';
 
-  DATA_INCOMPLETE = 'Data incomplete';
-  DATA_INCOMPLETE_MSG = 'Please fill require (*) data';
+  DATA_INCOMPLETE = 'กรอกข้อมูลไม่สมบูรณ์ ';
+  DATA_INCOMPLETE_MSG = 'กรุณากรอกข้อมูลสำคัญ(*)  Please fill require (*) data';
 
   DO_SUIT_MSG='กรุณาทำแบบประเมินความเสี่ยง';
   NO_SUIT_MSG='ไม่พบข้อมูลการทำประเมินความเสียง. กรุณาทำแบบประเมินความเสี่ยง';
@@ -95,6 +98,7 @@ export class SuitFormService {
     LABEL_OK = 'ตกลง OK';
     label_NewSurvey = 'ทำประเมิน ความเสี่ยง New Survey';
     LABEL_EVA_AGAIN = 'ประเมินใหม่ Do again';
+    LABEL_EVA_CONF = 'ยืนยันการประเมิน';
 
 
   //Dialog

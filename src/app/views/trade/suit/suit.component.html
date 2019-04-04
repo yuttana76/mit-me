@@ -4,38 +4,40 @@
 <mat-card *ngIf="!spinnerLoading">
   <div class="container">
       <!-- <h5>Merchnat partner survey</h5> -->
-      <div class='branner'>
-          <img  src="assets/img/brand/MPAM-logo.png" />
+      <div class="block">
+          <div class='branner col-md-6'>
+            <img  src="assets/img/brand/MPAM-logo.png" />
+          </div>
+          <div *ngIf="verifyFLag" class='branner col-md-6' >
+                <strong>{{ formService.label_Welcome }}</strong>
+                <p> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
+          </div>
       </div>
 
-      <nav class="navbar navbar-light bg-light">
+      <nav class="navbar navbar-light bg-light" *ngIf="!verifyFLag" >
           <form class="form-inline" [formGroup]="form" #custForm="ngForm" >
-            <span *ngIf="!verifyFLag">
+            <span >
                 <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
                 formControlName="pid" [(ngModel)]="survey.pid"  >
 
                 <!-- For mobile -->
                 <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0 div-only-mobile"  (click)="getCustomerData()">
-                    <span class="div-only-mobile">{{ formService.LABEL_SEARCH }}</span>
+                    <span class="div-only-mobile">{{ formService.LABEL_NEXT }}</span>
                        <i class="fas fa-search"></i> </a>
 
                 <!-- For desk -->
                 <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0 desk"  (click)="getCustomerData()">
-                  <span class="desk">{{ formService.LABEL_SEARCH }} {{ formService.LABEL_SEARCH_ENG }}</span>
+                  <span class="desk">{{ formService.LABEL_NEXT }} </span>
                      <i class="fas fa-search"></i> </a>
-
-
-
             </span>
 
-            <ul class="nav navbar-nav ml-auto" *ngIf="verifyFLag">
+            <!-- <ul class="nav navbar-nav ml-auto" *ngIf="verifyFLag">
                 <li >
                     <strong>{{ formService.label_Welcome }}</strong>
                     <p> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
                 </li>
-                <!-- <a (click) = "onLogout()"><i class="fa fa-lock" ></i> Logout</a> -->
                 <a (click) = "onLogout()" class="btn btn-outline-success my-2 my-sm-0" ><span class=" cui-account-logout" aria-hidden="true"></span> {{ formService.LABEL_EXIT }}</a>
-            </ul>
+            </ul> -->
           </form>
         </nav>
   </div>
@@ -100,37 +102,23 @@
       <!--Person information-->
         <form [formGroup]="cddFormGroup" class="form_section">
           <ng-template matStepLabel>{{formService.STEPER_1}}</ng-template>
-          <div class="stepper_action" >
-              <button mat-flat-button  matStepperNext color="primary"  (click)=checkCDD_FormInvalid(cddFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
-          </div>
+
           <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="cddFormGroup" [cddData]="cddData"></app-cust-cdd>
+
+          <mat-card-actions class="stepper_action center-screen ">
+              <button mat-flat-button  matStepperNext color="primary"  (click)=checkCDD_FormInvalid(cddFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+          </mat-card-actions>
         </form>
-
-        <!-- <div class="row">
-            <a mat-flat-button color="primary" (click)="savePersonInfo()" [disabled]="!modifyFlag"> Save</a>
-        </div> -->
-
-        <!-- FATCA -->
-        <div class='row'>
-          <!-- {{cddFormGroup.disabled}} -->
-            <h5 >
-              <span class="label_header">{{ formService.from_fatca_title }}</span>
-            </h5>
-            <form class="form_section">
-                  <app-suit-tree-view [questions]="fatcaQuestions" [questionDisabled]="cddFormGroup.disabled"></app-suit-tree-view>
-            </form>
-        </div>
-          <!-- FATCA -->
 
     </mat-step>
 
      <!-- ***************** #2 Information step-->
      <mat-step [stepControl]="register_formGroup" >
         <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
-        <div class="stepper_action" >
+        <!-- <div class="stepper_action" >
             <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
             <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
-        </div>
+        </div> -->
 
 
         <div class='row '>
@@ -206,20 +194,50 @@
 
                 </mat-expansion-panel>
 
+                <mat-card-actions class="stepper_action center-screen ">
+                    <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                    <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+                </mat-card-actions>
     </mat-step>
 
-  <!-- ***************** #3  Suitability Step-->
+    <!-- ***************** #3  FATCA -->
+    <mat-step [stepControl]="FATCAGroup"   >
+        <ng-template matStepLabel>{{formService.STEPER_FATCA}}</ng-template>
+        <form [formGroup]="FATCAGroup" >
+          <div class='row '>
+
+                <div class='fatca_desc'>
+                    <h5 >
+                        <span class="label_header">{{ formService.from_fatca_title }}</span>
+                      </h5>
+                      <span>{{ formService.fatca_desc }}</span>
+                </div>
+
+                <form class="form_section">
+                      <app-suit-tree-view [questions]="fatcaQuestions" [questionDisabled]="cddFormGroup.disabled"></app-suit-tree-view>
+                </form>
+            </div>
+
+            <mat-card-actions class="stepper_action center-screen ">
+                <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button  matStepperNext color="primary" (click)=fatch_FormInvalid(FATCAGroup) >
+                  {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+            </mat-card-actions>
+
+          </form>
+    </mat-step>
+  <!-- ***************** #4  Suitability Step-->
     <mat-step [stepControl]="suitFormGroup"   >
           <!--Person information-->
 
           <form [formGroup]="suitFormGroup" >
 
             <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
-            <div class="stepper_action">
+
+            <!-- <div class="stepper_action">
                 <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >
-                  {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
-            </div>
+                <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+            </div> -->
 
 
                 <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen form_section"  >
@@ -231,7 +249,7 @@
                     <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'yyyy-MM-dd' }}</p>
                     <p>{{ cust_RiskTypeInvestor }}</p>
 
-                    <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a>
+                    <!-- <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a> -->
                 </div>
             </form>
 
@@ -291,11 +309,11 @@
                 </div>
               </ul>
 
-              <mat-card-actions>
+              <!-- <mat-card-actions>
                   <button   mat-flat-button class="act_button"  color="warn"  (click)="suiteFormRESET()"  type="reset" >Reset </button>
                   <a mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> {{formService.LABEL_CALCULATE}}</a>
                   <a mat-flat-button color="accent" (click)="canDoSuit =false;" class ="act_button"> {{formService.LABEL_CANCEL}}</a>
-              </mat-card-actions>
+              </mat-card-actions> -->
 
               <div class ="row" *ngIf="onSuitCalculate">
                   <mat-spinner></mat-spinner>
@@ -311,12 +329,28 @@
                     <h4>{{ riskLevel }} - {{ riskLevelTxt }}</h4>
                     <p>{{ riskLevelDesc }}</p>
 
-                    <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;suitModifyFlag=false" class ="act_button"> {{formService.LABEL_CANCEL}}</a>
-                    <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" > {{formService.LABEL_EVA_AGAIN}}</a>
-                    <button mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">OK</button>
+                    <!-- <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;suitModifyFlag=false" class ="act_button"> {{formService.LABEL_CANCEL}}</a> -->
+                    <!-- <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" > {{formService.LABEL_EVA_AGAIN}}</a>
+                    <button mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">OK</button> -->
 
               </div>
             <!-- </mat-card-content> -->
+            <mat-card-actions class="stepper_action center-screen ">
+
+                <a *ngIf="canDoSuit" mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> {{formService.LABEL_CALCULATE}}</a>
+                <a *ngIf="!canDoSuit && !canSaveSuit" (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a>
+                <a *ngIf="canSaveSuit" mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" >{{formService.LABEL_EVA_AGAIN}}</a>
+                <a *ngIf="canSaveSuit" mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">{{formService.LABEL_EVA_CONF}}</a>
+                <!-- <button *ngIf="canSaveSuit" mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">{{formService.LABEL_EVA_CONF}}</button> -->
+
+            <!-- <div class="stepper_action"> -->
+                &nbsp;&nbsp;&nbsp;
+                <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+            <!-- </div>  -->
+
+            </mat-card-actions>
+
     </mat-step>
 
 <!-- ***************** #4 Final  step -->
@@ -341,11 +375,11 @@
                     <li>Suitability was change.</li>
                     <p>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </p>
                 </span>
-                <div>
 
+                <div>
                     <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px"><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
                     <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button>
-                  </div>
+                </div>
             </div>
 
             <!-- <div *ngIf="resultMsg?.length > 0" class="center-screen form_section">

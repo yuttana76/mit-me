@@ -89,7 +89,7 @@ export class CustAddrComponent implements OnInit {
 
     if (this.addrFormGroup.invalid) {
       this.addrFormGroup.enable();
-      this.modifyFlag  = true;
+      // this.modifyFlag  = true;
 
       const controls = this.addrFormGroup.controls;
       for (const name in controls) {
@@ -97,10 +97,12 @@ export class CustAddrComponent implements OnInit {
               this.addrFormGroup.controls[name].markAsTouched();
           }
       }
-    } else {
-      this.addrFormGroup.disable();
-      this.modifyFlag  = false;
     }
+    // else {
+    //   this.addrFormGroup.disable();
+    //   this.modifyFlag  = false;
+    // }
+
   }
 
   countryChange(event: MatSelectChange) {

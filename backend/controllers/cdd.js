@@ -88,6 +88,7 @@ exports.getCDDinfo_MIT = (req, res, next) => {
       ,b.Income,b.Income_Code,b.Income_Source,b.Income_Source_Code
       ,b.Modify_Date
       ,b.PID_ExpiryDate AS cardExpiryDate
+      ,'' AS MailSameAs
       FROM [Account_Info] a
       left join MFTS_Account b on b.Account_No like a.Cust_Code
       WHERE Cust_Code= @custCode
@@ -170,6 +171,7 @@ exports.saveCDDInfo = (req, res, next) => {
   var titleOther = req.body.titleOther;
   var firstNameE = req.body.firstNameE;
   var lastNameE = req.body.lastNameE;
+  var MailSameAs = req.body.MailSameAs;
 
   var logMsg = `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${Cust_Code}`;
   logger.info( logMsg);
@@ -205,6 +207,7 @@ exports.saveCDDInfo = (req, res, next) => {
    ,[titleOther]=@titleOther
    ,[First_Name_E]=@First_Name_E
    ,[Last_Name_E]=@Last_Name_E
+   ,[MailSameAs]=@MailSameAs
    WHERE Cust_Code = @Cust_Code;
 
 
@@ -213,10 +216,10 @@ exports.saveCDDInfo = (req, res, next) => {
 
     INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
       ,[Occupation_Code] ,[Occupation_Desc] ,[Position_Code],[Position_Desc] ,[BusinessType_Code],[BusinessType_Desc] ,[Income_Code] ,[Income_Source_Code],[Income_Source_Desc],WorkPlace,ReqModifyFlag,[CreateBy] ,[CreateDate]
-      ,[identificationCardType],[passportCountry],[title],[titleOther],[First_Name_E],[Last_Name_E],cardExpiryDate)
+      ,[identificationCardType],[passportCountry],[title],[titleOther],[First_Name_E],[Last_Name_E],cardExpiryDate,MailSameAs)
     VALUES(@Cust_Code,@ID_CARD ,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
         ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ReqModifyFlag,@ActionBy ,GETDATE()
-        ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E,@cardExpiryDate)
+        ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E,@cardExpiryDate,@MailSameAs)
 
     END
 
@@ -255,6 +258,7 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('titleOther', sql.NVarChar(50), titleOther)
     .input('First_Name_E', sql.NVarChar(200), firstNameE)
     .input('Last_Name_E', sql.NVarChar(200), lastNameE)
+    .input('MailSameAs', sql.VarChar(10), MailSameAs)
     .query(queryStr, (err, result) => {
         if(err){
           rsp_code = "902"; // Was error

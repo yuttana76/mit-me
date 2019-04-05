@@ -19,6 +19,7 @@ export class CddService {
       .pipe(
         map(fundtData => {
           return fundtData.result.map(data => {
+
             return {
               pid: data.ID_CARD,
               // title: data.Title_Name_T,
@@ -43,7 +44,8 @@ export class CddService {
               title: data.title,
               titleOther: data.titleOther,
               firstNameE: data.First_Name_E,
-              lastNameE: data.Last_Name_E
+              lastNameE: data.Last_Name_E,
+              MailSameAs: data.MailSameAs
             };
           });
         })
@@ -102,7 +104,8 @@ export class CddService {
       title: cdd.title,
       titleOther: cdd.titleOther,
       firstNameE: cdd.firstNameE,
-      lastNameE: cdd.lastNameE
+      lastNameE: cdd.lastNameE,
+      MailSameAs: cdd.MailSameAs
       };
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddInfo', data);
   }

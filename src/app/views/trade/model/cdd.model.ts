@@ -37,6 +37,7 @@ export class CDDModel {
 
       public ReqModifyFlag: boolean;
       public PIDExpDate: string;
+      public MailSameAs: string;
 
       constructor(){}
 

@@ -119,79 +119,81 @@
      <mat-step [stepControl]="register_formGroup" >
         <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
 
-        <div class='row '>
-            <section class="example-section" >
-                <mat-checkbox [(ngModel)]="addrModifyFlag"  (change)="modifOnChange(addrModifyFlag)"  class="form_section" >{{formService.REQ_MODIFY}}</mat-checkbox>
-            </section>
-        </div>
-
         <!-- 2.1 Register Address  (SEQ = 1)-->
-        <!-- <div> -->
-            <mat-expansion-panel [(expanded)]='register_expanded'>
-                <mat-expansion-panel-header>
-                  <mat-panel-title>{{ formService.register_addr_title }}</mat-panel-title>
-
-                  <mat-panel-description *ngIf="!register_expanded && !mobile" class="form_section desk" >
-                          {{re_addrData.Print_Address}}
-                  </mat-panel-description>
-
-                </mat-expansion-panel-header>
-                    <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
-              </mat-expansion-panel>
-        <!-- </div> -->
+          <div >
+            <p class="form_section label_header">{{ formService.register_addr_title }} {{ formService.register_addr_title_ENG }}
+            <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
+            </p>
+          </div>
+          <div>
+            <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
+          </div>
 
         <!-- 2.2 Work Address (SEQ = 3)-->
-        <!-- <div> -->
-          <!-- <mat-expansion-panel [(expanded)]='work_expanded'> -->
-            <mat-expansion-panel _ngcontent-c0="" class="" hidetoggle="true" ng-reflect-hide-toggle="true" [(expanded)]='work_expanded'>
-                <mat-expansion-panel-header>
-                  <mat-panel-title >{{ formService.work_addr_title }}</mat-panel-title>
-                  <mat-panel-description *ngIf="!work_expanded && !mobile" class="form_section desk">
-                        {{work_addrData.Print_Address}}
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
+            <div>
+                <p class="label_header">{{ formService.work_addr_title }} {{formService.work_addr_title_ENG}}</p>
+                <!-- <a  mat-flat-button color="accent" (click)="modifWorkAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
+              </div>
+              <div>
+                  <section class="example-section">
+                      <!-- <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)" [(disabled)]="!work_addrModifyFlag" > -->
+                      <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)"  >
+                        <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
+                        <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
 
-                <div>
-                    <section class="example-section">
-                        <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)" [(disabled)]="!addrModifyFlag" >
-                          <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
-                          <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
-
-                        </mat-radio-group>
-                      </section>
-                </div>
-                <!-- <form [formGroup]="work_formGroup"> -->
-                    <app-cust-addr *ngIf="showWorkAddr" [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
-                <!-- </form> -->
-
-              </mat-expansion-panel>
-          <!-- </div> -->
+                      </mat-radio-group>
+                    </section>
+              </div>
+              <div>
+                <app-cust-addr [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+              </div>
 
           <!-- 2.3 Current Address (SEQ = 2)-->
-              <mat-expansion-panel [(expanded)]='current_expanded' class='fullscreen'>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>{{ formService.contact_addr_title }}</mat-panel-title>
-                    <mat-panel-description *ngIf="!current_expanded && !mobile" class="form_section desk">
-                            {{cur_addrData.Print_Address}}
-                    </mat-panel-description>
-                  </mat-expansion-panel-header>
+          <div >
+              <p class="label_header">{{ formService.contact_addr_title }}  {{formService.contact_addr_title_ENG}}
+              <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
+              </p>
+            </div>
+            <div class='row'>
+                <section class="example-section" >
+                    <!-- <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="currAddrOnChange(cur_addrData.SameAs)"  [(disabled)]="!addrModifyFlag"> -->
+                    <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="currAddrOnChange(cur_addrData.SameAs)" >
+                        <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
+                        <mat-radio-button class="example-margin" value="3">{{formService.label_addrAs_work}}</mat-radio-button>
+                        <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
+                      </mat-radio-group>
+                  </section>
+            </div>
+            <div>
+              <app-cust-addr  [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+            </div>
 
-                  <div class='row'>
-                      <section class="example-section" >
-                          <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="cuurAddrOnChange(cur_addrData.SameAs)"  [(disabled)]="!addrModifyFlag">
-                              <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
-                              <mat-radio-button class="example-margin" value="3">{{formService.label_addrAs_work}}</mat-radio-button>
-                              <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
-                            </mat-radio-group>
-                        </section>
-                  </div>
 
-                  <!-- <form [formGroup]="current_formGroup"> -->
-                      <app-cust-addr *ngIf="showCurrentAddr" [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
-                  <!-- </form> -->
+              <!-- 2.4 Mail Address (SEQ = 4)-->
+          <div >
+            <p class="label_header">{{ formService.mail_addr_title }}/{{ formService.mail_addr_title_ENG }}
+            <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
+            </p>
+          </div>
 
-                </mat-expansion-panel>
 
+          <div class='row'>
+              <section class="example-section" >
+                  <!-- <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="currAddrOnChange(cur_addrData.SameAs)"  [(disabled)]="!addrModifyFlag"> -->
+                  <mat-radio-group [(ngModel)]="cddData.MailSameAs"  (change)="mailAddrOnChange(cddData.MailSameAs)" >
+                      <mat-radio-button class="example-margin" value="email">{{formService.label_Email}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="reg">{{formService.label_addrAs_reg}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="work">{{formService.label_addrAs_work}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="curr">{{formService.label_addrAs_curr}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
+                    </mat-radio-group>
+                </section>
+          </div>
+          <div>
+            <app-cust-addr  *ngIf="this.cddData.MailSameAs != 'email' "  [addrData]="mail_addrData" [custCode]="survey.pid"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
+          </div>
+
+            <!-- ******** ACTION BAR ************* -->
                 <mat-card-actions class="stepper_action center-screen ">
                     <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
                     <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
@@ -209,6 +211,8 @@
                         <span class="label_header">{{ formService.from_fatca_title }}</span>
                       </h5>
                       <span>{{ formService.fatca_desc }}</span>
+
+                      <p>MailSameAs->{{this.cddData.MailSameAs}}</p>
                 </div>
 
                 <form class="form_section">

@@ -36,6 +36,24 @@ export class SuitFormService {
   contact_addr_title = 'ที่อยู่ที่ติดต่อได้ ';
   contact_addr_title_ENG = 'Contact Address';
 
+  mail_addr_title = 'ที่อยู่สำหรับจัดส่งเอกสาร';
+  mail_addr_title_ENG = 'Mailing Address';
+
+  label_Email = 'อีเมล์'
+  label_Email_ENG = 'E-mail'
+
+  label_addrAs_reg = 'ตามทะเบียนบ้าน'
+  label_addrAs_reg_ENG = 'Same as Residence Registration Address'
+
+  label_addrAs_work = 'ตามที่่ทำงาน'
+  label_addrAs_work_ENG = 'Same as Workplace Address'
+
+  label_addrAs_curr = 'ตามที่อยู่ที่ติดต่อได้ '
+  label_addrAs_curr_ENG = 'Same as Contact Address'
+
+  label_addr_oth = 'อื่นๆ (โปรดระบุ)'
+  label_addr_oth_ENG = 'Other (Please specify)'
+
   SUIT_ANS_INCOMPLETE = ' Suit survery incomplete !';
   STEPPER_FINAL_CONFIRM= 'โปรดตรวจสอบและ บันทึกข้อมูล \n Please review and save your data.';
   // STEPPER_FINAL_THANK= ' Thank you, For you infomation.';
@@ -76,13 +94,7 @@ export class SuitFormService {
   label_RiskLevel = 'ผลประเมินความเสี่ยงระดับ';
   label_EvaluatedDate = 'วันที่ประเมิน';
 
-  label_addrAs_reg = 'ตามทะเบียนบ้าน'
-  label_addrAs_reg_ENG = 'Same as Residence Registration Address'
 
-  label_addrAs_work = 'ตามที่่ทำงาน'
-  label_addrAs_work_ENG = 'Same as Workplace Address'
-  label_addr_oth = 'อื่นๆ (โปรดระบุ)'
-  label_addr_oth_ENG = 'Other (Please specify)'
 
     // Button
     LABEL_SEARCH = 'ค้นหา ';

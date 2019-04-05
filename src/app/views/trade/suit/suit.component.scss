@@ -203,6 +203,7 @@ margin-top: 10px;
 }
 .form_section {
   font-size: 120%;
+
 }
 .blue-txt{
   color: #1194F6;
@@ -266,3 +267,47 @@ margin-top: 10px;
       visibility:visible;
       }
     }
+// *************TEST *******************
+std-bb {
+  margin-bottom: 20px;
+  padding: 17px 20px 9px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #fff;
+  box-shadow: 4px 4px 1px #eee;
+}
+
+body {
+  background: url(https://ir.ebaystatic.com/pictures/aw/pics/cmp/ds3/imgbg.jpg) repeat 0 0 #f8f8f8;
+  color: #333;
+  font-size: 14px;
+  font-family: "Helvetica neue",Helvetica,Arial,Sans-serif;
+  line-height: 1;
+}
+
+
+element.style {
+}
+.post-text pre, .wmd-preview pre {
+    word-wrap: normal;
+}
+.prettyprint {
+    display: block;
+    color: #393318;
+}
+pre {
+    max-height: none\9;
+}
+pre {
+    margin-bottom: 1em;
+    padding: 12px 8px;
+    padding-bottom: 20px;
+    width: auto;
+    width: 650px ;
+    max-height: 600px;
+    overflow: auto;
+    font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
+    font-size: 13px;
+    background-color: #eff0f1;
+    border-radius: 3px;
+}

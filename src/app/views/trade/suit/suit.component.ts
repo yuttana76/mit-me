@@ -38,6 +38,7 @@ export class SuitComponent implements OnInit {
   PREFIX_MOBILE_ALLOW_SEND_SMS ='02';
   SEQ_WORK_ADDR = 3;
   SEQ_CURR_ADDR = 2;
+  SEQ_MAIL_ADDR = 4;
 
   form: FormGroup;
 
@@ -47,6 +48,7 @@ export class SuitComponent implements OnInit {
   register_formGroup: FormGroup;
   work_formGroup: FormGroup;
   current_formGroup: FormGroup;
+  mail_formGroup: FormGroup;
 
   mobile = false;
   register_expanded = true;
@@ -62,9 +64,16 @@ export class SuitComponent implements OnInit {
   canDoFATCA = false;
   showOtpEntry = false;
   addrModifyFlag = false;
+
+  reg_addrModifyFlag = false;
+  work_addrModifyFlag = false;
+  cur_addrModifyFlag = false;
+
   suitModifyFlag = false;
-  showWorkAddr = false;
-  showCurrentAddr = false;
+  // showWorkAddr = false;
+  // showCurrentAddr = false;
+  // showMailAddr = false;
+
   onSuitCalculate = false;
   ADD_NEW = false;
   INTERNAL_USER = false;
@@ -82,6 +91,7 @@ export class SuitComponent implements OnInit {
   public re_addrData: AddrCustModel = new AddrCustModel();
   public cur_addrData: AddrCustModel = new AddrCustModel();
   public work_addrData: AddrCustModel = new AddrCustModel();
+  public mail_addrData: AddrCustModel = new AddrCustModel();
 
   // cust_mobile_disp;
   cust_RiskScore=0;
@@ -141,6 +151,11 @@ export class SuitComponent implements OnInit {
     this.work_addrData.Addr_Seq = 3;
     if(!this.work_addrData.Country_Id){
       this.work_addrData.Country_Id = 0;
+    }
+
+    this.mail_addrData.Addr_Seq = 4;
+    if(!this.mail_addrData.Country_Id){
+      this.mail_addrData.Country_Id = 0;
     }
 
     this.spinnerLoading = true;
@@ -406,6 +421,50 @@ export class SuitComponent implements OnInit {
     }),
   });
 
+
+
+  this.mail_formGroup = new FormGroup({
+    Addr_No: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Moo: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Place: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Floor: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Soi: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Road: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Tambon_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Amphur_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Province_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Country_Id: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Zip_Code: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    Tel: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    Fax: new FormControl(null, {
+      // validators: [Validators.required]
+    })
+  });
+
   }
 
   loadQuestions() {
@@ -502,7 +561,7 @@ export class SuitComponent implements OnInit {
  getCDD(_id){
   this.cddService.getCustCDDInfo(_id).subscribe(data => {
 
-console.log(' getCDD()>> ' + JSON.stringify(data));
+// console.log(' getCDD()>> ' + JSON.stringify(data));
 
     if(data ){
 
@@ -531,7 +590,7 @@ console.log(' getCDD()>> ' + JSON.stringify(data));
       this.cddData.incomeSource = data[0].incomeSource;
       this.cddData.incomeSource_Oth = data[0].incomeSourceOth;
       this.cddData.workPlace = data[0].workPlace;
-
+      this.cddData.MailSameAs = data[0].MailSameAs;
       this.cddData.ReqModifyFlag = false;
 
       // this.reloadData();
@@ -578,12 +637,17 @@ console.log(' getCDD()>> ' + JSON.stringify(data));
 
         } else if (seqNo === 2 ) {
           this.cur_addrData = Object.assign({}, _addrData);
-          this.showCurrentAddr = true;
+          // this.showCurrentAddr = true;
 
         } else if (seqNo === 3){
           this.work_addrData = Object.assign({}, _addrData);
-          this.showWorkAddr = true;
+          // this.showWorkAddr = true;
+        } else if (seqNo === 4){
+          this.mail_addrData = Object.assign({}, _addrData);
         }
+
+
+
       }
     }, error => () => {
         console.log('Was error', error);
@@ -849,30 +913,97 @@ console.log(' getCDD()>> ' + JSON.stringify(data));
   workAddrOnChange(val){
     if(val ==='1'){
       this.work_addrData = Object.assign({}, this.re_addrData);
-      this.showWorkAddr = false;
+      // this.showWorkAddr = false;
     }else { // Other
-      // console.log('Other addr. *** ');
-      this.showWorkAddr = true;
+      this.work_addrData = new AddrCustModel();
+      // this.showWorkAddr = true;
     }
+
     this.work_addrData.Addr_Seq = this.SEQ_WORK_ADDR;
     this.work_addrData.SameAs = val;
+
+    // Check which components are in validation
+    if (this.work_formGroup.invalid) {
+      this.work_formGroup.enable();
+      const controls = this.work_formGroup.controls;
+      for (const name in controls) {
+          if (controls[name].invalid) {
+              this.work_formGroup.controls[name].markAsTouched();
+          }
+      }
+    }
+
   }
 
-  cuurAddrOnChange(val){
+  currAddrOnChange(val){
     if(val ==='1'){
       this.cur_addrData = Object.assign({}, this.re_addrData);
-      this.showCurrentAddr = false;
+      // this.showCurrentAddr = false;
     } else if ( val === '3'){
       this.cur_addrData = Object.assign({}, this.work_addrData);
-      this.showCurrentAddr = false;
+      // this.showCurrentAddr = false;
     } else { // Other
-      // console.log('Other addr. *** ');
-      this.showCurrentAddr = true;
+      this.cur_addrData = new AddrCustModel();
+      // this.showCurrentAddr = true;
     }
     this.cur_addrData.SameAs = val;
     this.cur_addrData.Addr_Seq = this.SEQ_CURR_ADDR;
+
+    // Check which components are in validation
+    if (this.current_formGroup.invalid) {
+      this.current_formGroup.enable();
+      const controls = this.current_formGroup.controls;
+      for (const name in controls) {
+          if (controls[name].invalid) {
+              this.current_formGroup.controls[name].markAsTouched();
+          }
+      }
+    }
+
   }
 
+
+  reg
+curr
+work
+mail
+email
+
+
+  mailAddrOnChange(val){
+
+    this.cddData.MailSameAs = val;
+    if(val === 'email'){
+      // this.mail_addrData = Object.assign({}, this.re_addrData);
+
+    } else if(val === 'reg'){
+      this.mail_addrData = Object.assign({}, this.re_addrData);
+
+    } else if ( val === 'work'){
+      this.mail_addrData = Object.assign({}, this.work_addrData);
+
+    } else if ( val === 'curr'){
+      this.mail_addrData = Object.assign({}, this.cur_addrData);
+    } else { // 9:Other
+      this.mail_addrData = new AddrCustModel();
+      // this.showCurrentAddr = true;
+    }
+
+    if(val === 'email'){
+      this.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
+      // Check which components are in validation
+      if (this.mail_formGroup.invalid) {
+        this.mail_formGroup.enable();
+        const controls = this.mail_formGroup.controls;
+        for (const name in controls) {
+            if (controls[name].invalid) {
+                this.mail_formGroup.controls[name].markAsTouched();
+            }
+        }
+      }
+    }
+
+  }
 
   public loadFATCA(_id: string) {
     this.spinnerLoading = true;
@@ -1054,6 +1185,33 @@ console.log(' getCDD()>> ' + JSON.stringify(data));
 
        }
    }
+
+   modifRegAddr(){
+    this.reg_addrModifyFlag = !this.reg_addrModifyFlag;
+    if(this.reg_addrModifyFlag){
+      this.register_formGroup.enable();
+     }else{
+      this.register_formGroup.disable();
+     }
+ }
+
+  modifWorkAddr(){
+    this.work_addrModifyFlag = !this.work_addrModifyFlag;
+    if(this.work_addrModifyFlag){
+      this.work_formGroup.enable();
+    }else{
+      this.work_formGroup.disable();
+    }
+  }
+
+  modifCurrentAddr(){
+    this.cur_addrModifyFlag = !this.cur_addrModifyFlag
+    if(this.cur_addrModifyFlag){
+      this.current_formGroup.enable();
+     }else{
+      this.current_formGroup.disable();
+     }
+ }
 
    cDDmodifOnChange(){
 
@@ -1267,6 +1425,13 @@ console.log(' getCDD()>> ' + JSON.stringify(data));
     observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData));
     observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData));
     observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
+
+    console.log('MailSameAs = ' + this.cddData.MailSameAs);
+    if(this.cddData.MailSameAs !== 'email'){
+      console.log('*** Add mail_addrData to list');
+      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.mail_addrData));
+    }
+
 
 
     if(this.suitModifyFlag){

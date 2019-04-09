@@ -36,8 +36,9 @@ export class SuitComponent implements OnInit {
   ];
 
   PREFIX_MOBILE_ALLOW_SEND_SMS ='02';
-  SEQ_WORK_ADDR = 3;
+  SEQ_REG_ADDR = 1;
   SEQ_CURR_ADDR = 2;
+  SEQ_WORK_ADDR = 3;
   SEQ_MAIL_ADDR = 4;
 
   form: FormGroup;
@@ -613,7 +614,7 @@ export class SuitComponent implements OnInit {
       // console.log(`***getCustCDDAddr() ${seqNo} >>` + JSON.stringify(data) );
       _addrData.Addr_Seq = seqNo;
       if (data.length > 0){
-        // console.log('CDD-Address >>' + JSON.stringify(data));
+        console.log('CDD-Address >>' + JSON.stringify(data));
         // _addrData.Addr_Seq = data[0].Addr_Seq;
         _addrData.Addr_No = data[0].Addr_No;
         _addrData.Moo = data[0].Moo;
@@ -645,9 +646,6 @@ export class SuitComponent implements OnInit {
         } else if (seqNo === 4){
           this.mail_addrData = Object.assign({}, _addrData);
         }
-
-
-
       }
     }, error => () => {
         console.log('Was error', error);
@@ -739,9 +737,10 @@ export class SuitComponent implements OnInit {
           this.getCDD(this.survey.pid);
 
           // Load address
-          this.getCDDAddress(this.survey.pid, 1);
-          this.getCDDAddress(this.survey.pid, 2);
-          this.getCDDAddress(this.survey.pid, 3);
+          this.getCDDAddress(this.survey.pid, this.SEQ_REG_ADDR);
+          this.getCDDAddress(this.survey.pid, this.SEQ_CURR_ADDR);
+          this.getCDDAddress(this.survey.pid, this.SEQ_WORK_ADDR);
+          this.getCDDAddress(this.survey.pid, this.SEQ_MAIL_ADDR);
 
           // FATCA
           this.loadFATCA(this.survey.pid);
@@ -932,6 +931,7 @@ export class SuitComponent implements OnInit {
           }
       }
     }
+    // console.log('workAddrOnChange() >>' + JSON.stringify(this.work_addrData));
 
   }
 
@@ -962,17 +962,8 @@ export class SuitComponent implements OnInit {
 
   }
 
-
-  reg
-curr
-work
-mail
-email
-
-
   mailAddrOnChange(val){
 
-    this.cddData.MailSameAs = val;
     if(val === 'email'){
       // this.mail_addrData = Object.assign({}, this.re_addrData);
 
@@ -988,6 +979,9 @@ email
       this.mail_addrData = new AddrCustModel();
       // this.showCurrentAddr = true;
     }
+
+    this.cddData.MailSameAs = val;
+    this.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
 
     if(val === 'email'){
       this.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
@@ -1028,79 +1022,6 @@ email
       );
   }
 
-  // savePersonInfo(){
-  //   console.log('savePersonInfo()');
-  //   console.log('*** this.cddData.ReqModifyFlag>> ' + this.cddData.ReqModifyFlag);
-  //   this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData)
-  //   .subscribe((data: any ) => {
-  //    console.log('Successful', JSON.stringify(data));
-  //    if (data.code === "000") {
-  //      this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
-  //        timeOut: 5000,
-  //        closeButton: true,
-  //        positionClass: "toast-top-center"
-  //      });
-  //    } else {
-  //      this.toastr.warning(
-  //        data.msg,
-  //        this.formService.SAVE_INCOMPLETE,
-  //        {
-  //          timeOut: 5000,
-  //          closeButton: true,
-  //          positionClass: "toast-top-center"
-  //        }
-  //      );
-  //    }
-  //  }, error => () => {
-  //      console.log('Was error', error);
-  //  }, () => {
-  //     console.log('Loading complete');
-  //  });
-
-  // }
-
-
-  // public saveFATCA(){
-  //   this.suiteService
-  //   .saveFATCA(
-  //     this.survey.pid,
-  //     this.survey.pid,
-  //     this.fatcaQuestions
-  //   )
-  //   .finally(() => {
-  //     // Execute after graceful or exceptionally termination
-  //     console.log("saveFATCA logging logic...");
-  //     this.spinnerLoading = false;
-  //   })
-  //   .subscribe(
-  //     (data: any) => {
-  //       console.log("HTTP return  saveFATCA :" + JSON.stringify(data));
-  //       if (data.code === "000") {
-  //         this.toastr.success(data.msg, this.formService.FATCA_SAVE_COMPLETE, {
-  //           timeOut: 5000,
-  //           closeButton: true,
-  //           positionClass: "toast-top-center"
-  //         });
-  //       } else {
-  //         this.toastr.warning(
-  //           data.msg,
-  //           this.formService.FATCA_SAVE_INCOMPLETE,
-  //           {
-  //             timeOut: 5000,
-  //             closeButton: true,
-  //             positionClass: "toast-top-center"
-  //             }
-  //           );
-  //       }
-  //     },
-  //     error => () => {
-  //       console.log("saveFATCA Was error", error);
-  //     },
-  //     () => {
-  //       console.log("saveFATCA  complete");
-  //     }
-  //   );
-  // }
 
 
   evaluateSuitOK(){
@@ -1421,18 +1342,48 @@ email
     observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
     observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
 
+
+    // Check Work Address selected
+    let sameAs = this.work_addrData.SameAs;
+      if(sameAs ===  this.SEQ_REG_ADDR.toString() ){
+        this.work_addrData = Object.assign({}, this.re_addrData);
+
+      }
+      this.work_addrData.SameAs = sameAs;
+      this.work_addrData.Addr_Seq = this.SEQ_WORK_ADDR;
+
+    // Check Current Address selected
+    sameAs = this.cur_addrData.SameAs;
+      if(sameAs ===  this.SEQ_REG_ADDR.toString() ){
+        this.cur_addrData = Object.assign({}, this.re_addrData);
+
+      }else if(sameAs ===  this.SEQ_WORK_ADDR.toString() ){
+        this.cur_addrData = Object.assign({}, this.work_addrData);
+
+      }
+      this.cur_addrData.SameAs = sameAs;
+      this.cur_addrData.Addr_Seq = this.SEQ_CURR_ADDR;
+
+    // Check Mail Address selected
+    sameAs = this.mail_addrData.SameAs;
+      if(sameAs ===  this.SEQ_REG_ADDR.toString() ){
+        this.mail_addrData = Object.assign({}, this.re_addrData);
+      }else if(sameAs ===  this.SEQ_WORK_ADDR.toString() ){
+        this.mail_addrData = Object.assign({}, this.work_addrData);
+      }else if(sameAs ===  this.SEQ_CURR_ADDR.toString() ){
+        this.mail_addrData = Object.assign({}, this.work_addrData);
+      }
+      this.mail_addrData.SameAs = sameAs;
+      this.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
+
     // Address
     observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData));
     observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData));
     observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
 
-    console.log('MailSameAs = ' + this.cddData.MailSameAs);
     if(this.cddData.MailSameAs !== 'email'){
-      console.log('*** Add mail_addrData to list');
       observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.mail_addrData));
     }
-
-
 
     if(this.suitModifyFlag){
       observables.push(this.suiteService.saveSuitabilityByPID(

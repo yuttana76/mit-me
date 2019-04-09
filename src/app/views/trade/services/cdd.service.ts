@@ -167,7 +167,8 @@ export class CddService {
       _reqModifyFlag = 0;
     }
 
-    // console.log('saveCustCDDAddr()>>'+ JSON.stringify(_addr))
+    console.log('saveCustCDDAddr()>>'+ JSON.stringify(_addr))
+
     const data = {
       actionBy: ActionBy,
       Cust_Code: custCode,

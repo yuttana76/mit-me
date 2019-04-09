@@ -121,7 +121,7 @@
 
         <!-- 2.1 Register Address  (SEQ = 1)-->
           <div >
-            <p class="form_section label_header">{{ formService.register_addr_title }} {{ formService.register_addr_title_ENG }}
+            <p class="form_section label_header">{{ formService.register_addr_title }} {{ formService.register_addr_title_ENG }} -{{SEQ_REG_ADDR}}
             <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
             </p>
           </div>
@@ -131,7 +131,7 @@
 
         <!-- 2.2 Work Address (SEQ = 3)-->
             <div>
-                <p class="label_header">{{ formService.work_addr_title }} {{formService.work_addr_title_ENG}}</p>
+                <p class="label_header">{{ formService.work_addr_title }} {{formService.work_addr_title_ENG}} -{{SEQ_WORK_ADDR}}</p>
                 <!-- <a  mat-flat-button color="accent" (click)="modifWorkAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
               </div>
               <div>
@@ -145,12 +145,12 @@
                     </section>
               </div>
               <div>
-                <app-cust-addr [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+                <app-cust-addr *ngIf="this.work_addrData.SameAs == '9' " [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
               </div>
 
           <!-- 2.3 Current Address (SEQ = 2)-->
           <div >
-              <p class="label_header">{{ formService.contact_addr_title }}  {{formService.contact_addr_title_ENG}}
+              <p class="label_header">{{ formService.contact_addr_title }}  {{formService.contact_addr_title_ENG}} -{{SEQ_CURR_ADDR}}
               <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
               </p>
             </div>
@@ -165,13 +165,13 @@
                   </section>
             </div>
             <div>
-              <app-cust-addr  [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+              <app-cust-addr  *ngIf="this.cur_addrData.SameAs == '9' " [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
             </div>
 
 
               <!-- 2.4 Mail Address (SEQ = 4)-->
           <div >
-            <p class="label_header">{{ formService.mail_addr_title }}/{{ formService.mail_addr_title_ENG }}
+            <p class="label_header">{{ formService.mail_addr_title }}/{{ formService.mail_addr_title_ENG }}  -{{SEQ_MAIL_ADDR}}
             <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
             </p>
           </div>
@@ -190,7 +190,7 @@
                 </section>
           </div>
           <div>
-            <app-cust-addr  *ngIf="this.cddData.MailSameAs != 'email' "  [addrData]="mail_addrData" [custCode]="survey.pid"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
+            <app-cust-addr  *ngIf="this.cddData.MailSameAs == '9' "  [addrData]="mail_addrData" [custCode]="survey.pid"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
           </div>
 
             <!-- ******** ACTION BAR ************* -->

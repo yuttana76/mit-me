@@ -423,7 +423,6 @@ export class SuitComponent implements OnInit {
   });
 
 
-
   this.mail_formGroup = new FormGroup({
     Addr_No: new FormControl(null, {
       validators: [Validators.required]
@@ -563,7 +562,6 @@ export class SuitComponent implements OnInit {
   this.cddService.getCustCDDInfo(_id).subscribe(data => {
 
 // console.log(' getCDD()>> ' + JSON.stringify(data));
-
     if(data ){
 
       this.cddData.identificationCardType = data[0].identificationCardType;
@@ -611,10 +609,8 @@ export class SuitComponent implements OnInit {
     let _addrData: AddrCustModel = new AddrCustModel();
     this.cddService.getCustCDDAddr(_id, seqNo).subscribe(data => {
 
-      // console.log(`***getCustCDDAddr() ${seqNo} >>` + JSON.stringify(data) );
       _addrData.Addr_Seq = seqNo;
       if (data.length > 0){
-        console.log('CDD-Address >>' + JSON.stringify(data));
         // _addrData.Addr_Seq = data[0].Addr_Seq;
         _addrData.Addr_No = data[0].Addr_No;
         _addrData.Moo = data[0].Moo;
@@ -1007,8 +1003,6 @@ export class SuitComponent implements OnInit {
         this.spinnerLoading = false;
       })
       .subscribe((data: any) => {
-
-
           if ( data.result.length > 0 ) {
             this.fatcaQuestions = JSON.parse(data.result[0].FATCA_DATA);
           }
@@ -1144,6 +1138,16 @@ export class SuitComponent implements OnInit {
       this.cddFormGroup.disable();
      }
  }
+
+ fatcaOnChange(){
+
+  if(this.cddFormGroup.disabled){
+    this.cddFormGroup.enable();
+   }else{
+    this.cddFormGroup.disable();
+   }
+}
+
 
     checkCDD_FormInvalid(_Form:FormGroup){
 

@@ -106,9 +106,7 @@
           <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="cddFormGroup" [cddData]="cddData"></app-cust-cdd>
 
           <mat-card-actions class="stepper_action center-screen ">
-
               <a  mat-flat-button color="accent" (click)="cDDmodifOnChange()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a>
-
               <button mat-flat-button  matStepperNext color="primary"  (click)=checkCDD_FormInvalid(cddFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
           </mat-card-actions>
         </form>
@@ -121,7 +119,7 @@
 
         <!-- 2.1 Register Address  (SEQ = 1)-->
           <div >
-            <p class="form_section label_header">{{ formService.register_addr_title }} {{ formService.register_addr_title_ENG }} -{{SEQ_REG_ADDR}}
+            <p class="form_section label_header">{{ formService.register_addr_title }} {{ formService.register_addr_title_ENG }}
             <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
             </p>
           </div>
@@ -131,7 +129,7 @@
 
         <!-- 2.2 Work Address (SEQ = 3)-->
             <div>
-                <p class="label_header">{{ formService.work_addr_title }} {{formService.work_addr_title_ENG}} -{{SEQ_WORK_ADDR}}</p>
+                <p class="label_header">{{ formService.work_addr_title }} {{formService.work_addr_title_ENG}}</p>
                 <!-- <a  mat-flat-button color="accent" (click)="modifWorkAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
               </div>
               <div>
@@ -150,7 +148,7 @@
 
           <!-- 2.3 Current Address (SEQ = 2)-->
           <div >
-              <p class="label_header">{{ formService.contact_addr_title }}  {{formService.contact_addr_title_ENG}} -{{SEQ_CURR_ADDR}}
+              <p class="label_header">{{ formService.contact_addr_title }}  {{formService.contact_addr_title_ENG}}
               <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
               </p>
             </div>
@@ -171,7 +169,7 @@
 
               <!-- 2.4 Mail Address (SEQ = 4)-->
           <div >
-            <p class="label_header">{{ formService.mail_addr_title }}/{{ formService.mail_addr_title_ENG }}  -{{SEQ_MAIL_ADDR}}
+            <p class="label_header">{{ formService.mail_addr_title }}/{{ formService.mail_addr_title_ENG }}
             <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
             </p>
           </div>
@@ -211,19 +209,21 @@
                         <span class="label_header">{{ formService.from_fatca_title }}</span>
                       </h5>
                       <span>{{ formService.fatca_desc }}</span>
-
-                      <p>MailSameAs->{{this.cddData.MailSameAs}}</p>
                 </div>
 
                 <form class="form_section">
-                      <app-suit-tree-view [questions]="fatcaQuestions" [questionDisabled]="cddFormGroup.disabled"></app-suit-tree-view>
+                      <app-suit-tree-view [questions]="fatcaQuestions" [questionDisabled]="cddFormGroup.disabled" ></app-suit-tree-view>
+                      <!-- <app-suit-tree-view [questions]="fatcaQuestions"  ></app-suit-tree-view> -->
                 </form>
             </div>
 
             <mat-card-actions class="stepper_action center-screen ">
+
+                <!-- <button *ngIf="!cddFormGroup.disabled" mat-flat-button   (click)="fatcaOnChange()"  class ="act_button" >Cancel Edit <i class="fas fa-pencil-alt"></i></button> -->
+                <a  mat-flat-button color="accent" (click)="fatcaOnChange()" class ="act_button"> Edit  <i class="fas fa-pencil-alt"></i></a>
+
                 <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button  matStepperNext color="primary" (click)=fatch_FormInvalid(FATCAGroup) >
-                  {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+                <button mat-flat-button  matStepperNext color="primary" (click)=fatch_FormInvalid(FATCAGroup) > {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
             </mat-card-actions>
 
           </form>
@@ -347,8 +347,12 @@
 
             <!-- <div class="stepper_action"> -->
                 &nbsp;&nbsp;&nbsp;
-                <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+                <!-- <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button> -->
+
+                <button mat-flat-button *ngIf="!(canDoSuit || canSaveSuit)"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button *ngIf= "!(canDoSuit || canSaveSuit)"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+
             <!-- </div>  -->
 
             </mat-card-actions>

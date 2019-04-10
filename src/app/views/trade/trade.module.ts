@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import {CommonModule, DatePipe} from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { TradeRoutingModule } from './trade-routing.module';
+import { ChartsModule } from 'ng2-charts/ng2-charts';
 
 import { SummaryRepComponent } from './summary-rep/summary-rep.component';
 import { AngularMaterialModule } from '../../angular-material.module';
@@ -42,6 +43,7 @@ import { SuitTreeViewComponent } from './suit-tree-view/suit-tree-view.component
 import { SuitComponent } from './suit/suit.component';
 import { CustCDDComponent } from './cust-cdd/cust-cdd.component';
 import { CustAddrComponent } from './cust-addr/cust-addr.component';
+import { SuitChartComponent } from './suit-chart/suit-chart.component';
 
 @NgModule({
   imports: [
@@ -55,7 +57,8 @@ import { CustAddrComponent } from './cust-addr/cust-addr.component';
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory
-    })
+    }),
+    ChartsModule
   ],
   declarations: [
     SummaryRepComponent,
@@ -94,6 +97,7 @@ import { CustAddrComponent } from './cust-addr/cust-addr.component';
     SuitTreeViewComponent,
     CustCDDComponent,
     CustAddrComponent,
+    SuitChartComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

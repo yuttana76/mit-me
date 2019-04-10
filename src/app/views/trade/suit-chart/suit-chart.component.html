@@ -1,0 +1,44 @@
+<!-- <h5>Risk Level = {{riskLevel}}</h5> -->
+
+<div class="card">
+    <div class="card-body">
+      <div class="chart-wrapper">
+
+        <canvas *ngIf="riskLevel == '1'" baseChart class="chart"
+        [data]="pieChartData_1"
+        [labels]="pieChartLabels_1"
+        [chartType]="pieChartType"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"></canvas>
+
+        <canvas *ngIf="riskLevel == '2'" baseChart class="chart"
+        [data]="pieChartData_2"
+        [labels]="pieChartLabels_2"
+        [chartType]="pieChartType"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"></canvas>
+
+        <canvas *ngIf="riskLevel == '3'" baseChart class="chart"
+        [data]="pieChartData_3"
+        [labels]="pieChartLabels_3"
+        [chartType]="pieChartType"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"></canvas>
+
+        <canvas *ngIf="riskLevel == '4'" baseChart class="chart"
+        [data]="pieChartData_4"
+        [labels]="pieChartLabels_4"
+        [chartType]="pieChartType"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"></canvas>
+
+        <canvas *ngIf="riskLevel == '5'" baseChart class="chart"
+        [data]="pieChartData_5"
+        [labels]="pieChartLabels_5"
+        [chartType]="pieChartType"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"></canvas>
+
+      </div>
+    </div>
+  </div>

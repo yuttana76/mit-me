@@ -118,20 +118,23 @@
         <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
 
         <!-- 2.1 Register Address  (SEQ = 1)-->
-          <div >
-            <p class="form_section label_header">{{ formService.register_addr_title }} {{ formService.register_addr_title_ENG }}
-            <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
-            </p>
+          <div class='row' >
+            <code class='code_large'>
+                <p>{{ formService.register_addr_title }} {{ formService.register_addr_title_ENG }}</p>
+                    <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
+            </code>
           </div>
           <div>
             <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
           </div>
 
         <!-- 2.2 Work Address (SEQ = 3)-->
-            <div>
-                <p class="label_header">{{ formService.work_addr_title }} {{formService.work_addr_title_ENG}}</p>
-                <!-- <a  mat-flat-button color="accent" (click)="modifWorkAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
-              </div>
+            <div class='row'>
+              <code class='code_large'>
+                  <p>{{ formService.work_addr_title }} {{formService.work_addr_title_ENG}}</p>
+                  <!-- <a  mat-flat-button color="accent" (click)="modifWorkAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
+              </code>
+            </div>
               <div>
                   <section class="example-section">
                       <!-- <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)" [(disabled)]="!work_addrModifyFlag" > -->
@@ -147,10 +150,12 @@
               </div>
 
           <!-- 2.3 Current Address (SEQ = 2)-->
-          <div >
-              <p class="label_header">{{ formService.contact_addr_title }}  {{formService.contact_addr_title_ENG}}
-              <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
-              </p>
+          <div class='row'>
+            <code class='code_large'>
+                <p>{{ formService.contact_addr_title }}  {{formService.contact_addr_title_ENG}}
+                    <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
+                    </p>
+            </code>
             </div>
             <div class='row'>
                 <section class="example-section" >
@@ -165,15 +170,15 @@
             <div>
               <app-cust-addr  *ngIf="this.cur_addrData.SameAs == '9' " [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
             </div>
-
-
               <!-- 2.4 Mail Address (SEQ = 4)-->
-          <div >
-            <p class="label_header">{{ formService.mail_addr_title }}/{{ formService.mail_addr_title_ENG }}
-            <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
-            </p>
-          </div>
+          <div class='row' >
+            <code class='code_large'>
+                <p>{{ formService.mail_addr_title }}/{{ formService.mail_addr_title_ENG }}</p>
+                    <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
 
+            </code>
+
+          </div>
 
           <div class='row'>
               <section class="example-section" >
@@ -203,13 +208,10 @@
         <ng-template matStepLabel>{{formService.STEPER_FATCA}}</ng-template>
         <form [formGroup]="FATCAGroup" >
           <div class='row '>
-
-                <div class='fatca_desc'>
-                    <h5 >
-                        <span class="label_header">{{ formService.from_fatca_title }}</span>
-                      </h5>
-                      <span>{{ formService.fatca_desc }}</span>
-                </div>
+                <code class='code_large'>
+                    <span class="label_header">{{ formService.from_fatca_title }}</span>
+                    <p>{{ formService.fatca_desc }}</p>
+                </code>
 
                 <form class="form_section">
                       <app-suit-tree-view [questions]="fatcaQuestions" [questionDisabled]="cddFormGroup.disabled" ></app-suit-tree-view>
@@ -235,6 +237,11 @@
           <form [formGroup]="suitFormGroup" >
 
             <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
+            <div class='row '>
+                <code class='code_large'>
+                    <p>แบบมาตราฐานในการประเมินความเหมาะสมในการลงทุน</p>
+                </code>
+            </div>
 
             <!-- <div class="stepper_action">
                 <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
@@ -251,6 +258,7 @@
                     <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'dd/MM/yyyy' }}</p>
                     <p>{{ cust_RiskTypeInvestor }}</p>
 
+                    <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart>
                     <!-- <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a> -->
                 </div>
             </form>
@@ -331,6 +339,8 @@
                     <h4>{{ riskLevel }} - {{ riskLevelTxt }}</h4>
                     <p>{{ riskLevelDesc }}</p>
 
+                    <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart>
+
                     <!-- <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;suitModifyFlag=false" class ="act_button"> {{formService.LABEL_CANCEL}}</a> -->
                     <!-- <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" > {{formService.LABEL_EVA_AGAIN}}</a>
                     <button mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">OK</button> -->
@@ -363,7 +373,7 @@
     <!-- <mat-step [stepControl]="firstFormGroup"  > -->
     <mat-step >
             <ng-template matStepLabel>{{formService.STEPER_4}}</ng-template>
-
+<!--
             <div *ngIf="resultMsg?.length <= 0" class="center-screen form_section">
 
                 <span id='finalText'>
@@ -386,6 +396,20 @@
                     <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px"><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
                     <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button>
                 </div>
+            </div> -->
+            <div class = 'row center-screen2'>
+                <code>
+                  <br>
+                    <p><span class='txt_warning'>กรุณาตรวจสอบความถูกต้องก่อนกด "ยืนยันเปิดบัญชี" เนื่องจากท่านจะไม่สามารถเข้ามาแก้ไขข้อมูลใหม่ได้</span></p>
+                        <p><span class='txt_warning'>กรณีกดยืนยันแล้วต้องการแก้ไข ต้องเซ็นกำกับในเอกสารที่ต้องการแก้ไขเท่านั้น</span></p>
+                </code>
+            </div>
+
+
+            <div  class="row center-screen ">
+                <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px"><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_CONFIRM_DATA}}  </button>
+                <!-- <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button> -->
             </div>
 
             <!-- <div *ngIf="resultMsg?.length > 0" class="center-screen form_section">
@@ -399,11 +423,23 @@
 </mat-horizontal-stepper>
 </div>
 
-<div *ngIf="saveAllComplete" class="row center-screen Finish_section">
-
-  <span >
+<div *ngIf="saveAllComplete" class="row center-screen2 ">
+  <!-- <span >
       <h5>{{formService.STEPPER_FINAL_THANK}}</h5>
-  </span>
+  </span> -->
+      <code >
+          <br>
+          <p class ='code_large'>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </p>
+          <p class ='code_large'>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ </p>
+          <br>
+          <p>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
+          <p>942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4</p>
+          <p>แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500</p>
+          <p>โทร. 02 660 6677</p>
+          <p>แฟกซ์. 02 660 6678</p>
+          <p>เว็บไซต์ : www.merchantasset.co.th</p>
+          <p>อีเมล : info@merchantasset.co.th</p>
+      </code>
 
 </div>
 

@@ -52,6 +52,7 @@ import { AngularMaterialModule } from './angular-material.module';
 import { SuitComponent } from './views/trade/suit/suit.component';
 import { SuitTreeViewComponent } from './views/trade/suit-tree-view/suit-tree-view.component';
 import { TradeModule } from './views/trade/trade.module';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 
 @NgModule({
   imports: [
@@ -79,7 +80,8 @@ import { TradeModule } from './views/trade/trade.module';
 
     HttpClientModule,
     AngularMaterialModule,
-    TradeModule
+    TradeModule,
+    AccordionModule.forRoot()
   ],
   declarations: [
     AppComponent,

@@ -105,6 +105,7 @@ export class SuitFormService {
     LABEL_BACK = 'กลับ Back';
     LABEL_NEXT = 'ต่อไป Next';
     LABEL_SAVE = 'บันทึก Save';
+    LABEL_CONFIRM_DATA = 'ยืนยัน ข้อมูล';
     LABEL_CALCULATE = 'ประเมินผล Calculate';
     LABEL_CANCEL = 'ยกเลิก Cancel';
     LABEL_OK = 'ตกลง OK';

@@ -60,7 +60,7 @@ export class CddService {
               politicalRelate: data.PoliticalRelate,
               rejectFinancial: data.RejectFinancial,
               taxDeduction: data.TaxDeduction,
-              cardNotExt: data.cardNotExt,
+              cardNotExp: data.cardNotExp,
               SpouseIDNotExp: data.SpouseIDNotExp
             };
           });
@@ -76,15 +76,24 @@ export class CddService {
     let month = newDate.getMonth() + 1;
     let year = newDate.getFullYear()    ;
     let _DOB = year+"-"+month+"-"+day;
-    // console.log('cdd.dob >>' + cdd.dob);
 
+    let _cardEXPDate = '';
+    if('Y' != cdd.cardNotExp){
+      newDate = new Date(cdd.PIDExpDate)
+      day = newDate.getDate();
+      month = newDate.getMonth() + 1;
+      year = newDate.getFullYear()    ;
+     _cardEXPDate = year+"-"+month+"-"+day;
+    }
 
-     newDate = new Date(cdd.PIDExpDate)
-     day = newDate.getDate();
-     month = newDate.getMonth() + 1;
-     year = newDate.getFullYear()    ;
-    let _cardEXPDate = year+"-"+month+"-"+day;
-
+    let _spouseIDExpDate = '';
+    if('Y' != cdd.SpouseIDNotExp){
+      newDate = new Date(cdd.spouseIDExpDate)
+      day = newDate.getDate();
+      month = newDate.getMonth() + 1;
+      year = newDate.getFullYear()    ;
+     _spouseIDExpDate = year+"-"+month+"-"+day;
+    }
 
     let _reqModifyFlag ;
     if (cdd.ReqModifyFlag){
@@ -92,6 +101,7 @@ export class CddService {
     }else {
       _reqModifyFlag = 0;
     }
+
     const data = {
       actionBy: ActionBy,
       Cust_Code: custCode,
@@ -131,7 +141,7 @@ export class CddService {
       SpouseTitleOther: cdd.spouseTitleOther,
       SpouseFirstName: cdd.spouseFirstName,
       SpouseLastName: cdd.spouseLastName,
-      SpouseIDExpDate: cdd.spouseIDExpDate,
+      SpouseIDExpDate: _spouseIDExpDate,
       MoneyLaundaring: cdd.moneyLaundaring,
       PoliticalRelate: cdd.politicalRelate,
       RejectFinancial: cdd.rejectFinancial,
@@ -139,8 +149,6 @@ export class CddService {
       cardNotExp: cdd.cardNotExp,
       SpouseIDNotExp: cdd.SpouseIDNotExp
       };
-
-      console.log('saveCustCDDInfo()>>'+JSON.stringify(data));
 
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddInfo', data);
   }
@@ -201,9 +209,7 @@ export class CddService {
     }else {
       _reqModifyFlag = 0;
     }
-
-    console.log('saveCustCDDAddr()>>'+ JSON.stringify(_addr))
-
+    // console.log('saveCustCDDAddr()>>'+ JSON.stringify(_addr))
     const data = {
       actionBy: ActionBy,
       Cust_Code: custCode,

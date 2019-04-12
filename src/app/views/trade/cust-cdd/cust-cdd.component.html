@@ -41,13 +41,19 @@
         <mat-form-field class="col-md-4 col-sm-4">
             <input matInput [(ngModel)]="cddData.pid" placeholder={{formService.label_idNumber}}  formControlName="pid"  required readonly=true style="color: gray">
         </mat-form-field>
-
+    </div>
+    <div class='row'>
         <mat-form-field class="col-md-4">
             <input matInput [(ngModel)]="cddData.PIDExpDate"  [matDatepicker]="expDatePicker" formControlName="PIDExpDate"  placeholder={{formService.label_PIDExpDate}} readonly=true>
             <mat-datepicker-toggle matSuffix [for]="expDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #expDatePicker ></mat-datepicker>
             <mat-error *ngIf="cddFormGroup.get('PIDExpDate').invalid ">Please correct ID expire date</mat-error>
         </mat-form-field>
+
+        <mat-checkbox
+        [(ngModel)]="cardNotExpChecked"
+        (change)="OnCardNotExpChange($event)"
+          formControlName="cardNotExp"  >Not Expired</mat-checkbox>
     </div>
 
     <div class='row'>
@@ -112,6 +118,60 @@
               <input matInput [(ngModel)]="cddData.email" placeholder={{formService.label_email}}  formControlName="email" required>
           </mat-form-field>
       </div>
+
+      <div class='row'>
+          <p>สถานภาพ Marital Status *</p>
+          <section class="example-section" >
+              <mat-radio-group [(ngModel)]="cddData.maritalStatus"  (change)="maritalStatusOnChange(cddData.maritalStatus)" formControlName="maritalStatus">
+                  <mat-radio-button class="example-margin" value="Single">โสด Single</mat-radio-button>
+                  <mat-radio-button class="example-margin" value="Married">สมรส Married</mat-radio-button>
+                  <mat-radio-button class="example-margin" value="Divorced">หย่า Divorced</mat-radio-button>
+                  <mat-radio-button class="example-margin" value="Widowhood">ม่าย Widowhood</mat-radio-button>
+                </mat-radio-group>
+            </section>
+      </div>
+
+
+      <div class='row' *ngIf="cddData.maritalStatus == 'Married'">
+          <p>ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (if any)</p>
+
+          <div class="col-md-4">
+              <p>ประเภทบัตร ID Type</p>
+              <mat-radio-group  [(ngModel)]="cddData.spouseCardType"  formControlName="spouseCardType" required>
+                  <mat-radio-button *ngFor="let cardType of cardTypeList" [value]="cardType.Code">{{cardType.Description}}</mat-radio-button>
+              </mat-radio-group>
+            </div>
+      </div>
+
+      <div class='row'>
+          <mat-form-field class="col-md-4 col-sm-4">
+              <input matInput [(ngModel)]="cddData.spouseCardNumber" placeholder='เลขที่ No.'  formControlName="spouseCardNumber"  required>
+          </mat-form-field>
+
+          <div class="col-md-4 col-sm-4">
+                  <mat-select [(ngModel)]="cddData.spousePassportCountry" formControlName="spousePassportCountry" placeholder={{formService.label_passCountry}} required >
+                    <mat-option *ngFor="let obj of countryList" [value]="obj.Code">
+                      {{obj.Eng_Name}}
+                    </mat-option>
+                  </mat-select>
+          </div>
+      </div>
+
+      <div class='row'>
+          <mat-form-field class="col-md-4">
+              <input matInput [(ngModel)]="cddData.spouseIDExpDate"  [matDatepicker]="spouseIDExpDate" formControlName="spouseIDExpDate"  placeholder={{formService.label_PIDExpDate}} readonly=true>
+              <mat-datepicker-toggle matSuffix [for]="spouseIDExpDate"></mat-datepicker-toggle>
+              <mat-datepicker #spouseIDExpDate ></mat-datepicker>
+              <mat-error *ngIf="cddFormGroup.get('spouseIDExpDate').invalid ">Please correct ID expire date</mat-error>
+          </mat-form-field>
+
+          <mat-checkbox
+          [(ngModel)]="SPcardNotExpChecked"
+          (change)="OnSPCardNotExpChange($event)"
+            formControlName="SpouseIDNotExp"  >Not Expired</mat-checkbox>
+      </div>
+
+
 
       <div class='row label_header'>
         <code>

@@ -31,9 +31,7 @@ export class CustCDDComponent implements OnInit {
   // public cddData = new CDDModel() ;
   // public modifyFlag = false;
 
-
   countryList: FCcountry[];
-
   businessTypeList: FCbusinessType[];
   occupationList: FCoccupation[];
   positionList: Position[];
@@ -52,10 +50,14 @@ export class CustCDDComponent implements OnInit {
     ,{Code : 'OTHER',Description:'อื่นๆ'}
   ];
 
+
+  cardNotExpChecked = true;
+  SPcardNotExpChecked = true;
+
   constructor(
-    private cddService: CddService,
+    // private cddService: CddService,
     private masterDataService:MasterDataService,
-    private toastr: ToastrService,
+    // private toastr: ToastrService,
     public formService: CustCddFormService,
     public shareDataService: ShareDataService
     ) {
@@ -65,9 +67,12 @@ export class CustCDDComponent implements OnInit {
 
   ngOnInit() {
 
-    // this.masterDataService.getFCcountry().subscribe((data: any[]) => {
-    //   this.countryList = data;
-    // });
+    this.cardNotExpChecked =    this.cddData.cardNotExp == 'Y'? true :false;
+    this.SPcardNotExpChecked =    this.cddData.SpouseIDNotExp == 'Y'? true :false;
+
+    this.masterDataService.getFCcountry().subscribe((data: any[]) => {
+      this.countryList = data;
+    });
 
   this.masterDataService.getFCoccupation().subscribe((data: any[]) => {
     this.occupationList = data;
@@ -211,6 +216,60 @@ export class CustCDDComponent implements OnInit {
     return false;
   }
  }
+
+ CardNotExpChecked(){
+   return true;
+ }
+
+
+
+ OnCardNotExpChange($event){
+
+  if($event.checked){
+    this.cddData.cardNotExp  = "Y";
+    this.cddData.PIDExpDate = '';
+
+    this.cddFormGroup.controls["PIDExpDate"].clearValidators();
+    this.cddFormGroup.controls["PIDExpDate"].updateValueAndValidity();
+
+   }else{
+    this.cddFormGroup.controls["PIDExpDate"].setValidators(Validators.required);
+    this.cddFormGroup.controls["PIDExpDate"].updateValueAndValidity();
+
+    this.cddData.cardNotExp  = "N";
+   }
+}
+
+
+
+OnSPCardNotExpChange($event){
+
+  if($event.checked){
+    this.cddData.SpouseIDNotExp  = "Y";
+    this.cddData.spouseIDExpDate = '';
+
+    this.cddFormGroup.controls["spouseIDExpDate"].clearValidators();
+    this.cddFormGroup.controls["spouseIDExpDate"].updateValueAndValidity();
+
+   }else{
+    this.cddFormGroup.controls["spouseIDExpDate"].setValidators(Validators.required);
+    this.cddFormGroup.controls["spouseIDExpDate"].updateValueAndValidity();
+
+    this.cddData.SpouseIDNotExp  = "N";
+   }
+}
+
+
+
+
+
+maritalStatusOnChange(val){
+  console.log( "maritalStatusOnChange() >>"  + val);
+  if(val){
+
+  }
+
+}
 
 
 }

@@ -211,14 +211,12 @@ export class SuitComponent implements OnInit {
       validators: [Validators.required]
     }),
 
-
     title: new FormControl(null, {
       validators: [Validators.required]
     }),
     titleOth: new FormControl(null, {
       validators: [Validators.required]
     }),
-
 
     firstName: new FormControl(null, {
       validators: [Validators.required]
@@ -237,6 +235,9 @@ export class SuitComponent implements OnInit {
     }),
     PIDExpDate: new FormControl(null, {
       validators: [Validators.required]
+    }),
+    cardNotExp: new FormControl(null, {
+      // validators: [Validators.required]
     }),
     mobile: new FormControl(null, {
       validators: [Validators.required]
@@ -276,6 +277,27 @@ export class SuitComponent implements OnInit {
     workPlace: new FormControl(null, {
       validators: [Validators.required]
     }),
+    maritalStatus: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+
+    spouseCardType: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    spouseCardNumber: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    spousePassportCountry: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    spouseIDExpDate: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    SpouseIDNotExp: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
+
   });
 
 
@@ -561,7 +583,6 @@ export class SuitComponent implements OnInit {
  getCDD(_id){
   this.cddService.getCustCDDInfo(_id).subscribe(data => {
 
-// console.log(' getCDD()>> ' + JSON.stringify(data));
     if(data ){
 
       this.cddData.identificationCardType = data[0].identificationCardType;
@@ -605,12 +626,27 @@ export class SuitComponent implements OnInit {
       this.cddData.politicalRelate = data[0].politicalRelate;
       this.cddData.rejectFinancial = data[0].rejectFinancial;
       this.cddData.taxDeduction = data[0].taxDeduction;
-      this.cddData.cardNotExp = data[0].cardNotExt;
+      this.cddData.cardNotExp = data[0].cardNotExp;
       this.cddData.SpouseIDNotExp = data[0].SpouseIDNotExp;
+
+      if(this.cddData.cardNotExp ==='Y'){
+        this.cddData.PIDExpDate = '';
+
+        this.cddFormGroup.controls["PIDExpDate"].clearValidators();
+        this.cddFormGroup.controls["PIDExpDate"].updateValueAndValidity();
+
+      }
+
+      if(this.cddData.SpouseIDNotExp ==='Y'){
+        this.cddData.spouseIDExpDate = '';
+
+        // this.cddFormGroup.controls["PIDExpDate"].clearValidators();
+        // this.cddFormGroup.controls["PIDExpDate"].updateValueAndValidity();
+
+      }
 
       // this.reloadData();
     }
-    // console.log('this.cddData >>' +JSON.stringify(this.cddData));
 
   }, error => () => {
       console.log('Was error', error);
@@ -1501,5 +1537,6 @@ export class SuitComponent implements OnInit {
         });
     }
   }
+
 
 }

@@ -142,8 +142,6 @@ exports.getCDDinfo_MIT = (req, res, next) => {
 
 exports.saveCDDInfo = (req, res, next) => {
 
-  console.log('saveCDDInfo()>>' +JSON.stringify(req.body));
-
   var fncName = 'saveCDDInfo';
   var Cust_Code = req.body.Cust_Code;
   var actionBy = req.body.actionBy;

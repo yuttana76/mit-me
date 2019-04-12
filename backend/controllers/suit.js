@@ -141,11 +141,11 @@ exports.suitEvaluate = (req, res, next) => {
   var pid = req.body.pid;
   var suitSerieId = req.body.suitSerieId;
   var score = req.body.score || "0";
-  console.log(` PID:${pid} ;suitSerieId:${suitSerieId} ;SCORE:${score}`);
+  // console.log(` PID:${pid} ;suitSerieId:${suitSerieId} ;SCORE:${score}`);
 
   calculateRiskLevel(suitSerieId,score).then(
     function(data) {
-      console.log("*** data  promise >>" + JSON.stringify(data));
+      // console.log("*** data  promise >>" + JSON.stringify(data));
 
       if (!data){
         rsp_code = "206"; //"ไม่พบข้อมูล",
@@ -224,10 +224,7 @@ exports.suitSave = (req, res, next) => {
   var type_Investor = req.body.type_Investor;
   var ans = req.body.ans ;
 
-  var logMsg = `API /suitSave - ${req.originalUrl} - ${req.ip} - pid=${pid}
-  ;userId=${userId}; suitSerieId=${suitSerieId}; score=${score}; riskLevel=${riskLevel}; riskLevelTxt=${riskLevelTxt}; type_Investor=${type_Investor}; ans=${ans}
-
-  `
+  var logMsg = `API /suitSave - ${req.originalUrl} - ${req.ip} - pid=${pid}  ;userId=${userId};  `
 
   logger.info( logMsg);
 

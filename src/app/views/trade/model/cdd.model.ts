@@ -39,6 +39,23 @@ export class CDDModel {
       public PIDExpDate: string;
       public MailSameAs: string;
 
+
+      public maritalStatus: string;
+      public spouseCardType: string;
+      public spousePassportCountry: string;
+      public spouseCardNumber: string;
+      public spouseTitle: string;
+      public spouseTitleOther: string;
+      public spouseFirstName: string;
+      public spouseLastName: string;
+      public spouseIDExpDate: string;
+      public moneyLaundaring: string;
+      public politicalRelate: string;
+      public rejectFinancial: string;
+      public taxDeduction: string;
+      public cardNotExp: string;
+      public SpouseIDNotExp: string;
+
       constructor(){}
 
 }

@@ -320,9 +320,14 @@ code {
 
 .code_large {
   font-size: x-large;
+  color: lightslategrey;
+}
+
+code p {
+  color: lightslategrey;
 }
 
 .txt_warning {
   color:red;
-  font-size: 1.5rem;
+  font-size: 120%
 }

@@ -45,7 +45,23 @@ export class CddService {
               titleOther: data.titleOther,
               firstNameE: data.First_Name_E,
               lastNameE: data.Last_Name_E,
-              MailSameAs: data.MailSameAs
+              MailSameAs: data.MailSameAs,
+
+              maritalStatus: data.MaritalStatus,
+              spouseCardType: data.SpouseCardType,
+              spousePassportCountry: data.SpousePassportCountry,
+              spouseCardNumber: data.SpouseCardNumber,
+              spouseTitle: data.SpouseTitle,
+              spouseTitleOther: data.SpouseTitleOther,
+              spouseFirstName: data.SpouseFirstName,
+              spouseLastName: data.SpouseLastName,
+              spouseIDExpDate: data.SpouseIDExpDate,
+              moneyLaundaring: data.MoneyLaundaring,
+              politicalRelate: data.PoliticalRelate,
+              rejectFinancial: data.RejectFinancial,
+              taxDeduction: data.TaxDeduction,
+              cardNotExt: data.cardNotExt,
+              SpouseIDNotExp: data.SpouseIDNotExp
             };
           });
         })
@@ -105,8 +121,27 @@ export class CddService {
       titleOther: cdd.titleOther,
       firstNameE: cdd.firstNameE,
       lastNameE: cdd.lastNameE,
-      MailSameAs: cdd.MailSameAs
+      MailSameAs: cdd.MailSameAs,
+
+      MaritalStatus: cdd.maritalStatus,
+      SpouseCardType: cdd.spouseCardType,
+      SpousePassportCountry: cdd.spousePassportCountry,
+      SpouseCardNumber: cdd.spouseCardNumber,
+      SpouseTitle: cdd.spouseTitle,
+      SpouseTitleOther: cdd.spouseTitleOther,
+      SpouseFirstName: cdd.spouseFirstName,
+      SpouseLastName: cdd.spouseLastName,
+      SpouseIDExpDate: cdd.spouseIDExpDate,
+      MoneyLaundaring: cdd.moneyLaundaring,
+      PoliticalRelate: cdd.politicalRelate,
+      RejectFinancial: cdd.rejectFinancial,
+      TaxDeduction: cdd.taxDeduction,
+      cardNotExp: cdd.cardNotExp,
+      SpouseIDNotExp: cdd.SpouseIDNotExp
       };
+
+      console.log('saveCustCDDInfo()>>'+JSON.stringify(data));
+
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddInfo', data);
   }
 

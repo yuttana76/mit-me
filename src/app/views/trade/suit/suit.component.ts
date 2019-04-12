@@ -592,6 +592,22 @@ export class SuitComponent implements OnInit {
       this.cddData.MailSameAs = data[0].MailSameAs;
       this.cddData.ReqModifyFlag = false;
 
+      this.cddData.maritalStatus = data[0].maritalStatus;
+      this.cddData.spouseCardType = data[0].spouseCardType;
+      this.cddData.spousePassportCountry = data[0].spousePassportCountry;
+      this.cddData.spouseCardNumber = data[0].spouseCardNumber;
+      this.cddData.spouseTitle = data[0].spouseTitle;
+      this.cddData.spouseTitleOther = data[0].spouseTitleOther;
+      this.cddData.spouseFirstName = data[0].spouseFirstName;
+      this.cddData.spouseLastName = data[0].spouseLastName;
+      this.cddData.spouseIDExpDate = data[0].spouseIDExpDate;
+      this.cddData.moneyLaundaring = data[0].moneyLaundaring;
+      this.cddData.politicalRelate = data[0].politicalRelate;
+      this.cddData.rejectFinancial = data[0].rejectFinancial;
+      this.cddData.taxDeduction = data[0].taxDeduction;
+      this.cddData.cardNotExp = data[0].cardNotExt;
+      this.cddData.SpouseIDNotExp = data[0].SpouseIDNotExp;
+
       // this.reloadData();
     }
     // console.log('this.cddData >>' +JSON.stringify(this.cddData));

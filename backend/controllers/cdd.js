@@ -6,55 +6,55 @@ var logger = require('../config/winston');
 var prop = require("../config/backend-property");
 var mitLog = require('./mitLog');
 
-exports.getCDDinfo = (req, res, next) => {
+// exports.getCDDinfo = (req, res, next) => {
 
-  var fncName = 'getCustomer';
-  var _custCode = req.params.cusCode;
+//   var fncName = 'getCustomer';
+//   var _custCode = req.params.cusCode;
 
-  logger.info( `API /cddInfo - ${req.originalUrl} - ${req.ip} - ${_custCode}`);
+//   logger.info( `API /cddInfo - ${req.originalUrl} - ${req.ip} - ${_custCode}`);
 
-  var queryStr = `
-  BEGIN
+//   var queryStr = `
+//   BEGIN
 
-  select top 1 a.Cust_Code,a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.Birth_Day,a.Mobile,a.Email
-  ,b.Account_No,b.Occupation_Code,b.Occupation_Desc
-,b.Position_Code,b.Position,b.Politician_Desc
-,b.BusinessType_Code
-,b.Income,b.Income_Code,b.Income_Source,b.Income_Source_Code
-,b.Modify_Date
-  FROM [Account_Info] a
-  left join MFTS_Account b on b.Account_No like a.Cust_Code
-  WHERE Cust_Code= @custCode
-  order by b.Modify_Date desc
+//   select top 1 a.Cust_Code,a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.Birth_Day,a.Mobile,a.Email
+//   ,b.Account_No,b.Occupation_Code,b.Occupation_Desc
+// ,b.Position_Code,b.Position,b.Politician_Desc
+// ,b.BusinessType_Code
+// ,b.Income,b.Income_Code,b.Income_Source,b.Income_Source_Code
+// ,b.Modify_Date
+//   FROM [Account_Info] a
+//   left join MFTS_Account b on b.Account_No like a.Cust_Code
+//   WHERE Cust_Code= @custCode
+//   order by b.Modify_Date desc
 
-  END
-  `;
+//   END
+//   `;
 
-  const sql = require('mssql')
-  const pool1 = new sql.ConnectionPool(config, err => {
-    pool1.request() // or: new sql.Request(pool1)
-    .input('custCode', sql.VarChar(50), _custCode)
-    .query(queryStr, (err, result) => {
-        // ... error checks
-        if(err){
-          console.log( fncName +' Quey db. Was err !!!' + err);
-          res.status(201).json({
-            message: err,
-          });
-        }else {
-          res.status(200).json({
-            message: fncName + "Quey db. successfully!",
-            result: result.recordset
-          });
-        }
-    })
-  })
+//   const sql = require('mssql')
+//   const pool1 = new sql.ConnectionPool(config, err => {
+//     pool1.request() // or: new sql.Request(pool1)
+//     .input('custCode', sql.VarChar(50), _custCode)
+//     .query(queryStr, (err, result) => {
+//         // ... error checks
+//         if(err){
+//           console.log( fncName +' Quey db. Was err !!!' + err);
+//           res.status(201).json({
+//             message: err,
+//           });
+//         }else {
+//           res.status(200).json({
+//             message: fncName + "Quey db. successfully!",
+//             result: result.recordset
+//           });
+//         }
+//     })
+//   })
 
-  pool1.on('error', err => {
-    // ... error handler
-    console.log("EROR>>"+err);
-  })
-}
+//   pool1.on('error', err => {
+//     // ... error handler
+//     console.log("EROR>>"+err);
+//   })
+// }
 
 
 exports.getCDDinfo_MIT = (req, res, next) => {
@@ -142,6 +142,8 @@ exports.getCDDinfo_MIT = (req, res, next) => {
 
 exports.saveCDDInfo = (req, res, next) => {
 
+  console.log('saveCDDInfo()>>' +JSON.stringify(req.body));
+
   var fncName = 'saveCDDInfo';
   var Cust_Code = req.body.Cust_Code;
   var actionBy = req.body.actionBy;
@@ -172,6 +174,23 @@ exports.saveCDDInfo = (req, res, next) => {
   var firstNameE = req.body.firstNameE;
   var lastNameE = req.body.lastNameE;
   var MailSameAs = req.body.MailSameAs;
+
+  var MaritalStatus = req.body.MaritalStatus;
+  var SpouseCardType = req.body.SpouseCardType;
+  var SpousePassportCountry = req.body.SpousePassportCountry;
+  var SpouseCardNumber = req.body.SpouseCardNumber;
+  var SpouseTitle = req.body.SpouseTitle;
+  var SpouseTitleOther = req.body.SpouseTitleOther;
+  var SpouseFirstName = req.body.SpouseFirstName;
+  var SpouseLastName = req.body.SpouseLastName;
+  var SpouseIDExpDate = req.body.SpouseIDExpDate;
+  var MoneyLaundaring = req.body.MoneyLaundaring;
+  var PoliticalRelate = req.body.PoliticalRelate;
+  var RejectFinancial = req.body.RejectFinancial;
+  var TaxDeduction = req.body.TaxDeduction;
+  var SpouseIDNotExp = req.body.SpouseIDNotExp;
+  var cardNotExp = req.body.cardNotExp;
+
 
   var logMsg = `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${Cust_Code}`;
   logger.info( logMsg);
@@ -208,6 +227,22 @@ exports.saveCDDInfo = (req, res, next) => {
    ,[First_Name_E]=@First_Name_E
    ,[Last_Name_E]=@Last_Name_E
    ,[MailSameAs]=@MailSameAs
+
+   ,MaritalStatus = @MaritalStatus
+   ,SpouseCardType = @SpouseCardType
+   ,SpousePassportCountry = @SpousePassportCountry
+   ,SpouseCardNumber = @SpouseCardNumber
+   ,SpouseTitle = @SpouseTitle
+   ,SpouseTitleOther = @SpouseTitleOther
+   ,SpouseFirstName = @SpouseFirstName
+   ,SpouseLastName = @SpouseLastName
+   ,SpouseIDExpDate = @SpouseIDExpDate
+   ,MoneyLaundaring = @MoneyLaundaring
+   ,PoliticalRelate = @PoliticalRelate
+   ,RejectFinancial = @RejectFinancial
+   ,TaxDeduction = @TaxDeduction
+   ,cardNotExp = @cardNotExp
+   ,SpouseIDNotExp = @SpouseIDNotExp
    WHERE Cust_Code = @Cust_Code;
 
 
@@ -216,10 +251,19 @@ exports.saveCDDInfo = (req, res, next) => {
 
     INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
       ,[Occupation_Code] ,[Occupation_Desc] ,[Position_Code],[Position_Desc] ,[BusinessType_Code],[BusinessType_Desc] ,[Income_Code] ,[Income_Source_Code],[Income_Source_Desc],WorkPlace,ReqModifyFlag,[CreateBy] ,[CreateDate]
-      ,[identificationCardType],[passportCountry],[title],[titleOther],[First_Name_E],[Last_Name_E],cardExpiryDate,MailSameAs)
+      ,[identificationCardType],[passportCountry],[title],[titleOther],[First_Name_E],[Last_Name_E],cardExpiryDate,MailSameAs
+      ,[MaritalStatus],[SpouseCardType],[SpousePassportCountry],[SpouseCardNumber],[SpouseTitle],[SpouseTitleOther],[SpouseFirstName] ,[SpouseLastName]
+      ,[SpouseIDExpDate]
+      ,[MoneyLaundaring]
+      ,[PoliticalRelate] ,[RejectFinancial],[cardNotExp],[SpouseIDNotExp] ,[TaxDeduction])
+
     VALUES(@Cust_Code,@ID_CARD ,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
         ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ReqModifyFlag,@ActionBy ,GETDATE()
-        ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E,@cardExpiryDate,@MailSameAs)
+        ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E,@cardExpiryDate,@MailSameAs
+        ,@MaritalStatus,@SpouseCardType,@SpousePassportCountry,@SpouseCardNumber,@SpouseTitle,@SpouseTitleOther,@SpouseFirstName ,@SpouseLastName
+        ,@SpouseIDExpDate
+        ,@MoneyLaundaring
+        ,@PoliticalRelate ,@RejectFinancial,@cardNotExp,@SpouseIDNotExp ,@TaxDeduction)
 
     END
 
@@ -259,12 +303,34 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('First_Name_E', sql.NVarChar(200), firstNameE)
     .input('Last_Name_E', sql.NVarChar(200), lastNameE)
     .input('MailSameAs', sql.VarChar(10), MailSameAs)
+
+    .input('MaritalStatus', sql.VarChar(20), MaritalStatus)
+    .input('SpouseCardType', sql.VarChar(20), SpouseCardType)
+    .input('SpousePassportCountry', sql.VarChar(2), SpousePassportCountry)
+    .input('SpouseCardNumber', sql.VarChar(20), SpouseCardNumber)
+    .input('SpouseTitle', sql.VarChar(20), SpouseTitle)
+    .input('SpouseTitleOther', sql.NVarChar(50), SpouseTitleOther)
+    .input('SpouseFirstName', sql.NVarChar(200), SpouseFirstName)
+    .input('SpouseLastName', sql.NVarChar(200), SpouseLastName)
+    .input('SpouseIDExpDate', sql.VarChar(20), SpouseIDExpDate)
+    .input('MoneyLaundaring', sql.VarChar(1), MoneyLaundaring)
+    .input('PoliticalRelate', sql.VarChar(1), PoliticalRelate)
+    .input('RejectFinancial', sql.VarChar(1), RejectFinancial)
+    .input('cardNotExp', sql.VarChar(1), cardNotExp)
+    .input('SpouseIDNotExp', sql.VarChar(1), SpouseIDNotExp)
+    .input('TaxDeduction', sql.VarChar(1), TaxDeduction)
+
+
     .query(queryStr, (err, result) => {
+
         if(err){
+          console.log("err>>",err);
+          logger.error(JSON.stringify(err));
+
           rsp_code = "902"; // Was error
           logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
           logger.error(logMsg);
-          logger.error(err);
+
           mitLog.saveMITlog(Cust_Code,fncName,logMsg,req.ip,req.originalUrl,function(){});
 
           res.status(422).json({

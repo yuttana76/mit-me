@@ -1,0 +1,30 @@
+<form [formGroup]="formGroup" >
+<div class="row ">
+  <p>ประเภทบัตร ID Type</p>
+  <mat-radio-group  class="col-md-4" [(ngModel)]="personModel.cardType"  formControlName="cardType" required>
+      <mat-radio-button *ngFor="let cardType of cardTypeList" [value]="cardType.Code">{{cardType.Description}}</mat-radio-button>
+  </mat-radio-group>
+</div>
+
+<div class="row" >
+  <mat-form-field class="col-md-4" >
+    <input matInput [(ngModel)]="personModel.cardNumber" placeholder="cardNumber"  formControlName="cardNumber" required>
+  </mat-form-field>
+</div>
+
+<div class='row'>
+  <mat-form-field class="col-md-4">
+      <input matInput [(ngModel)]="personModel.cardExpDate"  [matDatepicker]="cardExpDate" formControlName="cardExpDate"  placeholder="cardExpDate" readonly=true>
+      <mat-datepicker-toggle matSuffix [for]="cardExpDate"></mat-datepicker-toggle>
+      <mat-datepicker #cardExpDate ></mat-datepicker>
+      <mat-error *ngIf="formGroup.get('cardExpDate').invalid ">Please correct ID expire date</mat-error>
+  </mat-form-field>
+
+  <mat-checkbox
+  [(ngModel)]="cardNotExpChecked"
+  (change)="OnCardNotExpChange($event)"
+    formControlName="cardNotExp"  >Not Expired</mat-checkbox>
+</div> 
+
+
+</form>

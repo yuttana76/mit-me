@@ -1,4 +1,4 @@
-export class personModel {
+export class PersonModel {
   public title: string;
   public titleOther: string;
   public firstName: string;

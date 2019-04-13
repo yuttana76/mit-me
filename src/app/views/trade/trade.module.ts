@@ -44,6 +44,7 @@ import { SuitComponent } from './suit/suit.component';
 import { CustCDDComponent } from './cust-cdd/cust-cdd.component';
 import { CustAddrComponent } from './cust-addr/cust-addr.component';
 import { SuitChartComponent } from './suit-chart/suit-chart.component';
+import { PersonalInfoComponent } from './personal-info/personal-info.component';
 
 @NgModule({
   imports: [
@@ -98,6 +99,7 @@ import { SuitChartComponent } from './suit-chart/suit-chart.component';
     CustCDDComponent,
     CustAddrComponent,
     SuitChartComponent,
+    PersonalInfoComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

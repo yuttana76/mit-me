@@ -131,8 +131,11 @@
             </section>
       </div>
 
-
       <div class='row' *ngIf="cddData.maritalStatus == 'Married'">
+        <app-personal-info [personModel]="SPpersonModel" ></app-personal-info>
+      </div>
+
+      <!-- <div class='row' *ngIf="cddData.maritalStatus == 'Married'">
           <p>ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (if any)</p>
 
           <div class="col-md-4">
@@ -169,7 +172,7 @@
           [(ngModel)]="SPcardNotExpChecked"
           (change)="OnSPCardNotExpChange($event)"
             formControlName="SpouseIDNotExp"  >Not Expired</mat-checkbox>
-      </div>
+      </div> -->
 
 
 

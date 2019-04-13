@@ -16,6 +16,7 @@ import { FCincomeLevel } from '../model/fcIncomeLevel.model';
 import { FCincomeSource } from '../model/fcIncomeSource.model';
 import { ShareDataService } from '../services/shareData.service';
 import { FCcountry } from '../model/fcContry.model';
+import { PersonModel } from '../model/person.model';
 
 @Component({
   selector: 'app-cust-cdd',
@@ -38,6 +39,8 @@ export class CustCDDComponent implements OnInit {
   incomeList: FCincomeLevel[];
   incomeSourceList: FCincomeSource[];
 
+  SPpersonModel:PersonModel = new PersonModel();
+  
   public cardTypeList = [
     {Code : 'CITIZEN_CARD',Description:'บัตรประชาชน'}
     ,{Code : 'PASSPORT',Description:'Passport'}

@@ -1,7 +1,7 @@
 <form [formGroup]="formGroup" >
 
 <div class="row ">
-    <p>ประเภทบัตร ID Type</p> 
+    <p>ประเภทบัตร ID Type</p>
 </div>
 <div class="row ">
   <!-- <p>ประเภทบัตร ID Type</p> -->
@@ -16,7 +16,7 @@
   </mat-form-field>
 
   <mat-form-field class="col-md-4 col-sm-4" *ngIf="personModel.cardType == 'PASSPORT'" >
-      <mat-select  [(ngModel)]="personModel.passportCountry" 
+      <mat-select  [(ngModel)]="personModel.passportCountry"
       formControlName="passportCountry" placeholder="passportCountry" required >
       <mat-option *ngFor="let obj of countryList" [value]="obj.Code">
         {{obj.Eng_Name}}
@@ -36,8 +36,8 @@
   <mat-checkbox
   [(ngModel)]="cardNotExpChecked"
   (change)="OnCardNotExpChange($event)"
-    formControlName="cardNotExp"  >Not Expired</mat-checkbox>
-</div> 
+    formControlName="cardNotExp"  >บัตรตลอดชีพ Not Expired</mat-checkbox>
+</div>
 
 
 <div class='row'>

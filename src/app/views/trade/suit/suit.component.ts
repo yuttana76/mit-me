@@ -104,7 +104,7 @@ export class SuitComponent implements OnInit {
   verifyDOB_val;
   otpToken_Date;
   otpToken_Period;
-  verifyOTP_val = ""
+  verifyOTP_val = "";
 
   public survey: SurveyModel = new SurveyModel();
   private token: string;
@@ -297,6 +297,19 @@ export class SuitComponent implements OnInit {
       // validators: [Validators.required]
     }),
 
+
+    moneyLaundaring: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    politicalRelate: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    rejectFinancial: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    taxDeduction: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
 
   });
 
@@ -547,12 +560,12 @@ export class SuitComponent implements OnInit {
       })
       .subscribe(
         (data: any) => {
-          // console.log("getCustomerData :" + JSON.stringify(data));
+          console.log("getCustomerData :" + JSON.stringify(data));
 
           this.needVerify = true;
           this.verifyFLag = false;
 
-          this.customer.Title_Name_T = data.USERDATA.Title_Name_T;
+          // this.customer.Title_Name_T = data.USERDATA.Title_Name_T;
           this.customer.First_Name_T = data.USERDATA.First_Name_T;
           this.customer.Last_Name_T = data.USERDATA.Last_Name_T;
           this.customer.First_Name_E = data.USERDATA.First_Name_E;
@@ -566,7 +579,6 @@ export class SuitComponent implements OnInit {
           this.cust_RiskLevel = data.USERDATA.Risk_Level;
           this.cust_RiskLevelTxt = data.USERDATA.Risk_Level_Txt;
           this.cust_RiskTypeInvestor = data.USERDATA.Type_Investor;
-
           this.cust_RiskDate = data.USERDATA.Risk_Date;
 
         },

@@ -350,7 +350,17 @@ function getCustomerData(_pid) {
 
   console.log("getCustomerData _pid>>" + _pid);
   var fncName = "getCustomerData";
-  var queryStr = ` BEGIN
+  var queryStr = `
+  BEGIN
+
+  DECLARE @Title_Name_T VARCHAR(250);
+  DECLARE @First_Name_T VARCHAR(250);
+  DECLARE @Last_Name_T VARCHAR(250);
+  DECLARE @First_Name_E VARCHAR(250);
+  DECLARE @Last_Name_E  VARCHAR(250);
+  DECLARE @DOB VARCHAR(20);
+  DECLARE @Mobile VARCHAR(50);
+  DECLARE @Email VARCHAR(250);
 
   DECLARE @Risk_Date date;
   DECLARE @Score int;
@@ -383,18 +393,50 @@ function getCustomerData(_pid) {
     and status ='A'
   END;
 
+
   select
-    a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.First_Name_E,a.Last_Name_E
-    ,  convert(varchar, a.Birth_Day, 105) as DOB
-    ,a.Mobile,a.Email
-    ,@Risk_Date AS Risk_Date
-    ,@Score AS Suit_Score
-    ,@Risk_Level AS Risk_Level
-    ,@Risk_Level_Txt AS Risk_Level_Txt
-    ,@TypeInvestor AS  Type_Investor
+    @Title_Name_T = a.title
+    ,@First_Name_T = a.First_Name_T
+    ,@Last_Name_T = a.Last_Name_T
+    ,@First_Name_E = a.First_Name_E
+    ,@Last_Name_E = a.Last_Name_E
+    ,@DOB = convert(varchar, a.Birth_Day, 105)
+    ,@Mobile = a.Mobile
+    ,@Email = a.Email
+    from MIT_CUSTOMER_INFO a
+    where Cust_Code= @pid
+
+
+  IF @@rowcount = 0
+  BEGIN
+    select
+    @Title_Name_T = a.Title_Name_T
+    ,@First_Name_T = a.First_Name_T
+    ,@Last_Name_T = a.Last_Name_T
+    ,@First_Name_E = a.First_Name_E
+    ,@Last_Name_E = a.Last_Name_E
+    ,@DOB =  convert(varchar, a.Birth_Day, 105)
+    ,@Mobile = a.Mobile
+    ,@Email = a.Email
     from Account_Info a
     where Cust_Code= @pid
 
+  END
+
+  SELECT
+    @Title_Name_T AS Title_Name_T
+    ,@First_Name_T AS First_Name_T
+    ,@Last_Name_T AS Last_Name_T
+    ,@First_Name_E AS First_Name_E
+    ,@Last_Name_E AS Last_Name_E
+    ,@DOB AS DOB
+    ,@Mobile AS Mobile
+    ,@Email AS Email
+    ,@Risk_Date AS Risk_Date
+    ,@Score AS Score
+    ,@Risk_Level AS Risk_Level
+    ,@Risk_Level_Txt AS Risk_Level_Txt
+    ,@TypeInvestor AS TypeInvestor
 
   END
     `;

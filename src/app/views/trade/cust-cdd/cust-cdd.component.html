@@ -53,7 +53,7 @@
         <mat-checkbox
         [(ngModel)]="cardNotExpChecked"
         (change)="OnCardNotExpChange($event)"
-          formControlName="cardNotExp"  >Not Expired</mat-checkbox>
+          formControlName="cardNotExp"  >บัตรตลอดชีพ Not Expired</mat-checkbox>
     </div>
 
     <div class='row'>
@@ -119,62 +119,27 @@
           </mat-form-field>
       </div>
 
-
-      <div class='row'>
-        <p>สถานภาพ Marital Status *</p>
-      </div>
-
-      <div class='row'>
-          <section class="example-section" >
-              <mat-radio-group [(ngModel)]="cddData.maritalStatus"  (change)="maritalStatusOnChange(cddData.maritalStatus)" formControlName="maritalStatus">
-                  <mat-radio-button class="example-margin" value="Single">โสด Single</mat-radio-button>
-                  <mat-radio-button class="example-margin" value="Married">สมรส Married</mat-radio-button>
-                  <mat-radio-button class="example-margin" value="Divorced">หย่า Divorced</mat-radio-button>
-                  <mat-radio-button class="example-margin" value="Widowhood">ม่าย Widowhood</mat-radio-button>
-                </mat-radio-group>
-            </section>
-      </div>
-
-      <app-personal-info *ngIf="cddData.maritalStatus == 'Married'" [personModel]="SPpersonModel" ></app-personal-info>
-
-      <!-- <div class='row' *ngIf="cddData.maritalStatus == 'Married'">
-          <p>ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (if any)</p>
-
-          <div class="col-md-4">
-              <p>ประเภทบัตร ID Type</p>
-              <mat-radio-group  [(ngModel)]="cddData.spouseCardType"  formControlName="spouseCardType" required>
-                  <mat-radio-button *ngFor="let cardType of cardTypeList" [value]="cardType.Code">{{cardType.Description}}</mat-radio-button>
-              </mat-radio-group>
-            </div>
-      </div>
-
-      <div class='row'>
-          <mat-form-field class="col-md-4 col-sm-4">
-              <input matInput [(ngModel)]="cddData.spouseCardNumber" placeholder='เลขที่ No.'  formControlName="spouseCardNumber"  required>
-          </mat-form-field>
-
-          <div class="col-md-4 col-sm-4">
-                  <mat-select [(ngModel)]="cddData.spousePassportCountry" formControlName="spousePassportCountry" placeholder={{formService.label_passCountry}} required >
-                    <mat-option *ngFor="let obj of countryList" [value]="obj.Code">
-                      {{obj.Eng_Name}}
-                    </mat-option>
-                  </mat-select>
+      <section>
+          <h3>สถานภาพ Marital Status * </h3>
+          <div class='row'>
+              <section class="example-section" >
+                  <mat-radio-group [(ngModel)]="cddData.maritalStatus"  (change)="maritalStatusOnChange(cddData.maritalStatus)" formControlName="maritalStatus">
+                      <mat-radio-button class="example-margin" value="Single">โสด Single</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="Married">สมรส Married</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="Divorced">หย่า Divorced</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="Widowhood">ม่าย Widowhood</mat-radio-button>
+                    </mat-radio-group>
+                </section>
           </div>
-      </div>
 
-      <div class='row'>
-          <mat-form-field class="col-md-4">
-              <input matInput [(ngModel)]="cddData.spouseIDExpDate"  [matDatepicker]="spouseIDExpDate" formControlName="spouseIDExpDate"  placeholder={{formService.label_PIDExpDate}} readonly=true>
-              <mat-datepicker-toggle matSuffix [for]="spouseIDExpDate"></mat-datepicker-toggle>
-              <mat-datepicker #spouseIDExpDate ></mat-datepicker>
-              <mat-error *ngIf="cddFormGroup.get('spouseIDExpDate').invalid ">Please correct ID expire date</mat-error>
-          </mat-form-field>
+          <div class="div_block" *ngIf="cddData.maritalStatus == 'Married'">
+              <h5>ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (If any)</h5>
+              <span>
+                  <app-personal-info *ngIf="cddData.maritalStatus == 'Married'" [personModel]="SPpersonModel" ></app-personal-info>
+              </span>
+          </div>
+        </section>
 
-          <mat-checkbox
-          [(ngModel)]="SPcardNotExpChecked"
-          (change)="OnSPCardNotExpChange($event)"
-            formControlName="SpouseIDNotExp"  >Not Expired</mat-checkbox>
-      </div> -->
 
 
 
@@ -200,7 +165,6 @@
       </div>
 
       <div class='row'>
-
           <mat-form-field class="col-md-4">
               <mat-select [(ngModel)]="cddData.occupation" formControlName="occupation" placeholder={{formService.label_occupation}} required >
                 <mat-option *ngFor="let obj of occupationList" [value]="obj.Code">
@@ -263,8 +227,55 @@
           <mat-form-field class="col-md-4">
               <input matInput [(ngModel)]="cddData.workPlace" placeholder= {{formService.label_workPlace}}  formControlName="workPlace" required>
           </mat-form-field>
-
       </div>
 
+
+      <section>
+          <p>คำสั่งสำหรับหักภาษี ณ ที่จ่ายสำหรับเงินปันผล * </p>
+          <div class='row'>
+              <section class="example-section" >
+                  <mat-radio-group [(ngModel)]="cddData.taxDeduction"   formControlName="taxDeduction">
+                      <mat-radio-button class="example-margin" value="Y">ยินยอม  Consent</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="N">ไม่ยินยอม   Do not consent</mat-radio-button>
+                    </mat-radio-group>
+                </section>
+          </div>
+        </section>
+
+      <section>
+          <p>ท่านเคยมีประวัติการกระทำผิดกฎหมายฟอกเงินหรือไม่ * </p>
+          <div class='row'>
+              <section class="example-section" >
+                  <mat-radio-group [(ngModel)]="cddData.moneyLaundaring"   formControlName="moneyLaundaring">
+                      <mat-radio-button class="example-margin" value="Y">ใช่ Yes</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="N">ไม่ใช่ No</mat-radio-button>
+                    </mat-radio-group>
+                </section>
+          </div>
+      </section>
+
+      <section>
+          <p>ท่านเป็นนักการเมืองหรือเกี่ยวข้องกับนักการเมือง หรือบุคคลที่มีสถานภาพทางการเมืองหรือไม่ * </p>
+          <div class='row'>
+              <section class="example-section" >
+                  <mat-radio-group [(ngModel)]="cddData.politicalRelate"   formControlName="politicalRelate">
+                      <mat-radio-button class="example-margin" value="Y">ใช่ Yes</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="N">ไม่ใช่ No</mat-radio-button>
+                    </mat-radio-group>
+                </section>
+          </div>
+      </section>
+
+      <section>
+          <p>ท่านเคยถูกปฏิเสธการรับทำธุรกรรมทางการเงินจากสถาบันทางการเงินอื่นหรือไม่ * </p>
+          <div class='row'>
+              <section class="example-section" >
+                  <mat-radio-group [(ngModel)]="cddData.rejectFinancial"   formControlName="rejectFinancial">
+                      <mat-radio-button class="example-margin" value="Y">ใช่ Yes</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="N">ไม่ใช่ No</mat-radio-button>
+                    </mat-radio-group>
+                </section>
+          </div>
+      </section>
   </form>
 </div>

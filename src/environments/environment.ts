@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  // apiURL: 'https://localhost:3009/api'
-  apiURL: 'https://mpamapi.merchantasset.co.th:3009/api'
+  apiURL: 'https://localhost:3009/api'
+  // apiURL: 'https://mpamapi.merchantasset.co.th:3009/api'
   // apiURL: 'http://mpamapi.merchantasset.co.th:3000/api'
 };

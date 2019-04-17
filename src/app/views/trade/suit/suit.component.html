@@ -56,8 +56,6 @@
                       <span class="desk">-{{ formService.label_verify_otp_ENG }}</span>
                     </mat-radio-button>
                 </mat-radio-group>
-
-
           </div>
 
           <div  *ngIf="!INTERNAL_USER && verifyBy=='OTP'" class=" bg-light ver-div">
@@ -400,8 +398,12 @@
             <div class = 'row center-screen2'>
                 <code>
                   <br>
-                    <p><span class='txt_warning'>กรุณาตรวจสอบความถูกต้องก่อนกด "ยืนยัน ข้อมูล" เนื่องจากท่านจะไม่สามารถเข้ามาแก้ไขข้อมูลใหม่ได้</span></p>
-                        <p><span class='txt_warning'>กรณีกดยืนยันแล้วต้องการแก้ไข ต้องเซ็นกำกับในเอกสารที่ต้องการแก้ไขเท่านั้น</span></p>
+                    <!-- <p><span class='txt_warning'>กรุณาตรวจสอบความถูกต้องก่อนกด "ยืนยัน ข้อมูล" เนื่องจากท่านจะไม่สามารถเข้ามาแก้ไขข้อมูลใหม่ได้</span></p>
+                    <p><span class='txt_warning'>กรณีกดยืนยันแล้วต้องการแก้ไข ต้องเซ็นกำกับในเอกสารที่ต้องการแก้ไขเท่านั้น</span></p> -->
+
+                    <p><span class='txt_warning'>กรุณาตรวจอบความถูกต้องก่อนกด “ยืนยันข้อมูล” เนื่องจากหากท่านกดยืนยันข้อมูลแล้วจะไม่สามารถกลับไปแก้ไขข้อมูลได้  </span>
+                      <p><span class='txt_warning'>ในกรณีที่ท่านต้องการแก้ไขข้อมูลอีกครั้งกรุณาติดต่อบริษัท</span>
+
                 </code>
             </div>
 

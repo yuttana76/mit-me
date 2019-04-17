@@ -299,17 +299,23 @@ export class SuitComponent implements OnInit {
 
 
     moneyLaundaring: new FormControl(null, {
-      // validators: [Validators.required]
+      validators: [Validators.required]
     }),
     politicalRelate: new FormControl(null, {
-      // validators: [Validators.required]
+      validators: [Validators.required]
     }),
     rejectFinancial: new FormControl(null, {
-      // validators: [Validators.required]
+      validators: [Validators.required]
     }),
     taxDeduction: new FormControl(null, {
-      // validators: [Validators.required]
+      validators: [Validators.required]
     }),
+
+    numberChildren: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+
+
 
   });
 

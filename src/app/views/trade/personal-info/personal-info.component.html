@@ -33,7 +33,7 @@
       <mat-error *ngIf="formGroup.get('cardExpDate').invalid ">Please correct ID expire date</mat-error>
   </mat-form-field>
 
-  <mat-checkbox
+  <mat-checkbox *ngIf="adult == true"
   [(ngModel)]="cardNotExpChecked"
   (change)="OnCardNotExpChange($event)"
     formControlName="cardNotExp"  >บัตรตลอดชีพ Not Expired</mat-checkbox>
@@ -42,11 +42,18 @@
 
 <div class='row'>
   <mat-form-field class="col-md-4 col-sm-4">
-      <mat-select [(ngModel)]="personModel.title" formControlName="title" placeholder="title" required >
+      <mat-select *ngIf="adult == true" [(ngModel)]="personModel.title" formControlName="title" placeholder="title" required >
         <mat-option *ngFor="let obj of titleList" [value]="obj.Code">
             {{obj.Code}}-{{obj.Description}}
         </mat-option>
       </mat-select>
+
+      <mat-select *ngIf="adult == false" [(ngModel)]="personModel.title" formControlName="title" placeholder="title" required >
+          <mat-option *ngFor="let obj of titleList_child" [value]="obj.Code">
+              {{obj.Code}}-{{obj.Description}}
+          </mat-option>
+        </mat-select>
+
   </mat-form-field>
 
   <mat-form-field  *ngIf="isTitleOther()">

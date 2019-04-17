@@ -28,9 +28,6 @@ export class CustCDDComponent implements OnInit {
   @Input() custCode: string;
   @Input() cddFormGroup: FormGroup;
   @Input() cddData: CDDModel;
-  // cddFormGroup: FormGroup;
-  // public cddData = new CDDModel() ;
-  // public modifyFlag = false;
 
   countryList: FCcountry[];
   businessTypeList: FCbusinessType[];
@@ -40,7 +37,10 @@ export class CustCDDComponent implements OnInit {
   incomeSourceList: FCincomeSource[];
 
   SPpersonModel:PersonModel = new PersonModel();
-  
+
+  numberChildren;
+  children: PersonModel[] =[];
+
   public cardTypeList = [
     {Code : 'CITIZEN_CARD',Description:'บัตรประชาชน'}
     ,{Code : 'PASSPORT',Description:'Passport'}
@@ -263,9 +263,6 @@ OnSPCardNotExpChange($event){
 }
 
 
-
-
-
 maritalStatusOnChange(val){
   console.log( "maritalStatusOnChange() >>"  + val);
   if(val){
@@ -274,5 +271,23 @@ maritalStatusOnChange(val){
 
 }
 
+
+childrenOnChange(val){
+  console.log( "childrenOnChange() >>"  + val );
+  if(val){
+
+    this.children=[];
+    var i:number = val
+    while(i>0) {
+      let child = new PersonModel();
+      this.children.push(child);
+
+      i--;
+    }
+
+
+    console.log("length  >> " + this.children.length);
+  }
+}
 
 }

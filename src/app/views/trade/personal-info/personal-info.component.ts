@@ -12,6 +12,7 @@ import { MasterDataService } from '../services/masterData.service';
 export class PersonalInfoComponent implements OnInit {
 
   @Input() personModel: PersonModel;
+  @Input() adult;
   formGroup: FormGroup;
 
   countryList: FCcountry[];
@@ -28,6 +29,11 @@ export class PersonalInfoComponent implements OnInit {
     ,{Code : 'OTHER',Description:'อื่นๆ'}
   ];
 
+  public titleList_child = [
+    {Code : 'MR',Description:'เด็กชาย / นาย'}
+    ,{Code : 'MISS',Description:'เด็กหญิง / นางสาว'}
+    ,{Code : 'OTHER',Description:'อื่นๆ'}
+  ];
 
   cardNotExpChecked=false;
 
@@ -72,7 +78,7 @@ export class PersonalInfoComponent implements OnInit {
       lastName: new FormControl(null, {
         // validators: [Validators.required]
       }),
-      
+
     });
   }
 

@@ -119,8 +119,12 @@
           </mat-form-field>
       </div>
 
+
       <div class='row'>
-          <p>สถานภาพ Marital Status *</p>
+        <p>สถานภาพ Marital Status *</p>
+      </div>
+
+      <div class='row'>
           <section class="example-section" >
               <mat-radio-group [(ngModel)]="cddData.maritalStatus"  (change)="maritalStatusOnChange(cddData.maritalStatus)" formControlName="maritalStatus">
                   <mat-radio-button class="example-margin" value="Single">โสด Single</mat-radio-button>
@@ -131,9 +135,7 @@
             </section>
       </div>
 
-      <div class='row' *ngIf="cddData.maritalStatus == 'Married'">
-        <app-personal-info [personModel]="SPpersonModel" ></app-personal-info>
-      </div>
+      <app-personal-info *ngIf="cddData.maritalStatus == 'Married'" [personModel]="SPpersonModel" ></app-personal-info>
 
       <!-- <div class='row' *ngIf="cddData.maritalStatus == 'Married'">
           <p>ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (if any)</p>

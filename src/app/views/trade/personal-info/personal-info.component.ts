@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PersonModel } from '../model/person.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FCcountry } from '../model/fcContry.model';
+import { MasterDataService } from '../services/masterData.service';
 
 @Component({
   selector: 'app-personal-info',
@@ -12,6 +14,7 @@ export class PersonalInfoComponent implements OnInit {
   @Input() personModel: PersonModel;
   formGroup: FormGroup;
 
+  countryList: FCcountry[];
 
   public cardTypeList = [
     {Code : 'CITIZEN_CARD',Description:'บัตรประชาชน'}
@@ -28,11 +31,17 @@ export class PersonalInfoComponent implements OnInit {
 
   cardNotExpChecked=false;
 
-  constructor() { }
+  constructor(
+    private masterDataService:MasterDataService,
+  ) { }
 
   ngOnInit() {
 
     this.cardNotExpChecked =    this.personModel.cardNotExp == 'Y'? true :false;
+
+    this.masterDataService.getFCcountry().subscribe((data: any[]) => {
+      this.countryList = data;
+    });
 
     this.formGroup = new FormGroup({
 
@@ -48,8 +57,21 @@ export class PersonalInfoComponent implements OnInit {
       cardNotExp: new FormControl(null, {
         // validators: [Validators.required]
       }),
-      
-
+      passportCountry: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      title: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      titleOther: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      firstName: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      lastName: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
       
     });
   }
@@ -73,5 +95,17 @@ export class PersonalInfoComponent implements OnInit {
    }
 }
 
+isTitleOther(){
+  if(this.personModel.title === 'OTHER'){
+    this.formGroup.controls["titleOther"].setValidators(Validators.required);
+    this.formGroup.controls["titleOther"].updateValueAndValidity();
+    return true;
+ }else{
+    this.formGroup.controls["titleOther"].clearValidators();
+    this.formGroup.controls["titleOther"].updateValueAndValidity();
+    this.personModel.titleOther = "";
+      return false;
+ }
+ }
 
 }

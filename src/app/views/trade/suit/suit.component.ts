@@ -16,6 +16,7 @@ import { AddrCustModel } from "../model/addrCust.model";
 import { ConfirmationDialogService } from "../dialog/confirmation-dialog/confirmation-dialog.service";
 import { CDDModel } from "../model/cdd.model";
 import { forkJoin } from "rxjs";
+import { PersonModel } from "../model/person.model";
 // import { CDDModel } from "../model/cdd.model";
 
 
@@ -89,6 +90,7 @@ export class SuitComponent implements OnInit {
   public customer: Customer = new Customer();
 
   public cddData = new CDDModel() ;
+  // public SPpersonModel:PersonModel = new PersonModel();
   public re_addrData: AddrCustModel = new AddrCustModel();
   public cur_addrData: AddrCustModel = new AddrCustModel();
   public work_addrData: AddrCustModel = new AddrCustModel();
@@ -281,21 +283,21 @@ export class SuitComponent implements OnInit {
       validators: [Validators.required]
     }),
 
-    spouseCardType: new FormControl(null, {
-      // validators: [Validators.required]
-    }),
-    spouseCardNumber: new FormControl(null, {
-      // validators: [Validators.required]
-    }),
-    spousePassportCountry: new FormControl(null, {
-      // validators: [Validators.required]
-    }),
-    spouseIDExpDate: new FormControl(null, {
-      // validators: [Validators.required]
-    }),
-    SpouseIDNotExp: new FormControl(null, {
-      // validators: [Validators.required]
-    }),
+    // spouseCardType: new FormControl(null, {
+    //   validators: [Validators.required]
+    // }),
+    // spouseCardNumber: new FormControl(null, {
+    //   validators: [Validators.required]
+    // }),
+    // spousePassportCountry: new FormControl(null, {
+    //   // validators: [Validators.required]
+    // }),
+    // spouseIDExpDate: new FormControl(null, {
+    //   validators: [Validators.required]
+    // }),
+    // SpouseIDNotExp: new FormControl(null, {
+    //   // validators: [Validators.required]
+    // }),
 
 
     moneyLaundaring: new FormControl(null, {
@@ -601,6 +603,8 @@ export class SuitComponent implements OnInit {
  getCDD(_id){
   this.cddService.getCustCDDInfo(_id).subscribe(data => {
 
+    // console.log("getCDD()" + JSON.stringify(data));
+
     if(data ){
 
       this.cddData.identificationCardType = data[0].identificationCardType;
@@ -632,20 +636,22 @@ export class SuitComponent implements OnInit {
       this.cddData.ReqModifyFlag = false;
 
       this.cddData.maritalStatus = data[0].maritalStatus;
-      this.cddData.spouseCardType = data[0].spouseCardType;
-      this.cddData.spousePassportCountry = data[0].spousePassportCountry;
-      this.cddData.spouseCardNumber = data[0].spouseCardNumber;
-      this.cddData.spouseTitle = data[0].spouseTitle;
-      this.cddData.spouseTitleOther = data[0].spouseTitleOther;
-      this.cddData.spouseFirstName = data[0].spouseFirstName;
-      this.cddData.spouseLastName = data[0].spouseLastName;
-      this.cddData.spouseIDExpDate = data[0].spouseIDExpDate;
+      this.cddData.SPpersonModel.cardType = data[0].spouseCardType;
+      this.cddData.SPpersonModel.passportCountry = data[0].spousePassportCountry;
+      this.cddData.SPpersonModel.cardNumber = data[0].spouseCardNumber;
+      this.cddData.SPpersonModel.title = data[0].spouseTitle;
+      this.cddData.SPpersonModel.titleOther = data[0].spouseTitleOther;
+      this.cddData.SPpersonModel.firstName = data[0].spouseFirstName;
+      this.cddData.SPpersonModel.lastName = data[0].spouseLastName;
+      this.cddData.SPpersonModel.cardExpDate = data[0].spouseIDExpDate;
+      this.cddData.SPpersonModel.cardNotExp = data[0].SpouseIDNotExp;
+
       this.cddData.moneyLaundaring = data[0].moneyLaundaring;
       this.cddData.politicalRelate = data[0].politicalRelate;
       this.cddData.rejectFinancial = data[0].rejectFinancial;
       this.cddData.taxDeduction = data[0].taxDeduction;
       this.cddData.cardNotExp = data[0].cardNotExp;
-      this.cddData.SpouseIDNotExp = data[0].SpouseIDNotExp;
+      this.cddData.numChildren = data[0].NumChildren;
 
       if(this.cddData.cardNotExp ==='Y'){
         this.cddData.PIDExpDate = '';
@@ -655,8 +661,17 @@ export class SuitComponent implements OnInit {
 
       }
 
-      if(this.cddData.SpouseIDNotExp ==='Y'){
-        this.cddData.spouseIDExpDate = '';
+      // if(this.cddData.SPpersonModel.cardNotExp ==='Y'){
+      //   this.cddData.SPpersonModel.cardExpDate = '';
+
+      //   this.cddFormGroup.controls["spouseIDExpDate"].clearValidators();
+      //   this.cddFormGroup.controls["spouseIDExpDate"].updateValueAndValidity();
+
+      // }
+
+
+      if(this.cddData.SPpersonModel.cardNotExp ==='Y'){
+        this.cddData.SPpersonModel.cardExpDate = '';
 
         // this.cddFormGroup.controls["PIDExpDate"].clearValidators();
         // this.cddFormGroup.controls["PIDExpDate"].updateValueAndValidity();
@@ -1401,16 +1416,19 @@ export class SuitComponent implements OnInit {
 
     const observables = [];
 
-    // if(this.cddData.ReqModifyFlag){
-    //   observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
-    //   observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
-    // }
+  //  if(this.cddData.maritalStatus === 'Married'){
 
-    // if(this.addrModifyFlag){
-    //   observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData));
-    //   observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData));
-    //   observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
-    // }
+  //     this.cddData.maritalStatus = this.SPpersonModel.maritalStatus;
+  //     this.cddData.spouseCardType: string;
+  //     this.cddData.spousePassportCountry: string;
+  //     this.cddData.spouseCardNumber: string;
+  //     this.cddData.spouseTitle: string;
+  //     this.cddData.spouseTitleOther: string;
+  //     this.cddData.spouseFirstName: string;
+  //     this.cddData.spouseLastName: string;
+  //     this.cddData.spouseIDExpDate
+
+  //  }
 
     // CDD
     observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));

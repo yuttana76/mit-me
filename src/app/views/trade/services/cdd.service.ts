@@ -61,7 +61,8 @@ export class CddService {
               rejectFinancial: data.RejectFinancial,
               taxDeduction: data.TaxDeduction,
               cardNotExp: data.cardNotExp,
-              SpouseIDNotExp: data.SpouseIDNotExp
+              SpouseIDNotExp: data.SpouseIDNotExp,
+              NumChildren: data.NumChildren.toString(),
             };
           });
         })
@@ -87,8 +88,8 @@ export class CddService {
     }
 
     let _spouseIDExpDate = '';
-    if('Y' != cdd.SpouseIDNotExp){
-      newDate = new Date(cdd.spouseIDExpDate)
+    if('Y' != cdd.SPpersonModel.cardNotExp){
+      newDate = new Date(cdd.SPpersonModel.cardExpDate)
       day = newDate.getDate();
       month = newDate.getMonth() + 1;
       year = newDate.getFullYear()    ;
@@ -134,20 +135,23 @@ export class CddService {
       MailSameAs: cdd.MailSameAs,
 
       MaritalStatus: cdd.maritalStatus,
-      SpouseCardType: cdd.spouseCardType,
-      SpousePassportCountry: cdd.spousePassportCountry,
-      SpouseCardNumber: cdd.spouseCardNumber,
-      SpouseTitle: cdd.spouseTitle,
-      SpouseTitleOther: cdd.spouseTitleOther,
-      SpouseFirstName: cdd.spouseFirstName,
-      SpouseLastName: cdd.spouseLastName,
+
+      SpouseCardType: cdd.SPpersonModel.cardType,
+      SpousePassportCountry: cdd.SPpersonModel.passportCountry,
+      SpouseCardNumber: cdd.SPpersonModel.cardNumber,
+      SpouseTitle: cdd.SPpersonModel.title,
+      SpouseTitleOther: cdd.SPpersonModel.titleOther,
+      SpouseFirstName: cdd.SPpersonModel.firstName,
+      SpouseLastName: cdd.SPpersonModel.lastName,
+      SpouseIDNotExp: cdd.SPpersonModel.cardNotExp,
       SpouseIDExpDate: _spouseIDExpDate,
+
       MoneyLaundaring: cdd.moneyLaundaring,
       PoliticalRelate: cdd.politicalRelate,
       RejectFinancial: cdd.rejectFinancial,
       TaxDeduction: cdd.taxDeduction,
       cardNotExp: cdd.cardNotExp,
-      SpouseIDNotExp: cdd.SpouseIDNotExp
+      NumChildren: cdd.numChildren,
       };
 
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddInfo', data);

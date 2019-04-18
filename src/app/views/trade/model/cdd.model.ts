@@ -1,3 +1,5 @@
+import { PersonModel } from "./person.model";
+
 export class CDDModel {
 
       // public modifyFlag: string;
@@ -41,20 +43,24 @@ export class CDDModel {
 
 
       public maritalStatus: string;
-      public spouseCardType: string;
-      public spousePassportCountry: string;
-      public spouseCardNumber: string;
-      public spouseTitle: string;
-      public spouseTitleOther: string;
-      public spouseFirstName: string;
-      public spouseLastName: string;
-      public spouseIDExpDate: string;
+      // public spouseCardType: string;
+      // public spousePassportCountry: string;
+      // public spouseCardNumber: string;
+      // public spouseTitle: string;
+      // public spouseTitleOther: string;
+      // public spouseFirstName: string;
+      // public spouseLastName: string;
+      // public spouseIDExpDate: string;
+      // public SpouseIDNotExp: string;
+
       public moneyLaundaring: string;
       public politicalRelate: string;
       public rejectFinancial: string;
       public taxDeduction: string;
       public cardNotExp: string;
-      public SpouseIDNotExp: string;
+      public numChildren: string;
+
+      public SPpersonModel:PersonModel = new PersonModel();
 
       constructor(){}
 

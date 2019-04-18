@@ -42,6 +42,7 @@ const navRoutes = require('./routes/nav');
 const reportRoutes = require('./routes/report');
 const downloadRoutes = require('./routes/download');
 const fatcaRoutes = require('./routes/fatca');
+const custChildrenRoutes = require('./routes/custChildren');
 
 const app = express();
 
@@ -122,6 +123,8 @@ app.use("/api/suit",suitRoutes);
 app.use("/api/otp",otpTokenRoutes);
 
 app.use("/api/cdd",cddRoutes);
+
+app.use("/api/child",custChildrenRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

@@ -67,38 +67,41 @@ export class PersonalInfoComponent implements OnInit {
         // validators: [Validators.required]
       }),
       title: new FormControl(null, {
-        // validators: [Validators.required]
+        validators: [Validators.required]
       }),
       titleOther: new FormControl(null, {
         // validators: [Validators.required]
       }),
       firstName: new FormControl(null, {
-        // validators: [Validators.required]
+        validators: [Validators.required]
       }),
       lastName: new FormControl(null, {
-        // validators: [Validators.required]
+        validators: [Validators.required]
       }),
 
     });
+
+    if(this.personModel.cardNotExp ==='Y'){
+
+      this.formGroup.controls["cardExpDate"].clearValidators();
+      this.formGroup.controls["cardExpDate"].updateValueAndValidity();
+     }
   }
 
-
-
   OnCardNotExpChange($event){
+    if($event.checked){
+      this.personModel.cardNotExp  = "Y";
+      this.personModel.cardExpDate = '';
 
-  if($event.checked){
-    this.personModel.cardNotExp  = "Y";
-    this.personModel.cardExpDate = '';
+      this.formGroup.controls["cardExpDate"].clearValidators();
+      this.formGroup.controls["cardExpDate"].updateValueAndValidity();
 
-    this.formGroup.controls["cardExpDate"].clearValidators();
-    this.formGroup.controls["cardExpDate"].updateValueAndValidity();
+    }else{
+      this.formGroup.controls["cardExpDate"].setValidators(Validators.required);
+      this.formGroup.controls["cardExpDate"].updateValueAndValidity();
 
-   }else{
-    this.formGroup.controls["cardExpDate"].setValidators(Validators.required);
-    this.formGroup.controls["cardExpDate"].updateValueAndValidity();
-
-    this.personModel.cardNotExp  = "N";
-   }
+      this.personModel.cardNotExp  = "N";
+    }
 }
 
 isTitleOther(){
@@ -106,12 +109,12 @@ isTitleOther(){
     this.formGroup.controls["titleOther"].setValidators(Validators.required);
     this.formGroup.controls["titleOther"].updateValueAndValidity();
     return true;
- }else{
-    this.formGroup.controls["titleOther"].clearValidators();
-    this.formGroup.controls["titleOther"].updateValueAndValidity();
-    this.personModel.titleOther = "";
-      return false;
- }
+  }else{
+      this.formGroup.controls["titleOther"].clearValidators();
+      this.formGroup.controls["titleOther"].updateValueAndValidity();
+      this.personModel.titleOther = "";
+        return false;
+  }
  }
 
 }

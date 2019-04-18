@@ -139,7 +139,7 @@
           <div class="div_block" *ngIf="cddData.maritalStatus == 'Married'">
               <h5>ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (If any)</h5>
               <span>
-                  <app-personal-info *ngIf="cddData.maritalStatus == 'Married'" [personModel]="SPpersonModel" [adult]="true" ></app-personal-info>
+                  <app-personal-info *ngIf="cddData.maritalStatus == 'Married'" [personModel]="cddData.SPpersonModel" [adult]="true" ></app-personal-info>
               </span>
           </div>
         </section>
@@ -152,13 +152,13 @@
             <!-- <h4>จำนวนบุตร หรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และยังไม่ได้สมรส) *</h4> -->
                     <mat-form-field>
                         <mat-label>จำนวนบุตร</mat-label>
-                        <mat-select [(ngModel)]="numberChildren"  (selectionChange)="childrenOnChange(numberChildren)"formControlName="numberChildren">
-                          <mat-option value="0">ไม่มี</mat-option>
-                          <mat-option value="1">1 คน</mat-option>
-                          <mat-option value="2">2 คน</mat-option>
-                          <mat-option value="3">3 คน</mat-option>
-                          <mat-option value="4">4 คน</mat-option>
-                          <mat-option value="5">5 คน</mat-option>
+                        <mat-select [(ngModel)]="cddData.numChildren"  (selectionChange)="childrenOnChange(cddData.numChildren)"formControlName="numberChildren">
+                          <mat-option value=0>ไม่มี</mat-option>
+                          <mat-option value=1>1 คน</mat-option>
+                          <mat-option value=2>2 คน</mat-option>
+                          <mat-option value=3>3 คน</mat-option>
+                          <mat-option value=4>4 คน</mat-option>
+                          <mat-option value=5>5 คน</mat-option>
                         </mat-select>
                       </mat-form-field>
         </section>

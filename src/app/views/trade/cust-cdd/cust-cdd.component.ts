@@ -28,6 +28,7 @@ export class CustCDDComponent implements OnInit {
   @Input() custCode: string;
   @Input() cddFormGroup: FormGroup;
   @Input() cddData: CDDModel;
+  @Input() SPpersonModel: PersonModel;
 
   countryList: FCcountry[];
   businessTypeList: FCbusinessType[];
@@ -36,9 +37,9 @@ export class CustCDDComponent implements OnInit {
   incomeList: FCincomeLevel[];
   incomeSourceList: FCincomeSource[];
 
-  SPpersonModel:PersonModel = new PersonModel();
+  // SPpersonModel:PersonModel = new PersonModel();
 
-  numberChildren;
+  // numberChildren;
   children: PersonModel[] =[];
 
   public cardTypeList = [
@@ -71,7 +72,7 @@ export class CustCDDComponent implements OnInit {
   ngOnInit() {
 
     this.cardNotExpChecked =    this.cddData.cardNotExp == 'Y'? true :false;
-    this.SPcardNotExpChecked =    this.cddData.SpouseIDNotExp == 'Y'? true :false;
+    this.SPcardNotExpChecked =    this.cddData.SPpersonModel.cardNotExp == 'Y'? true :false;
 
     this.masterDataService.getFCcountry().subscribe((data: any[]) => {
       this.countryList = data;
@@ -248,8 +249,8 @@ export class CustCDDComponent implements OnInit {
 OnSPCardNotExpChange($event){
 
   if($event.checked){
-    this.cddData.SpouseIDNotExp  = "Y";
-    this.cddData.spouseIDExpDate = '';
+    this.cddData.SPpersonModel.cardNotExp  = "Y";
+    this.cddData.SPpersonModel.cardExpDate = '';
 
     this.cddFormGroup.controls["spouseIDExpDate"].clearValidators();
     this.cddFormGroup.controls["spouseIDExpDate"].updateValueAndValidity();
@@ -258,7 +259,7 @@ OnSPCardNotExpChange($event){
     this.cddFormGroup.controls["spouseIDExpDate"].setValidators(Validators.required);
     this.cddFormGroup.controls["spouseIDExpDate"].updateValueAndValidity();
 
-    this.cddData.SpouseIDNotExp  = "N";
+    this.cddData.SPpersonModel.cardNotExp = "N";
    }
 }
 
@@ -284,7 +285,6 @@ childrenOnChange(val){
 
       i--;
     }
-
 
     console.log("length  >> " + this.children.length);
   }

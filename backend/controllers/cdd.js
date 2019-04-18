@@ -1,6 +1,5 @@
 
 const dbConfig = require('../config/db-config');
-// var sql = require("mssql");
 var config = dbConfig.dbParameters;
 var logger = require('../config/winston');
 var prop = require("../config/backend-property");
@@ -89,6 +88,7 @@ exports.getCDDinfo_MIT = (req, res, next) => {
       ,b.Modify_Date
       ,b.PID_ExpiryDate AS cardExpiryDate
       ,'' AS MailSameAs
+      ,'' AS NumChildren
       FROM [Account_Info] a
       left join MFTS_Account b on b.Account_No like a.Cust_Code
       WHERE Cust_Code= @custCode
@@ -188,6 +188,7 @@ exports.saveCDDInfo = (req, res, next) => {
   var TaxDeduction = req.body.TaxDeduction;
   var SpouseIDNotExp = req.body.SpouseIDNotExp;
   var cardNotExp = req.body.cardNotExp;
+  var NumChildren = req.body.NumChildren;
 
 
   var logMsg = `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${Cust_Code}`;
@@ -241,6 +242,7 @@ exports.saveCDDInfo = (req, res, next) => {
    ,TaxDeduction = @TaxDeduction
    ,cardNotExp = @cardNotExp
    ,SpouseIDNotExp = @SpouseIDNotExp
+   ,NumChildren = @NumChildren
    WHERE Cust_Code = @Cust_Code;
 
 
@@ -253,15 +255,16 @@ exports.saveCDDInfo = (req, res, next) => {
       ,[MaritalStatus],[SpouseCardType],[SpousePassportCountry],[SpouseCardNumber],[SpouseTitle],[SpouseTitleOther],[SpouseFirstName] ,[SpouseLastName]
       ,[SpouseIDExpDate]
       ,[MoneyLaundaring]
-      ,[PoliticalRelate] ,[RejectFinancial],[cardNotExp],[SpouseIDNotExp] ,[TaxDeduction])
-
+      ,[PoliticalRelate] ,[RejectFinancial],[cardNotExp],[SpouseIDNotExp] ,[TaxDeduction]
+      ,NumChildren)
     VALUES(@Cust_Code,@ID_CARD ,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
         ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ReqModifyFlag,@ActionBy ,GETDATE()
         ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E,@cardExpiryDate,@MailSameAs
         ,@MaritalStatus,@SpouseCardType,@SpousePassportCountry,@SpouseCardNumber,@SpouseTitle,@SpouseTitleOther,@SpouseFirstName ,@SpouseLastName
         ,@SpouseIDExpDate
         ,@MoneyLaundaring
-        ,@PoliticalRelate ,@RejectFinancial,@cardNotExp,@SpouseIDNotExp ,@TaxDeduction)
+        ,@PoliticalRelate ,@RejectFinancial,@cardNotExp,@SpouseIDNotExp ,@TaxDeduction
+        ,@NumChildren)
 
     END
 
@@ -317,6 +320,7 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('cardNotExp', sql.VarChar(1), cardNotExp)
     .input('SpouseIDNotExp', sql.VarChar(1), SpouseIDNotExp)
     .input('TaxDeduction', sql.VarChar(1), TaxDeduction)
+    .input('NumChildren', sql.Int, NumChildren)
 
 
     .query(queryStr, (err, result) => {

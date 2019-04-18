@@ -18,23 +18,21 @@ export class ChildService {
     .pipe(
       map(fundtData => {
         return fundtData.result.map(data => {
-
-          console.log( "getChildByCust()" + JSON.stringify(data));
-
+          // console.log( "getChildByCust()" + JSON.stringify(data));
           return {
             Cust_Code : data.Cust_Code,
-            ChildIDType : data.ChildIDType,
-            ChildPassportCountry : data.ChildPassportCountry,
-            ChildCardNumber : data.ChildCardNumber,
-            cardExpiryDate : data.cardExpiryDate,
-            cardNotExt : data.cardNotExt,
+            cardType : data.ChildIDType,
+            passportCountry : data.ChildPassportCountry,
+            cardNumber : data.ChildCardNumber,
+            cardExpDate : data.cardExpiryDate,
+            cardNotExp : data.cardNotExt,
             title : data.title,
             titleOther : data.titleOther,
-            First_Name_T :data.First_Name_T,
-            Last_Name_T : data.Last_Name_T,
+            firstName :data.First_Name_T,
+            lastName : data.Last_Name_T,
             First_Name_E : data.First_Name_E,
             Last_Name_E : data.Last_Name_E,
-            Birth_Day : data.Birth_Day,
+            dob : data.Birth_Day,
             CreateBy : data.CreateBy,
             CreateDate : data.CreateDate
           };
@@ -43,12 +41,23 @@ export class ChildService {
     );
   }
 
-  saveCustCDDInfo(ActionBy:string,custCode: string, child: PersonModel) {
-    let newDate = new Date(child.dob)
-    let day = newDate.getDate();
-    let month = newDate.getMonth() + 1;
-    let year = newDate.getFullYear()    ;
-    let _DOB = year+"-"+month+"-"+day
+  saveChild(ActionBy:string,custCode: string, child: PersonModel) {
+
+    let newDate;
+    let day;
+    let month;
+    let year;
+    let _DOB;
+
+
+
+    if(child.dob){
+      newDate = new Date(child.dob)
+      day = newDate.getDate();
+      month = newDate.getMonth() + 1;
+      year = newDate.getFullYear()    ;
+      _DOB = year+"-"+month+"-"+day
+    }
 
 
     let _cardEXPDate = '';
@@ -75,7 +84,10 @@ export class ChildService {
       ,CreateBy:ActionBy
     };
 
-    return this.http.post<{ message: string, data: any }>(BACKEND_URL , data);
+    // console.log( "saveChild()" + JSON.stringify(data));
+
+    return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cust/' + custCode , data);
+
   }
 
 }

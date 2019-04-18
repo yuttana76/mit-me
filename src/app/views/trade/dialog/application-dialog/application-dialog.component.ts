@@ -74,10 +74,10 @@ export class ApplicationDialogComponent implements OnInit {
 
  public onSave() {
 
-    if (this.form.invalid) {
-      console.log('form.invalid() ' + this.form.invalid);
-      return true;
-    }
+      if (this.form.invalid) {
+        console.log('form.invalid() ' + this.form.invalid);
+        return true;
+      }
 
     if (this.insertMode) {
       // console.log('Is new mode');

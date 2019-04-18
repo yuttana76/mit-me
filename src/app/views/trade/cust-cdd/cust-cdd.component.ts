@@ -17,6 +17,11 @@ import { FCincomeSource } from '../model/fcIncomeSource.model';
 import { ShareDataService } from '../services/shareData.service';
 import { FCcountry } from '../model/fcContry.model';
 import { PersonModel } from '../model/person.model';
+import { MatDialogRef, MatDialog } from '@angular/material';
+import { PersonalInfoComponent } from '../personal-info/personal-info.component';
+import { ChildrenDialogComponent } from '../dialog/children-dialog/children-dialog.component';
+import { BehaviorSubject } from 'rxjs';
+import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 
 @Component({
   selector: 'app-cust-cdd',
@@ -37,10 +42,8 @@ export class CustCDDComponent implements OnInit {
   incomeList: FCincomeLevel[];
   incomeSourceList: FCincomeSource[];
 
-  // SPpersonModel:PersonModel = new PersonModel();
-
-  // numberChildren;
-  children: PersonModel[] =[];
+  // childDisplayedColumns: string[] = ['index','CardType', 'Number', 'Expire' , 'Title', 'FirstName', 'LastName', 'Action'];
+  // childDataSource = new BehaviorSubject([]);
 
   public cardTypeList = [
     {Code : 'CITIZEN_CARD',Description:'บัตรประชาชน'}
@@ -58,12 +61,16 @@ export class CustCDDComponent implements OnInit {
   cardNotExpChecked = true;
   SPcardNotExpChecked = true;
 
+  childrenDialogComponent: MatDialogRef<ChildrenDialogComponent>;
+
   constructor(
     // private cddService: CddService,
     private masterDataService:MasterDataService,
     // private toastr: ToastrService,
     public formService: CustCddFormService,
-    public shareDataService: ShareDataService
+    public shareDataService: ShareDataService,
+    public dialog: MatDialog,
+    private confirmationDialogService: ConfirmationDialogService,
     ) {
 
      }
@@ -99,6 +106,8 @@ export class CustCDDComponent implements OnInit {
     this.incomeSourceList = data;
   });
 
+
+  // this.childDataSource.next(this.cddData.children);
 
   }
 
@@ -277,17 +286,65 @@ childrenOnChange(val){
   console.log( "childrenOnChange() >>"  + val );
   if(val){
 
-    this.children=[];
-    var i:number = val
-    while(i>0) {
-      let child = new PersonModel();
-      this.children.push(child);
+    this.cddData.children=[];
+    let i : number = val;
+    while ( i > 0 ) {
+      const child = new PersonModel();
+      this.cddData.children.push(child);
 
       i--;
     }
-
-    console.log("length  >> " + this.children.length);
+    console.log("length  >> " + this.cddData.children.length);
   }
 }
+
+addChildren() {
+
+    this.childrenDialogComponent = this.dialog.open(ChildrenDialogComponent, {
+      width: '600px',
+      data: new PersonModel()
+    });
+
+    this.childrenDialogComponent.afterClosed().subscribe(result => {
+
+      if(result){
+
+        this.cddData.children.push(result);
+        // this.childDataSource.next(this.cddData.children);
+        this.cddFormGroup.controls["numberChildren"].clearValidators();
+        this.cddFormGroup.controls["numberChildren"].updateValueAndValidity();
+
+        this.cddData.numChildren = String(this.cddData.children.length) ;
+
+      }
+        console.log('Dialog result => ', this.cddData.children);
+
+    });
+  }
+
+
+   onDeleteChildren(appId: string, appName: string) {
+    this.confirmationDialogService.confirm('Please confirm..', `Do you really want to delete  ${appName}  application?`)
+    .then((confirmed) => {
+      if ( confirmed ) {
+
+      }
+    }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
+  }
+
+  onEditChildren(app: PersonModel) {
+    this.childrenDialogComponent = this.dialog.open(ChildrenDialogComponent, {
+      width: '600px',
+      data: app
+    });
+
+    this.childrenDialogComponent.afterClosed().subscribe(result => {
+        console.log('Dialog result => ', result);
+        // if(result){
+        //   this.cddData.children.push(result);
+        // }
+
+    });
+  }
 
 }

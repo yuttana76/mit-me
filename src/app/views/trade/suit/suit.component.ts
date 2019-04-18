@@ -17,6 +17,7 @@ import { ConfirmationDialogService } from "../dialog/confirmation-dialog/confirm
 import { CDDModel } from "../model/cdd.model";
 import { forkJoin } from "rxjs";
 import { PersonModel } from "../model/person.model";
+import { ChildService } from "../services/child.service";
 // import { CDDModel } from "../model/cdd.model";
 
 
@@ -123,7 +124,8 @@ export class SuitComponent implements OnInit {
     private suiteService: SuiteService,
     public authService: AuthService,
     private _formBuilder: FormBuilder,
-    private cddService: CddService
+    private cddService: CddService,
+    private childService: ChildService
   ) {
 
     if (
@@ -316,8 +318,6 @@ export class SuitComponent implements OnInit {
     numberChildren: new FormControl(null, {
       validators: [Validators.required]
     }),
-
-
 
   });
 
@@ -679,6 +679,8 @@ export class SuitComponent implements OnInit {
       }
 
       // this.reloadData();
+      this.getChildren(_id);
+
     }
 
   }, error => () => {
@@ -687,6 +689,29 @@ export class SuitComponent implements OnInit {
     console.log('Loading complete');
   });
  }
+
+ getChildren(_id){
+  this.childService.getChildByCust(_id).subscribe(data => {
+
+    if(data){
+      for(let i in data){
+        this.cddData.children.push(data[i]);
+      }
+
+      this.cddData.numChildren = String(this.cddData.children.length) ;
+
+      if(this.cddData.children.length >=1 ){
+        this.cddFormGroup.controls["numberChildren"].clearValidators();
+        this.cddFormGroup.controls["numberChildren"].updateValueAndValidity();
+      }
+    }
+
+    }, error => () => {
+        console.log('Was error', error);
+    }, () => {
+      console.log('Loading complete');
+    });
+  }
 
 
   getCDDAddress(_id,seqNo : number){
@@ -1402,13 +1427,15 @@ export class SuitComponent implements OnInit {
      });
     }
 
-  finalSaveAll(){
     // Save CDD
     // Save FATCA
     // Save register Address
     // Save work Address
     // Save current Address
     // Save Suit
+    // Children
+
+  finalSaveAll(){
 
     this.re_addrData.ReqModifyFlag = this.addrModifyFlag;
     this.work_addrData.ReqModifyFlag = this.addrModifyFlag;
@@ -1433,6 +1460,11 @@ export class SuitComponent implements OnInit {
     // CDD
     observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
     observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
+
+    // Children
+    for (var i in this.cddData.children) {
+      observables.push(this.childService.saveChild(this.survey.pid,this.survey.pid,this.cddData.children[i]));
+    }
 
 
     // Check Work Address selected

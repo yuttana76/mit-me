@@ -149,33 +149,76 @@
                 <code>จำนวนบุตร หรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และยังไม่ได้สมรส) *</code>
               </div>
 
-            <!-- <h4>จำนวนบุตร หรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และยังไม่ได้สมรส) *</h4> -->
-                    <mat-form-field>
-                        <mat-label>จำนวนบุตร</mat-label>
-                        <mat-select [(ngModel)]="cddData.numChildren"  (selectionChange)="childrenOnChange(cddData.numChildren)"formControlName="numberChildren">
-                          <mat-option value=0>ไม่มี</mat-option>
-                          <mat-option value=1>1 คน</mat-option>
-                          <mat-option value=2>2 คน</mat-option>
-                          <mat-option value=3>3 คน</mat-option>
-                          <mat-option value=4>4 คน</mat-option>
-                          <mat-option value=5>5 คน</mat-option>
-                        </mat-select>
-                      </mat-form-field>
-        </section>
-
-        <!-- <section *ngIf="numberChildren >0"> -->
-          <!-- <div *ngFor="let child of children">
-              <app-personal-info [personModel]="child" [adult]="false" ></app-personal-info>
-            </div> -->
+              <a  mat-flat-button color="accent" (click)="addChildren()" class ="act_button"> เพิ่มบุตร  Add children ...  </a>
 
               <mat-tab-group >
-                  <mat-tab label="Children {{i+1}}" *ngFor="let child of children;let i = index">
-                    <h1>Children...</h1>
-                    <app-personal-info [personModel]="child" [adult]="false" ></app-personal-info>
+                  <mat-tab label="Children {{i+1}}" *ngFor="let obj of cddData.children;let i = index">
+                    <app-personal-info [personModel]="obj" [adult]="false" ></app-personal-info>
                   </mat-tab>
-                </mat-tab-group>
+              </mat-tab-group>
 
-        <!-- </section> -->
+              <!-- <table mat-table [dataSource]="childDataSource">
+                  <ng-container matColumnDef="index">
+                      <th mat-header-cell *matHeaderCellDef> No </th>
+                      <td mat-cell *matCellDef="let element; let i = index;"> {{i+1}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="CardType">
+                        <th mat-header-cell *matHeaderCellDef> Card Type </th>
+                        <td mat-cell *matCellDef="let element"> {{element.cardType}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Number">
+                        <th mat-header-cell *matHeaderCellDef> Number </th>
+                        <td mat-cell *matCellDef="let element"> {{element.cardNumber}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Expire">
+                      <th mat-header-cell *matHeaderCellDef> Expire</th>
+                      <td mat-cell *matCellDef="let element"> {{element.cardExpDate | date: 'dd/MM/yyyy'}} </td>
+                  </ng-container>
+
+                    <ng-container matColumnDef="Title">
+                        <th mat-header-cell *matHeaderCellDef> Title </th>
+                        <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="FirstName">
+                      <th mat-header-cell *matHeaderCellDef> First Name</th>
+                      <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+                  </ng-container>
+
+                    <ng-container matColumnDef="LastName">
+                      <th mat-header-cell *matHeaderCellDef> Last Name </th>
+                      <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="Action">
+                      <th mat-header-cell *matHeaderCellDef> </th>
+                      <td mat-cell *matCellDef="let element">
+                        <i class="far fa-edit"  (click)="onEditChildren(element)"  matTooltip="Edit"></i>
+                        <i class="fas fa-trash-alt"    (click)="onDeleteChildren(element.AppId,element.AppName)"  matTooltip="Delete"></i>
+                      </td>
+                  </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="childDisplayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: childDisplayedColumns;"></tr>
+              </table> -->
+
+            <!-- <mat-form-field>
+                <mat-label>จำนวนบุตร</mat-label>
+                <mat-select [(ngModel)]="cddData.numChildren"  (selectionChange)="childrenOnChange(cddData.numChildren)"formControlName="numberChildren">
+                  <mat-option value=0>ไม่มี</mat-option>
+                  <mat-option value=1>1 คน</mat-option>
+                  <mat-option value=2>2 คน</mat-option>
+                  <mat-option value=3>3 คน</mat-option>
+                  <mat-option value=4>4 คน</mat-option>
+                  <mat-option value=5>5 คน</mat-option>
+                </mat-select>
+              </mat-form-field>
+            -->
+
+        </section>
 
 
       <div class='row label_header'>

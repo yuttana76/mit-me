@@ -1,0 +1,70 @@
+
+<form [formGroup]="formGroup" >
+
+  <div class="row ">
+      <p>ประเภทบัตร ID Type</p>
+  </div>
+  <div class="row ">
+    <mat-radio-group class="col-md-4" [(ngModel)]="personModel.cardType"  formControlName="cardType" placeholder="ประเภทบัตร ID Type"   required>
+        <mat-radio-button *ngFor="let cardType of cardTypeList" [value]="cardType.Code">{{cardType.Description}}</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <div class="row" >
+    <mat-form-field  class="col-md-4"  >
+      <input matInput [(ngModel)]="personModel.cardNumber" placeholder="cardNumber"  formControlName="cardNumber" required>
+    </mat-form-field>
+
+    <mat-form-field class="col-md-4 col-sm-4" *ngIf="personModel.cardType == 'PASSPORT'" >
+        <mat-select  [(ngModel)]="personModel.passportCountry"
+        formControlName="passportCountry" placeholder="passportCountry" required >
+        <mat-option *ngFor="let obj of countryList" [value]="obj.Code">
+          {{obj.Eng_Name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class='row'>
+    <mat-form-field class="col-md-4" >
+        <input matInput [(ngModel)]="personModel.cardExpDate"  [matDatepicker]="cardExpDate" formControlName="cardExpDate"  placeholder="cardExpDate" readonly=true>
+        <mat-datepicker-toggle matSuffix [for]="cardExpDate"></mat-datepicker-toggle>
+        <mat-datepicker #cardExpDate ></mat-datepicker>
+        <mat-error *ngIf="formGroup.get('cardExpDate').invalid ">Please correct ID expire date</mat-error>
+    </mat-form-field>
+  </div>
+
+
+  <div class='row'>
+    <mat-form-field class="col-md-4 col-sm-4">
+
+        <mat-select [(ngModel)]="personModel.title" formControlName="title" placeholder="title" required >
+            <mat-option *ngFor="let obj of titleList_child" [value]="obj.Code">
+                {{obj.Code}}-{{obj.Description}}
+            </mat-option>
+          </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field  *ngIf="isTitleOther()">
+        <input matInput [(ngModel)]="personModel.titleOther"  placeholder= "titleOther" formControlName="titleOther"  required>
+    </mat-form-field>
+  </div>
+
+
+  <div class='row'>
+    <mat-form-field class="col-md-4" >
+        <input matInput [(ngModel)]="personModel.firstName" placeholder="firstName"  formControlName="firstName" required>
+    </mat-form-field>
+    <mat-form-field class="col-md-4">
+        <input matInput [(ngModel)]="personModel.lastName"  placeholder="lastName"  formControlName="lastName"  required>
+    </mat-form-field>
+  </div>
+
+  </form>
+
+<mat-card-actions>
+  <a  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >Add</a>
+  <a class="button_card_action" mat-flat-button color="accent"  (click)="onClose()"> Cancel</a>
+</mat-card-actions>
+

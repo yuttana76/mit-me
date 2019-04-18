@@ -61,6 +61,7 @@ export class CDDModel {
       public numChildren: string;
 
       public SPpersonModel:PersonModel = new PersonModel();
+      public children: PersonModel[] =[];
 
       constructor(){}
 

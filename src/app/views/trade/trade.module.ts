@@ -45,6 +45,7 @@ import { CustCDDComponent } from './cust-cdd/cust-cdd.component';
 import { CustAddrComponent } from './cust-addr/cust-addr.component';
 import { SuitChartComponent } from './suit-chart/suit-chart.component';
 import { PersonalInfoComponent } from './personal-info/personal-info.component';
+import { ChildrenDialogComponent } from './dialog/children-dialog/children-dialog.component';
 
 @NgModule({
   imports: [
@@ -100,6 +101,7 @@ import { PersonalInfoComponent } from './personal-info/personal-info.component';
     CustAddrComponent,
     SuitChartComponent,
     PersonalInfoComponent,
+    ChildrenDialogComponent,
   ],
   providers: [DatePipe],
   entryComponents: [
@@ -111,7 +113,8 @@ import { PersonalInfoComponent } from './personal-info/personal-info.component';
     UserLevelDialogComponent,
     UserGroupDialogComponent,
     ApplicationDialogComponent,
-    AnoucementDialogComponent
+    AnoucementDialogComponent,
+    ChildrenDialogComponent
   ],
 })
 export class TradeModule {

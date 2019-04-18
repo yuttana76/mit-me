@@ -17,7 +17,7 @@ export class SuiteService {
 
   verifyExtLink(_pid: string, _has: string): Observable<any> {
 
-    console.log(` verifyExtLink() URL= ${environment.apiURL}`);
+    // console.log(` verifyExtLink() URL= ${environment.apiURL}`);
 
     const data = {
       'pid': _pid.trim()

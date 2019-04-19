@@ -8,6 +8,6 @@ router.get("/cust/:custid", custChildrenController.getChildrenList);
 router.get("/:id", custChildrenController.getChildren);
 router.post("/cust/:custid", custChildrenController.CreateChildren);
 router.put("/:id", custChildrenController.UpdateChildren);
-// router.put("/:id", checkAuth, custChildrenController.UpdateChildren);
+router.delete("/cust/:custid", custChildrenController.delChildren);
 
 module.exports = router;

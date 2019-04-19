@@ -347,4 +347,18 @@ addChildren() {
     });
   }
 
+  removeChild(i){
+
+    this.confirmationDialogService.confirm('ยืนยัน Confirmation', `โปรดยืนยันการลบ ข้อมูลบุตร  Please confirm delete data ?`)
+    .then((confirmed) => {
+      if ( confirmed ) {
+        // console.log("Remove >>" + i);
+        this.cddData.children.splice(i,1);
+
+      }
+    }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
+
+
+
+  }
 }

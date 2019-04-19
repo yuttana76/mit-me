@@ -47,6 +47,7 @@ import { SuitChartComponent } from './suit-chart/suit-chart.component';
 import { PersonalInfoComponent } from './personal-info/personal-info.component';
 import { ChildrenDialogComponent } from './dialog/children-dialog/children-dialog.component';
 
+import { TabsModule } from 'ngx-bootstrap/tabs';
 @NgModule({
   imports: [
     CommonModule,
@@ -60,7 +61,8 @@ import { ChildrenDialogComponent } from './dialog/children-dialog/children-dialo
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    ChartsModule
+    ChartsModule,
+    TabsModule.forRoot()
   ],
   declarations: [
     SummaryRepComponent,

@@ -48,6 +48,47 @@ exports.getChildrenList = (req, res, next) => {
 }
 
 
+exports.delChildren = (req, res, next) => {
+
+  // var fncName = 'getChildrenList';
+  var custid = req.params.custid;
+
+  logger.info( `API /delChildren - ${req.originalUrl} - ${req.ip} - ${custid}`);
+
+  var queryStr = `
+  BEGIN
+    DELETE FROM MIT_CUSTOMER_CHILDREN
+    WHERE Cust_Code=@Cust_Code
+  END
+  `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input('Cust_Code', sql.VarChar(50), custid)
+    .query(queryStr, (err, result) => {
+        if(err){
+          let rsp_code = "902"; // Was error
+          res.status(422).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+          });
+        }else {
+          let rsp_code = "000";
+          res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            // result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+
 exports.getChildren = (req, res, next) => {
 
   // var fncName = 'getChildren';
@@ -97,7 +138,7 @@ exports.CreateChildren = (req, res, next) => {
   var ChildIDType = req.body.ChildIDType;
   var ChildPassportCountry = req.body.ChildPassportCountry;
   var ChildCardNumber = req.body.ChildCardNumber;
-  var cardExpiryDate = req.body.cardExpiryDate;
+  var cardExpiryDate = req.body.cardExpiryDate || '';
   var cardNotExt = req.body.cardNotExt;
   var title = req.body.title;
   var titleOther = req.body.titleOther;
@@ -105,22 +146,33 @@ exports.CreateChildren = (req, res, next) => {
   var Last_Name_T = req.body.Last_Name_T;
   var First_Name_E = req.body.First_Name_E;
   var Last_Name_E = req.body.Last_Name_E;
-  var Birth_Day = req.body.Birth_Day;
+  var Birth_Day = req.body.Birth_Day || '';
   var CreateBy = req.body.CreateBy;
 
-  logger.info( `API /CreateChildren - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${ChildPassportCountry}`);
+  logger.info( `API /CreateChildren - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${cardExpiryDate} - ${Birth_Day}`);
 
   var queryStr = `
   BEGIN
 
-   INSERT INTO MIT_CUSTOMER_CHILDREN
-   (Cust_Code, ChildIDType, ChildPassportCountry, ChildCardNumber, cardExpiryDate
-    ,cardNotExt, title, titleOther, First_Name_T, Last_Name_T,First_Name_E, Last_Name_E
-    ,Birth_Day, CreateBy, CreateDate)
-   VALUES
-   (@Cust_Code, @ChildIDType, @ChildPassportCountry, @ChildCardNumber, @cardExpiryDate
-    ,@cardNotExt, @title, @titleOther, @First_Name_T, @Last_Name_T,@First_Name_E, @Last_Name_E
-    ,@Birth_Day, @CreateBy, GETDATE())
+      UPDATE MIT_CUSTOMER_CHILDREN
+      SET  ChildIDType=@ChildIDType, ChildPassportCountry=@ChildPassportCountry, ChildCardNumber=@ChildCardNumber, cardExpiryDate=@cardExpiryDate, cardNotExt=@cardNotExt
+      , title=@title, titleOther=@titleOther, First_Name_T=@First_Name_T, Last_Name_T=@Last_Name_T, First_Name_E=@First_Name_E, Last_Name_E=@Last_Name_E, Birth_Day=@Birth_Day
+      , UpdateBy=@CreateBy, UpdateDate=GETDATE()
+      WHERE ChildCardNumber = @ChildCardNumber;
+
+    if @@rowcount = 0
+    BEGIN
+
+      INSERT INTO MIT_CUSTOMER_CHILDREN
+      (Cust_Code, ChildIDType, ChildPassportCountry, ChildCardNumber, cardExpiryDate
+      ,cardNotExt, title, titleOther, First_Name_T, Last_Name_T,First_Name_E, Last_Name_E
+      ,Birth_Day, CreateBy, CreateDate)
+      VALUES
+      (@Cust_Code, @ChildIDType, @ChildPassportCountry, @ChildCardNumber, @cardExpiryDate
+      ,@cardNotExt, @title, @titleOther, @First_Name_T, @Last_Name_T,@First_Name_E, @Last_Name_E
+      ,@Birth_Day, @CreateBy, GETDATE())
+
+    END
 
   END
   `;
@@ -143,6 +195,9 @@ exports.CreateChildren = (req, res, next) => {
     .input('Birth_Day', sql.VarChar(20), Birth_Day)
     .input('CreateBy', sql.VarChar(50), CreateBy)
     .query(queryStr, (err, result) => {
+
+      console.log("ERROR CreateChildren()"+err);
+
         if(err){
           let rsp_code = "902"; // Was error
           res.status(422).json({
@@ -189,11 +244,11 @@ exports.UpdateChildren = (req, res, next) => {
   var queryStr = `
   BEGIN
 
-    UPDATE MIT_CUSTOMER_CHILDREN
-    SET  ChildIDType=@ChildIDType, ChildPassportCountry=@ChildPassportCountry, ChildCardNumber=@ChildCardNumber, cardExpiryDate=@cardExpiryDate, cardNotExt=@cardNotExt
-    , title=@title, titleOther=@titleOther, First_Name_T=@First_Name_T, Last_Name_T=@Last_Name_T, First_Name_E=@First_Name_E, Last_Name_E=@Last_Name_E, Birth_Day=@Birth_Day
-    , UpdateBy=@UpdateBy, UpdateDate=GETDATE()
-    WHERE ChildCardNumber = @ChildCardNumber;
+      UPDATE MIT_CUSTOMER_CHILDREN
+      SET  ChildIDType=@ChildIDType, ChildPassportCountry=@ChildPassportCountry, ChildCardNumber=@ChildCardNumber, cardExpiryDate=@cardExpiryDate, cardNotExt=@cardNotExt
+      , title=@title, titleOther=@titleOther, First_Name_T=@First_Name_T, Last_Name_T=@Last_Name_T, First_Name_E=@First_Name_E, Last_Name_E=@Last_Name_E, Birth_Day=@Birth_Day
+      , UpdateBy=@UpdateBy, UpdateDate=GETDATE()
+      WHERE ChildCardNumber = @ChildCardNumber;
 
   END
   `;

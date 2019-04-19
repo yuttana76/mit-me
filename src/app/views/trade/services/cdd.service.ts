@@ -88,7 +88,7 @@ export class CddService {
     }
 
     let _spouseIDExpDate = '';
-    if('Y' != cdd.SPpersonModel.cardNotExp){
+    if('Y' != cdd.SPpersonModel.cardNotExp && cdd.SPpersonModel.cardExpDate != ''){
       newDate = new Date(cdd.SPpersonModel.cardExpDate)
       day = newDate.getDate();
       month = newDate.getMonth() + 1;

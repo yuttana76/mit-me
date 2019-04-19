@@ -85,8 +85,14 @@ export class ChildService {
     };
 
     // console.log( "saveChild()" + JSON.stringify(data));
-
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cust/' + custCode , data);
+
+  }
+
+
+  delAllChildren(custCode: string){
+    console.log( "delAllChildren()" + custCode);
+    return this.http.delete<{ message: string, data: any }>(BACKEND_URL + '/cust/' + custCode );
 
   }
 

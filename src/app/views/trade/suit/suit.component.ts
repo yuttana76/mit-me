@@ -1443,23 +1443,24 @@ export class SuitComponent implements OnInit {
 
     const observables = [];
 
-  //  if(this.cddData.maritalStatus === 'Married'){
+   if(this.cddData.maritalStatus !== 'Married'){
 
-  //     this.cddData.maritalStatus = this.SPpersonModel.maritalStatus;
-  //     this.cddData.spouseCardType: string;
-  //     this.cddData.spousePassportCountry: string;
-  //     this.cddData.spouseCardNumber: string;
-  //     this.cddData.spouseTitle: string;
-  //     this.cddData.spouseTitleOther: string;
-  //     this.cddData.spouseFirstName: string;
-  //     this.cddData.spouseLastName: string;
-  //     this.cddData.spouseIDExpDate
+      this.cddData.SPpersonModel.cardType ='';
+      this.cddData.SPpersonModel.passportCountry =''
+      this.cddData.SPpersonModel.cardNumber ='';
+      this.cddData.SPpersonModel.title ='';
+      this.cddData.SPpersonModel.titleOther ='';
+      this.cddData.SPpersonModel.firstName = '';
+      this.cddData.SPpersonModel.lastName = '';
+      this.cddData.SPpersonModel.cardNotExp = '';
+      this.cddData.SPpersonModel.cardExpDate = '';
 
-  //  }
+   }
 
     // CDD
     observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
     observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
+    observables.push(this.childService.delAllChildren(this.survey.pid));
 
     // Children
     for (var i in this.cddData.children) {

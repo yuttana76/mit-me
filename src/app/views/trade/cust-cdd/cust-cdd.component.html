@@ -150,12 +150,16 @@
               </div>
 
               <div class="row">
-              <a  mat-flat-button color="accent" (click)="addChildren()" class ="act_button"> เพิ่มบุตร  Add children ...  </a>
+                  <a id="btn_add_child"  mat-flat-button color="accent" (click)="addChildren()" class ="act_button"> เพิ่มบุตร  Add children ...  </a>
+                  <!-- <i class="fas fa-plus-circle" (click)="addChildren()"  matTooltip="เพิ่มบุตร  Add children .."></i> -->
               </div>
 
-                  <tabset>
+                  <tabset >
                     <tab heading= "บุตร Child {{i+1}}" id="tab{{i}}" *ngFor="let obj of cddData.children;let i = index">
-                        <a  mat-flat-button color="accent" (click)="removeChild(i)" class ="act_button"> ลบ Remove...{{i+1}}  </a>
+
+                        <!-- <a  id="btn_remove_child" mat-flat-button color="accent" (click)="removeChild(i)" class ="act_button"> ลบ Remove...{{i+1}}  </a> -->
+                        <i  id="btn_remove_child" class="fas fa-2x fa-trash-alt" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i>
+
                         <app-personal-info [personModel]="obj" [adult]="false" ></app-personal-info>
                     </tab>
 

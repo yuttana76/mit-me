@@ -13,6 +13,7 @@ export class PersonalInfoComponent implements OnInit {
 
   @Input() personModel: PersonModel;
   @Input() adult;
+  // @Input() formGroup: FormGroup;
   formGroup: FormGroup;
 
   countryList: FCcountry[];
@@ -39,9 +40,14 @@ export class PersonalInfoComponent implements OnInit {
 
   constructor(
     private masterDataService:MasterDataService,
-  ) { }
+  ) {
+
+
+   }
 
   ngOnInit() {
+
+    console.log('PersonalInfoComponent()->ngOnInit()')
 
     this.cardNotExpChecked =    this.personModel.cardNotExp == 'Y'? true :false;
 
@@ -49,8 +55,13 @@ export class PersonalInfoComponent implements OnInit {
       this.countryList = data;
     });
 
-    this.formGroup = new FormGroup({
+    if(this.personModel.cardNotExp ==='Y'){
 
+      this.formGroup.controls["cardExpDate"].clearValidators();
+      this.formGroup.controls["cardExpDate"].updateValueAndValidity();
+     }
+
+     this.formGroup = new FormGroup({
       cardType: new FormControl(null, {
         validators: [Validators.required]
       }),
@@ -81,11 +92,6 @@ export class PersonalInfoComponent implements OnInit {
 
     });
 
-    if(this.personModel.cardNotExp ==='Y'){
-
-      this.formGroup.controls["cardExpDate"].clearValidators();
-      this.formGroup.controls["cardExpDate"].updateValueAndValidity();
-     }
   }
 
   OnCardNotExpChange($event){

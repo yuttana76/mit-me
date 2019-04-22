@@ -285,21 +285,38 @@ export class SuitComponent implements OnInit {
       validators: [Validators.required]
     }),
 
-    // spouseCardType: new FormControl(null, {
-    //   validators: [Validators.required]
-    // }),
-    // spouseCardNumber: new FormControl(null, {
-    //   validators: [Validators.required]
-    // }),
-    // spousePassportCountry: new FormControl(null, {
-    //   // validators: [Validators.required]
-    // }),
-    // spouseIDExpDate: new FormControl(null, {
-    //   validators: [Validators.required]
-    // }),
-    // SpouseIDNotExp: new FormControl(null, {
-    //   // validators: [Validators.required]
-    // }),
+    // Spouce
+    spCardType: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    spCardNumber: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
+    spPassportCountry: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
+    spCardExpDate: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
+    spCardNotExp: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
+    spTitle: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    spTitleOther: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    spFirstName: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+    spLastName: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
 
 
     moneyLaundaring: new FormControl(null, {
@@ -669,12 +686,14 @@ export class SuitComponent implements OnInit {
 
       // }
 
+      if(this.cddData.maritalStatus !=='Married'){
+        this.cddData.SPpersonModel.cardExpDate = '';
+
+      }
+
 
       if(this.cddData.SPpersonModel.cardNotExp ==='Y'){
         this.cddData.SPpersonModel.cardExpDate = '';
-
-        // this.cddFormGroup.controls["PIDExpDate"].clearValidators();
-        // this.cddFormGroup.controls["PIDExpDate"].updateValueAndValidity();
 
       }
 
@@ -1268,8 +1287,11 @@ export class SuitComponent implements OnInit {
         // const controls = _Form.controls;
         // for (const name in controls) {
         //     if (controls[name].invalid) {
-        //         invalid.push(name);
-        //         msg += `<li> ${controls[name]} </li>`;
+
+        //       console.log('comp invalid >>' + name)
+
+        //         // invalid.push(name);
+        //         // msg += `<li> ${controls[name]} </li>`;
         //     }
         // }
         // msg += '</ul>';

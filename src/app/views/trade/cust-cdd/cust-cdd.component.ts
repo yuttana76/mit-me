@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { CDDModel } from '../model/cdd.model';
 import { CddService } from '../services/cdd.service';
@@ -32,8 +32,16 @@ export class CustCDDComponent implements OnInit {
 
   @Input() custCode: string;
   @Input() cddFormGroup: FormGroup;
+
   @Input() cddData: CDDModel;
   @Input() SPpersonModel: PersonModel;
+
+  // SPformGroup: FormGroup;
+
+  // @ViewChild('SP') SPComponent: PersonalInfoComponent;
+  // @ViewChild('Child') ChildComponent: PersonalInfoComponent;
+
+  // SPComponent: PersonalInfoComponent;
 
   countryList: FCcountry[];
   businessTypeList: FCbusinessType[];
@@ -108,6 +116,36 @@ export class CustCDDComponent implements OnInit {
 
 
   // this.childDataSource.next(this.cddData.children);
+  // this.SPformGroup = new FormGroup({
+  //   cardType: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   cardNumber: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   cardExpDate: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   cardNotExp: new FormControl(null, {
+  //     // validators: [Validators.required]
+  //   }),
+  //   passportCountry: new FormControl(null, {
+  //     // validators: [Validators.required]
+  //   }),
+  //   title: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   titleOther: new FormControl(null, {
+  //     // validators: [Validators.required]
+  //   }),
+  //   firstName: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+  //   lastName: new FormControl(null, {
+  //     validators: [Validators.required]
+  //   }),
+
+  // });
 
   }
 
@@ -162,12 +200,25 @@ export class CustCDDComponent implements OnInit {
     this.cddFormGroup.controls["titleOth"].setValidators(Validators.required);
     this.cddFormGroup.controls["titleOth"].updateValueAndValidity();
     return true;
- }else{
+  }else{
     this.cddFormGroup.controls["titleOth"].clearValidators();
     this.cddFormGroup.controls["titleOth"].updateValueAndValidity();
     this.cddData.titleOther = "";
       return false;
+  }
  }
+
+ isSpouceTitleOther(){
+  if(this.cddData.SPpersonModel.title === 'OTHER'){
+    this.cddFormGroup.controls["spTitleOther"].setValidators(Validators.required);
+    this.cddFormGroup.controls["spTitleOther"].updateValueAndValidity();
+    return true;
+  }else{
+    this.cddFormGroup.controls["spTitleOther"].clearValidators();
+    this.cddFormGroup.controls["spTitleOther"].updateValueAndValidity();
+    this.cddData.titleOther = "";
+      return false;
+  }
  }
 
 //  isPassportCard(){
@@ -261,29 +312,65 @@ OnSPCardNotExpChange($event){
     this.cddData.SPpersonModel.cardNotExp  = "Y";
     this.cddData.SPpersonModel.cardExpDate = '';
 
-    this.cddFormGroup.controls["spouseIDExpDate"].clearValidators();
-    this.cddFormGroup.controls["spouseIDExpDate"].updateValueAndValidity();
+    this.cddFormGroup.controls["spCardExpDate"].clearValidators();
+    this.cddFormGroup.controls["spCardExpDate"].updateValueAndValidity();
 
    }else{
-    this.cddFormGroup.controls["spouseIDExpDate"].setValidators(Validators.required);
-    this.cddFormGroup.controls["spouseIDExpDate"].updateValueAndValidity();
+    this.cddFormGroup.controls["spCardExpDate"].setValidators(Validators.required);
+    this.cddFormGroup.controls["spCardExpDate"].updateValueAndValidity();
 
     this.cddData.SPpersonModel.cardNotExp = "N";
    }
 }
 
-
 maritalStatusOnChange(val){
   console.log( "maritalStatusOnChange() >>"  + val);
-  if(val){
+  if(val ==='Married'){
+    console.log( " *** SET setParent() " );
 
+    // this.cddFormGroup.addControl('SPformGroup', this.SPformGroup);
+    // this.SPformGroup.setParent(this.cddFormGroup);
+
+    this.cddFormGroup.controls["spCardType"].setValidators(Validators.required);
+    this.cddFormGroup.controls["spCardNumber"].setValidators(Validators.required);
+    this.cddFormGroup.controls["spTitle"].setValidators(Validators.required);
+    this.cddFormGroup.controls["spFirstName"].setValidators(Validators.required);
+    this.cddFormGroup.controls["spLastName"].setValidators(Validators.required);
+
+  }else{
+
+    // Clear spouce validation
+    this.cddFormGroup.controls["spCardType"].clearValidators();
+    this.cddFormGroup.controls["spCardNumber"].clearValidators();
+    this.cddFormGroup.controls["spTitle"].clearValidators();
+    this.cddFormGroup.controls["spFirstName"].clearValidators();
+    this.cddFormGroup.controls["spLastName"].clearValidators();
+
+    // Clear spouce data
+    this.cddData.SPpersonModel.cardType ='';
+    this.cddData.SPpersonModel.cardNumber = '';
+    this.cddData.SPpersonModel.cardExpDate = '';
+    this.cddData.SPpersonModel.cardNotExp = '';
+    this.cddData.SPpersonModel.title = '';
+    this.cddData.SPpersonModel.titleOther = '';
+    this.cddData.SPpersonModel.firstName = '';
+    this.cddData.SPpersonModel.lastName = '';
   }
+
+  this.cddFormGroup.controls["spCardType"].updateValueAndValidity();
+  this.cddFormGroup.controls["spCardNumber"].updateValueAndValidity();
+  this.cddFormGroup.controls["spTitle"].updateValueAndValidity();
+  this.cddFormGroup.controls["spFirstName"].updateValueAndValidity();
+  this.cddFormGroup.controls["spLastName"].updateValueAndValidity();
+
 
 }
 
 
+
+
 childrenOnChange(val){
-  console.log( "childrenOnChange() >>"  + val );
+  // console.log( "childrenOnChange() >>"  + val );
   if(val){
 
     this.cddData.children=[];

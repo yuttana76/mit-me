@@ -136,11 +136,79 @@
                 </section>
           </div>
 
+          {{cddData.maritalStatus}}
           <div class="div_block" *ngIf="cddData.maritalStatus == 'Married'">
-              <h5>ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (If any)</h5>
-              <span>
-                  <app-personal-info *ngIf="cddData.maritalStatus == 'Married'" [personModel]="cddData.SPpersonModel" [adult]="true" ></app-personal-info>
-              </span>
+
+                  <tabset *ngIf="cddData.maritalStatus == 'Married'" >
+                    <tab heading= "ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (If any)" >
+                      <!-- <app-personal-info #SP [personModel]="cddData.SPpersonModel" [adult]="true" ></app-personal-info> -->
+
+                      <!-- Spouce section -->
+                      <div class="row ">
+                        <!-- <p>ประเภทบัตร ID Type</p> -->
+                        <mat-radio-group class="col-md-4" [(ngModel)]="cddData.SPpersonModel.cardType"  formControlName="spCardType" placeholder="ประเภทบัตร ID Type"   required>
+                            <mat-radio-button *ngFor="let cardType of cardTypeList" [value]="cardType.Code">{{cardType.Description}}</mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+
+                      <div class="row" >
+                        <mat-form-field  class="col-md-4"  >
+                          <input matInput [(ngModel)]="cddData.SPpersonModel.cardNumber" placeholder="cardNumber"  formControlName="spCardNumber" required>
+                        </mat-form-field>
+
+                        <mat-form-field class="col-md-4 col-sm-4" *ngIf="cddData.SPpersonModel.cardType == 'PASSPORT'" >
+                            <mat-select  [(ngModel)]="cddData.SPpersonModel.passportCountry"
+                            formControlName="spPassportCountry" placeholder="passportCountry" required >
+                            <mat-option *ngFor="let obj of countryList" [value]="obj.Code">
+                              {{obj.Eng_Name}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+
+
+                      <div class='row'>
+                        <mat-form-field class="col-md-4" >
+                            <input matInput [(ngModel)]="cddData.SPpersonModel.cardExpDate"  [matDatepicker]="spCardExpDate" formControlName="spCardExpDate"  placeholder="cardExpDate" readonly=true>
+                            <mat-datepicker-toggle matSuffix [for]="spCardExpDate"></mat-datepicker-toggle>
+                            <mat-datepicker #spCardExpDate ></mat-datepicker>
+                            <mat-error *ngIf="cddFormGroup.get('spCardExpDate').invalid ">Please correct ID expire date</mat-error>
+                        </mat-form-field>
+
+                        <mat-checkbox [(ngModel)]="cddData.SPpersonModel.cardNotExp"
+                        (change)="OnSPCardNotExpChange($event)"
+                          formControlName="spCardNotExp"  >บัตรตลอดชีพ Not Expired</mat-checkbox>
+                      </div>
+
+
+                      <div class='row'>
+                        <mat-form-field class="col-md-4 col-sm-4">
+                            <mat-select  [(ngModel)]="cddData.SPpersonModel.title" formControlName="spTitle" placeholder="title" required >
+                              <mat-option *ngFor="let obj of titleList" [value]="obj.Code">
+                                  {{obj.Code}}-{{obj.Description}}
+                              </mat-option>
+                            </mat-select>
+
+                        </mat-form-field>
+
+                        <mat-form-field  *ngIf="isSpouceTitleOther()">
+                            <input matInput [(ngModel)]="cddData.SPpersonModel.titleOther"  placeholder= "titleOther" formControlName="spTitleOther"  required>
+                        </mat-form-field>
+                      </div>
+
+
+                      <div class='row'>
+                        <mat-form-field class="col-md-4" >
+                            <input matInput [(ngModel)]="cddData.SPpersonModel.firstName" placeholder="firstName"  formControlName="spFirstName" required>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-4">
+                            <input matInput [(ngModel)]="cddData.SPpersonModel.lastName"  placeholder="lastName"  formControlName="spLastName"  required>
+                        </mat-form-field>
+                      </div>
+                      <!-- Spouce section -->
+                    </tab>
+                  </tabset>
+
           </div>
         </section>
 
@@ -148,30 +216,15 @@
             <div class='row label_header'>
                 <code>จำนวนบุตร หรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และยังไม่ได้สมรส) *</code>
               </div>
-
               <div class="row">
                   <a id="btn_add_child"  mat-flat-button color="accent" (click)="addChildren()" class ="act_button"> เพิ่มบุตร  Add children ...  </a>
-                  <!-- <i class="fas fa-plus-circle" (click)="addChildren()"  matTooltip="เพิ่มบุตร  Add children .."></i> -->
               </div>
-
-                  <tabset >
-                    <tab heading= "บุตร Child {{i+1}}" id="tab{{i}}" *ngFor="let obj of cddData.children;let i = index">
-
-                        <!-- <a  id="btn_remove_child" mat-flat-button color="accent" (click)="removeChild(i)" class ="act_button"> ลบ Remove...{{i+1}}  </a> -->
-                        <i  id="btn_remove_child" class="fas fa-2x fa-trash-alt" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i>
-
-                        <app-personal-info [personModel]="obj" [adult]="false" ></app-personal-info>
-                    </tab>
-
-                  </tabset>
-<!--
-              <mat-tab-group >
-                  <mat-tab label="บุตร Child {{i+1}}" *ngFor="let obj of cddData.children;let i = index">
-                      <a  mat-flat-button color="accent" (click)="removeChild(i)" class ="act_button"> ลบ Remove...{{i+1}}  </a>
-                    <app-personal-info [personModel]="obj" [adult]="false" ></app-personal-info>
-                  </mat-tab>
-              </mat-tab-group> -->
-
+              <tabset >
+                <tab heading= "บุตร Child {{i+1}}" id="tab{{i}}" *ngFor="let obj of cddData.children;let i = index">
+                    <i  id="btn_remove_child" class="fas fa-2x fa-trash-alt" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i>
+                    <app-personal-info #Child [personModel]="obj" [adult]="false"  ></app-personal-info>
+                </tab>
+              </tabset>
           </section>
 
 

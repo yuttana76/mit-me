@@ -1351,22 +1351,22 @@ export class SuitComponent implements OnInit {
           }
       }
 
-      // if(alertMSG.length>0){
+      if(alertMSG.length>0){
 
-      //   // this.cddFormGroup.controls["titleOth"].setValidators(Validators.required);
-      //   this.suitFormGroup.controls["cust_RiskLevel"].setValue(null);
-      //   this.suitFormGroup.controls["cust_RiskLevel"].updateValueAndValidity();
+        // this.cddFormGroup.controls["titleOth"].setValidators(Validators.required);
+        this.suitFormGroup.controls["cust_RiskLevel"].setValue(null);
+        this.suitFormGroup.controls["cust_RiskLevel"].updateValueAndValidity();
 
-      //   this.toastr.warning(
-      //     alertMSG ,
-      //     this.formService.DATA_INCOMPLETE,
-      //     {
-      //       timeOut: 5000,
-      //       closeButton: true,
-      //       positionClass: "toast-top-center"
-      //     }
-      //   );
-      // }
+        this.toastr.warning(
+          alertMSG ,
+          this.formService.DATA_INCOMPLETE,
+          {
+            timeOut: 5000,
+            closeButton: true,
+            positionClass: "toast-top-center"
+          }
+        );
+      }
 
 
       // this.suitFormGroup.controls["titleOth"].setValidators(Validators.required);

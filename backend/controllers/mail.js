@@ -2,7 +2,9 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mailConfig = require('../config/mail-conf');
-
+const path = require('path');
+const readline = require('readline');
+const fs = require('fs');
 const dbConfig = require('../config/db-config');
 
 const utility = require('./utility');
@@ -57,17 +59,31 @@ exports.sendMail = (req, res, next) =>{
 /*
 Send mail  by encypt use bcrypt
 */
-exports.surveyByMailBulk = (req, res, next) =>{
+const FILE_SEND_MAIL = __dirname+'..\downloadFiles\mail\mail.txt';
+
+exports.surveyBulkFile = (req, res, next) =>{
 
   // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
 
-  const _PID = '41121225';
-  let _from = mailConfig.mail_form;
-  let _to = 'yuttana76@gmail.com';
-  let _subject = 'Interview suit by MPAM.'
-  let _msg = '';
   let _target = req.body.target || 'test';
   let _url='';
+
+
+  // create instance of readline
+// each instance is associated with single input stream
+// console.log('DIR>' + __dirname);
+
+var today = new Date();
+var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+var time = today.getHours() + "-" + today.getMinutes()
+// var time = today.getHours() + "-" + today.getMinutes() + ":" + today.getSeconds();
+var dateTime = date+'-'+time;
+
+const readPath = __dirname + '/readFiles/mail/';
+const readFile = 'sendMail.txt';
+
+const bakPath = __dirname + '/readFiles/mailBackup/';
+const bakFile =  dateTime+'-sendMail.txt';
 
   if (_target =='prod'){
     _url = 'http://mit.wealth-merchant.com:3000/suit?has='
@@ -75,39 +91,196 @@ exports.surveyByMailBulk = (req, res, next) =>{
     _url = 'http://localhost:4200/suit?has='
   }
 
-  //Encrypt token
-  bcrypt.hash(_PID, SALT_WORK_FACTOR)
-  .then(hash =>{
-
-        // setup email data with unicode symbols
+let checkFile = readline.createInterface({
+  input: fs.createReadStream(readPath+readFile)
+});
 
 
-      let mailOptions = {
-        from: _from,
-        to: _to,
-        subject: _subject,
-        html: `${_msg}
-        <br>Click this link for risk intereview. <br> ${_url}${hash}` // html body
-      };
 
-      // send mail with defined transport object
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          // Keep log incase send was error
-            return console.log(error);
-        }
-        // Keep log incase send success
+// Check data is correct
+let line_no = 0;
+let numData = 0;
 
-        console.log('Message sent: %s', info.messageId);
-        // Preview only available when sending through an Ethereal account
-        // console.log('info: %s', JSON.stringify(info));
+checkFile.on('line', function(line) {
+  line_no++;
+  if (line_no == 1){
+    numData = line;
+  }
+});
 
-        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-        res.status(200).json({ message: 'Send mail successful!' });
+// end
+checkFile.on('close', function(line) {
+
+    if(((line_no-1) == numData) && (numData != 0) ){
+
+      line_no = 0;
+      let rFile = readline.createInterface({
+        input: fs.createReadStream(readPath+readFile)
       });
 
-  });
+      rFile.on('line', function(line) {
+          line_no++;
+          console.log('line_no >>:' + line_no);
+          if(line_no >1){
+            var array = line.split("|");
+            console.log('ARRAY >> ID:' + array[0] + ' ;Email:' + array[2] + ' ;URL='+ _url);
+
+            senMailFromFile(req,res,array[0],array[2],_url);
+          }
+      });
+
+      // end
+      rFile.on('close', function(line) {
+        console.log('Total lines : ' + line_no);
+
+        //Move file to Backup
+        fs.rename(readPath+readFile, bakPath+bakFile,  (err) => {
+          if (err) throw err;
+          console.log('Rename/Move complete!');
+        });
+
+      });
+
+
+    }else{
+      console.log('Data incorrect ; data lines =' + (line_no-1) + ' ;Header =' + numData );
+
+      res.status(501).json({ message: 'Data incorrect' });
+    }
+
+ });
+
+}
+
+function senMailFromFile(req,res,_PID,_Email,_url){
+
+
+  const _compInfo = mailConfig.mailCompInfo_TH;
+  let _from = mailConfig.mail_form;
+  let _to ;
+  let _subject = 'การสำรวจ และตรวจสอบข้อมูล บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
+  let _msgTH = '';
+  var logMsg ;
+
+
+  try {
+    logger.info(`senMailFromFile() _PID=${_PID}- _Email=${_Email}`);
+
+    // Incase has Email
+      if(_Email){
+        //Generate token
+        const token = jwt.sign(
+          {USERID: _PID},
+          JWT_SECRET_STRING,
+          { expiresIn: JWT_EXTERNAL_EXPIRES},
+        );
+
+        _to = _Email;
+
+        // Thai message
+        _msgTH = `
+        <html>
+        <head>
+        <style>
+
+        .blog-content-outer {
+          background: whitesmoke;
+          border: 1px solid #e1e1e1;
+          border-radius: 5px;
+          margin-top: 40px;
+          margin-bottom: 20px;
+          padding: 0 15px;
+          font-size: 16px;
+        }
+
+        .logo-area{
+          margin-top:20px;
+          margin-left:60px;
+          margin-bottom:20px;
+        }
+
+        </style>
+        </head>
+        <body>
+        <br>
+
+        <div class='blog-content-outer'>
+
+        <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+        <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+        </div>
+        <pre>
+        เรียน    ท่านลูกค้า
+
+        เรื่อง    ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคคลของท่าน
+
+              บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) ได้ทำการทบทวนข้อมูลส่วนบุคคล
+        ลูกค้าเพื่อนำไปเพิ่มประสิทธิภาพในการให้บริการแก่ท่าน
+          จึงเรียนมาเพื่อขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และหากท่านมีความประสงค์จะแก้ไข
+        ข้อมูลที่เคยให้ไว้สามารถมาดำเนินการด้วยตนเองที่บริษัท หรือ แจ้งข้อมูลผ่านลิงก์ด้านล่างนี้
+
+              บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ
+        คุณญาณิดา ท่าจีน ได้ทางอีเมล์  wealthservice@merchantasset.co.th  หรือ โทรศัพท์ 02 660 6696
+
+        <p>
+        ลิงก์สำหรับการตรวจสอบข้อมูลเดิมและแก้ไขข้อมูล
+        ${_url}${token}
+        </p>
+
+        </pre>
+        </div>
+
+        <p>
+        <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+        <p>
+        </body>
+        </html>
+        `;
+
+        _msgTH +=_compInfo
+
+        // setup email data with unicode symbols
+        let mailOptions = {
+          from: _from,
+          to: _to,
+          subject: _subject,
+          html: _msgTH,
+        };
+
+      /**
+       * SEND mail to suctomer
+       */
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              return console.log(error);
+          }
+
+            /*
+            Save MIT_LOG
+            */
+            try {
+              mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){
+                    // console.log("Save MIT log");
+              })
+            } catch (error) {
+              console.log(error);
+            }
+
+          logger.info(`API /surveyByMailToken -  Send mail successful!`);
+          res.status(200).json({ message: 'Send mail successful!' });
+
+        });
+
+        // Incase No Email
+      }else{
+        logger.error(`API /surveyByMailToken - NO E-mail`);
+
+      }
+  } catch (error) {
+    res.status(400).json({ message: 'surveyByMailToken' });
+
+  }
+
 }
 
 function getCustomerInfo(Cust_Code) {
@@ -196,42 +369,63 @@ exports.surveyByMailToken = (req, res, next) =>{
 
           // Thai message
           _msgTH = `
-          เรียน ${data.fullName}
+          <html>
+          <head>
+          <style>
+
+          .blog-content-outer {
+            background: whitesmoke;
+            border: 1px solid #e1e1e1;
+            border-radius: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 0 15px;
+            font-size: 16px;
+          }
+
+          .logo-area{
+          	margin-top:20px;
+            margin-left:60px;
+            margin-bottom:20px;
+          }
+
+          </style>
+          </head>
+          <body>
           <br>
-          <br>
-          ด้วยทาง บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้มีการสำวจและตรวจสอบข้อมูลของลูกค้า
-          <br>
-          เพื่อให้มีความเป็นปัจจุบันและถูกต้องตามข้อกำหนดของหน่วยงาน
-          <br>
-          สามารถเข้าใช้ระบบตามลิงค์ด้านล่างนี้
-          <br>${_url}${token}
-          <br>
-          <br>
-          ขอแสดงความนับถือ
-          <br>
+
+          <div class='blog-content-outer'>
+
+          <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+          <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+          </div>
+          <pre>
+          เรียน    ท่านลูกค้า
+
+          เรื่อง    ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคคลของท่าน
+
+                บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) ได้ทำการทบทวนข้อมูลส่วนบุคคล
+          ลูกค้าเพื่อนำไปเพิ่มประสิทธิภาพในการให้บริการแก่ท่าน
+          	จึงเรียนมาเพื่อขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และหากท่านมีความประสงค์จะแก้ไข
+          ข้อมูลที่เคยให้ไว้สามารถมาดำเนินการด้วยตนเองที่บริษัท หรือ แจ้งข้อมูลผ่านลิงก์ด้านล่างนี้
+
+                บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ
+          คุณญาณิดา ท่าจีน ได้ทางอีเมล์  wealthservice@merchantasset.co.th  หรือ โทรศัพท์ 02 660 6696
+
+		      <p>
+          ลิงก์สำหรับการตรวจสอบข้อมูลเดิมและแก้ไขข้อมูล
+          ${_url}${token}
+          </p>
+
+          </pre>
+          </div>
+
           <p>
           <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
           <p>
+          </body>
+          </html>
           `;
-
-          // English message
-          if(data.fullName_Eng){
-          _msgTH += `
-          <br>
-          <br>
-          Dear ${data.fullName_Eng}
-          <br>
-          For review and update your information.Please access this link below.
-          <br>${_url}${token}
-          <br>
-          <br>
-          Yours Sincerely,
-          <br>
-          <p>
-          <br>*** This is an automatically generated email, please do not reply. ***
-          </p>
-          `;
-          }
 
           _msgTH +=_compInfo
 

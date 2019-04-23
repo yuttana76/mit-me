@@ -333,7 +333,7 @@ export class SuitComponent implements OnInit {
     }),
 
     numberChildren: new FormControl(null, {
-      validators: [Validators.required]
+      // validators: [Validators.required]
     }),
 
   });
@@ -1037,10 +1037,16 @@ export class SuitComponent implements OnInit {
   workAddrOnChange(val){
     if(val ==='1'){
       this.work_addrData = Object.assign({}, this.re_addrData);
-      // this.showWorkAddr = false;
+
+      this.register_formGroup.removeControl('work_formGroup');
+
     }else { // Other
+
       this.work_addrData = new AddrCustModel();
-      // this.showWorkAddr = true;
+
+      this.register_formGroup.addControl('work_formGroup', this.work_formGroup);
+      this.work_formGroup.setParent(this.register_formGroup);
+
     }
 
     this.work_addrData.Addr_Seq = this.SEQ_WORK_ADDR;
@@ -1064,13 +1070,23 @@ export class SuitComponent implements OnInit {
     if(val ==='1'){
       this.cur_addrData = Object.assign({}, this.re_addrData);
       // this.showCurrentAddr = false;
+
+      this.register_formGroup.removeControl('current_formGroup');
     } else if ( val === '3'){
       this.cur_addrData = Object.assign({}, this.work_addrData);
       // this.showCurrentAddr = false;
+
+      this.register_formGroup.removeControl('current_formGroup');
+
     } else { // Other
       this.cur_addrData = new AddrCustModel();
       // this.showCurrentAddr = true;
+
+      this.register_formGroup.addControl('current_formGroup', this.current_formGroup);
+      this.current_formGroup.setParent(this.register_formGroup);
+
     }
+
     this.cur_addrData.SameAs = val;
     this.cur_addrData.Addr_Seq = this.SEQ_CURR_ADDR;
 
@@ -1094,15 +1110,19 @@ export class SuitComponent implements OnInit {
 
     } else if(val === 'reg'){
       this.mail_addrData = Object.assign({}, this.re_addrData);
-
+      this.register_formGroup.removeControl('mail_formGroup');
     } else if ( val === 'work'){
       this.mail_addrData = Object.assign({}, this.work_addrData);
-
+      this.register_formGroup.removeControl('mail_formGroup');
     } else if ( val === 'curr'){
       this.mail_addrData = Object.assign({}, this.cur_addrData);
+      this.register_formGroup.removeControl('mail_formGroup');
     } else { // 9:Other
       this.mail_addrData = new AddrCustModel();
-      // this.showCurrentAddr = true;
+
+      this.register_formGroup.addControl('mail_formGroup', this.mail_formGroup);
+      this.mail_formGroup.setParent(this.register_formGroup);
+
     }
 
     this.cddData.MailSameAs = val;
@@ -1284,29 +1304,17 @@ export class SuitComponent implements OnInit {
 
         // let msg = '<ul>';
         // const invalid = [];
-        // const controls = _Form.controls;
-        // for (const name in controls) {
-        //     if (controls[name].invalid) {
+        const controls = _Form.controls;
+        for (const name in controls) {
+            if (controls[name].invalid) {
 
-        //       console.log('comp invalid >>' + name)
+              console.log('comp invalid >>' + name)
 
-        //         // invalid.push(name);
-        //         // msg += `<li> ${controls[name]} </li>`;
-        //     }
-        // }
-        // msg += '</ul>';
+                // invalid.push(name);
+                // msg += `<li> ${controls[name]} </li>`;
+            }
+        }
 
-        // if ( invalid.length > 0 ){
-        //   this.toastr.warning(
-        //     this.formService.DATA_INCOMPLETE_MSG + msg,
-        //     this.formService.DATA_INCOMPLETE,
-        //     {
-        //       timeOut: 5000,
-        //       closeButton: true,
-        //       positionClass: "toast-top-center"
-        //     }
-        //   );
-        // }
 
         this.toastr.warning(
               this.formService.DATA_INCOMPLETE_MSG,
@@ -1343,22 +1351,22 @@ export class SuitComponent implements OnInit {
           }
       }
 
-      if(alertMSG.length>0){
+      // if(alertMSG.length>0){
 
-        // this.cddFormGroup.controls["titleOth"].setValidators(Validators.required);
-        this.suitFormGroup.controls["cust_RiskLevel"].setValue(null);
-        this.suitFormGroup.controls["cust_RiskLevel"].updateValueAndValidity();
+      //   // this.cddFormGroup.controls["titleOth"].setValidators(Validators.required);
+      //   this.suitFormGroup.controls["cust_RiskLevel"].setValue(null);
+      //   this.suitFormGroup.controls["cust_RiskLevel"].updateValueAndValidity();
 
-        this.toastr.warning(
-          alertMSG ,
-          this.formService.DATA_INCOMPLETE,
-          {
-            timeOut: 5000,
-            closeButton: true,
-            positionClass: "toast-top-center"
-          }
-        );
-      }
+      //   this.toastr.warning(
+      //     alertMSG ,
+      //     this.formService.DATA_INCOMPLETE,
+      //     {
+      //       timeOut: 5000,
+      //       closeButton: true,
+      //       positionClass: "toast-top-center"
+      //     }
+      //   );
+      // }
 
 
       // this.suitFormGroup.controls["titleOth"].setValidators(Validators.required);

@@ -173,7 +173,6 @@
             <code class='code_large'>
                 <p>{{ formService.mail_addr_title }}/{{ formService.mail_addr_title_ENG }}</p>
                     <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
-
             </code>
 
           </div>
@@ -247,10 +246,11 @@
             </div> -->
 
 
-                <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen form_section"  >
+                <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen  suitResult"  >
                     <h4>{{formService.label_RiskLevel}}  </h4>
                     <h4>
-                      <span><input  matInput [(ngModel)]="cust_RiskLevel"  formControlName="cust_RiskLevel" readonly="true"> - {{ cust_RiskLevelTxt }} </span>
+                      <span><input  matInput [(ngModel)]="cust_RiskLevel"  size=1 formControlName="cust_RiskLevel" readonly="true"> - {{ cust_RiskLevelTxt }} </span>
+                    <!-- {{cust_RiskLevel}}- {{ cust_RiskLevelTxt }} -->
                     </h4>
 
                     <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'dd/MM/yyyy' }}</p>

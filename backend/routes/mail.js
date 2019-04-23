@@ -9,5 +9,5 @@ router.post("/merchant",mailController.sendMail);
 
 router.post("/surveyByMailToken",selfAuth,mailController.surveyByMailToken);
 router.post("/surveyThankCust",mailController.sendMailThankCust);
-router.post("/surveyBulkFile",selfAuth,mailController.surveyBulkFile);  // Not finish
+router.post("/surveyBulkFile",selfAuth,mailController.surveyBulkFile);
 module.exports = router;

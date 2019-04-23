@@ -3,8 +3,10 @@ exports.MPAM_MailParameters = {
     port: '587',//process.env.MAIL_PORT,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: 'italert@merchantasset.co.th',//process.env.MAIL_USER, // generated ethereal user
-        pass: 'Merchant@2018**'//process.env.MAIL_PASS // generated ethereal password
+        user: 'wealthservice@merchantasset.co.th',//process.env.MAIL_USER, // generated ethereal user
+        pass: 'Merchant@2019**'//process.env.MAIL_PASS // generated ethereal password
+        // user: 'italert@merchantasset.co.th',//process.env.MAIL_USER, // generated ethereal user
+        // pass: 'Merchant@2018**'//process.env.MAIL_PASS // generated ethereal password
     }
   }
 
@@ -18,7 +20,7 @@ exports.MPAM_MailParameters = {
     }
   }
 
-  exports.mail_form ='it2@merchantasset.co.th';
+  exports.mail_form ='wealthservice@merchantasset.co.th';
 
   // exports.mail_toRM ='PW@merchantasset.co.th'; //
   exports.mailRM ='yuttana@merchantasset.co.th';

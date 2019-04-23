@@ -23,8 +23,8 @@ const JWT_EXTERNAL_EXPIRES = dbConfig.JWT_EXTERNAL_EXPIRES;
 
 var config = dbConfig.dbParameters;
 
-// let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
-let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
+let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
+// let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
 
 //reference https://nodemailer.com/about/
 exports.sendMail = (req, res, next) =>{
@@ -182,6 +182,7 @@ function senMailFromFile(req,res,_PID,_Email,_url){
         <html>
         <head>
         <style>
+
 
         .blog-content-outer {
           background: whitesmoke;
@@ -373,6 +374,14 @@ exports.surveyByMailToken = (req, res, next) =>{
           <head>
           <style>
 
+          pre {
+            font-size: 120%;
+          }
+
+          span{
+            font-size: 100%;
+          }
+
           .blog-content-outer {
             background: whitesmoke;
             border: 1px solid #e1e1e1;
@@ -414,7 +423,10 @@ exports.surveyByMailToken = (req, res, next) =>{
 
 		      <p>
           ลิงก์สำหรับการตรวจสอบข้อมูลเดิมและแก้ไขข้อมูล
+          <span>
           ${_url}${token}
+          </span>
+
           </p>
 
           </pre>

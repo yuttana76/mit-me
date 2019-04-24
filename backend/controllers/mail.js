@@ -514,6 +514,7 @@ exports.sendMailThankCust = (req, res, next) =>{
   let _from = mailConfig.mail_form;
   let _to ;
   let _toRM = mailConfig.mailRM;
+
   let _subject = 'แจ้งผลการสำรวจ และตรวจสอบข้อมูล  บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
   let _subjectRM = 'แจ้งผลการสำรวจ และตรวจสอบข้อมูล(MIT-survey) '
   let _msg = '';
@@ -531,35 +532,57 @@ exports.sendMailThankCust = (req, res, next) =>{
         if(data.Email){
 
           _to = data.Email;
-          _msg =  `
-          เรียน ${data.fullName}
+
+          _msgTH = `
+          <html>
+          <head>
+          <style>
+
+
+          .blog-content-outer {
+            background: whitesmoke;
+            border: 1px solid #e1e1e1;
+            border-radius: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 0 15px;
+            font-size: 16px;
+          }
+
+          .logo-area{
+            margin-top:20px;
+            margin-left:60px;
+            margin-bottom:20px;
+          }
+
+          </style>
+          </head>
+          <body>
           <br>
-          บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด  ได้รับข้อมูลและบันทึกข้อมูลเรียบร้อยแล้ว
-          บริษัท ขอขอบพระคุณที่ท่านใช้บริการจากเรา
-          <br>
-          ขอแสดงความนับถือ
-          <br>
+
+          <div class='blog-content-outer'>
+
+          <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+          <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+          </div>
+          <pre>
+          เรียน    ท่านลูกค้า
+
+              บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม
+          กรุณาติดต่อ คุณญาณิดา ท่าจีน ได้ทางอีเมล์  wealthservice@merchantasset.co.th  หรือ โทรศัพท์ 02 660 6696
+
+
+          </pre>
+          </div>
+
+          <p>
           <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
-          <br>
+          <p>
+          </body>
+          </html>
           `;
 
-          if(data.fullName_Eng){
-            _msg += `
-            <br>
-            <br>
-            Dear ${data.fullName_Eng}
-            <br>
-              We got your data and saved.Thank you
-            <br>
-            Yours Sincerely,
-            <br>
-            <p>
-            <br>*** This is an automatically generated email, please do not reply. ***
-            <br>
-            </p>
-            `;
-            }
-            _msg +=_compInfo
+          _msgTH +=_compInfo
 
 
           // message to customer
@@ -567,7 +590,7 @@ exports.sendMailThankCust = (req, res, next) =>{
             from: _from,
             to: _to,
             subject: _subject,
-            html: _msg
+            html: _msgTH
           };
 
           // message to RM.

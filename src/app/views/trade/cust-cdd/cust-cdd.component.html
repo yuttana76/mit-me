@@ -131,12 +131,12 @@
                       <mat-radio-button class="example-margin" value="Single">โสด Single</mat-radio-button>
                       <mat-radio-button class="example-margin" value="Married">สมรส Married</mat-radio-button>
                       <mat-radio-button class="example-margin" value="Divorced">หย่า Divorced</mat-radio-button>
-                      <mat-radio-button class="example-margin" value="Widowhood">ม่าย Widowhood</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="Widowhood">หม้าย Widowed</mat-radio-button>
                     </mat-radio-group>
+                    <mat-error *ngIf="cddFormGroup.get('maritalStatus').invalid"> *โปรดเลือก Please choose </mat-error>
                 </section>
           </div>
 
-          {{cddData.maritalStatus}}
           <div class="div_block" *ngIf="cddData.maritalStatus == 'Married'">
 
                   <tabset *ngIf="cddData.maritalStatus == 'Married'" >
@@ -153,12 +153,12 @@
 
                       <div class="row" >
                         <mat-form-field  class="col-md-4"  >
-                          <input matInput [(ngModel)]="cddData.SPpersonModel.cardNumber" placeholder="cardNumber"  formControlName="spCardNumber" required>
+                          <input matInput [(ngModel)]="cddData.SPpersonModel.cardNumber" placeholder="เลขที่ No"  formControlName="spCardNumber" required>
                         </mat-form-field>
 
                         <mat-form-field class="col-md-4 col-sm-4" *ngIf="cddData.SPpersonModel.cardType == 'PASSPORT'" >
                             <mat-select  [(ngModel)]="cddData.SPpersonModel.passportCountry"
-                            formControlName="spPassportCountry" placeholder="passportCountry" required >
+                            formControlName="spPassportCountry" placeholder="ประเทศที่ออก Issuing Country" required >
                             <mat-option *ngFor="let obj of countryList" [value]="obj.Code">
                               {{obj.Eng_Name}}
                             </mat-option>
@@ -169,7 +169,7 @@
 
                       <div class='row'>
                         <mat-form-field class="col-md-4" >
-                            <input matInput [(ngModel)]="cddData.SPpersonModel.cardExpDate"  [matDatepicker]="spCardExpDate" formControlName="spCardExpDate"  placeholder="cardExpDate" readonly=true>
+                            <input matInput [(ngModel)]="cddData.SPpersonModel.cardExpDate"  [matDatepicker]="spCardExpDate" formControlName="spCardExpDate"  placeholder="วันหมดอายุ (ค.ศ.) Expire Date" readonly=true>
                             <mat-datepicker-toggle matSuffix [for]="spCardExpDate"></mat-datepicker-toggle>
                             <mat-datepicker #spCardExpDate ></mat-datepicker>
                             <mat-error *ngIf="cddFormGroup.get('spCardExpDate').invalid ">Please correct ID expire date</mat-error>
@@ -183,7 +183,7 @@
 
                       <div class='row'>
                         <mat-form-field class="col-md-4 col-sm-4">
-                            <mat-select  [(ngModel)]="cddData.SPpersonModel.title" formControlName="spTitle" placeholder="title" required >
+                            <mat-select  [(ngModel)]="cddData.SPpersonModel.title" formControlName="spTitle" placeholder="คำนำหน้า Title" required >
                               <mat-option *ngFor="let obj of titleList" [value]="obj.Code">
                                   {{obj.Code}}-{{obj.Description}}
                               </mat-option>
@@ -192,17 +192,17 @@
                         </mat-form-field>
 
                         <mat-form-field  *ngIf="isSpouceTitleOther()">
-                            <input matInput [(ngModel)]="cddData.SPpersonModel.titleOther"  placeholder= "titleOther" formControlName="spTitleOther"  required>
+                            <input matInput [(ngModel)]="cddData.SPpersonModel.titleOther"  placeholder= "อื่นๆ Other" formControlName="spTitleOther"  required>
                         </mat-form-field>
                       </div>
 
 
                       <div class='row'>
                         <mat-form-field class="col-md-4" >
-                            <input matInput [(ngModel)]="cddData.SPpersonModel.firstName" placeholder="firstName"  formControlName="spFirstName" required>
+                            <input matInput [(ngModel)]="cddData.SPpersonModel.firstName" placeholder="ชื่อ Name"  formControlName="spFirstName" required>
                         </mat-form-field>
                         <mat-form-field class="col-md-4">
-                            <input matInput [(ngModel)]="cddData.SPpersonModel.lastName"  placeholder="lastName"  formControlName="spLastName"  required>
+                            <input matInput [(ngModel)]="cddData.SPpersonModel.lastName"  placeholder="นามสกุล Surname"  formControlName="spLastName"  required>
                         </mat-form-field>
                       </div>
                       <!-- Spouce section -->
@@ -321,6 +321,7 @@
                       <mat-radio-button class="example-margin" value="Y">ยินยอม  Consent</mat-radio-button>
                       <mat-radio-button class="example-margin" value="N">ไม่ยินยอม   Do not consent</mat-radio-button>
                     </mat-radio-group>
+                    <mat-error *ngIf="cddFormGroup.get('taxDeduction').invalid"> *โปรดเลือก Please choose </mat-error>
                 </section>
           </div>
         </section>
@@ -333,6 +334,7 @@
                       <mat-radio-button class="example-margin" value="Y">ใช่ Yes</mat-radio-button>
                       <mat-radio-button class="example-margin" value="N">ไม่ใช่ No</mat-radio-button>
                     </mat-radio-group>
+                    <mat-error *ngIf="cddFormGroup.get('moneyLaundaring').invalid"> *โปรดเลือก Please choose </mat-error>
                 </section>
           </div>
       </section>
@@ -345,6 +347,7 @@
                       <mat-radio-button class="example-margin" value="Y">ใช่ Yes</mat-radio-button>
                       <mat-radio-button class="example-margin" value="N">ไม่ใช่ No</mat-radio-button>
                     </mat-radio-group>
+                    <mat-error *ngIf="cddFormGroup.get('politicalRelate').invalid"> *โปรดเลือก Please choose </mat-error>
                 </section>
           </div>
       </section>
@@ -357,6 +360,7 @@
                       <mat-radio-button class="example-margin" value="Y">ใช่ Yes</mat-radio-button>
                       <mat-radio-button class="example-margin" value="N">ไม่ใช่ No</mat-radio-button>
                     </mat-radio-group>
+                    <mat-error *ngIf="cddFormGroup.get('rejectFinancial').invalid"> *โปรดเลือก Please choose </mat-error>
                 </section>
           </div>
       </section>

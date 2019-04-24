@@ -17,8 +17,12 @@
       <nav class="navbar navbar-light bg-light" *ngIf="!verifyFLag" >
           <form class="form-inline" [formGroup]="form" #custForm="ngForm" >
             <span >
+
                 <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
                 formControlName="pid" [(ngModel)]="survey.pid"  >
+
+                <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
+              </span>
 
                 <!-- For mobile -->
                 <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0 div-only-mobile"  (click)="getCustomerData()">
@@ -29,7 +33,7 @@
                 <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0 desk"  (click)="getCustomerData()">
                   <span class="desk">{{ formService.LABEL_NEXT }} </span>
                      <i class="fas fa-search"></i> </a>
-            </span>
+
 
             <!-- <ul class="nav navbar-nav ml-auto" *ngIf="verifyFLag">
                 <li >
@@ -134,14 +138,16 @@
               </code>
             </div>
               <div>
+                  <form [formGroup]="register_formGroup">
                   <section class="example-section">
-                      <!-- <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)" [(disabled)]="!work_addrModifyFlag" > -->
-                      <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)"  >
+                      <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)"  formControlName="work_addrData"  >
                         <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
                         <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
-
                       </mat-radio-group>
+                      <mat-error *ngIf="register_formGroup.get('work_addrData').invalid">โปรดเลือก Please choose </mat-error>
                     </section>
+
+                  </form>
               </div>
               <div>
                 <app-cust-addr *ngIf="this.work_addrData.SameAs == '9' " [addrData]="work_addrData" [custCode]="survey.pid"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
@@ -156,14 +162,16 @@
             </code>
             </div>
             <div class='row'>
+                <form [formGroup]="register_formGroup">
                 <section class="example-section" >
-                    <!-- <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="currAddrOnChange(cur_addrData.SameAs)"  [(disabled)]="!addrModifyFlag"> -->
-                    <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="currAddrOnChange(cur_addrData.SameAs)" >
+                    <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="currAddrOnChange(cur_addrData.SameAs)" formControlName="cur_addrData">
                         <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
                         <mat-radio-button class="example-margin" value="3">{{formService.label_addrAs_work}}</mat-radio-button>
                         <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
                       </mat-radio-group>
-                  </section>
+                      <mat-error *ngIf="register_formGroup.get('cur_addrData').invalid">โปรดเลือก Please choose </mat-error>
+                </section>
+                </form>
             </div>
             <div>
               <app-cust-addr  *ngIf="this.cur_addrData.SameAs == '9' " [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
@@ -178,16 +186,18 @@
           </div>
 
           <div class='row'>
+              <form [formGroup]="register_formGroup">
               <section class="example-section" >
-                  <!-- <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="currAddrOnChange(cur_addrData.SameAs)"  [(disabled)]="!addrModifyFlag"> -->
-                  <mat-radio-group [(ngModel)]="cddData.MailSameAs"  (change)="mailAddrOnChange(cddData.MailSameAs)" >
+                  <mat-radio-group [(ngModel)]="cddData.MailSameAs"  (change)="mailAddrOnChange(cddData.MailSameAs)" formControlName="MailSameAs">
                       <mat-radio-button class="example-margin" value="email">{{formService.label_Email}}</mat-radio-button>
                       <mat-radio-button class="example-margin" value="reg">{{formService.label_addrAs_reg}}</mat-radio-button>
                       <mat-radio-button class="example-margin" value="work">{{formService.label_addrAs_work}}</mat-radio-button>
                       <mat-radio-button class="example-margin" value="curr">{{formService.label_addrAs_curr}}</mat-radio-button>
                       <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
                     </mat-radio-group>
+                    <mat-error *ngIf="register_formGroup.get('MailSameAs').invalid">โปรดเลือก Please choose </mat-error>
                 </section>
+              </form>
           </div>
           <div>
             <app-cust-addr  *ngIf="this.cddData.MailSameAs == '9' "  [addrData]="mail_addrData" [custCode]="survey.pid"  [addrFormGroup]="mail_formGroup"></app-cust-addr>

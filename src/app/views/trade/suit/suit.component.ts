@@ -395,6 +395,18 @@ export class SuitComponent implements OnInit {
     Fax: new FormControl(null, {
       // validators: [Validators.required]
     }),
+
+    work_addrData: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    cur_addrData: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    MailSameAs: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+
+
   });
 
   // this.register_formGroup = new FormGroup({ });
@@ -564,7 +576,7 @@ export class SuitComponent implements OnInit {
     this.customer = new Customer();
 
     if (this.form.invalid) {
-      console.log("form.invalid() " + this.form.invalid);
+      // console.log("form.invalid() " + this.form.invalid);
 
       this.toastr.error("Invalid require data", "warning", {
         timeOut: 5000,
@@ -580,12 +592,13 @@ export class SuitComponent implements OnInit {
     this.suiteService
       .verifyExtLink(this.survey.pid, this.token)
       .finally(() => {
-        console.log("Handle logging logic...");
+        // console.log("Handle logging logic...");
         this.spinnerLoading = false;
       })
       .subscribe(
         (data: any) => {
-          console.log("getCustomerData :" + JSON.stringify(data));
+
+           console.log("getCustomerData :" + JSON.stringify(data));
 
           this.needVerify = true;
           this.verifyFLag = false;

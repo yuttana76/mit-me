@@ -48,6 +48,7 @@ import { PersonalInfoComponent } from './personal-info/personal-info.component';
 import { ChildrenDialogComponent } from './dialog/children-dialog/children-dialog.component';
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { SuitResultTableComponent } from './suit-result-table/suit-result-table.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -104,6 +105,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     SuitChartComponent,
     PersonalInfoComponent,
     ChildrenDialogComponent,
+    SuitResultTableComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

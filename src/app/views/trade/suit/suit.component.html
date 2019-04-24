@@ -264,9 +264,12 @@
                     </h4>
 
                     <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'dd/MM/yyyy' }}</p>
-                    <p>{{ cust_RiskTypeInvestor }}</p>
+                    <!-- <p>{{ cust_RiskTypeInvestor }}</p> -->
 
-                    <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart>
+                    <app-suit-result-table [riskLevel]="riskLevel" ></app-suit-result-table>
+
+                    <!-- <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart> -->
+
                     <!-- <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a> -->
                 </div>
             </form>
@@ -345,9 +348,11 @@
                 <!-- <div class="suitResult" *ngIf="canSaveSuit"> -->
                     <h4>{{formService.label_RiskLevel}}</h4>
                     <h4>{{ riskLevel }} - {{ riskLevelTxt }}</h4>
-                    <p>{{ riskLevelDesc }}</p>
+                    <!-- <p>{{ riskLevelDesc }}</p> -->
 
-                    <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart>
+                    <app-suit-result-table [riskLevel]="riskLevel" ></app-suit-result-table>
+
+                    <!-- <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart> -->
 
                     <!-- <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;suitModifyFlag=false" class ="act_button"> {{formService.LABEL_CANCEL}}</a> -->
                     <!-- <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" > {{formService.LABEL_EVA_AGAIN}}</a>

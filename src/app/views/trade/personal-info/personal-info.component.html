@@ -12,7 +12,9 @@
 
 <div class="row" >
   <mat-form-field  class="col-md-4"  >
-    <input matInput [(ngModel)]="personModel.cardNumber" placeholder="เลขที่ No"  formControlName="cardNumber" required>
+    <input matInput #cardNumber [(ngModel)]="personModel.cardNumber" placeholder="เลขที่ No"  formControlName="cardNumber" required
+    (keyup.enter)="cardNumberUpdate(cardNumber.value)"
+      (blur)="cardNumberUpdate(cardNumber.value)" >
   </mat-form-field>
 
   <mat-form-field class="col-md-4 col-sm-4" *ngIf="personModel.cardType == 'PASSPORT'" >
@@ -27,7 +29,8 @@
 
 <div class='row'>
   <mat-form-field class="col-md-4" >
-      <input matInput [(ngModel)]="personModel.cardExpDate"  [matDatepicker]="cardExpDate" formControlName="cardExpDate"  placeholder="วันหมดอายุ (ค.ศ.) Expire Date" readonly=true>
+      <input matInput [(ngModel)]="personModel.cardExpDate"  [matDatepicker]="cardExpDate" formControlName="cardExpDate"
+      placeholder="วันหมดอายุ (ค.ศ.) Expire Date" readonly=true>
       <mat-datepicker-toggle matSuffix [for]="cardExpDate"></mat-datepicker-toggle>
       <mat-datepicker #cardExpDate ></mat-datepicker>
       <mat-error *ngIf="formGroup.get('cardExpDate').invalid ">Please correct ID expire date</mat-error>

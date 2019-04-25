@@ -18,6 +18,7 @@ import { CDDModel } from "../model/cdd.model";
 import { forkJoin } from "rxjs";
 import { PersonModel } from "../model/person.model";
 import { ChildService } from "../services/child.service";
+import { ShareDataService } from "../services/shareData.service";
 // import { CDDModel } from "../model/cdd.model";
 
 
@@ -127,7 +128,8 @@ export class SuitComponent implements OnInit {
     public authService: AuthService,
     private _formBuilder: FormBuilder,
     private cddService: CddService,
-    private childService: ChildService
+    private childService: ChildService,
+
   ) {
 
     if (
@@ -572,8 +574,6 @@ export class SuitComponent implements OnInit {
   }
 
   public getCustomerData() {
-    // this.canDoSuit = false;
-    // this.canDoFATCA = false;
 
     this.customer = new Customer();
 
@@ -600,7 +600,7 @@ export class SuitComponent implements OnInit {
       .subscribe(
         (data: any) => {
 
-           console.log("getCustomerData :" + JSON.stringify(data));
+          //  console.log("getCustomerData :" + JSON.stringify(data));
 
           this.needVerify = true;
           this.verifyFLag = false;
@@ -629,6 +629,8 @@ export class SuitComponent implements OnInit {
           // console.log("Verify  complete");
         }
       );
+
+
   }
 
 

@@ -146,14 +146,17 @@
                       <!-- Spouce section -->
                       <div class="row ">
                         <!-- <p>ประเภทบัตร ID Type</p> -->
-                        <mat-radio-group class="col-md-4" [(ngModel)]="cddData.SPpersonModel.cardType"  formControlName="spCardType" placeholder="ประเภทบัตร ID Type"   required>
+                        <mat-radio-group class="col-md-4" [(ngModel)]="cddData.SPpersonModel.cardType"  formControlName="spCardType"
+                        placeholder="ประเภทบัตร ID Type"   required (change)="CardTypeChange($event)">
                             <mat-radio-button *ngFor="let cardType of cardTypeList" [value]="cardType.Code">{{cardType.Description}}</mat-radio-button>
                         </mat-radio-group>
                       </div>
 
                       <div class="row" >
                         <mat-form-field  class="col-md-4"  >
-                          <input matInput [(ngModel)]="cddData.SPpersonModel.cardNumber" placeholder="เลขที่ No"  formControlName="spCardNumber" required>
+                          <input matInput #SPcardNumber [(ngModel)]="cddData.SPpersonModel.cardNumber" placeholder="เลขที่ No"  formControlName="spCardNumber" required
+                          (keyup.enter)="cardNumberUpdate(SPcardNumber.value)"
+                          (blur)="cardNumberUpdate(SPcardNumber.value)">
                         </mat-form-field>
 
                         <mat-form-field class="col-md-4 col-sm-4" *ngIf="cddData.SPpersonModel.cardType == 'PASSPORT'" >

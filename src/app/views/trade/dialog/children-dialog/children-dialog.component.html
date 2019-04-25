@@ -5,19 +5,23 @@
       <p>ประเภทบัตร ID Type</p>
   </div>
   <div class="row ">
-    <mat-radio-group class="col-md-4" [(ngModel)]="personModel.cardType"  formControlName="cardType" placeholder="ประเภทบัตร ID Type"   required>
+    <mat-radio-group class="col-md-4" [(ngModel)]="personModel.cardType"  formControlName="cardType" placeholder="ประเภทบัตร ID Type"   required
+    (change)="CardTypeChange($event)">
         <mat-radio-button *ngFor="let cardType of cardTypeList" [value]="cardType.Code">{{cardType.Description}}</mat-radio-button>
     </mat-radio-group>
   </div>
 
   <div class="row" >
     <mat-form-field  class="col-md-4"  >
-      <input matInput [(ngModel)]="personModel.cardNumber" placeholder="cardNumber"  formControlName="cardNumber" required>
+      <input matInput #cardNumber [(ngModel)]="personModel.cardNumber" placeholder="เลขที่ No"  formControlName="cardNumber" required
+      (keyup.enter)="cardNumberUpdate(cardNumber.value)"
+      (blur)="cardNumberUpdate(cardNumber.value)"
+      >
     </mat-form-field>
 
     <mat-form-field class="col-md-4 col-sm-4" *ngIf="personModel.cardType == 'PASSPORT'" >
         <mat-select  [(ngModel)]="personModel.passportCountry"
-        formControlName="passportCountry" placeholder="passportCountry" required >
+        formControlName="passportCountry" placeholder="ประเทศที่ออก Issuing Country" required >
         <mat-option *ngFor="let obj of countryList" [value]="obj.Code">
           {{obj.Eng_Name}}
         </mat-option>
@@ -27,7 +31,8 @@
 
   <div class='row'>
     <mat-form-field class="col-md-4" >
-        <input matInput [(ngModel)]="personModel.cardExpDate"  [matDatepicker]="cardExpDate" formControlName="cardExpDate"  placeholder="cardExpDate" readonly=true>
+        <input matInput [(ngModel)]="personModel.cardExpDate"  [matDatepicker]="cardExpDate" formControlName="cardExpDate"
+        placeholder="วันหมดอายุ (ค.ศ.) Expire Date" readonly=true>
         <mat-datepicker-toggle matSuffix [for]="cardExpDate"></mat-datepicker-toggle>
         <mat-datepicker #cardExpDate ></mat-datepicker>
         <mat-error *ngIf="formGroup.get('cardExpDate').invalid ">Please correct ID expire date</mat-error>
@@ -38,7 +43,7 @@
   <div class='row'>
     <mat-form-field class="col-md-4 col-sm-4">
 
-        <mat-select [(ngModel)]="personModel.title" formControlName="title" placeholder="title" required >
+        <mat-select [(ngModel)]="personModel.title" formControlName="title" placeholder="คำนำหน้า Title"required >
             <mat-option *ngFor="let obj of titleList_child" [value]="obj.Code">
                 {{obj.Code}}-{{obj.Description}}
             </mat-option>
@@ -47,17 +52,17 @@
     </mat-form-field>
 
     <mat-form-field  *ngIf="isTitleOther()">
-        <input matInput [(ngModel)]="personModel.titleOther"  placeholder= "titleOther" formControlName="titleOther"  required>
+        <input matInput [(ngModel)]="personModel.titleOther"  placeholder= "อื่นๆ Other" formControlName="titleOther"  required>
     </mat-form-field>
   </div>
 
 
   <div class='row'>
     <mat-form-field class="col-md-4" >
-        <input matInput [(ngModel)]="personModel.firstName" placeholder="firstName"  formControlName="firstName" required>
+        <input matInput [(ngModel)]="personModel.firstName" placeholder="ชื่อ Name"  formControlName="firstName" required>
     </mat-form-field>
     <mat-form-field class="col-md-4">
-        <input matInput [(ngModel)]="personModel.lastName"  placeholder="lastName"  formControlName="lastName"  required>
+        <input matInput [(ngModel)]="personModel.lastName"  placeholder="นามสกุล Surname"   formControlName="lastName"  required>
     </mat-form-field>
   </div>
 

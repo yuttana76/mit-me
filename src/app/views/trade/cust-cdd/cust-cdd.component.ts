@@ -79,6 +79,7 @@ export class CustCDDComponent implements OnInit {
     public shareDataService: ShareDataService,
     public dialog: MatDialog,
     private confirmationDialogService: ConfirmationDialogService,
+    private toastr: ToastrService,
     ) {
 
      }
@@ -444,8 +445,38 @@ addChildren() {
 
       }
     }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
-
-
-
   }
+
+  public cardNumberUpdate(value: string){
+
+    if(this.cddData.SPpersonModel.cardType ==='CITIZEN_CARD' && value !==''){
+      if(!this.shareDataService.checkIDcard(value)){
+
+        this.toastr.warning("เลขบัตรไม่ถูกต้อง Card number incorrect", "warning", {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+
+        this.cddData.SPpersonModel.cardNumber ='';
+      }
+    }
+  }
+
+  public CardTypeChange(event){
+    if (event.value === 'CITIZEN_CARD' && this.cddData.SPpersonModel.cardNumber !=''){
+
+      if(!this.shareDataService.checkIDcard(this.cddData.SPpersonModel.cardNumber)){
+
+        this.toastr.warning("เลขบัตรไม่ถูกต้อง Card number incorrect", "warning", {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+
+        this.cddData.SPpersonModel.cardNumber ='';
+      }
+    }
+  }
+
 }

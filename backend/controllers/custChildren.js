@@ -183,7 +183,7 @@ exports.CreateChildren = (req, res, next) => {
     .input('Cust_Code', sql.VarChar(50), Cust_Code)
     .input('ChildIDType', sql.VarChar(50), ChildIDType)
     .input('ChildPassportCountry', sql.VarChar(50), ChildPassportCountry)
-    .input('ChildCardNumber', sql.Int, ChildCardNumber)
+    .input('ChildCardNumber', sql.VarChar(50), ChildCardNumber)
     .input('cardExpiryDate', sql.VarChar(20), cardExpiryDate)
     .input('cardNotExt', sql.VarChar(1), cardNotExt)
     .input('title', sql.NVarChar(50), title)

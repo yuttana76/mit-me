@@ -3,6 +3,8 @@ import { PersonModel } from '../model/person.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FCcountry } from '../model/fcContry.model';
 import { MasterDataService } from '../services/masterData.service';
+import { ShareDataService } from '../services/shareData.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-personal-info',
@@ -17,6 +19,8 @@ export class PersonalInfoComponent implements OnInit {
   formGroup: FormGroup;
 
   countryList: FCcountry[];
+
+
 
   public cardTypeList = [
     {Code : 'CITIZEN_CARD',Description:'บัตรประชาชน'}
@@ -40,6 +44,8 @@ export class PersonalInfoComponent implements OnInit {
 
   constructor(
     private masterDataService:MasterDataService,
+    private shareDataService: ShareDataService,
+    private toastr: ToastrService,
   ) {
 
 
@@ -123,4 +129,20 @@ isTitleOther(){
   }
  }
 
+
+ public cardNumberUpdate(value: string){
+
+  if(this.personModel.cardType ==='CITIZEN_CARD'){
+    if(!this.shareDataService.checkIDcard(value)){
+
+      this.toastr.warning("เลขบัตรไม่ถูกต้อง Card number incorrect", "warning", {
+        timeOut: 5000,
+        closeButton: true,
+        positionClass: "toast-top-center"
+      });
+
+      this.personModel.cardNumber ='';
+    }
+  }
+}
 }

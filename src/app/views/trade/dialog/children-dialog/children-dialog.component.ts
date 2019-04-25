@@ -4,6 +4,8 @@ import { PersonModel } from '../../model/person.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FCcountry } from '../../model/fcContry.model';
 import { MasterDataService } from '../../services/masterData.service';
+import { ShareDataService } from '../../services/shareData.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-children-dialog',
@@ -39,7 +41,8 @@ export class ChildrenDialogComponent implements OnInit {
     private masterDataService:MasterDataService,
     public dialogRef: MatDialogRef<ChildrenDialogComponent> ,
     @Inject(MAT_DIALOG_DATA) public personModel: PersonModel ,
-
+    private shareDataService: ShareDataService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
@@ -133,6 +136,38 @@ isTitleOther(){
 
  onClose(): void {
   this.dialogRef.close();
+}
+
+public cardNumberUpdate(value: string){
+
+    if(this.personModel.cardType ==='CITIZEN_CARD'){
+      if(!this.shareDataService.checkIDcard(value)){
+
+        this.toastr.warning("เลขบัตรไม่ถูกต้อง Card number incorrect", "warning", {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+
+        this.personModel.cardNumber ='';
+      }
+    }
+}
+
+public CardTypeChange(event){
+  if (event.value === 'CITIZEN_CARD' && this.personModel.cardNumber !=''){
+
+    if(!this.shareDataService.checkIDcard(this.personModel.cardNumber)){
+
+      this.toastr.warning("เลขบัตรไม่ถูกต้อง Card number incorrect", "warning", {
+        timeOut: 5000,
+        closeButton: true,
+        positionClass: "toast-top-center"
+      });
+
+      this.personModel.cardNumber ='';
+    }
+  }
 }
 
 }

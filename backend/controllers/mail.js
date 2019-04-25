@@ -200,6 +200,12 @@ function senMailFromFile(req,res,_PID,_Email,_url){
           margin-bottom:20px;
         }
 
+		.tab { margin-left: 40px; }
+        .tab2 { margin-left: 80px; }
+
+        div.a {
+  			text-indent: 50px;
+		}
         </style>
         </head>
         <body>
@@ -210,25 +216,50 @@ function senMailFromFile(req,res,_PID,_Email,_url){
         <div class="logo-area col-xs-12 col-sm-12 col-md-3">
         <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
         </div>
-        <pre>
-        เรียน    ท่านลูกค้า
 
-        เรื่อง    ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคคลของท่าน
+        <div class="a">
+        เรียน    ท่านลูกค้า
+        </div>
 
-              บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) ได้ทำการทบทวนข้อมูลส่วนบุคคล
-        ลูกค้าเพื่อนำไปเพิ่มประสิทธิภาพในการให้บริการแก่ท่าน
-          จึงเรียนมาเพื่อขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และหากท่านมีความประสงค์จะแก้ไข
-        ข้อมูลที่เคยให้ไว้สามารถมาดำเนินการด้วยตนเองที่บริษัท หรือ แจ้งข้อมูลผ่านลิงก์ด้านล่างนี้
+    <div id="content2" class="a">
+    <p >
+      เรื่อง    ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคคลของท่าน
+        </p>
+    </div>
 
-              บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ
-        คุณญาณิดา ท่าจีน ได้ทางอีเมล์  wealthservice@merchantasset.co.th  หรือ โทรศัพท์ 02 660 6696
+    <div  class="a">
+    <p>
+    อ้างถึง 	1. ประกาศของสำนักงานป้องกันและปรามปรามการฟอกเงินเกี่ยวกับการทบทวนข้อมูลลูกค้า
+    </p>
+    </div>
 
-        <p>
+    <div class="a">
+    <p>
+      2. ประกาศสำนักงานคณะกรรมการกำกับหลักทรัพย์และตลาดหลักทรัพย์เกี่ยวกับการทำแบบประเมินความสามารถในการรับความเสี่ยงของผู้ลงทุน
+    </p>
+    </div>
+
+      <div class="a">
+        <p >
+        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) จึงเรียนมาเพื่อขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และหากท่านมีความประสงค์จะแก้ไขข้อมูลที่เคยให้ไว้สามารถมาดำเนินการด้วยตนเองที่บริษัท หรือ แจ้งข้อมูลผ่านลิงก์ด้านล่างนี้
+            </p>
+    </div>
+          <div class="a">
+          <p>
+        บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม ได้ทางอีเมล์  wealthservice@merchantasset.co.th   หรือ โทรศัพท์ 02 660 6696
+            </p>
+      </div>
+
+	      <div class="a">
+    	  <p>
         ลิงก์สำหรับการตรวจสอบข้อมูลเดิมและแก้ไขข้อมูล
+        </p>
+        <p>
         ${_url}${token}
         </p>
+        </div>
 
-        </pre>
+        </div>
         </div>
 
         <p>
@@ -371,72 +402,93 @@ exports.surveyByMailToken = (req, res, next) =>{
           // Thai message
           _msgTH = `
           <html>
-          <head>
-          <style>
+        <head>
+        <style>
 
-          pre {
-            font-size: 120%;
-          }
 
-          span{
-            font-size: 100%;
-          }
+        .blog-content-outer {
+          background: whitesmoke;
+          border: 1px solid #e1e1e1;
+          border-radius: 5px;
+          margin-top: 40px;
+          margin-bottom: 20px;
+          padding: 0 15px;
+          font-size: 16px;
+        }
 
-          .blog-content-outer {
-            background: whitesmoke;
-            border: 1px solid #e1e1e1;
-            border-radius: 5px;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            padding: 0 15px;
-            font-size: 16px;
-          }
+        .logo-area{
+          margin-top:20px;
+          margin-left:60px;
+          margin-bottom:20px;
+        }
 
-          .logo-area{
-          	margin-top:20px;
-            margin-left:60px;
-            margin-bottom:20px;
-          }
+		.tab { margin-left: 40px; }
+        .tab2 { margin-left: 80px; }
 
-          </style>
-          </head>
-          <body>
-          <br>
+        div.a {
+  			text-indent: 50px;
+		}
+        </style>
+        </head>
+        <body>
+        <br>
 
-          <div class='blog-content-outer'>
+        <div class='blog-content-outer'>
 
-          <div class="logo-area col-xs-12 col-sm-12 col-md-3">
-          <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
-          </div>
-          <pre>
-          เรียน    ท่านลูกค้า
+        <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+        <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+        </div>
 
-          เรื่อง    ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคคลของท่าน
+        <div class="a">
+        เรียน    ท่านลูกค้า
+        </div>
 
-                บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) ได้ทำการทบทวนข้อมูลส่วนบุคคล
-          ลูกค้าเพื่อนำไปเพิ่มประสิทธิภาพในการให้บริการแก่ท่าน
-          	จึงเรียนมาเพื่อขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และหากท่านมีความประสงค์จะแก้ไข
-          ข้อมูลที่เคยให้ไว้สามารถมาดำเนินการด้วยตนเองที่บริษัท หรือ แจ้งข้อมูลผ่านลิงก์ด้านล่างนี้
+    <div id="content2" class="a">
+    <p >
+      เรื่อง    ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคคลของท่าน
+        </p>
+    </div>
 
-                บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ
-          คุณญาณิดา ท่าจีน ได้ทางอีเมล์  wealthservice@merchantasset.co.th  หรือ โทรศัพท์ 02 660 6696
+    <div  class="a">
+    <p>
+    อ้างถึง 	1. ประกาศของสำนักงานป้องกันและปรามปรามการฟอกเงินเกี่ยวกับการทบทวนข้อมูลลูกค้า
+    </p>
+    </div>
 
-		      <p>
-          ลิงก์สำหรับการตรวจสอบข้อมูลเดิมและแก้ไขข้อมูล
-          <span>
-          ${_url}${token}
-          </span>
+    <div class="a">
+    <p>
+      2. ประกาศสำนักงานคณะกรรมการกำกับหลักทรัพย์และตลาดหลักทรัพย์เกี่ยวกับการทำแบบประเมินความสามารถในการรับความเสี่ยงของผู้ลงทุน
+    </p>
+    </div>
 
-          </p>
-
-          </pre>
-          </div>
-
+      <div class="a">
+        <p >
+        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) จึงเรียนมาเพื่อขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และหากท่านมีความประสงค์จะแก้ไขข้อมูลที่เคยให้ไว้สามารถมาดำเนินการด้วยตนเองที่บริษัท หรือ แจ้งข้อมูลผ่านลิงก์ด้านล่างนี้
+            </p>
+    </div>
+          <div class="a">
           <p>
-          <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
-          <p>
-          </body>
-          </html>
+        บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม ได้ทางอีเมล์  wealthservice@merchantasset.co.th   หรือ โทรศัพท์ 02 660 6696
+            </p>
+      </div>
+
+	      <div class="a">
+    	  <p>
+        ลิงก์สำหรับการตรวจสอบข้อมูลเดิมและแก้ไขข้อมูล
+        </p>
+        <p>
+        ${_url}${token}
+        </p>
+        </div>
+
+        </div>
+        </div>
+
+        <p>
+        <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+        <p>
+        </body>
+        </html>
           `;
 
           _msgTH +=_compInfo
@@ -555,6 +607,10 @@ exports.sendMailThankCust = (req, res, next) =>{
             margin-bottom:20px;
           }
 
+          div.a {
+            text-indent: 50px;
+        }
+
           </style>
           </head>
           <body>
@@ -568,9 +624,9 @@ exports.sendMailThankCust = (req, res, next) =>{
           <pre>
           เรียน    ท่านลูกค้า
 
-              บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม
-          กรุณาติดต่อ คุณญาณิดา ท่าจีน ได้ทางอีเมล์  wealthservice@merchantasset.co.th  หรือ โทรศัพท์ 02 660 6696
-
+          <div class="a">
+          บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
+          </div>
 
           </pre>
           </div>

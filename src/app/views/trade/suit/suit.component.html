@@ -309,7 +309,7 @@
                       <div *ngFor="let choice of ques.choices">
 
                         <div *ngIf="ques.multilchoice">
-                          <input type="checkbox"
+                          <input  type="checkbox"
                           value=" {{ choice.score }}"
                           id="{{ choice.id }}"
                           [(ngModel)]="choice.answer"

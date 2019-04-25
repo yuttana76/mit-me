@@ -35,7 +35,7 @@
           </div>
 
           <div *ngIf="!ques.multilchoice">
-            <input type="radio"  [(disabled)]="questionDisabled"  name="{{ ques.id }}"  id="{{ ques.id }}"   value="{{ choice.score }}"   [(ngModel)]="ques.answer" />
+            <input  type="radio"  [(disabled)]="questionDisabled"  name="{{ ques.id }}"  id="{{ ques.id }}"   value="{{ choice.score }}"   [(ngModel)]="ques.answer" />
             {{ choice.name }}
           </div>
         </div>

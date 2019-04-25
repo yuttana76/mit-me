@@ -63,7 +63,7 @@ export class SuitComponent implements OnInit {
   needVerify = false;
   verifyFLag = false;
 
-  canDoSuit = false;  // Default =true
+  canDoSuit = true;  // Default =true
 
   canSaveSuit = false;
   canDoFATCA = false;
@@ -567,7 +567,7 @@ export class SuitComponent implements OnInit {
       this.formService.fatca_q6,
       this.formService.fatca_q7,
       this.formService.fatca_q8,
-      this.formService.fatca_q9
+      // this.formService.fatca_q9
     ];
   }
 

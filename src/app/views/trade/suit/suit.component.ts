@@ -982,6 +982,7 @@ export class SuitComponent implements OnInit {
       this.riskEvaluate();
     }
 
+    scroll(0,0);
     // console.log(JSON.stringify(this.questions));
   }
 
@@ -1194,6 +1195,7 @@ export class SuitComponent implements OnInit {
     this.canSaveSuit = false;
     this.suitModifyFlag = true;
 
+    scroll(0,0);
   }
 
   saveSuit() {

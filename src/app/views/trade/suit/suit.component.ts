@@ -62,7 +62,9 @@ export class SuitComponent implements OnInit {
 
   needVerify = false;
   verifyFLag = false;
-  canDoSuit = true;
+
+  canDoSuit = false;  // Default =true
+
   canSaveSuit = false;
   canDoFATCA = false;
   showOtpEntry = false;

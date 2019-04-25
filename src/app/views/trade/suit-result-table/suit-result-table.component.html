@@ -1,13 +1,12 @@
-<div class="container">
+<div class="container suit_condition">
 
-    <h2>ส่วนที่1 เกณฑ์การคิดคะแนน</h2>
-    <p>--</p>
+    <!-- <h3>ส่วนที่1 เกณฑ์การคิดคะแนน</h3>
+    <p>--</p> -->
 
-    <h2>ส่วนที่2 ผลการประเมินความเหมาะสมในการลงทุน</h2>
-    <p>--</p>
+    <h5>ส่วนที่2 ผลการประเมินความเหมาะสมในการลงทุน {{riskLevel}}</h5>
 
     <div class="table-responsive">
-    <table class="table">
+    <table class="table table-bordered">
       <thead>
         <tr>
           <th></th>
@@ -18,92 +17,220 @@
       </thead>
       <tbody>
         <tr>
-          <td></td>
+          <td><span class="suit-txt-activate" *ngIf="riskLevel == '1'">Your score</span>
+            <i class="fas fa-2x fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '1'"></i></td>
           <td>น้อยกว่า 15</td>
-          <td>1</td>
-          <td>เสี่ยงต่ำ</td>
+          <td>
+              <span *ngIf="riskLevel == '1'"class="suit-activate ">1</span>
+              <span *ngIf="riskLevel != '1'">1</span>
+
+          </td>
+          <td>
+              <span *ngIf="riskLevel == '1'"class="suit-activate ">เสี่ยงต่ำ</span>
+              <span *ngIf="riskLevel != '1'">เสี่ยงต่ำ</span>
+
+          </td>
         </tr>
         <tr>
-          <td></td>
+          <td><span class="suit-txt-activate" *ngIf="riskLevel == '2'">Your score</span>
+            <i class="fas fa-2x fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '2'"></i></td>
           <td>15-21</td>
-          <td>2</td>
-          <td>เสี่ยงปานกลางค่อนข้างต่ำ</td>
+          <td>
+              <span *ngIf="riskLevel == '2'"class="suit-activate ">2</span>
+              <span *ngIf="riskLevel != '2'">2</span>
+
+          </td>
+          <td>
+              <span *ngIf="riskLevel == '2'"class="suit-activate ">เสี่ยงปานกลางค่อนข้างต่ำ</span>
+              <span *ngIf="riskLevel != '2'">เสี่ยงปานกลางค่อนข้างต่ำ</span>
+
+          </td>
         </tr>
-        <tr>
-          <td></td>
+        <tr  >
+          <td><span class="suit-txt-activate" *ngIf="riskLevel == '3'">Your score</span>
+            <i class="fas fa-2x  fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '3'"></i>
+          </td>
           <td>22-29</td>
-          <td>3</td>
-          <td>เสี่ยงปานกลางค่อนข้างสูง</td>
+          <td>
+            <span *ngIf="riskLevel == '3'"class="suit-activate ">3</span>
+            <span *ngIf="riskLevel != '3'">3</span>
+          </td>
+          <td>
+              <span *ngIf="riskLevel == '3'"class="suit-activate ">เสี่ยงปานกลางค่อนข้างสูง</span>
+              <span *ngIf="riskLevel != '3'">เสี่ยงปานกลางค่อนข้างสูง</span>
+          </td>
         </tr>
         <tr>
-          <td></td>
+          <td><span class="suit-txt-activate" *ngIf="riskLevel == '4'">Your score</span>
+            <i class="fas fa-2x fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '4'"></i></td>
           <td>30-36</td>
-          <td>4</td>
-          <td>เสี่ยงสูง</td>
+          <td>
+              <span *ngIf="riskLevel == '4'"class="suit-activate ">4</span>
+              <span *ngIf="riskLevel != '4'">3</span>
+          </td>
+          <td>
+              <span *ngIf="riskLevel == '4'"class="suit-activate ">เสี่ยงสูง</span>
+              <span *ngIf="riskLevel != '4'">เสี่ยงสูง</span>
+          </td>
         </tr>
         <tr>
-          <td></td>
+          <td><span class="suit-txt-activate" *ngIf="riskLevel == '5'">Your score</span>
+            <i class="fas fa-2x fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '5'"></i></td>
           <td>37 ขึ้นไป</td>
-          <td>5</td>
-          <td>เสี่ยงสูงมาก</td>
+          <td>
+            <span *ngIf="riskLevel == '5'"class="suit-activate ">5</span>
+            <span *ngIf="riskLevel != '5'">3</span>
+          </td>
+          <td>
+              <span *ngIf="riskLevel == '4'"class="suit-activate ">เสี่ยงสูงมาก</span>
+              <span *ngIf="riskLevel != '4'">เสี่ยงสูงมาก</span>
+          </td>
         </tr>
       </tbody>
     </table>
     </div>
 
-    <h2>ส่วนที่3 ตัวอย่างคำแนะนำเรื่องการจัดสรรการลงทุน (ฺBasic Asset Allocation)</h2>
-    <p>--</p>
+    <h5>ส่วนที่3 ตัวอย่างคำแนะนำเรื่องการจัดสรรการลงทุน (ฺBasic Asset Allocation)</h5>
 
     <div class="table-responsive">
-    <table class="table">
+
+    <table class="table table-bordered">
       <thead>
         <tr>
-          <th>ประเภทผู้ลงทุน</th>
-          <th>เงินฝากและตราสารหนี้ระยะสั้น</th>
-          <th>ตราสารหนี้ภาครัฐที่มีอายุมากกว่า 1 ปี</th>
-          <th>ตราสารหนี้ภาคเอกชน</th>
-          <th>ตราสารทุน</th>
-          <th>การลงทุนทางเลือก*</th>
+          <th></th>
+          <th colspan=5 >สัดส่วนการลงทุน</th>
+		</tr>
+        <tr>
+        	<th>ประเภทผู้ลงทุน</th>
+            <th>เงินฝากและตราสารหนี้ระยะสั้น</th>
+            <th>ตราสารหนี้ภาครัฐที่มีอายุมากกว่า 1 ปี</th>
+            <th>ตราสารหนี้ภาคเอกชน</th>
+            <th>ตราสารทุน</th>
+            <th>การลงทุนทางเลือก*</th>
+
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>เสี่ยงต่ำ</td>
-          <td colspan=2 > &gt;60%</td>
-          <td > &lt;20% </td>
-          <td > &lt;10% </td>
-          <td > &lt;5% </td>
+          <td><i class="fas fa-2x fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '1'"></i>
+            <span *ngIf="riskLevel == '1'"class="suit-activate ">เสี่ยงต่ำ</span>
+            <span *ngIf="riskLevel != '1'">เสี่ยงต่ำ</span>
+          </td>
+          <td colspan=2 >
+             <span *ngIf="riskLevel == '1'"class="suit-activate ">&gt;60%</span>
+             <span *ngIf="riskLevel != '1'">&gt;60%</span>
+            </td>
+          <td >
+             <span *ngIf="riskLevel == '1'"class="suit-activate ">&lt;20% </span>
+             <span *ngIf="riskLevel != '1'">&lt;20% </span>
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '1'"class="suit-activate ">&lt;10% </span>
+              <span *ngIf="riskLevel != '1'">&lt;10% </span>
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '1'"class="suit-activate ">&lt;5% </span>
+              <span *ngIf="riskLevel != '1'">&lt;5% </span>
+          </td>
         </tr>
         <tr>
-          <td>เสี่ยงปานกลางค่อนข้างต่ำ</td>
-          <td  > &lt;20%</td>
-          <td colspan=2 > &lt;70% </td>
-          <td > &lt;20% </td>
-          <td > &lt;10% </td>
+          <td><i class="fas fa-2x fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '2'"></i>
+            <span *ngIf="riskLevel == '2'"class="suit-activate ">เสี่ยงปานกลางค่อนข้างต่ำ</span>
+            <span *ngIf="riskLevel != '2'">เสี่ยงปานกลางค่อนข้างต่ำ</span>
+          </td>
+          <td>
+              <span *ngIf="riskLevel == '2'"class="suit-activate ">&lt;20% </span>
+              <span *ngIf="riskLevel != '2'">&lt;20% </span>
+          </td>
+          <td colspan=2 >
+              <span *ngIf="riskLevel == '2'"class="suit-activate ">&lt;70% </span>
+              <span *ngIf="riskLevel != '2'">&lt;70% </span>
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '2'"class="suit-activate ">&lt;20% </span>
+              <span *ngIf="riskLevel != '2'">&lt;20% </span>
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '2'"class="suit-activate ">&lt;10% </span>
+              <span *ngIf="riskLevel != '2'">&lt;10% </span>
+          </td>
 
         </tr>
         <tr>
-          <td>เสี่ยงปานกลางค่อนข้างสูง</td>
-          <td  > &lt;10%</td>
-          <td colspan=2 > &lt;60% </td>
-          <td > &lt;30% </td>
-          <td > &lt;10% </td>
+          <td>
+            <i class="fas fa-2x fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '3'"></i>
+            <span *ngIf="riskLevel == '3'"class="suit-activate ">เสี่ยงปานกลางค่อนข้างสูง </span>
+            <span *ngIf="riskLevel != '3'">เสี่ยงปานกลางค่อนข้างสูง </span>
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '3'"class="suit-activate ">&lt;10% </span>
+              <span *ngIf="riskLevel != '3'">&lt;10% </span>
+          </td>
+          <td colspan=2 >
+              <span *ngIf="riskLevel == '3'"class="suit-activate ">&lt;60% </span>
+              <span *ngIf="riskLevel != '3'">&lt;60% </span>
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '3'"class="suit-activate ">&lt;30% </span>
+              <span *ngIf="riskLevel != '3'">&lt;30% </span>
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '3'"class="suit-activate ">&lt;10% </span>
+              <span *ngIf="riskLevel != '3'">&lt;10% </span>
+          </td>
 
         </tr>
         <tr>
-          <td>เสี่ยงสูง</td>
-          <td  > &lt;10%</td>
-          <td colspan=2 > &lt;40% </td>
-          <td > &lt;40% </td>
-          <td > &lt;20% </td>
+          <td><i class="fas fa-2x fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '4'"></i>
+            <span *ngIf="riskLevel == '4'"class="suit-activate ">เสี่ยงสูง </span>
+            <span *ngIf="riskLevel != '4'">เสี่ยงสูง </span>
+          </td>
+          <td  >
+              <span *ngIf="riskLevel == '4'"class="suit-activate ">&lt;10% </span>
+              <span *ngIf="riskLevel != '4'">&lt;10% </span>
+
+          </td>
+          <td colspan=2 >
+              <span *ngIf="riskLevel == '4'"class="suit-activate ">&lt;40% </span>
+              <span *ngIf="riskLevel != '4'">&lt;40% </span>
+
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '4'"class="suit-activate ">&lt;40% </span>
+              <span *ngIf="riskLevel != '4'">&lt;40% </span>
+
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '4'"class="suit-activate ">&lt;20% </span>
+              <span *ngIf="riskLevel != '4'">&lt;20% </span>
+
+          </td>
 
         </tr>
         <tr>
-          <td>เสี่ยงสูงมาก</td>
-          <td  > &lt;50%</td>
-          <td colspan=2 > &lt;30% </td>
-          <td > &lt;40% </td>
-          <td > &lt;30% </td>
+          <td><i class="fas fa-2x fa-arrow-color fa-arrow-circle-right" *ngIf="riskLevel == '5'"></i>
+            <span *ngIf="riskLevel == '5'"class="suit-activate ">เสี่ยงสูงมาก</span>
+            <span *ngIf="riskLevel != '5'">เสี่ยงสูงมาก</span>
+          </td>
+          <td  >
+              <span *ngIf="riskLevel == '5'"class="suit-activate ">&lt;5%</span>
+              <span *ngIf="riskLevel != '5'">&lt;5%</span>
+          </td>
+          <td colspan=2 >
+              <span *ngIf="riskLevel == '5'"class="suit-activate ">&lt;30%</span>
+              <span *ngIf="riskLevel != '5'">&lt;30%</span>
+
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '5'"class="suit-activate ">&lt;60%</span>
+              <span *ngIf="riskLevel != '5'">&lt;60%</span>
+
+          </td>
+          <td >
+              <span *ngIf="riskLevel == '5'"class="suit-activate ">&lt;30%</span>
+              <span *ngIf="riskLevel != '5'">&lt;30%</span>
+
+          </td>
         </tr>
       </tbody>
     </table>

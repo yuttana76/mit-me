@@ -256,17 +256,22 @@
             </div> -->
 
 
-                <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen  suitResult"  >
-                    <h4>{{formService.label_RiskLevel}}  </h4>
+                <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen "  >
+
+                    <div class='suit_result'>
+                        <span id='suit_label'>{{formService.label_RiskLevel}}</span>
+                        <span id='suit_level'><input  matInput [(ngModel)]="cust_RiskLevel"  size=1 formControlName="cust_RiskLevel" readonly="true"> </span>
+                        <span id='suit_txt'>{{ cust_RiskLevelTxt }} </span>
+                        <span id='suit_date'>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'dd/MM/yyyy' }}</span>
+                    </div>
+
+                    <app-suit-result-table [riskLevel]="cust_RiskLevel"  ></app-suit-result-table>
+
+                    <!-- <h4>{{formService.label_RiskLevel}}  </h4>
                     <h4>
                       <span><input  matInput [(ngModel)]="cust_RiskLevel"  size=1 formControlName="cust_RiskLevel" readonly="true"> - {{ cust_RiskLevelTxt }} </span>
-                    <!-- {{cust_RiskLevel}}- {{ cust_RiskLevelTxt }} -->
                     </h4>
-
-                    <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'dd/MM/yyyy' }}</p>
-                    <!-- <p>{{ cust_RiskTypeInvestor }}</p> -->
-
-                    <app-suit-result-table [riskLevel]="riskLevel" ></app-suit-result-table>
+                    <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'dd/MM/yyyy' }}</p> -->
 
                     <!-- <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart> -->
 
@@ -346,12 +351,21 @@
 
             <div *ngIf="canSaveSuit"  class="container center-screen suitResult form_section"  >
                 <!-- <div class="suitResult" *ngIf="canSaveSuit"> -->
-                    <h4>{{formService.label_RiskLevel}}</h4>
-                    <h4>{{ riskLevel }} - {{ riskLevelTxt }}</h4>
+                    <!-- <div>
+                        <span id='label'>{{formService.label_RiskLevel}}</span>
+                        <span id='level'>{{ riskLevel }}</span>
+                        <span id='desc'>{{ riskLevelTxt }}</span>
+                    </div> -->
+
+                    <div class='suit_result'>
+                        <span id='suit_label'>{{formService.label_RiskLevel}}</span>
+                        <span id='suit_level'>{{ riskLevel }}</span>
+                        <span id='suit_txt'>{{ riskLevelTxt }} </span>
+                    </div>
+
                     <!-- <p>{{ riskLevelDesc }}</p> -->
 
-                    <app-suit-result-table [riskLevel]="riskLevel" ></app-suit-result-table>
-
+                    <app-suit-result-table [riskLevel]="riskLevel"  ></app-suit-result-table>
                     <!-- <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart> -->
 
                     <!-- <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;suitModifyFlag=false" class ="act_button"> {{formService.LABEL_CANCEL}}</a> -->

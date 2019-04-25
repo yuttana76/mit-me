@@ -331,3 +331,33 @@ code p {
   color: darkblue;
   font-size: 120%
 }
+
+.suit_result{
+  border-radius: 25px;
+  background: lavender;
+  padding: 20px;
+
+}
+.suit_result span{
+  display: block;
+  color: darkblue;
+
+}
+.suit_result #suit_label {
+  font-size: x-large;
+}
+
+.suit_result #suit_level {
+  font-size: xx-large;
+  color: orangered;
+
+}
+
+.suit_result #suit_txt {
+  font-size: x-large;
+  color: orangered;
+}
+.suit_result #suit_date {
+  font-size: medium;
+
+}

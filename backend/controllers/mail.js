@@ -59,7 +59,7 @@ exports.sendMail = (req, res, next) =>{
 /*
 Send mail  by encypt use bcrypt
 */
-const FILE_SEND_MAIL = __dirname+'..\downloadFiles\mail\mail.txt';
+// const FILE_SEND_MAIL = __dirname+'..\downloadFiles\mail\mail.txt';
 
 exports.surveyBulkFile = (req, res, next) =>{
 

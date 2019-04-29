@@ -385,6 +385,7 @@ exports.getCDDAddr = (req, res, next) => {
     DECLARE @Amphur_Id [int];
     DECLARE @Province_Id [int];
     DECLARE @Country_Id [int];
+    DECLARE @Country_oth [nvarchar](100);
     DECLARE @Zip_Code [varchar](10);
     DECLARE @Print_Address [nvarchar](400);
     DECLARE @Tel [varchar](50);
@@ -418,6 +419,7 @@ exports.getCDDAddr = (req, res, next) => {
     ,@Amphur_Id=Amphur_Id
     ,@Province_Id=Province_Id
     ,@Country_Id=Country_Id
+    ,@Country_oth=Country_oth
     ,@Zip_Code=Zip_Code
     ,@Print_Address=Print_Address
     ,@Tel=Tel
@@ -437,6 +439,7 @@ exports.getCDDAddr = (req, res, next) => {
     ,@Amphur_Id AS Amphur_Id
     ,@Province_Id AS Province_Id
     ,@Country_Id AS Country_Id
+    ,@Country_oth AS Country_oth
     ,@Zip_Code AS Zip_Code
     ,@Print_Address AS Print_Address
     ,@Tel AS Tel
@@ -491,6 +494,7 @@ exports.saveCDDAddr = (req, res, next) => {
   var Amphur_Id = req.body.Amphur_Id
   var Province_Id = req.body.Province_Id
   var Country_Id = req.body.Country_Id
+  var Country_oth = req.body.Country_oth
   var Zip_Code = req.body.Zip_Code
   var Tel = req.body.Tel
   var Fax = req.body.Fax
@@ -508,7 +512,7 @@ BEGIN
 
   UPDATE MIT_CUSTOMER_ADDR SET
   [Addr_No] =@Addr_No ,[Moo] =@Moo ,[Place]=@Place ,[Floor]=@Floor,[Soi]=@Soi ,[Road]=@Road ,[Tambon_Id]=@Tambon_Id ,[Amphur_Id]=@Amphur_Id ,[Province_Id]=@Province_Id ,
-  [Country_Id]=@Country_Id ,[Zip_Code]=@Zip_Code ,[Tel]=@Tel ,[Fax] =@Fax ,[UpdateBy]=@ActionBy ,[UpdateDate]=GETDATE()
+  [Country_Id]=@Country_Id ,Country_oth=@Country_oth ,[Zip_Code]=@Zip_Code ,[Tel]=@Tel ,[Fax] =@Fax ,[UpdateBy]=@ActionBy ,[UpdateDate]=GETDATE()
   ,SameAs=@SameAs,ReqModifyFlag=@ReqModifyFlag
   WHERE
   Cust_Code = @Cust_Code
@@ -518,10 +522,10 @@ BEGIN
       BEGIN
 
       INSERT INTO MIT_CUSTOMER_ADDR
-      ([Cust_Code] ,[Addr_Seq] ,[Addr_No] ,[Moo] ,[Place] ,[Floor],[Soi] ,[Road] ,[Tambon_Id] ,[Amphur_Id] ,[Province_Id] ,[Country_Id] ,[Zip_Code] ,[Tel] ,[Fax] ,[CreateBy] ,[CreateDate]
+      ([Cust_Code] ,[Addr_Seq] ,[Addr_No] ,[Moo] ,[Place] ,[Floor],[Soi] ,[Road] ,[Tambon_Id] ,[Amphur_Id] ,[Province_Id] ,[Country_Id] ,Country_oth,[Zip_Code] ,[Tel] ,[Fax] ,[CreateBy] ,[CreateDate]
         ,SameAs,ReqModifyFlag)
       VALUES
-      (@Cust_Code,@Addr_Seq,@Addr_No ,@Moo,@Place ,@Floor ,@Soi ,@Road ,@Tambon_Id ,@Amphur_Id ,@Province_Id ,@Country_Id,@Zip_Code ,@Tel ,@Fax ,@ActionBy ,GETDATE()
+      (@Cust_Code,@Addr_Seq,@Addr_No ,@Moo,@Place ,@Floor ,@Soi ,@Road ,@Tambon_Id ,@Amphur_Id ,@Province_Id ,@Country_Id ,@Country_oth,@Zip_Code ,@Tel ,@Fax ,@ActionBy ,GETDATE()
       ,@SameAs,@ReqModifyFlag)
 
     END
@@ -538,14 +542,16 @@ BEGIN
     +' '+ISNULL(d.Name_Thai,'')
     +' '+ISNULL(c.Name_Thai,'')
     +' '+ISNULL(Zip_Code,'')
+    + ' ' + ISNULL(b.Name_Thai ,'')
+    + ' ' + ISNULL(a.Country_oth,'')
     from MIT_CUSTOMER_ADDR a
-    LEFT JOIN REF_Countrys b ON b.Country_Id = a.Country_ID
+    LEFT JOIN REF_Countrys b  ON b.Country_Id = a.Country_ID and b.Country_ID <>9
     LEFT JOIN REF_Provinces c ON c.Province_Id = a.Province_ID and c.Country_ID = a.Country_ID
     LEFT JOIN REF_Amphurs d ON d.Province_Id = a.Province_ID and d.Amphur_ID=a.Amphur_Id
     LEFT JOIN REF_Tambons e ON e.Amphur_ID=a.Amphur_Id and e.Tambon_ID=a.Tambon_Id
     where a.Cust_Code = @Cust_Code
     and a.Addr_Seq = @Addr_Seq
-    and b.Nation=0
+    --and b.Nation=0
 
     UPDATE MIT_CUSTOMER_ADDR SET  Print_Address = @FULL_TXT WHERE Cust_Code = @Cust_Code AND Addr_Seq = @Addr_Seq
 END
@@ -566,6 +572,7 @@ END
     .input('Amphur_Id', sql.Int, Amphur_Id)
     .input('Province_Id', sql.Int, Province_Id)
     .input('Country_Id', sql.Int, Country_Id)
+    .input('Country_oth', sql.NVarChar(100), Country_oth)
     .input('Zip_Code', sql.VarChar(10), Zip_Code)
     .input('Tel', sql.VarChar(50), Tel)
     .input('Fax', sql.VarChar(50), Fax)

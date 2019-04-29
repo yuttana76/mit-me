@@ -390,6 +390,12 @@ export class SuitComponent implements OnInit {
     Country_Id: new FormControl(null, {
       validators: [Validators.required]
     }),
+
+    Country_oth: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
+
     Zip_Code: new FormControl(null, {
       validators: [Validators.required]
     }),
@@ -445,6 +451,10 @@ export class SuitComponent implements OnInit {
     Country_Id: new FormControl(null, {
       validators: [Validators.required]
     }),
+    Country_oth: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
     Zip_Code: new FormControl(null, {
       validators: [Validators.required]
     }),
@@ -487,6 +497,10 @@ export class SuitComponent implements OnInit {
     Country_Id: new FormControl(null, {
       validators: [Validators.required]
     }),
+    Country_oth: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
     Zip_Code: new FormControl(null, {
       validators: [Validators.required]
     }),
@@ -530,6 +544,10 @@ export class SuitComponent implements OnInit {
     Country_Id: new FormControl(null, {
       validators: [Validators.required]
     }),
+    Country_oth: new FormControl(null, {
+      // validators: [Validators.required]
+    }),
+
     Zip_Code: new FormControl(null, {
       validators: [Validators.required]
     }),
@@ -768,6 +786,8 @@ export class SuitComponent implements OnInit {
         _addrData.Amphur_Id = data[0].Amphur_Id;
         _addrData.Province_Id = data[0].Province_Id;
         _addrData.Country_Id = data[0].Country_Id;
+        _addrData.Country_oth = data[0].Country_oth;
+
         _addrData.Zip_Code = data[0].Zip_Code;
         _addrData.Print_Address = data[0].Print_Address;
         _addrData.Tel = data[0].Tel;
@@ -778,15 +798,48 @@ export class SuitComponent implements OnInit {
           // console.log('Seting in RE ');
           this.re_addrData = Object.assign({}, _addrData);
 
+          if (this.re_addrData.Country_Id === null)
+            this.re_addrData.Country_Id=0;
+
+
+          if(_addrData.Country_Id === 9 ){
+            this.register_formGroup.controls["Country_oth"].setValidators(Validators.required);
+            this.register_formGroup.controls["Country_oth"].updateValueAndValidity();
+
+            // console.log(' ** SET Validators RE Address');
+          }
+
+
         } else if (seqNo === 2 ) {
           this.cur_addrData = Object.assign({}, _addrData);
           // this.showCurrentAddr = true;
 
+          if(_addrData.Country_Id === 9 ){
+            this.current_formGroup.controls["Country_oth"].setValidators(Validators.required);
+            this.current_formGroup.controls["Country_oth"].updateValueAndValidity();
+
+            // console.log(' ** SET Validators CURR Address');
+          }
         } else if (seqNo === 3){
           this.work_addrData = Object.assign({}, _addrData);
           // this.showWorkAddr = true;
+
+          if(_addrData.Country_Id === 9 ){
+            this.work_formGroup.controls["Country_oth"].setValidators(Validators.required);
+            this.work_formGroup.controls["Country_oth"].updateValueAndValidity();
+
+            // console.log(' ** SET Validators WORK Address');
+          }
         } else if (seqNo === 4){
           this.mail_addrData = Object.assign({}, _addrData);
+
+          if(_addrData.Country_Id === 9 ){
+            this.mail_formGroup.controls["Country_oth"].setValidators(Validators.required);
+            this.mail_formGroup.controls["Country_oth"].updateValueAndValidity();
+
+            // console.log(' ** SET Validators MAIL Address');
+          }
+
         }
       }
     }, error => () => {
@@ -1070,6 +1123,9 @@ export class SuitComponent implements OnInit {
     this.work_addrData.Addr_Seq = this.SEQ_WORK_ADDR;
     this.work_addrData.SameAs = val;
 
+    // Default value
+    this.work_addrData.Country_Id=0;
+
     // Check which components are in validation
     if (this.work_formGroup.invalid) {
       this.work_formGroup.enable();
@@ -1108,6 +1164,11 @@ export class SuitComponent implements OnInit {
     this.cur_addrData.SameAs = val;
     this.cur_addrData.Addr_Seq = this.SEQ_CURR_ADDR;
 
+    // Default value
+    this.cur_addrData.Country_Id=0;
+
+
+
     // Check which components are in validation
     if (this.current_formGroup.invalid) {
       this.current_formGroup.enable();
@@ -1140,6 +1201,9 @@ export class SuitComponent implements OnInit {
 
       this.register_formGroup.addControl('mail_formGroup', this.mail_formGroup);
       this.mail_formGroup.setParent(this.register_formGroup);
+
+      // Default value
+      this.mail_addrData.Country_Id=0;
 
     }
 

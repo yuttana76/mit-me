@@ -39,6 +39,9 @@
             <mat-error *ngIf="addrFormGroup.get('Country_Id').invalid">{{formService.label_Pl_Choose}}</mat-error>
           </mat-form-field>
 
+          <mat-form-field class="col-md-4" *ngIf="isCountryOth()">
+            <input matInput [(ngModel)]="addrData.Country_oth" placeholder="อื่นๆ"  formControlName="Country_oth" required>
+        </mat-form-field>
         </div>
 
         <div class="row">

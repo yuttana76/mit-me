@@ -63,7 +63,8 @@ export class CustAddrComponent implements OnInit {
         console.log('Was error', error);
     }, () => {
 
-      this.sel_provinceList = this.getProvinceByCountry( this.provinceMasList, this.addrData.Country_Id);
+      this.sel_provinceList = this.getProvinceByCountry( this.provinceMasList, 0); // Default is Thailand
+      // this.sel_provinceList = this.getProvinceByCountry( this.provinceMasList, this.addrData.Country_Id);
     });
 
     this.masterDataService.getAmphurs().subscribe((data: any[]) => {
@@ -107,7 +108,20 @@ export class CustAddrComponent implements OnInit {
 
   countryChange(event: MatSelectChange) {
 
-    this.sel_provinceList = this.getProvinceByCountry( this.provinceMasList,  event.value);
+    console.log(" *** countryChange()" + event.value);
+    // this.sel_provinceList = this.getProvinceByCountry( this.provinceMasList,  event.value);
+    if(event.value === 9){
+      this.addrFormGroup.controls["Country_oth"].setValidators(Validators.required);
+      this.addrFormGroup.controls["Country_oth"].updateValueAndValidity();
+      // return true;
+    }else{
+      this.addrFormGroup.controls["Country_oth"].clearValidators();
+      this.addrFormGroup.controls["Country_oth"].updateValueAndValidity();
+      // this.addrData.Country_oth = "";
+      // return false;
+    }
+
+
   }
 
   provinceChange(event: MatSelectChange) {
@@ -162,6 +176,24 @@ export class CustAddrComponent implements OnInit {
      }else{
       this.addrFormGroup.disable();
      }
+ }
+
+ isCountryOth(){
+  if(this.addrData.Country_Id === 9){
+
+    // console.log(' *** SET Country Oth VALIDAATED')
+
+    // this.addrFormGroup.controls["Country_oth"].setValidators(Validators.required);
+    // this.addrFormGroup.controls["Country_oth"].updateValueAndValidity();
+    return true;
+  }else{
+    // console.log(' *** SET Country Oth VALIDAATED')
+    // this.addrFormGroup.controls["Country_oth"].clearValidators();
+    // this.addrFormGroup.controls["Country_oth"].updateValueAndValidity();
+    // this.addrData.Country_oth = "";
+    return false;
+  }
+
  }
 
 }

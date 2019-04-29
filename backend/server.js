@@ -64,6 +64,14 @@ app.set("port", port);
 // })
 
 // HTTPS
+
+// var intermediateCertificate = fs.readFileSync('intermediate.pem', 'utf8');
+// https.createServer({
+//     key: privateKey,
+//     cert: certificate,
+//     ca: [ intermediateCertificate ]
+// }, app).listen(port);
+
 // console.log('DIR>' + __dirname);
 // ************************************** GET IP address
 var os = require('os');
@@ -93,6 +101,7 @@ Object.keys(ifaces).forEach(function (ifname) {
 const option = {
   key: fs.readFileSync(__dirname+'/merchantasset_CA/key.pem'),
   cert: fs.readFileSync(__dirname+'/merchantasset_CA/cert.pem'),
+  ca: fs.readFileSync(__dirname+'/merchantasset_CA/inter.pem'),
     passphrase: 'mpam@2019'
 };
 var server = https.createServer(option, app)

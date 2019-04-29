@@ -11,6 +11,7 @@ export class AddrCustModel {
   public Amphur_Id: number;
   public Province_Id: number;
   public Country_Id: number;
+  public Country_oth: string;
   public Zip_Code: string;
   public Print_Address: string;
   public Tel: string;

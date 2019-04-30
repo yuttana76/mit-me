@@ -12,7 +12,6 @@ const utility = require('./utility');
 
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
-
 var mitLog = require('./mitLog');
 
 
@@ -103,6 +102,8 @@ let numData = 0;
 
 checkFile.on('line', function(line) {
   line_no++;
+
+  //Get number of data in line #1
   if (line_no == 1){
     numData = line;
   }

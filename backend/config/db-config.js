@@ -11,6 +11,39 @@ exports.dbParameters = {
   options: {
     encrypt: false // Use this if you're on Windows Azure
   }
+
+}
+exports.dbParameters_BULK = {
+  user: 'mftsuser',//process.env.AUTH_SRV_USER,
+  password: 'P@ssw0rd',//process.env.AUTH_SRV_PWD,
+  server: '192.168.10.48',//process.env.AUTH_SRV_IP,
+  database: 'MFTS',//process.env.AUTH_SRV_db,
+  requestTimeout:50000,
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  },
+  options: {
+    encrypt: false // Use this if you're on Windows Azure
+  }
+
+}
+
+exports.dbParameters_stream = {
+  user: 'mftsuser',//process.env.AUTH_SRV_USER,
+  password: 'P@ssw0rd',//process.env.AUTH_SRV_PWD,
+  server: '192.168.10.48',//process.env.AUTH_SRV_IP,
+  database: 'MFTS',//process.env.AUTH_SRV_db,
+  stream :true,
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  },
+  options: {
+    encrypt: false // Use this if you're on Windows Azure
+  }
 }
 
 // exports.mssql_db_user = process.env.AUTH_SRV_USER;

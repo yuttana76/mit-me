@@ -16,6 +16,8 @@ const resp_msg = {
   "207": "OTP  Expired",
   "208": "Incorrect data",
 
+  "301": "No User",
+
   "901": "Reset password	",
   "902": " Was error"
 };

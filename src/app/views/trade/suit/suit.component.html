@@ -122,7 +122,7 @@
         <!-- 2.1 Register Address  (SEQ = 1)-->
           <div class='row' >
             <code class='code_large'>
-                <p>{{ formService.register_addr_title }} {{ formService.register_addr_title_ENG }}</p>
+                <p>{{ formService.register_addr_title }} ({{ formService.register_addr_title_ENG }})</p>
                     <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
             </code>
           </div>
@@ -133,7 +133,7 @@
         <!-- 2.2 Work Address (SEQ = 3)-->
             <div class='row'>
               <code class='code_large'>
-                  <p>{{ formService.work_addr_title }} {{formService.work_addr_title_ENG}}</p>
+                  <p>{{ formService.work_addr_title }} ({{formService.work_addr_title_ENG}})</p>
                   <!-- <a  mat-flat-button color="accent" (click)="modifWorkAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
               </code>
             </div>
@@ -156,7 +156,7 @@
           <!-- 2.3 Current Address (SEQ = 2)-->
           <div class='row'>
             <code class='code_large'>
-                <p>{{ formService.contact_addr_title }}  {{formService.contact_addr_title_ENG}}
+                <p>{{ formService.contact_addr_title }}  ({{formService.contact_addr_title_ENG}})
                     <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
                     </p>
             </code>
@@ -179,7 +179,7 @@
               <!-- 2.4 Mail Address (SEQ = 4)-->
           <div class='row' >
             <code class='code_large'>
-                <p>{{ formService.mail_addr_title }}/{{ formService.mail_addr_title_ENG }}</p>
+                <p>{{ formService.mail_addr_title }} ({{ formService.mail_addr_title_ENG }})</p>
                     <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
             </code>
 
@@ -256,7 +256,7 @@
             </div> -->
 
 
-                <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen "  >
+                <!-- <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen "  >
 
                     <div class='suit_result'>
                         <span id='suit_label'>{{formService.label_RiskLevel}}</span>
@@ -267,16 +267,8 @@
 
                     <app-suit-result-table [riskLevel]="cust_RiskLevel"  ></app-suit-result-table>
 
-                    <!-- <h4>{{formService.label_RiskLevel}}  </h4>
-                    <h4>
-                      <span><input  matInput [(ngModel)]="cust_RiskLevel"  size=1 formControlName="cust_RiskLevel" readonly="true"> - {{ cust_RiskLevelTxt }} </span>
-                    </h4>
-                    <p>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'dd/MM/yyyy' }}</p> -->
+                </div> -->
 
-                    <!-- <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart> -->
-
-                    <!-- <a (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a> -->
-                </div>
             </form>
 
              <!-- Show Suit question  -->
@@ -349,7 +341,7 @@
             </div>
             <!-- Show Suit question  -->
 
-            <div *ngIf="canSaveSuit"  class="container center-screen suitResult form_section"  >
+            <div *ngIf="!canDoSuit && canSaveSuit"  class="container center-screen suitResult form_section"  >
                 <!-- <div class="suitResult" *ngIf="canSaveSuit"> -->
                     <!-- <div>
                         <span id='label'>{{formService.label_RiskLevel}}</span>
@@ -357,11 +349,11 @@
                         <span id='desc'>{{ riskLevelTxt }}</span>
                     </div> -->
 
-                    <div class='suit_result'>
+                    <!-- <div class='suit_result'>
                         <span id='suit_label'>{{formService.label_RiskLevel}}</span>
                         <span id='suit_level'>{{ riskLevel }}</span>
                         <span id='suit_txt'>{{ riskLevelTxt }} </span>
-                    </div>
+                    </div> -->
 
                     <!-- <p>{{ riskLevelDesc }}</p> -->
 
@@ -377,18 +369,20 @@
             <mat-card-actions class="stepper_action center-screen ">
 
                 <a *ngIf="canDoSuit" mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> {{formService.LABEL_CALCULATE}}</a>
-                <a *ngIf="!canDoSuit && !canSaveSuit" (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a>
-                <a *ngIf="canSaveSuit" mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" >{{formService.LABEL_EVA_AGAIN}}</a>
-                <a *ngIf="canSaveSuit" mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">{{formService.LABEL_EVA_CONF}}</a>
-                <!-- <button *ngIf="canSaveSuit" mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">{{formService.LABEL_EVA_CONF}}</button> -->
+                <!-- <a *ngIf="!canDoSuit && !canSaveSuit" (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}} -2</a> -->
+                <a *ngIf="!canDoSuit && canSaveSuit" (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a>
+
+                <!-- <a *ngIf="canSaveSuit" mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" >{{formService.LABEL_EVA_AGAIN}} -3</a>
+                <a *ngIf="canSaveSuit" mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">{{formService.LABEL_EVA_CONF}}-4</a> -->
 
             <!-- <div class="stepper_action"> -->
                 &nbsp;&nbsp;&nbsp;
-                <!-- <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button> -->
 
-                <button mat-flat-button *ngIf="!(canDoSuit || canSaveSuit)"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button *ngIf= "!(canDoSuit || canSaveSuit)"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+                <button mat-flat-button *ngIf="!canDoSuit && canSaveSuit"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button *ngIf= "!canDoSuit && canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+
+                <!-- <button mat-flat-button *ngIf="canSaveSuit"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button *ngIf= "canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button> -->
 
             <!-- </div>  -->
 

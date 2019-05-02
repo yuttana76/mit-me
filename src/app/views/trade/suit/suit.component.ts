@@ -345,7 +345,7 @@ export class SuitComponent implements OnInit {
 
   this.suitFormGroup = new FormGroup({
     cust_RiskLevel: new FormControl(null, {
-      validators: [Validators.required, Validators.minLength(1)]
+      // validators: [Validators.required, Validators.minLength(1)]
     }),
 
   });
@@ -1422,6 +1422,20 @@ export class SuitComponent implements OnInit {
       if(!this.cust_RiskDate  ){
         alertMSG = this.formService.NO_SUIT_MSG; // `No suitability data. Please do suitability survey.`;
       } else {
+
+        // Add dition on 02/05
+        this.cust_RiskLevel = this.riskLevel;
+        this.cust_RiskLevelTxt = this.riskLevelTxt;
+        this.cust_RiskTypeInvestor = this.riskLevelDesc;
+        this.cust_RiskDate =  new Date();
+
+        this.canDoSuit = false;
+        this.canSaveSuit = true;
+        this.suitModifyFlag = true;
+
+        this.suitFormGroup.controls["cust_RiskLevel"].setValue(this.cust_RiskLevel);
+
+        // Add dition on 02/05
 
           let _riskDate =  new Date(this.cust_RiskDate);
           let diff = Math.abs(new Date().getTime() - _riskDate.getTime());

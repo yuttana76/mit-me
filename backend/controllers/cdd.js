@@ -291,7 +291,7 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('BusinessType_Code', sql.VarChar(3), typeBusiness)
     .input('BusinessType_Oth', sql.NVarChar(100), typeBusiness_Oth)
     .input('Income_Code', sql.VarChar(6), incomeLevel)
-    .input('Income_Source_Code', sql.VarChar(100), incomeSource)
+    .input('Income_Source_Code', sql.VarChar(300), incomeSource)
     .input('Income_Source_Oth', sql.NVarChar(100), incomeSource_Oth)
     .input('WorkPlace', sql.NVarChar(500), workPlace)
     .input('ReqModifyFlag', sql.VarChar(1), reqModifyFlag)

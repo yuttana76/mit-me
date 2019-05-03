@@ -31,6 +31,7 @@ export class CDDModel {
 
       public incomeLevel: string;
       public incomeSource: string;
+      public incomeSourceList: string[] =[""];
       public incomeSource_Oth: string;
 
       public incomeCountry: string;

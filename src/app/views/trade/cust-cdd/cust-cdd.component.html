@@ -293,20 +293,31 @@
             </mat-form-field>
       </div>
 
+      <!-- {{cddData.incomeSourceList}} -->
       <div class='row'>
-            <!-- {{cddData.incomeSource}} -->
-          <mat-form-field class="col-md-4">
+            <mat-form-field class="col-md-4">
+                <mat-select [(ngModel)]="cddData.incomeSourceList" multiple name="type_list" formControlName="incomeSource" placeholder={{formService.label_incomeSource}} required >
+                   <mat-option *ngFor="let obj of incomeSourceList" [value]="obj.Code">
+                    {{obj.Thai_Name}}
+                </mat-option>
+                </mat-select>
+                <mat-error *ngIf="cddFormGroup.get('incomeSource').invalid">Please choose one.</mat-error>
+            </mat-form-field>
+
+
+            <!-- <mat-form-field class="col-md-4">
               <mat-select [(ngModel)]="cddData.incomeSource" formControlName="incomeSource" placeholder={{formService.label_incomeSource}} required >
                 <mat-option *ngFor="let obj of incomeSourceList" [value]="obj.Code">
                     {{obj.Thai_Name}}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="cddFormGroup.get('incomeSource').invalid">Please choose one.</mat-error>
-            </mat-form-field>
+            </mat-form-field> -->
 
           <mat-form-field class="col-md-4" *ngIf="isIncomeSource()">
               <input matInput [(ngModel)]="cddData.incomeSource_Oth" placeholder={{formService.label_other}}  formControlName="incomeSourceOth" required>
           </mat-form-field>
+
       </div>
 
       <div class='row'>

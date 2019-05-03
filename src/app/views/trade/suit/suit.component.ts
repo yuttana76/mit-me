@@ -735,6 +735,10 @@ export class SuitComponent implements OnInit {
       // this.reloadData();
       this.getChildren(_id);
 
+      if(this.cddData.incomeSource){
+        this.cddData.incomeSourceList = this.cddData.incomeSource.split(",");
+      }
+
     }
 
   }, error => () => {
@@ -1571,7 +1575,6 @@ export class SuitComponent implements OnInit {
     const observables = [];
 
    if(this.cddData.maritalStatus !== 'Married'){
-
       this.cddData.SPpersonModel.cardType ='';
       this.cddData.SPpersonModel.passportCountry =''
       this.cddData.SPpersonModel.cardNumber ='';
@@ -1581,8 +1584,20 @@ export class SuitComponent implements OnInit {
       this.cddData.SPpersonModel.lastName = '';
       this.cddData.SPpersonModel.cardNotExp = '';
       this.cddData.SPpersonModel.cardExpDate = '';
-
    }
+
+   let j: any;
+  //  let incomeSourvceVal='';
+   this.cddData.incomeSource ='';
+console.log("incomeSourceList >>" + this.cddData.incomeSourceList);
+
+  for(j in this.cddData.incomeSourceList) {
+    console.log("VAL >>" + this.cddData.incomeSourceList[j]);
+    this.cddData.incomeSource = this.cddData.incomeSource + ","+this.cddData.incomeSourceList[j];
+    // incomeSourvceVal = this.cddData.incomeSource +","+this.cddData.incomeSourceList[j];
+ }
+ console.log("incomeSource >>" + this.cddData.incomeSource);
+  // this.cddData.incomeSource = incomeSourvceVal;
 
     // CDD
     observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));

@@ -49,6 +49,7 @@ export class CustCDDComponent implements OnInit {
   positionList: Position[];
   incomeList: FCincomeLevel[];
   incomeSourceList: FCincomeSource[];
+  // incomeSel_list: string[] =[""];
 
   // childDisplayedColumns: string[] = ['index','CardType', 'Number', 'Expire' , 'Title', 'FirstName', 'LastName', 'Action'];
   // childDataSource = new BehaviorSubject([]);
@@ -270,7 +271,10 @@ export class CustCDDComponent implements OnInit {
  }
 
  isIncomeSource(){
-  if(this.cddData.incomeSource === this.shareDataService.INCOMESOURCE_FC_OTHER){
+
+  // if(this.cddData.incomeSource === this.shareDataService.INCOMESOURCE_FC_OTHER){
+  // if(this.incomeSel_list.indexOf(this.shareDataService.INCOMESOURCE_FC_OTHER) > -1){
+  if(this.cddData.incomeSourceList.includes(this.shareDataService.INCOMESOURCE_FC_OTHER)){
     this.cddFormGroup.controls["incomeSourceOth"].setValidators(Validators.required);
     this.cddFormGroup.controls["incomeSourceOth"].updateValueAndValidity();
     return true;

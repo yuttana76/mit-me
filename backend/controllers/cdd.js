@@ -80,7 +80,7 @@ exports.getCDDinfo_MIT = (req, res, next) => {
 
   END ELSE
     BEGIN
-      SELECT top 1 a.Cust_Code,a.Cust_Code AS ID_CARD, a.Title_Name_T,a.First_Name_T,a.Last_Name_T,a.First_Name_E,a.Last_Name_E,a.Birth_Day,a.Mobile,a.Email
+      SELECT top 1 a.Cust_Code,a.Cust_Code AS ID_CARD, UPPER(a.Title_Name_E) AS title,a.First_Name_T,a.Last_Name_T,a.First_Name_E,a.Last_Name_E,a.Birth_Day,'TH' AS nationality,a.Mobile,a.Email
       ,b.Account_No,b.Occupation_Code,b.Occupation_Desc
       ,b.Position_Code,b.Position,b.Politician_Desc
       ,b.BusinessType_Code
@@ -150,6 +150,7 @@ exports.saveCDDInfo = (req, res, next) => {
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
   var dob = req.body.dob;
+  var nationality = req.body.nationality;
   var cardExpiryDate = req.body.cardExpiryDate;
   var mobile = req.body.mobile;
   var email = req.body.email;
@@ -202,6 +203,7 @@ exports.saveCDDInfo = (req, res, next) => {
    ,[First_Name_T]=@First_Name_T
    ,[Last_Name_T]=@Last_Name_T
    ,[Birth_Day]=@Birth_Day
+    ,nationality=@nationality
    ,[cardExpiryDate]=@cardExpiryDate
    ,[Mobile]=@Mobile
    ,[Email]=@Email
@@ -249,7 +251,7 @@ exports.saveCDDInfo = (req, res, next) => {
     if @@rowcount = 0
     BEGIN
 
-    INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[First_Name_T] ,[Last_Name_T] ,[Birth_Day] ,[Mobile] ,[Email]
+    INSERT INTO MIT_CUSTOMER_INFO ([Cust_Code],[ID_CARD] ,[First_Name_T] ,[Last_Name_T] ,[Birth_Day],nationality ,[Mobile] ,[Email]
       ,[Occupation_Code] ,[Occupation_Desc] ,[Position_Code],[Position_Desc] ,[BusinessType_Code],[BusinessType_Desc] ,[Income_Code] ,[Income_Source_Code],[Income_Source_Desc],WorkPlace,ReqModifyFlag,[CreateBy] ,[CreateDate]
       ,[identificationCardType],[passportCountry],[title],[titleOther],[First_Name_E],[Last_Name_E],cardExpiryDate,MailSameAs
       ,[MaritalStatus],[SpouseCardType],[SpousePassportCountry],[SpouseCardNumber],[SpouseTitle],[SpouseTitleOther],[SpouseFirstName] ,[SpouseLastName]
@@ -257,7 +259,7 @@ exports.saveCDDInfo = (req, res, next) => {
       ,[MoneyLaundaring]
       ,[PoliticalRelate] ,[RejectFinancial],[cardNotExp],[SpouseIDNotExp] ,[TaxDeduction]
       ,NumChildren)
-    VALUES(@Cust_Code,@ID_CARD ,@First_Name_T ,@Last_Name_T ,@Birth_Day ,@Mobile ,@Email
+    VALUES(@Cust_Code,@ID_CARD ,@First_Name_T ,@Last_Name_T ,@Birth_Day,@nationality ,@Mobile ,@Email
         ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ReqModifyFlag,@ActionBy ,GETDATE()
         ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E,@cardExpiryDate,@MailSameAs
         ,@MaritalStatus,@SpouseCardType,@SpousePassportCountry,@SpouseCardNumber,@SpouseTitle,@SpouseTitleOther,@SpouseFirstName ,@SpouseLastName
@@ -281,6 +283,7 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('First_Name_T', sql.NVarChar(200), firstName)
     .input('Last_Name_T', sql.NVarChar(200), lastName)
     .input('Birth_Day', sql.VarChar(20), dob)
+    .input('nationality', sql.VarChar(2), nationality)
     .input('cardExpiryDate', sql.VarChar(20), cardExpiryDate)
     .input('Mobile', sql.VarChar(50), mobile)
     .input('Email', sql.NVarChar(200), email)

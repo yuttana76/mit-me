@@ -20,12 +20,16 @@ export class CddService {
         map(fundtData => {
           return fundtData.result.map(data => {
 
+            console.log("Title BF>>" + data.title);
+            var _title = data.title.split(".");
+            console.log("Title AF>>" + _title);
+
             return {
               pid: data.ID_CARD,
-              // title: data.Title_Name_T,
               firstName: data.First_Name_T,
               lastName: data.Last_Name_T,
               dob: data.Birth_Day,
+              nationality: data.nationality,
               PIDExpDate: data.cardExpiryDate,
               mobile: data.Mobile,
               email: data.Email,
@@ -41,7 +45,8 @@ export class CddService {
               workPlace: data.WorkPlace,
               identificationCardType: data.identificationCardType,
               passportCountry: data.passportCountry,
-              title: data.title,
+              // title: data.title,
+              title: _title[0],
               titleOther: data.titleOther,
               firstNameE: data.First_Name_E,
               lastNameE: data.Last_Name_E,
@@ -111,6 +116,7 @@ export class CddService {
       firstName: cdd.firstName,
       lastName: cdd.lastName,
       dob: _DOB,
+      nationality: cdd.nationality,
       cardExpiryDate:_cardEXPDate,
       mobile: cdd.mobile,
       email: cdd.email,

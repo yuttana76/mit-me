@@ -20,6 +20,7 @@ export class CDDModel {
       public dob: string;
       public mobile: string;
       public email: string ;
+      public nationality: string;
       public occupation: string;
       public occupation_Oth: string;
 

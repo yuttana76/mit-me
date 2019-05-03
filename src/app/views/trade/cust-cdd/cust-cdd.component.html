@@ -99,6 +99,20 @@
           </mat-form-field>
       </div>
 
+
+      <div class='row'>
+        <mat-form-field class="col-md-4">
+            <mat-select [(ngModel)]="cddData.nationality" formControlName="nationality" placeholder={{formService.label_nationality}} required >
+              <mat-option *ngFor="let obj of nationalityList" [value]="obj.Code">
+                {{obj.Eng_Name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="cddFormGroup.get('nationality').invalid">Please choose one.</mat-error>
+          </mat-form-field>
+
+    </div>
+
+
       <!-- <div class="row" >
           <mat-form-field class="col-md-4">
               <input matInput [(ngModel)]="cddData.PIDExpDate"  [matDatepicker]="expDatePicker" formControlName="PIDExpDate"  placeholder={{formService.label_PIDExpDate}} readonly=true>

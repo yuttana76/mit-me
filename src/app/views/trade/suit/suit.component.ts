@@ -241,6 +241,9 @@ export class SuitComponent implements OnInit {
     dob: new FormControl(null, {
       validators: [Validators.required]
     }),
+    nationality: new FormControl(null, {
+      validators: [Validators.required]
+    }),
     PIDExpDate: new FormControl(null, {
       validators: [Validators.required]
     }),
@@ -670,6 +673,8 @@ export class SuitComponent implements OnInit {
       this.cddData.firstName = data[0].firstName;
       this.cddData.lastName = data[0].lastName;
       this.cddData.dob = data[0].dob;
+      this.cddData.nationality = data[0].nationality;
+
       this.cddData.PIDExpDate = data[0].PIDExpDate;
       this.cddData.mobile = data[0].mobile;
       this.cddData.email = data[0].email;
@@ -1589,14 +1594,10 @@ export class SuitComponent implements OnInit {
    let j: any;
   //  let incomeSourvceVal='';
    this.cddData.incomeSource ='';
-console.log("incomeSourceList >>" + this.cddData.incomeSourceList);
-
   for(j in this.cddData.incomeSourceList) {
-    console.log("VAL >>" + this.cddData.incomeSourceList[j]);
     this.cddData.incomeSource = this.cddData.incomeSource + ","+this.cddData.incomeSourceList[j];
     // incomeSourvceVal = this.cddData.incomeSource +","+this.cddData.incomeSourceList[j];
  }
- console.log("incomeSource >>" + this.cddData.incomeSource);
   // this.cddData.incomeSource = incomeSourvceVal;
 
     // CDD

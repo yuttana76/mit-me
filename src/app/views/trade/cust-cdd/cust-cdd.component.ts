@@ -22,6 +22,7 @@ import { PersonalInfoComponent } from '../personal-info/personal-info.component'
 import { ChildrenDialogComponent } from '../dialog/children-dialog/children-dialog.component';
 import { BehaviorSubject } from 'rxjs';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
+import { FCnation } from '../model/fcNation.model';
 
 @Component({
   selector: 'app-cust-cdd',
@@ -43,6 +44,7 @@ export class CustCDDComponent implements OnInit {
 
   // SPComponent: PersonalInfoComponent;
 
+  nationalityList: FCnation[];
   countryList: FCcountry[];
   businessTypeList: FCbusinessType[];
   occupationList: FCoccupation[];
@@ -90,6 +92,10 @@ export class CustCDDComponent implements OnInit {
 
     this.cardNotExpChecked =    this.cddData.cardNotExp == 'Y'? true :false;
     this.SPcardNotExpChecked =    this.cddData.SPpersonModel.cardNotExp == 'Y'? true :false;
+
+    this.masterDataService.getFCnation().subscribe((data: any[]) => {
+      this.nationalityList = data;
+    });
 
     this.masterDataService.getFCcountry().subscribe((data: any[]) => {
       this.countryList = data;

@@ -85,6 +85,7 @@ exports.getPosition = (req, res, next) => {
   var queryStr = `
   SELECT *
   FROM [REF_Position]
+  WHERE MIT_FLAG = 'A'
   ORDER BY Thai_Name
   `;
 

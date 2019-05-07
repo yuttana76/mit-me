@@ -118,7 +118,7 @@ exports.uploadBulkFile = (req, res, next) =>{
     const pool1 = new sql.ConnectionPool(config_BULK, err => {
 
         console.log('connected');
-        const table = new sql.Table('MIT_LED');
+        const table = new sql.Table('MIT_LED_MASTER');
         // table.create = true;
         table.columns.add('twsid', sql.Int, {nullable: false, primary: true});
         table.columns.add('black_case', sql.NVarChar(20));
@@ -198,7 +198,7 @@ exports.uploadBulkFile = (req, res, next) =>{
               });
 
               // Response to client
-              res.status(200).json({ message: 'BULK successful' });
+              res.status(200).json({ message: 'Total lines : ' + line_no });
             }
 
           })

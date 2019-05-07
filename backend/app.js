@@ -44,6 +44,7 @@ const downloadRoutes = require('./routes/download');
 const fatcaRoutes = require('./routes/fatca');
 const custChildrenRoutes = require('./routes/custChildren');
 const ledRoutes = require('./routes/led');
+const swanRoutes = require('./routes/swan');
 
 const app = express();
 
@@ -128,6 +129,8 @@ app.use("/api/cdd",cddRoutes);
 app.use("/api/child",custChildrenRoutes);
 
 app.use("/api/led",ledRoutes);
+
+app.use("/api/swan",swanRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

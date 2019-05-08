@@ -1,7 +1,11 @@
+// var HOST_SERVER = '192.168.10.25'; // PROD
+var HOST_SERVER = '192.168.10.48';  // DEV
+
 exports.dbParameters = {
+  server: HOST_SERVER,//PROD
+  // server: '192.168.10.48',//DEV
   user: 'mftsuser',//process.env.AUTH_SRV_USER,
   password: 'P@ssw0rd',//process.env.AUTH_SRV_PWD,
-  server: '192.168.10.48',//process.env.AUTH_SRV_IP,
   database: 'MFTS',//process.env.AUTH_SRV_db,
   pool: {
     max: 10,
@@ -14,9 +18,10 @@ exports.dbParameters = {
 
 }
 exports.dbParameters_BULK = {
+  // server: '192.168.10.48',//process.env.AUTH_SRV_IP,
+  server: HOST_SERVER,//process.env.AUTH_SRV_IP,
   user: 'mftsuser',//process.env.AUTH_SRV_USER,
   password: 'P@ssw0rd',//process.env.AUTH_SRV_PWD,
-  server: '192.168.10.48',//process.env.AUTH_SRV_IP,
   database: 'MFTS',//process.env.AUTH_SRV_db,
   requestTimeout:50000,
   pool: {
@@ -31,9 +36,10 @@ exports.dbParameters_BULK = {
 }
 
 exports.dbParameters_stream = {
+  // server: '192.168.10.48',//process.env.AUTH_SRV_IP,
+  server: HOST_SERVER,//process.env.AUTH_SRV_IP,
   user: 'mftsuser',//process.env.AUTH_SRV_USER,
   password: 'P@ssw0rd',//process.env.AUTH_SRV_PWD,
-  server: '192.168.10.48',//process.env.AUTH_SRV_IP,
   database: 'MFTS',//process.env.AUTH_SRV_db,
   stream :true,
   pool: {

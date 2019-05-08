@@ -78,10 +78,10 @@ var time = today.getHours() + "-" + today.getMinutes()
 // var time = today.getHours() + "-" + today.getMinutes() + ":" + today.getSeconds();
 var dateTime = date+'-'+time;
 
-const readPath = __dirname + '/readFiles/mail/';
+const readPath = __dirname + '/readFiles/SURVEY/';
 const readFile = 'sendMail.txt';
 
-const bakPath = __dirname + '/readFiles/mailBackup/';
+const bakPath = __dirname + '/readFiles/SURVEYBackup/';
 const bakFile =  dateTime+'-sendMail.txt';
 
   if (_target =='prod'){
@@ -321,6 +321,17 @@ function getCustomerInfo(Cust_Code) {
   var fncName = "getCustomerData";
   var queryStr = ` BEGIN
 
+  select Cust_Code
+  ,a.First_Name_T +' ' + a.Last_Name_T AS fullName
+  ,a.First_Name_E +' ' + a.Last_Name_E AS fullName_Eng
+  ,Email
+  from MIT_CUSTOMER_INFO a
+  where cust_code= @Cust_Code
+
+
+  if @@rowcount = 0
+  BEGIN
+
   SELECT Cust_Code
   ,[Title_Name_T] + ' ' +  [First_Name_T] + ' ' + [Last_Name_T] AS fullName
   ,[Title_Name_E] + ' ' +  [First_Name_E] + ' ' + [Last_Name_E] AS fullName_Eng
@@ -329,6 +340,8 @@ function getCustomerInfo(Cust_Code) {
   WHERE Cust_Code= @Cust_Code
 
   END
+
+END
     `;
 
   const sql = require("mssql");

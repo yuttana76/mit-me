@@ -1,24 +1,15 @@
 
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
 const mysql_dbConfig = require("../config/mysql-config");
-var prop = require("../config/backend-property");
+// var prop = require("../config/backend-property");
 var logger = require("../config/winston");
-var mitLog = require('./mitLog');
-
+// var mitLog = require('./mitLog');
 var config = mysql_dbConfig.swan_dbParameters;
 
 var mysql = require('mysql');
-var pool  = mysql.createPool(config);
+// var pool  = mysql.createPool(config);
 
-const connection = mysql.createConnection(config);
-connection.connect(function(err) {
-if(err) {
-  console.log('error')
-} else {
-  console.log('Connected');
-}
-});
 
 // Execute Streaming data (OK)
 //  exports.getCustomers = (req, res, next) => {
@@ -69,9 +60,19 @@ exports.getCustomers = (req, res, next) => {
 }
 
 // Use Streaming query
-function getSWANCustomer(){
+// exports.getSWANCustomer = function(){
+  function getSWANCustomer(){
 
   logger.info(`Welcome getSWANCustomer() `);
+
+  const connection = mysql.createConnection(config);
+  connection.connect(function(err) {
+  if(err) {
+    console.log('error')
+  } else {
+    console.log('SWAN-Connected');
+  }
+  });
 
   return new Promise(function(resolve, reject) {
     var allData=[];

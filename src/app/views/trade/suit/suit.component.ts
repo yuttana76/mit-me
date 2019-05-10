@@ -1670,7 +1670,7 @@ export class SuitComponent implements OnInit {
     if(observables.length > 0){
 
       const example = forkJoin(observables);
-      const subscribe = example.subscribe(result => {
+      const subscribe = example.subscribe((result:any) => {
           // console.log(result)
          this.saveAllComplete = true;
 

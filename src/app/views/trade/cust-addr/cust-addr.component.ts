@@ -114,6 +114,28 @@ export class CustAddrComponent implements OnInit {
       this.addrFormGroup.controls["Country_oth"].setValidators(Validators.required);
       this.addrFormGroup.controls["Country_oth"].updateValueAndValidity();
       // return true;
+    }else if(event.value !== 'TH'){
+
+      // Addr_No
+      this.addrFormGroup.controls["Addr_No"].clearValidators();
+      this.addrFormGroup.controls["Addr_No"].updateValueAndValidity();
+
+      // Zip_Code
+      this.addrFormGroup.controls["Zip_Code"].clearValidators();
+      this.addrFormGroup.controls["Zip_Code"].updateValueAndValidity();
+
+      // Province_Id
+      this.addrFormGroup.controls["Province_Id"].clearValidators();
+      this.addrFormGroup.controls["Province_Id"].updateValueAndValidity();
+
+      // Amphur_Id
+      this.addrFormGroup.controls["Amphur_Id"].clearValidators();
+      this.addrFormGroup.controls["Amphur_Id"].updateValueAndValidity();
+
+      // Tambon_Id
+      this.addrFormGroup.controls["Tambon_Id"].clearValidators();
+      this.addrFormGroup.controls["Tambon_Id"].updateValueAndValidity();
+
     }else{
       this.addrFormGroup.controls["Country_oth"].clearValidators();
       this.addrFormGroup.controls["Country_oth"].updateValueAndValidity();

@@ -8,4 +8,7 @@ const router = express.Router();
 router.post("/uploadFile",selfAuth,ledController.uploadFile);
 router.post("/uploadBulkFile",selfAuth,ledController.uploadBulkFile);
 
+router.post("/checkCustAll",selfAuth,ledController.checkCustAll);
+router.post("/checkCustByID",selfAuth,ledController.checkCustByID);
+
 module.exports = router;

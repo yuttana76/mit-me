@@ -12,11 +12,15 @@ var config = dbConfig.dbParameters;
 var config_BULK = dbConfig.dbParameters_BULK;
 var config_stream = dbConfig.dbParameters_stream;
 
+const mysql_dbConfig = require("../config/mysql-config");
+var swan_config = mysql_dbConfig.swan_dbParameters;
+var mysql = require('mysql');
+
 const readPath = __dirname + '/readFiles/LED/';
 const readFile = 'exp_lom.txt';
 
 const bakPath = __dirname + '/readFiles/LEDBackup/';
-
+var msdb = require("../config/msdb");
 
 exports.uploadFile = (req, res, next) =>{
 
@@ -98,7 +102,6 @@ exports.uploadBulkFile = (req, res, next) =>{
     return res.status(401);
   }
 
-
 // Check file exist
   fs.stat(readPath+readFile, function(err, stat) {
     if(err == null) {
@@ -111,7 +114,6 @@ exports.uploadBulkFile = (req, res, next) =>{
         console.log('Some other error: ', err.code);
     }
   });
-
 
     //Table config
     const sql = require('mssql');
@@ -143,11 +145,11 @@ exports.uploadBulkFile = (req, res, next) =>{
         table.columns.add('bkr_prot_mm ', sql.VarChar(2), { nullable: true });
         table.columns.add('bkr_prot_yy ', sql.VarChar(4), { nullable: true });
         table.columns.add('statusdf ', sql.VarChar(1), { nullable: true });
-        table.columns.add('CreateBy ', sql.VarChar(20), { nullable: true });
-        table.columns.add('CreateDate ', sql.Date, { nullable: true });
-        table.columns.add('UpdateBy ', sql.VarChar(20), { nullable: true });
-        table.columns.add('UpdateDate ', sql.Date, { nullable: true });
-        table.columns.add('LED_Status ', sql.Char(2), { nullable: true });
+        table.columns.add('createBy ', sql.VarChar(20), { nullable: true });
+        table.columns.add('createDate ', sql.Date, { nullable: true });
+        table.columns.add('updateBy ', sql.VarChar(20), { nullable: true });
+        table.columns.add('updateDate ', sql.Date, { nullable: true });
+        table.columns.add('ledStatus ', sql.Char(2), { nullable: true });
 
         //  File
       line_no = 0;
@@ -203,8 +205,6 @@ exports.uploadBulkFile = (req, res, next) =>{
 
           })
 
-
-
         });
         // file
 
@@ -217,8 +217,290 @@ exports.uploadBulkFile = (req, res, next) =>{
 
 }
 
+let mftsCust =[];
+let swanCust =[];
+let ledMaster =[];
+
+exports.checkCustAll = (req, res, next) => {
+    logger.info(`API /api/led/checkCustAll - ${req.originalUrl} - ${req.ip} `);
+
+
+    //Get SWAN customer
+    // getSWANCustomers()
+    // .then((data)=>{
+    //   console.log('getSWANCustomers()>>' + data.length);
+    //   res.status(200).json({record: data.length , data: data });
+    // }
+    // ,(err)=>{
+    //   res.status(401).json({ message: err });
+    // });
+
+    // getMFTSCustomers()
+    // .then((data)=>{
+    //   console.log('getMFTSCustomers()>>' + data.length);
+    //   res.status(200).json({record: data.length , data: data });
+    // }
+    // ,(err)=>{
+    //   res.status(401).json({ message: err });
+    // });
+
+
+Promise.all([
+  getSWANCustomers().catch(err => { res.status(401).json({ message: 'getSWANCustomers()'+err }); }),
+  getMFTSCustomers().catch(err => { res.status(401).json({ message: 'getMFTSCustomers()'+err }); }),
+  getLEDMaster().catch(err => { res.status(401).json({ message: 'getLEDMaster()' +err }); }),
+  ]).then(values => {
+    // swanCust = values[0];
+    // mftsCust = values[1];
+    // ledMaster = values[2];
+
+    // console.log("swanCust=" + swanCust.length  );
+    // console.log("mftsCust=" + mftsCust.length  );
+    // console.log("ledMaster=" + ledMaster.length  );
+
+    // res.status(200).json({record: swanCust.length + mftsCust.length  , message: 'API successful' });
+
+    console.log("values 1 =" + values[0].length  );
+    console.log("values 2 =" + values[1].length  );
+    console.log("values 3 =" + values[2].length  );
+    res.status(200).json({ message: 'API successful' });
+});
+
+
+}
+
+
+exports.checkCustByID = (req, res, next) => {
+    logger.info(`API /api/led/checkCustByID - ${req.originalUrl} - ${req.ip} `);
+
+    // getSWANCustomer().then((data)=>{
+
+    //   res.status(200).json({record: data.length , data: data });
+    // }
+    // ,(err)=>{
+    //   res.status(401).json({ message: err });
+    // });
+
+    res.status(200).json({message: 'API successful' });
+
+}
 
 // **** Functions
+function getSWANCustomers(){
+
+  logger.info(`Welcome getSWANCustomers() `);
+
+  const connection = mysql.createConnection(swan_config);
+  connection.connect(function(err) {
+  if(err) {
+    console.log('error')
+  } else {
+    console.log('SWAN-Connected');
+  }
+  });
+
+  return new Promise(function(resolve, reject) {
+    var allData=[];
+    var query = connection.query('SELECT AlienNo AS Cust_Code,ThaiName AS First_Name_T,ThaiSurname AS Last_Name_T from external_fireSwan.investor_profile');
+    query
+      .on('error', function(err) {
+        // Handle error, an 'end' event will be emitted after this as well
+        reject(err);
+      })
+      .on('fields', function(fields) {
+        // the field packets for the rows to follow
+      })
+      .on('result', function(row) {
+        // Pausing the connnection is useful if your processing involves I/O
+        connection.pause();
+        // console.log(row);
+        allData.push(row);
+        connection.resume();
+
+      })
+      .on('end', function() {
+        // all rows have been received
+        // res.status(200).json({ message: allData });
+        resolve(allData);
+      });
+  });
+}
+
+
+function getMFTSCustomers(){
+  logger.info(`Welcome getMFTSCustomers() `);
+
+  return new Promise(function(resolve, reject) {
+    var queryStr = `SELECT Cust_Code,First_Name_T,Last_Name_T FROM Account_Info`;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+      console.log("EROR>>"+err);
+    })
+  });
+}
+
+
+function getLEDMaster(){
+
+  logger.info(`Welcome getLEDMaster() `);
+
+  return new Promise(function(resolve, reject) {
+    var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    // var queryStr = `SELECT twsid,df_id,df_name,df_surname FROM MIT_LED_MASTER`;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+      console.log("EROR>>"+err);
+    })
+  });
+}
+
+
+// function getMFTSCustomers(){
+
+//   logger.info(`Welcome getMFTSCustomers() `);
+
+//   return new Promise(function(resolve, reject) {
+//     var allData=[];
+
+//     const sql = require('mssql')
+//     const mftsQuery ='SELECT Cust_Code,First_Name_T,Last_Name_T FROM Account_Info';
+
+//       sql.connect(config, err => {
+//           // ... error checks
+//           if(err){
+//             reject(err);
+//           }
+
+//           const request = new sql.Request()
+//           request.stream = true // You can set streaming differently for each request
+//           request.query(mftsQuery) // or request.execute(procedure)
+
+//           request.on('recordset', columns => {
+//               // Emitted once for each recordset in a query
+//           })
+
+//           request.on('row', row => {
+//               // Emitted for each row in a recordset
+//               //  request.pause();
+//               // console.log(row);
+//               allData.push(row);
+//               // request.resume();
+
+//           })
+
+//           request.on('error', err => {
+//               // May be emitted multiple times
+//               console.log('SQL closed.');
+//               sql.close();
+//               reject(err);
+//           })
+
+//           request.on('done', result => {
+//               // Always emitted as the last one
+//               console.log('SQL closed.');
+//               sql.close();
+//               resolve(allData);
+//           })
+//       })
+
+//       sql.on('error', err => {
+//           // ... error handler
+//           console.log('SQL closed.');
+//           sql.close();
+//           reject(err);
+//       })
+
+//   });
+// }
+
+
+// function getLEDMaster(){
+
+//   logger.info(`Welcome getLEDMaster() `);
+
+//   return new Promise(function(resolve, reject) {
+//     var allData=[];
+
+//     const sql = require('mssql')
+
+//     const mftsQuery ='SELECT twsid,df_id,df_name,df_surname FROM MIT_LED_MASTER ';
+
+//       sql.connect(config, err => {
+//           // ... error checks
+//           if(err){
+//             reject(err);
+//           }
+
+//           const request = new sql.Request()
+//           request.stream = true // You can set streaming differently for each request
+//           request.query(mftsQuery) // or request.execute(procedure)
+
+//           request.on('recordset', columns => {
+//               // Emitted once for each recordset in a query
+//           })
+
+//           request.on('row', row => {
+//               // Emitted for each row in a recordset
+//               //  request.pause();
+//               // console.log(row);
+//               allData.push(row);
+//               // request.resume();
+
+//           })
+
+//           request.on('error', err => {
+//               // May be emitted multiple times
+//               console.log('SQL closed.');
+//               sql.close();
+
+//               reject(err);
+//           })
+
+//           request.on('done', result => {
+//               // Always emitted as the last one
+//               console.log('SQL closed.');
+//               sql.close();
+
+//               resolve(allData);
+//           })
+//       })
+
+//       sql.on('error', err => {
+//           // ... error handler
+//           console.log('SQL closed.');
+//           sql.close();
+
+//           reject(err);
+//       })
+
+//   });
+// }
 
 function insertMIT_LED(userCode,line) {
 
@@ -281,6 +563,45 @@ function insertMIT_LED(userCode,line) {
           else
             resolve(array[7]);
 
+        });
+    });
+    pool1.on("error", err => {
+      console.log("EROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+
+
+function insertCustInspect(_pid,_ledKey) {
+
+  console.log(`insertCustInspect _pid=$_pid ; _ledKey=$_ledKey`  );
+  var fncName = "insertCustInspect";
+  var queryStr = `
+  BEGIN
+
+
+  END
+    `;
+
+  const sql = require("mssql");
+
+  return new Promise(function(resolve, reject) {
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("pid", sql.VarChar(50), _pid)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            resolve(result.recordset[0]);
+
+          }
         });
     });
     pool1.on("error", err => {

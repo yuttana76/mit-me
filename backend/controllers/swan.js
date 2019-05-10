@@ -51,12 +51,12 @@ exports.getCustomers = (req, res, next) => {
     logger.info(`API /api/swan/getCustomers - ${req.originalUrl} - ${req.ip} `);
 
     getSWANCustomer().then((data)=>{
+      
       res.status(200).json({record: data.length , data: data });
     }
     ,(err)=>{
       res.status(401).json({ message: err });
     });
-
 }
 
 // Use Streaming query

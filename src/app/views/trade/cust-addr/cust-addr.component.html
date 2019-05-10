@@ -1,6 +1,24 @@
 <div class="container ">
 
     <form [formGroup]="addrFormGroup" class="form_section">
+
+        <div class="row">
+            <mat-form-field class="col-md-4">
+              <mat-select formControlName="Country_Id" placeholder="{{formService.label_Country}}" [(ngModel)]="addrData.Country_Id"
+              (selectionChange) ="countryChange($event)" required>
+                <mat-option *ngFor="let obj of sel_countryList" [value]="obj.Country_ID">
+                  {{obj.Name_Thai}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="addrFormGroup.get('Country_Id').invalid">{{formService.label_Pl_Choose}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-4" *ngIf="isCountryOth()">
+              <input matInput [(ngModel)]="addrData.Country_oth" placeholder="อื่นๆ"  formControlName="Country_oth" required>
+          </mat-form-field>
+          </div>
+
+
       <div class='row'>
           <mat-form-field class="col-md-4" >
               <input matInput [(ngModel)]="addrData.Addr_No" placeholder="{{formService.label_no}}"  formControlName="Addr_No" required>
@@ -28,7 +46,7 @@
           </mat-form-field>
       </div>
 
-      <div class="row">
+      <!-- <div class="row">
           <mat-form-field class="col-md-4">
             <mat-select formControlName="Country_Id" placeholder="{{formService.label_Country}}" [(ngModel)]="addrData.Country_Id"
             (selectionChange) ="countryChange($event)" required>
@@ -42,7 +60,7 @@
           <mat-form-field class="col-md-4" *ngIf="isCountryOth()">
             <input matInput [(ngModel)]="addrData.Country_oth" placeholder="อื่นๆ"  formControlName="Country_oth" required>
         </mat-form-field>
-        </div>
+        </div> -->
 
         <div class="row">
           <mat-form-field class="col-md-4">

@@ -29,7 +29,7 @@
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.22.2",
-    "mssql": "^4.1.0",
+    "mssql": "^5.1.0",
     "mutationobserver-shim": "^0.3.2",
     "nodemailer": "^4.6.8",
     "object-to-xml": "^2.0.0",

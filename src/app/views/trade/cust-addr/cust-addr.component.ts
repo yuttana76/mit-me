@@ -109,12 +109,16 @@ export class CustAddrComponent implements OnInit {
   countryChange(event: MatSelectChange) {
 
     console.log(" *** countryChange()" + event.value);
+    /**
+     * 0:Thailand
+     * 9:Other
+     */
     // this.sel_provinceList = this.getProvinceByCountry( this.provinceMasList,  event.value);
     if(event.value === 9){
       this.addrFormGroup.controls["Country_oth"].setValidators(Validators.required);
       this.addrFormGroup.controls["Country_oth"].updateValueAndValidity();
       // return true;
-    }else if(event.value !== 'TH'){
+    }else if(event.value !== 0){
 
       // Addr_No
       this.addrFormGroup.controls["Addr_No"].clearValidators();
@@ -136,8 +140,31 @@ export class CustAddrComponent implements OnInit {
       this.addrFormGroup.controls["Tambon_Id"].clearValidators();
       this.addrFormGroup.controls["Tambon_Id"].updateValueAndValidity();
 
+    }else if(event.value === 0){
+
+      // Addr_No
+      this.addrFormGroup.controls["Addr_No"].setValidators(Validators.required);
+      this.addrFormGroup.controls["Addr_No"].updateValueAndValidity();
+
+      // Zip_Code
+      this.addrFormGroup.controls["Zip_Code"].setValidators(Validators.required);
+      this.addrFormGroup.controls["Zip_Code"].updateValueAndValidity();
+
+      // Province_Id
+      this.addrFormGroup.controls["Province_Id"].setValidators(Validators.required);
+      this.addrFormGroup.controls["Province_Id"].updateValueAndValidity();
+
+      // Amphur_Id
+      this.addrFormGroup.controls["Amphur_Id"].setValidators(Validators.required);
+      this.addrFormGroup.controls["Amphur_Id"].updateValueAndValidity();
+
+      // Tambon_Id
+      this.addrFormGroup.controls["Tambon_Id"].setValidators(Validators.required);
+      this.addrFormGroup.controls["Tambon_Id"].updateValueAndValidity();
+
+
     }else{
-      this.addrFormGroup.controls["Country_oth"].clearValidators();
+      this.addrFormGroup.controls["Country_oth"].setValidators(Validators.required);
       this.addrFormGroup.controls["Country_oth"].updateValueAndValidity();
       // this.addrData.Country_oth = "";
       // return false;

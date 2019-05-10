@@ -217,32 +217,17 @@ exports.uploadBulkFile = (req, res, next) =>{
 
 }
 
-let mftsCust =[];
-let swanCust =[];
-let ledMaster =[];
 
 exports.checkCustAll = (req, res, next) => {
     logger.info(`API /api/led/checkCustAll - ${req.originalUrl} - ${req.ip} `);
+    let swanCust =[];
+    let swanCust_CustCode =[];
 
+    let mftsCust =[];
+    let mftsCust_CustCode =[];
 
-    //Get SWAN customer
-    // getSWANCustomers()
-    // .then((data)=>{
-    //   console.log('getSWANCustomers()>>' + data.length);
-    //   res.status(200).json({record: data.length , data: data });
-    // }
-    // ,(err)=>{
-    //   res.status(401).json({ message: err });
-    // });
-
-    // getMFTSCustomers()
-    // .then((data)=>{
-    //   console.log('getMFTSCustomers()>>' + data.length);
-    //   res.status(200).json({record: data.length , data: data });
-    // }
-    // ,(err)=>{
-    //   res.status(401).json({ message: err });
-    // });
+    let ledMaster =[];
+    let ledMaster_CustCode =[];
 
 
 Promise.all([
@@ -250,22 +235,42 @@ Promise.all([
   getMFTSCustomers().catch(err => { res.status(401).json({ message: 'getMFTSCustomers()'+err }); }),
   getLEDMaster().catch(err => { res.status(401).json({ message: 'getLEDMaster()' +err }); }),
   ]).then(values => {
-    // swanCust = values[0];
-    // mftsCust = values[1];
-    // ledMaster = values[2];
+    swanCust = values[0];
+    mftsCust = values[1];
+    ledMaster = values[2];
 
-    // console.log("swanCust=" + swanCust.length  );
-    // console.log("mftsCust=" + mftsCust.length  );
-    // console.log("ledMaster=" + ledMaster.length  );
+    // console.log("*** SWAN ***");
+    // for(var exKey in swanCust) {
+    //   // console.log("key:"+exKey+", Cust_Code:"+ swanCust[exKey].Cust_Code + " " + swanCust[exKey].First_Name_T + " " + swanCust[exKey].Last_Name_T);
+    //   swanCust_CustCode.push(swanCust[exKey].Cust_Code)
+    // }
+    // console.log("*** SWAN >>" + swanCust_CustCode.length);
 
-    // res.status(200).json({record: swanCust.length + mftsCust.length  , message: 'API successful' });
+    console.log("*** MFTS ***");
+    for(var exKey in mftsCust) {
+      // console.log("key:"+exKey+", Cust_Code:"+ mftsCust[exKey].Cust_Code + " " + mftsCust[exKey].First_Name_T + " " + mftsCust[exKey].Last_Name_T);
+      mftsCust_CustCode.push(mftsCust[exKey].Cust_Code);
+    }
+    console.log("*** MFTS >>" + mftsCust_CustCode.length);
 
-    console.log("values 1 =" + values[0].length  );
-    console.log("values 2 =" + values[1].length  );
-    console.log("values 3 =" + values[2].length  );
-    res.status(200).json({ message: 'API successful' });
+    // console.log("*** LED ***");
+    // for(var exKey in ledMaster) {
+    //   // console.log("key:"+exKey+", Cust_Code:"+ ledMaster[exKey].Cust_Code + " " + ledMaster[exKey].First_Name_T + " " + ledMaster[exKey].Last_Name_T);
+    //   ledMaster_CustCode.push(ledMaster[exKey].Cust_Code);
+    // }
+    ledMaster_CustCode.push('0105495001124');
+    ledMaster_CustCode.push('A22851823');
+
+
+    console.log("*** LED >>" + ledMaster_CustCode.length);
+
+    compareLED(ledMaster_CustCode,mftsCust_CustCode).then(foundData =>{
+      console.log("Found data ->" + foundData)
+      res.status(200).json({ message: 'API successful' });
+    });
+
+    // res.status(200).json({ message: 'API successful' });
 });
-
 
 }
 
@@ -286,6 +291,30 @@ exports.checkCustByID = (req, res, next) => {
 }
 
 // **** Functions
+
+
+/**
+ *
+ */
+function compareLED(_ledData,_custData){
+  const finalarray =[];
+  return new Promise(function(resolve, reject) {
+count=0;
+_custData.forEach((e1)=>_ledData.forEach((e2)=>{
+  console.log(' >>' + e1 + "   >>" + e2)
+       if(e1===e2){
+         console.log('Found >>' + e1)
+         finalarray.push(e1);
+       }
+
+    }));
+
+    resolve(finalarray);
+  });
+}
+
+
+
 function getSWANCustomers(){
 
   logger.info(`Welcome getSWANCustomers() `);
@@ -358,8 +387,8 @@ function getLEDMaster(){
   logger.info(`Welcome getLEDMaster() `);
 
   return new Promise(function(resolve, reject) {
-    var queryStr = `SELECT * FROM MIT_LED_MASTER`;
-    // var queryStr = `SELECT twsid,df_id,df_name,df_surname FROM MIT_LED_MASTER`;
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `SELECT twsid AS ID,df_id AS Cust_Code,df_name AS First_Name_T,df_surname AS Last_Name_T FROM MIT_LED_MASTER`;
 
     const sql = require('mssql')
     const pool1 = new sql.ConnectionPool(config, err => {

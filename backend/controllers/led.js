@@ -395,7 +395,103 @@ exports.checkCustDialy = (req, res, next) => {
       });
 }
 
-// **** Functions
+
+exports.searchInsp = (req, res, next) => {
+  var fncName = "searchInsp";
+
+  var numPerPage = parseInt(req.query.pagesize, 10) || 10;
+  var page = parseInt(req.query.page, 10) || 1;
+  var custId = req.query.custId || false;
+  var firstName = req.query.firstName || false;
+  var lastName = req.query.lastName || false;
+  var fromSource = req.query.fromSource || false;
+  var led_code = req.query.led_code || false;
+
+  var whereCond = "1=1";
+
+  if(custId){
+    whereCond += ` AND Cust_Code= '${custId}' `
+  }
+
+  // if(firstName){
+  //   whereCond += `Cust_Code= '${firstName}' `
+  // }
+
+  // if(lastName){
+  //   whereCond += `Cust_Code= '${lastName}' `
+  // }
+
+  if(fromSource){
+    whereCond += ` AND cust_source= '${fromSource}' `
+  }
+
+  if(led_code){
+    whereCond += ` AND led_code= '${led_code}' `
+  }
+
+  // VALIDATION Condifiton
+  if(whereCond.length<=3){
+    res.status(400).json();
+    return;
+  }
+
+  //Call Query
+  searchInspCust(whereCond,page,numPerPage).then(result =>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+
+  },err=>{
+    console.log(fncName + " Quey db. Was err !!!" + err);
+    res.status(400).json({
+      message: err
+    });
+
+  })
+
+}
+
+
+// **** FUNCTION HERE
+
+  function searchInspCust(whereCond,page,numPerPage){
+
+    console.log( ' fnc searchInspCust() whereCond='+whereCond);
+
+      var queryStr = `
+      SELECT * FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY led_inspect_id) AS NUMBER,
+           * FROM [MIT_LED_INSP_CUST] WHERE ${whereCond}
+      ) AS TBL
+      WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+      ORDER BY Cust_Code
+      `;
+
+    return new Promise(function(resolve, reject) {
+
+        const sql = require('mssql')
+        const pool1 = new sql.ConnectionPool(config, err => {
+          pool1.request() // or: new sql.Request(pool1)
+          // .input('whereCond', sql.VarChar(100), led_inspect_id)
+          // .input('page', sql.VarChar(50), cust_code)
+          // .input('numPerPage', sql.Int, parseInt(twsid))
+          .query(queryStr, (err, result) => {
+              if(err){
+                reject(err);
+              }else {
+                resolve(result.recordset);
+              }
+          })
+        })
+        pool1.on('error', err => {
+          reject(err);
+        })
+
+    })
+  }
+
+
 
 function compareLED_2(_ledData,_custData){
 

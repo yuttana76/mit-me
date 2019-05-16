@@ -1,0 +1,24 @@
+:host {
+  display: block;
+
+}
+
+.condition-div {
+  max-width: 400px;
+}
+
+mat-form-field,
+input {
+    width: 100%;
+}
+
+mat-spinner {
+    margin: auto;
+}
+
+.resultDiv {
+  margin-top: 1rem;
+}
+.resultDiv table {
+  width: 100%;
+}

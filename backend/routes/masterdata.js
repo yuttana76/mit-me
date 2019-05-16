@@ -15,5 +15,6 @@ router.get("/FCincomeLevel", checkAuth,masterdataController.getFCincomeLevel);
 router.get("/FCincomeSource", checkAuth,masterdataController.getFCincomeSource);
 router.get("/FCnation", checkAuth,masterdataController.getFCnation);
 router.get("/FCcountry", checkAuth,masterdataController.getFCcountry);
+router.get("/codeLookup", masterdataController.getCodeLookup);
 
 module.exports = router;

@@ -21,6 +21,7 @@ import { LedInspDetailComponent } from './led-insp-detail/led-insp-detail.compon
 import { LedInspSearchComponent } from './led-insp-search/led-insp-search.component';
 import { LedMasSearchComponent } from './led-mas-search/led-mas-search.component';
 import { LedDetailComponent } from './led-detail/led-detail.component';
+import { LedInspResultComponent } from './led-insp-result/led-insp-result.component';
 
 const routes: Routes = [
 
@@ -173,6 +174,14 @@ const routes: Routes = [
           title: 'LED Dashboard'
         }
       },
+
+      {
+        path: 'led-insp-result',
+        component: LedInspResultComponent,
+        data: {
+          title: 'LED Result'
+        }
+      },
       {
         path: 'led-insp-detail',
         component: LedInspDetailComponent,
@@ -201,7 +210,13 @@ const routes: Routes = [
           title: 'LED detail'
         }
       },
-
+      {
+        path: 'led-insp-result',
+        component: LedInspResultComponent,
+        data: {
+          title: 'LED Result'
+        }
+      },
 
     ]
   },

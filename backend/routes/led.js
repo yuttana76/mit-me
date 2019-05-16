@@ -12,4 +12,6 @@ router.post("/uploadBulkFileDialy",selfAuth,ledController.uploadBulkFileDialy);
 router.post("/checkCustDialy",selfAuth,ledController.checkCustDialy);
 // router.post("/checkCustByID",selfAuth,ledController.checkCustByID);
 
+router.get("/inspCust/", ledController.searchInsp);
+
 module.exports = router;

@@ -414,3 +414,47 @@ exports.getFCcountry = (req, res, next) => {
     console.log("EROR>>"+err);
   })
 }
+
+
+exports.getCodeLookup = (req, res, next) => {
+  logger.info(`API /getCodeLookup - ${req.originalUrl} - ${req.ip} `);
+  var keyname = req.query.keyname || false;
+  let rsp_code;
+
+  // VALIDATION
+  if(!keyname){
+    return res.status(400).json();
+  }
+
+  var queryStr = `
+    SELECT keycode,keyText
+    FROM MIT_CODE_LOOKUP
+    WHERE keyname='${keyname}'
+    AND status=1
+    ORDER BY fieldOrder
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          rsp_code = "205";
+          return res.status(401).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }else {
+          rsp_code = "000";
+          return res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}

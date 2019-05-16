@@ -1,3 +1,51 @@
-<p>
-  led-insp-search works!
-</p>
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<mat-card class="example-card">
+
+  <form [formGroup]="form" (submit)="onSerach()" #custForm="ngForm" *ngIf="!spinnerLoading">
+    <mat-card-title>Search LED Inspection
+      <!-- <a mat-button routerLink="/trade/customerDetail" routerLinkActive="mat-accent" matTooltip="New customer">
+        <i class="fas fa-user-plus fa-2x" ></i>
+      </a> -->
+    </mat-card-title>
+    <mat-card-content>
+      <div class="condition-div">
+
+        <mat-form-field>
+          <input matInput formControlName="custId" [(ngModel)]="inspSearch.custId" placeholder="Card No./ Name" >
+          <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput formControlName="firstName" [(ngModel)]="inspSearch.firstName" placeholder="First name">
+            <mat-error *ngIf="form.get('firstName').invalid">Please enter first name.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+              <input matInput formControlName="lastName" [(ngModel)]="inspSearch.lastName" placeholder="Last name">
+              <mat-error *ngIf="form.get('lastName').invalid">Please enter last name.</mat-error>
+            </mat-form-field>
+
+        <mat-form-field>
+          <mat-select  formControlName="fromSource"  [(ngModel)]="inspSearch.fromSource" placeholder="Type of Unitholder">
+            <mat-option *ngFor="let fromSource of fromSourceList" [value]="fromSource.value">
+                {{fromSource.viewValue}}
+              </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('fromSource').invalid">Please choose from Source.</mat-error>
+        </mat-form-field>
+
+      </div>
+
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
+      <button mat-stroked-button color="warn" type='reset'>Reset</button>
+
+    </mat-card-actions>
+  </form>
+</mat-card>
+
+<app-led-insp-result></app-led-insp-result>
+
+

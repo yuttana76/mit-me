@@ -36,6 +36,12 @@ export const navItems = [
     icon: 'icon-wrench',
   },
 
+  {
+    name: 'LED Result',
+    url: '/trade/led-insp-result',
+    icon: 'icon-wrench',
+  },
+
 ];
 
 // export const navItems = [

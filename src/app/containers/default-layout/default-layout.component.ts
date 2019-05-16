@@ -52,7 +52,7 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
     });
 
   // ***************************   Dynamic NAV
-  this.navItems =  null;  // For production
+  // this.navItems =  null;  // For production
 
   if ( this.navItems == null ) {
 

@@ -16,6 +16,11 @@ import { MitGroupDetailComponent } from './mit-group-detail/mit-group-detail.com
 import { ConnextCalendarComponent } from './connext-calendar/connext-calendar.component';
 import { AnoucementComponent } from './anoucement/anoucement.component';
 import { SuitComponent } from './suit/suit.component';
+import { LedInspDashComponent } from './led-insp-dash/led-insp-dash.component';
+import { LedInspDetailComponent } from './led-insp-detail/led-insp-detail.component';
+import { LedInspSearchComponent } from './led-insp-search/led-insp-search.component';
+import { LedMasSearchComponent } from './led-mas-search/led-mas-search.component';
+import { LedDetailComponent } from './led-detail/led-detail.component';
 
 const routes: Routes = [
 
@@ -160,6 +165,44 @@ const routes: Routes = [
           title: 'Suitability'
         }
       },
+// LED
+      {
+        path: 'led-insp-dash',
+        component: LedInspDashComponent,
+        data: {
+          title: 'LED Dashboard'
+        }
+      },
+      {
+        path: 'led-insp-detail',
+        component: LedInspDetailComponent,
+        data: {
+          title: 'LED Inspecton Detail'
+        }
+      },
+      {
+        path: 'led-insp-search',
+        component: LedInspSearchComponent,
+        data: {
+          title: 'LED Inspection Search'
+        }
+      },
+      {
+        path: 'led-mas-search',
+        component: LedMasSearchComponent,
+        data: {
+          title: 'LED Search'
+        }
+      },
+      {
+        path: 'led-detail',
+        component: LedDetailComponent,
+        data: {
+          title: 'LED detail'
+        }
+      },
+
+
     ]
   },
   // {path: '**', redirectTo: '/404'}

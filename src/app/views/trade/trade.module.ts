@@ -49,6 +49,11 @@ import { ChildrenDialogComponent } from './dialog/children-dialog/children-dialo
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SuitResultTableComponent } from './suit-result-table/suit-result-table.component';
+import { LedInspDashComponent } from './led-insp-dash/led-insp-dash.component';
+import { LedInspDetailComponent } from './led-insp-detail/led-insp-detail.component';
+import { LedInspSearchComponent } from './led-insp-search/led-insp-search.component';
+import { LedMasSearchComponent } from './led-mas-search/led-mas-search.component';
+import { LedDetailComponent } from './led-detail/led-detail.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -106,6 +111,11 @@ import { SuitResultTableComponent } from './suit-result-table/suit-result-table.
     PersonalInfoComponent,
     ChildrenDialogComponent,
     SuitResultTableComponent,
+    LedInspDashComponent,
+    LedInspDetailComponent,
+    LedInspSearchComponent,
+    LedMasSearchComponent,
+    LedDetailComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

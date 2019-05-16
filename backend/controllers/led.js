@@ -20,6 +20,10 @@ const readPath = __dirname + '/readFiles/LED/';
 const readFile = 'exp_lom.txt';
 
 const bakPath = __dirname + '/readFiles/LEDBackup/';
+
+const LED_INSP_LED_CODE = '001';
+const LED_INSP_STATUS =1;
+
 // var msdb = require("../config/msdb");
 
 // exports.uploadFile = (req, res, next) =>{
@@ -412,15 +416,14 @@ function compareLED_2(_ledData,_custData){
 
 function insertLEDInspect(inspectData,cust_source,_createBy){
 
-  LED_INSP_CODE = '001';
-  LED_INSP_STATUS =1;
+
   return new Promise(function(resolve, reject) {
 
     for (var i = 0; i < inspectData.length; i++){
       _obj = JSON.parse(inspectData[i]);
 // console.log(cust_source +" ;twsid:"+_obj.twsid +" ;LED_CUST_CODE:"+_obj.LED_CUST_CODE  +" ;MPAM_CUST_CODE:"+_obj.MPAM_CUST_CODE  );
 
-        insertData(_obj.MPAM_CUST_CODE,_obj.twsid,cust_source,LED_INSP_STATUS,LED_INSP_CODE,_createBy).then(result => {
+        insertData(_obj.MPAM_CUST_CODE,_obj.twsid,cust_source,LED_INSP_STATUS,LED_INSP_LED_CODE,_createBy).then(result => {
           resolve('Insert Inspect success');
         })
     }
@@ -436,7 +439,7 @@ function insertData(cust_code,twsid,cust_source,status,led_code,createBy){
 
       var queryStr = `
       BEGIN
-        INSERT INTO MFTS.dbo.MIT_LED_CUST_INSPECT
+        INSERT INTO MIT_LED_INSP_CUST
         (led_inspect_id, Cust_Code, twsid, cust_source, status, led_code, createBy , createDate )
         VALUES
         (@led_inspect_id, @Cust_Code, @twsid, @cust_source, @status, @led_code, @createBy, GETDATE())

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { PageEvent } from '@angular/material';
+import { PageEvent, MatTableDataSource } from '@angular/material';
+import { MitLedInspCust } from '../model/mitLedInspCust.model';
 
 @Component({
   selector: 'app-led-insp-result',
@@ -9,16 +10,18 @@ import { PageEvent } from '@angular/material';
 })
 export class LedInspResultComponent implements OnInit {
 
-  currentPage = 1;
-  rowsPerPage = 20;
+  @Input() currentPage = 1;
+  @Input() rowsPerPage = 20;
+  @Input() dataSource = new BehaviorSubject([]);
   totalRecords = 10;
   pageSizeOptions = [10, 20, 50, 100];
   displayedColumns: string[] = ['Cust_Code', 'FullName', 'cust_source', 'led_code', 'TMPDate','ABSDate','DFDate','BRKDate','Action'];
-  dataSource = new BehaviorSubject([]);
+
 
   constructor() { }
 
   ngOnInit() {
+    // console.log("INSP result>>" + JSON.stringify(this.mitLedInspCustList))
   }
 
   onChangedPage(pageData: PageEvent) {

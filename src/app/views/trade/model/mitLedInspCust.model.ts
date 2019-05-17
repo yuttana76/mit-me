@@ -6,6 +6,8 @@ export class MitLedInspCust {
   cust_code: string;
   twsid: string;
   cust_source: string;
+  firstName: string;
+  lastName: string;
   memo: string;
   status: string;
   led_code: string;

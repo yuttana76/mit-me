@@ -413,24 +413,26 @@ exports.searchInsp = (req, res, next) => {
     whereCond += ` AND Cust_Code= '${custId}' `
   }
 
-  // if(firstName){
-  //   whereCond += `Cust_Code= '${firstName}' `
-  // }
+  if(firstName){
+    whereCond += `AND firstName like '%${firstName}%' `
+  }
 
-  // if(lastName){
-  //   whereCond += `Cust_Code= '${lastName}' `
-  // }
+  if(lastName){
+    whereCond += `AND lastName like '%${lastName}%' `
+  }
 
-  if(fromSource){
+  if(fromSource && fromSource != '0' ){
     whereCond += ` AND cust_source= '${fromSource}' `
   }
 
-  if(led_code){
+  if(led_code && led_code != '0'){
     whereCond += ` AND led_code= '${led_code}' `
   }
 
   // VALIDATION Condifiton
-  if(whereCond.length<=3){
+  console.log('Validate COND. >>' + whereCond );
+
+  if(whereCond.length<=3 && fromSource != '0' && led_code != '0'){
     res.status(400).json();
     return;
   }
@@ -460,12 +462,14 @@ exports.searchInsp = (req, res, next) => {
     console.log( ' fnc searchInspCust() whereCond='+whereCond);
 
       var queryStr = `
+      BEGIN
       SELECT * FROM (
         SELECT ROW_NUMBER() OVER(ORDER BY led_inspect_id) AS NUMBER,
            * FROM [MIT_LED_INSP_CUST] WHERE ${whereCond}
       ) AS TBL
       WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
       ORDER BY Cust_Code
+      END
       `;
 
     return new Promise(function(resolve, reject) {
@@ -502,7 +506,8 @@ function compareLED_2(_ledData,_custData){
           // console.log( 'LED>>' +_ledData[i].Cust_Code)
           for (var j = 0; j < _custData.length; j++){
               if (_ledData[i].Cust_Code === _custData[j].Cust_Code){
-                finalarray.push('{"twsid":"' +_ledData[i].twsid + '","LED_CUST_CODE":"' + _ledData[i].Cust_Code + '","MPAM_CUST_CODE":"' + _custData[j].Cust_Code + '"}');
+                console.log("_custData>>" + JSON.stringify(_custData[j]))
+                finalarray.push('{"twsid":"' +_ledData[i].twsid + '","LED_CUST_CODE":"' + _ledData[i].Cust_Code + '","MPAM_CUST_CODE":"' + _custData[j].Cust_Code + '","firstName":"'+_custData[j].First_Name_T+'" ,"lastName":"'+_custData[j].Last_Name_T+'"}');
               }
           }
         }
@@ -517,16 +522,17 @@ function insertLEDInspect(inspectData,cust_source,_createBy){
 
     for (var i = 0; i < inspectData.length; i++){
       _obj = JSON.parse(inspectData[i]);
+      console.log("insertLEDInspect()>> " +JSON.stringify(_obj));
 // console.log(cust_source +" ;twsid:"+_obj.twsid +" ;LED_CUST_CODE:"+_obj.LED_CUST_CODE  +" ;MPAM_CUST_CODE:"+_obj.MPAM_CUST_CODE  );
 
-        insertData(_obj.MPAM_CUST_CODE,_obj.twsid,cust_source,LED_INSP_STATUS,LED_INSP_LED_CODE,_createBy).then(result => {
+        insertData(_obj.MPAM_CUST_CODE,_obj.twsid,cust_source,_obj.firstName,_obj.lastName,LED_INSP_STATUS,LED_INSP_LED_CODE,_createBy).then(result => {
           resolve('Insert Inspect success');
         })
     }
   })
 }
 
-function insertData(cust_code,twsid,cust_source,status,led_code,createBy){
+function insertData(cust_code,twsid,cust_source,firstName,lastName,status,led_code,createBy){
   console.log("led_code>>" + led_code + "  createBy>>" +createBy );
 
   return new Promise(function(resolve, reject) {
@@ -536,9 +542,9 @@ function insertData(cust_code,twsid,cust_source,status,led_code,createBy){
       var queryStr = `
       BEGIN
         INSERT INTO MIT_LED_INSP_CUST
-        (led_inspect_id, Cust_Code, twsid, cust_source, status, led_code, createBy , createDate )
+        (led_inspect_id, Cust_Code, twsid, cust_source,firstName,lastName, status, led_code, createBy , createDate )
         VALUES
-        (@led_inspect_id, @Cust_Code, @twsid, @cust_source, @status, @led_code, @createBy, GETDATE())
+        (@led_inspect_id, @Cust_Code, @twsid, @cust_source,@firstName,@lastName, @status, @led_code, @createBy, GETDATE())
       END
       `;
 
@@ -549,6 +555,8 @@ function insertData(cust_code,twsid,cust_source,status,led_code,createBy){
         .input('Cust_Code', sql.VarChar(50), cust_code)
         .input('twsid', sql.Int, parseInt(twsid))
         .input('cust_source', sql.VarChar(50), cust_source)
+        .input('firstName', sql.NVarChar(50), firstName)
+        .input('lastName', sql.NVarChar(50), lastName)
         .input('status', sql.Bit, status)
         .input('led_code', sql.VarChar(5), led_code)
         .input('createBy', sql.VarChar(50), createBy)

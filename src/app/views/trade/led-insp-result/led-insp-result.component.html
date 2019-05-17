@@ -53,11 +53,10 @@
                 <td mat-cell *matCellDef="let element"> {{element.BRKDate | date:"dd/MM/yyyy"}} </td>
               </ng-container>
 
-
             <!-- Edit  -->
             <ng-container matColumnDef="Action">
                 <th mat-header-cell *matHeaderCellDef> Action </th>
-                <!-- <td mat-cell *matCellDef="let element"> <i class="far fa-edit"  [routerLink]="['/trade/customerEdit',element.Cust_Code,'SEARCH_CUST_SCR']"></i> </td> -->
+                <td mat-cell *matCellDef="let element"> <i class="far fa-edit"  [routerLink]="['/trade/customerEdit',element.Cust_Code,'SEARCH_CUST_SCR']"></i> </td>
               </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

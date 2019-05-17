@@ -218,50 +218,39 @@ function senMailFromFile(req,res,_PID,_Email,_url){
         <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
         </div>
 
-        <div class="a">
-        เรียน    ท่านลูกค้า
-        </div>
-
-    <div id="content2" class="a">
-    <p >
-      เรื่อง ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคคลของท่าน
-        </p>
-    </div>
-
-
       <div class="a">
+        <p >เรียน ท่านลูกค้า </p>
+        <p >เรื่อง ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคล</p>
         <p >
     เพื่อเป็นการปฏิบัติให้เป็นไปตามประกาศกำหนดของสำนักงานป้องกันและปราบปรามการฟอกเงิน และสำนักงานคณะกรรมการกำกับหลักทรัพย์และตลาดหลักทรัพย์ เรื่อง การทบทวนข้อมูลลูกค้าและการทำแบบประเมินความเสี่ยงของผู้ลงทุน
         </p>
-
-        <div class="a">
         <p >
-        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) จึงเรียนมาเพื่อขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และหากท่านมีความประสงค์จะแก้ไขข้อมูลที่เคยให้ไว้สามารถมาดำเนินการด้วยตนเองที่บริษัท หรือ แจ้งข้อมูลผ่านลิงก์ด้านล่างนี้
-            </p>
-    </div>
-          <div class="a">
-          <p>
-        บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม ได้ทางอีเมล์  wealthservice@merchantasset.co.th   หรือ โทรศัพท์ 02 660 6696
-            </p>
-      </div>
-
-	      <div class="a">
-    	  <p>
+        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) จึงขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และแก้ไขข้อมูลให้เป็นปัจจุบัน พร้อมทั้งทำแบบประเมินความเสี่ยง เพื่อท่านจะสามารถรับการบริการได้อย่างต่อเนื่อง ผ่านลิงก์ด้านล่างนี้
+        </p>
+      	<p>
         ลิงก์สำหรับการตรวจสอบข้อมูลเดิมและแก้ไขข้อมูล
         </p>
         <p>
         ${_url}${token}
         </p>
-        </div>
+        <p>
+        บริษัทขอขอบพระคุณที่ท่านสละเวลาในการตรวจสอบ/แก้ไขข้อมูลดังกล่าว หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
+        </p>
+        <p>
+          ขอแสดงความนับถือ
+        </p>
+        <p>
+          บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
+        <p>
+    </div>
 
-        </div>
-        </div>
-
+        </body>
+        </html>
+        <br>
         <p>
         <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
         <p>
-        </body>
-        </html>
+
         `;
 
         _msgTH +=_compInfo
@@ -374,11 +363,11 @@ exports.surveyByMailToken = (req, res, next) =>{
   // let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
 
   const _PID = req.body.custCode ||'41121225'
-  const _compInfo = mailConfig.mailCompInfo_TH;
-  let _from = mailConfig.mail_form;
-  let _to ;//= 'yuttana76@gmail.com';
-  let _subject = 'การสำรวจ และตรวจสอบข้อมูล บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
-  let _msgTH = '';
+  // const _compInfo = mailConfig.mailCompInfo_TH;
+  // let _from = mailConfig.mail_form;
+  // let _to ;//= 'yuttana76@gmail.com';
+  // let _subject = 'การสำรวจ และตรวจสอบข้อมูล บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
+  // let _msgTH = '';
   var logMsg ;
 
   let _target = req.body.target || 'test';
@@ -396,140 +385,9 @@ exports.surveyByMailToken = (req, res, next) =>{
       logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
       logger.info(`API /surveyByMailToken - ${logMsg}`);
 
-      // Incase has Email
-        if(data.Email){
-          //Generate token
-          const token = jwt.sign(
-            {USERID: _PID},
-            JWT_SECRET_STRING,
-            { expiresIn: JWT_EXTERNAL_EXPIRES},
-          );
-
-          _to = data.Email;
-
-          // Thai message
-          _msgTH = `
-          <html>
-        <head>
-        <style>
+      senMailFromFile(req,res,_PID,data.Email,_url);
 
 
-        .blog-content-outer {
-          background: whitesmoke;
-          border: 1px solid #e1e1e1;
-          border-radius: 5px;
-          margin-top: 40px;
-          margin-bottom: 20px;
-          padding: 0 15px;
-          font-size: 16px;
-        }
-
-        .logo-area{
-          margin-top:20px;
-          margin-left:60px;
-          margin-bottom:20px;
-        }
-
-		.tab { margin-left: 40px; }
-        .tab2 { margin-left: 80px; }
-
-        div.a {
-  			text-indent: 50px;
-		}
-        </style>
-        </head>
-        <body>
-        <br>
-
-        <div class='blog-content-outer'>
-
-        <div class="logo-area col-xs-12 col-sm-12 col-md-3">
-        <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
-        </div>
-
-        <div class="a">
-        เรียน    ท่านลูกค้า
-        </div>
-
-    <div id="content2" class="a">
-    <p >
-      เรื่อง    ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคคลของท่าน
-        </p>
-    </div>
-
-    <div class="a">
-        <p >
-    เพื่อเป็นการปฏิบัติให้เป็นไปตามประกาศกำหนดของสำนักงานป้องกันและปราบปรามการฟอกเงิน และสำนักงานคณะกรรมการกำกับหลักทรัพย์และตลาดหลักทรัพย์ เรื่อง การทบทวนข้อมูลลูกค้าและการทำแบบประเมินความเสี่ยงของผู้ลงทุน
-        </p>
-      <div class="a">
-        <p >
-        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) จึงเรียนมาเพื่อขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และหากท่านมีความประสงค์จะแก้ไขข้อมูลที่เคยให้ไว้สามารถมาดำเนินการด้วยตนเองที่บริษัท หรือ แจ้งข้อมูลผ่านลิงก์ด้านล่างนี้
-            </p>
-    </div>
-          <div class="a">
-          <p>
-        บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม ได้ทางอีเมล์  wealthservice@merchantasset.co.th   หรือ โทรศัพท์ 02 660 6696
-            </p>
-      </div>
-
-	      <div class="a">
-    	  <p>
-        ลิงก์สำหรับการตรวจสอบข้อมูลเดิมและแก้ไขข้อมูล
-        </p>
-        <p>
-        ${_url}${token}
-        </p>
-        </div>
-
-        </div>
-        </div>
-
-        <p>
-        <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
-        <p>
-        </body>
-        </html>
-          `;
-
-          _msgTH +=_compInfo
-
-          // setup email data with unicode symbols
-          let mailOptions = {
-            from: _from,
-            to: _to,
-            subject: _subject,
-            html: _msgTH,
-          };
-
-        /**
-         * SEND mail to suctomer
-         */
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return console.log(error);
-            }
-
-              /*
-              Save MIT_LOG
-              */
-              try {
-                mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){
-                      // console.log("Save MIT log");
-                })
-              } catch (error) {
-                console.log(error);
-              }
-
-            logger.info(`API /surveyByMailToken -  Send mail successful!`);
-            res.status(200).json({ message: 'Send mail successful!' });
-
-          });
-
-          // Incase No Email
-        }else{
-          logger.error(`API /surveyByMailToken - NO E-mail`);
-
-        }
     } catch (error) {
       res.status(400).json({ message: 'surveyByMailToken' });
 
@@ -625,7 +483,7 @@ exports.sendMailThankCust = (req, res, next) =>{
           เรียน    ท่านลูกค้า
 
           <div class="a">
-          บริษัทขอขอบพระคุณที่ท่านสละเวลาในการตรวจสอบข้อมูล หากท่านมีข้อสอบถามเพิ่มเติม ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
+            บริษัทขอขอบพระคุณที่ท่านสละเวลาในการตรวจสอบ/แก้ไขข้อมูลดังกล่าว หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
           </div>
 
           </pre>

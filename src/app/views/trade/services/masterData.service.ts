@@ -377,24 +377,25 @@ export class MasterDataService {
   }
 
   getCodeLookup(keyname) {
+
+    // console.log("getCodeLookup() >>" +keyname);
     if(!keyname){
       return null;
     }
 
     const queryParams = `?keyname=${keyname}`;
     return this.http
-      .get<{ message: string; result: any }>(BACKEND_URL + '/codeLookup' + queryParams);
-      // .pipe(
-      //   map(fundtData => {
-      //     return fundtData.result.map(rtnData => {
-      //       return {
-      //         PIDType_Code: rtnData.PIDType_Code,
-      //         PIDType_Desc: rtnData.PIDType_Desc,
-      //         TypeHolder: rtnData.TypeHolder
-      //       };
-      //     });
-      //   })
-      // );
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/codeLookup'+queryParams)
+      .pipe(
+        map(fundtData => {
+          return fundtData.result.map(rtnData => {
+            return {
+              keycode: rtnData.keycode,
+              keyText: rtnData.keyText
+            };
+          });
+        })
+      );
   }
   // *********************************
 }

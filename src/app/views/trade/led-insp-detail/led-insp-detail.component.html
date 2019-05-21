@@ -1,3 +1,54 @@
-<p>
-  led-insp-detail works!
-</p>
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+<mat-card id="led_header" class="cust-container" *ngIf="!spinnerLoading">
+    <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title>{{key}}</mat-card-title>
+        <!-- <mat-card-subtitle>Dog Breed</mat-card-subtitle> -->
+      </mat-card-header>
+      <mat-card-content>
+    <div class="row">
+        <mat-form-field>
+          <input matInput placeholder="ID">
+        </mat-form-field>
+    </div>
+
+    <div class="row">
+        <mat-form-field>
+            <input matInput placeholder="First name">
+          </mat-form-field>
+
+          <mat-form-field>
+              <input matInput placeholder="Last name">
+            </mat-form-field>
+    </div>
+
+    <div class="row">
+        <mat-form-field>
+            <textarea matInput placeholder="SOURCE" rows=3 ></textarea>
+          </mat-form-field>
+
+    </div>
+
+        <!-- <div class="row">
+        <mat-form-field>
+            <input matInput placeholder="Register data">
+          </mat-form-field>
+          <mat-form-field>
+              <input matInput placeholder="Last transaction">
+            </mat-form-field>
+          <mat-form-field>
+              <input matInput placeholder="Balance">
+            </mat-form-field>
+      </div> -->
+      </mat-card-content>
+</mat-card>
+
+<mat-card id="led_body" class="cust-container" *ngIf="!spinnerLoading">
+    <mat-tab-group >
+        <mat-tab label="LED detail">Content 1</mat-tab>
+        <mat-tab label="MPAM">Content 2</mat-tab>
+        <mat-tab label="Resources">Content 3</mat-tab>
+      </mat-tab-group>
+</mat-card>
+
+

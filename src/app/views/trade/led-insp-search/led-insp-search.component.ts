@@ -36,7 +36,7 @@ export class LedInspSearchComponent implements OnInit {
   dataSource = new BehaviorSubject([]);
   totalRecords = 10;
   pageSizeOptions = [10, 20, 50, 100];
-  displayedColumns: string[] = ['Cust_Code', 'FullName', 'cust_source', 'led_code', 'TMPDate','ABSDate','DFDate','BRKDate','Action'];
+  displayedColumns: string[] = ['key','id', 'FullName', 'cust_source', 'led_code', 'TMPDate','ABSDate','DFDate','BRKDate','Action'];
   // Result table [END]
 
    public codeLedList: CodeLookup[];

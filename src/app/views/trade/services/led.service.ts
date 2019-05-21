@@ -43,5 +43,37 @@
           });
         }));
       }
+
+      getLEDMasterBykey(key) {
+        let queryParams = `?key=${key}`;
+        return this.http.get<{result: any }>(BACKEND_URL+"/ledMasterBykey"+  queryParams)
+        .pipe(map( _data => {
+          return _data.result.map(data => {
+            return data
+          });
+        }));
+      }
+
+      getInspByCustCode(key) {
+        let queryParams = `?key=${key}`;
+        return this.http.get<{result: any }>(BACKEND_URL+"/inspByCustCode"+  queryParams)
+        .pipe(map( _data => {
+          return _data.result.map(data => {
+            return data
+          });
+        }));
+      }
+
+      getInspByGroupId(key) {
+        let queryParams = `?key=${key}`;
+        return this.http.get<{result: any }>(BACKEND_URL+"/inspByGroupId"+  queryParams)
+        .pipe(map( _data => {
+          return _data.result.map(data => {
+            return data
+          });
+        }));
+      }
+
+
       // ******************************** END FILE
     }

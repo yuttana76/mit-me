@@ -183,7 +183,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'led-insp-detail',
+        path: 'led-insp-detail/:key/:source',
         component: LedInspDetailComponent,
         data: {
           title: 'LED Inspecton Detail'

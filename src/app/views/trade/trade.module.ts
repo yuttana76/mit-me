@@ -55,6 +55,8 @@ import { LedInspSearchComponent } from './led-insp-search/led-insp-search.compon
 import { LedMasSearchComponent } from './led-mas-search/led-mas-search.component';
 import { LedDetailComponent } from './led-detail/led-detail.component';
 import { LedInspResultComponent } from './led-insp-result/led-insp-result.component';
+import { LedInspHistoryComponent } from './led-insp-history/led-insp-history.component';
+import { LedInspResourceComponent } from './led-insp-resource/led-insp-resource.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -118,6 +120,8 @@ import { LedInspResultComponent } from './led-insp-result/led-insp-result.compon
     LedMasSearchComponent,
     LedDetailComponent,
     LedInspResultComponent,
+    LedInspHistoryComponent,
+    LedInspResourceComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

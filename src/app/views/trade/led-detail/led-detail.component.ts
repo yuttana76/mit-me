@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { MitLedMas } from '../model/mitLedMas.model';
+import { LEDService } from '../services/led.service';
 
 @Component({
   selector: 'app-led-detail',
@@ -7,9 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LedDetailComponent implements OnInit {
 
-  constructor() { }
+  @Input() twsid;
+  ledMas:MitLedMas = new MitLedMas();
+
+  constructor(
+    private ledService:LEDService
+  ) { }
 
   ngOnInit() {
+
+    this.ledService.getLEDMasterBykey(this.twsid)
+        .subscribe((data: any[]) => {
+          this.ledMas  = data[0];
+        });
   }
 
 }

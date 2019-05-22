@@ -10,7 +10,7 @@ import { MitLedInspCust } from '../model/mitLedInspCust.model';
 import { MitLedMas } from '../model/mitLedMas.model';
 import { MitLedInspHistory } from '../model/mitLedInspHistory.model';
 import { MitLedInspResource } from '../model/mitLedInspResource.model';
-
+import { forkJoin } from "rxjs";
 @Component({
   selector: 'app-led-insp-detail',
   templateUrl: './led-insp-detail.component.html',
@@ -25,11 +25,14 @@ export class LedInspDetailComponent implements OnInit {
   spinnerLoading = false;
 
   dataMode = '';
+
   //LED data
-  mitLedMas:MitLedMas;
-  mitLedInspCust:MitLedInspCust;
-  mitLedInspHistory:MitLedInspHistory;
-  mitLedInspResource:MitLedInspResource;
+  _key
+  // mitLedMas:MitLedMas = new MitLedMas;
+  main_mitLedInspCust:MitLedInspCust = new MitLedInspCust();
+  member_mitLedInspCust:MitLedInspCust[] = [];
+  mitLedInspHistory:MitLedInspHistory[] =[];
+  mitLedInspResource:MitLedInspResource[] =[];
 
 
   constructor(
@@ -44,16 +47,43 @@ export class LedInspDetailComponent implements OnInit {
 
   ngOnInit() {
     // this.spinnerLoading = true;
+    const observables = [];
 
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('source')) {
-        // console.log('SOURCE>>', paramMap.get('source'));
         this.formScreen = paramMap.get('source');
       }
 
       if (paramMap.has('key')) {
+
         this.dataMode = this.MODE_EDIT;
-        this.custCode = paramMap.get('key');
+        this._key = paramMap.get('key');
+
+        // Initail data
+
+        this.ledService.getInspByKey(this._key)
+        .subscribe((data: any[]) => {
+          this.main_mitLedInspCust  = data[0];
+
+          console.log('INSP CUST >>' + JSON.stringify(this.main_mitLedInspCust) );
+
+        observables.push(this.ledService.getInspByCustCode(this.main_mitLedInspCust.cust_code));
+
+        const example = forkJoin(observables);
+        const subscribe = example.subscribe((result:any) => {
+        this.member_mitLedInspCust =result[0];
+          console.log('MEMBER>>' + JSON.stringify(this.member_mitLedInspCust) );
+        });
+
+
+        }, error => () => {
+            console.log('Was error', error);
+        }, () => {
+           console.log('Loading complete');
+
+        });
+
+
       }
 
     });

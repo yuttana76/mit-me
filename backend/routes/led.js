@@ -16,6 +16,11 @@ router.get("/inspCust/", ledController.searchInsp);
 
 router.get("/ledMasterBykey/", ledController.getLEDMasterBykey);
 router.get("/inspByCustCode/", ledController.getInspByCustCode);
+router.get("/inspByKey/", ledController.getInspByKey);
+
 router.get("/inspByGroupId/", ledController.getInspByGroupId);
+router.get("/inspHistory/", ledController.getInspHistory);
+router.get("/inspResource/", ledController.getInspResource);
+
 
 module.exports = router;

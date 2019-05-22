@@ -264,29 +264,29 @@ exports.uploadBulkFileDialy = (req, res, next) =>{
         table.columns.add('black_yy', sql.NVarChar(4), { nullable: true });
         table.columns.add('red_case', sql.NVarChar(20), { nullable: true });
         table.columns.add('red_yy', sql.VarChar(4), { nullable: true });
-        table.columns.add('court_name ', sql.NVarChar(180), { nullable: true });
-        table.columns.add('plaintiff1 ', sql.NVarChar(1024), { nullable: true });
-        table.columns.add('df_id ', sql.NVarChar(50), { nullable: true });
-        table.columns.add('df_name ', sql.NVarChar(1024), { nullable: true });
-        table.columns.add('df_surname ', sql.NVarChar(1024), { nullable: true });
-        table.columns.add('tmp_prot_dd ', sql.VarChar(2), { nullable: true });
-        table.columns.add('tmp_prot_mm ', sql.VarChar(2), { nullable: true });
-        table.columns.add('tmp_prot_yy ', sql.VarChar(4), { nullable: true });
-        table.columns.add('abs_prot_dd ', sql.VarChar(2), { nullable: true });
-        table.columns.add('abs_prot_mm ', sql.VarChar(2), { nullable: true });
-        table.columns.add('abs_prot_yy ', sql.VarChar(4), { nullable: true });
-        table.columns.add('df_manage_dd ', sql.VarChar(2), { nullable: true });
-        table.columns.add('df_manage_mm ', sql.VarChar(2), { nullable: true });
-        table.columns.add('df_manage_yy ', sql.VarChar(4), { nullable: true });
-        table.columns.add('bkr_prot_dd ', sql.VarChar(2), { nullable: true });
-        table.columns.add('bkr_prot_mm ', sql.VarChar(2), { nullable: true });
-        table.columns.add('bkr_prot_yy ', sql.VarChar(4), { nullable: true });
-        table.columns.add('statusdf ', sql.VarChar(1), { nullable: true });
-        table.columns.add('createBy ', sql.VarChar(20), { nullable: true });
-        table.columns.add('createDate ', sql.Date, { nullable: true });
-        table.columns.add('updateBy ', sql.VarChar(20), { nullable: true });
-        table.columns.add('updateDate ', sql.Date, { nullable: true });
-        table.columns.add('ledStatus ', sql.Char(2), { nullable: true });
+        table.columns.add('court_name', sql.NVarChar(180), { nullable: true });
+        table.columns.add('plaintiff1', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('df_id', sql.NVarChar(50), { nullable: true });
+        table.columns.add('df_name', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('df_surname', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('tmp_prot_dd', sql.VarChar(2), { nullable: true });
+        table.columns.add('tmp_prot_mm', sql.VarChar(2), { nullable: true });
+        table.columns.add('tmp_prot_yy', sql.VarChar(4), { nullable: true });
+        table.columns.add('abs_prot_dd', sql.VarChar(2), { nullable: true });
+        table.columns.add('abs_prot_mm', sql.VarChar(2), { nullable: true });
+        table.columns.add('abs_prot_yy', sql.VarChar(4), { nullable: true });
+        table.columns.add('df_manage_dd', sql.VarChar(2), { nullable: true });
+        table.columns.add('df_manage_mm', sql.VarChar(2), { nullable: true });
+        table.columns.add('df_manage_yy', sql.VarChar(4), { nullable: true });
+        table.columns.add('bkr_prot_dd', sql.VarChar(2), { nullable: true });
+        table.columns.add('bkr_prot_mm', sql.VarChar(2), { nullable: true });
+        table.columns.add('bkr_prot_yy', sql.VarChar(4), { nullable: true });
+        table.columns.add('statusdf', sql.VarChar(1), { nullable: true });
+        table.columns.add('createBy', sql.VarChar(20), { nullable: true });
+        table.columns.add('createDate', sql.Date, { nullable: true });
+        table.columns.add('updateBy', sql.VarChar(20), { nullable: true });
+        table.columns.add('updateDate', sql.Date, { nullable: true });
+        table.columns.add('ledStatus', sql.Char(2), { nullable: true });
 
         //  File
       line_no = 0;
@@ -474,12 +474,59 @@ exports.getLEDMasterBykey = (req, res, next) => {
 }
 
 
+exports.getInspByKey = (req, res, next) => {
+
+  var _key = req.query.key;
+  console.log("getInspByKey() " + _key)
+
+  getInspByKey(_key)
+  .then(result=>{
+
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+
+}
+
+
 exports.getInspByCustCode = (req, res, next) => {
 
   var _key = req.query.key;
   console.log("getInspByCustCode() " + _key)
 
   getInspByCustCode(_key)
+  .then(result=>{
+
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+
+}
+
+
+
+
+
+exports.getInspByGroupId = (req, res, next) => {
+
+  var _key = req.query.key;
+  console.log("getInspByGroupId() " + _key)
+
+  getInspByGroupId(_key)
   .then(result=>{
     res.status(200).json({
       message: "Successfully!",
@@ -493,13 +540,31 @@ exports.getInspByCustCode = (req, res, next) => {
 
 }
 
-
-exports.getInspByGroupId = (req, res, next) => {
+exports.getInspHistory = (req, res, next) => {
 
   var _key = req.query.key;
-  console.log("getInspByGroupId() " + _key)
+  console.log("inspHistory API " + _key)
 
-  getInspByGroupId(_key)
+  getInspHistory(_key)
+  .then(result=>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+
+}
+
+exports.getInspResource = (req, res, next) => {
+
+  var _key = req.query.key;
+  console.log("inspResource API " + _key)
+
+  getInspResource(_key)
   .then(result=>{
     res.status(200).json({
       message: "Successfully!",
@@ -650,52 +715,52 @@ function swapLEDDialyToMaster(){
           ,[black_yy]
           ,[red_case]
           ,[red_yy]
-          ,[court_name ]
-          ,[plaintiff1 ]
-          ,[df_id ]
-          ,[df_name ]
-          ,[df_surname ]
-          ,[tmp_prot_dd ]
-          ,[tmp_prot_mm ]
-          ,[tmp_prot_yy ]
-          ,[abs_prot_dd ]
-          ,[abs_prot_mm ]
-          ,[abs_prot_yy ]
-          ,[df_manage_dd ]
-          ,[df_manage_mm ]
-          ,[df_manage_yy ]
-          ,[bkr_prot_dd ]
-          ,[bkr_prot_mm ]
-          ,[bkr_prot_yy ]
-          ,[statusdf ]
-          ,[createBy ]
-          ,[createDate ]
-          ,[ledStatus ])
+          ,[court_name]
+          ,[plaintiff1]
+          ,[df_id]
+          ,[df_name]
+          ,[df_surname]
+          ,[tmp_prot_dd]
+          ,[tmp_prot_mm]
+          ,[tmp_prot_yy]
+          ,[abs_prot_dd]
+          ,[abs_prot_mm]
+          ,[abs_prot_yy]
+          ,[df_manage_dd]
+          ,[df_manage_mm]
+          ,[df_manage_yy]
+          ,[bkr_prot_dd]
+          ,[bkr_prot_mm]
+          ,[bkr_prot_yy]
+          ,[statusdf]
+          ,[createBy]
+          ,[createDate]
+          ,[ledStatus])
       SELECT twsid,black_case
           ,[black_yy]
           ,[red_case]
           ,[red_yy]
-          ,[court_name ]
-          ,[plaintiff1 ]
-          ,[df_id ]
-          ,[df_name ]
-          ,[df_surname ]
-          ,[tmp_prot_dd ]
-          ,[tmp_prot_mm ]
-          ,[tmp_prot_yy ]
-          ,[abs_prot_dd ]
-          ,[abs_prot_mm ]
-          ,[abs_prot_yy ]
-          ,[df_manage_dd ]
-          ,[df_manage_mm ]
-          ,[df_manage_yy ]
-          ,[bkr_prot_dd ]
-          ,[bkr_prot_mm ]
-          ,[bkr_prot_yy ]
-          ,[statusdf ]
-          ,[createBy ]
-          ,[createDate ]
-          ,[ledStatus ]
+          ,[court_name]
+          ,[plaintiff1]
+          ,[df_id]
+          ,[df_name]
+          ,[df_surname]
+          ,[tmp_prot_dd]
+          ,[tmp_prot_mm]
+          ,[tmp_prot_yy]
+          ,[abs_prot_dd]
+          ,[abs_prot_mm]
+          ,[abs_prot_yy]
+          ,[df_manage_dd]
+          ,[df_manage_mm]
+          ,[df_manage_yy]
+          ,[bkr_prot_dd]
+          ,[bkr_prot_mm]
+          ,[bkr_prot_yy]
+          ,[statusdf]
+          ,[createBy]
+          ,[createDate]
+          ,[ledStatus]
       FROM MIT_LED_DB_DIALY
 
       DELETE FROM MIT_LED_DB_DIALY
@@ -897,6 +962,52 @@ function getLEDMasterBykey(key){
 }
 
 
+function getInspByKey(key){
+
+  logger.info(`Welcome getInspBykey() `);
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+    SELECT * FROM MIT_LED_INSP_CUST  where led_inspect_id=@key
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input('key', sql.VarChar, key)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+
+             console.log("getInspByCustCode()" + JSON.stringify(result.recordset))
+
+            // Promise.all([
+            //   getInspHistory().catch(err => { res.status(401).json({ message: 'Error getInspHistory()'+err }); }),
+            //   getInspResource().catch(err => { res.status(401).json({ message: 'Error getInspResource()'+err }); }),
+            //   ]).then(values => {
+
+            //    },function(err){
+            //     res.status(401).json({ message: err });
+            //   })
+
+            resolve(result.recordset);
+          }
+      })
+
+    })
+    pool1.on('error', err => {
+      reject(err);
+      console.log("EROR>>"+err);
+    })
+  });
+}
+
+
 function getInspByCustCode(custCode){
 
   logger.info(`Welcome getInspBykey() `);
@@ -930,10 +1041,10 @@ function getInspByCustCode(custCode){
             //     res.status(401).json({ message: err });
             //   })
 
-
             resolve(result.recordset);
           }
       })
+
     })
     pool1.on('error', err => {
       reject(err);
@@ -1011,7 +1122,7 @@ function getInspHistory(led_inspect_id){
 
 function getInspResource(led_inspect_id){
 
-  logger.info(`Welcome getInspHistory() `);
+  logger.info(`Welcome getInspResource() `);
 
   return new Promise(function(resolve, reject) {
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;

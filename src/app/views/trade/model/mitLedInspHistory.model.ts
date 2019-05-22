@@ -3,7 +3,6 @@ export class MitLedInspHistory {
   constructor() {}
   led_inspect_id: string;
   no: string;
-  his_code: string;
   his_topic: string;
   memo: string;
   status: string;

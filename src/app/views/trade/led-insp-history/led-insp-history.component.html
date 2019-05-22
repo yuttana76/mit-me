@@ -1,3 +1,35 @@
-<p>
-  led-insp-history works!
-</p>
+
+<div class="row">
+  <mat-card>
+    <form [formGroup]="form" (submit)="onSubmit()" #custForm="ngForm" >
+        <mat-card-content>
+            <div class="row">
+                <mat-form-field class="col-md-4">
+                  <input   matInput formControlName="topic" placeholder="Topic" [(ngModel)]="newHistory.his_topic">
+                  <mat-error *ngIf="form.get('topic').invalid">Please enter a first name.</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="row">
+                <mat-form-field class="col-md-4">
+                  <textarea matInput formControlName="memo"  placeholder="Leave a comment" [(ngModel)]="newHistory.memo"></textarea>
+                  <mat-error *ngIf="form.get('memo').invalid">Please enter a first name.</mat-error>
+                </mat-form-field>
+            </div>
+
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-flat-button class="button_card_action" color="primary" type='submit' >Submit</button>
+            <button mat-flat-button class="button_card_action"color="warn" type='reset' >Reset</button>
+        </mat-card-actions>
+
+      </form>
+    </mat-card>
+</div>>
+
+<div class="row" *ngFor="let item of mitLedInspHistoryArray">
+  <span>{{item.his_topic}}</span>
+  <p>{{item.memo}}</p>
+  <p>{{item.createBy}}</p>
+  <p>{{item.createDate | date: 'dd/MM/yyyy'}}</p>
+</div>

@@ -133,7 +133,6 @@
       }
 
     getAddInspHistory(led_inspect_id,version,his_topic,memo,actionBy){
-
         const data = {
           key:led_inspect_id,
           version:version,

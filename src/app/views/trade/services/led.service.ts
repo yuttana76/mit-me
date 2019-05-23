@@ -132,11 +132,10 @@
         }));
       }
 
-    getAddInspHistory(led_inspect_id,version,his_topic,memo,actionBy){
+    getAddInspHistory(led_inspect_id,version,memo,actionBy){
         const data = {
           key:led_inspect_id,
           version:version,
-          his_topic:his_topic,
           memo:memo,
           actionBy:actionBy
         }

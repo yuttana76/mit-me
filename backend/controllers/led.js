@@ -559,6 +559,32 @@ exports.getInspHistory = (req, res, next) => {
 
 }
 
+
+exports.getAddInspHistory = (req, res, next) => {
+
+  var _key = req.body.key
+  var _version = req.body.version
+  var _his_topic = req.body.his_topic
+  var _memo = req.body.memo
+  var _actionBy = req.body.actionBy
+
+  console.log("inspHistory API " + _key)
+
+  getAddInspHistory(_key,_version,_his_topic,_memo,_actionBy)
+  .then(result=>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+
+}
+
+
 exports.getInspResource = (req, res, next) => {
 
   var _key = req.query.key;
@@ -1094,8 +1120,9 @@ function getInspHistory(led_inspect_id){
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
     var queryStr = `
     BEGIN
-    SELECT * FROM MIT_LED_INSP_CUST
+    SELECT * FROM MIT_LED_INSP_HISTORY
     WHERE led_inspect_id=@led_inspect_id
+    ORDER BY createDate desc
     END
     `;
 
@@ -1119,6 +1146,55 @@ function getInspHistory(led_inspect_id){
   });
 }
 
+
+
+
+function getAddInspHistory(led_inspect_id,version,his_topic,memo,createBy){
+
+  logger.info(`Welcome getAddInspHistory() `);
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+
+    DECLARE @NO int;
+
+    select @NO = count(1) +1
+    from MIT_LED_INSP_HISTORY
+    where led_inspect_id= @led_inspect_id
+    and version=@version
+
+    INSERT INTO MFTS.dbo.MIT_LED_INSP_HISTORY
+    (led_inspect_id, version, [no], memo, status, createBy, createDate)
+    VALUES
+    (@led_inspect_id, @version, @NO, @memo, 1, @createBy, getDate());
+
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input('led_inspect_id', sql.VarChar, led_inspect_id)
+      .input('version', sql.VarChar, version)
+      .input('memo', sql.NVarChar, memo)
+      .input('createBy', sql.NVarChar, createBy)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+      console.log("EROR>>"+err);
+    })
+  });
+}
 
 function getInspResource(led_inspect_id){
 

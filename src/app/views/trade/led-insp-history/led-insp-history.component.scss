@@ -1,0 +1,37 @@
+
+
+// ******************** https://www.bootdey.com/snippets/view/Simple-Comment-panel#html
+
+body{margin-top:20px;}
+
+.comment-wrapper .panel-body {
+    max-height:650px;
+    overflow:auto;
+}
+
+.comment-wrapper .media-list .media img {
+    width:64px;
+    height:64px;
+    border:2px solid #e5e7e8;
+}
+
+.comment-wrapper .media-list .media {
+    border-bottom:1px dashed #efefef;
+    margin-bottom:25px;
+}
+
+.media img {
+  height: 60px;
+}
+
+.text-success {
+  margin-left: 10px;
+}
+
+.media-body p{
+  margin-left: 10px;
+}
+
+.text-muted {
+  margin-left: 10px;
+}

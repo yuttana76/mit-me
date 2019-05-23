@@ -1,35 +1,21 @@
 
-<div class="row">
-  <mat-card>
-    <form [formGroup]="form" (submit)="onSubmit()" #custForm="ngForm" >
-        <mat-card-content>
-            <div class="row">
-                <mat-form-field class="col-md-4">
-                  <input   matInput formControlName="topic" placeholder="Topic" [(ngModel)]="newHistory.his_topic">
-                  <mat-error *ngIf="form.get('topic').invalid">Please enter a first name.</mat-error>
-                </mat-form-field>
-            </div>
+                <div class="panel-body">
+                    <ul class="media-list" *ngFor="let item of mitLedInspHistoryArray">
+                        <li class="media">
+                            <a href="#" class="pull-left">
+                                <!-- <img src="\assets\img\avatars\thump1.jpg" alt="" class="img-circle"> -->
+                                <img src="\assets\img\avatars\noPerson.png" alt="" class="img-circle">
+                            </a>
+                            <div class="media-body">
+                                <span class="text-muted">
+                                    <small class="text-muted">{{item.createDate | date: 'dd/MM/yyyy h:mm a'}}</small>
+                                </span>
+                                <strong class="text-success pull-left">{{item.createBy}}</strong>
+                                <p>
+                                  {{item.memo}}
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
 
-            <div class="row">
-                <mat-form-field class="col-md-4">
-                  <textarea matInput formControlName="memo"  placeholder="Leave a comment" [(ngModel)]="newHistory.memo"></textarea>
-                  <mat-error *ngIf="form.get('memo').invalid">Please enter a first name.</mat-error>
-                </mat-form-field>
-            </div>
-
-        </mat-card-content>
-        <mat-card-actions>
-            <button mat-flat-button class="button_card_action" color="primary" type='submit' >Submit</button>
-            <button mat-flat-button class="button_card_action"color="warn" type='reset' >Reset</button>
-        </mat-card-actions>
-
-      </form>
-    </mat-card>
-</div>>
-
-<div class="row" *ngFor="let item of mitLedInspHistoryArray">
-  <span>{{item.his_topic}}</span>
-  <p>{{item.memo}}</p>
-  <p>{{item.createBy}}</p>
-  <p>{{item.createDate | date: 'dd/MM/yyyy'}}</p>
-</div>

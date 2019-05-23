@@ -20,6 +20,7 @@ router.get("/inspByKey/", ledController.getInspByKey);
 
 router.get("/inspByGroupId/", ledController.getInspByGroupId);
 router.get("/inspHistory/", ledController.getInspHistory);
+router.post("/inspHistory/", ledController.getAddInspHistory);
 router.get("/inspResource/", ledController.getInspResource);
 
 

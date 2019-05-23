@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
@@ -11,6 +11,8 @@ import { MitLedMas } from '../model/mitLedMas.model';
 import { MitLedInspHistory } from '../model/mitLedInspHistory.model';
 import { MitLedInspResource } from '../model/mitLedInspResource.model';
 import { forkJoin } from "rxjs";
+import { AuthService } from '../../services/auth.service';
+import { LedInspHistoryComponent } from '../led-insp-history/led-insp-history.component';
 @Component({
   selector: 'app-led-insp-detail',
   templateUrl: './led-insp-detail.component.html',
@@ -28,12 +30,17 @@ export class LedInspDetailComponent implements OnInit {
 
   //LED data
   _key
-  // mitLedMas:MitLedMas = new MitLedMas;
   main_mitLedInspCust:MitLedInspCust = new MitLedInspCust();
   member_mitLedInspCust:MitLedInspCust[] = [];
   mitLedInspHistory:MitLedInspHistory[] =[];
   mitLedInspResource:MitLedInspResource[] =[];
 
+  //History
+  newHistory :MitLedInspHistory = new MitLedInspHistory();
+  // hisForm: FormGroup;
+
+  @ViewChild(LedInspHistoryComponent)
+  ledInspHistoryComponent: LedInspHistoryComponent;
 
   constructor(
     public route: ActivatedRoute,
@@ -41,7 +48,8 @@ export class LedInspDetailComponent implements OnInit {
     private confirmationDialogService: ConfirmationDialogService,
     public dialog: MatDialog,
     private masterDataService: MasterDataService,
-    private ledService:LEDService
+    private ledService:LEDService,
+    private authService: AuthService,
 
   ) { }
 
@@ -80,13 +88,78 @@ export class LedInspDetailComponent implements OnInit {
             console.log('Was error', error);
         }, () => {
            console.log('Loading complete');
+        });
+      }
+    });
 
+    // this.hisForm = new FormGroup({
+    //   // topic: new FormControl(null, {
+    //   //   validators: [Validators.required]
+    //   // }),
+    //   memo: new FormControl(null, {
+    //     validators: [Validators.required]
+    //   })
+    // });
+
+  }
+
+
+  onAddHistory(){
+
+      // if(this.hisForm.invalid){
+    console.log("memo >>" + this.newHistory.memo);
+
+    if(!this.newHistory.memo){
+        this.toastr.warning("Please complete entry data." , "Data not complete", {
+          timeOut: 3000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+        return
+      }
+
+      console.log("Add new history ");
+      const _createBy = this.authService.getUserData() || 'NONE';
+      const _version = "1";
+      // const _createBy = 'NONE';
+
+      this.ledService.getAddInspHistory(this.main_mitLedInspCust.led_inspect_id,_version,this.newHistory.memo,_createBy).subscribe(result=>{
+
+        // this.hisForm.reset();
+        this.newHistory.memo=null;
+
+        this.ledInspHistoryComponent.loadHistory();
+
+        this.toastr.info("Add new memo complete.", "successful", {
+          timeOut: 3000,
+          closeButton: true,
+          positionClass: "toast-top-center"
         });
 
 
-      }
 
-    });
+      }, error => () => {
+            console.log('Was error', error);
+
+            this.toastr.error("Was error " +error, "Incomplete !!", {
+              timeOut: 3000,
+              closeButton: true,
+              positionClass: "toast-top-center"
+            });
+
+        }, () => {
+           console.log('Loading complete');
+        });
+
+        this.form = new FormGroup({
+          topic: new FormControl(null, {
+            validators: [Validators.required]
+          }),
+          memo: new FormControl(null, {
+            validators: [Validators.required]
+          })
+        });
 
   }
+
 }

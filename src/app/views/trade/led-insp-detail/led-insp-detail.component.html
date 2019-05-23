@@ -3,8 +3,39 @@
 <app-led-detail  [twsid] ="main_mitLedInspCust.twsid"  *ngIf="main_mitLedInspCust.twsid"></app-led-detail>
 
 <!-- Found investor -->
-<mat-card *ngFor="let item of member_mitLedInspCust"  >
-    <mat-card-header>
+<mat-card id="led_insp"   >
+
+<div class="row">
+  <h4>MPAM Investor</h4>
+</div>
+
+    <div class="card" *ngFor="let item of member_mitLedInspCust">
+        <div class="card-body">
+          <h5 class="card-title">{{item.cust_code}} {{item.firstName}}  {{item.lastName}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{item.cust_source}}</h6>
+          <p class="card-text">
+              {{item.memo}}
+          </p>
+          <a href="#" class="btn btn-primary">Edit</a>
+        </div>
+      </div>
+
+    <!-- <ul *ngFor="let item of member_mitLedInspCust">
+
+        <li class="media">
+            <div class="media-body">
+                <span class="text-muted">
+                    <small class="text-muted">{{item.createDate | date: 'dd/MM/yyyy'}}</small>
+                </span>
+                <strong class="pull-left">{{item.cust_source}} {{item.cust_code}} {{item.firstName}}  {{item.lastName}}</strong>
+                <p>{{item.led_code}}</p>
+                <p>
+                  {{item.memo}}
+                </p>
+            </div>
+        </li>
+    </ul> -->
+    <!-- <mat-card-header>
       <div mat-card-avatar class="example-header-image"></div>
       <mat-card-title>{{item.cust_source}} {{item.cust_code}} {{item.firstName}}  {{item.lastName}}</mat-card-title>
       <span><button mat-button>Edit</button></span>
@@ -16,17 +47,34 @@
         LED code: {{item.led_code}}
         {{item.memo}}
       </p>
-    </mat-card-content>
+    </mat-card-content> -->
+
   </mat-card>
 
 <!-- History & Resource -->
 
-<mat-card id="led_body" class="cust-container" *ngIf="!spinnerLoading">
+<mat-card id="led_his" >
     <mat-tab-group >
         <mat-tab label="History">
+
+                <form  (submit)="onAddHistory()" #custForm="ngForm" class="example-form" >
+                    <div class="form-group shadow-textarea">
+                        <textarea name="memo" [(ngModel)]="newHistory.memo" class="form-control z-depth-1" rows="3" placeholder="Write something here..." ></textarea>
+                      </div>
+
+                    <div class="row">
+                      <button mat-flat-button class="button_card_action" color="primary" type='submit' >Submit</button>
+                      <button mat-flat-button class="button_card_action"color="warn" type='reset' >Reset</button>
+                    </div>
+              </form>
+            <hr>
+
           <app-led-insp-history [led_inspect_id]="main_mitLedInspCust.led_inspect_id" *ngIf="main_mitLedInspCust.led_inspect_id"></app-led-insp-history>
         </mat-tab>
-        <mat-tab label="Reources">Content 2</mat-tab>
+
+        <mat-tab label="Reources">
+          Content 2
+        </mat-tab>
       </mat-tab-group>
 </mat-card>
 

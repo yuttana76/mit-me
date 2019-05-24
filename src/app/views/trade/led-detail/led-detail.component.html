@@ -52,7 +52,58 @@
       <h5 class="card-title">LED detail</h5>
       <div class="card-text">
           <div class="row">
-              <p><strong>คดีหมายเลขดำ</strong> {{ledMas.black_case}}   <strong>ปีคดีหมายเลขดำ</strong> {{ledMas.black_yy}} </p>
+
+            <table style="border=0">
+              <tr>
+                <td><strong>คดีหมายเลขดำ</strong></td>
+                <td><input type="text" class="form-control"  value="{{ledMas.black_case}}" readonly="true"></td>
+                <td><strong>ปีคดีหมายเลขดำ</strong></td>
+                <td><input type="text" class="form-control"  value="{{ledMas.black_yy}}" readonly="true"></td>
+              </tr>
+              <tr>
+                <td><strong>คดีหมายเลขแดง</strong></td>
+                <td><input type="text" class="form-control"  value="{{ledMas.red_case}}" readonly="true"></td>
+                <td><strong>ปีคดีหมายเลขดำ</strong></td>
+                <td><input type="text" class="form-control"  value="{{ledMas.red_yy}}" readonly="true"></td>
+              </tr>
+
+              <tr>
+                <td><strong>ชื่อศาล</strong></td>
+                <td><input type="text" class="form-control"  value="{{ledMas.court_name}}" readonly="true">  </td>
+              </tr>
+              <tr>
+                <td><strong>ชื่อโจทก์ (หน้าหมาย)</strong></td>
+                <td><input type="text" class="form-control"  value="{{ledMas.plaintiff1}}" readonly="true">  </td>
+              </tr>
+              <tr>
+                <td><strong>เลขบัตรประชาชน / เลขนิติบุคคล</strong></td>
+                <td><input type="text" class="form-control"  value="{{ledMas.df_id}}" readonly="true">  </td>
+              </tr>
+              <tr>
+                <td><strong>ชื่อจำเลย</strong></td>
+                <td><input type="text" class="form-control"  value="{{ledMas.df_name}}" readonly="true">  </td>
+                <td><strong>สกุลจำเลย</strong></td>
+                <td><input type="text" class="form-control"  value="{{ledMas.df_surname}}" readonly="true">  </td>
+              </tr>
+              <tr>
+                  <td><strong>วันที่พิทักษ์ทรัพย์ชั่วคราว</strong></td>
+                  <td><input type="text" class="form-control"  value="{{ledMas.tmp_prot_dd}} / {{ledMas.tmp_prot_mm}} / {{ledMas.tmp_prot_yy}}" readonly="true">  </td>
+                </tr>
+              <tr>
+                  <td><strong>วันที่พิทักษ์ทรัพย์เด็ดขาด</strong></td>
+                  <td><input type="text" class="form-control"  value="{{ledMas.abs_prot_dd}} / {{ledMas.abs_prot_mm}} / {{ledMas.abs_prot_yy}}" readonly="true">  </td>
+                </tr>
+              <tr>
+                  <td><strong>วันที่ศาลสั่งให้จัดการทรัพย์มรดก</strong></td>
+                  <td><input type="text" class="form-control"  value="{{ledMas.df_manage_dd}} / {{ledMas.df_manage_mm}} / {{ledMas.df_manage_yy}}" readonly="true"></td>
+                </tr>
+              <tr>
+                  <td><strong>วันที่พิพากษาให้ล้มละลาย</strong></td>
+                  <td><input type="text" class="form-control"  value="{{ledMas.bkr_prot_dd}} / {{ledMas.bkr_prot_mm}} / {{ledMas.bkr_prot_yy}}" readonly="true"> </td>
+                </tr>
+            </table>
+<!--
+              <p><strong>คดีหมายเลขดำ</strong>    <strong>ปีคดีหมายเลขดำ</strong> {{ledMas.black_yy}} </p>
             </div>
             <div class="row">
                 <p><strong>คดีหมายเลขแดง</strong>  {{ledMas.red_case}}  <strong>ปีคดีหมายเลขแดง</strong> {{ledMas.red_yy}}</p>
@@ -85,7 +136,7 @@
 
             <div class="row">
               <p><strong>วันที่พิพากษาให้ล้มละลาย</strong> {{ledMas.bkr_prot_dd}} / {{ledMas.bkr_prot_mm}} / {{ledMas.bkr_prot_yy}}</p>
-            </div>
+            </div> -->
       </div>
 
     </div>

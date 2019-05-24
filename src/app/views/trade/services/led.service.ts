@@ -59,23 +59,8 @@
         return this.http.get<{result: any }>(BACKEND_URL+"/inspByKey"+  queryParams)
         .pipe(map( _data => {
           return _data.result.map(data => {
-            // return data
-            return{
-              led_inspect_id: data.led_inspect_id
-              ,version:data.version
-              ,cust_code: data.Cust_Code
-              ,twsid: data.twsid
-              ,cust_source: data.cust_source
-              ,firstName: data.firstName
-              ,lastName: data.lastName
-              ,memo: data.memo
-              ,status: data.status
-              ,led_code: data.led_code
-              ,createBy: data.createBy
-              ,createDate: data.createDate
-              ,updateBy: data.updateBy
-              ,updateDate: data.updateDate
-            }
+            return data
+
           });
         }));
       }
@@ -84,29 +69,12 @@
 
       getInspByCustCode(key) {
 
-        console.log("*** getInspByCustCode() " + key);
-
         let queryParams = `?key=${key}`;
         return this.http.get<{result: any }>(BACKEND_URL+"/inspByCustCode"+  queryParams)
         .pipe(map( _data => {
           return _data.result.map(data => {
-            // return data
-            return{
-              led_inspect_id: data.led_inspect_id
-              ,version:data.version
-              ,cust_code: data.Cust_Code
-              ,twsid: data.twsid
-              ,cust_source: data.cust_source
-              ,firstName: data.firstName
-              ,lastName: data.lastName
-              ,memo: data.memo
-              ,status: data.status
-              ,led_code: data.led_code
-              ,createBy: data.createBy
-              ,createDate: data.createDate
-              ,updateBy: data.updateBy
-              ,updateDate: data.updateDate
-            }
+            return data
+
           });
         }));
       }
@@ -142,8 +110,6 @@
         return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/inspHistory', data);
     }
 
-
-
       getInspResource(key) {
         let queryParams = `?key=${key}`;
         return this.http.get<{result: any }>(BACKEND_URL+"/inspResource"+  queryParams)
@@ -152,6 +118,21 @@
             return data
           });
         }));
+      }
+
+      getCntInspToday() {
+        return this.http.get<{result: any }>(BACKEND_URL+"/cntInspToday")
+
+      }
+
+      getCntOnInspection() {
+        return this.http.get<{result: any }>(BACKEND_URL+"/cntOnInspection")
+
+      }
+
+      getCntOnFreeze() {
+        return this.http.get<{result: any }>(BACKEND_URL+"/cntOnFreeze")
+
       }
 
       // ******************************** END FILE

@@ -586,10 +586,8 @@ exports.getAddInspHistory = (req, res, next) => {
 
 
 exports.getInspResource = (req, res, next) => {
-
   var _key = req.query.key;
   console.log("inspResource API " + _key)
-
   getInspResource(_key)
   .then(result=>{
     res.status(200).json({
@@ -601,8 +599,59 @@ exports.getInspResource = (req, res, next) => {
       message: err
     });
   });
-
 }
+
+exports.cntInspToday = (req, res, next) => {
+  console.log("cntInspToday API ")
+  cntInspToday()
+  .then(result=>{
+    res.status(200).json({
+      key:"TODAY",
+      message: "Successfully!",
+      result: result[0].CNT
+    });
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+}
+
+
+exports.cntOnInspection = (req, res, next) => {
+  console.log("cntOnInspection API ")
+  cntOnInspection()
+  .then(result=>{
+    res.status(200).json({
+      key:"INSP",
+      message: "Successfully!",
+      result: result[0].CNT
+    });
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+}
+
+
+exports.cntOnFreeze = (req, res, next) => {
+  console.log("cntOnInspection API ")
+  cntOnFreeze()
+  .then(result=>{
+    res.status(200).json({
+      key:"FREEZE",
+      message: "Successfully!",
+      result: result[0].CNT
+    });
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+}
+
+
 
 // **** FUNCTION HERE
 
@@ -996,7 +1045,13 @@ function getInspByKey(key){
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
     var queryStr = `
     BEGIN
-    SELECT * FROM MIT_LED_INSP_CUST  where led_inspect_id=@key
+
+    SELECT b.keyText as led_code_text, a.*
+    FROM MIT_LED_INSP_CUST a
+    LEFT JOIN MIT_CODE_LOOKUP b on  b.keyname='LEDCODE' and b.keycode = a.led_code
+    where a.led_inspect_id=@key
+
+
     END
     `;
 
@@ -1009,18 +1064,6 @@ function getInspByKey(key){
           if(err){
             reject(err);
           }else {
-
-             console.log("getInspByCustCode()" + JSON.stringify(result.recordset))
-
-            // Promise.all([
-            //   getInspHistory().catch(err => { res.status(401).json({ message: 'Error getInspHistory()'+err }); }),
-            //   getInspResource().catch(err => { res.status(401).json({ message: 'Error getInspResource()'+err }); }),
-            //   ]).then(values => {
-
-            //    },function(err){
-            //     res.status(401).json({ message: err });
-            //   })
-
             resolve(result.recordset);
           }
       })
@@ -1042,10 +1085,13 @@ function getInspByCustCode(custCode){
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
     var queryStr = `
     BEGIN
-    SELECT * FROM MIT_LED_INSP_CUST  where Cust_Code=@Cust_Code
+    SELECT b.keyText as led_code_text, a.*
+    FROM MIT_LED_INSP_CUST a
+    LEFT JOIN MIT_CODE_LOOKUP b on  b.keyname='LEDCODE' and b.keycode = a.led_code
+    where a.Cust_Code= @Cust_Code
+
     END
     `;
-
     const sql = require('mssql')
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request() // or: new sql.Request(pool1)
@@ -1055,18 +1101,6 @@ function getInspByCustCode(custCode){
           if(err){
             reject(err);
           }else {
-
-             console.log("getInspByCustCode()" + JSON.stringify(result.recordset))
-
-            // Promise.all([
-            //   getInspHistory().catch(err => { res.status(401).json({ message: 'Error getInspHistory()'+err }); }),
-            //   getInspResource().catch(err => { res.status(401).json({ message: 'Error getInspResource()'+err }); }),
-            //   ]).then(values => {
-
-            //    },function(err){
-            //     res.status(401).json({ message: err });
-            //   })
-
             resolve(result.recordset);
           }
       })
@@ -1087,7 +1121,12 @@ function getInspByGroupId(grpId){
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
     var queryStr = `
     BEGIN
-    SELECT * FROM MIT_LED_INSP_CUST  where grpid=@grpid
+
+      SELECT b.keyText as led_code_text, a.*
+      FROM MIT_LED_INSP_CUST a
+      LEFT JOIN MIT_CODE_LOOKUP b on  b.keyname='LEDCODE' and b.keycode = a.led_code
+      where a.grpid=@grpid
+
     END
     `;
 
@@ -1120,9 +1159,10 @@ function getInspHistory(led_inspect_id){
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
     var queryStr = `
     BEGIN
-    SELECT * FROM MIT_LED_INSP_HISTORY
-    WHERE led_inspect_id=@led_inspect_id
-    ORDER BY createDate desc
+      SELECT * FROM MIT_LED_INSP_HISTORY
+      WHERE led_inspect_id=@led_inspect_id
+      AND [status]=1
+      ORDER BY createDate desc
     END
     `;
 
@@ -1197,7 +1237,6 @@ function getAddInspHistory(led_inspect_id,version,his_topic,memo,createBy){
 }
 
 function getInspResource(led_inspect_id){
-
   logger.info(`Welcome getInspResource() `);
 
   return new Promise(function(resolve, reject) {
@@ -1213,6 +1252,106 @@ function getInspResource(led_inspect_id){
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request() // or: new sql.Request(pool1)
       .input('led_inspect_id', sql.VarChar, led_inspect_id)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+      console.log("EROR>>"+err);
+    })
+  });
+}
+
+
+function cntInspToday(){
+  logger.info(`Welcome cntInspToday() `);
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+      SELECT count(*) AS CNT
+      FROM MIT_LED_INSP_CUST a
+      --WHERE led_code IN('001','100')
+      WHERE  CONVERT(date,a.createDate)= CONVERT(date, getdate())
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+      console.log("EROR>>"+err);
+    })
+  });
+}
+
+
+function cntOnInspection(){
+  logger.info(`Welcome cntOnInspection() `);
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+      SELECT count(*) AS CNT
+      FROM MIT_LED_INSP_CUST a
+      WHERE led_code IN('001')
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+      console.log("EROR>>"+err);
+    })
+  });
+}
+
+
+function cntOnFreeze(){
+  logger.info(`Welcome cntOnInspection() `);
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+      SELECT count(*) AS CNT
+      FROM MIT_LED_INSP_CUST a
+      WHERE led_code IN('100','101','102')
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
       .query(queryStr, (err, result) => {
           // ... error checks
           if(err){

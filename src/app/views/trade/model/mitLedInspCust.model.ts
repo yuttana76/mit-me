@@ -16,4 +16,6 @@ export class MitLedInspCust {
   createDate: string;
   updateBy: string;
   updateDate: string;
+
+  led_code_text:string;
 }

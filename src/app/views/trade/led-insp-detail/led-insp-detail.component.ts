@@ -73,14 +73,13 @@ export class LedInspDetailComponent implements OnInit {
         .subscribe((data: any[]) => {
           this.main_mitLedInspCust  = data[0];
 
-          console.log('INSP CUST >>' + JSON.stringify(this.main_mitLedInspCust) );
-
+        console.log('INSP MAIN CUST >>' + JSON.stringify(this.main_mitLedInspCust) );
         observables.push(this.ledService.getInspByCustCode(this.main_mitLedInspCust.cust_code));
 
         const example = forkJoin(observables);
         const subscribe = example.subscribe((result:any) => {
         this.member_mitLedInspCust =result[0];
-          console.log('MEMBER>>' + JSON.stringify(this.member_mitLedInspCust) );
+          console.log('MEMBER >>' + JSON.stringify(this.member_mitLedInspCust) );
         });
 
 
@@ -135,7 +134,6 @@ export class LedInspDetailComponent implements OnInit {
           closeButton: true,
           positionClass: "toast-top-center"
         });
-
 
 
       }, error => () => {

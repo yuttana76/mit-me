@@ -5,50 +5,19 @@
 <!-- Found investor -->
 <mat-card id="led_insp"   >
 
-<div class="row">
-  <h4>MPAM Investor</h4>
-</div>
-
-    <div class="card" *ngFor="let item of member_mitLedInspCust">
-        <div class="card-body">
-          <h5 class="card-title">{{item.cust_code}} {{item.firstName}}  {{item.lastName}}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">{{item.cust_source}}</h6>
-          <p class="card-text">
-              {{item.memo}}
-          </p>
-          <a href="#" class="btn btn-primary">Edit</a>
-        </div>
+  <div class="row">
+    <h4>MPAM Investor</h4>
+  </div>
+  <div class="card" *ngFor="let item of member_mitLedInspCust">
+      <div class="card-body">
+        <h5 class="card-title">{{item.cust_code}} {{item.firstName}}  {{item.lastName}}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{item.cust_source}} - {{item.led_code_text}}</h6>
+        <p class="card-text">
+            {{item.memo}}
+        </p>
+        <a href="#" class="btn btn-primary">Edit</a>
       </div>
-
-    <!-- <ul *ngFor="let item of member_mitLedInspCust">
-
-        <li class="media">
-            <div class="media-body">
-                <span class="text-muted">
-                    <small class="text-muted">{{item.createDate | date: 'dd/MM/yyyy'}}</small>
-                </span>
-                <strong class="pull-left">{{item.cust_source}} {{item.cust_code}} {{item.firstName}}  {{item.lastName}}</strong>
-                <p>{{item.led_code}}</p>
-                <p>
-                  {{item.memo}}
-                </p>
-            </div>
-        </li>
-    </ul> -->
-    <!-- <mat-card-header>
-      <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>{{item.cust_source}} {{item.cust_code}} {{item.firstName}}  {{item.lastName}}</mat-card-title>
-      <span><button mat-button>Edit</button></span>
-
-    </mat-card-header>
-    <mat-card-content>
-      <p>
-        Found Date: {{item.createDate | date: 'dd/MM/yyyy'}}
-        LED code: {{item.led_code}}
-        {{item.memo}}
-      </p>
-    </mat-card-content> -->
-
+    </div>
   </mat-card>
 
 <!-- History & Resource -->

@@ -38,7 +38,6 @@ export class ApplicationDialogComponent implements OnInit {
       this.insertMode = true;
     } else {
       this.insertMode = false;
-
       this.form.controls['id'].disable();
     }
 

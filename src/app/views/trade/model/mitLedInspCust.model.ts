@@ -3,6 +3,7 @@ export class MitLedInspCust {
   constructor() {}
 
   led_inspect_id: string;
+  no:string
   version:string;
   cust_code: string;
   twsid: string;

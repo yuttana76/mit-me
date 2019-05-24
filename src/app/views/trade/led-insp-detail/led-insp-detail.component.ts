@@ -2,17 +2,18 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
-import { MatDialog } from '@angular/material';
-import { MasterDataService } from '../services/masterData.service';
+// import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
+import { MatDialog, MatDialogRef } from '@angular/material';
+// import { MasterDataService } from '../services/masterData.service';
 import { LEDService } from '../services/led.service';
 import { MitLedInspCust } from '../model/mitLedInspCust.model';
-import { MitLedMas } from '../model/mitLedMas.model';
+// import { MitLedMas } from '../model/mitLedMas.model';
 import { MitLedInspHistory } from '../model/mitLedInspHistory.model';
 import { MitLedInspResource } from '../model/mitLedInspResource.model';
 import { forkJoin } from "rxjs";
 import { AuthService } from '../../services/auth.service';
 import { LedInspHistoryComponent } from '../led-insp-history/led-insp-history.component';
+import { LedInspCustDetailComponent } from '../dialog/led-insp-cust-detail/led-insp-cust-detail.component';
 @Component({
   selector: 'app-led-insp-detail',
   templateUrl: './led-insp-detail.component.html',
@@ -39,15 +40,19 @@ export class LedInspDetailComponent implements OnInit {
   newHistory :MitLedInspHistory = new MitLedInspHistory();
   // hisForm: FormGroup;
 
+  // Dialog
+  ledInspCustDetailComponent: MatDialogRef<LedInspCustDetailComponent>;
+
   @ViewChild(LedInspHistoryComponent)
   ledInspHistoryComponent: LedInspHistoryComponent;
+
 
   constructor(
     public route: ActivatedRoute,
     private toastr: ToastrService,
-    private confirmationDialogService: ConfirmationDialogService,
+    // private confirmationDialogService: ConfirmationDialogService,
     public dialog: MatDialog,
-    private masterDataService: MasterDataService,
+    // private masterDataService: MasterDataService,
     private ledService:LEDService,
     private authService: AuthService,
 
@@ -73,13 +78,13 @@ export class LedInspDetailComponent implements OnInit {
         .subscribe((data: any[]) => {
           this.main_mitLedInspCust  = data[0];
 
-        console.log('INSP MAIN CUST >>' + JSON.stringify(this.main_mitLedInspCust) );
+        // console.log('INSP MAIN CUST >>' + JSON.stringify(this.main_mitLedInspCust) );
         observables.push(this.ledService.getInspByCustCode(this.main_mitLedInspCust.cust_code));
 
         const example = forkJoin(observables);
         const subscribe = example.subscribe((result:any) => {
         this.member_mitLedInspCust =result[0];
-          console.log('MEMBER >>' + JSON.stringify(this.member_mitLedInspCust) );
+          // console.log('MEMBER >>' + JSON.stringify(this.member_mitLedInspCust) );
         });
 
 
@@ -158,6 +163,17 @@ export class LedInspDetailComponent implements OnInit {
           })
         });
 
+  }
+
+  onEditInspCust(_data: MitLedInspCust) {
+    this.ledInspCustDetailComponent = this.dialog.open(LedInspCustDetailComponent, {
+      width: '600px',
+      data: _data
+    });
+
+    this.ledInspCustDetailComponent.afterClosed().subscribe(result => {
+        // console.log('Dialog result => ', result);
+    });
   }
 
 }

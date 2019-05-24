@@ -43,6 +43,17 @@ export class ShareDataService {
       },
   ];
 
+  statusListBoolean= [
+    {
+    code: true,
+    desc: 'Active'
+    },
+    {
+      code: false,
+      desc: 'Inactive'
+      },
+  ];
+
   menuGroupList = [
     {
       code: 'Applications',

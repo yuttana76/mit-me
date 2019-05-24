@@ -6,6 +6,7 @@
     import { Router } from '@angular/router';
     import {InspSearch} from '../model/inspSearch.model';
     import { environment } from '../../../../environments/environment';
+import { MitLedInspCust } from '../model/mitLedInspCust.model';
 
     const BACKEND_URL = environment.apiURL + '/led/';
 
@@ -134,6 +135,29 @@
         return this.http.get<{result: any }>(BACKEND_URL+"/cntOnFreeze")
 
       }
+
+
+      updateInspCust(obj:MitLedInspCust,updateBy){
+
+        var statusInt=0;
+        if(obj.status){
+          statusInt =1
+        }else{
+          statusInt =0
+        }
+
+        const data = {
+                "led_inspect_id":obj.led_inspect_id,
+                "no":obj.no,
+                "version":obj.version,
+                "memo":obj.memo,
+                "status":obj.status,
+                "led_code":obj.led_code,
+                "updateBy":updateBy
+                      }
+
+        return this.http.put<{ message: string, data: any }>(BACKEND_URL + '/inspCust', data);
+    }
 
       // ******************************** END FILE
     }

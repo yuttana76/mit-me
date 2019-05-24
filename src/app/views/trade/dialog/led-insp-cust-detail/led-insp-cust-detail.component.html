@@ -1,0 +1,71 @@
+
+<mat-card class="example-card" >
+    <form [formGroup]="form"  #custForm="ngForm" >
+        <mat-card-title>Inspection detail</mat-card-title>
+
+        <div class="example-container">
+
+            <mat-form-field >
+                <input   matInput formControlName="twsid" placeholder=" twsid"
+                [(ngModel)]="mitLedInspCust.twsid">
+                <mat-error *ngIf="form.get('twsid').invalid">Please enter cust_code</mat-error>
+            </mat-form-field>
+
+            <mat-form-field >
+                <input   matInput formControlName="cust_code" placeholder="ID"
+                [(ngModel)]="mitLedInspCust.cust_code">
+                <mat-error *ngIf="form.get('cust_code').invalid">Please enter cust_code</mat-error>
+            </mat-form-field>
+            <mat-form-field >
+                <input   matInput formControlName="firstName" placeholder="First Name"
+                [(ngModel)]="mitLedInspCust.firstName">
+                <mat-error *ngIf="form.get('firstName').invalid">Please enter firstName</mat-error>
+            </mat-form-field>
+            <mat-form-field >
+                <input   matInput formControlName="lastName" placeholder=" Last Name"
+                [(ngModel)]="mitLedInspCust.lastName">
+                <mat-error *ngIf="form.get('lastName').invalid">Please enter lastName</mat-error>
+            </mat-form-field>
+            <mat-form-field >
+                <input   matInput formControlName="cust_source" placeholder="Source"
+                [(ngModel)]="mitLedInspCust.cust_source">
+                <mat-error *ngIf="form.get('cust_source').invalid">Please enter Source</mat-error>
+            </mat-form-field>
+
+            <mat-form-field >
+                <textarea matInput formControlName="memo" placeholder=" memo" [(ngModel)]="mitLedInspCust.memo"></textarea>
+                <mat-error *ngIf="form.get('memo').invalid">Please enter memo</mat-error>
+              </mat-form-field>
+
+                <mat-form-field >
+                    <mat-select  formControlName="led_code" placeholder="LED code"
+                    [(ngModel)]="mitLedInspCust.led_code">
+                        <mat-option  *ngFor="let obj of codeLookupList" [value]="obj.keycode">
+                          {{obj.keyText}}
+                        </mat-option>
+                      </mat-select>
+                    <mat-error *ngIf="form.get('led_code').invalid">Choose one</mat-error>
+                </mat-form-field>
+
+                <mat-form-field >
+                    <mat-select  formControlName="status" placeholder="Status"
+                    [(ngModel)]="mitLedInspCust.status">
+                        <mat-option  *ngFor="let obj of shareDataService.statusListBoolean" [value]="obj.code">
+                          {{obj.desc}}
+                        </mat-option>
+                      </mat-select>
+                    <mat-error *ngIf="form.get('status').invalid">Choose one</mat-error>
+                </mat-form-field>
+
+                <mat-card-actions>
+                    <a  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >Save</a>
+                    <a class="button_card_action" mat-flat-button color="accent"  (click)="onClose()"> Close </a>
+
+                  </mat-card-actions>
+
+
+          </div>
+
+
+      </form>
+      </mat-card>

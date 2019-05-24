@@ -57,6 +57,7 @@ import { LedDetailComponent } from './led-detail/led-detail.component';
 import { LedInspResultComponent } from './led-insp-result/led-insp-result.component';
 import { LedInspHistoryComponent } from './led-insp-history/led-insp-history.component';
 import { LedInspResourceComponent } from './led-insp-resource/led-insp-resource.component';
+import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-insp-cust-detail.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -122,6 +123,7 @@ import { LedInspResourceComponent } from './led-insp-resource/led-insp-resource.
     LedInspResultComponent,
     LedInspHistoryComponent,
     LedInspResourceComponent,
+    LedInspCustDetailComponent,
   ],
   providers: [DatePipe],
   entryComponents: [
@@ -134,7 +136,8 @@ import { LedInspResourceComponent } from './led-insp-resource/led-insp-resource.
     UserGroupDialogComponent,
     ApplicationDialogComponent,
     AnoucementDialogComponent,
-    ChildrenDialogComponent
+    ChildrenDialogComponent,
+    LedInspCustDetailComponent
   ],
 })
 export class TradeModule {

@@ -222,6 +222,40 @@ const LED_INSP_STATUS =1;
 // }
 
 
+
+
+exports.callGetBankruptList = (req, res, next) =>{
+
+  var led_options = {
+    host: 'test.example.com',
+    port: 443,
+    path: '/api/service/'+servicename,
+    // authentication headers
+    headers: {
+       'username': 'MPAM',
+       'password': 'MPAM123',
+       'api-key': '328010cc65ecf3a5f0bcdbb51e339d36',
+      //  'api-key': 'Basic ' + new Buffer(username + ':' + passw).toString('base64')
+    }
+  };
+
+  request = https.get(options, function(res){
+    var body = "";
+    res.on('data', function(data) {
+       body += data;
+    });
+    res.on('end', function() {
+     //here we have the full response, html or json object
+       console.log(body);
+    })
+    res.on('error', function(e) {
+       onsole.log("Got error: " + e.message);
+    });
+   });
+
+
+}
+
 exports.uploadBulkFileDialy = (req, res, next) =>{
 
   logger.info('Welcome uploadBulkFileDialy()');

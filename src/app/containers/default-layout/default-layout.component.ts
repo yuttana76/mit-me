@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 // import { navItems } from './../../_nav';  // CORE UI MENU (default)
 import { navItems } from './../../_MerchantNav';
+// import { navItems } from './../../_devNav'; // For development
 
 
 import { AuthService } from '../../views/services/auth.service';
@@ -52,7 +53,7 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
     });
 
   // ***************************   Dynamic NAV
-  // this.navItems =  null;  // For production
+  this.navItems =  null;  // For production
 
   if ( this.navItems == null ) {
 

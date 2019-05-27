@@ -92,6 +92,9 @@ export class ApplicationService {
   }
 
   deleteApplication(appId: string): Observable<any> {
+
+    console.log("deleteApplication() >>"  + appId)
+
     return new Observable((observer) => {
         this.http
         .delete<{ message: string, result: string }>( BACKEND_URL + '/' + appId)

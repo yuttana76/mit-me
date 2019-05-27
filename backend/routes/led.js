@@ -7,6 +7,8 @@ const router = express.Router();
 
 // router.post("/uploadFile",selfAuth,ledController.uploadFile);
 // router.post("/uploadBulkFileMaster",selfAuth,ledController.uploadBulkFileMaster);
+router.get("/CallGetBankruptList",selfAuth,ledController.callGetBankruptList);
+
 router.post("/uploadBulkFileDialy",selfAuth,ledController.uploadBulkFileDialy);
 
 router.post("/checkCustDialy",selfAuth,ledController.checkCustDialy);

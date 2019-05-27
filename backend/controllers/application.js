@@ -1,5 +1,6 @@
 const dbConfig = require('../config/db-config');
 var config = dbConfig.dbParameters;
+var logger = require("../config/winston");
 
 exports.getApplication = (req, res, next) => {
 
@@ -36,8 +37,10 @@ exports.deleteApplication = (req, res, next) => {
 
   var appId = req.params.appId;
 
+  logger.info('deleteApplication API/' + appId);
+
   var fncName = 'deleteApplication()';
-  var queryStr = `SELECT * FROM MIT_ApplicationInfo  WHERE AppId ='${appId}' `;
+  var queryStr = `Delete FROM MIT_ApplicationInfo  WHERE AppId ='${appId}' `;
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {

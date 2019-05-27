@@ -10,7 +10,8 @@ exports.getNavMenu = (req, res, next) => {
   // console.log('userId>>' ,userId);
 
   var fncName = 'getNavMenu()';
-  var queryStr = `    SELECT C.*
+  var queryStr = `
+  SELECT C.*
   from MIT_USERS_GROUP A
 ,MIT_Authority B
 ,MIT_ApplicationInfo C
@@ -19,6 +20,7 @@ WHERE A.USERID = '${userId}'
 AND CURRENT_TIMESTAMP < ISNULL(A.EXPIRE_DATE,CURRENT_TIMESTAMP+1)
  AND B.MIT_GROUP =A.GroupId
   AND B.[Status]='A'
+  AND C.[Status]='A'
   AND CURRENT_TIMESTAMP < ISNULL(B.EXPIRE_DATE,CURRENT_TIMESTAMP+1)
 AND B.AppId = C.AppId
 order by C.menuGroup, C.menuOrder

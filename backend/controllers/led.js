@@ -399,6 +399,8 @@ exports.checkCustDialy = (req, res, next) => {
 exports.searchInsp = (req, res, next) => {
   var fncName = "searchInsp";
 
+  logger.info(`searchInsp API/ `);
+
   var numPerPage = parseInt(req.query.pagesize, 10) || 10;
   var page = parseInt(req.query.page, 10) || 1;
   var custId = req.query.custId || false;
@@ -414,11 +416,11 @@ exports.searchInsp = (req, res, next) => {
   }
 
   if(firstName){
-    whereCond += `AND firstName like '%${firstName}%' `
+    whereCond += ` AND firstName like '%${firstName}%' `
   }
 
   if(lastName){
-    whereCond += `AND lastName like '%${lastName}%' `
+    whereCond += ` AND lastName like '%${lastName}%' `
   }
 
   if(fromSource && fromSource != '0' ){
@@ -430,7 +432,7 @@ exports.searchInsp = (req, res, next) => {
   }
 
   // VALIDATION Condifiton
-  console.log('Validate COND. >>' + whereCond );
+  // console.log('Validate COND. >>' + whereCond );
 
   if(whereCond.length<=3 && fromSource != '0' && led_code != '0'){
     res.status(400).json();
@@ -445,7 +447,57 @@ exports.searchInsp = (req, res, next) => {
     });
 
   },err=>{
-    console.log(fncName + " Quey db. Was err !!!" + err);
+    // console.log(fncName + " Quey db. Was err !!!" + err);
+    res.status(400).json({
+      message: err
+    });
+
+  })
+}
+
+
+exports.searchLedMaster = (req, res, next) => {
+  var fncName = "searchInsp";
+
+  logger.info(`searchLedMaster API/ `);
+
+  var numPerPage = parseInt(req.query.pagesize, 10) || 10;
+  var page = parseInt(req.query.page, 10) || 1;
+
+  var id = req.query.id || false;
+  var firstName = req.query.firstName || false;
+  var lastName = req.query.lastName || false;
+
+  var whereCond = "1=1";
+
+  if(id){
+    whereCond += ` AND df_id= '${id}' `
+  }
+
+  if(firstName){
+    whereCond += ` AND df_name like '%${firstName}%' `
+  }
+
+  if(lastName){
+    whereCond += ` AND df_surname like '%${lastName}%' `
+  }
+
+  // VALIDATION Condifiton
+  // console.log('Validate COND. >>' + whereCond );
+  if(whereCond.length<=3){
+    res.status(400).json();
+    return;
+  }
+
+  //Call Query
+  searchLedMaster(whereCond,page,numPerPage).then(result =>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+
+  },err=>{
+    // console.log(fncName + " Quey db. Was err !!!" + err);
     res.status(400).json({
       message: err
     });
@@ -457,7 +509,8 @@ exports.searchInsp = (req, res, next) => {
 exports.getLEDMasterBykey = (req, res, next) => {
 
   var _key = req.query.key;
-  console.log("getLEDMasterBykey() " + _key)
+  // console.log("getLEDMasterBykey() " + _key)
+  logger.info(`getLEDMasterBykey API/ `);
 
   getLEDMasterBykey(_key)
   .then(result=>{
@@ -477,7 +530,8 @@ exports.getLEDMasterBykey = (req, res, next) => {
 exports.getInspByKey = (req, res, next) => {
 
   var _key = req.query.key;
-  console.log("getInspByKey() " + _key)
+  // console.log("getInspByKey() " + _key)
+  logger.info(`getInspByKey API/ `);
 
   getInspByKey(_key)
   .then(result=>{
@@ -499,7 +553,8 @@ exports.getInspByKey = (req, res, next) => {
 exports.getInspByCustCode = (req, res, next) => {
 
   var _key = req.query.key;
-  console.log("getInspByCustCode() " + _key)
+  // console.log("getInspByCustCode() " + _key)
+  logger.info(`getInspByCustCode API/ `);
 
   getInspByCustCode(_key)
   .then(result=>{
@@ -524,7 +579,8 @@ exports.getInspByCustCode = (req, res, next) => {
 exports.getInspByGroupId = (req, res, next) => {
 
   var _key = req.query.key;
-  console.log("getInspByGroupId() " + _key)
+  // console.log("getInspByGroupId() " + _key)
+  logger.info(`getInspByGroupId API/ `);
 
   getInspByGroupId(_key)
   .then(result=>{
@@ -543,7 +599,8 @@ exports.getInspByGroupId = (req, res, next) => {
 exports.getInspHistory = (req, res, next) => {
 
   var _key = req.query.key;
-  console.log("inspHistory API " + _key)
+  // console.log("inspHistory API " + _key)
+  logger.info(`getInspHistory API/ `);
 
   getInspHistory(_key)
   .then(result=>{
@@ -559,7 +616,6 @@ exports.getInspHistory = (req, res, next) => {
 
 }
 
-
 exports.getAddInspHistory = (req, res, next) => {
 
   var _key = req.body.key
@@ -568,9 +624,37 @@ exports.getAddInspHistory = (req, res, next) => {
   var _memo = req.body.memo
   var _actionBy = req.body.actionBy
 
-  console.log("inspHistory API " + _key)
+  // console.log("inspHistory API " + _key)
+  logger.info(`getAddInspHistory API/ `);
 
   getAddInspHistory(_key,_version,_his_topic,_memo,_actionBy)
+  .then(result=>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+
+}
+
+exports.updateInspCust = (req, res, next) => {
+
+  var led_inspect_id = req.body.led_inspect_id
+  var no = req.body.no
+  var version = req.body.version
+  var memo = req.body.memo
+  var status = req.body.status
+  var led_code = req.body.led_code
+  var updateBy = req.body.updateBy
+
+  // console.log("inspHistory API " + _key)
+  logger.info(`updateInspCust API/ `);
+
+  updateInspCust(led_inspect_id,no,version,memo,status,led_code,updateBy)
   .then(result=>{
     res.status(200).json({
       message: "Successfully!",
@@ -587,7 +671,9 @@ exports.getAddInspHistory = (req, res, next) => {
 
 exports.getInspResource = (req, res, next) => {
   var _key = req.query.key;
-  console.log("inspResource API " + _key)
+
+  logger.info(`getInspResource API/ `);
+
   getInspResource(_key)
   .then(result=>{
     res.status(200).json({
@@ -602,7 +688,8 @@ exports.getInspResource = (req, res, next) => {
 }
 
 exports.cntInspToday = (req, res, next) => {
-  console.log("cntInspToday API ")
+  logger.info(`cntInspToday API/ `);
+
   cntInspToday()
   .then(result=>{
     res.status(200).json({
@@ -619,7 +706,8 @@ exports.cntInspToday = (req, res, next) => {
 
 
 exports.cntOnInspection = (req, res, next) => {
-  console.log("cntOnInspection API ")
+
+  logger.info(`cntOnInspection API/ `);
   cntOnInspection()
   .then(result=>{
     res.status(200).json({
@@ -636,7 +724,8 @@ exports.cntOnInspection = (req, res, next) => {
 
 
 exports.cntOnFreeze = (req, res, next) => {
-  console.log("cntOnInspection API ")
+
+  logger.info(`cntOnFreeze API/ `);
   cntOnFreeze()
   .then(result=>{
     res.status(200).json({
@@ -657,17 +746,61 @@ exports.cntOnFreeze = (req, res, next) => {
 
   function searchInspCust(whereCond,page,numPerPage){
 
-    console.log( ' fnc searchInspCust() whereCond='+whereCond);
+    // console.log( ' fnc searchInspCust() whereCond='+whereCond);
+      var queryStr = `
+
+
+      BEGIN
+        SELECT b.keyText AS led_code_text, TBL.* FROM (
+          SELECT ROW_NUMBER() OVER(ORDER BY led_inspect_id) AS NUMBER,
+            * FROM [MIT_LED_INSP_CUST]
+              WHERE ${whereCond}
+        ) AS TBL
+        left join MIT_CODE_LOOKUP b ON b.keyname='LEDCODE' AND b.keycode=TBL.led_code
+      WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+        ORDER BY Cust_Code
+      END
+
+      `;
+
+    return new Promise(function(resolve, reject) {
+
+        const sql = require('mssql')
+        const pool1 = new sql.ConnectionPool(config, err => {
+          pool1.request() // or: new sql.Request(pool1)
+          // .input('whereCond', sql.VarChar(100), led_inspect_id)
+          // .input('page', sql.VarChar(50), cust_code)
+          // .input('numPerPage', sql.Int, parseInt(twsid))
+          .query(queryStr, (err, result) => {
+              if(err){
+                reject(err);
+              }else {
+                resolve(result.recordset);
+              }
+          })
+        })
+        pool1.on('error', err => {
+          reject(err);
+        })
+
+    })
+  }
+
+  function searchLedMaster(whereCond,page,numPerPage){
+
+    logger.info(' fnc searchLedMaster() whereCond='+whereCond);
 
       var queryStr = `
       BEGIN
-      SELECT * FROM (
-        SELECT ROW_NUMBER() OVER(ORDER BY led_inspect_id) AS NUMBER,
-           * FROM [MIT_LED_INSP_CUST] WHERE ${whereCond}
+      SELECT TBL.*,B.led_inspect_id FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY twsid) AS NUMBER,
+           * FROM [MIT_LED_DB_MASTER]
+            WHERE ${whereCond}
       ) AS TBL
-      WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
-      ORDER BY Cust_Code
-      END
+      left join MIT_LED_INSP_CUST B ON  B.twsid = TBL.twsid
+       WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+       ORDER BY TBL.twsid
+END
       `;
 
     return new Promise(function(resolve, reject) {
@@ -723,14 +856,14 @@ function insertLEDInspect(inspectData,cust_source,_createBy){
       console.log("insertLEDInspect()>> " +JSON.stringify(_obj));
 // console.log(cust_source +" ;twsid:"+_obj.twsid +" ;LED_CUST_CODE:"+_obj.LED_CUST_CODE  +" ;MPAM_CUST_CODE:"+_obj.MPAM_CUST_CODE  );
 
-        insertData(_obj.MPAM_CUST_CODE,_obj.twsid,cust_source,_obj.firstName,_obj.lastName,LED_INSP_STATUS,LED_INSP_LED_CODE,_createBy).then(result => {
+        insertInspCust(_obj.MPAM_CUST_CODE,_obj.twsid,cust_source,_obj.firstName,_obj.lastName,LED_INSP_STATUS,LED_INSP_LED_CODE,_createBy).then(result => {
           resolve('Insert Inspect success');
         })
     }
   })
 }
 
-function insertData(cust_code,twsid,cust_source,firstName,lastName,status,led_code,createBy){
+function insertInspCust(cust_code,twsid,cust_source,firstName,lastName,status,led_code,createBy){
   console.log("led_code>>" + led_code + "  createBy>>" +createBy );
 
   return new Promise(function(resolve, reject) {
@@ -739,10 +872,18 @@ function insertData(cust_code,twsid,cust_source,firstName,lastName,status,led_co
 
       var queryStr = `
       BEGIN
+
+        DECLARE @NO int;
+
+        select @NO = count(1) +1
+        from MIT_LED_INSP_CUST
+        where led_inspect_id= @led_inspect_id
+        and version=@version
+
         INSERT INTO MIT_LED_INSP_CUST
-        (led_inspect_id,version, Cust_Code, twsid, cust_source,firstName,lastName, status, led_code, createBy , createDate )
+        (led_inspect_id,NO,version, Cust_Code, twsid, cust_source,firstName,lastName, status, led_code, createBy , createDate )
         VALUES
-        (@led_inspect_id,1, @Cust_Code, @twsid, @cust_source,@firstName,@lastName, @status, @led_code, @createBy, GETDATE())
+        (@led_inspect_id,@NO,@version, @Cust_Code, @twsid, @cust_source,@firstName,@lastName, @status, @led_code, @createBy, GETDATE())
       END
       `;
 
@@ -750,6 +891,7 @@ function insertData(cust_code,twsid,cust_source,firstName,lastName,status,led_co
       const pool1 = new sql.ConnectionPool(config, err => {
         pool1.request() // or: new sql.Request(pool1)
         .input('led_inspect_id', sql.VarChar(100), led_inspect_id)
+        .input('version', sql.Int, 1)
         .input('Cust_Code', sql.VarChar(50), cust_code)
         .input('twsid', sql.Int, parseInt(twsid))
         .input('cust_source', sql.VarChar(50), cust_source)
@@ -1236,8 +1378,52 @@ function getAddInspHistory(led_inspect_id,version,his_topic,memo,createBy){
   });
 }
 
+
+function updateInspCust(led_inspect_id,no,version,memo,status,led_code,updateBy){
+  logger.info(`Welcome updateInspCust() `);
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+
+    UPDATE MFTS.dbo.MIT_LED_INSP_CUST
+    SET memo=@memo, status=@status, led_code=@led_code,  updateBy=@updateBy, updateDate= GETDATE()
+    WHERE  led_inspect_id=@led_inspect_id
+    AND version=@version
+    AND no=@no
+
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input('led_inspect_id', sql.VarChar, led_inspect_id)
+      .input('version', sql.Int, version)
+      .input('no', sql.Int, no)
+      .input('memo', sql.NVarChar, memo)
+      .input('status', sql.Bit, status)
+      .input('led_code', sql.VarChar, led_code)
+      .input('updateBy', sql.VarChar, updateBy)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+      console.log("EROR>>"+err);
+    })
+  });
+}
+
 function getInspResource(led_inspect_id){
-  logger.info(`Welcome getInspResource() `);
+  // logger.info(`Welcome getInspResource() `);
 
   return new Promise(function(resolve, reject) {
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
@@ -1270,7 +1456,7 @@ function getInspResource(led_inspect_id){
 
 
 function cntInspToday(){
-  logger.info(`Welcome cntInspToday() `);
+  // logger.info(`Welcome cntInspToday() `);
 
   return new Promise(function(resolve, reject) {
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
@@ -1304,7 +1490,7 @@ function cntInspToday(){
 
 
 function cntOnInspection(){
-  logger.info(`Welcome cntOnInspection() `);
+  // logger.info(`Welcome cntOnInspection() `);
 
   return new Promise(function(resolve, reject) {
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
@@ -1330,14 +1516,13 @@ function cntOnInspection(){
     })
     pool1.on('error', err => {
       reject(err);
-      console.log("EROR>>"+err);
     })
   });
 }
 
 
 function cntOnFreeze(){
-  logger.info(`Welcome cntOnInspection() `);
+  // logger.info(`Welcome cntOnInspection() `);
 
   return new Promise(function(resolve, reject) {
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
@@ -1363,7 +1548,6 @@ function cntOnFreeze(){
     })
     pool1.on('error', err => {
       reject(err);
-      console.log("EROR>>"+err);
     })
   });
 }

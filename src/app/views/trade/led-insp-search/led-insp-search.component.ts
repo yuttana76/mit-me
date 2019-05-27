@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
+// import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { MatDialog, PageEvent } from '@angular/material';
 import { ToastrService } from 'ngx-toastr';
 import { MasterDataService } from '../services/masterData.service';
@@ -9,12 +9,12 @@ import { LEDService } from '../services/led.service';
 import { MitLedInspCust } from '../model/mitLedInspCust.model';
 import { InspSearch } from '../model/inspSearch.model';
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
+// export interface PeriodicElement {
+//   name: string;
+//   position: number;
+//   weight: number;
+//   symbol: string;
+// }
 
 
 @Component({
@@ -49,7 +49,7 @@ export class LedInspSearchComponent implements OnInit {
 
   constructor(
     private toastr: ToastrService,
-    private confirmationDialogService: ConfirmationDialogService,
+    // private confirmationDialogService: ConfirmationDialogService,
     public dialog: MatDialog,
     private masterDataService: MasterDataService,
     private ledService:LEDService
@@ -139,7 +139,9 @@ export class LedInspSearchComponent implements OnInit {
 
     console.log("currentPage>>" + this.currentPage  + "  ;rowsPerPage>>" + this.rowsPerPage);
 
-  this.ledService.getInsp(this.rowsPerPage, this.currentPage, this.inspSearch) .subscribe(data =>{
+    this.spinnerLoading = true;
+
+    this.ledService.getInsp(this.rowsPerPage, this.currentPage, this.inspSearch) .subscribe(data =>{
       this.mitLedInspCustList = data;
       this.dataSource.next(this.mitLedInspCustList);
     }

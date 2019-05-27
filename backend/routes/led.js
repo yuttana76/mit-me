@@ -13,6 +13,8 @@ router.post("/checkCustDialy",selfAuth,ledController.checkCustDialy);
 // router.post("/checkCustByID",selfAuth,ledController.checkCustByID);
 
 router.get("/inspCust/", ledController.searchInsp);
+router.put("/inspCust/", ledController.updateInspCust);
+router.get("/ledMaster/", ledController.searchLedMaster);
 
 router.get("/ledMasterBykey/", ledController.getLEDMasterBykey);
 router.get("/inspByCustCode/", ledController.getInspByCustCode);
@@ -25,5 +27,6 @@ router.get("/inspResource/", ledController.getInspResource);
 router.get("/cntInspToday/", ledController.cntInspToday);
 router.get("/cntOnInspection/", ledController.cntOnInspection);
 router.get("/cntOnFreeze/", ledController.cntOnFreeze);
+
 
 module.exports = router;

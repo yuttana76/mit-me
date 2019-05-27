@@ -31,4 +31,5 @@ createDate: string;
 updateBy: string;
 updateDate: string;
 
+led_inspect_id: string;
 }

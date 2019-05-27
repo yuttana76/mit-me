@@ -94,26 +94,26 @@
             <!-- Symbol Column -->
             <ng-container matColumnDef="led_code">
               <th mat-header-cell *matHeaderCellDef> LED CODE </th>
-              <td mat-cell *matCellDef="let element"> {{element.led_code }} </td>
+              <td mat-cell *matCellDef="let element"> {{element.led_code_text }} </td>
             </ng-container>
 
             <ng-container matColumnDef="TMPDate">
-                <th mat-header-cell *matHeaderCellDef> TMP Date </th>
+                <th mat-header-cell *matHeaderCellDef> วันที่พิทักษ์ทรัพย์ชั่วคราว </th>
                 <td mat-cell *matCellDef="let element"> {{element.TMPDate | date:"dd/MM/yyyy"}} </td>
               </ng-container>
 
             <ng-container matColumnDef="ABSDate">
-                <th mat-header-cell *matHeaderCellDef> ABS Date </th>
+                <th mat-header-cell *matHeaderCellDef>วันที่พิทักษ์ทรัพย์เด็ดขาด</th>
                 <td mat-cell *matCellDef="let element"> {{element.ABSDate | date:"dd/MM/yyyy"}} </td>
               </ng-container>
 
             <ng-container matColumnDef="DFDate">
-                <th mat-header-cell *matHeaderCellDef> DF Date </th>
+                <th mat-header-cell *matHeaderCellDef>วันที่ศาลสั่งให้จัดการทรัพย์มรดก</th>
                 <td mat-cell *matCellDef="let element"> {{element.DFDate | date:"dd/MM/yyyy"}} </td>
               </ng-container>
 
             <ng-container matColumnDef="BRKDate">
-                <th mat-header-cell *matHeaderCellDef> BRK Date </th>
+                <th mat-header-cell *matHeaderCellDef>วันที่พิพากษาให้ล้มละลาย</th>
                 <td mat-cell *matCellDef="let element"> {{element.BRKDate | date:"dd/MM/yyyy"}} </td>
               </ng-container>
 

@@ -15,7 +15,12 @@ import { MitLedInspCust } from '../model/mitLedInspCust.model';
 
       constructor(private http: HttpClient , private router: Router) { }
 
-      // https://localhost:3009/api/led/inspCust?pagesize=5&page=1&custId=&fromSource=&led_code=001&
+      /**
+       * Search Inspection
+       * @param rowPerPage
+       * @param currentPage
+       * @param cond
+       */
       getInsp(rowPerPage: number, currentPage: number, cond: InspSearch) {
 
         let queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
@@ -38,6 +43,35 @@ import { MitLedInspCust } from '../model/mitLedInspCust.model';
         }
 
         return this.http.get<{result: any }>(BACKEND_URL+"/inspCust"+  queryParams)
+        .pipe(map( _data => {
+          return _data.result.map(data => {
+            return data
+          });
+        }));
+      }
+
+/**
+ *
+ * @param rowPerPage
+ * @param currentPage
+ * @param cond
+ */
+      getLedMaster(rowPerPage: number, currentPage: number, id,firstName,lastName) {
+
+        let queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
+
+        if(id){
+          queryParams += `&id=${id}`;
+        }
+        if(firstName){
+          queryParams += `&firstName=${firstName}`;
+        }
+        if(lastName){
+          queryParams += `&lastName=${lastName}`;
+        }
+
+
+        return this.http.get<{result: any }>(BACKEND_URL+"/ledMaster"+  queryParams)
         .pipe(map( _data => {
           return _data.result.map(data => {
             return data

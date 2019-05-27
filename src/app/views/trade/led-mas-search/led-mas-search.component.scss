@@ -1,0 +1,46 @@
+:host {
+  display: block;
+
+}
+
+.condition-div {
+  max-width: 400px;
+}
+
+mat-form-field,
+input {
+    width: 100%;
+}
+
+mat-spinner {
+    margin: auto;
+}
+
+.resultDiv {
+  margin-top: 1rem;
+}
+.resultDiv table {
+  width: 100%;
+}
+// .resultDiv table th {
+//   font-size: 12px;
+//   font-weight: 700;
+// }
+
+.resultDiv i {
+  margin-left: 10px;
+}
+
+table th {
+	text-align: center;
+  font-weight: bold;
+
+  border-width: 1px;
+	border-style: solid;
+}
+
+table td {
+  text-align: center;
+  border-width: 1px;
+	border-style: solid;
+}

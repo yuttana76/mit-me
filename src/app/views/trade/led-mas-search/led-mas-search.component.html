@@ -1,3 +1,123 @@
-<p>
-  led-mas-search works!
-</p>
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<mat-card class="example-card">
+
+  <form [formGroup]="form" (submit)="onSerach()" #custForm="ngForm" *ngIf="!spinnerLoading">
+    <mat-card-title>Search LED Master Data
+      <!-- <a mat-button routerLink="/trade/customerDetail" routerLinkActive="mat-accent" matTooltip="New customer">
+        <i class="fas fa-user-plus fa-2x" ></i>
+      </a> -->
+    </mat-card-title>
+    <mat-card-content>
+      <div class="condition-div">
+
+        <mat-form-field>
+          <input matInput formControlName="custId" [(ngModel)]="ledSearch.id" placeholder="Card No./ Name" >
+          <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput formControlName="firstName" [(ngModel)]="ledSearch.firstName" placeholder="First name">
+            <mat-error *ngIf="form.get('firstName').invalid">Please enter first name.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+              <input matInput formControlName="lastName" [(ngModel)]="ledSearch.lastName" placeholder="Last name">
+              <mat-error *ngIf="form.get('lastName').invalid">Please enter last name.</mat-error>
+            </mat-form-field>
+
+      </div>
+
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
+      <button mat-stroked-button color="warn" type='reset'>Reset</button>
+
+    </mat-card-actions>
+  </form>
+</mat-card>
+
+<!-- RESULT -->
+<mat-card class="resultDiv">
+    <mat-card-title>Result</mat-card-title>
+    <mat-card-content>
+
+        <table mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="position">
+              <th mat-header-cell *matHeaderCellDef> No. </th>
+              <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="key">
+              <th mat-header-cell *matHeaderCellDef> Ref. </th>
+              <td mat-cell *matCellDef="let element"> {{element.twsid}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef> ID </th>
+              <td mat-cell *matCellDef="let element"> {{element.df_id}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="FullName">
+              <th mat-header-cell *matHeaderCellDef> Name </th>
+              <td mat-cell *matCellDef="let element">{{element.df_name}} {{element.df_surname}}</td>
+            </ng-container>
+            <ng-container matColumnDef="black_case">
+              <th mat-header-cell *matHeaderCellDef> คดีหมายเลขดำ / ปี</th>
+              <td mat-cell *matCellDef="let element"><span *ngIf="element.black_case">{{element.black_case}} Year:{{element.black_yy}} </span></td>
+            </ng-container>
+            <ng-container matColumnDef="red_case">
+              <th mat-header-cell *matHeaderCellDef> คดีหมายเลขแดง / ปี</th>
+              <td mat-cell *matCellDef="let element"><span *ngIf="element.red_case">{{element.red_case}} Year:{{element.red_yy}}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="court_name">
+              <th mat-header-cell *matHeaderCellDef> ชื่อศาล</th>
+              <td mat-cell *matCellDef="let element">{{element.court_name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="plaintiff1">
+              <th mat-header-cell *matHeaderCellDef> ชื่อโจทก์ (หน้าหมาย) </th>
+              <td mat-cell *matCellDef="let element">{{element.plaintiff1}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="TMPDate">
+                <th mat-header-cell *matHeaderCellDef> วันที่พิทักษ์ทรัพย์ชั่วคราว </th>
+                <td mat-cell *matCellDef="let element"> <span *ngIf="element.tmp_prot_dd">{{element.tmp_prot_dd}}/{{element.tmp_prot_mm}}/{{element.tmp_prot_yy}}</span></td>
+              </ng-container>
+
+            <ng-container matColumnDef="ABSDate">
+                <th mat-header-cell *matHeaderCellDef> วันที่พิทักษ์ทรัพย์เด็ดขาด </th>
+                <td mat-cell *matCellDef="let element"><span *ngIf="element.abs_prot_dd">{{element.abs_prot_dd}}/{{element.abs_prot_mm}}/{{element.abs_prot_yy}}</span></td>
+              </ng-container>
+
+            <ng-container matColumnDef="DFDate">
+                <th mat-header-cell *matHeaderCellDef> วันที่ศาลสั่งให้จัดการทรัพย์มรดก </th>
+                <td mat-cell *matCellDef="let element"><span *ngIf="element.df_manage_dd">{{element.df_manage_dd}}/{{element.df_manage_mm}}/{{element.df_manage_yy}}</span></td>
+              </ng-container>
+
+            <ng-container matColumnDef="BRKDate">
+                <th mat-header-cell *matHeaderCellDef> วันที่พิพากษาให้ล้มละลาย </th>
+                <td mat-cell *matCellDef="let element"><span *ngIf="element.bkr_prot_dd">{{element.bkr_prot_dd}}/{{element.bkr_prot_mm}}/{{element.bkr_prot_yy}}</span></td>
+              </ng-container>
+
+            <ng-container matColumnDef="Action">
+                <th mat-header-cell *matHeaderCellDef> Action </th>
+                <td mat-cell *matCellDef="let element">
+                  <i *ngIf="element.led_inspect_id" matTooltip="Go inspection detail" class="far fa-edit"  [routerLink]="['/trade/led-insp-detail',element.led_inspect_id,'SEARCH_SCR']"></i>
+                  <!-- <i class="fas fa-balance-scale" matTooltip=" View LED detail" ></i> -->
+                </td>
+
+              </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+
+          <mat-paginator [length]="totalRecords"
+              [pageSize]="rowsPerPage"
+              [pageSizeOptions]="pageSizeOptions" (page)="onChangedPage($event)">
+          </mat-paginator>
+
+    </mat-card-content>
+
+  </mat-card>
+

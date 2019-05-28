@@ -110,9 +110,9 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       validators: [Validators.required]
     }),
     dobDate: new FormControl(null, {
-      validators: [Validators.required
+      // validators: [Validators.required
         //  , Validators.pattern(DATE_REGEX)
-      ]
+      // ]
     }),
     department: new FormControl(null, {
       validators: [Validators.required]

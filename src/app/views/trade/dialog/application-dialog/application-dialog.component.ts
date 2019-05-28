@@ -62,6 +62,9 @@ export class ApplicationDialogComponent implements OnInit {
      appLink: new FormControl(null, {
       //  validators: [Validators.required]
      }),
+     isMenu: new FormControl(null, {
+      //  validators: [Validators.required]
+     }),
      menuOrder: new FormControl(null, {
       //  validators: [Validators.required]
      }),
@@ -70,6 +73,14 @@ export class ApplicationDialogComponent implements OnInit {
      }),
    });
  }
+
+//  checkCheckBoxvalue(event){
+//   this.application.isMenu="0";
+//    if(event.checked){
+//     this.application.isMenu="1";
+//    }
+
+//  }
 
  public onSave() {
 

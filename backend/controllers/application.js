@@ -74,10 +74,15 @@ exports.updateApplication = (req, res, next) => {
   var status = req.body.status;
   var menuOrder = req.body.menuOrder;
   var menuGroup = req.body.menuGroup;
+  var isMenu = req.body.isMenu;
+
+  logger.info(`updateApplication()  ${appId} ;isMenu=${isMenu}`);
 
   var fncName = 'updateApplication()';
   var queryStr = `UPDATE MIT_ApplicationInfo
-                  SET  AppName = '${appName}', AppGroup='${appGroup}', AppLink='${appLink}', status='${status}' , menuOrder='${menuOrder}' , menuGroup='${menuGroup}'
+                  SET  AppName = '${appName}', AppGroup='${appGroup}', AppLink='${appLink}', status='${status}' , menuOrder='${menuOrder}'
+                  , menuGroup='${menuGroup}'
+                  , isMenu=${isMenu}
                   WHERE AppId ='${appId}' `;
 
   const sql = require('mssql')
@@ -113,10 +118,11 @@ exports.addApplication = (req, res, next) => {
   var status = req.body.status;
   var menuOrder = req.body.menuOrder;
   var menuGroup = req.body.menuGroup || '';
+  var isMenu = req.body.isMenu || '';
 
   var fncName = 'addApplication()';
-  var queryStr = `INSERT INTO MIT_ApplicationInfo  (AppId,AppName,AppGroup,AppLink,status,menuOrder,menuGroup)
-                  VALUES( '${appId}','${appName}', '${appGroup}', '${appLink}', '${status}' ,'${menuOrder}', '${menuGroup}' )`;
+  var queryStr = `INSERT INTO MIT_ApplicationInfo  (AppId,AppName,AppGroup,AppLink,status,menuOrder,menuGroup,isMenu)
+                  VALUES( '${appId}','${appName}', '${appGroup}', '${appLink}', '${status}' ,'${menuOrder}', '${menuGroup}',${isMenu} )`;
 
   console.log('addApplication()>>', queryStr);
 

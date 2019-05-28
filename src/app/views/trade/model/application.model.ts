@@ -8,4 +8,5 @@ export class Application {
   status: string;
   menuOrder: string;
   menuGroup: string;
+  isMenu:string;
 }

@@ -89,6 +89,26 @@ export class ShareDataService {
      {
       code: 5,
       desc: '5'
+     },
+     {
+      code: 6,
+      desc: '6'
+     },
+     {
+      code: 7,
+      desc: '7'
+     },
+     {
+      code: 8,
+      desc: '8'
+     },
+     {
+      code: 9,
+      desc: '9'
+     },
+     {
+      code: 10,
+      desc: '10'
      }
   ];
 

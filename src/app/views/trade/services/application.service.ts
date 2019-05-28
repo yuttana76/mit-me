@@ -29,6 +29,7 @@ export class ApplicationService {
               status: data.status,
               menuOrder: data.menuOrder,
               menuGroup: data.menuGroup,
+              isMenu: data.isMenu,
             };
         });
     }))
@@ -45,6 +46,7 @@ export class ApplicationService {
 
   addApplication(insertApplication: Application): Observable<any> {
     // console.log( 'Service addGroup()' + groupId + ' ;groupName:' + groupName);
+
     const appData = {
       'AppId': insertApplication.AppId,
       'AppName': insertApplication.AppName,
@@ -52,7 +54,8 @@ export class ApplicationService {
       'AppLink': insertApplication.AppLink,
       'status': insertApplication.status,
       'menuOrder': insertApplication.menuOrder,
-      'menuGroup': insertApplication.menuGroup
+      'menuGroup': insertApplication.menuGroup,
+      'isMenu': insertApplication.isMenu.toString() === 'true'? 1:0
       };
 
     return new Observable((observer) => {
@@ -65,7 +68,7 @@ export class ApplicationService {
   }
 
   updateApplication(updateApplication: Application): Observable<any> {
-    // console.log( 'Service addGroup()' + groupId + ' ;groupName:' + groupName);
+
     const appData = {
       'AppId': updateApplication.AppId,
       'AppName': updateApplication.AppName,
@@ -73,7 +76,9 @@ export class ApplicationService {
       'AppLink': updateApplication.AppLink,
       'status': updateApplication.status,
       'menuOrder': updateApplication.menuOrder,
-      'menuGroup': updateApplication.menuGroup
+      'menuGroup': updateApplication.menuGroup,
+      'isMenu': updateApplication.isMenu.toString() === 'true'? 1:0
+      // 'isMenu': updateApplication.isMenu
       };
     // return this.http.post<{ message: string, result: string }>(BACKEND_URL , appData);
     return new Observable((observer) => {
@@ -93,7 +98,7 @@ export class ApplicationService {
 
   deleteApplication(appId: string): Observable<any> {
 
-    console.log("deleteApplication() >>"  + appId)
+    // console.log("deleteApplication() >>"  + appId)
 
     return new Observable((observer) => {
         this.http

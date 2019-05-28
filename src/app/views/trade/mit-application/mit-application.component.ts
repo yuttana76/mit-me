@@ -18,7 +18,7 @@ export class MitApplicationComponent implements OnInit , OnDestroy {
 
   spinnerLoading = false;
 
-  displayedColumns: string[] = ['index', 'AppId', 'AppName' , 'Status', 'AppGroup', 'AppLink', 'MenuOrder', 'MenuGroup', 'Action'];
+  displayedColumns: string[] = ['index', 'AppId', 'AppName' , 'Status', 'AppGroup', 'AppLink','IsMenu', 'MenuOrder', 'MenuGroup', 'Action'];
   dataSource = new BehaviorSubject([]);
   applicationList: Application[];
   private applicationSub: Subscription;

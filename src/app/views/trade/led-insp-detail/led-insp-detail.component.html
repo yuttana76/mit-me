@@ -6,7 +6,7 @@
 <mat-card id="led_insp"   >
 
   <div class="row">
-    <h4>MPAM Investor</h4>
+    <h4>Investor</h4>
   </div>
   <div class="card" *ngFor="let item of member_mitLedInspCust">
       <div class="card-body">
@@ -16,7 +16,7 @@
             {{item.memo}}
         </p>
 
-        <a  mat-flat-button class="button_card_action" color="primary" (click)="onEditInspCust(item)"   >Edit</a>
+        <a *ngIf="authority.mEdit == YES_VAL"  mat-flat-button class="button_card_action" color="primary" (click)="onEditInspCust(item)"   >Edit</a>
 
       </div>
     </div>
@@ -33,7 +33,7 @@
                         <textarea name="memo" [(ngModel)]="newHistory.memo" class="form-control z-depth-1" rows="3" placeholder="Write something here..." ></textarea>
                       </div>
 
-                    <div class="row">
+                    <div class="row" *ngIf="authority.mEdit == YES_VAL" >
                       <button mat-flat-button class="button_card_action" color="primary" type='submit' >Submit</button>
                       <button mat-flat-button class="button_card_action"color="warn" type='reset' >Reset</button>
                     </div>

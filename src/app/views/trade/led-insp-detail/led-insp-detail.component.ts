@@ -14,6 +14,8 @@ import { forkJoin } from "rxjs";
 import { AuthService } from '../../services/auth.service';
 import { LedInspHistoryComponent } from '../led-insp-history/led-insp-history.component';
 import { LedInspCustDetailComponent } from '../dialog/led-insp-cust-detail/led-insp-cust-detail.component';
+import { Authority } from '../model/authority.model';
+import { AuthorityService } from '../services/authority.service';
 @Component({
   selector: 'app-led-insp-detail',
   templateUrl: './led-insp-detail.component.html',
@@ -23,9 +25,12 @@ export class LedInspDetailComponent implements OnInit {
 
   MODE_EDIT = 'EDIT';
   formScreen = '';
+  spinnerLoading = false;
 
   form: FormGroup;
-  spinnerLoading = false;
+  public authority: Authority = new Authority();
+  private appId = 'LEDInspSearch';
+  public YES_VAL = 'Y';
 
   dataMode = '';
 
@@ -55,7 +60,7 @@ export class LedInspDetailComponent implements OnInit {
     // private masterDataService: MasterDataService,
     private ledService:LEDService,
     private authService: AuthService,
-
+    private authorityService: AuthorityService,
   ) { }
 
   ngOnInit() {
@@ -96,14 +101,14 @@ export class LedInspDetailComponent implements OnInit {
       }
     });
 
-    // this.hisForm = new FormGroup({
-    //   // topic: new FormControl(null, {
-    //   //   validators: [Validators.required]
-    //   // }),
-    //   memo: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   })
-    // });
+
+        // PERMISSION
+        this.authorityService.getPermissionByAppId(this.authService.getUserData(), this.appId).subscribe( (auth: Authority[]) => {
+          auth.forEach( (element) => {
+            this.authority = element;
+          });
+        });
+
 
   }
 

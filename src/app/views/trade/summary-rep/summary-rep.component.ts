@@ -61,11 +61,9 @@ export class SummaryRepComponent implements OnInit, OnDestroy {
 
     // Permission
     this.authorityService.getPermissionByAppId(this.authService.getUserData(), this.appId).subscribe( (auth: Authority[]) => {
-
       auth.forEach( (element) => {
         this.authority = element;
       });
-
     });
 
     this.spinnerLoading = true;

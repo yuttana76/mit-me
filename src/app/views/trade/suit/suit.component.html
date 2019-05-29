@@ -52,18 +52,21 @@
           <!-- <h5>Request verify method.</h5> -->
           <div class="row form_section">
               <mat-radio-group  [(ngModel)]="verifyBy" class="col-lg-4 col-md-4 col-sm-4 display_block" >
-                  <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >{{ formService.label_verify_dob }}
+                  <!-- <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >{{ formService.label_verify_dob }}
                       <span class="desk">-{{ formService.label_verify_dob_ENG }}</span>
                   </mat-radio-button>
+                   -->
                   <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == PREFIX_MOBILE_ALLOW_SEND_SMS "  >
                       {{ formService.label_verify_otp }}
                       <span class="desk">-{{ formService.label_verify_otp_ENG }}</span>
+                      <span class="desk"> to {{_mobile_hint}}</span>
                     </mat-radio-button>
                 </mat-radio-group>
           </div>
 
           <div  *ngIf="!INTERNAL_USER && verifyBy=='OTP'" class=" bg-light ver-div">
               <a  mat-flat-button  class="btn btn-outline-success my-2 my-sm-0" (click)="requestOTP()" >{{ formService.label_Request_otp }}
+
                   <i class="fas fa-sms"></i>
               </a>
           </div>
@@ -82,8 +85,9 @@
 
       <!-- Verify OTP section -->
       <div  *ngIf="verifyBy=='OTP' && showOtpEntry " class=" bg-light ver-div">
-          <form class="form-inline ">
-            <span>
+      <!-- <div  *ngIf="verifyBy=='OTP'" class=" bg-light ver-div"> -->
+          <form class="form-inline " style="width: 100%">
+            <span class="center-screen">
               <input class="form-control mr-sm-2" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
               <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0" (click)="verifyConfirmOTP()" > {{formService.LABEL_Verify}}
                  <i class="fas fa-check"></i>

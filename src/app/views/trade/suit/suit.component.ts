@@ -92,6 +92,7 @@ export class SuitComponent implements OnInit {
   riskLevelDesc = "";
 
   public customer: Customer = new Customer();
+  _mobile_hint;
 
   public cddData = new CDDModel() ;
   // public SPpersonModel:PersonModel = new PersonModel();
@@ -635,6 +636,15 @@ export class SuitComponent implements OnInit {
 
           this.customer.Birth_Day = data.USERDATA.DOB;
           this.customer.Mobile = data.USERDATA.Mobile;
+
+          if(data.USERDATA.Mobile.length==10){
+            this._mobile_hint="";
+            for(let i=0;i<6;i++){
+              this._mobile_hint += data.USERDATA.Mobile[i];
+            }
+            this._mobile_hint +="-xxxx"
+          }
+
 
           this.cust_RiskScore = data.USERDATA.Suit_Score;
           this.cust_RiskLevel = data.USERDATA.Risk_Level;

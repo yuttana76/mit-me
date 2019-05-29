@@ -90,7 +90,7 @@ export class SuitFormService {
   label_Request_otp = 'ส่ง OTP';
   label_input_verify_dob =  'วันเดือนปีเกิด - Your date of birth';
   label_verify_dob_Format = 'รูปแบบ ddmmyyyy (ค.ศ.)  (ตัวอย่าง = 01012019)';
-  label_input_verify_OTP =  'OTP';
+  label_input_verify_OTP =  'Entry OTP';
   label_RiskLevel = 'ผลประเมินความเสี่ยงระดับ';
   label_EvaluatedDate = 'วันที่ประเมิน';
 

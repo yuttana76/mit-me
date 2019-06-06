@@ -1,4 +1,8 @@
 
+html {
+  height: 100%;
+}
+
 body {
   background: url(https://ir.ebaystatic.com/pictures/aw/pics/cmp/ds3/imgbg.jpg) repeat 0 0 #f8f8f8;
   color: #333;
@@ -6,6 +10,7 @@ body {
   // font-family: "Helvetica neue",Helvetica,Arial,Sans-serif;
   font-family: sans-serif;
   line-height: 1;
+  min-height: 100%;
 }
 
 .spinner {
@@ -159,6 +164,9 @@ mat-form-field {
 
 .branner {
   margin-bottom: 15px;
+}
+.branner > p{
+  font-size: x-large;
 }
 
 .block {
@@ -362,3 +370,43 @@ code p {
 .suit_result #suit_date {
   font-size: medium;
 }
+
+.mobileHint {
+  display: block;
+}
+
+.mobileHint > p{
+  // color: darkgray;
+  font-size: x-large;
+}
+
+.mobileHint  > mat-radio-group{
+  font-size: initial;
+}
+
+
+
+.btn{
+  margin-left: 20px;
+}
+
+.Entry_OTP {
+  margin-top: 50px;
+  white-space: nowrap;
+}
+.Entry_OTP > div {
+  width: 300px;
+  display: inline-block;
+}
+.margin_top_40 {
+  margin-top: 40px;
+}
+.choose_verify{
+  margin-top: 40px;
+}
+
+.verify_div{
+  padding: 50px;
+}
+
+

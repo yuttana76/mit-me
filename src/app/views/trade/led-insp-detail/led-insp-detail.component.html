@@ -3,14 +3,14 @@
 <app-led-detail  [twsid] ="main_mitLedInspCust.twsid"  *ngIf="main_mitLedInspCust.twsid"></app-led-detail>
 
 <!-- Found investor -->
-<mat-card id="led_insp"   >
-
+<!-- <mat-card id="led_insp"   >
   <div class="row">
     <h4>Investor</h4>
   </div>
   <div class="card" *ngFor="let item of member_mitLedInspCust">
       <div class="card-body">
-        <h5 class="card-title">{{item.cust_code}} {{item.firstName}}  {{item.lastName}}</h5>
+        <h5 class="card-title">{{item.cust_code}}</h5>
+        <h5 class="card-title">{{item.firstName}}  {{item.lastName}}</h5>
         <h6 class="card-subtitle mb-2 text-muted">{{item.cust_source}} - {{item.led_code_text}}</h6>
         <p class="card-text">
             {{item.memo}}
@@ -20,12 +20,29 @@
 
       </div>
     </div>
-  </mat-card>
+  </mat-card> -->
 
 <!-- History & Resource -->
 
 <mat-card id="led_his" >
     <mat-tab-group >
+
+        <mat-tab label="Investor profile">
+            <div class="card" *ngFor="let item of member_mitLedInspCust">
+                <div class="card-body">
+                  <h5 class="card-title">{{item.cust_code}}</h5>
+                  <h5 class="card-title">{{item.firstName}}  {{item.lastName}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{item.cust_source}} - {{item.led_code_text}}</h6>
+                  <p class="card-text">
+                      {{item.memo}}
+                  </p>
+
+                  <a *ngIf="authority.mEdit == YES_VAL"  mat-flat-button class="button_card_action" color="primary" (click)="onEditInspCust(item)"   >Edit</a>
+                </div>
+              </div>
+        </mat-tab>
+
+
         <mat-tab label="History">
 
                 <form  (submit)="onAddHistory()" #custForm="ngForm" class="example-form" >

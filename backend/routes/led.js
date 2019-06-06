@@ -30,5 +30,6 @@ router.get("/cntInspToday/", ledController.cntInspToday);
 router.get("/cntOnInspection/", ledController.cntOnInspection);
 router.get("/cntOnFreeze/", ledController.cntOnFreeze);
 
+router.get("/cntByDate", ledController.cntByDate);
 
 module.exports = router;

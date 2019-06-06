@@ -680,7 +680,11 @@ exports.updateInspCust = (req, res, next) => {
   var led_inspect_id = req.body.led_inspect_id
   var no = req.body.no
   var version = req.body.version
+  var cust_code = req.body.cust_code
+  var firstName = req.body.firstName
+  var lastName = req.body.lastName
   var memo = req.body.memo
+
   var status = req.body.status
   var led_code = req.body.led_code
   var updateBy = req.body.updateBy
@@ -688,7 +692,7 @@ exports.updateInspCust = (req, res, next) => {
   // console.log("inspHistory API " + _key)
   logger.info(`updateInspCust API/ `);
 
-  updateInspCust(led_inspect_id,no,version,memo,status,led_code,updateBy)
+  updateInspCust(led_inspect_id,no,version,cust_code,firstName,lastName,memo,status,led_code,updateBy)
   .then(result=>{
     res.status(200).json({
       message: "Successfully!",
@@ -766,6 +770,23 @@ exports.cntOnFreeze = (req, res, next) => {
       key:"FREEZE",
       message: "Successfully!",
       result: result[0].CNT
+    });
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+}
+
+exports.cntByDate = (req, res, next) => {
+
+  logger.info(`cntByDate API/ `);
+
+  cntByDate(req)
+  .then(result=>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result[0]
     });
   },err=>{
     res.status(400).json({
@@ -1413,7 +1434,8 @@ function getAddInspHistory(led_inspect_id,version,his_topic,memo,createBy){
 }
 
 
-function updateInspCust(led_inspect_id,no,version,memo,status,led_code,updateBy){
+function updateInspCust(led_inspect_id,no,version,cust_code,firstName,lastName,memo,status,led_code,updateBy){
+
   logger.info(`Welcome updateInspCust() `);
 
   return new Promise(function(resolve, reject) {
@@ -1422,7 +1444,7 @@ function updateInspCust(led_inspect_id,no,version,memo,status,led_code,updateBy)
     BEGIN
 
     UPDATE MFTS.dbo.MIT_LED_INSP_CUST
-    SET memo=@memo, status=@status, led_code=@led_code,  updateBy=@updateBy, updateDate= GETDATE()
+    SET cust_code=@cust_code,firstName=@firstName,lastName=@lastName,memo=@memo, status=@status, led_code=@led_code,  updateBy=@updateBy, updateDate= GETDATE()
     WHERE  led_inspect_id=@led_inspect_id
     AND version=@version
     AND no=@no
@@ -1436,6 +1458,9 @@ function updateInspCust(led_inspect_id,no,version,memo,status,led_code,updateBy)
       .input('led_inspect_id', sql.VarChar, led_inspect_id)
       .input('version', sql.Int, version)
       .input('no', sql.Int, no)
+      .input('cust_code', sql.NVarChar, cust_code)
+      .input('firstName', sql.NVarChar, firstName)
+      .input('lastName', sql.NVarChar, lastName)
       .input('memo', sql.NVarChar, memo)
       .input('status', sql.Bit, status)
       .input('led_code', sql.VarChar, led_code)
@@ -1571,6 +1596,65 @@ function cntOnFreeze(){
     const sql = require('mssql')
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request() // or: new sql.Request(pool1)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+    })
+  });
+}
+
+
+function cntByDate(req){
+
+  // var _onDate = req.param.onDate;
+  var _onDate = req.param('onDate');
+
+  logger.info(`Welcome cntByDate() ${_onDate}` );
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+
+    DECLARE @CNT_ALL int;
+    DECLARE @CNT_INSP int;
+    DECLARE @CNT_FREEZE int;
+    --DECLARE @ONDATE varchar(30);
+
+      -- Count LED
+      SELECT @CNT_ALL = count(*)
+      FROM MIT_LED_DB_MASTER a
+      --WHERE led_code IN('001','100')
+      WHERE  CONVERT(date,a.createDate)= CONVERT(date, @ONDATE)
+
+      -- Inspection
+      SELECT @CNT_INSP = count(*)
+      FROM MIT_LED_INSP_CUST a
+      WHERE led_code IN('001')
+      AND  CONVERT(date,a.createDate)= CONVERT(date, @ONDATE)
+
+      -- Freeze
+      SELECT @CNT_FREEZE = count(*)
+      FROM MIT_LED_INSP_CUST a
+      WHERE led_code IN('100','101','102')
+      AND  CONVERT(date,a.createDate)= CONVERT(date, @ONDATE)
+
+      SELECT @CNT_ALL AS CNT_ALL,@CNT_INSP AS CNT_INSP,@CNT_FREEZE AS CNT_FREEZE
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input('ONDATE', sql.VarChar(50), _onDate)
       .query(queryStr, (err, result) => {
           // ... error checks
           if(err){

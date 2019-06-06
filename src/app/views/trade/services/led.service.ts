@@ -170,6 +170,12 @@ import { MitLedInspCust } from '../model/mitLedInspCust.model';
 
       }
 
+      getCntByDate(onDate) {
+        let queryParams = `?onDate=${onDate}`;
+        return this.http.get<{result: any }>(BACKEND_URL+"/cntByDate" + queryParams)
+      }
+
+
 
       updateInspCust(obj:MitLedInspCust,updateBy){
 
@@ -184,6 +190,9 @@ import { MitLedInspCust } from '../model/mitLedInspCust.model';
                 "led_inspect_id":obj.led_inspect_id,
                 "no":obj.no,
                 "version":obj.version,
+                "cust_code":obj.cust_code,
+                "firstName":obj.firstName,
+                "lastName":obj.lastName,
                 "memo":obj.memo,
                 "status":obj.status,
                 "led_code":obj.led_code,

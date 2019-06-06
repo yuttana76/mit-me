@@ -14,18 +14,13 @@
           </div>
       </div>
 
-      <nav class="navbar navbar-light " *ngIf="!verifyFLag" >
+      <nav class="navbar navbar-light bg-light" *ngIf="!verifyFLag" >
           <form class="form-inline" [formGroup]="form" #custForm="ngForm" >
 
             <span *ngIf="!needVerify" >
-
-                <div class="form-group">
-                    <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
-                    formControlName="pid" [(ngModel)]="survey.pid"  >
-                    <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
-                  </div>
-
-
+                <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
+                formControlName="pid" [(ngModel)]="survey.pid"  >
+                <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
               </span>
 
                 <!-- For mobile
@@ -34,12 +29,9 @@
                        <i class="fas fa-search"></i> </a> -->
 
                 <!-- For desk -->
-                <div *ngIf="!INTERNAL_USER &&  !needVerify" class="form-group">
-                    <a  mat-flat-button   class="btn btn-outline-success "  (click)="getCustomerData()">
-                        <span>{{ formService.LABEL_NEXT }} </span>
-                           <i class="fas fa-search"></i> </a>
-                </div>
-
+                <a *ngIf="!INTERNAL_USER &&  !needVerify" mat-flat-button   class="btn btn-outline-success "  (click)="getCustomerData()">
+                  <span class="desk">{{ formService.LABEL_NEXT }} </span>
+                     <i class="fas fa-search"></i> </a>
 
 
             <!-- <ul class="nav navbar-nav ml-auto" *ngIf="verifyFLag">
@@ -51,26 +43,36 @@
             </ul> -->
           </form>
         </nav>
-
+  </div>
 
   <!-- VERIFY -->
-  <div *ngIf="needVerify" class="container center-screen bg-light verify_div mobileHint">
+  <div *ngIf="needVerify" class="container">
 
           <!-- <h5>Request verify method.</h5> -->
-          <p>{{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
-          <p>{{_mobile_hint}}</p>
+          <div class="row mobileHint">
+              <p >
+                  {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}
+                  {{_mobile_hint}}
+                </p>
 
-              <mat-radio-group  [(ngModel)]="verifyBy" class="mobileHint" >
+          </div>
+
+          <div class="row form_section">
+
+
+              <mat-radio-group  [(ngModel)]="verifyBy" class="col-lg-4 col-md-4 col-sm-4 display_block" >
                   <!-- <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >{{ formService.label_verify_dob }}
                       <span class="desk">-{{ formService.label_verify_dob_ENG }}</span>
                   </mat-radio-button>
                    -->
+
                   <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == PREFIX_MOBILE_ALLOW_SEND_SMS "  >
                       {{ formService.label_verify_otp }}
                       <span class="desk">-{{ formService.label_verify_otp_ENG }}</span>
 
                     </mat-radio-button>
                 </mat-radio-group>
+          </div>
 
           <!-- <div  *ngIf="!INTERNAL_USER && verifyBy=='OTP'" class=" bg-light ver-div">
               <a  mat-flat-button  class="btn btn-outline-success my-2 my-sm-0" (click)="requestOTP()" >{{ formService.label_Request_otp }}
@@ -90,35 +92,19 @@
         </form>
       </div>
 
-      <!-- Verify Entry OTP section -->
-      <!-- <div  id="Entry_OTP" *ngIf="verifyBy=='OTP' && showOtpEntry " class=" bg-light ver-div">
-      <form class="form-inline " style="width: 100%">
-          <span  class="center-screen">
-              <input id class="form-control mr-sm-2" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
+      <!-- Verify OTP section -->
+      <div  *ngIf="verifyBy=='OTP' && showOtpEntry " class=" bg-light ver-div">
+          <form class="form-inline " style="width: 100%">
+            <span class="center-screen">
+              <input class="form-control mr-sm-2" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
               <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0" (click)="verifyConfirmOTP()" > {{formService.LABEL_Verify}}
-                <i class="fas fa-check"></i>
+                 <i class="fas fa-check"></i>
               </a>
               <br>
               <a (click)="requestOTP()">Resend OTP</a>
             </span>
           </form>
-        </div> -->
-
-          <!-- <form class="form-inline " style="width: 100%"> -->
-          <div *ngIf="verifyBy=='OTP' && showOtpEntry ">
-          <div  class="Entry_OTP">
-            <div  >
-              <input id class="form-control" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
-            </div>
-            <div>
-                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success" (click)="verifyConfirmOTP()" > {{formService.LABEL_Verify}}
-                    <i class="fas fa-check"></i>
-                 </a>
-            </div>
-          </div>
-          <a class="center-screen margin_top_40" (click)="requestOTP()">Resend OTP</a>
         </div>
-          <!-- </form> -->
     </div>
 
   <!-- ************* STEPPER  -->
@@ -496,5 +482,5 @@
 
 </div>
 
-</div>
+
 <!-- </mat-card> -->

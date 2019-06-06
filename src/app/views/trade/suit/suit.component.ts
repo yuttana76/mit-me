@@ -643,6 +643,8 @@ export class SuitComponent implements OnInit {
               this._mobile_hint += data.USERDATA.Mobile[i];
             }
             this._mobile_hint +="-xxxx"
+
+            this._mobile_hint = `Send OTP to  ${this._mobile_hint} `;
           }
 
 
@@ -1117,10 +1119,13 @@ export class SuitComponent implements OnInit {
 
 
   verifyByChange(event: MatRadioChange) {
-    // console.log( 'verifyByChange()>>' + event.value);
+    console.log( 'verifyByChange()>>' + event.value);
     this.verifyDOB_val = '';
     this.verifyOTP_val = '';
     this.showOtpEntry =false;
+    if(event.value ==="OTP"){
+      this.requestOTP()
+    }
   }
 
 

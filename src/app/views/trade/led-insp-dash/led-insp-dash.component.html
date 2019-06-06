@@ -1,39 +1,59 @@
-<div class="animated fadeIn">
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<div class="animated fadeIn" *ngIf="!spinnerLoading" >
 
   <div class="row">
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
-
             LED Dashboard
           </div>
           <div class="card-body">
             <div class="row">
               <div class="col-sm-6">
 
-                <div class="row">
+                <label><strong class="h4">Today</strong></label>
+
+                <mat-form-field class="led_dash_date">
+                  <input matInput [matDatepicker]="picker" placeholder="Choose a date" (dateChange)="onChangeDate($event)" [(ngModel)]="_chooseDate">
+                  <mat-datepicker-toggle matSuffix [for]="picker"  >
+                    <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+                  </mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+                <!-- TODAY -->
+                <div class="row div_today">
+
                   <div class="col-sm-3">
                     <div class="callout callout-info">
-                      <small class="text-muted">LED Today</small>
+                        <div class="everythingOnOneLine ">
+                      <small class="text-muted">LED Today <i class="fas fa-2x fa-chevron-circle-right"></i></small>
+                      </div>
                       <br>
-                      <strong class="h4">{{_cntToday}}</strong>
+                      <strong class="h4">{{_ledDataToday | number}}</strong>
+
                     </div>
                   </div>
                   <!--/.col-->
                   <div class="col-sm-3">
                     <div class="callout callout-danger">
-                      <small class="text-muted">Inspecton</small>
+                      <div class="everythingOnOneLine ">
+                          <small class="text-muted">Partial <i class="fas fa-2x fa-chevron-circle-right"></i></small>
+                      </div>
                       <br>
-                      <strong class="h4">{{_cntInspect}}</strong>
+                      <strong class="h4">{{_cntInspToday}}</strong>
                     </div>
                   </div><!--/.col-->
 
-                <!--/.col-->
-                <div class="col-sm-3">
-                    <div class="callout callout-danger">
-                      <small class="text-muted">Freeze</small>
+                  <!--/.col-->
+                  <div class="col-sm-3">
+                      <div class="callout callout-warning">
+                          <div class="everythingOnOneLine ">
+                      <small class="text-muted">Freeze <i class="fas fa-2x fa-chevron-circle-right"></i></small>
+                      </div>
                       <br>
-                      <strong class="h4">{{_cntFreeze}}</strong>
+                      <strong class="h4">{{_cntFreezeToday}} </strong>
                     </div>
                   </div><!--/.col-->
 
@@ -41,24 +61,45 @@
 
                 <hr class="mt-0">
 
-                <!-- <div class="progress-group mb-4">
-                    <div class="progress-group-prepend">
-                      <span class="progress-group-text">
-                        Monday
-                      </span>
+
+                <label id="label_total" ><strong class="h4">All</strong></label>
+
+                <!-- Total -->
+                <div class="row div_total">
+
+                  <div class="col-sm-3">
+                    <div class="callout callout-info">
+                      <!-- <small class="text-muted">LED Today</small>
+                      <br>
+                      <strong class="h4">{{_cntInspToday}}</strong> -->
                     </div>
-                    <div class="progress-group-bars">
-                      <div class="progress progress-xs">
-                        <div class="progress-bar bg-info" role="progressbar" style="width: 34%" aria-valuenow="34" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <div class="progress progress-xs">
-                        <div class="progress-bar bg-danger" role="progressbar" style="width: 78%" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
+                  </div>
+                  <!--/.col-->
+                  <div class="col-sm-3">
+                    <div class="callout callout-danger">
+                      <small class="text-muted">Partial</small>
+                      <br>
+                      <strong class="h4">{{_cntInspectAll}}</strong>
                     </div>
-                </div> -->
+                  </div><!--/.col-->
+
+                  <!--/.col-->
+                  <div class="col-sm-3">
+                      <div class="callout callout-warning">
+                      <small class="text-muted">Freeze</small>
+                      <br>
+                      <strong class="h4">{{_cntFreezeAll}}</strong>
+                    </div>
+                  </div><!--/.col-->
+
+                </div><!--/.row-->
+
+                <hr class="mt-0">
 
                 </div>
               </div>
             </div><!--/.col-->
           </div><!--/.row-->
+
+
     </div>

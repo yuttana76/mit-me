@@ -12,8 +12,7 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
     ): boolean | Observable<boolean> | Promise<boolean> {
 
-      console.log('**** AuthGuard() ');
-
+      // console.log('**** AuthGuard() ');
       // NOT WORK
       // route.queryParams.subscribe(params => {
       //   const has = params['has'];

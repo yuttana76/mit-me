@@ -24,7 +24,6 @@ import { InspSearch } from '../model/inspSearch.model';
 })
 export class LedInspSearchComponent implements OnInit {
 
-
   spinnerLoading = false;
   form: FormGroup;
   inspSearch: InspSearch = new InspSearch() ;

@@ -69,7 +69,7 @@ this.form = new FormGroup({
     validators: [Validators.required]
   }),
   memo: new FormControl(null, {
-    validators: [Validators.required]
+    // validators: [Validators.required]
   }),
 
   led_code: new FormControl(null, {
@@ -87,10 +87,11 @@ this.form = new FormGroup({
 
     if(!this.insertMode){
       this.form.get('twsid').disable();
-      this.form.get('cust_code').disable();
-      this.form.get('firstName').disable();
-      this.form.get('lastName').disable();
       this.form.get('cust_source').disable();
+      // this.form.get('cust_code').disable();
+      // this.form.get('firstName').disable();
+      // this.form.get('lastName').disable();
+
     }
 
   }
@@ -106,8 +107,7 @@ this.form = new FormGroup({
     if(this.insertMode){
       console.log("Insert new  >>" );
     }else{
-      console.log("Update data >>" + JSON.stringify(this.mitLedInspCust));
-
+      // console.log("Update data >>" + JSON.stringify(this.mitLedInspCust));
       const _actionBy = this.authService.getUserData() || 'NONE';
 
       this.ledService.updateInspCust(this.mitLedInspCust,_actionBy).subscribe((data: any ) => {

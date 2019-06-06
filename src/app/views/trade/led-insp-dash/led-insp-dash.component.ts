@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LEDService } from '../services/led.service';
 import { forkJoin } from 'rxjs';
-import { MatDatepickerInputEvent } from '@angular/material';
+import { MatDatepickerInputEvent, MatDialogRef, MatDialog } from '@angular/material';
 import {formatDate} from '@angular/common';
 
 @Component({
@@ -12,7 +12,8 @@ import {formatDate} from '@angular/common';
 export class LedInspDashComponent implements OnInit {
 
   spinnerLoading = false;
-  _chooseDate;
+  public chooseDate = new Date();
+  public chooseDateTxt;
   _ledDataToday;
   _cntInspToday;
   _cntFreezeToday;
@@ -21,15 +22,16 @@ export class LedInspDashComponent implements OnInit {
   _cntFreezeAll;
 
   constructor(
-    private ledService:LEDService
+    private ledService:LEDService,
+    public dialog: MatDialog,
   ) { }
 
   ngOnInit() {
     const observables = [];
 
     // Count current date
-    const _curDate = formatDate(new Date(), 'yyyy-MM-dd', 'en') ;
-    this.getCountByDate(_curDate)
+    this.chooseDateTxt = formatDate(new Date(), 'yyyy-MM-dd', 'en') ;
+    this.getCountByDate(this.chooseDateTxt);
 
     // count all data
     observables.push(this.ledService.getCntOnInspection());
@@ -45,10 +47,8 @@ export class LedInspDashComponent implements OnInit {
 
 
   onChangeDate(event: MatDatepickerInputEvent<Date>) {
-    const _date = formatDate(event.value, 'yyyy-MM-dd', 'en')
-    console.log("onChangedDate >> " +  _date );
-
-    this.getCountByDate(_date)
+    this.chooseDateTxt = formatDate(event.value, 'yyyy-MM-dd', 'en')
+    this.getCountByDate(this.chooseDateTxt)
 
   }
 
@@ -67,4 +67,6 @@ export class LedInspDashComponent implements OnInit {
 
    });
   }
+
+
 }

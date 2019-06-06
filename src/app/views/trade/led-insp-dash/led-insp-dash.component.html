@@ -15,7 +15,7 @@
                 <label><strong class="h4">Today</strong></label>
 
                 <mat-form-field class="led_dash_date">
-                  <input matInput [matDatepicker]="picker" placeholder="Choose a date" (dateChange)="onChangeDate($event)" [(ngModel)]="_chooseDate">
+                  <input matInput [matDatepicker]="picker" placeholder="Choose a date" (dateChange)="onChangeDate($event)" [(ngModel)]="chooseDate">
                   <mat-datepicker-toggle matSuffix [for]="picker"  >
                     <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
                   </mat-datepicker-toggle>
@@ -28,7 +28,9 @@
                   <div class="col-sm-3">
                     <div class="callout callout-info">
                         <div class="everythingOnOneLine ">
-                      <small class="text-muted">LED Today <i class="fas fa-2x fa-chevron-circle-right"></i></small>
+                      <small class="text-muted">LED Today
+                        <i class="fas fa-2x fa-chevron-circle-right" [routerLink]="['/trade/led-insp-dash-list',chooseDateTxt,'led_data']"></i>
+                      </small>
                       </div>
                       <br>
                       <strong class="h4">{{_ledDataToday | number}}</strong>

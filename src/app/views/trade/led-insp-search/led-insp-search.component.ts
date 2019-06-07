@@ -29,7 +29,7 @@ export class LedInspSearchComponent implements OnInit {
   form: FormGroup;
   inspSearch: InspSearch = new InspSearch() ;
   mitLedInspCustList: MitLedInspCust[] = [];
-
+  formScreen;
 
 
   // Result table [START]
@@ -63,10 +63,13 @@ export class LedInspSearchComponent implements OnInit {
 
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
 
+      if(paramMap.get('formScreen')){
+        this.formScreen = paramMap.get('formScreen');
+      }
 
       if(paramMap.get('chooseDate') && paramMap.get('led_state')){
 
-        console.log(` Welcome DASH route_param_chooseDate= ${paramMap.get('chooseDate')}  ;route_param_led_state=${paramMap.get('led_state')}`);
+        // console.log(` Welcome DASH route_param_chooseDate= ${paramMap.get('chooseDate')}  ;route_param_led_state=${paramMap.get('led_state')}`);
 
         this.spinnerLoading = true;
         this.inspSearch.chooseDate = paramMap.get('chooseDate');

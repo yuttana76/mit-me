@@ -446,8 +446,6 @@ exports.searchInsp = (req, res, next) => {
   var chooseDate = req.query.chooseDate || false;
   var led_state = req.query.led_state || false;
 
-
-
   var whereCond = "1=1";
 
   if(custId){
@@ -470,16 +468,16 @@ exports.searchInsp = (req, res, next) => {
     whereCond += ` AND led_code= '${led_code}' `
   }
 
-  if(chooseDate){
-    whereCond += ` AND CONVERT(date,a.createDate)= CONVERT(date, ${chooseDate})  `
-  }
-  if(led_state === 'led_insp'){
-    whereCond += ` AND led_code IN ('201') `
 
+  if(chooseDate){
+    whereCond += ` AND CONVERT(date,createDate)= CONVERT(date, '${chooseDate}')  `
+  }
+
+  if(led_state === 'led_insp'){
+    whereCond += ` AND led_code IN ('001','201') `
   }else if(led_state === 'led_freeze') {
     whereCond += ` AND led_code IN ('100','101','102') `
   }
-
 
   // VALIDATION Condifiton
   // console.log('Validate COND. >>' + whereCond );
@@ -1654,7 +1652,7 @@ function cntByDate(req){
       -- Inspection
       SELECT @CNT_INSP = count(*)
       FROM MIT_LED_INSP_CUST a
-      WHERE led_code IN('001')
+      WHERE led_code IN('001','201')
       AND  CONVERT(date,a.createDate)= CONVERT(date, @ONDATE)
 
       -- Freeze

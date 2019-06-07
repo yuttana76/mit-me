@@ -198,7 +198,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'led-insp-search/:chooseDate/:led_state',
+        path: 'led-insp-search/:formScreen/:chooseDate/:led_state',
         component: LedInspSearchComponent,
         data: {
           title: 'LED Inspection Search (Dash) '

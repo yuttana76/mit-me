@@ -42,10 +42,10 @@ import { MitLedInspCust } from '../model/mitLedInspCust.model';
           queryParams += `&led_code=${cond.led_code}`;
         }
         // From dash board
-        if(cond.led_code){
+        if(cond.chooseDate){
           queryParams += `&chooseDate=${cond.chooseDate}`;
         }
-        if(cond.led_code){
+        if(cond.led_state){
           queryParams += `&led_state=${cond.led_state}`;
         }
 

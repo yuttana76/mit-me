@@ -5,7 +5,11 @@ import { BehaviorSubject } from 'rxjs';
 import { InspSearch } from '../model/inspSearch.model';
 import { ToastrService } from 'ngx-toastr';
 import { LEDService } from '../services/led.service';
-import { PageEvent } from '@angular/material';
+import { PageEvent, MatDialogRef, MatDialog } from '@angular/material';
+import { LedMasDetailComponent } from '../dialog/led-mas-detail/led-mas-detail.component';
+import { Authority } from '../model/authority.model';
+import { AuthService } from '../../services/auth.service';
+import { AuthorityService } from '../services/authority.service';
 
 
 export class LedSearch {
@@ -23,26 +27,34 @@ export class LedMasSearchComponent implements OnInit {
 
   spinnerLoading = false;
   form: FormGroup;
+  private appId = 'LEDMasterSearch';
+  public YES_VAL = 'Y';
+  public authority: Authority = new Authority();
   ledSearch: LedSearch = new LedSearch();
   mitLedMasList: MitLedMas[] = [];
 
   // Result table [START]
   currentPage = 1;
-  rowsPerPage = 2;
+  rowsPerPage = 10;
   dataSource = new BehaviorSubject([]);
   totalRecords = 10;
   pageSizeOptions = [10, 20, 50, 100];
   displayedColumns: string[] = ['key','id', 'FullName', 'black_case','red_case','court_name','plaintiff1', 'TMPDate','ABSDate','DFDate','BRKDate','Action'];
   // Result table [END]
 
+  // Dialog
+  ledMasDetailComponent: MatDialogRef<LedMasDetailComponent>;
+
   constructor(
     private toastr: ToastrService,
-    private ledService:LEDService
+    private ledService:LEDService,
+    public dialog: MatDialog,
+    private authService: AuthService,
+    private authorityService: AuthorityService,
 
   ) { }
 
   ngOnInit() {
-
 
 // Initial Form
 // this.ledSearch.id="";
@@ -61,7 +73,14 @@ this.form = new FormGroup({
     // validators: [Validators.required]
   }),
 
-});
+  });
+
+    // PERMISSION
+    this.authorityService.getPermissionByAppId(this.authService.getUserData(), this.appId).subscribe( (auth: Authority[]) => {
+      auth.forEach( (element) => {
+        this.authority = element;
+      });
+    });
   }
 
   onSerach() {
@@ -135,6 +154,18 @@ this.form = new FormGroup({
       }
     );
 
+  }
+
+  onEditLedMas(_data: MitLedMas) {
+
+    this.ledMasDetailComponent = this.dialog.open(LedMasDetailComponent, {
+      width: '600px',
+      data: _data
+    });
+
+    this.ledMasDetailComponent.afterClosed().subscribe(result => {
+        // console.log('Dialog result => ', result);
+    });
   }
 
 }

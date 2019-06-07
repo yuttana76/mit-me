@@ -50,7 +50,6 @@
     <mat-card-actions>
       <button mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
       <button mat-stroked-button color="warn" type='reset'>Reset</button>
-
     </mat-card-actions>
   </form>
 </mat-card>
@@ -121,7 +120,7 @@
             <ng-container matColumnDef="Action">
                 <th mat-header-cell *matHeaderCellDef> Action </th>
                 <td mat-cell *matCellDef="let element"> <i class="far fa-edit"  [routerLink]="['/trade/led-insp-detail',element.led_inspect_id,'SEARCH_SCR']"></i> </td>
-              </ng-container>
+            </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

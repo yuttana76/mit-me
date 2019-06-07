@@ -33,7 +33,7 @@ export class LedInspCustDetailComponent implements OnInit,AfterViewInit {
   ) { }
 
   ngOnInit() {
-    console.log("Edit Insp cust>>" + JSON.stringify(this.mitLedInspCust));
+    // console.log("Edit Insp cust>>" + JSON.stringify(this.mitLedInspCust));
 
     if(this.mitLedInspCust.cust_code){
           this.insertMode = false;

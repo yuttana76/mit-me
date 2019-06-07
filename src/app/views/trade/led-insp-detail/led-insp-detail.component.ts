@@ -102,12 +102,12 @@ export class LedInspDetailComponent implements OnInit {
     });
 
 
-        // PERMISSION
-        this.authorityService.getPermissionByAppId(this.authService.getUserData(), this.appId).subscribe( (auth: Authority[]) => {
-          auth.forEach( (element) => {
-            this.authority = element;
-          });
-        });
+    // PERMISSION
+    this.authorityService.getPermissionByAppId(this.authService.getUserData(), this.appId).subscribe( (auth: Authority[]) => {
+      auth.forEach( (element) => {
+        this.authority = element;
+      });
+    });
 
 
   }
@@ -171,6 +171,7 @@ export class LedInspDetailComponent implements OnInit {
   }
 
   onEditInspCust(_data: MitLedInspCust) {
+
     this.ledInspCustDetailComponent = this.dialog.open(LedInspCustDetailComponent, {
       width: '600px',
       data: _data

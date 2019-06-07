@@ -809,13 +809,9 @@ exports.cntByDate = (req, res, next) => {
   });
 }
 
-
-
 // **** FUNCTION HERE
-
   function searchInspCust(whereCond,page,numPerPage){
-
-    console.log( ' fnc searchInspCust() whereCond='+whereCond);
+    // console.log( ' fnc searchInspCust() whereCond='+whereCond);
       var queryStr = `
 
 

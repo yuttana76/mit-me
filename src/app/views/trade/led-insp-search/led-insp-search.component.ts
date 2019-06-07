@@ -34,7 +34,7 @@ export class LedInspSearchComponent implements OnInit {
 
   // Result table [START]
   currentPage = 1;
-  rowsPerPage = 2;
+  rowsPerPage = 10;
   dataSource = new BehaviorSubject([]);
   totalRecords = 10;
   pageSizeOptions = [10, 20, 50, 100];

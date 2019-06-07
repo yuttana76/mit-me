@@ -29,7 +29,8 @@
                     <div class="callout callout-info">
                         <div class="everythingOnOneLine ">
                       <small class="text-muted">LED Today
-                        <i class="fas fa-2x fa-chevron-circle-right" [routerLink]="['/trade/led-insp-dash-list',chooseDateTxt,'led_data']"></i>
+
+
                       </small>
                       </div>
                       <br>
@@ -41,7 +42,10 @@
                   <div class="col-sm-3">
                     <div class="callout callout-danger">
                       <div class="everythingOnOneLine ">
-                          <small class="text-muted">Partial <i class="fas fa-2x fa-chevron-circle-right"></i></small>
+                          <small class="text-muted">Partial
+                        <!-- <i class="fas fa-2x fa-chevron-circle-right" [routerLink]="['/trade/led-insp-dash-list',chooseDateTxt,'led_data']"></i> -->
+                        <i class="fas fa-2x fa-chevron-circle-right" [routerLink]="['/trade/led-insp-search',chooseDateTxt,'led_insp']"></i>
+                          </small>
                       </div>
                       <br>
                       <strong class="h4">{{_cntInspToday}}</strong>
@@ -52,7 +56,10 @@
                   <div class="col-sm-3">
                       <div class="callout callout-warning">
                           <div class="everythingOnOneLine ">
-                      <small class="text-muted">Freeze <i class="fas fa-2x fa-chevron-circle-right"></i></small>
+                      <small class="text-muted">Freeze
+                        <!-- <i class="fas fa-2x fa-chevron-circle-right"></i> -->
+                        <i class="fas fa-2x fa-chevron-circle-right" [routerLink]="['/trade/led-insp-search',chooseDateTxt,'led_freeze']"></i>
+                      </small>
                       </div>
                       <br>
                       <strong class="h4">{{_cntFreezeToday}} </strong>

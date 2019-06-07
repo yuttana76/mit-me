@@ -23,7 +23,6 @@ import { LedMasSearchComponent } from './led-mas-search/led-mas-search.component
 import { LedDetailComponent } from './led-detail/led-detail.component';
 import { LedInspResultComponent } from './led-insp-result/led-insp-result.component';
 import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-insp-cust-detail.component';
-import { LedInspDashListComponent } from './led-insp-dash-list/led-insp-dash-list.component';
 
 const routes: Routes = [
 
@@ -176,13 +175,6 @@ const routes: Routes = [
           title: 'LED Dashboard'
         }
       },
-      {
-        path: 'led-insp-dash-list/:chooseDate/:led_state',
-        component: LedInspDashListComponent,
-        data: {
-          title: 'Dashboard list'
-        }
-      },
 
       {
         path: 'led-insp-result',
@@ -203,6 +195,13 @@ const routes: Routes = [
         component: LedInspSearchComponent,
         data: {
           title: 'LED Inspection Search'
+        }
+      },
+      {
+        path: 'led-insp-search/:chooseDate/:led_state',
+        component: LedInspSearchComponent,
+        data: {
+          title: 'LED Inspection Search (Dash) '
         }
       },
       {

@@ -8,6 +8,7 @@ import { MasterDataService } from '../services/masterData.service';
 import { LEDService } from '../services/led.service';
 import { MitLedInspCust } from '../model/mitLedInspCust.model';
 import { InspSearch } from '../model/inspSearch.model';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 // export interface PeriodicElement {
 //   name: string;
@@ -28,6 +29,10 @@ export class LedInspSearchComponent implements OnInit {
   form: FormGroup;
   inspSearch: InspSearch = new InspSearch() ;
   mitLedInspCustList: MitLedInspCust[] = [];
+
+
+  route_param_chooseDate
+  route_param_led_state;
 
   // Result table [START]
   currentPage = 1;
@@ -51,11 +56,26 @@ export class LedInspSearchComponent implements OnInit {
     // private confirmationDialogService: ConfirmationDialogService,
     public dialog: MatDialog,
     private masterDataService: MasterDataService,
-    private ledService:LEDService
+    private ledService:LEDService,
+    public route: ActivatedRoute,
   ) { }
 
    ngOnInit() {
     this.inspSearch.fromSource = '0';
+
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+
+      if (paramMap.has('chooseDate')) {
+        this.route_param_chooseDate = paramMap.get('chooseDate');
+      }
+
+      if (paramMap.has('led_state')) {
+        this.route_param_led_state = paramMap.get('led_state');
+      }
+
+      console.log(` route_param_chooseDate=${this.route_param_chooseDate}  ;route_param_led_state=${this.route_param_led_state}`);
+
+   });
 
 // Initial Form
     this.form = new FormGroup({
@@ -83,7 +103,6 @@ export class LedInspSearchComponent implements OnInit {
     });
 
     // Initial data
-
     this.masterDataService.getCodeLookup("LEDCODE").subscribe((data: any[]) => {
       this.codeLedList = data;
     }, error => () => {
@@ -91,6 +110,7 @@ export class LedInspSearchComponent implements OnInit {
     }, () => {
        console.log('Loading complete');
     });
+
   }
 
 

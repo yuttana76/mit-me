@@ -58,7 +58,6 @@ import { LedInspResultComponent } from './led-insp-result/led-insp-result.compon
 import { LedInspHistoryComponent } from './led-insp-history/led-insp-history.component';
 import { LedInspResourceComponent } from './led-insp-resource/led-insp-resource.component';
 import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-insp-cust-detail.component';
-import { LedInspDashListComponent } from './led-insp-dash-list/led-insp-dash-list.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -125,7 +124,6 @@ import { LedInspDashListComponent } from './led-insp-dash-list/led-insp-dash-lis
     LedInspHistoryComponent,
     LedInspResourceComponent,
     LedInspCustDetailComponent,
-    LedInspDashListComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

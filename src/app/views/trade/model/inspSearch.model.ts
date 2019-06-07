@@ -6,4 +6,7 @@ export class InspSearch {
   lastName: string;
   fromSource: string;
   led_code: string;
+
+  chooseDate: string;
+  led_state: string;
 }

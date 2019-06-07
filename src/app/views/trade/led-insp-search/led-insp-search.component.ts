@@ -31,8 +31,6 @@ export class LedInspSearchComponent implements OnInit {
   mitLedInspCustList: MitLedInspCust[] = [];
 
 
-  route_param_chooseDate
-  route_param_led_state;
 
   // Result table [START]
   currentPage = 1;
@@ -65,15 +63,42 @@ export class LedInspSearchComponent implements OnInit {
 
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
 
-      if (paramMap.has('chooseDate')) {
-        this.route_param_chooseDate = paramMap.get('chooseDate');
-      }
 
-      if (paramMap.has('led_state')) {
-        this.route_param_led_state = paramMap.get('led_state');
-      }
+      if(paramMap.get('chooseDate') && paramMap.get('led_state')){
 
-      console.log(` route_param_chooseDate=${this.route_param_chooseDate}  ;route_param_led_state=${this.route_param_led_state}`);
+        console.log(` Welcome DASH route_param_chooseDate= ${paramMap.get('chooseDate')}  ;route_param_led_state=${paramMap.get('led_state')}`);
+
+        this.spinnerLoading = true;
+        this.inspSearch.chooseDate = paramMap.get('chooseDate');
+        this.inspSearch.led_state = paramMap.get('led_state');
+
+        this.ledService.getInsp(this.rowsPerPage, 1, this.inspSearch) .subscribe(data =>{
+          this.mitLedInspCustList = data;
+          this.dataSource.next(this.mitLedInspCustList);
+        }
+        , error => {
+            console.log("WAS ERR>>" + JSON.stringify(error) );
+            this.spinnerLoading = false;
+          }
+          ,() => {
+            // 'onCompleted' callback.
+            this.spinnerLoading = false;
+
+
+            if(this.mitLedInspCustList.length <= 0){
+              this.toastr.warning(``,
+                  "Not found data",
+                  {
+                    timeOut: 5000,
+                    closeButton: true,
+                    positionClass: "toast-top-center"
+                  }
+                );
+            }
+          }
+        );
+
+      }
 
    });
 

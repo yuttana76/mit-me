@@ -443,6 +443,11 @@ exports.searchInsp = (req, res, next) => {
   var fromSource = req.query.fromSource || false;
   var led_code = req.query.led_code || false;
 
+  var chooseDate = req.query.chooseDate || false;
+  var led_state = req.query.led_state || false;
+
+
+
   var whereCond = "1=1";
 
   if(custId){
@@ -464,6 +469,17 @@ exports.searchInsp = (req, res, next) => {
   if(led_code && led_code != '0'){
     whereCond += ` AND led_code= '${led_code}' `
   }
+
+  if(chooseDate){
+    whereCond += ` AND CONVERT(date,a.createDate)= CONVERT(date, ${chooseDate})  `
+  }
+  if(led_state === 'led_insp'){
+    whereCond += ` AND led_code IN ('201') `
+
+  }else if(led_state === 'led_freeze') {
+    whereCond += ` AND led_code IN ('100','101','102') `
+  }
+
 
   // VALIDATION Condifiton
   // console.log('Validate COND. >>' + whereCond );
@@ -801,7 +817,7 @@ exports.cntByDate = (req, res, next) => {
 
   function searchInspCust(whereCond,page,numPerPage){
 
-    // console.log( ' fnc searchInspCust() whereCond='+whereCond);
+    console.log( ' fnc searchInspCust() whereCond='+whereCond);
       var queryStr = `
 
 

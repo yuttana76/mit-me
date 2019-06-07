@@ -41,6 +41,13 @@ import { MitLedInspCust } from '../model/mitLedInspCust.model';
         if(cond.led_code){
           queryParams += `&led_code=${cond.led_code}`;
         }
+        // From dash board
+        if(cond.led_code){
+          queryParams += `&chooseDate=${cond.chooseDate}`;
+        }
+        if(cond.led_code){
+          queryParams += `&led_state=${cond.led_state}`;
+        }
 
         return this.http.get<{result: any }>(BACKEND_URL+"/inspCust"+  queryParams)
         .pipe(map( _data => {

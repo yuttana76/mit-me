@@ -1,7 +1,7 @@
 
 <mat-card class="example-card" >
     <form [formGroup]="form"  #custForm="ngForm" >
-        <mat-card-title>Inspection detail</mat-card-title>
+        <mat-card-title>LED detail</mat-card-title>
 
         <div class="example-container">
 
@@ -28,37 +28,44 @@
                 [(ngModel)]="mitLedMas.df_surname">
                 <mat-error *ngIf="form.get('lastName').invalid">Please enter lastName</mat-error>
             </mat-form-field>
-<!--
-            <mat-form-field >
-                <textarea matInput formControlName="memo" placeholder=" memo" [(ngModel)]="mitLedInspCust.memo"></textarea>
-                <mat-error *ngIf="form.get('memo').invalid">Please enter memo</mat-error>
-              </mat-form-field>
 
-                <mat-form-field >
-                    <mat-select  formControlName="led_code" placeholder="LED code"
-                    [(ngModel)]="mitLedInspCust.led_code">
-                        <mat-option  *ngFor="let obj of codeLookupList" [value]="obj.keycode">
-                          {{obj.keyText}}
-                        </mat-option>
-                      </mat-select>
-                    <mat-error *ngIf="form.get('led_code').invalid">Choose one</mat-error>
-                </mat-form-field>
+            <div class="panel-body" >
+              <label>History</label>
+              <ul class="media-list" *ngFor="let item of masHistory">
+                  <li class="media">
+                      <!-- <a href="#" class="pull-left">
+                          <img src="\assets\img\avatars\noPerson.png" alt="" class="img-circle">
+                      </a> -->
+                      <div class="media-body">
+                          <span class="text-muted">
+                              <small class="text-muted">{{item.createDate | date: 'dd/MM/yyyy h:mm a'}}</small>
+                          </span>
+                          <strong class="text-success pull-left">{{item.createBy}}</strong>
+                          <p>
+                            {{item.memo}}
+                          </p>
+                          <p>
+                              <i class="far fa-2x fa-file-pdf"></i>
+                            {{item.resourceRef}}
+                          </p>
+                      </div>
+                  </li>
+              </ul>
 
-                <mat-form-field >
-                    <mat-select  formControlName="status" placeholder="Status"
-                    [(ngModel)]="mitLedInspCust.status">
-                        <mat-option  *ngFor="let obj of shareDataService.statusListBoolean" [value]="obj.code">
-                          {{obj.desc}}
-                        </mat-option>
-                      </mat-select>
-                    <mat-error *ngIf="form.get('status').invalid">Choose one</mat-error>
-                </mat-form-field> -->
+              <div class="row" *ngIf="authority.mEdit == YES_VAL" >
 
-                <mat-card-actions>
-                    <a  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >Save</a>
-                    <a class="button_card_action" mat-flat-button color="accent"  (click)="onClose()"> Close </a>
-
+                  <mat-card-actions>
+                      <a  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >Save</a>
                   </mat-card-actions>
+              </div>
+
           </div>
+        </div>
       </form>
   </mat-card>
+
+  <div class="row btn_control">
+
+          <a id="btn_close"  mat-flat-button color="accent"  (click)="onClose()"> Close </a>
+
+  </div>

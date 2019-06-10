@@ -1773,7 +1773,7 @@ function getledMasHis(id){
     const sql = require('mssql')
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request() // or: new sql.Request(pool1)
-      .input('twsid', sql.Int, parseInt(id))
+      .input('twsid', sql.VarChar, id)
       .query(queryStr, (err, result) => {
           // ... error checks
           if(err){
@@ -1812,7 +1812,7 @@ function createLedMasHis(id,led_state,memo,resourceRef,status,createBy){
     const sql = require('mssql')
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request() // or: new sql.Request(pool1)
-      .input('twsid', sql.Int, parseInt(id))
+      .input('twsid', sql.VarChar, id)
       .input('led_state', sql.VarChar, led_state)
       .input('memo', sql.NVarChar, memo)
       .input('status', sql.Bit, status)
@@ -1846,12 +1846,10 @@ function updateLedMasHis(id,no,led_state,memo,resourceRef,status,updateBy){
 
     END
     `;
-
-
     const sql = require('mssql')
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request() // or: new sql.Request(pool1)
-      .input('twsid', sql.Int, parseInt(id))
+      .input('twsid', sql.VarChar, id)
       .input('no', sql.Int, parseInt(no))
       .input('led_state', sql.VarChar, led_state)
       .input('memo', sql.NVarChar, memo)

@@ -32,4 +32,7 @@ router.get("/cntOnFreeze/", ledController.cntOnFreeze);
 
 router.get("/cntByDate", ledController.cntByDate);
 
+router.get("/ledMasHis/:id", ledController.getledMasHis);
+router.post("/ledMasHis/:id", ledController.createLedMasHis);
+router.put("/ledMasHis/:id", ledController.updateLedMasHis);
 module.exports = router;

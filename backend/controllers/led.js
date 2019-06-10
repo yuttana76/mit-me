@@ -1679,3 +1679,196 @@ function cntByDate(req){
     })
   });
 }
+
+exports.getledMasHis = (req, res, next) => {
+
+  logger.info(`getledMasHis API/ `);
+  // var id = req.query.id || false;
+  var _id = req.param('id');
+
+  //Call Query
+  getledMasHis(_id).then(result =>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+
+  })
+}
+
+exports.createLedMasHis = (req, res, next) => {
+
+  logger.info(`createLedMasHis API/ `);
+  // var id = req.query.id || false;
+  var _id = req.param('id');
+  var led_state = req.body.led_state;
+  var memo = req.body.memo;
+  var resourceRef = req.body.resourceRef;
+  var status = req.body.status;
+  var createBy = req.body.createBy;
+
+  //Call Query
+  createLedMasHis(_id,led_state,memo,resourceRef,status,createBy).then(result =>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+
+  })
+}
+
+exports.updateLedMasHis = (req, res, next) => {
+
+  logger.info(`updateLedMasHis API/ `);
+  // var id = req.query.id || false;
+  var _id = req.param('id');
+  // var _id = req.body.id;
+  var no = req.body.no;
+  var led_state = req.body.led_state;
+  var memo = req.body.memo;
+  var resourceRef = req.body.resourceRef;
+  var status = req.body.status;
+  var updateBy = req.body.updateBy;
+
+
+  //Call Query
+  updateLedMasHis(_id,no,led_state,memo,resourceRef,status,updateBy).then(result =>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+
+  })
+}
+
+function getledMasHis(id){
+
+  logger.info(`Welcome getledMasHis() ${id}` );
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+
+    SELECT * from MIT_LED_DB_MASTER_HIS where twsid=@twsid
+
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input('twsid', sql.Int, parseInt(id))
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+    })
+  });
+}
+
+
+function createLedMasHis(id,led_state,memo,resourceRef,status,createBy){
+  logger.info(`Welcome createLedMasHis() ${id}` );
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+
+      DECLARE @no int;
+
+      SELECT @no =count(twsid)+1 from MIT_LED_DB_MASTER_HIS where twsid=@twsid
+
+      INSERT INTO MIT_LED_DB_MASTER_HIS
+      (twsid,no,led_state,memo,status,resourceRef,createBy,createDate)
+      VALUES (@twsid,@no,@led_state,@memo,@status,@resourceRef,@createBy,getdate())
+
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input('twsid', sql.Int, parseInt(id))
+      .input('led_state', sql.VarChar, led_state)
+      .input('memo', sql.NVarChar, memo)
+      .input('status', sql.Bit, status)
+      .input('resourceRef', sql.NVarChar, resourceRef)
+      .input('createBy', sql.VarChar, createBy)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+    })
+  });
+}
+
+function updateLedMasHis(id,no,led_state,memo,resourceRef,status,updateBy){
+  logger.info(`Welcome updateLedMasHis() ${id}` );
+
+  return new Promise(function(resolve, reject) {
+    var queryStr = `
+    BEGIN
+
+      UPDATE MIT_LED_DB_MASTER_HIS
+      SET led_state=@led_state,memo=@memo,status=@status,resourceRef=@resourceRef,updateBy=@updateBy,updateDate=getdate()
+      WHERE twsid = @twsid AND [no]=@no
+
+    END
+    `;
+
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input('twsid', sql.Int, parseInt(id))
+      .input('no', sql.Int, parseInt(no))
+      .input('led_state', sql.VarChar, led_state)
+      .input('memo', sql.NVarChar, memo)
+      .input('status', sql.Bit, status)
+      .input('resourceRef', sql.NVarChar, resourceRef)
+      .input('updateBy', sql.VarChar, updateBy)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+    })
+  });
+}

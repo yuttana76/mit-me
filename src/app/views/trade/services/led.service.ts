@@ -7,6 +7,7 @@
     import {InspSearch} from '../model/inspSearch.model';
     import { environment } from '../../../../environments/environment';
 import { MitLedInspCust } from '../model/mitLedInspCust.model';
+import { mitLedMasHis } from '../model/mitLedMasHis.model';
 
     const BACKEND_URL = environment.apiURL + '/led/';
 
@@ -208,6 +209,34 @@ import { MitLedInspCust } from '../model/mitLedInspCust.model';
 
         return this.http.put<{ message: string, data: any }>(BACKEND_URL + '/inspCust', data);
     }
+
+    getLedMasterHis(id){
+      return this.http.get<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + id);
+    }
+    createLedMasterHis(obj:mitLedMasHis,createBy){
+        const data = {
+                "status":obj.status,
+                "led_state":obj.led_state,
+                "memo":obj.memo,
+                "resourceRef":obj.resourceRef,
+                "createBy":createBy
+                      }
+        return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + obj.twsid, data);
+    }
+
+      updateLedMasterHis(obj:mitLedMasHis,updateBy){
+        const data = {
+                "no":obj.no,
+                "status":obj.status,
+                "led_state":obj.led_state,
+                "memo":obj.memo,
+                "resourceRef":obj.resourceRef,
+                "updateBy":updateBy
+                      }
+
+        return this.http.put<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + obj.twsid, data);
+    }
+
 
       // ******************************** END FILE
     }

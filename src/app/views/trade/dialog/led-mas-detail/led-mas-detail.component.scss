@@ -2,16 +2,13 @@
 .panel-body {
   overflow-y: auto ;
   height: 300px;
+  margin-top: 10px;
 }
 
 mat-card-actions{
   margin-top: 10px;
 }
 
-.button_card_action {
-  // margin-left: 10px;
-}
-
-.btn_control a{
-  margin-right: 10px;
+mat-card-title i {
+  margin-left: 10px;
 }

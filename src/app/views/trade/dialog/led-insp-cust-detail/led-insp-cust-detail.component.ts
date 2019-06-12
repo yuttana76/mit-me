@@ -19,7 +19,7 @@ export class LedInspCustDetailComponent implements OnInit,AfterViewInit {
 
   form: FormGroup;
   insertMode: boolean;
-  codeLookupList:CodeLookup[]=[];
+  public codeLookupList:CodeLookup[]=[];
 
 
   constructor(
@@ -118,7 +118,12 @@ this.form = new FormGroup({
 
         this.dialogRef.close('close');
       }, error => () => {
-        console.log('Add appliation was error ', error);
+        // console.log('Add appliation was error ', error);
+        this.toastr.error( `Was error: ${error}`, 'Error', {
+          timeOut: 5000,
+          positionClass: 'toast-top-center',
+        });
+
       }, () => {
         console.log(` Add appliation complete` );
       });

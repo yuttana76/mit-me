@@ -20,14 +20,17 @@ import { Authority } from '../../model/authority.model';
 export class LedMasDetailComponent implements OnInit, AfterViewInit {
 
   form: FormGroup;
+  addHistForm: FormGroup;
+
   public authority: Authority = new Authority();
   private appId = 'LEDMasterSearch';
   public YES_VAL = 'Y';
 
   insertMode: boolean;
-  codeLookupList:CodeLookup[]=[];
-
+  public codeLookupList:CodeLookup[]=[];
   masHistory:mitLedMasHis[]=[];
+
+  new_mitLedMasHis:mitLedMasHis;
 
   constructor(
     public dialogRef: MatDialogRef<LedMasDetailComponent> ,
@@ -56,10 +59,14 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
 
     const example = forkJoin(observables);
     const subscribe = example.subscribe((result:any) => {
-      this.codeLookupList = result[0];
+
+      // console.log("LEDCODE->" + JSON.stringify(result[0]));
+      if(result[0]){
+        this.codeLookupList = result[0];
+      }
 
       if(result[1]){
-        console.log("HIS->" + JSON.stringify(result[1]));
+        // console.log("HIS->" + JSON.stringify(result[1]));
         this.masHistory = result[1].result;
       }
 
@@ -85,6 +92,18 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
       // }),
     });
 
+    this.addHistForm = new FormGroup({
+      led_state: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      memo: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      resourceRef: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+    });
+
      // PERMISSION
      this.authorityService.getPermissionByAppId(this.authService.getUserData(), this.appId).subscribe( (auth: Authority[]) => {
       auth.forEach( (element) => {
@@ -101,18 +120,45 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
       this.form.get('cust_code').disable();
       this.form.get('firstName').disable();
       this.form.get('lastName').disable();
-
     }
-
   }
 
   onSave(): void {
-    this.dialogRef.close('close');
-  }
+    // this.dialogRef.close('close');
+    const _actionBy = this.authService.getUserData() || 'NONE';
+    this.ledService.createLedMasterHis(this.new_mitLedMasHis,_actionBy).subscribe((data: any ) => {
 
+      this.masHistory.push(this.new_mitLedMasHis);
+
+        this.toastr.success( `Add new successful`, 'Successful', {
+          timeOut: 5000,
+          positionClass: 'toast-top-center',
+        });
+
+    }, error => () => {
+      // console.log('Add appliation was error ', error);
+      this.toastr.error( `Was error: ${error}`, 'Error', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+      });
+
+    }, () => {
+      console.log(` Add appliation complete` );
+    });
+
+  }
 
   onClose(): void {
     this.dialogRef.close('close');
   }
 
+  public addHistory(): void {
+    this.new_mitLedMasHis = new mitLedMasHis();
+    this.new_mitLedMasHis.twsid = this.mitLedMas.twsid;
+    this.new_mitLedMasHis.status="A";
+  }
+
+  onNewHisCancel(){
+    this.new_mitLedMasHis = null;
+  }
 }

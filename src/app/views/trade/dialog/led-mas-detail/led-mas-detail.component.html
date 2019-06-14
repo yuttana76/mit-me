@@ -1,46 +1,40 @@
 
   <div class="container ">
-    <form [formGroup]="form"  >
         <mat-card-title>LED detail</mat-card-title>
-
-        <div class="example-container">
-
+          <form [formGroup]="form"  >
             <mat-form-field >
                 <input   matInput formControlName="twsid" placeholder=" twsid"
                 [(ngModel)]="mitLedMas.twsid">
-                <mat-error *ngIf="form.get('twsid').invalid">Please enter cust_code</mat-error>
             </mat-form-field>
 
             <mat-form-field >
                 <input   matInput formControlName="cust_code" placeholder="ID"
                 [(ngModel)]="mitLedMas.df_id">
-                <mat-error *ngIf="form.get('cust_code').invalid">Please enter ID</mat-error>
             </mat-form-field>
 
             <mat-form-field >
                 <input   matInput formControlName="firstName" placeholder="First Name"
                 [(ngModel)]="mitLedMas.df_name">
-                <mat-error *ngIf="form.get('firstName').invalid">Please enter firstName</mat-error>
             </mat-form-field>
 
             <mat-form-field >
                 <input   matInput formControlName="lastName" placeholder=" Last Name"
                 [(ngModel)]="mitLedMas.df_surname">
-                <mat-error *ngIf="form.get('lastName').invalid">Please enter lastName</mat-error>
             </mat-form-field>
 
             <mat-card-title>History
-              <i *ngIf="authority.mEdit == YES_VAL" class="fas fa-plus-circle" (click)="addHistory()" ></i>
+              <!-- <i *ngIf="authority.mEdit == YES_VAL && !new_mitLedMasHis" class="fas fa-plus-circle" matTooltip="Add new history." (click)="addHistory()" ></i> -->
             </mat-card-title>
 
-            <div *ngIf="new_mitLedMasHis " >
+          </form>
+            <div *ngIf="new_mitLedMasHis" >
                 <form [formGroup]="addHistForm"   >
                     <div class='row  '>
                     <mat-form-field >
-                        <mat-select  formControlName="led_state" placeholder="LED code"
+                        <mat-select  formControlName="led_state" placeholder="State"
                         [(ngModel)]="new_mitLedMasHis.led_state">
                             <mat-option  *ngFor="let obj of codeLookupList" [value]="obj.keycode">
-                              {{obj.keyText}}
+                             {{obj.keyText}}
                             </mat-option>
                           </mat-select>
                         <mat-error *ngIf="addHistForm.get('led_state').invalid">Choose one</mat-error>
@@ -72,37 +66,84 @@
                 </form>
             </div>
 
-            <div class="panel-body" >
-              <ul class="media-list" *ngFor="let item of masHistory">
-                  <li class="media">
-                      <!-- <a href="#" class="pull-left">
-                          <img src="\assets\img\avatars\noPerson.png" alt="" class="img-circle">
-                      </a> -->
-                      <div class="media-body">
-                          <span class="text-muted">
-                              <small class="text-muted">{{item.createDate | date: 'dd/MM/yyyy h:mm a'}}</small>
-                          </span>
-                          <strong class="text-success pull-left">{{item.createBy}}</strong>
-                          <p>
-                            {{item.memo}}
-                          </p>
-                          <p>
-                              <i class="far fa-2x fa-file-pdf"></i>
-                            {{item.resourceRef}}
-                          </p>
-                          <hr>
-                      </div>
-                  </li>
-              </ul>
+            <div *ngIf="!new_mitLedMasHis" >
+                <div class="panel-body"  >
+                  <ul class="media-list" *ngFor="let item of masHistory">
+                      <li class="media">
+
+                        <div class="container">
+                          <div class="container">
+                              <span class="row text-muted">
+                                  <p class="pull-left">Create By
+                                      <strong class="text-success "> {{item.createBy}}</strong>
+                                  </p>
+                                  <small class="his_time">{{item.createDate | date: 'dd/MM/yyyy h:mm a'}}</small>
+                              </span>
 
 
+                              <span *ngIf="item.updateBy" class="row text-muted">
+                                  <p class="pull-left">Update By
+                                      <strong class="text-success">{{item.updateBy}}</strong>
+                                  </p>
+                                  <small class="his_time" >{{item.updateDate | date: 'dd/MM/yyyy h:mm a'}}</small>
+                              </span>
+                          </div>
 
+
+                            <div class="row pull-left">
+                                State <p class="text-muted text-danger">{{item.led_state_txt}}</p>
+
+                                <!-- <a  mat-flat-button class="md-small button_card_action" color="warn" (click)="editHistory(item)"  >Edit</a> -->
+                                <span class="action_icon">
+                                    <!-- <i class="fas fa-edit "  matTooltip="Edit " (click)="editHistory(item)"></i> -->
+                                    <button type="button" class="btn btn-warning btn-xs btn_edit_his" (click)="editHistory(item)" >แก้ไข</button>
+                                 </span>
+                                </div>
+
+                                <textarea class="form-control" rows="5" id="comment" readonly=true >{{item.memo}}</textarea>
+
+                                <p class="his_ref"><i class="far fa-2x fa-file-pdf"></i> {{item.resourceRef}}</p>
+                                <hr>
+
+                        </div>
+
+                          <!-- <div class="media-body">
+                              <span class="text-muted">
+                                  <small >{{item.createDate | date: 'dd/MM/yyyy h:mm a'}}</small>
+                                  <i class="fas fa-edit "  matTooltip="Edit " (click)="editHistory(item)"></i>
+                                  <p class="pull-left">Create By:
+                                      <strong class="text-success "> {{item.createBy}}</strong>
+                                    </p>
+                              </span>
+
+                            <span class="text-muted">
+                                <small  >{{item.updateDate | date: 'dd/MM/yyyy h:mm a'}}</small>
+                                <p class="pull-left">Update By:
+                                    <strong class="text-success">{{item.updateBy}}</strong>
+                                </p>
+                            </span>
+
+
+                              <p>
+                                State:{{item.led_state_txt}}
+                              </p>
+                              <p>
+                                {{item.memo}}
+                              </p>
+                              <p>
+                                  <i class="far fa-2x fa-file-pdf"></i>
+                                {{item.resourceRef}}
+                              </p>
+
+                              <hr>
+                          </div> -->
+                      </li>
+                  </ul>
+              </div>
           </div>
-        </div>
-      </form>
 
-  <div class="row ">
-          <a id="btn_close"  mat-flat-button color="accent"  (click)="onClose()"> Close </a>
-  </div>
-
+          <div *ngIf="!new_mitLedMasHis" class="panel-buttom">
+              <a *ngIf="authority.mEdit == YES_VAL" id ="new_his"  mat-flat-button color="primary"  (click)="addHistory()"> Add new his. </a>
+              <a id ="closeBtn"  mat-flat-button color="accent"  (click)="onClose()"> Close </a>
+          </div>
 </div>

@@ -126,25 +126,59 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
   onSave(): void {
     // this.dialogRef.close('close');
     const _actionBy = this.authService.getUserData() || 'NONE';
-    this.ledService.createLedMasterHis(this.new_mitLedMasHis,_actionBy).subscribe((data: any ) => {
 
-      this.masHistory.push(this.new_mitLedMasHis);
+    if(!this.new_mitLedMasHis.no){
+      //New his
 
-        this.toastr.success( `Add new successful`, 'Successful', {
+      this.ledService.createLedMasterHis(this.new_mitLedMasHis,_actionBy).subscribe((data: any ) => {
+        this.masHistory.push(this.new_mitLedMasHis);
+        this.new_mitLedMasHis = null;
+
+          this.toastr.success( `Add new successful`, 'Successful', {
+            timeOut: 5000,
+            positionClass: 'toast-top-center',
+          });
+      }, error => () => {
+        this.toastr.error( `Was error: ${error}`, 'Error', {
           timeOut: 5000,
           positionClass: 'toast-top-center',
         });
-
-    }, error => () => {
-      // console.log('Add appliation was error ', error);
-      this.toastr.error( `Was error: ${error}`, 'Error', {
-        timeOut: 5000,
-        positionClass: 'toast-top-center',
+      }, () => {
+        console.log(` Add appliation complete` );
       });
 
-    }, () => {
-      console.log(` Add appliation complete` );
-    });
+    }else{
+      //Update his
+      this.ledService.updateLedMasterHis(this.new_mitLedMasHis,_actionBy).subscribe((data: any ) => {
+
+        this.updateHistList(this.new_mitLedMasHis);
+        this.new_mitLedMasHis = null;
+
+          this.toastr.success( `Update successful`, 'Successful', {
+            timeOut: 5000,
+            positionClass: 'toast-top-center',
+          });
+      }, error => () => {
+        this.toastr.error( `Was error: ${error}`, 'Error', {
+          timeOut: 5000,
+          positionClass: 'toast-top-center',
+        });
+      }, () => {
+        console.log(` Add appliation complete` );
+      });
+
+    }
+
+  }
+
+  updateHistList(item:mitLedMasHis){
+    for(var index in this.masHistory){
+
+      if (this.masHistory[index].no === item.no){
+        this.masHistory[index] = item;
+        break;
+      }
+    }
 
   }
 
@@ -160,5 +194,14 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
 
   onNewHisCancel(){
     this.new_mitLedMasHis = null;
+  }
+
+  editHistory(editItem:mitLedMasHis){
+    console.log(`Edit ` + JSON.stringify(editItem));
+
+    this.new_mitLedMasHis = editItem;
+
+    console.log(`Edit obj>> ` + JSON.stringify(this.new_mitLedMasHis));
+
   }
 }

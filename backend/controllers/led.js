@@ -1765,7 +1765,11 @@ function getledMasHis(id){
     var queryStr = `
     BEGIN
 
-    SELECT * from MIT_LED_DB_MASTER_HIS where twsid=@twsid
+    SELECT B.keyText AS led_state_txt,A.*
+    from MIT_LED_DB_MASTER_HIS A
+    LEFT join MIT_CODE_LOOKUP B ON B.keyname='LEDCODE' AND B.keycode=A.led_state
+    where twsid= @twsid
+    ORDER  BY A.[no] DESC
 
     END
     `;

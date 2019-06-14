@@ -6,6 +6,7 @@ export class mitLedMasHis {
   no: string;
   status :string;
   led_state: string;
+  led_state_txt: string;
   memo: string;
   resourceRef: string;
   createBy: string;

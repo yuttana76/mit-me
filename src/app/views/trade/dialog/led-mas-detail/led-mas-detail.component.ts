@@ -12,6 +12,8 @@ import { mitLedMasHis } from '../../model/mitLedMasHis.model';
 import { AuthorityService } from '../../services/authority.service';
 import { Authority } from '../../model/authority.model';
 
+import {mimeType} from './mime-type.validator';
+
 @Component({
   selector: 'app-led-mas-detail',
   templateUrl: './led-mas-detail.component.html',
@@ -86,6 +88,10 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
       lastName: new FormControl(null, {
         validators: [Validators.required]
       }),
+      resourceRef: new FormControl(null, {
+        validators:[Validators.required],
+          // asyncValidators: [mimeType]
+      }),
 
       // status: new FormControl(null, {
       //   // validators: [Validators.required]
@@ -130,7 +136,10 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
     if(!this.new_mitLedMasHis.no){
       //New his
 
-      this.ledService.createLedMasterHis(this.new_mitLedMasHis,_actionBy).subscribe((data: any ) => {
+      this.ledService.createLedMasterHis(this.new_mitLedMasHis,_actionBy,this.form.value.resourceRef).subscribe((data: any ) => {
+
+        console.log("Finish add new >>" + JSON.stringify(data));
+
         this.masHistory.push(this.new_mitLedMasHis);
         this.new_mitLedMasHis = null;
 
@@ -149,7 +158,7 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
 
     }else{
       //Update his
-      this.ledService.updateLedMasterHis(this.new_mitLedMasHis,_actionBy).subscribe((data: any ) => {
+      this.ledService.updateLedMasterHis(this.new_mitLedMasHis,_actionBy,this.form.value.resourceRef).subscribe((data: any ) => {
 
         this.updateHistList(this.new_mitLedMasHis);
         this.new_mitLedMasHis = null;
@@ -204,4 +213,17 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
     console.log(`Edit obj>> ` + JSON.stringify(this.new_mitLedMasHis));
 
   }
+
+  onResourcePicked(event :Event){
+
+    const file = (event.target as HTMLInputElement).files[0];
+    this.form.patchValue({resourceRef:file})
+    this.form.get('resourceRef').updateValueAndValidity();
+
+    // this.new_mitLedMasHis.resourceRef = file;
+
+    console.log("file>>" + JSON.stringify(file));
+    console.log("Form file>>" + this.form.get('resourceRef'));
+  }
+
 }

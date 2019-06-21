@@ -213,27 +213,45 @@ import { mitLedMasHis } from '../model/mitLedMasHis.model';
     getLedMasterHis(id){
       return this.http.get<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + id);
     }
-    createLedMasterHis(obj:mitLedMasHis,createBy){
-        const data = {
-                "status":obj.status,
-                "led_state":obj.led_state,
-                "memo":obj.memo,
-                "resourceRef":obj.resourceRef,
-                "createBy":createBy
-                      }
-        return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + obj.twsid, data);
+
+    createLedMasterHis(obj:mitLedMasHis,createBy,_resourceRef:File){
+      const postData = new FormData();
+      postData.append("status",obj.status);
+      postData.append("led_state",obj.led_state);
+      postData.append("memo",obj.memo);
+      postData.append("resourceRef",_resourceRef);
+      postData.append("createBy",createBy);
+
+        return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + obj.twsid, postData);
+        // .subscribe(resData=>{
+        //   console.log("createLedMasterHis SUB>>" + JSON.stringify(resData));
+        // }
+        // );
     }
 
-      updateLedMasterHis(obj:mitLedMasHis,updateBy){
-        const data = {
-                "no":obj.no,
-                "status":obj.status,
-                "led_state":obj.led_state,
-                "memo":obj.memo,
-                "resourceRef":obj.resourceRef,
-                "updateBy":updateBy
-                      }
 
+      updateLedMasterHis(obj:mitLedMasHis,updateBy,_resourceRef:File | string){
+
+        let data :any;
+
+        if(typeof(_resourceRef)==='object'){
+          data = new FormData();
+          data.append("no",obj.no);
+          data.append("status",obj.status);
+          data.append("led_state",obj.led_state);
+          data.append("memo",obj.memo);
+          data.append("resourceRef",_resourceRef);
+          data.append("updateBy",updateBy);
+        }else{
+           data = {
+            "no":obj.no,
+            "status":obj.status,
+            "led_state":obj.led_state,
+            "memo":obj.memo,
+            "resourceRef":obj.resourceRef,
+            "updateBy":updateBy
+                  }
+        }
         return this.http.put<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + obj.twsid, data);
     }
 

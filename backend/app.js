@@ -52,7 +52,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/", express.static(path.join(__dirname, "angular")));
 app.use("/images",express.static(path.join("backend/images")));
-
+app.use("/downloadFiles/files",express.static(path.join("backend/downloadFiles/files")));
 
 /*
 Config for separate Banckend and Frontend servers

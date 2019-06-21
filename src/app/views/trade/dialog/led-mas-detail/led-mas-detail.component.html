@@ -56,6 +56,11 @@
                       </mat-form-field>
                   </div>
 
+                  <div>
+                      <button mat-stroked-button type="button" (click)="filePicker.click()">Pick Image</button>
+                      <input type="file" #filePicker (change)="onResourcePicked($event)">
+                    </div>
+
                   <div class="row"  >
                       <mat-card-actions>
                           <a  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >Save</a>
@@ -68,11 +73,11 @@
 
             <div *ngIf="!new_mitLedMasHis" >
                 <div class="panel-body"  >
-                  <ul class="media-list" *ngFor="let item of masHistory">
+                  <ul class="media-list" *ngFor="let item of masHistory; let i = index">
                       <li class="media">
 
                         <div class="container">
-                          <div class="container">
+                          <div class="row">
                               <span class="row text-muted">
                                   <p class="pull-left">Create By
                                       <strong class="text-success "> {{item.createBy}}</strong>
@@ -93,50 +98,26 @@
                             <div class="row pull-left">
                                 State <p class="text-muted text-danger">{{item.led_state_txt}}</p>
 
-                                <!-- <a  mat-flat-button class="md-small button_card_action" color="warn" (click)="editHistory(item)"  >Edit</a> -->
                                 <span class="action_icon">
-                                    <!-- <i class="fas fa-edit "  matTooltip="Edit " (click)="editHistory(item)"></i> -->
+                                  <!-- <div class="numberCircle">{{i+1 | number }}</div> -->
                                     <button type="button" class="btn btn-warning btn-xs btn_edit_his" (click)="editHistory(item)" >แก้ไข</button>
                                  </span>
-                                </div>
-
+                              </div>
                                 <textarea class="form-control" rows="5" id="comment" readonly=true >{{item.memo}}</textarea>
+                                <p *ngIf="item.resourceRef"  class="his_ref">
 
-                                <p class="his_ref"><i class="far fa-2x fa-file-pdf"></i> {{item.resourceRef}}</p>
+                                  <a [href]="item.resourceRef"  target="_blank">
+                                    <i  class="far fa-2x fa-file-pdf"></i>
+                                  </a>
+
+                                  <!-- {{item.resourceRef}}
+                                  <img [src]="item.resourceRef"> -->
+                                </p>
                                 <hr>
 
                         </div>
 
-                          <!-- <div class="media-body">
-                              <span class="text-muted">
-                                  <small >{{item.createDate | date: 'dd/MM/yyyy h:mm a'}}</small>
-                                  <i class="fas fa-edit "  matTooltip="Edit " (click)="editHistory(item)"></i>
-                                  <p class="pull-left">Create By:
-                                      <strong class="text-success "> {{item.createBy}}</strong>
-                                    </p>
-                              </span>
 
-                            <span class="text-muted">
-                                <small  >{{item.updateDate | date: 'dd/MM/yyyy h:mm a'}}</small>
-                                <p class="pull-left">Update By:
-                                    <strong class="text-success">{{item.updateBy}}</strong>
-                                </p>
-                            </span>
-
-
-                              <p>
-                                State:{{item.led_state_txt}}
-                              </p>
-                              <p>
-                                {{item.memo}}
-                              </p>
-                              <p>
-                                  <i class="far fa-2x fa-file-pdf"></i>
-                                {{item.resourceRef}}
-                              </p>
-
-                              <hr>
-                          </div> -->
                       </li>
                   </ul>
               </div>

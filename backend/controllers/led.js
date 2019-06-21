@@ -1704,16 +1704,20 @@ exports.getledMasHis = (req, res, next) => {
 exports.createLedMasHis = (req, res, next) => {
 
   logger.info(`createLedMasHis API/ `);
+
+  const url = req.protocol +"://"+ req.get("host");
+
   // var id = req.query.id || false;
   var _id = req.param('id');
   var led_state = req.body.led_state;
   var memo = req.body.memo;
-  var resourceRef = req.body.resourceRef;
+  var resourceRef = url+"/downloadFiles/files/" + req.file.filename;
   var status = req.body.status;
   var createBy = req.body.createBy;
 
   //Call Query
   createLedMasHis(_id,led_state,memo,resourceRef,status,createBy).then(result =>{
+
     res.status(200).json({
       message: "Successfully!",
       result: result
@@ -1730,19 +1734,27 @@ exports.createLedMasHis = (req, res, next) => {
 exports.updateLedMasHis = (req, res, next) => {
 
   logger.info(`updateLedMasHis API/ `);
+
+  let _resourceRef = req.body.imagePath;
+  if (req.file) {
+    const url = req.protocol + "://" + req.get("host");
+    _resourceRef = url+"/downloadFiles/files/" + req.file.filename;
+  }
+
   // var id = req.query.id || false;
   var _id = req.param('id');
   // var _id = req.body.id;
   var no = req.body.no;
   var led_state = req.body.led_state;
   var memo = req.body.memo;
-  var resourceRef = req.body.resourceRef;
+  // var resourceRef = _resourceRef;
   var status = req.body.status;
   var updateBy = req.body.updateBy;
 
+  console.log("***resourceRef >>" + _resourceRef);
 
   //Call Query
-  updateLedMasHis(_id,no,led_state,memo,resourceRef,status,updateBy).then(result =>{
+  updateLedMasHis(_id,no,led_state,memo,_resourceRef,status,updateBy).then(result =>{
     res.status(200).json({
       message: "Successfully!",
       result: result
@@ -1838,7 +1850,7 @@ function createLedMasHis(id,led_state,memo,resourceRef,status,createBy){
 }
 
 function updateLedMasHis(id,no,led_state,memo,resourceRef,status,updateBy){
-  logger.info(`Welcome updateLedMasHis() ${id}` );
+  logger.info(`Welcome updateLedMasHis() ${id}; ${no} , ${resourceRef}` );
 
   return new Promise(function(resolve, reject) {
     var queryStr = `

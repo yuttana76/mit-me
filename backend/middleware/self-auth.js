@@ -7,7 +7,8 @@ const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
 
 module.exports = (req,res,next)=>{
 
-  logger.info( `API /self-auth - ${req.originalUrl} - ${req.ip} `);
+  logger.info( ` ${req.originalUrl} - ${req.connection.remoteAddress} `);
+
   try{
     const token = req.headers.authorization.split(" ")[1];
     // jwt.verify(token,JWT_SECRET_STRING);
@@ -16,7 +17,6 @@ module.exports = (req,res,next)=>{
     }else{
       res.status(401).json({message: 'Auth failed!'});
     }
-
 
   }catch(error){
     console.log(error);

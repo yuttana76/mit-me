@@ -225,7 +225,6 @@ const LED_INSP_STATUS =1;
 
 
 exports.callGetBankruptList = (req, res, next) =>{
-
   var led_options = {
     host: 'test.example.com',
     port: 443,
@@ -252,8 +251,6 @@ exports.callGetBankruptList = (req, res, next) =>{
        onsole.log("Got error: " + e.message);
     });
    });
-
-
 }
 
 exports.uploadBulkFileDialy = (req, res, next) =>{
@@ -1711,12 +1708,19 @@ exports.createLedMasHis = (req, res, next) => {
   var _id = req.param('id');
   var led_state = req.body.led_state;
   var memo = req.body.memo;
-  var resourceRef = url+"/downloadFiles/files/" + req.file.filename;
+
+  var resourceRef = '' ;
+
+  if(req.file)
+    resourceRef = url+"/downloadFiles/files/" + req.file.filename;
+
   var status = req.body.status;
   var createBy = req.body.createBy;
 
   //Call Query
   createLedMasHis(_id,led_state,memo,resourceRef,status,createBy).then(result =>{
+
+    // console.log("Result >>" + JSON.stringify(result))
 
     res.status(200).json({
       message: "Successfully!",
@@ -1735,7 +1739,7 @@ exports.updateLedMasHis = (req, res, next) => {
 
   logger.info(`updateLedMasHis API/ `);
 
-  let _resourceRef = req.body.imagePath;
+  let _resourceRef = req.body.resourceRef;
   if (req.file) {
     const url = req.protocol + "://" + req.get("host");
     _resourceRef = url+"/downloadFiles/files/" + req.file.filename;
@@ -1751,10 +1755,9 @@ exports.updateLedMasHis = (req, res, next) => {
   var status = req.body.status;
   var updateBy = req.body.updateBy;
 
-  console.log("***resourceRef >>" + _resourceRef);
-
   //Call Query
   updateLedMasHis(_id,no,led_state,memo,_resourceRef,status,updateBy).then(result =>{
+
     res.status(200).json({
       message: "Successfully!",
       result: result
@@ -1781,7 +1784,7 @@ function getledMasHis(id){
     from MIT_LED_DB_MASTER_HIS A
     LEFT join MIT_CODE_LOOKUP B ON B.keyname='LEDCODE' AND B.keycode=A.led_state
     where twsid= @twsid
-    ORDER  BY A.[no] DESC
+    ORDER  BY A.[no] ASC
 
     END
     `;
@@ -1839,6 +1842,9 @@ function createLedMasHis(id,led_state,memo,resourceRef,status,createBy){
           if(err){
             reject(err);
           }else {
+
+            console.log("Result >>" + JSON.stringify(result))
+
             resolve(result.recordset);
           }
       })
@@ -1850,7 +1856,7 @@ function createLedMasHis(id,led_state,memo,resourceRef,status,createBy){
 }
 
 function updateLedMasHis(id,no,led_state,memo,resourceRef,status,updateBy){
-  logger.info(`Welcome updateLedMasHis() ${id}; ${no} , ${resourceRef}` );
+  logger.info(`Welcome updateLedMasHis() ${id}; ${no} ` );
 
   return new Promise(function(resolve, reject) {
     var queryStr = `

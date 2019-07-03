@@ -9,6 +9,7 @@ export class mitLedMasHis {
   led_state_txt: string;
   memo: string;
   resourceRef: string;
+  resourceExt: string;
   createBy: string;
   createDate: string;
   updateBy: string;

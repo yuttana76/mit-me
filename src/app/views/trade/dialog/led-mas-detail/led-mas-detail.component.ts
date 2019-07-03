@@ -13,6 +13,7 @@ import { AuthorityService } from '../../services/authority.service';
 import { Authority } from '../../model/authority.model';
 
 import {mimeType} from './mime-type.validator';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-led-mas-detail',
@@ -40,7 +41,7 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
     private toastr: ToastrService,
     private masterDataService: MasterDataService,
     public shareDataService: ShareDataService,
-    private ledService:LEDService,
+    public ledService:LEDService,
     private authService: AuthService,
     private authorityService: AuthorityService,
   ) { }
@@ -62,14 +63,12 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
     const example = forkJoin(observables);
     const subscribe = example.subscribe((result:any) => {
 
-      // console.log("LEDCODE->" + JSON.stringify(result[0]));
       if(result[0]){
         this.codeLookupList = result[0];
       }
 
       if(result[1]){
-        // console.log("HIS->" + JSON.stringify(result[1]));
-        this.masHistory = result[1].result;
+        this.masHistory = result[1];
       }
 
     });
@@ -106,7 +105,7 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
         // validators: [Validators.required]
       }),
       resourceRef: new FormControl(null, {
-        // validators: [Validators.required]
+        asyncValidators: [mimeType]
       }),
     });
 
@@ -126,19 +125,18 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
       this.form.get('cust_code').disable();
       this.form.get('firstName').disable();
       this.form.get('lastName').disable();
+
+      // this.addHistForm.get('resourceRef').disable();
     }
   }
 
   onSave(): void {
-    // this.dialogRef.close('close');
+
     const _actionBy = this.authService.getUserData() || 'NONE';
 
-    if(!this.new_mitLedMasHis.no){
-      //New his
+    if(!this.new_mitLedMasHis.no){ // CREATE NEW
 
-      this.ledService.createLedMasterHis(this.new_mitLedMasHis,_actionBy,this.form.value.resourceRef).subscribe((data: any ) => {
-
-        console.log("Finish add new >>" + JSON.stringify(data));
+      this.ledService.createLedMasterHis(this.new_mitLedMasHis,_actionBy,this.addHistForm.value.resourceRef).subscribe((data: any ) => {
 
         this.masHistory.push(this.new_mitLedMasHis);
         this.new_mitLedMasHis = null;
@@ -156,17 +154,22 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
         console.log(` Add appliation complete` );
       });
 
-    }else{
-      //Update his
-      this.ledService.updateLedMasterHis(this.new_mitLedMasHis,_actionBy,this.form.value.resourceRef).subscribe((data: any ) => {
+    } else { // UPDATE
 
-        this.updateHistList(this.new_mitLedMasHis);
+      this.ledService.updateLedMasterHis(this.new_mitLedMasHis,_actionBy,this.addHistForm.value.resourceRef).subscribe((data: any ) => {
+
+        // this.updateHistList(this.new_mitLedMasHis);
         this.new_mitLedMasHis = null;
+
+        this.ledService.getLedMasterHis(this.mitLedMas.twsid).subscribe(data=>{
+            this.masHistory = data;
+        });
 
           this.toastr.success( `Update successful`, 'Successful', {
             timeOut: 5000,
             positionClass: 'toast-top-center',
           });
+
       }, error => () => {
         this.toastr.error( `Was error: ${error}`, 'Error', {
           timeOut: 5000,
@@ -175,21 +178,18 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
       }, () => {
         console.log(` Add appliation complete` );
       });
-
     }
-
   }
 
-  updateHistList(item:mitLedMasHis){
-    for(var index in this.masHistory){
+  // updateHistList(item:mitLedMasHis){
+  //   for(var index in this.masHistory){
 
-      if (this.masHistory[index].no === item.no){
-        this.masHistory[index] = item;
-        break;
-      }
-    }
-
-  }
+  //     if (this.masHistory[index].no === item.no){
+  //       this.masHistory[index] = item;
+  //       break;
+  //     }
+  //   }
+  // }
 
   onClose(): void {
     this.dialogRef.close('close');
@@ -206,24 +206,25 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
   }
 
   editHistory(editItem:mitLedMasHis){
-    console.log(`Edit ` + JSON.stringify(editItem));
-
     this.new_mitLedMasHis = editItem;
 
-    console.log(`Edit obj>> ` + JSON.stringify(this.new_mitLedMasHis));
+    this.addHistForm.setValue({
+      led_state: editItem.led_state,
+      memo: editItem.memo,
+      resourceRef: editItem.resourceRef,
+    });
 
   }
 
   onResourcePicked(event :Event){
 
     const file = (event.target as HTMLInputElement).files[0];
-    this.form.patchValue({resourceRef:file})
-    this.form.get('resourceRef').updateValueAndValidity();
+    this.addHistForm.patchValue({resourceRef:file})
+    this.addHistForm.get('resourceRef').updateValueAndValidity();
 
-    // this.new_mitLedMasHis.resourceRef = file;
-
-    console.log("file>>" + JSON.stringify(file));
-    console.log("Form file>>" + this.form.get('resourceRef'));
   }
 
+  onRemoveHist(){
+    this.new_mitLedMasHis.resourceRef="";
+  }
 }

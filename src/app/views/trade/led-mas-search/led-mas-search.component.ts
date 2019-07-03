@@ -159,7 +159,7 @@ this.form = new FormGroup({
   onEditLedMas(_data: MitLedMas) {
 
     this.ledMasDetailComponent = this.dialog.open(LedMasDetailComponent, {
-      width: '600px',
+      width: '700px',
       data: _data
     });
 

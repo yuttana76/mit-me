@@ -3,6 +3,7 @@
 # compiled output
 /dist
 /backend/angular
+/backend/downloadFiles
 /backend/.env
 backend/angular
 /dist-server

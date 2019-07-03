@@ -7,7 +7,9 @@ const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
 
 module.exports = (req,res,next)=>{
 
-  logger.info( `API /check-auth - ${req.originalUrl} - ${req.ip} `);
+  // logger.info( ` ${req.originalUrl} - ${req.ip} `);
+  logger.info( ` ${req.originalUrl} - ${req.connection.remoteAddress} `);
+
   try{
     const token = req.headers.authorization.split(" ")[1];
 

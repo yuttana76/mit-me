@@ -116,7 +116,7 @@ this.form = new FormGroup({
           positionClass: 'toast-top-center',
         });
 
-        this.dialogRef.close('close');
+        this.dialogRef.close('save');
       }, error => () => {
         // console.log('Add appliation was error ', error);
         this.toastr.error( `Was error: ${error}`, 'Error', {
@@ -130,7 +130,7 @@ this.form = new FormGroup({
 
     }
 
-    this.dialogRef.close('close');
+    // this.dialogRef.close('close');
   }
 
   onClose(): void {

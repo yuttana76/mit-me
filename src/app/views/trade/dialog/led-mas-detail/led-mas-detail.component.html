@@ -2,35 +2,44 @@
   <div class="container ">
         <mat-card-title>LED detail</mat-card-title>
           <form [formGroup]="form"  >
-            <mat-form-field >
+            <div class="row">
+            <mat-form-field class="col-md-4" >
                 <input   matInput formControlName="twsid" placeholder=" twsid"
                 [(ngModel)]="mitLedMas.twsid">
             </mat-form-field>
 
-            <mat-form-field >
+            <mat-form-field class="col-md-4">
                 <input   matInput formControlName="cust_code" placeholder="ID"
                 [(ngModel)]="mitLedMas.df_id">
             </mat-form-field>
+            </div>
 
-            <mat-form-field >
+            <div class="row">
+            <mat-form-field class="col-md-4">
                 <input   matInput formControlName="firstName" placeholder="First Name"
                 [(ngModel)]="mitLedMas.df_name">
             </mat-form-field>
 
-            <mat-form-field >
+            <mat-form-field class="col-md-4">
                 <input   matInput formControlName="lastName" placeholder=" Last Name"
                 [(ngModel)]="mitLedMas.df_surname">
             </mat-form-field>
+            </div>
 
-            <mat-card-title>History
-              <!-- <i *ngIf="authority.mEdit == YES_VAL && !new_mitLedMasHis" class="fas fa-plus-circle" matTooltip="Add new history." (click)="addHistory()" ></i> -->
-            </mat-card-title>
+
 
           </form>
+
+          <!-- Add new history -->
             <div *ngIf="new_mitLedMasHis" >
+
+                <mat-card-title *ngIf="!new_mitLedMasHis.no">Add history  </mat-card-title>
+                <mat-card-title *ngIf="new_mitLedMasHis.no" >Edit history  </mat-card-title>
+
                 <form [formGroup]="addHistForm"   >
+
                     <div class='row  '>
-                    <mat-form-field >
+                    <mat-form-field class="col-md-6">
                         <mat-select  formControlName="led_state" placeholder="State"
                         [(ngModel)]="new_mitLedMasHis.led_state">
                             <mat-option  *ngFor="let obj of codeLookupList" [value]="obj.keycode">
@@ -42,24 +51,36 @@
                   </div>
 
                   <div class='row '>
-                      <mat-form-field >
-                          <textarea matInput placeholder="Memo" formControlName="memo" [(ngModel)]="new_mitLedMasHis.memo"></textarea>
+                      <mat-form-field class="col-md-8">
+                          <textarea matInput placeholder="Memo" formControlName="memo" [(ngModel)]="new_mitLedMasHis.memo" rows=5 ></textarea>
                           <mat-error *ngIf="addHistForm.get('memo').invalid">Please enter Memo</mat-error>
                       </mat-form-field>
                   </div>
 
                   <div class='row '>
-                  <mat-form-field >
-                          <input   matInput formControlName="resourceRef" placeholder=" Reference source"
-                          [(ngModel)]="new_mitLedMasHis.resourceRef">
-                          <mat-error *ngIf="addHistForm.get('resourceRef').invalid">Please enter reference source</mat-error>
-                      </mat-form-field>
-                  </div>
+<!--
+                        <mat-form-field >
+                            <input  id="input_resourceRef" matInput formControlName="resourceRef" placeholder=" Reference source"
+                            [(ngModel)]="new_mitLedMasHis.resourceRef" readonly=true >
+                            <mat-error *ngIf="addHistForm.get('resourceRef').invalid">Please enter reference source</mat-error>
+                        </mat-form-field> -->
 
-                  <div>
-                      <button mat-stroked-button type="button" (click)="filePicker.click()">Pick Image</button>
-                      <input type="file" #filePicker (change)="onResourcePicked($event)">
+                        <div>
+                          <p>{{new_mitLedMasHis.resourceRef}}</p>
+
+                          <span *ngIf="new_mitLedMasHis.resourceRef" >
+                                <i *ngIf="new_mitLedMasHis.resourceExt === 'pdf'"  class="far fa-2x fa-file-pdf" ></i>
+                                <i *ngIf="new_mitLedMasHis.resourceExt === 'zip'"  class="far fa-2x fa-file-archive" ></i>
+                                <i *ngIf="new_mitLedMasHis.resourceExt === 'png' ||  new_mitLedMasHis.resourceExt === 'jpg' " class="far fa-2x fa-file-image" ></i>
+                        </span>
+
+
+                          <i id="delResourceRef" *ngIf="new_mitLedMasHis.resourceRef" class="fas fa-2x fa-trash-alt" (click)="onRemoveHist()" matTooltip= "ลบ" ></i>
+
+                          <button id="btnResourceRef" *ngIf="!new_mitLedMasHis.resourceRef" mat-stroked-button type="button" (click)="filePicker.click()">Pick Image</button>
+                          <input type="file" #filePicker (change)="onResourcePicked($event)">
                     </div>
+                  </div>
 
                   <div class="row"  >
                       <mat-card-actions>
@@ -71,57 +92,62 @@
                 </form>
             </div>
 
-            <div *ngIf="!new_mitLedMasHis" >
-                <div class="panel-body"  >
-                  <ul class="media-list" *ngFor="let item of masHistory; let i = index">
-                      <li class="media">
+            <!-- List all history -->
+            <div *ngIf="!new_mitLedMasHis"  class="panel-body">
+            <mat-card-title>List history  </mat-card-title>
+            <mat-card  *ngFor="let item of masHistory; let i = index" >
 
-                        <div class="container">
-                          <div class="row">
-                              <span class="row text-muted">
-                                  <p class="pull-left">Create By
-                                      <strong class="text-success "> {{item.createBy}}</strong>
-                                  </p>
-                                  <small class="his_time">{{item.createDate | date: 'dd/MM/yyyy h:mm a'}}</small>
-                              </span>
+                <!-- <div mat-card-avatar class="example-header-image"></div> -->
 
+                <mat-card-title>{{item.led_state_txt}}
 
-                              <span *ngIf="item.updateBy" class="row text-muted">
-                                  <p class="pull-left">Update By
-                                      <strong class="text-success">{{item.updateBy}}</strong>
-                                  </p>
-                                  <small class="his_time" >{{item.updateDate | date: 'dd/MM/yyyy h:mm a'}}</small>
-                              </span>
-                          </div>
+                  <span *ngIf="item.resourceRef"  class="his_ref">
+                        <a [href]="item.resourceRef"  target="_blank" >
+                          <i *ngIf="item.resourceExt === 'pdf'"  class="far  fa-file-pdf" ></i>
+                          <i *ngIf="item.resourceExt === 'zip'"   class="far  fa-file-archive" ></i>
+                          <i *ngIf="item.resourceExt === 'png' ||  item.resourceExt === 'jpg' "  class="far  fa-file-image" ></i>
+                        </a>
+                  </span>
 
+                </mat-card-title>
 
-                            <div class="row pull-left">
-                                State <p class="text-muted text-danger">{{item.led_state_txt}}</p>
+                <mat-card-subtitle>
+                  <span class="row text-muted">
+                      <p class="pull-left">Create By
+                          <strong class="text-success "> {{item.createBy}}</strong>
+                      </p>
+                      <small class="his_time">{{item.createDate | date: 'dd/MM/yyyy h:mm a'}}</small>
+                  </span>
 
-                                <span class="action_icon">
-                                  <!-- <div class="numberCircle">{{i+1 | number }}</div> -->
-                                    <button type="button" class="btn btn-warning btn-xs btn_edit_his" (click)="editHistory(item)" >แก้ไข</button>
-                                 </span>
-                              </div>
-                                <textarea class="form-control" rows="5" id="comment" readonly=true >{{item.memo}}</textarea>
-                                <p *ngIf="item.resourceRef"  class="his_ref">
+                  <span *ngIf="item.updateBy" class="row text-muted">
+                      <p class="pull-left">Update By
+                          <strong class="text-success">{{item.updateBy}}</strong>
+                      </p>
+                      <small class="his_time" >{{item.updateDate | date: 'dd/MM/yyyy h:mm a'}}</small>
+                  </span>
+                </mat-card-subtitle>
 
-                                  <a [href]="item.resourceRef"  target="_blank">
-                                    <i  class="far fa-2x fa-file-pdf"></i>
-                                  </a>
+              <!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu"> -->
+              <mat-card-content>
+                <p>
+                    {{item.memo}}
+                </p>
+              </mat-card-content>
+              <mat-card-actions>
+                <button  mat-stroked-button color="warn" (click)="editHistory(item)" >Edit</button>
 
-                                  <!-- {{item.resourceRef}}
-                                  <img [src]="item.resourceRef"> -->
-                                </p>
-                                <hr>
-
-                        </div>
-
-
-                      </li>
-                  </ul>
-              </div>
+                <!-- <span *ngIf="item.resourceRef"  class="his_ref">
+                    <a [href]="item.resourceRef"  target="_blank" >
+                      <i *ngIf="item.resourceExt === 'pdf'" matTooltip= "item.resourceRef" class="far fa-2x fa-file-pdf" ></i>
+                      <i *ngIf="item.resourceExt === 'zip'"  matTooltip= "item.resourceRef" class="far fa-2x fa-file-archive" ></i>
+                      <i *ngIf="item.resourceExt === 'png' ||  item.resourceExt === 'jpg' " matTooltip= "item.resourceRef" class="far fa-2x fa-file-image" ></i>
+                    </a>
+                  </span> -->
+              </mat-card-actions>
+            </mat-card>
           </div>
+
+
 
           <div *ngIf="!new_mitLedMasHis" class="panel-buttom">
               <a *ngIf="authority.mEdit == YES_VAL" id ="new_his"  mat-flat-button color="primary"  (click)="addHistory()"> Add new his. </a>

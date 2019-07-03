@@ -65,7 +65,6 @@ export class LedInspDetailComponent implements OnInit {
 
   ngOnInit() {
     // this.spinnerLoading = true;
-    const observables = [];
 
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('source')) {
@@ -78,29 +77,10 @@ export class LedInspDetailComponent implements OnInit {
         this._key = paramMap.get('key');
 
         // Initail data
+        this.loadInvestProfile();
 
-        this.ledService.getInspByKey(this._key)
-        .subscribe((data: any[]) => {
-          this.main_mitLedInspCust  = data[0];
-
-        // console.log('INSP MAIN CUST >>' + JSON.stringify(this.main_mitLedInspCust) );
-        observables.push(this.ledService.getInspByCustCode(this.main_mitLedInspCust.cust_code));
-
-        const example = forkJoin(observables);
-        const subscribe = example.subscribe((result:any) => {
-        this.member_mitLedInspCust =result[0];
-          // console.log('MEMBER >>' + JSON.stringify(this.member_mitLedInspCust) );
-        });
-
-
-        }, error => () => {
-            console.log('Was error', error);
-        }, () => {
-           console.log('Loading complete');
-        });
       }
     });
-
 
     // PERMISSION
     this.authorityService.getPermissionByAppId(this.authService.getUserData(), this.appId).subscribe( (auth: Authority[]) => {
@@ -108,7 +88,30 @@ export class LedInspDetailComponent implements OnInit {
         this.authority = element;
       });
     });
+  }
 
+  loadInvestProfile(){
+    const observables = [];
+
+    this.ledService.getInspByKey(this._key)
+        .subscribe((data: any[]) => {
+            this.main_mitLedInspCust  = data[0];
+
+            // console.log('INSP MAIN CUST >>' + JSON.stringify(this.main_mitLedInspCust) );
+            observables.push(this.ledService.getInspByCustCode(this.main_mitLedInspCust.cust_code));
+
+            const example = forkJoin(observables);
+            const subscribe = example.subscribe((result:any) => {
+            this.member_mitLedInspCust =result[0];
+              // console.log('MEMBER >>' + JSON.stringify(this.member_mitLedInspCust) );
+            });
+
+
+        }, error => () => {
+            console.log('Was error', error);
+        }, () => {
+           console.log('Loading complete');
+        });
 
   }
 
@@ -178,7 +181,12 @@ export class LedInspDetailComponent implements OnInit {
     });
 
     this.ledInspCustDetailComponent.afterClosed().subscribe(result => {
-        // console.log('Dialog result => ', result);
+        console.log('Dialog result => ', result);
+
+        if(result==='save'){
+          this.loadInvestProfile();
+        }
+
     });
   }
 

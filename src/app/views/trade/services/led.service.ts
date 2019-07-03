@@ -1,13 +1,14 @@
 
     import { Injectable } from '../../../../../node_modules/@angular/core';
     import { HttpClient } from '@angular/common/http';
-    import { Subject } from 'rxjs';
-    import { map } from 'rxjs/operators';
+    import { Subject, of, Observable } from 'rxjs';
+    import { map, mergeMap } from 'rxjs/operators';
     import { Router } from '@angular/router';
     import {InspSearch} from '../model/inspSearch.model';
     import { environment } from '../../../../environments/environment';
-import { MitLedInspCust } from '../model/mitLedInspCust.model';
-import { mitLedMasHis } from '../model/mitLedMasHis.model';
+    import { MitLedInspCust } from '../model/mitLedInspCust.model';
+    import { mitLedMasHis } from '../model/mitLedMasHis.model';
+    import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
 
     const BACKEND_URL = environment.apiURL + '/led/';
 
@@ -210,11 +211,42 @@ import { mitLedMasHis } from '../model/mitLedMasHis.model';
         return this.http.put<{ message: string, data: any }>(BACKEND_URL + '/inspCust', data);
     }
 
+
+    // getLedMasterHis(id){
+    //   return this.http.get<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + id);
+    // }
+
     getLedMasterHis(id){
-      return this.http.get<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + id);
+      return this.http.get<{ message: string, result: any }>(BACKEND_URL + '/ledMasHis/' + id)
+      .pipe(map( _data => {
+
+        return _data.result.map(map_data => {
+          return {
+            'twsid':map_data.twsid,
+            'no':map_data.no,
+            'led_state':map_data.led_state,
+            'led_state_txt':map_data.led_state_txt,
+            'memo':map_data.memo,
+            'resourceRef':map_data.resourceRef,
+            'createBy':map_data.createBy,
+            'createDate':map_data.createDate,
+            'updateBy':map_data.updateBy,
+            'updateDate':map_data.updateDate,
+            'status':map_data.status,
+            'resourceExt':this.getMinetypeFromLink(map_data.resourceRef)
+          }
+          // return map_data
+        });
+      }));
+
     }
 
+
+
     createLedMasterHis(obj:mitLedMasHis,createBy,_resourceRef:File){
+
+      console.log("createLedMasterHis()>>" + JSON.stringify(_resourceRef));
+
       const postData = new FormData();
       postData.append("status",obj.status);
       postData.append("led_state",obj.led_state);
@@ -235,6 +267,7 @@ import { mitLedMasHis } from '../model/mitLedMasHis.model';
         let data :any;
 
         if(typeof(_resourceRef)==='object'){
+
           data = new FormData();
           data.append("no",obj.no);
           data.append("status",obj.status);
@@ -243,6 +276,7 @@ import { mitLedMasHis } from '../model/mitLedMasHis.model';
           data.append("resourceRef",_resourceRef);
           data.append("updateBy",updateBy);
         }else{
+
            data = {
             "no":obj.no,
             "status":obj.status,
@@ -252,9 +286,26 @@ import { mitLedMasHis } from '../model/mitLedMasHis.model';
             "updateBy":updateBy
                   }
         }
+
         return this.http.put<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + obj.twsid, data);
     }
 
+      getMinetypeFromLink(link:string){
+
+        var ext='';
+        if(link){
+          var fileName = link.split('/files/');
+          ext = fileName[1].split('.')[1].toLowerCase();
+        }
+
+        return ext;
+        // return new Promise(function(resolve, reject) {
+        //   var fileName = link.split('/files/');
+        //   var ext = fileName[1].split('.')[1].toLowerCase();
+        //   resolve(ext);
+        // });
+
+      }
 
       // ******************************** END FILE
     }

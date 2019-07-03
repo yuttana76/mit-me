@@ -44,6 +44,7 @@ const downloadRoutes = require('./routes/download');
 const fatcaRoutes = require('./routes/fatca');
 const custChildrenRoutes = require('./routes/custChildren');
 const ledRoutes = require('./routes/led');
+const ledApiRoutes = require('./routes/led_api');
 const swanRoutes = require('./routes/swan');
 
 const app = express();
@@ -129,6 +130,7 @@ app.use("/api/cdd",cddRoutes);
 app.use("/api/child",custChildrenRoutes);
 
 app.use("/api/led",ledRoutes);
+app.use("/api/ledApi",ledApiRoutes);
 
 app.use("/api/swan",swanRoutes);
 

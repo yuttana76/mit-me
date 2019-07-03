@@ -4,19 +4,35 @@ input[type="file"]{
 
 }
 
+#input_resourceRef{
+  visibility: hidden;
+
+}
+
 .panel-body {
   overflow-y: auto ;
-  height: 300px;
+  height: 400px;
   margin-top: 10px;
+  align-items: center;
 }
+
+
+mat-card{
+  margin-top:10px;
+  margin-bottom:10px;
+  width: 95%;
+}
+
+mat-card-title i {
+  margin-left: 10px;
+  width: 100%;
+}
+
 
 mat-card-actions{
   margin-top: 10px;
 }
 
-mat-card-title i {
-  margin-left: 10px;
-}
 
 .text-muted {
   margin-left: 10px;
@@ -36,8 +52,10 @@ mat-card-title i {
 }
 
 .his_ref {
-  margin-top: 10px;
+  // margin-top: 10px;
+  float: right;
 }
+
 
 .his_time {
   margin-left: 10px;
@@ -63,4 +81,11 @@ mat-card-title i {
   color: #666;
   text-align: center;
   font: 32px Arial, sans-serif;
+}
+
+#delResourceRef{
+  margin-left: 20px;
+}
+#btnResourceRef{
+  margin-left: 20px;
 }

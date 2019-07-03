@@ -8,28 +8,44 @@ const selfAuth = require('../middleware/self-auth');
 const router = express.Router();
 
 // backend/downloadFiles/files
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
 const MIME_TYPE_MAP = {
   "image/png": "png",
   "image/jpeg": "jpg",
-  "image/jpg": "jpg"
+  "image/jpg": "jpg",
+  "application/pdf":"pdf",
+  "application/x-tar":"tar",
+  "application/zip":"zip",
 };
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+
+  destination: (req, file, callback) => {
     const isValid = MIME_TYPE_MAP[file.mimetype];
     let error = new Error("Invalid mime type");
     if (isValid) {
       error = null;
     }
-    cb(error, "backend/downloadFiles/files");
+    callback(error, "backend/downloadFiles/files");
   },
-  filename: (req, file, cb) => {
-    const name = file.originalname
+  filename: (req, file, callback) => {
+
+    let name ;
+
+      if(file.originalname.split(".")){
+        name=file.originalname.split(".")[0]
+        .toLowerCase()
+        .split(" ")
+        .join("-");
+      }else{
+        name = file.originalname
       .toLowerCase()
       .split(" ")
       .join("-");
+      }
+
     const ext = MIME_TYPE_MAP[file.mimetype];
-    cb(null, name + "-" + Date.now() + "." + ext);
+    callback(null, name + "-" + Date.now() + "." + ext);
   }
 });
 

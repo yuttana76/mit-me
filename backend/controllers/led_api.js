@@ -8,6 +8,8 @@ var prop = require("../config/backend-property");
 var logger = require("../config/winston");
 var mitLog = require('./mitLog');
 var soap = require('soap');
+var cron = require('node-cron');
+var CronJob = require('cron').CronJob;
 
 var config = dbConfig.dbParameters;
 var config_BULK = dbConfig.dbParameters_BULK;
@@ -17,13 +19,11 @@ const mysql_dbConfig = require("../config/mysql-config");
 var swan_config = mysql_dbConfig.swan_dbParameters;
 var mysql = require('mysql');
 
-const readPath = __dirname + '/readFiles/LED/';
-const readFile = 'exp_lom.txt';
+const FILE_BAK_PATH = __dirname + '/readFiles/LEDBackup/';
+const FILE_PATH = __dirname + '/readFiles/LED/';
+// const directoryPath = path.join(__dirname, '/readFiles/LED/');
 
-
-const writePath = __dirname + '/readFiles/LED/';
-const writeFile = 'dialy_led.txt';
-
+const LED_LIST_FILE_NAME = 'led_list.txt';
 
 const HTTP_SOAP = 'https://192.168.10.48:444/CrytoService.svc';
 const HOST_LED= "uatdebtor.led.go.th";
@@ -33,20 +33,23 @@ const PATH_GetBankruptList ="/api/public/GetBankruptList";
 const PATH_ReceiverBreezeWebService ="/api/public/ReceiverBreezeWebService";
 const PATH_GetBankruptListByDate ="/api/public/GetBankruptListByDate";
 
-// const HTTP_GetBankruptList ='https://uatdebtor.led.go.th/api/public/GetBankruptList';
-// const HTTP_ReceiverBreezeWebService ='https://uatdebtor.led.go.th/api/public/ReceiverBreezeWebService';
-// const HTTP_GetBankruptListByDate ='https://uatdebtor.led.go.th/api/public/GetBankruptListByDate';
-
 
 exports.checkAPI = (req, res, next) =>{
 
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 
-  console.log(`ip>> - ${ip}`);
-  console.log(`fullUrl>> - ${fullUrl}`);
+  // console.log(`ip>> - ${ip}`);
+  // console.log(`fullUrl>> - ${fullUrl}`);
 
-  res.status(200).json({ message: 'API successful' });
+  readLedListFiles().then(result=>{
+    console.log("OK");
+    res.status(200).json({ message: result });
+  },err=>{
+    console.log("ERROR>>" + err);
+    res.status(400).json({ message: err });
+  })
+
 
 }
 
@@ -107,149 +110,402 @@ exports.ledDecrypt = (req, res, next) =>{
 
 exports.callGetBankruptList = (req, res, next) =>{
   // console.log("Welcome to API /callGetBankruptList/");
+  fnGetBankruptList().then(result =>{
+    res.status(200).json({
+      message: "Successfully!",
+      code:"000",
+      result: result
+    });
+  },err =>{
+    res.status(400).json({
+      message: err,
+      code:"999",
+    });
+  });
 
-  var input ="";
-  // #1 Encryt
-  fncSOAPEncrypt().then(result =>{
-
-    // console.log("fncSOAPEncrypt() >>" + result.EncryptResult );
-    input= result.EncryptResult;
-    // #2 Call APIs
-    fnCallLEDapis(PATH_GetBankruptList,input).then(result =>{
-
-      console.log(result);
-
-      var resultObj =  JSON.parse(result);
-
-      if(resultObj.responseCode == "000"){
-        if(resultObj.data){
-        // #3 Decrypt
-        fncSOAPDecrypt(resultObj.data).then(result =>{
-
-          // #4 write file
-          let writeStream = fs.createWriteStream(writePath+writeFile);
-          writeStream.write(result, 'utf8');
-          // the finish event is emitted when all data has been flushed from the stream
-          writeStream.on('finish', () => {
-            // console.log('wrote all data to file');
-
-            res.status(200).json({
-              message: "Successfully!",
-              code:"000",
-              result: result
-            });
-
-          });
-          // close the stream
-          writeStream.end();
-
-        },err=>{
-          res.status(200).json({
-            message: "Error on SOAP decrypt.",
-            code:"501",
-            result: err
-          });
-        })
-
-        }
-      }else{
-        res.status(200).json({
-          message: "Successfully!",
-          result: result
-        });
-      }
-
-
-
-    },err=>{
-      res.status(400).json({
-        message: 'Error on call API'
-      });
-
-    })
-
-  },err=>{
- res.status(400).json({
-        message: 'Error on SOAP Encrypt'
-      });
-  })
 }
 
-
 exports.GetBankruptListByDate = (req, res, next) =>{
-  // console.log("Welcome to API /callGetBankruptList/");
-
-  // #1 Encryt
   const req_key="";
   const req_status = ""
   const startdate=req.body.startdate;
   const enddate =req.body.enddate;
 
-  fncSOAPEncrypt(req_key,req_status,startdate,enddate).then(result =>{
+  fnGetBankruptListByDate(req_key,req_status,startdate,enddate).then(result =>{
+    res.status(200).json({
+      message: "Successfully!",
+      code:"000",
+      result: result
+    });
+  },err =>{
+    res.status(400).json({
+      message: err,
+      code:"999",
+    });
+  });
 
-    // console.log("fncSOAPEncrypt() >>" + result.EncryptResult );
-    const input= result.EncryptResult;
-    // #2 Call APIs
-    fnCallLEDapis(PATH_GetBankruptListByDate,input).then(result =>{
+};
 
-      var resultObj =  JSON.parse(result);
+// ******************** SCHEDULE
+// https://www.npmjs.com/package/cron
 
-      if(resultObj.responseCode == "000"){
-          if(resultObj.data){
-          // #3 Decrypt
-          fncSOAPDecrypt(resultObj.data).then(result =>{
+var LED_JOB;
 
-            // #4 write file
-            let writeStream = fs.createWriteStream(writePath+writeFile);
-            writeStream.write(result, 'utf8');
-            // the finish event is emitted when all data has been flushed from the stream
-            writeStream.on('finish', () => {
-              // console.log('wrote all data to file');
+exports.ledSchedule = (req, res, next) =>{
 
-              res.status(200).json({
-                message: "Successfully!",
-                code:"000",
-                result: result
-              });
+  const schStatus =req.body.schStatus;
+  const schData =req.body.schData;
 
-            });
-            // close the stream
-            writeStream.end();
+  fnLedSchedule(schStatus,schData).then(result=>{
+    res.status(200).json({
+      message: "Successfully!",
+      code:"000",
+      result: result
+    });
 
-          },err=>{
-            res.status(200).json({
-              message: "Error on SOAP decrypt.",
-              code:"501",
-              result: err
-            });
-          })
-
-          }
-        }else{
-          res.status(200).json({
-            message: "Successfully!",
-            result: result
-          });
-        }
-      // result.responseMessage
-      // console.log();
-
-    },err=>{
-      res.status(400).json({
-        message: 'Error on call API'
-      });
-
-    })
 
   },err=>{
- res.status(400).json({
-        message: 'Error on SOAP Encrypt'
-      });
-  })
+    res.status(400).json({
+      message: err,
+      code:"999",
+    });
+
+  });
+
 }
 
 
+// ******************** SCHEDULE
+
 // ****************************** FUNCTION HERE
+function readLedListFiles(userName){
+
+  const LED_FILE_NAME= "led_list.txt";
+
+  return new Promise(function(resolve, reject) {
+    fs.readdir(FILE_PATH, function (err, files) {
+        if (err) {
+            // return console.log('Unable to scan directory: ' + err);
+            reject(err);
+        }
+        //listing all files using forEach
+        var foundFiles=0;
+        // var ledArray = new Array();
+
+        files.forEach(function (file) {
+            // Do whatever you want to do with the file
+            var i =file.indexOf(LED_FILE_NAME);
+            if(i>0){
+
+              foundFiles++;
+
+              //Table config
+              const sql = require('mssql');
+              const pool1 = new sql.ConnectionPool(config_BULK, err => {
+                  const table = new sql.Table('MIT_LED_GetBankruptList');
+                  table.create = true;
+                  // 1-10
+                  // table.columns.add('TWS_ID', sql.Int, {nullable: false, primary: true});
+                  table.columns.add('TWS_ID', sql.Int);
+                  table.columns.add('RECV_NO', sql.NVarChar(20));
+                  table.columns.add('RECV_YR', sql.NVarChar(4), { nullable: true });
+                  table.columns.add('DF_ID', sql.NVarChar(20), { nullable: true });
+                  table.columns.add('DF_NAME', sql.NVarChar(400), { nullable: true });
+                  table.columns.add('DF_SURNAME', sql.NVarChar(400), { nullable: true });
+                  table.columns.add('DF_NO', sql.VarChar(2), { nullable: true });
+                  table.columns.add('COURT_NAME', sql.NVarChar(400), { nullable: true });
+                  table.columns.add('COURT_TYPE', sql.VarChar(2), { nullable: true });
+                  table.columns.add('BLACK_CASE', sql.NVarChar(50), { nullable: true });
+                  // 11-20
+                  table.columns.add('BLACK_YY', sql.VarChar(5), { nullable: true });
+                  table.columns.add('RED_CASE', sql.NVarChar(50), { nullable: true });
+                  table.columns.add('RED_YY', sql.VarChar(5), { nullable: true });
+                  table.columns.add('PLAINTIFF1', sql.NVarChar(400), { nullable: true });
+                  table.columns.add('PLAINTIFF2', sql.NVarChar(400), { nullable: true });
+                  table.columns.add('PLAINTIFF3', sql.NVarChar(400), { nullable: true });
+                  table.columns.add('DEFENDANT1', sql.NVarChar(400), { nullable: true });
+                  table.columns.add('DEFENDANT2', sql.NVarChar(400), { nullable: true });
+                  table.columns.add('DEFENDANT3', sql.NVarChar(400), { nullable: true });
+                  table.columns.add('ABS_PROT_DD', sql.VarChar(2), { nullable: true });
+                  // 21-29
+                  table.columns.add('ABS_PROT_MM', sql.VarChar(2), { nullable: true });
+                  table.columns.add('ABS_PROT_YY', sql.VarChar(5), { nullable: true });
+                  table.columns.add('IMAGE_COURT', sql.NVarChar(1024), { nullable: true });
+                  table.columns.add('CASE_CAPITAL', sql.VarChar(20), { nullable: true });
+                  table.columns.add('OWN_NAME', sql.VarChar(500), { nullable: true });
+                  table.columns.add('OWN_DEPT', sql.VarChar(500), { nullable: true });
+                  table.columns.add('OWN_TEL', sql.VarChar(20), { nullable: true });
+                  table.columns.add('RCV_DATE', sql.VarChar(50), { nullable: true });
+                  table.columns.add('REQ_KEY', sql.VarChar(50), { nullable: true });
+
+                  table.columns.add('createBy', sql.VarChar(20), { nullable: true });
+                  table.columns.add('createDate', sql.Date, { nullable: true });
+                  table.columns.add('updateBy', sql.VarChar(20), { nullable: true });
+                  table.columns.add('updateDate', sql.Date, { nullable: true });
+
+
+              // Read file
+              let rFile = readline.createInterface({
+                input: fs.createReadStream(FILE_PATH+file, 'utf8')
+              });
+
+                rFile.on('line', function(line) {
+
+
+
+                const dataObj = JSON.parse(line);
+                console.log("LINE >>" + JSON.stringify(dataObj));
+
+                table.rows.add(
+                dataObj['TWS_ID'],
+                dataObj['RECV_NO'],
+                dataObj['RECV_YR'],
+                dataObj['DF_ID'],
+                dataObj['DF_NAME'],
+                dataObj['DF_SURNAME'],
+                dataObj['DF_NO'],
+                dataObj['COURT_NAME'],
+                dataObj['COURT_TYPE'],
+                dataObj['BLACK_CASE'],
+                dataObj['BLACK_YY'],
+                dataObj['RED_CASE'],
+                dataObj['RED_YY'],
+                dataObj['PLAINTIFF1'],
+                dataObj['PLAINTIFF2'],
+                dataObj['PLAINTIFF3'],
+                dataObj['DEFENDANT1'],
+                dataObj['DEFENDANT2'],
+                dataObj['DEFENDANT3'],
+                dataObj['ABS_PROT_DD'],
+                dataObj['ABS_PROT_MM'],
+                dataObj['ABS_PROT_YY'],
+                dataObj['IMAGE_COURT'],
+                dataObj['CASE_CAPITAL'],
+                dataObj['OWN_NAME'],
+                dataObj['OWN_DEPT'],
+                dataObj['OWN_TEL'],
+                dataObj['RCV_DATE'],
+                dataObj['REQ_KEY'],
+                userName,new Date,null,null);
+
+                });
+
+                rFile.on('close', function(line) {
+                  console.log("close >>");
+                  // Execute insert Bulk data to  MIT_LED table
+                  const request = new sql.Request(pool1)
+                  request.bulk(table, (err, result) => {
+
+                    if(err){
+                      reject(err);
+                    }else{
+
+                      //Move file to Backup
+                        //  fs.rename(FILE_PATH+file, FILE_BAK_PATH+file,  (err) => {
+                        //   if (err) {
+                        //     res.status(422).json({ message: err });
+                        //   };
+                        // });
+
+                      resolve("Successful");
+                    }
+                  });
+                });
+                // file
+
+              }); //ConnectionPool
+            }else{
+              resolve('success');
+            }
+        }
+
+        );
+
+        console.log("foundFiles >>" + foundFiles);
+        if(foundFiles==0){
+          reject('Not found LED files.');
+        }
+    });
+
+  });
+}
+
+function fnLedSchedule(schStatus,schData){
+
+  const SCH_STOP = 'STOP';
+  const SCH_START = 'START';
+
+  return new Promise(function(resolve, reject) {
+
+        if(schStatus.toUpperCase() === SCH_START){
+          logger.info("START LED_JOB");
+          // START SCH
+          // var LED_JOB_SCH ='* 22 * * *'; //Every 22.00
+          var LED_JOB_SCH =' * * * * *'; // Every minute
+
+          if(schData)
+            LED_JOB_SCH=schData;
+
+          LED_JOB = new CronJob(LED_JOB_SCH, function() {
+
+            // logger.info("Complete LED_JOB download & write files.");
+
+            const req_key="";
+            const req_status = ""
+            const startdate= "2019-07-02";
+            const enddate = "2019-07-02";
+
+            // Tempolary
+            fnGetBankruptListByDate(req_key,req_status,startdate,enddate).then(result =>{
+              logger.info("Complete LED_JOB download & write files.");
+            },err =>{
+              logger.info(err);
+            });
+
+
+            // fnGetBankruptList().then(result =>{
+            //     // Download LED -> write file complese
+            //     // Next clean your data base
+            //     logger.info("Complete LED_JOB download & write files.");
+            //     logger.info(result);
+
+            // },err =>{
+            //   // Download & Write file error
+            //   // Send mail to system addmin
+            //   logger.error(err);
+            // });
+
+          }, null, true, 'America/Los_Angeles');
+
+          resolve("000");
+
+        }else if(schStatus.toUpperCase() === SCH_STOP){
+
+            LED_JOB.stop();
+            logger.info("STOP LED_JOB");
+
+            resolve("000");
+        }else{
+          reject("Incorrect condition.");
+        }
+  });
+}
+
+function fnGetBankruptList(){
+
+  return new Promise(function(resolve, reject) {
+
+      var input ="";
+      // #1 Encryt
+      fncSOAPEncrypt().then(result =>{
+
+        input= result.EncryptResult;
+        // #2 Call APIs
+        fnCallLEDapis(PATH_GetBankruptList,input).then(result =>{
+
+          // console.log(result);
+          var resultObj =  JSON.parse(result);
+
+          if(resultObj.responseCode == "000"){
+            if(resultObj.data){
+            // #3 Decrypt
+            fncSOAPDecrypt(resultObj.data).then(result =>{
+
+              // #4 write file
+              writeLocalFile(result,LED_LIST_FILE_NAME).then(result =>{
+                resolve(result);
+              },err=>{
+                logger.error(err);
+                reject(err);
+              });
+
+            },err=>{
+              logger.error(err);
+              reject(err);
+            })
+
+            }
+          }else{
+            resolve(result);
+          }
+        },err=>{
+          logger.error(err);
+          reject(err);
+
+        })
+
+      },err=>{
+        logger.error(err);
+        reject(err);
+      })
+  });
+}
+
+function fnGetBankruptListByDate(req_key,req_status,startdate,enddate){
+  // console.log("Welcome to API /callGetBankruptList/");
+
+  return new Promise(function(resolve, reject) {
+    // #1 Encryt
+    fncSOAPEncrypt(req_key,req_status,startdate,enddate).then(result =>{
+
+      const input= result.EncryptResult;
+      // #2 Call APIs
+      fnCallLEDapis(PATH_GetBankruptListByDate,input).then(result =>{
+
+        var resultObj =  JSON.parse(result);
+        if(resultObj.responseCode == "000"){
+            if(resultObj.data){
+            // #3 Decrypt
+              fncSOAPDecrypt(resultObj.data).then(result =>{
+
+                // #4 write file
+                writeLocalFile(result,LED_LIST_FILE_NAME).then(result =>{
+                  resolve(result);
+                },err=>{
+                  reject(err);
+                });
+
+              },err=>{// Error  fncSOAPDecrypt
+                reject(err);
+              })
+            }
+          }else{
+            resolve(result);
+          }
+      },err=>{
+        reject(err);
+      })
+    },err=>{
+      reject(err);
+    });
+  });
+}
+
+function writeLocalFile(data,fileName) {
+
+  var today = new Date();
+
+  // var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  // var time = today.getHours() + "-" + today.getMinutes()
+  // var dateTime = date+'-'+time;
+  var date = today.getFullYear()+''+(today.getMonth()+1)+''+today.getDate();
+  var time = today.getHours() + "" + today.getMinutes()
+  var dateTime = date+''+time;
+
+  const _fileName =  dateTime+'-'+fileName;
+
+  return new Promise(function(resolve, reject) {
+    // #4 write file
+    let writeStream = fs.createWriteStream(FILE_PATH+_fileName);
+    writeStream.write(data, 'utf8');
+    // the finish event is emitted when all data has been flushed from the stream
+    writeStream.on('finish', () => {
+      resolve(data);
+    });
+    // close the stream
+    writeStream.end();
+  });
+}
 
 function fnCallLEDapis(path,input){
 

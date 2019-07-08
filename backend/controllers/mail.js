@@ -562,7 +562,6 @@ exports.sendMailThankCust = (req, res, next) =>{
     } catch (error) {
       res.status(400).json({ message: 'sendMailToRelated' });
     }
-
   },(err)=>{
     if(err) {
       console.log(' Error on send mail >>>' + err)
@@ -573,7 +572,108 @@ exports.sendMailThankCust = (req, res, next) =>{
         msg: prop.getRespMsg(rsp_code),
       });
     }
+  });
+}
+
+/*
+Send mail  to Whom response LED
+
+*/
+exports.mailLedResponseToday = function(){
+
+  console.log( "Welcome mailLedResponse()");
+
+  // [
+  //  MFTS:0 ["{\"twsid\":\"567557\",\"LED_CUST_CODE\":\"3209900477033\",\"MPAM_CUST_CODE\":\"3209900477033\",\"firstName\":\"สืบวงษ์\" ,\"lastName\":\"สุขะมงคล\"}"],
+  //  SWAN:1 ["{\"twsid\":\"567557\",\"LED_CUST_CODE\":\"3209900477033\",\"MPAM_CUST_CODE\":\"3209900477033\",\"firstName\":\"CustName1065\" ,\"lastName\":\"CustName1065\"}"]
+  // ]
+
+  const FROM_LED_SYS = mailConfig.FROM_LED_SYS;
+  const TO_LED_RES = mailConfig.TO_LED_RES;
+  const LED_CLEANING_SUBJECT  = mailConfig.LED_CLEANING_SUBJECT
+
+  let _msg = `<h3>LED Cleaning data result on ${utility.getDateTime()}</h3>`;
+
+  return new Promise(function(resolve, reject) {
+
+    getInspToday().then(value=>{
+
+//      console.log('getInspToday() >>' + JSON.stringify(value));
+      value.forEach(function(data,i) {
+        _msg += `
+          <hr>
+          <p>
+          <B>No:</B> ${i+1}
+          </p>
+          <p>
+          <B>ID:</B> ${data.cust_code}
+          </p>
+          <p>
+          <B>Full name:</B> ${data.firstName} ${data.lastName}
+          </p>
+          <p>
+          <B>Source:</B> ${data.cust_source}
+          </p>
+          <p>
+          <B>led_code:</B> ${data.led_code}
+          </p>
+          <h4>LED data</h4>
+          `;
+        });
+
+        let mailOptions = {
+          from: FROM_LED_SYS,
+          to: TO_LED_RES,
+          subject: LED_CLEANING_SUBJECT,
+          html: _msg
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            reject(error);
+          }
+          resolve("000")
+        });
+
+
+
+    }
+    ,err=>{
+      reject(reject);
+    })
 
   });
-
 }
+
+
+function getInspToday() {
+    // logger.info(`Welcome cntInspToday() `);
+
+    return new Promise(function(resolve, reject) {
+      // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+      var queryStr = `
+      BEGIN
+        SELECT *
+        FROM MIT_LED_INSP_CUST a
+        WHERE  CONVERT(date,a.createDate)= CONVERT(date, getdate())
+      END
+      `;
+
+      const sql = require('mssql')
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request() // or: new sql.Request(pool1)
+        .query(queryStr, (err, result) => {
+            // ... error checks
+            if(err){
+              reject(err);
+            }else {
+              resolve(result.recordset);
+            }
+        })
+      })
+      pool1.on('error', err => {
+        reject(err);
+        console.log("EROR>>"+err);
+      })
+    });
+  }

@@ -22,8 +22,14 @@ exports.MPAM_MailParameters = {
 
   exports.mail_form ='wealthservice@merchantasset.co.th';
 
+
   // exports.mail_toRM ='PW@merchantasset.co.th'; //
   exports.mailRM ='yuttana@merchantasset.co.th';
+
+  //LED
+  exports.FROM_LED_SYS ='yuttana@merchantasset.co.th';
+  exports.TO_LED_RES ='yuttana@merchantasset.co.th';
+  exports.LED_CLEANING_SUBJECT = 'LED Cleaning data result';
 
   exports.mailCompInfo_TH = `
   <br>

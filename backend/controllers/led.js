@@ -922,8 +922,6 @@ exports.insertLEDInspect =function (inspectData,cust_source,_createBy){
 
     for (var i = 0; i < inspectData.length; i++){
       _obj = JSON.parse(inspectData[i]);
-      console.log("insertLEDInspect()>> " +JSON.stringify(_obj));
-// console.log(cust_source +" ;twsid:"+_obj.twsid +" ;LED_CUST_CODE:"+_obj.LED_CUST_CODE  +" ;MPAM_CUST_CODE:"+_obj.MPAM_CUST_CODE  );
 
         insertInspCust(_obj.MPAM_CUST_CODE,_obj.twsid,cust_source,_obj.firstName,_obj.lastName,LED_INSP_STATUS,LED_INSP_LED_CODE,_createBy).then(result => {
           resolve(result);

@@ -13,6 +13,7 @@ var cron = require('node-cron');
 var CronJob = require('cron').CronJob;
 
 var led = require('./led');
+var mail = require('./mail');
 
 
 var config = dbConfig.dbParameters;
@@ -190,14 +191,11 @@ exports.cleanCustFromFile = (req, res, next) =>{
         led.compareLED_2(values[2],values[1]).catch(err => { res.status(401).json({ message: 'Error Compare LED & MFTS >>'+err }); }),
         ]).then(values => {
 
-          // console.log("COMPARE >>"+JSON.stringify(values));
-          // res.status(200).json({ message: 'Successful /checkCustDialy' });
-
           Promise.all([
             led.insertLEDInspect(values[0],"SWAN",actionBy).catch(err => { res.status(401).json({ message: 'Error SWAN to inspection >>'+err }); }),
             led.insertLEDInspect(values[1],"MFTS",actionBy).catch(err => { res.status(401).json({ message: 'Error MFTS  to inspection>>'+err }); }),
             insertAllFilesMIT_LED_DB_MASTER(actionBy).catch(err => { res.status(401).json({ message: 'Error SWAP >>'+err }); }),
-
+            mail.mailLedResponseToday().catch(err => { res.status(401).json({ message: 'LED send mail rrror SWAP >>'+err }); }),
             ]).then(values => {
 
               console.log("INSERT >>"+JSON.stringify(values));
@@ -229,7 +227,6 @@ exports.cleanCustFromFile = (req, res, next) =>{
 }
 
 // ****************************** FUNCTION HERE
-
 
 
 function getLedFiles(){

@@ -16,7 +16,11 @@ router.post("/mpamGetBankruptList/",led_apiController.callGetBankruptList);
 // router.post("/mpamReceiverBreezeWebService/",led_apiController.ReceiverBreezeWebService);
 router.post("/mpamGetBankruptListByDate/",led_apiController.GetBankruptListByDate);
 
+// #1 Run schedule
 router.post("/ledSchedule/",led_apiController.ledSchedule);
+
+// #2 Run Cleaning data
+router.post("/cleanFromFile/",led_apiController.cleanCustFromFile);
 
 
 module.exports = router;

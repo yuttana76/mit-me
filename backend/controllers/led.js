@@ -395,8 +395,8 @@ exports.checkCustDialy = (req, res, next) => {
     console.log('Start checkCustAll()' + new Date())
       // GET data
       Promise.all([
-      getSWANCustomers().catch(err => { res.status(401).json({ message: 'Error getSWANCustomers()'+err }); }),
-      getMFTSCustomers().catch(err => { res.status(401).json({ message: 'Error getMFTSCustomers()'+err }); }),
+      this.getSWANCustomers().catch(err => { res.status(401).json({ message: 'Error getSWANCustomers()'+err }); }),
+      this.getMFTSCustomers().catch(err => { res.status(401).json({ message: 'Error getMFTSCustomers()'+err }); }),
       getLED_Dialy().catch(err => { res.status(401).json({ message: 'Error getLED_Dialy()' +err }); }),
       ]).then(values => {
 
@@ -405,8 +405,8 @@ exports.checkCustDialy = (req, res, next) => {
         //index 2: is LED
         // Cleaning db. 2
         Promise.all([
-          compareLED_2(values[2],values[0]).catch(err => { res.status(401).json({ message: 'Error Compare LED & SWAN >>'+err }); }),
-          compareLED_2(values[2],values[1]).catch(err => { res.status(401).json({ message: 'Error Compare LED & MFTS >>'+err }); }),
+          this.compareLED_2(values[2],values[0]).catch(err => { res.status(401).json({ message: 'Error Compare LED & SWAN >>'+err }); }),
+          this.compareLED_2(values[2],values[1]).catch(err => { res.status(401).json({ message: 'Error Compare LED & MFTS >>'+err }); }),
           ]).then(values => {
 
             Promise.all([
@@ -890,7 +890,8 @@ END
 
 
 
-function compareLED_2(_ledData,_custData){
+// function compareLED_2(_ledData,_custData){
+  exports.compareLED_2 = function(_ledData,_custData) {
 
   const finalarray =[];
   return new Promise(function(resolve, reject) {
@@ -898,6 +899,8 @@ function compareLED_2(_ledData,_custData){
         for (var i = 0; i < _ledData.length; i++){
           // console.log( 'LED>>' +_ledData[i].Cust_Code)
           for (var j = 0; j < _custData.length; j++){
+
+            // console.log("COMP>> " +_ledData[i].Cust_Code + "  & " +_custData[j].Cust_Code);
               if (_ledData[i].Cust_Code === _custData[j].Cust_Code){
                 console.log("_custData>>" + JSON.stringify(_custData[j]))
                 finalarray.push('{"twsid":"' +_ledData[i].twsid + '","LED_CUST_CODE":"' + _ledData[i].Cust_Code + '","MPAM_CUST_CODE":"' + _custData[j].Cust_Code + '","firstName":"'+_custData[j].First_Name_T+'" ,"lastName":"'+_custData[j].Last_Name_T+'"}');
@@ -908,10 +911,14 @@ function compareLED_2(_ledData,_custData){
     });
 }
 
-function insertLEDInspect(inspectData,cust_source,_createBy){
-
+// function insertLEDInspect(inspectData,cust_source,_createBy){
+exports.insertLEDInspect =function (inspectData,cust_source,_createBy){
 
   return new Promise(function(resolve, reject) {
+
+    if(inspectData.length == 0){
+      resolve("0")
+    }
 
     for (var i = 0; i < inspectData.length; i++){
       _obj = JSON.parse(inspectData[i]);
@@ -919,15 +926,16 @@ function insertLEDInspect(inspectData,cust_source,_createBy){
 // console.log(cust_source +" ;twsid:"+_obj.twsid +" ;LED_CUST_CODE:"+_obj.LED_CUST_CODE  +" ;MPAM_CUST_CODE:"+_obj.MPAM_CUST_CODE  );
 
         insertInspCust(_obj.MPAM_CUST_CODE,_obj.twsid,cust_source,_obj.firstName,_obj.lastName,LED_INSP_STATUS,LED_INSP_LED_CODE,_createBy).then(result => {
-          resolve('Insert Inspect success');
+          resolve(result);
+        },err=>{
+          reject(err)
         })
     }
   })
 }
 
 function insertInspCust(cust_code,twsid,cust_source,firstName,lastName,status,led_code,createBy){
-  console.log("led_code>>" + led_code + "  createBy>>" +createBy );
-
+  // console.log("led_code>>" + led_code + "  createBy>>" +createBy );
   return new Promise(function(resolve, reject) {
     genInspectId(cust_code)
     .then(led_inspect_id=>{
@@ -1084,7 +1092,8 @@ var dateStr = today.getFullYear()+''+(today.getMonth()+1)+''+today.getDate()+'-'
 }
 
 
-function getSWANCustomers(){
+// function getSWANCustomers(){
+  exports.getSWANCustomers = function() {
 
   logger.info(`Welcome getSWANCustomers() `);
 
@@ -1125,7 +1134,9 @@ function getSWANCustomers(){
 }
 
 
-function getMFTSCustomers(){
+// function getMFTSCustomers(){
+  exports.getMFTSCustomers = function() {
+
   logger.info(`Welcome getMFTSCustomers() `);
 
   return new Promise(function(resolve, reject) {

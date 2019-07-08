@@ -9,7 +9,11 @@ var logger = require("../config/winston");
 var mitLog = require('./mitLog');
 var soap = require('soap');
 var cron = require('node-cron');
+
 var CronJob = require('cron').CronJob;
+
+var led = require('./led');
+
 
 var config = dbConfig.dbParameters;
 var config_BULK = dbConfig.dbParameters_BULK;
@@ -29,6 +33,8 @@ const HTTP_SOAP = 'https://192.168.10.48:444/CrytoService.svc';
 const HOST_LED= "uatdebtor.led.go.th";
 const API_KEY ="328010cc65ecf3a5f0bcdbb51e339d36";
 
+const LED_FILE_NAME= "led_list.txt";
+
 const PATH_GetBankruptList ="/api/public/GetBankruptList";
 const PATH_ReceiverBreezeWebService ="/api/public/ReceiverBreezeWebService";
 const PATH_GetBankruptListByDate ="/api/public/GetBankruptListByDate";
@@ -41,15 +47,6 @@ exports.checkAPI = (req, res, next) =>{
 
   // console.log(`ip>> - ${ip}`);
   // console.log(`fullUrl>> - ${fullUrl}`);
-
-  readLedListFiles().then(result=>{
-    console.log("OK");
-    res.status(200).json({ message: result });
-  },err=>{
-    console.log("ERROR>>" + err);
-    res.status(400).json({ message: err });
-  })
-
 
 }
 
@@ -175,14 +172,120 @@ exports.ledSchedule = (req, res, next) =>{
 }
 
 
-// ******************** SCHEDULE
+exports.cleanCustFromFile = (req, res, next) =>{
+  var actionBy = req.body.actionBy
+
+  // 1.Compare ledFile & SWAN & MFTS
+
+   // GET data
+   Promise.all([
+    led.getSWANCustomers().catch(err => { res.status(401).json({ message: 'Error getSWANCustomers()'+err }); }),
+    led.getMFTSCustomers().catch(err => { res.status(401).json({ message: 'Error getMFTSCustomers()'+err }); }),
+    getLedFiles().catch(err => { res.status(401).json({ message: 'Error getLedFiles()' +err }); }),
+    ]).then(values => {
+
+
+      Promise.all([
+        led.compareLED_2(values[2],values[0]).catch(err => { res.status(401).json({ message: 'Error Compare LED & SWAN >>'+err }); }),
+        led.compareLED_2(values[2],values[1]).catch(err => { res.status(401).json({ message: 'Error Compare LED & MFTS >>'+err }); }),
+        ]).then(values => {
+
+          // console.log("COMPARE >>"+JSON.stringify(values));
+          // res.status(200).json({ message: 'Successful /checkCustDialy' });
+
+          Promise.all([
+            led.insertLEDInspect(values[0],"SWAN",actionBy).catch(err => { res.status(401).json({ message: 'Error SWAN to inspection >>'+err }); }),
+            led.insertLEDInspect(values[1],"MFTS",actionBy).catch(err => { res.status(401).json({ message: 'Error MFTS  to inspection>>'+err }); }),
+            insertAllFilesMIT_LED_DB_MASTER(actionBy).catch(err => { res.status(401).json({ message: 'Error SWAP >>'+err }); }),
+
+            ]).then(values => {
+
+              console.log("INSERT >>"+JSON.stringify(values));
+              res.status(200).json({ message: 'Successful /checkCustDialy' });
+
+            },function(err){
+              res.status(401).json({ message: err });
+            })
+
+        },function(err){
+          res.status(401).json({ message: err });
+        })
+
+    });
+  //   1.1 Insert found data to MIT_LED_INSP_CUST
+  //   1.2 Send mail to responsible
+
+  // 2.Insert LED MASTER db.
+  // 3.Files Backup
+
+
+  // readLedListFiles(actionBy).then(result=>{
+  //   res.status(200).json({ message: result });
+  // },err=>{
+  //   console.log("ERROR>>" + err);
+  //   res.status(400).json({ message: err });
+  // })
+
+}
 
 // ****************************** FUNCTION HERE
-function readLedListFiles(userName){
 
-  const LED_FILE_NAME= "led_list.txt";
+
+
+function getLedFiles(){
+
+  let _fileArray=[];
+  return new Promise(function(resolve, reject) {
+
+      fs.readdir(FILE_PATH, function (err, files) {
+        if (err) {
+            reject(err);
+        }
+
+        let num_files=0;
+
+        files.forEach(function (file,i) {
+            // Do whatever you want to do with the file
+            var j =file.indexOf(LED_FILE_NAME);
+            if(j>0){
+
+              // i++;
+              num_files++;
+
+              // console.log("File>>" +FILE_PATH+file);
+              // Read file
+              let rFile = readline.createInterface({
+                input: fs.createReadStream(FILE_PATH+file, 'utf8')
+              });
+
+              rFile.on('line', function(line) {
+                const dataObj = JSON.parse(line);
+                _fileArray.push({"twsid": dataObj.TWS_ID ,"Cust_Code":dataObj.DF_ID,"First_Name_T":dataObj.DF_NAME,"Last_Name_T":dataObj.DF_SURNAME});
+
+                });//Read file(line)
+                rFile.on('close', function(line) {
+                  resolve(_fileArray);
+                });//Read file(close)
+
+            }else{
+              resolve(_fileArray);
+            }
+        }
+        );
+
+        console.log("num_files >>" + num_files);
+        if(num_files==0){
+          reject('Not found LED files.');
+        }
+    });
+
+  });
+}
+
+function insertAllFilesMIT_LED_DB_MASTER(userName){
 
   return new Promise(function(resolve, reject) {
+
     fs.readdir(FILE_PATH, function (err, files) {
         if (err) {
             // return console.log('Unable to scan directory: ' + err);
@@ -199,126 +302,24 @@ function readLedListFiles(userName){
 
               foundFiles++;
 
-              //Table config
-              const sql = require('mssql');
-              const pool1 = new sql.ConnectionPool(config_BULK, err => {
-                  const table = new sql.Table('MIT_LED_GetBankruptList');
-                  table.create = true;
-                  // 1-10
-                  // table.columns.add('TWS_ID', sql.Int, {nullable: false, primary: true});
-                  table.columns.add('TWS_ID', sql.Int);
-                  table.columns.add('RECV_NO', sql.NVarChar(20));
-                  table.columns.add('RECV_YR', sql.NVarChar(4), { nullable: true });
-                  table.columns.add('DF_ID', sql.NVarChar(20), { nullable: true });
-                  table.columns.add('DF_NAME', sql.NVarChar(400), { nullable: true });
-                  table.columns.add('DF_SURNAME', sql.NVarChar(400), { nullable: true });
-                  table.columns.add('DF_NO', sql.VarChar(2), { nullable: true });
-                  table.columns.add('COURT_NAME', sql.NVarChar(400), { nullable: true });
-                  table.columns.add('COURT_TYPE', sql.VarChar(2), { nullable: true });
-                  table.columns.add('BLACK_CASE', sql.NVarChar(50), { nullable: true });
-                  // 11-20
-                  table.columns.add('BLACK_YY', sql.VarChar(5), { nullable: true });
-                  table.columns.add('RED_CASE', sql.NVarChar(50), { nullable: true });
-                  table.columns.add('RED_YY', sql.VarChar(5), { nullable: true });
-                  table.columns.add('PLAINTIFF1', sql.NVarChar(400), { nullable: true });
-                  table.columns.add('PLAINTIFF2', sql.NVarChar(400), { nullable: true });
-                  table.columns.add('PLAINTIFF3', sql.NVarChar(400), { nullable: true });
-                  table.columns.add('DEFENDANT1', sql.NVarChar(400), { nullable: true });
-                  table.columns.add('DEFENDANT2', sql.NVarChar(400), { nullable: true });
-                  table.columns.add('DEFENDANT3', sql.NVarChar(400), { nullable: true });
-                  table.columns.add('ABS_PROT_DD', sql.VarChar(2), { nullable: true });
-                  // 21-29
-                  table.columns.add('ABS_PROT_MM', sql.VarChar(2), { nullable: true });
-                  table.columns.add('ABS_PROT_YY', sql.VarChar(5), { nullable: true });
-                  table.columns.add('IMAGE_COURT', sql.NVarChar(1024), { nullable: true });
-                  table.columns.add('CASE_CAPITAL', sql.VarChar(20), { nullable: true });
-                  table.columns.add('OWN_NAME', sql.VarChar(500), { nullable: true });
-                  table.columns.add('OWN_DEPT', sql.VarChar(500), { nullable: true });
-                  table.columns.add('OWN_TEL', sql.VarChar(20), { nullable: true });
-                  table.columns.add('RCV_DATE', sql.VarChar(50), { nullable: true });
-                  table.columns.add('REQ_KEY', sql.VarChar(50), { nullable: true });
+                insertMIT_LED_DB_MASTER(FILE_PATH+file,userName).then(result=>{
 
-                  table.columns.add('createBy', sql.VarChar(20), { nullable: true });
-                  table.columns.add('createDate', sql.Date, { nullable: true });
-                  table.columns.add('updateBy', sql.VarChar(20), { nullable: true });
-                  table.columns.add('updateDate', sql.Date, { nullable: true });
+                    //Move file to Backup
+                fs.rename(FILE_PATH+file, FILE_BAK_PATH+file,  (err) => {
+                  if (err) {
+                    reject(err);
+                  };
+                });
 
-
-              // Read file
-              let rFile = readline.createInterface({
-                input: fs.createReadStream(FILE_PATH+file, 'utf8')
+                resolve(result);
+              },err=>{
+                reject(err);
               });
 
-                rFile.on('line', function(line) {
-
-
-
-                const dataObj = JSON.parse(line);
-                console.log("LINE >>" + JSON.stringify(dataObj));
-
-                table.rows.add(
-                dataObj['TWS_ID'],
-                dataObj['RECV_NO'],
-                dataObj['RECV_YR'],
-                dataObj['DF_ID'],
-                dataObj['DF_NAME'],
-                dataObj['DF_SURNAME'],
-                dataObj['DF_NO'],
-                dataObj['COURT_NAME'],
-                dataObj['COURT_TYPE'],
-                dataObj['BLACK_CASE'],
-                dataObj['BLACK_YY'],
-                dataObj['RED_CASE'],
-                dataObj['RED_YY'],
-                dataObj['PLAINTIFF1'],
-                dataObj['PLAINTIFF2'],
-                dataObj['PLAINTIFF3'],
-                dataObj['DEFENDANT1'],
-                dataObj['DEFENDANT2'],
-                dataObj['DEFENDANT3'],
-                dataObj['ABS_PROT_DD'],
-                dataObj['ABS_PROT_MM'],
-                dataObj['ABS_PROT_YY'],
-                dataObj['IMAGE_COURT'],
-                dataObj['CASE_CAPITAL'],
-                dataObj['OWN_NAME'],
-                dataObj['OWN_DEPT'],
-                dataObj['OWN_TEL'],
-                dataObj['RCV_DATE'],
-                dataObj['REQ_KEY'],
-                userName,new Date,null,null);
-
-                });
-
-                rFile.on('close', function(line) {
-                  console.log("close >>");
-                  // Execute insert Bulk data to  MIT_LED table
-                  const request = new sql.Request(pool1)
-                  request.bulk(table, (err, result) => {
-
-                    if(err){
-                      reject(err);
-                    }else{
-
-                      //Move file to Backup
-                        //  fs.rename(FILE_PATH+file, FILE_BAK_PATH+file,  (err) => {
-                        //   if (err) {
-                        //     res.status(422).json({ message: err });
-                        //   };
-                        // });
-
-                      resolve("Successful");
-                    }
-                  });
-                });
-                // file
-
-              }); //ConnectionPool
             }else{
               resolve('success');
             }
         }
-
         );
 
         console.log("foundFiles >>" + foundFiles);
@@ -328,6 +329,259 @@ function readLedListFiles(userName){
     });
 
   });
+}
+
+function insertMIT_LED_DB_MASTER(path_file,userName){
+
+  const LEDSTATUS='A';
+  const SOURCE='API';
+
+  return new Promise(function(resolve,reject){
+
+     //Table config
+     const sql = require('mssql');
+     const pool1 = new sql.ConnectionPool(config_BULK, err => {
+         const table = new sql.Table('MIT_LED_DB_MASTER');
+         table.create = true;
+         // 1-10
+        table.columns.add('twsid', sql.Int, {nullable: false, primary: true});
+        table.columns.add('black_case', sql.NVarChar(20));
+        table.columns.add('black_yy', sql.NVarChar(4), { nullable: true });
+        table.columns.add('red_case', sql.NVarChar(20), { nullable: true });
+        table.columns.add('red_yy', sql.VarChar(4), { nullable: true });
+        table.columns.add('court_name ', sql.NVarChar(180), { nullable: true });
+        table.columns.add('plaintiff1 ', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('df_id ', sql.NVarChar(50), { nullable: true });
+        table.columns.add('df_name ', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('df_surname ', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('tmp_prot_dd ', sql.VarChar(2), { nullable: true });
+        table.columns.add('tmp_prot_mm ', sql.VarChar(2), { nullable: true });
+        table.columns.add('tmp_prot_yy ', sql.VarChar(4), { nullable: true });
+        table.columns.add('abs_prot_dd ', sql.VarChar(2), { nullable: true });
+        table.columns.add('abs_prot_mm ', sql.VarChar(2), { nullable: true });
+        table.columns.add('abs_prot_yy ', sql.VarChar(4), { nullable: true });
+        table.columns.add('df_manage_dd ', sql.VarChar(2), { nullable: true });
+        table.columns.add('df_manage_mm ', sql.VarChar(2), { nullable: true });
+        table.columns.add('df_manage_yy ', sql.VarChar(4), { nullable: true });
+        table.columns.add('bkr_prot_dd ', sql.VarChar(2), { nullable: true });
+        table.columns.add('bkr_prot_mm ', sql.VarChar(2), { nullable: true });
+        table.columns.add('bkr_prot_yy ', sql.VarChar(4), { nullable: true });
+        table.columns.add('statusdf ', sql.VarChar(1), { nullable: true });
+
+        table.columns.add('RECV_NO', sql.VarChar(50), { nullable: true });
+        table.columns.add('RECV_YR', sql.VarChar(4), { nullable: true });
+        table.columns.add('DF_NO', sql.VarChar(3), { nullable: true });
+        table.columns.add('COURT_TYPE', sql.VarChar(3), { nullable: true });
+        table.columns.add('PLAINTIFF2', sql.NVarChar(500), { nullable: true });
+        table.columns.add('PLAINTIFF3', sql.NVarChar(500), { nullable: true });
+        table.columns.add('DEFENDANT1', sql.NVarChar(500), { nullable: true });
+        table.columns.add('DEFENDANT2', sql.NVarChar(500), { nullable: true });
+        table.columns.add('DEFENDANT3', sql.NVarChar(500), { nullable: true });
+        table.columns.add('IMAGE_COURT', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('CASE_CAPITA', sql.VarChar(16), { nullable: true });
+        table.columns.add('OWN_NAME', sql.NVarChar(500), { nullable: true });
+        table.columns.add('OWN_DEPT', sql.NVarChar(500), { nullable: true });
+        table.columns.add('OWN_TEL', sql.VarChar(100), { nullable: true });
+        table.columns.add('RCV_DATE', sql.VarChar(50), { nullable: true });
+        table.columns.add('REQ_KEY', sql.VarChar(50), { nullable: true });
+
+        table.columns.add('createBy ', sql.VarChar(20), { nullable: true });
+        table.columns.add('createDate ', sql.Date, { nullable: true });
+        table.columns.add('updateBy ', sql.VarChar(20), { nullable: true });
+        table.columns.add('updateDate ', sql.Date, { nullable: true });
+        table.columns.add('ledStatus ', sql.Char(2), { nullable: true });
+        table.columns.add('source ', sql.Char(5), { nullable: true });
+
+      // Read file
+      let rFile = readline.createInterface({
+        input: fs.createReadStream(path_file, 'utf8')
+      });
+
+      rFile.on('line', function(line) {
+        const dataObj = JSON.parse(line);
+        // console.log("LINE(MAS) >>" + JSON.stringify(dataObj));
+
+        table.rows.add(
+          dataObj['TWS_ID'],// twsid
+          dataObj['BLACK_CASE'],// black_case
+          dataObj['BLACK_YY'],// black_yy
+          dataObj['RED_CASE'],// red_case
+          dataObj['RED_YY'],// red_yy
+          dataObj['COURT_NAME'],// court_name
+          dataObj['PLAINTIFF1'],// plaintiff1
+          dataObj['DF_ID'],// df_id
+          dataObj['DF_NAME'],// df_name
+          dataObj['DF_SURNAME'],// df_surname
+        '',// tmp_prot_dd
+        '',// tmp_prot_mm
+        '',// tmp_prot_yy
+        dataObj['ABS_PROT_DD'],// abs_prot_dd
+        dataObj['ABS_PROT_MM'],// abs_prot_mm
+        dataObj['ABS_PROT_YY'],// abs_prot_yy
+        '',// df_manage_dd
+        '',// df_manage_mm
+        '',// df_manage_yy
+        '',// bkr_prot_dd
+        '',// bkr_prot_mm
+        '',// bkr_prot_yy
+        '',// statusdf
+// API fields.
+          dataObj['RECV_NO'],
+          dataObj['RECV_YR'],
+          dataObj['DF_NO'],
+          dataObj['COURT_TYPE'],
+          dataObj['PLAINTIFF2'],
+          dataObj['PLAINTIFF3'],
+          dataObj['DEFENDANT1'],
+          dataObj['DEFENDANT2'],
+          dataObj['DEFENDANT3'],
+          dataObj['IMAGE_COURT'],
+          dataObj['CASE_CAPITAL'],
+          dataObj['OWN_NAME'],
+          dataObj['OWN_DEPT'],
+          dataObj['OWN_TEL'],
+          dataObj['RCV_DATE'],
+          dataObj['REQ_KEY'],
+          userName  //createBy
+          ,new Date //createDate
+          ,null //updateBy
+          ,null //updateDate
+          ,LEDSTATUS  //ledStatus
+          ,SOURCE //source
+          );
+
+
+        });//Read file(line)
+
+        rFile.on('close', function(line) {
+          // console.log("close >>");
+
+          // Execute insert Bulk data to  MIT_LED table
+          const request = new sql.Request(pool1)
+          request.bulk(table, (err, result) => {
+
+            if(err){
+              // console.log("BULK ERR>>" +err);
+              reject(err);
+            }else{
+              // console.log("BULK-> "+ JSON.stringify(result));
+              resolve(result);
+            }
+          });
+
+        });//Read file(close)
+
+      });// SQL ConnectionPool
+
+    });//Promise
+}
+function insertMIT_LED_GetBankruptList(path_file,userName){
+
+  return new Promise(function(resolve,reject){
+
+     //Table config
+     const sql = require('mssql');
+     const pool1 = new sql.ConnectionPool(config_BULK, err => {
+         const table = new sql.Table('MIT_LED_GetBankruptList');
+         table.create = true;
+         // 1-10
+         // table.columns.add('TWS_ID', sql.Int, {nullable: false, primary: true});
+         table.columns.add('TWS_ID', sql.Int);
+         table.columns.add('RECV_NO', sql.NVarChar(20));
+         table.columns.add('RECV_YR', sql.NVarChar(4), { nullable: true });
+         table.columns.add('DF_ID', sql.NVarChar(20), { nullable: true });
+         table.columns.add('DF_NAME', sql.NVarChar(400), { nullable: true });
+         table.columns.add('DF_SURNAME', sql.NVarChar(400), { nullable: true });
+         table.columns.add('DF_NO', sql.VarChar(2), { nullable: true });
+         table.columns.add('COURT_NAME', sql.NVarChar(400), { nullable: true });
+         table.columns.add('COURT_TYPE', sql.VarChar(2), { nullable: true });
+         table.columns.add('BLACK_CASE', sql.NVarChar(50), { nullable: true });
+         // 11-20
+         table.columns.add('BLACK_YY', sql.VarChar(5), { nullable: true });
+         table.columns.add('RED_CASE', sql.NVarChar(50), { nullable: true });
+         table.columns.add('RED_YY', sql.VarChar(5), { nullable: true });
+         table.columns.add('PLAINTIFF1', sql.NVarChar(400), { nullable: true });
+         table.columns.add('PLAINTIFF2', sql.NVarChar(400), { nullable: true });
+         table.columns.add('PLAINTIFF3', sql.NVarChar(400), { nullable: true });
+         table.columns.add('DEFENDANT1', sql.NVarChar(400), { nullable: true });
+         table.columns.add('DEFENDANT2', sql.NVarChar(400), { nullable: true });
+         table.columns.add('DEFENDANT3', sql.NVarChar(400), { nullable: true });
+         table.columns.add('ABS_PROT_DD', sql.VarChar(2), { nullable: true });
+         // 21-29
+         table.columns.add('ABS_PROT_MM', sql.VarChar(2), { nullable: true });
+         table.columns.add('ABS_PROT_YY', sql.VarChar(5), { nullable: true });
+         table.columns.add('IMAGE_COURT', sql.NVarChar(1024), { nullable: true });
+         table.columns.add('CASE_CAPITAL', sql.VarChar(20), { nullable: true });
+         table.columns.add('OWN_NAME', sql.VarChar(500), { nullable: true });
+         table.columns.add('OWN_DEPT', sql.VarChar(500), { nullable: true });
+         table.columns.add('OWN_TEL', sql.VarChar(20), { nullable: true });
+         table.columns.add('RCV_DATE', sql.VarChar(50), { nullable: true });
+         table.columns.add('REQ_KEY', sql.VarChar(50), { nullable: true });
+
+         table.columns.add('createBy', sql.VarChar(20), { nullable: true });
+         table.columns.add('createDate', sql.Date, { nullable: true });
+         table.columns.add('updateBy', sql.VarChar(20), { nullable: true });
+         table.columns.add('updateDate', sql.Date, { nullable: true });
+
+      // Read file
+      let rFile = readline.createInterface({
+        input: fs.createReadStream(path_file, 'utf8')
+      });
+
+      rFile.on('line', function(line) {
+        const dataObj = JSON.parse(line);
+        console.log("LINE >>" + JSON.stringify(dataObj));
+        table.rows.add(
+          dataObj['TWS_ID'],
+          dataObj['RECV_NO'],
+          dataObj['RECV_YR'],
+          dataObj['DF_ID'],
+          dataObj['DF_NAME'],
+          dataObj['DF_SURNAME'],
+          dataObj['DF_NO'],
+          dataObj['COURT_NAME'],
+          dataObj['COURT_TYPE'],
+          dataObj['BLACK_CASE'],
+          dataObj['BLACK_YY'],
+          dataObj['RED_CASE'],
+          dataObj['RED_YY'],
+          dataObj['PLAINTIFF1'],
+          dataObj['PLAINTIFF2'],
+          dataObj['PLAINTIFF3'],
+          dataObj['DEFENDANT1'],
+          dataObj['DEFENDANT2'],
+          dataObj['DEFENDANT3'],
+          dataObj['ABS_PROT_DD'],
+          dataObj['ABS_PROT_MM'],
+          dataObj['ABS_PROT_YY'],
+          dataObj['IMAGE_COURT'],
+          dataObj['CASE_CAPITAL'],
+          dataObj['OWN_NAME'],
+          dataObj['OWN_DEPT'],
+          dataObj['OWN_TEL'],
+          dataObj['RCV_DATE'],
+          dataObj['REQ_KEY'],
+          userName,new Date,null,null);
+        });//Read file(line)
+
+        rFile.on('close', function(line) {
+          console.log("close >>");
+
+          // Execute insert Bulk data to  MIT_LED table
+          const request = new sql.Request(pool1)
+          request.bulk(table, (err, result) => {
+
+            if(err){
+              reject(err);
+            }else{
+              resolve("Successful");
+            }
+          });
+        });//Read file(close)
+
+      });// SQL ConnectionPool
+
+    });//Promise
 }
 
 function fnLedSchedule(schStatus,schData){
@@ -340,7 +594,7 @@ function fnLedSchedule(schStatus,schData){
         if(schStatus.toUpperCase() === SCH_START){
           logger.info("START LED_JOB");
           // START SCH
-          // var LED_JOB_SCH ='* 22 * * *'; //Every 22.00
+          // var LED_JOB_SCH ='* 22 * * *'; //Every day on 22.00
           var LED_JOB_SCH =' * * * * *'; // Every minute
 
           if(schData)

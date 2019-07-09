@@ -103,12 +103,14 @@
         return this.http.get<{result: any }>(BACKEND_URL+"/inspByKey"+  queryParams)
         .pipe(map( _data => {
           return _data.result.map(data => {
+
+            console.log("getInspByKey()>>" + JSON.stringify(data));
+
             return data
 
           });
         }));
       }
-
 
 
       getInspByCustCode(key) {

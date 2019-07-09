@@ -141,7 +141,6 @@ exports.GetBankruptListByDate = (req, res, next) =>{
       code:"999",
     });
   });
-
 };
 
 // ******************** SCHEDULE
@@ -194,12 +193,15 @@ exports.cleanCustFromFile = (req, res, next) =>{
           Promise.all([
             led.insertLEDInspect(values[0],"SWAN",actionBy).catch(err => { res.status(401).json({ message: 'Error SWAN to inspection >>'+err }); }),
             led.insertLEDInspect(values[1],"MFTS",actionBy).catch(err => { res.status(401).json({ message: 'Error MFTS  to inspection>>'+err }); }),
-            insertAllFilesMIT_LED_DB_MASTER(actionBy).catch(err => { res.status(401).json({ message: 'Error SWAP >>'+err }); }),
-            mail.mailLedResponseToday().catch(err => { res.status(401).json({ message: 'LED send mail rrror SWAP >>'+err }); }),
+            insertAllFilesMIT_LED_DB_MASTER(actionBy).catch(err => { res.status(401).json({ message: 'Error SWAP >>'+err }); })
             ]).then(values => {
 
-              console.log("INSERT >>"+JSON.stringify(values));
-              res.status(200).json({ message: 'Successful /checkCustDialy' });
+              mail.mailLedResponseToday().then(data=>{
+                // console.log("INSERT >>"+JSON.stringify(values));
+                res.status(200).json({ message: 'Successful /checkCustDialy' });
+              },err=>{
+                res.status(401).json({ message: 'LED send mail rrror SWAP >>'+err });
+              });
 
             },function(err){
               res.status(401).json({ message: err });
@@ -210,23 +212,56 @@ exports.cleanCustFromFile = (req, res, next) =>{
         })
 
     });
-  //   1.1 Insert found data to MIT_LED_INSP_CUST
-  //   1.2 Send mail to responsible
-
-  // 2.Insert LED MASTER db.
-  // 3.Files Backup
-
-
-  // readLedListFiles(actionBy).then(result=>{
-  //   res.status(200).json({ message: result });
-  // },err=>{
-  //   console.log("ERROR>>" + err);
-  //   res.status(400).json({ message: err });
-  // })
-
 }
 
+exports.ReceiverBreezeWebService = (req, res, next) =>{
+  const req_key= req.body.req_key;
+  const req_status = req.body.req_status;
+  const startdate="";
+  const enddate ="";
+
+  fnReceiverBreezeWebService(req_key,req_status,startdate,enddate).then(result =>{
+    res.status(200).json({
+      message: "Successfully!",
+      code:"000",
+      result: result
+    });
+  },err =>{
+    res.status(400).json({
+      message: err,
+      code:"999",
+    });
+  });
+};
+
+
+
 // ****************************** FUNCTION HERE
+function fnReceiverBreezeWebService(req_key,req_status,startdate,enddate){
+
+  logger.info(`Welcome fnReceiverBreezeWebService() req_key:${req_key}; req_status:${req_status}` );
+
+  return new Promise(function(resolve, reject) {
+
+    // #1 Encryt
+    fncSOAPEncrypt(req_key,req_status,startdate,enddate).then(result =>{
+
+      const input= result.EncryptResult;
+
+      // #2 Call APIs
+      fnCallLEDapis(PATH_ReceiverBreezeWebService,input).then(result =>{
+        var resultObj =  JSON.parse(result);
+          resolve(resultObj);
+      },err=>{
+        reject(err);
+      })
+
+    },err=>{
+      reject(err);
+    });
+  });
+}
+
 
 
 function getLedFiles(){
@@ -614,17 +649,17 @@ function fnLedSchedule(schStatus,schData){
             });
 
 
-            // fnGetBankruptList().then(result =>{
-            //     // Download LED -> write file complese
-            //     // Next clean your data base
-            //     logger.info("Complete LED_JOB download & write files.");
-            //     logger.info(result);
+            fnGetBankruptList().then(result =>{
+                // Download LED -> write file complese
+                // Next clean your data base
+                logger.info("Complete LED_JOB download & write files.");
+                logger.info(result);
 
-            // },err =>{
-            //   // Download & Write file error
-            //   // Send mail to system addmin
-            //   logger.error(err);
-            // });
+            },err =>{
+              // Download & Write file error
+              // Send mail to system addmin
+              logger.error(err);
+            });
 
           }, null, true, 'America/Los_Angeles');
 
@@ -807,10 +842,9 @@ var _chunk="";
 
 function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
 
-  // logger.info(`Welcome fncEncry() req_key:${req_key}; req_status:${req_status}; startdate:${startdate}; enddate:${enddate}` );
+  logger.info(`Welcome fncEncry() req_key:${req_key}; req_status:${req_status}; startdate:${startdate}; enddate:${enddate}` );
+
   return new Promise(function(resolve, reject) {
-    // reject(err);
-    // resolve(result.recordset);
 
     var userPath = path.resolve('./backend/merchantasset_CA/led/led_user.json');
     var userData = fs.readFileSync(userPath, "utf8"); //ascii,utf8
@@ -841,8 +875,10 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
     //   'input': '{"username":"MPAM", "password":"MPAM123", "startdate":"2019-06-11","enddate":"2019-06-17"}',
       userDataObj.startdate=startdate;
       userDataObj.enddate=enddate;
+
     }
-    // console.log("userDataObj >>" + JSON.stringify(userDataObj));
+
+    console.log("userDataObj >>" + JSON.stringify(userDataObj));
     //GetBankruptList
     var args = {
       'input': `${JSON.stringify(userDataObj)}`,
@@ -864,13 +900,8 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
           if(err){
             console.log("WAS ERROR Encrypt() >>" + err);
             reject(err);
-            // console.log(err);
-            // res.status(422).json({ message: err });
           }else{
-            // console.log("Connection successful >>" + result);
             resolve(result);
-            // console.log('Result>>' + result);
-            // res.status(200).json({ message: result });
           }
         });
       }

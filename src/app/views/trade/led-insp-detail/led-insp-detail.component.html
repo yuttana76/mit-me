@@ -33,11 +33,14 @@
                   <h5 class="card-title">{{item.cust_code}}</h5>
                   <h5 class="card-title">{{item.firstName}}  {{item.lastName}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{item.cust_source}} - {{item.led_code_text}}</h6>
+                  <span *ngIf="item.ReceiverBreezeDate ">Response to LED {{item.ReceiverBreezeDate |date :'medium' }}</span>
                   <p class="card-text">
                       {{item.memo}}
                   </p>
 
                   <a *ngIf="authority.mEdit == YES_VAL"  mat-flat-button class="button_card_action" color="primary" (click)="onEditInspCust(item)"   >Edit</a>
+                  <a *ngIf="authority.mEdit == YES_VAL && !item.ReceiverBreezeDate "  mat-flat-button class="button_card_action" color="accent" (click)="onResponseToLED(item )"  matTooltip="Response to LED" >Response to LED </a>
+
                 </div>
               </div>
         </mat-tab>

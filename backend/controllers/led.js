@@ -935,7 +935,7 @@ exports.insertLEDInspect =function (inspectData,cust_source,_createBy){
 function insertInspCust(cust_code,twsid,cust_source,firstName,lastName,status,led_code,createBy){
   // console.log("led_code>>" + led_code + "  createBy>>" +createBy );
   return new Promise(function(resolve, reject) {
-    genInspectId(cust_code)
+    genInspectId(twsid)
     .then(led_inspect_id=>{
 
       var queryStr = `
@@ -1079,15 +1079,21 @@ function swapLEDDialyToMaster(){
     });
 }
 
-function genInspectId(cust_code){
-  var today = new Date();
-var dateStr = today.getFullYear()+''+(today.getMonth()+1)+''+today.getDate()+'-';
+function genInspectId(twsid){
 
   return new Promise(function(resolve, reject) {
-    let led_inspect_id = dateStr+ cust_code;
-    resolve(led_inspect_id);
+    resolve(twsid);
   })
 }
+// function genInspectId(cust_code){
+//   var today = new Date();
+// var dateStr = today.getFullYear()+''+(today.getMonth()+1)+''+today.getDate()+'-';
+
+//   return new Promise(function(resolve, reject) {
+//     let led_inspect_id = dateStr+ cust_code;
+//     resolve(led_inspect_id);
+//   })
+// }
 
 
 // function getSWANCustomers(){
@@ -1259,11 +1265,22 @@ function getInspByKey(key){
     var queryStr = `
     BEGIN
 
-    SELECT b.keyText as led_code_text, a.*
+    DECLARE @REQ_KEY VARCHAR(50);
+    DECLARE @ReceiverBreezeDate DATETIME
+    DECLARE @twsid VARCHAR(50);
+
+    SELECT @twsid = a.twsid
+    FROM MIT_LED_INSP_CUST a
+    where a.led_inspect_id=@key
+
+    SELECT top 1 @REQ_KEY=x.REQ_KEY,@ReceiverBreezeDate=ReceiverBreezeDate
+    FROM MIT_LED_DB_MASTER x
+    WHERE twsid=@twsid
+
+    SELECT @REQ_KEY AS REQ_KEY,@ReceiverBreezeDate AS ReceiverBreezeDate,b.keyText as led_code_text, a.*
     FROM MIT_LED_INSP_CUST a
     LEFT JOIN MIT_CODE_LOOKUP b on  b.keyname='LEDCODE' and b.keycode = a.led_code
     where a.led_inspect_id=@key
-
 
     END
     `;
@@ -1298,10 +1315,11 @@ function getInspByCustCode(custCode){
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
     var queryStr = `
     BEGIN
-    SELECT b.keyText as led_code_text, a.*
-    FROM MIT_LED_INSP_CUST a
-    LEFT JOIN MIT_CODE_LOOKUP b on  b.keyname='LEDCODE' and b.keycode = a.led_code
-    where a.Cust_Code= @Cust_Code
+
+      SELECT b.keyText as led_code_text, a.*
+      FROM MIT_LED_INSP_CUST a
+      LEFT JOIN MIT_CODE_LOOKUP b on  b.keyname='LEDCODE' and b.keycode = a.led_code
+      where a.Cust_Code= @Cust_Code
 
     END
     `;

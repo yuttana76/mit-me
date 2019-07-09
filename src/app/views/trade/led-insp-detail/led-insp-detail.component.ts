@@ -16,6 +16,7 @@ import { LedInspHistoryComponent } from '../led-insp-history/led-insp-history.co
 import { LedInspCustDetailComponent } from '../dialog/led-insp-cust-detail/led-insp-cust-detail.component';
 import { Authority } from '../model/authority.model';
 import { AuthorityService } from '../services/authority.service';
+import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 @Component({
   selector: 'app-led-insp-detail',
   templateUrl: './led-insp-detail.component.html',
@@ -55,7 +56,7 @@ export class LedInspDetailComponent implements OnInit {
   constructor(
     public route: ActivatedRoute,
     private toastr: ToastrService,
-    // private confirmationDialogService: ConfirmationDialogService,
+    private confirmationDialogService: ConfirmationDialogService,
     public dialog: MatDialog,
     // private masterDataService: MasterDataService,
     private ledService:LEDService,
@@ -99,11 +100,12 @@ export class LedInspDetailComponent implements OnInit {
 
             // console.log('INSP MAIN CUST >>' + JSON.stringify(this.main_mitLedInspCust) );
             observables.push(this.ledService.getInspByCustCode(this.main_mitLedInspCust.cust_code));
-
             const example = forkJoin(observables);
             const subscribe = example.subscribe((result:any) => {
+
+              console.log("loadInvestProfile()>>" + JSON.stringify(result[0]) );
+
             this.member_mitLedInspCust =result[0];
-              // console.log('MEMBER >>' + JSON.stringify(this.member_mitLedInspCust) );
             });
 
 
@@ -188,6 +190,34 @@ export class LedInspDetailComponent implements OnInit {
         }
 
     });
+  }
+
+
+
+  onResponseToLED(_data: MitLedInspCust) {
+
+    this.confirmationDialogService.confirm('Please confirm..', `Do you want report this(${_data.cust_code}  ${_data.firstName} ${_data.lastName}) to LED?`)
+    .then((confirmed) => {
+      if ( confirmed ) {
+        //Do here
+
+        //1.GET REQ_KEY
+        //2. Capp API  params
+        // 2.1 req_key = REQ_KEY
+        // 2.2 req_status = 20001 // พบ
+        // 2.2 req_status = 20002 //ไม่พบ
+        //
+
+
+        this.toastr.success( 'Successful' , 'Successful', {
+          timeOut: 5000,
+          positionClass: 'toast-top-center',
+        });
+
+      }
+    }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
+
+
   }
 
 }

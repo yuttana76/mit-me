@@ -583,25 +583,51 @@ exports.mailLedResponseToday = function(){
 
   console.log( "Welcome mailLedResponse()");
 
-  // [
-  //  MFTS:0 ["{\"twsid\":\"567557\",\"LED_CUST_CODE\":\"3209900477033\",\"MPAM_CUST_CODE\":\"3209900477033\",\"firstName\":\"สืบวงษ์\" ,\"lastName\":\"สุขะมงคล\"}"],
-  //  SWAN:1 ["{\"twsid\":\"567557\",\"LED_CUST_CODE\":\"3209900477033\",\"MPAM_CUST_CODE\":\"3209900477033\",\"firstName\":\"CustName1065\" ,\"lastName\":\"CustName1065\"}"]
-  // ]
 
   const FROM_LED_SYS = mailConfig.FROM_LED_SYS;
   const TO_LED_RES = mailConfig.TO_LED_RES;
   const LED_CLEANING_SUBJECT  = mailConfig.LED_CLEANING_SUBJECT
 
-  let _msg = `<h3>LED Cleaning data result on ${utility.getDateTime()}</h3>`;
+  let _msg = `
+  <html>
+  <head>
+  <style>
+
+
+  .blog-content-outer {
+
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding: 0 15px;
+    font-size: 16px;
+  }
+
+
+
+  </style>
+  </head>
+  <body>
+
+  <h3>LED Cleaning data result on ${utility.getDateTime()} </h3>`;
+
+  let _msgLedHeader = "";
+  let _msgContent = "";
 
   return new Promise(function(resolve, reject) {
 
     getInspToday().then(value=>{
 
-//      console.log('getInspToday() >>' + JSON.stringify(value));
+console.log(" getInspToday() >>" + JSON.stringify(value));
+
       value.forEach(function(data,i) {
-        _msg += `
-          <hr>
+
+
+        _msgLedHeader =`<h3>LED amount ${data.CNT_LED_DATA} </h3>`;
+
+        _msgContent += `
+        <div class='blog-content-outer'>
           <p>
           <B>No:</B> ${i+1}
           </p>
@@ -618,8 +644,31 @@ exports.mailLedResponseToday = function(){
           <B>led_code:</B> ${data.led_code}
           </p>
           <h4>LED data</h4>
+          <p>
+          <B>ศาล</B> ${data.court_name}
+          </p>
+          <p>
+          <B>โจทก์ ที่ 1:</B> ${data.plaintiff1}
+          </p>
+          <p>
+          <B>วันที่พิทักษ์ทรัพย์เด็ดขาด </B> ${data.abs_prot_dd}/${data.abs_prot_mm}/${data.abs_prot_yy}
+          </p>
+          <p>
+          <B>ชื่อนิติกรเจ้าของสานวน</B> ${data.OWN_NAME}
+          </p>
+          <p>
+          <B>หน่วยงานนิติกรเจ้าของสานวน</B> ${data.OWN_DEPT}
+          </p>
+          <p>
+          <B>เบอร์โทรศัพท์นิติกรเจ้าของสานวน:</B> ${data.OWN_TEL}
+          </p>
+          </div>
           `;
         });
+
+        _msg +=_msgLedHeader;
+        _msg +=_msgContent;
+        _msg +='</body></html>';
 
         let mailOptions = {
           from: FROM_LED_SYS,
@@ -653,9 +702,20 @@ function getInspToday() {
       // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
       var queryStr = `
       BEGIN
-        SELECT *
-        FROM MIT_LED_INSP_CUST a
-        WHERE  CONVERT(date,a.createDate)= CONVERT(date, getdate())
+
+      DECLARE @CNT_LED_DATA   int;
+
+      SELECT  @CNT_LED_DATA = count(*)
+      FROM MIT_LED_DB_MASTER b
+      WHERE  CONVERT(date,createDate)= CONVERT(date, getdate())
+
+
+      SELECT @CNT_LED_DATA AS CNT_LED_DATA,b.court_name,b.plaintiff1,b.abs_prot_dd,b.abs_prot_mm,b.abs_prot_yy,b.OWN_NAME,b.OWN_DEPT,b.OWN_TEL
+      ,a.*
+      FROM MIT_LED_INSP_CUST a
+      LEFT JOIN MIT_LED_DB_MASTER  b ON b.twsid=a.twsid
+      WHERE  CONVERT(date,a.createDate)= CONVERT(date, getdate())
+
       END
       `;
 
@@ -677,3 +737,38 @@ function getInspToday() {
       })
     });
   }
+
+
+
+function getLedMaster(twsid) {
+  // logger.info(`Welcome cntInspToday() `);
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+      SELECT top 1 a.*
+      FROM MIT_LED_DB_MASTER a
+      where twsid=${twsid}
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      reject(err);
+      console.log("EROR>>"+err);
+    })
+  });
+}
+

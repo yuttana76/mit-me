@@ -217,16 +217,20 @@ exports.cleanCustFromFile = (req, res, next) =>{
 exports.ReceiverBreezeWebService = (req, res, next) =>{
   const req_key= req.body.req_key;
   const req_status = req.body.req_status;
-  const startdate="";
-  const enddate ="";
+  const actionBy = req.body.actionBy;
 
-  fnReceiverBreezeWebService(req_key,req_status,startdate,enddate).then(result =>{
+  fnReceiverBreezeWebService(req_key,req_status,actionBy).then(result =>{
+
+    logger.info(result);
+
     res.status(200).json({
       message: "Successfully!",
       code:"000",
       result: result
     });
   },err =>{
+    logger.error(err);
+
     res.status(400).json({
       message: err,
       code:"999",
@@ -235,23 +239,31 @@ exports.ReceiverBreezeWebService = (req, res, next) =>{
 };
 
 
-
 // ****************************** FUNCTION HERE
-function fnReceiverBreezeWebService(req_key,req_status,startdate,enddate){
+function fnReceiverBreezeWebService(req_key,req_status,actionBy){
 
-  logger.info(`Welcome fnReceiverBreezeWebService() req_key:${req_key}; req_status:${req_status}` );
+  // logger.info(`Welcome fnReceiverBreezeWebService() req_key:${req_key}; req_status:${req_status}` );
 
   return new Promise(function(resolve, reject) {
 
     // #1 Encryt
-    fncSOAPEncrypt(req_key,req_status,startdate,enddate).then(result =>{
+    fncSOAPEncrypt(req_key,req_status,"","").then(result =>{
 
       const input= result.EncryptResult;
-
       // #2 Call APIs
       fnCallLEDapis(PATH_ReceiverBreezeWebService,input).then(result =>{
         var resultObj =  JSON.parse(result);
-          resolve(resultObj);
+
+        if(resultObj.responseCode ==='000'){
+            updateResponseMIT_LED_DB_MASTER(req_key,req_status,actionBy).then(result=>{
+            },err=>{
+              // console.log("updateResponseMIT_LED_DB_MASTER >> " +err);
+              logger.error(err);
+            });
+        }
+
+        resolve(resultObj);
+
       },err=>{
         reject(err);
       })
@@ -262,6 +274,41 @@ function fnReceiverBreezeWebService(req_key,req_status,startdate,enddate){
   });
 }
 
+function updateResponseMIT_LED_DB_MASTER(REQ_KEY,REQ_STATUS,RESPONSE_BY){
+
+  console.log(`updateResponseMIT_LED_DB_MASTER() >> ${REQ_KEY} - ${REQ_STATUS} - ${RESPONSE_BY}`);
+
+    return new Promise(function(resolve, reject) {
+      // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+      var queryStr = `
+      BEGIN
+        UPDATE MIT_LED_DB_MASTER
+        SET REQ_STATUS=@REQ_STATUS,RESPONSE_BY=@RESPONSE_BY,ReceiverBreezeDate=getdate()
+        WHERE REQ_KEY=@REQ_KEY
+      END
+      `;
+      const sql = require('mssql')
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request() // or: new sql.Request(pool1)
+        .input('REQ_KEY', sql.VarChar, REQ_KEY)
+        .input('REQ_STATUS', sql.VarChar, REQ_STATUS)
+        .input('RESPONSE_BY', sql.VarChar, RESPONSE_BY)
+        .query(queryStr, (err, result) => {
+            // ... error checks
+            if(err){
+              reject(err);
+            }else {
+              resolve(result.recordset);
+            }
+        })
+
+      })
+      pool1.on('error', err => {
+        reject(err);
+        console.log("EROR>>"+err);
+      })
+    });
+  }
 
 
 function getLedFiles(){
@@ -878,7 +925,7 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
 
     }
 
-    console.log("userDataObj >>" + JSON.stringify(userDataObj));
+    // console.log("userDataObj >>" + JSON.stringify(userDataObj));
     //GetBankruptList
     var args = {
       'input': `${JSON.stringify(userDataObj)}`,

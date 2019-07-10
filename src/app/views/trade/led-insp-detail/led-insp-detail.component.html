@@ -28,24 +28,40 @@
     <mat-tab-group >
 
         <mat-tab label="Investor profile">
-            <div class="card" *ngFor="let item of member_mitLedInspCust">
-                <div class="card-body">
-                  <h5 class="card-title">{{item.cust_code}}</h5>
-                  <h5 class="card-title">{{item.firstName}}  {{item.lastName}}</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">{{item.cust_source}} - {{item.led_code_text}}</h6>
-                  <span *ngIf="item.ReceiverBreezeDate ">Response to LED {{item.ReceiverBreezeDate |date :'medium' }}</span>
+            <div class="card" >
+                <div class="row card-body">
+                    <div class="col-sm-6">
+                  <h5 class="card-title">{{main_mitLedInspCust.cust_code}}</h5>
+                  <h5 class="card-title">{{main_mitLedInspCust.firstName}}  {{main_mitLedInspCust.lastName}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{main_mitLedInspCust.cust_source}} - {{main_mitLedInspCust.led_code_text}}</h6>
+                  <span *ngIf="main_mitLedInspCust.ReceiverBreezeDate ">Response to LED {{main_mitLedInspCust.REQ_STATUS | ledReqStatus}} {{main_mitLedInspCust.ReceiverBreezeDate }}</span>
                   <p class="card-text">
-                      {{item.memo}}
+                      {{main_mitLedInspCust.memo}}
                   </p>
 
-                  <a *ngIf="authority.mEdit == YES_VAL"  mat-flat-button class="button_card_action" color="primary" (click)="onEditInspCust(item)"   >Edit</a>
-                  <a *ngIf="authority.mEdit == YES_VAL && !item.ReceiverBreezeDate "  mat-flat-button class="button_card_action" color="accent" (click)="onResponseToLED(item )"  matTooltip="Response to LED" >Response to LED </a>
+                  <a *ngIf="authority.mEdit == YES_VAL"  mat-flat-button class="button_card_action" color="primary" (click)="onEditInspCust(main_mitLedInspCust)"   >Edit</a>
+                  <!-- <a *ngIf="authority.mEdit == YES_VAL && !main_mitLedInspCust.ReceiverBreezeDate "  mat-flat-button class="button_card_action" color="accent" (click)="onResponseToLED(main_mitLedInspCust)"  matTooltip="Response to LED" >Response to LED </a> -->
+
+                </div>
+
+                <div class="col-sm-6" *ngIf="authority.mEdit == YES_VAL && !main_mitLedInspCust.ReceiverBreezeDate " class="resp_led_div">
+                  <div ><label id="example-radio-group-label">Response LED</label></div>
+                  <mat-radio-group
+                    aria-labelledby="example-radio-group-label"
+                    [(ngModel)]="main_mitLedInspCust.REQ_STATUS">
+                    <mat-radio-button  *ngFor="let item of ledReqStatusList" [value]="item.value">
+                      {{item.viewValue}}
+                    </mat-radio-button>
+                  </mat-radio-group>
+
+                  <div><a mat-flat-button class="button_card_action" color="accent" (click)="onResponseToLED(main_mitLedInspCust)"  matTooltip="Response to LED" >Response to LED </a></div>
+
+                </div>
+
 
                 </div>
               </div>
         </mat-tab>
-
-
         <mat-tab label="History">
 
                 <form  (submit)="onAddHistory()" #custForm="ngForm" class="example-form" >

@@ -11,6 +11,7 @@
     import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
 
     const BACKEND_URL = environment.apiURL + '/led/';
+    const BACKEND_URL_API = environment.apiURL + '/ledApi/';
 
     @Injectable({ providedIn: 'root' })
     export class LEDService {
@@ -247,7 +248,6 @@
 
     createLedMasterHis(obj:mitLedMasHis,createBy,_resourceRef:File){
 
-      console.log("createLedMasterHis()>>" + JSON.stringify(_resourceRef));
 
       const postData = new FormData();
       postData.append("status",obj.status);
@@ -257,11 +257,8 @@
       postData.append("createBy",createBy);
 
         return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + obj.twsid, postData);
-        // .subscribe(resData=>{
-        //   console.log("createLedMasterHis SUB>>" + JSON.stringify(resData));
-        // }
-        // );
     }
+
 
 
       updateLedMasterHis(obj:mitLedMasHis,updateBy,_resourceRef:File | string){
@@ -292,22 +289,28 @@
         return this.http.put<{ message: string, data: any }>(BACKEND_URL + '/ledMasHis/' + obj.twsid, data);
     }
 
-      getMinetypeFromLink(link:string){
+    getMinetypeFromLink(link:string){
 
-        var ext='';
-        if(link){
-          var fileName = link.split('/files/');
-          ext = fileName[1].split('.')[1].toLowerCase();
-        }
-
-        return ext;
-        // return new Promise(function(resolve, reject) {
-        //   var fileName = link.split('/files/');
-        //   var ext = fileName[1].split('.')[1].toLowerCase();
-        //   resolve(ext);
-        // });
-
+      var ext='';
+      if(link){
+        var fileName = link.split('/files/');
+        ext = fileName[1].split('.')[1].toLowerCase();
       }
+
+      return ext;
+    }
+
+    ResponseToLED(actionBy,req_key,req_status){
+
+      const data = {
+        "actionBy":actionBy,
+        "req_key":req_key,
+        "req_status":req_status,
+              }
+
+        return this.http.post<{ message: string, data: any }>(BACKEND_URL_API + '/mpamReceiverBreezeWebService/', data);
+      }
+
 
       // ******************************** END FILE
     }

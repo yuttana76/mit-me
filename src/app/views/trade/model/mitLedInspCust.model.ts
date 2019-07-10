@@ -20,4 +20,5 @@ export class MitLedInspCust {
   led_code_text:string;
   ReceiverBreezeDate: string;
   REQ_KEY:string;
+  REQ_STATUS:string;
 }

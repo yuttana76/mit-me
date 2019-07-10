@@ -28,6 +28,9 @@ export class LedInspDetailComponent implements OnInit {
   formScreen = '';
   spinnerLoading = false;
 
+  ledReqStatusList =[{value:"20001", viewValue:"พบทรัพย์"},
+  {value:'20002', viewValue:"ไม่พบทรัพย์"}]
+
   form: FormGroup;
   public authority: Authority = new Authority();
   private appId = 'LEDInspSearch';
@@ -38,7 +41,6 @@ export class LedInspDetailComponent implements OnInit {
   //LED data
   _key
   main_mitLedInspCust:MitLedInspCust = new MitLedInspCust();
-  member_mitLedInspCust:MitLedInspCust[] = [];
   mitLedInspHistory:MitLedInspHistory[] =[];
   mitLedInspResource:MitLedInspResource[] =[];
 
@@ -97,31 +99,14 @@ export class LedInspDetailComponent implements OnInit {
     this.ledService.getInspByKey(this._key)
         .subscribe((data: any[]) => {
             this.main_mitLedInspCust  = data[0];
-
-            // console.log('INSP MAIN CUST >>' + JSON.stringify(this.main_mitLedInspCust) );
-            observables.push(this.ledService.getInspByCustCode(this.main_mitLedInspCust.cust_code));
-            const example = forkJoin(observables);
-            const subscribe = example.subscribe((result:any) => {
-
-              console.log("loadInvestProfile()>>" + JSON.stringify(result[0]) );
-
-            this.member_mitLedInspCust =result[0];
-            });
-
-
         }, error => () => {
             console.log('Was error', error);
         }, () => {
            console.log('Loading complete');
         });
-
   }
 
-
   onAddHistory(){
-
-      // if(this.hisForm.invalid){
-    console.log("memo >>" + this.newHistory.memo);
 
     if(!this.newHistory.memo){
         this.toastr.warning("Please complete entry data." , "Data not complete", {
@@ -132,16 +117,11 @@ export class LedInspDetailComponent implements OnInit {
         return
       }
 
-      console.log("Add new history ");
       const _createBy = this.authService.getUserData() || 'NONE';
       const _version = "1";
-      // const _createBy = 'NONE';
 
       this.ledService.getAddInspHistory(this.main_mitLedInspCust.led_inspect_id,_version,this.newHistory.memo,_createBy).subscribe(result=>{
-
-        // this.hisForm.reset();
         this.newHistory.memo=null;
-
         this.ledInspHistoryComponent.loadHistory();
 
         this.toastr.info("Add new memo complete.", "successful", {
@@ -150,9 +130,7 @@ export class LedInspDetailComponent implements OnInit {
           positionClass: "toast-top-center"
         });
 
-
       }, error => () => {
-            console.log('Was error', error);
 
             this.toastr.error("Was error " +error, "Incomplete !!", {
               timeOut: 3000,
@@ -192,14 +170,12 @@ export class LedInspDetailComponent implements OnInit {
     });
   }
 
-
-
   onResponseToLED(_data: MitLedInspCust) {
 
+    // tslint:disable-next-line:max-line-length
     this.confirmationDialogService.confirm('Please confirm..', `Do you want report this(${_data.cust_code}  ${_data.firstName} ${_data.lastName}) to LED?`)
     .then((confirmed) => {
       if ( confirmed ) {
-        //Do here
 
         //1.GET REQ_KEY
         //2. Capp API  params
@@ -207,12 +183,47 @@ export class LedInspDetailComponent implements OnInit {
         // 2.2 req_status = 20001 // พบ
         // 2.2 req_status = 20002 //ไม่พบ
         //
+        console.log("onResponseToLED()"  +JSON.stringify(_data))
 
+        const _actionBy = this.authService.getUserData() || 'NONE';
+        // const REQ_KEY = 'LED2019062000030';
+        // const req_status = '20001';
 
-        this.toastr.success( 'Successful' , 'Successful', {
-          timeOut: 5000,
-          positionClass: 'toast-top-center',
+        this.ledService.ResponseToLED(_actionBy,_data.REQ_KEY,_data.REQ_STATUS)
+        .subscribe(result => {
+
+          if(result.hasOwnProperty('code')){
+
+            const resultObj = JSON.parse(JSON.stringify(result));
+            const childObj = resultObj.result;
+
+            if(childObj.responseCode=== '000'){
+
+              this.loadInvestProfile(); // Reload data
+
+                  this.toastr.success( 'Response to LED Successful' , 'Successful', {
+                    timeOut: 5000,
+                    positionClass: 'toast-top-center',
+                  });
+
+            }else{
+
+                this.toastr.error( `${childObj.responseMessage}`,'Response to LED incorrect' , {
+                  timeOut: 5000,
+                  positionClass: 'toast-top-center',
+                });
+
+            }
+
+          }
+
+        }, error => () => {
+            console.log('Was error', error);
+        }, () => {
+           console.log('Loading complete');
         });
+
+
 
       }
     }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));

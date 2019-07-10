@@ -1266,18 +1266,19 @@ function getInspByKey(key){
     BEGIN
 
     DECLARE @REQ_KEY VARCHAR(50);
-    DECLARE @ReceiverBreezeDate DATETIME
+    DECLARE @ReceiverBreezeDate VARCHAR(50)
     DECLARE @twsid VARCHAR(50);
+    DECLARE @REQ_STATUS VARCHAR(50);
 
     SELECT @twsid = a.twsid
     FROM MIT_LED_INSP_CUST a
     where a.led_inspect_id=@key
 
-    SELECT top 1 @REQ_KEY=x.REQ_KEY,@ReceiverBreezeDate=ReceiverBreezeDate
+    SELECT top 1 @REQ_KEY=x.REQ_KEY,@ReceiverBreezeDate= convert(varchar, ReceiverBreezeDate, 22),@REQ_STATUS=x.REQ_STATUS
     FROM MIT_LED_DB_MASTER x
     WHERE twsid=@twsid
 
-    SELECT @REQ_KEY AS REQ_KEY,@ReceiverBreezeDate AS ReceiverBreezeDate,b.keyText as led_code_text, a.*
+    SELECT @REQ_KEY AS REQ_KEY,@REQ_STATUS AS REQ_STATUS,@ReceiverBreezeDate AS ReceiverBreezeDate,b.keyText as led_code_text, a.*
     FROM MIT_LED_INSP_CUST a
     LEFT JOIN MIT_CODE_LOOKUP b on  b.keyname='LEDCODE' and b.keycode = a.led_code
     where a.led_inspect_id=@key

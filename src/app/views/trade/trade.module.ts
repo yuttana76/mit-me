@@ -59,6 +59,7 @@ import { LedInspHistoryComponent } from './led-insp-history/led-insp-history.com
 import { LedInspResourceComponent } from './led-insp-resource/led-insp-resource.component';
 import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-insp-cust-detail.component';
 import { LedMasDetailComponent } from './dialog/led-mas-detail/led-mas-detail.component';
+import { LedReqStatusPipeComponent } from './pipe/led-req-status-pipe/led-req-status-pipe.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -126,6 +127,7 @@ import { LedMasDetailComponent } from './dialog/led-mas-detail/led-mas-detail.co
     LedInspResourceComponent,
     LedInspCustDetailComponent,
     LedMasDetailComponent,
+    LedReqStatusPipeComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

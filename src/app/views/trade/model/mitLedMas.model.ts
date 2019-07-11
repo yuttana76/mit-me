@@ -32,4 +32,5 @@ updateBy: string;
 updateDate: string;
 
 led_inspect_id: string;
+led_code: string;
 }

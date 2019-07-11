@@ -64,6 +64,8 @@ router.put("/inspCust/", ledController.updateInspCust);
 router.get("/ledMaster/", ledController.searchLedMaster);
 
 router.get("/ledMasterBykey/", ledController.getLEDMasterBykey);
+router.put("/updateLedMas/:id", ledController.updateLedMas);
+
 router.get("/inspByCustCode/", ledController.getInspByCustCode);
 router.get("/inspByKey/", ledController.getInspByKey);
 router.get("/inspByGroupId/", ledController.getInspByGroupId);

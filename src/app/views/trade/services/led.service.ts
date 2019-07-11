@@ -9,6 +9,7 @@
     import { MitLedInspCust } from '../model/mitLedInspCust.model';
     import { mitLedMasHis } from '../model/mitLedMasHis.model';
     import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
+import { MitLedMas } from '../model/mitLedMas.model';
 
     const BACKEND_URL = environment.apiURL + '/led/';
     const BACKEND_URL_API = environment.apiURL + '/ledApi/';
@@ -188,7 +189,6 @@
       }
 
 
-
       updateInspCust(obj:MitLedInspCust,updateBy){
 
         var statusInt=0;
@@ -213,6 +213,16 @@
 
         return this.http.put<{ message: string, data: any }>(BACKEND_URL + '/inspCust', data);
     }
+
+    updateLedMas(obj:MitLedMas){
+
+           const data = {
+              "ledcode":obj.led_code,
+              "updateBy":obj.updateBy
+                    }
+
+      return this.http.put<{ message: string, data: any }>(BACKEND_URL + '/updateLedMas/' +obj.twsid , data);
+  }
 
 
     // getLedMasterHis(id){

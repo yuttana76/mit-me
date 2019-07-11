@@ -148,59 +148,90 @@ exports.GetBankruptListByDate = (req, res, next) =>{
 
 var LED_JOB;
 
-exports.ledSchedule = (req, res, next) =>{
+exports.ledGetBankruptListSchedule = (req, res, next) =>{
 
   const schStatus =req.body.schStatus;
   const schData =req.body.schData;
 
-  fnLedSchedule(schStatus,schData).then(result=>{
-    res.status(200).json({
-      message: "Successfully!",
-      code:"000",
-      result: result
-    });
-
-
+  fnLedGetBankruptListSchedule(schStatus,schData).then(result=>{
+    res.status(200).json({ message: "Successfully!",code:"000", result: result });
   },err=>{
-    res.status(400).json({
-      message: err,
-      code:"999",
-    });
+    res.status(400).json({message: err, code:"999"});
+  });
+}
 
+
+
+exports.cleanCustFromFile = (req, res, next) =>{
+
+  const actionBy = req.body.actionBy
+
+  fnCleanCustFromFile(actionBy).then(result=>{
+    res.status(200).json({ message: "Successfully!",code:"000", result: result });
+  },err=>{
+    res.status(400).json({message: err, code:"999"});
   });
 
 }
 
+/**
+ * Compare ledFile & SWAN & MFTS
+ */
 
-exports.cleanCustFromFile = (req, res, next) =>{
-  var actionBy = req.body.actionBy
+function fnCleanCustFromFile(actionBy){
 
-  // 1.Compare ledFile & SWAN & MFTS
-
-   // GET data
+  /**
+   * GET data SWAN & MFTS
+   */
    Promise.all([
     led.getSWANCustomers().catch(err => { res.status(401).json({ message: 'Error getSWANCustomers()'+err }); }),
     led.getMFTSCustomers().catch(err => { res.status(401).json({ message: 'Error getMFTSCustomers()'+err }); }),
     getLedFiles().catch(err => { res.status(401).json({ message: 'Error getLedFiles()' +err }); }),
     ]).then(values => {
 
-
+      /**
+       * Compare LED list with SWAN & MFTS
+       * values[0] = SWAN
+       * values[1] = MFTS
+       * values[2] = LED list
+       */
       Promise.all([
         led.compareLED_2(values[2],values[0]).catch(err => { res.status(401).json({ message: 'Error Compare LED & SWAN >>'+err }); }),
         led.compareLED_2(values[2],values[1]).catch(err => { res.status(401).json({ message: 'Error Compare LED & MFTS >>'+err }); }),
         ]).then(values => {
 
+          /**
+           * Incase Found
+           *1.Insert to MIT_LED_INSP_CUST
+           *2.Insert all LED list to MIT_LED_DB_MASTER
+           *3.Move LED download file to backup folder
+           */
           Promise.all([
             led.insertLEDInspect(values[0],"SWAN",actionBy).catch(err => { res.status(401).json({ message: 'Error SWAN to inspection >>'+err }); }),
             led.insertLEDInspect(values[1],"MFTS",actionBy).catch(err => { res.status(401).json({ message: 'Error MFTS  to inspection>>'+err }); }),
             insertAllFilesMIT_LED_DB_MASTER(actionBy).catch(err => { res.status(401).json({ message: 'Error SWAP >>'+err }); })
             ]).then(values => {
 
+              /**
+               * Send mail to responsibility
+               */
               mail.mailLedResponseToday().then(data=>{
                 // console.log("INSERT >>"+JSON.stringify(values));
                 res.status(200).json({ message: 'Successful /checkCustDialy' });
               },err=>{
-                res.status(401).json({ message: 'LED send mail rrror SWAP >>'+err });
+                res.status(401).json({ message: 'LED send mail error SWAP >>'+err });
+              });
+
+              /**
+               * Incase not found MPAM DB.
+               * Auto response to LED ;
+               */
+               fnReceiverBreezeWebService(req_key,req_status,actionBy).then(result =>{
+                logger.info(result);
+                res.status(200).json({  message: "Successfully!", code:"000", result: result });
+              },err =>{
+                logger.error(err);
+                res.status(400).json({message: err, code:"999"});
               });
 
             },function(err){
@@ -222,9 +253,7 @@ exports.ReceiverBreezeWebService = (req, res, next) =>{
   fnReceiverBreezeWebService(req_key,req_status,actionBy).then(result =>{
 
     logger.info(result);
-
-    res.status(200).json({
-      message: "Successfully!",
+    res.status(200).json({  message: "Successfully!",
       code:"000",
       result: result
     });
@@ -236,6 +265,7 @@ exports.ReceiverBreezeWebService = (req, res, next) =>{
       code:"999",
     });
   });
+
 };
 
 
@@ -663,11 +693,11 @@ function insertMIT_LED_GetBankruptList(path_file,userName){
     });//Promise
 }
 
-function fnLedSchedule(schStatus,schData){
+function fnLedGetBankruptListSchedule(schStatus,schData){
 
   const SCH_STOP = 'STOP';
   const SCH_START = 'START';
-
+  const actionBy = 'MPAM_SCH';
   return new Promise(function(resolve, reject) {
 
         if(schStatus.toUpperCase() === SCH_START){
@@ -682,31 +712,31 @@ function fnLedSchedule(schStatus,schData){
           LED_JOB = new CronJob(LED_JOB_SCH, function() {
 
             // logger.info("Complete LED_JOB download & write files.");
-
+            // Call Tempolary for test & development
             const req_key="";
             const req_status = ""
             const startdate= "2019-07-02";
             const enddate = "2019-07-02";
 
-            // Tempolary
             fnGetBankruptListByDate(req_key,req_status,startdate,enddate).then(result =>{
               logger.info("Complete LED_JOB download & write files.");
+              fnCleanCustFromFile(actionBy);
             },err =>{
               logger.info(err);
             });
 
+             // Call on production
+            // fnGetBankruptList().then(result =>{
+            //     // Download LED -> write file complese
+            //     // Next clean your data base
+            //     logger.info("Complete LED_JOB download & write files.");
 
-            fnGetBankruptList().then(result =>{
-                // Download LED -> write file complese
-                // Next clean your data base
-                logger.info("Complete LED_JOB download & write files.");
-                logger.info(result);
-
-            },err =>{
-              // Download & Write file error
-              // Send mail to system addmin
-              logger.error(err);
-            });
+            // fnCleanCustFromFile(actionBy);
+            // },err =>{
+            //   // Download & Write file error
+            //   // Send mail to system addmin
+            //   logger.error(err);
+            // });
 
           }, null, true, 'America/Los_Angeles');
 

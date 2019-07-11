@@ -26,6 +26,22 @@
             </mat-form-field>
             </div>
 
+            <div class="row">
+              <mat-form-field class="col-md-4">
+                <mat-select  formControlName="led_code" placeholder="LED code"
+                [(ngModel)]="mitLedMas.led_code">
+                    <mat-option  *ngFor="let obj of codeLookupList" [value]="obj.keycode">
+                      {{obj.keyText}}
+                    </mat-option>
+                  </mat-select>
+                <mat-error *ngIf="form.get('led_code').invalid">Choose one</mat-error>
+            </mat-form-field>
+            </div>
+
+            <div *ngIf="editMasFlag" class="row" >
+              <a *ngIf="authority.mEdit == YES_VAL"  mat-flat-button color="primary"  (click)="saveMas()"> SAVE MAS</a>
+              <a *ngIf="authority.mEdit == YES_VAL"  mat-flat-button  color="accent" (click)="saveMasClear()"> CANCEL</a>
+            </div>
 
 
           </form>
@@ -75,16 +91,16 @@
                         </span>
 
 
-                          <i id="delResourceRef" *ngIf="new_mitLedMasHis.resourceRef" class="fas fa-2x fa-trash-alt" (click)="onRemoveHist()" matTooltip= "ลบ" ></i>
+                          <i id="delResourceRef" *ngIf="new_mitLedMasHis.resourceRef && authority.mEdit == YES_VAL " class="fas fa-2x fa-trash-alt" (click)="onRemoveHist()" matTooltip= "ลบ" ></i>
 
-                          <button id="btnResourceRef" *ngIf="!new_mitLedMasHis.resourceRef" mat-stroked-button type="button" (click)="filePicker.click()">Pick Image</button>
+                          <button id="btnResourceRef" *ngIf="!new_mitLedMasHis.resourceRef && authority.mEdit == YES_VAL" mat-stroked-button type="button" (click)="filePicker.click()">Pick Image</button>
                           <input type="file" #filePicker (change)="onResourcePicked($event)">
                     </div>
                   </div>
 
                   <div class="row"  >
                       <mat-card-actions>
-                          <a  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >Save</a>
+                          <a *ngIf="authority.mEdit == YES_VAL"  mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >Save</a>
                           <a  mat-flat-button class="button_card_action" color="accent" (click)="onNewHisCancel()"  >Cancel</a>
                       </mat-card-actions>
                   </div>
@@ -133,24 +149,19 @@
                     {{item.memo}}
                 </p>
               </mat-card-content>
-              <mat-card-actions>
+              <!-- <mat-card-actions>
                 <button  mat-stroked-button color="warn" (click)="editHistory(item)" >Edit</button>
-
-                <!-- <span *ngIf="item.resourceRef"  class="his_ref">
-                    <a [href]="item.resourceRef"  target="_blank" >
-                      <i *ngIf="item.resourceExt === 'pdf'" matTooltip= "item.resourceRef" class="far fa-2x fa-file-pdf" ></i>
-                      <i *ngIf="item.resourceExt === 'zip'"  matTooltip= "item.resourceRef" class="far fa-2x fa-file-archive" ></i>
-                      <i *ngIf="item.resourceExt === 'png' ||  item.resourceExt === 'jpg' " matTooltip= "item.resourceRef" class="far fa-2x fa-file-image" ></i>
-                    </a>
-                  </span> -->
-              </mat-card-actions>
+              </mat-card-actions> -->
             </mat-card>
           </div>
 
 
 
-          <div *ngIf="!new_mitLedMasHis" class="panel-buttom">
-              <a *ngIf="authority.mEdit == YES_VAL" id ="new_his"  mat-flat-button color="primary"  (click)="addHistory()"> Add new his. </a>
+          <div *ngIf="showActionBar" class="panel-buttom">
+              <a *ngIf="authority.mEdit == YES_VAL" id ="new_his"  mat-flat-button color="primary"  (click)="addHistory()"> Add  HIS </a>
+              <a *ngIf="authority.mEdit == YES_VAL" id ="new_his"  mat-flat-button color="accent"  (click)="editMas()"> Edit MAS </a>
+
+
               <a id ="closeBtn"  mat-flat-button color="accent"  (click)="onClose()"> Close </a>
           </div>
 </div>

@@ -30,6 +30,9 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
   public YES_VAL = 'Y';
 
   insertMode: boolean;
+  editMasFlag: boolean=false;
+  showActionBar = true;
+
   public codeLookupList:CodeLookup[]=[];
   masHistory:mitLedMasHis[]=[];
 
@@ -47,7 +50,7 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    // console.log("LedMasDetailComponent>>" + JSON.stringify(this.mitLedMas));
+    console.log("Init >>" + JSON.stringify(this.mitLedMas));
 
     if(this.mitLedMas.twsid){
           this.insertMode = false;
@@ -88,7 +91,11 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
         validators: [Validators.required]
       }),
       resourceRef: new FormControl(null, {
-        validators:[Validators.required],
+        // validators:[Validators.required],
+          // asyncValidators: [mimeType]
+      }),
+      led_code: new FormControl(null, {
+        // validators:[Validators.required],
           // asyncValidators: [mimeType]
       }),
 
@@ -125,6 +132,7 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
       this.form.get('cust_code').disable();
       this.form.get('firstName').disable();
       this.form.get('lastName').disable();
+      this.form.get('led_code').disable();
 
       // this.addHistForm.get('resourceRef').disable();
     }
@@ -140,11 +148,12 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
 
         this.masHistory.push(this.new_mitLedMasHis);
         this.new_mitLedMasHis = null;
+        this.showActionBar = true;
 
-          this.toastr.success( `Add new successful`, 'Successful', {
-            timeOut: 5000,
-            positionClass: 'toast-top-center',
-          });
+        this.toastr.success( `Add new successful`, 'Successful', {
+          timeOut: 5000,
+          positionClass: 'toast-top-center',
+        });
       }, error => () => {
         this.toastr.error( `Was error: ${error}`, 'Error', {
           timeOut: 5000,
@@ -178,6 +187,7 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
       }, () => {
         console.log(` Add appliation complete` );
       });
+
     }
   }
 
@@ -196,14 +206,57 @@ export class LedMasDetailComponent implements OnInit, AfterViewInit {
   }
 
   public addHistory(): void {
+    this.showActionBar =false;
     this.new_mitLedMasHis = new mitLedMasHis();
     this.new_mitLedMasHis.twsid = this.mitLedMas.twsid;
     this.new_mitLedMasHis.status="A";
   }
 
+
+  editMas(){
+    this.showActionBar =false;
+     this.editMasFlag =true;
+     this.form.get('led_code').enable();
+  }
+
+  saveMasClear(){
+
+    this.showActionBar=true;
+    this.editMasFlag =false;
+    this.form.get('led_code').disable();
+  }
+
+  public saveMas():void{
+
+    this.mitLedMas.updateBy=this.authService.getUserData() || 'NONE';
+
+    this.ledService.updateLedMas(this.mitLedMas).subscribe((data: any ) => {
+
+      this.saveMasClear();
+        this.toastr.success( `Update successful`, 'Successful', {
+          timeOut: 5000,
+          positionClass: 'toast-top-center',
+        });
+
+    }, error => () => {
+      this.toastr.error( `Update LED Master error: ${error}`, 'Error', {
+        timeOut: 5000,
+        positionClass: 'toast-top-center',
+      });
+    }, () => {
+      this.form.get('led_code').disable();
+      console.log(` Add appliation complete` );
+    });
+
+
+  }
+
   onNewHisCancel(){
     this.new_mitLedMasHis = null;
+    this.showActionBar = true;
   }
+
+
 
   editHistory(editItem:mitLedMasHis){
     this.new_mitLedMasHis = editItem;

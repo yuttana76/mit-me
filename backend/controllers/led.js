@@ -422,6 +422,9 @@ exports.checkCustDialy = (req, res, next) => {
                 res.status(401).json({ message: err });
               })
 
+              // Incase not found ton MPAM DB.
+
+
           });
       });
 }
@@ -570,6 +573,65 @@ exports.getLEDMasterBykey = (req, res, next) => {
   });
 
 }
+
+exports.updateLedMas = (req, res, next) => {
+
+  logger.info(`updateLedMas API/ `);
+
+  // var id = req.query.id || false;
+  var twsid = req.param('id');
+  var ledcode = req.body.ledcode;
+  var updateBy = req.body.updateBy;
+
+  updateLedMas(twsid,ledcode,updateBy)
+  .then(result=>{
+    res.status(200).json({
+      message: "Successfully!",
+      result: result
+    });
+  },err=>{
+    res.status(400).json({
+      message: err
+    });
+  });
+}
+
+
+function updateLedMas(twsid,ledcode,updateBy){
+
+  console.log(`updateLedMas() >> ${twsid} - ${ledcode} - ${updateBy}`);
+
+    return new Promise(function(resolve, reject) {
+      // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+      var queryStr = `
+      BEGIN
+        UPDATE MIT_LED_DB_MASTER
+        SET led_code=@led_code,updateBy=@updateBy,updateDate=getdate()
+        WHERE twsid=@twsid
+      END
+      `;
+      const sql = require('mssql')
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request() // or: new sql.Request(pool1)
+        .input('twsid', sql.VarChar, twsid)
+        .input('led_code', sql.VarChar, ledcode)
+        .input('updateBy', sql.VarChar, updateBy)
+        .query(queryStr, (err, result) => {
+            // ... error checks
+            if(err){
+              reject(err);
+            }else {
+              resolve(result.recordset);
+            }
+        })
+
+      })
+      pool1.on('error', err => {
+        reject(err);
+        console.log("EROR>>"+err);
+      })
+    });
+  }
 
 
 exports.getInspByKey = (req, res, next) => {
@@ -1762,6 +1824,8 @@ exports.createLedMasHis = (req, res, next) => {
 
   })
 }
+
+
 
 exports.updateLedMasHis = (req, res, next) => {
 

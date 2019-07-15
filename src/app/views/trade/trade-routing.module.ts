@@ -23,6 +23,7 @@ import { LedMasSearchComponent } from './led-mas-search/led-mas-search.component
 import { LedDetailComponent } from './led-detail/led-detail.component';
 import { LedInspResultComponent } from './led-insp-result/led-insp-result.component';
 import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-insp-cust-detail.component';
+import { OpenAccountComponent } from './open-account/open-account.component';
 
 const routes: Routes = [
 
@@ -230,6 +231,13 @@ const routes: Routes = [
         component: LedInspCustDetailComponent,
         data: {
           title: 'Inspection detail'
+        }
+      },
+      {
+        path: 'open-account',
+        component: OpenAccountComponent,
+        data: {
+          title: 'Open account'
         }
       },
 

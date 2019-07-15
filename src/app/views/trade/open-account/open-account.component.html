@@ -1,3 +1,58 @@
-<p>
-  open-account works!
-</p>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 mx-auto">
+
+      <mat-horizontal-stepper [linear]="isLinear" #stepper>
+        <mat-step [stepControl]="firstFormGroup">
+          <form [formGroup]="firstFormGroup" class="col-md-6">
+            <ng-template matStepLabel>Identify</ng-template>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-default">ID card number</span>
+                </div>
+                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" formControlName="firstCtrl"  required>
+              </div>
+
+            <!-- <mat-form-field>
+              <input matInput placeholder="ID card" formControlName="firstCtrl" required>
+            </mat-form-field> -->
+
+            <div>
+                <button type="button" class="btn btn-success" matStepperNext >Next</button>
+            </div>
+          </form>
+        </mat-step>
+        <mat-step >
+            <ng-template matStepLabel>Verify indentify</ng-template>
+
+            <div>
+                <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
+                <button type="button" class="btn btn-success" matStepperNext >Next</button>
+            </div>
+        </mat-step>
+        <mat-step [stepControl]="secondFormGroup">
+          <form [formGroup]="secondFormGroup">
+            <ng-template matStepLabel>Complete form</ng-template>
+            <mat-form-field>
+              <input matInput placeholder="Address" formControlName="secondCtrl" required>
+            </mat-form-field>
+            <div>
+                <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
+                <button type="button" class="btn btn-success" matStepperNext >Next</button>
+            </div>
+          </form>
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Submit</ng-template>
+          You are now done.
+          <div>
+              <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
+              <button type="button" class="btn btn-success" matStepperNext >Submit</button>
+          </div>
+        </mat-step>
+      </mat-horizontal-stepper>
+
+    </div>
+  </div>
+</div>

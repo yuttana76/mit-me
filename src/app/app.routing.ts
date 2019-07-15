@@ -10,6 +10,7 @@ import { LoginComponent } from './views/login/login.component';
 import { RegisterComponent } from './views/register/register.component';
 import { AuthGuard } from './views/services/auth/auth.guard';
 import { SuitComponent } from './views/trade/suit/suit.component';
+import { OpenAccountComponent } from './views/trade/open-account/open-account.component';
 
 export const routes: Routes = [
   {
@@ -51,6 +52,13 @@ export const routes: Routes = [
     component: SuitComponent,
     data: {
       title: 'Suitability'
+    }
+  },
+  {
+    path: 'openAcc',
+    component: OpenAccountComponent,
+    data: {
+      title: 'Open account'
     }
   },
   {

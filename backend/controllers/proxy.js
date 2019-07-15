@@ -14,8 +14,16 @@ const PROXY_HTTPS = "https://ndidproxydev.finnet.co.th";
 const API_AUTH_TOKEN_PATH = "/api/auth/token";
 // const API_AUTH_TOKEN = "/api/auth/token";
 
+
+exports.callback = (req, res, next) => {
+  console.log("Welcome API /callback");
+  res.status(200).json({
+    result:JSON.stringify(req.body)
+  });
+}
+
 exports.authtoken = (req, res, next) => {
-console.log("Welcome API /authtoken");
+  console.log("Welcome API /authtoken");
   fnAuthtoken().then(result=>{
     res.status(200).json({
       message: "Proxy auth successful",
@@ -27,6 +35,7 @@ console.log("Welcome API /authtoken");
     });
   });
 }
+
 
 
 function fnAuthtoken(){
@@ -77,7 +86,9 @@ function fnAuthtoken(){
         // Write data to request body
         request.write(authObj);
         request.end();
-
+      /**
+       * HTTPS REQUEST (END)
+       */
 
         },err=>{
           reject(err);

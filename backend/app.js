@@ -46,6 +46,7 @@ const custChildrenRoutes = require('./routes/custChildren');
 const ledRoutes = require('./routes/led');
 const ledApiRoutes = require('./routes/led_api');
 const swanRoutes = require('./routes/swan');
+const proxyRoutes = require('./routes/proxy');
 
 const app = express();
 
@@ -133,6 +134,9 @@ app.use("/api/led",ledRoutes);
 app.use("/api/ledApi",ledApiRoutes);
 
 app.use("/api/swan",swanRoutes);
+
+//NDID Proxy
+app.use("/api/proxy",proxyRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

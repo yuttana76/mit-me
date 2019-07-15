@@ -712,7 +712,7 @@ function fnLedGetBankruptListSchedule(schStatus,schData){
           LED_JOB = new CronJob(LED_JOB_SCH, function() {
 
             // logger.info("Complete LED_JOB download & write files.");
-            // Call Tempolary for test & development
+            //****************** */ Call Tempolary for test & development
             const req_key="";
             const req_status = ""
             const startdate= "2019-07-02";
@@ -725,7 +725,7 @@ function fnLedGetBankruptListSchedule(schStatus,schData){
               logger.info(err);
             });
 
-             // Call on production
+             //****************** */ Call on production
             // fnGetBankruptList().then(result =>{
             //     // Download LED -> write file complese
             //     // Next clean your data base
@@ -873,6 +873,7 @@ function writeLocalFile(data,fileName) {
 function fnCallLEDapis(path,input){
 
   return new Promise(function(resolve, reject) {
+
   const https = require('https')
   // var input = req.body.input;
   const postData = JSON.stringify({
@@ -893,7 +894,7 @@ function fnCallLEDapis(path,input){
 
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
   const request = https.request(options_1,(res) => {
-var _chunk="";
+    var _chunk="";
     res.setEncoding('utf8');
     res.on('data', (chunk) => {
       // console.log(`BODY: ${chunk}`);

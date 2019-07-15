@@ -1,0 +1,45 @@
+{
+  "name": "@coreui/coreui-free-angular-admin-template",
+  "version": "2.0.0",
+  "description": "CoreUI Free Angular 2+ Admin Template",
+  "author": {
+    "name": "Łukasz Holeczek",
+    "url": "http://holeczek.pl",
+    "github": "https://github.com/mrholek",
+    "twitter": "https://twitter.com/lukaszholeczek"
+  },
+  "contributors": [
+    {
+      "name": "Andrzej Kopański",
+      "url": "https://github.com/xidedix"
+    }
+  ],
+  "homepage": "https://coreui.io/angular",
+  "copyright": "Copyright 2018 creativeLabs Łukasz Holeczek",
+  "license": "MIT",
+  "scripts": {
+    "start:server": "nodemon ./backend/server.js"
+  },
+  "private": true,
+  "dependencies": {
+    "bcrypt": "^3.0.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "core-js": "^2.5.7",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "moment": "^2.22.2",
+    "mssql": "^5.1.0",
+    "mutationobserver-shim": "^0.3.2",
+    "nodemailer": "^4.6.8",
+    "object-to-xml": "^2.0.0",
+    "tedious": "^2.6.4",
+    "ts-helpers": "^1.1.2",
+    "winston": "^3.1.0",
+    "winston-daily-rotate-file": "^3.3.3"
+  },
+  "engines": {
+    "node": ">= 8.9.4",
+    "npm": ">= 5.6.0"
+  }
+}

@@ -10,7 +10,7 @@ const crypto = require('crypto');
 // UAT Environment: https://ndidproxytest.finnet.co.th
 // Production Environment: https://ndidproxy.finnet.co.th
 
-const PROXY_HTTPS = "https://ndidproxydev.finnet.co.th";
+const PROXY_HTTPS = "ndidproxydev.finnet.co.th";
 const API_AUTH_TOKEN_PATH = "/api/auth/token";
 // const API_AUTH_TOKEN = "/api/auth/token";
 

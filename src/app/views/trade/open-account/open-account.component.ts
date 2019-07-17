@@ -9,6 +9,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 export class OpenAccountComponent implements OnInit {
 
   isLinear = true;
+
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 

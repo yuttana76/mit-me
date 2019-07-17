@@ -24,6 +24,7 @@ exports.callback = (req, res, next) => {
 
 exports.authtoken = (req, res, next) => {
   console.log("Welcome API /authtoken");
+
   fnAuthtoken().then(result=>{
     res.status(200).json({
       message: "Proxy auth successful",
@@ -80,17 +81,19 @@ function fnAuthtoken(){
         });
 
         request.on('error', (e) => {
+          console.log('HTTP ERR>>' + e);
           reject(e);
         });
 
         // Write data to request body
-        request.write(authObj);
+        request.write(JSON.stringify(authObj));
         request.end();
       /**
        * HTTPS REQUEST (END)
        */
 
         },err=>{
+
           reject(err);
         })
   });

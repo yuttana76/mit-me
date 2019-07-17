@@ -52,10 +52,15 @@ function fnAuthtoken(){
       authObj.request_time = _request_time;
 
       let data = authObj.client_code +"|" +authObj.request_time;
+
       fnSignPrivateKey(data).then(result=>{
 
         authObj.signature = result;
-        console.log(` authObj >> ${JSON.stringify(authObj)}`);
+
+
+        authObj_JSON = JSON.stringify(authObj);
+        console.log(` authObj_JSON >> ${authObj_JSON}`);
+
       /**
        * HTTPS REQUEST
        */
@@ -65,6 +70,7 @@ function fnAuthtoken(){
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'Content-Length': authObj_JSON.length
           },
         };
 
@@ -86,7 +92,7 @@ function fnAuthtoken(){
         });
 
         // Write data to request body
-        request.write(JSON.stringify(authObj));
+        request.write(authObj_JSON);
         request.end();
       /**
        * HTTPS REQUEST (END)

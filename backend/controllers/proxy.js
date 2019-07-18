@@ -66,7 +66,9 @@ function fnAuthtoken(){
        * HTTPS REQUEST
        */
         var options = {
-          host: PROXY_HTTPS,
+          // host: PROXY_HTTPS,
+          host: 'https://ndidproxydev.finnet.co.th',
+          port:'443',
           path:API_AUTH_TOKEN_PATH,
           method: "POST",
           timeout: 10000,
@@ -96,6 +98,7 @@ function fnAuthtoken(){
 
         // Write data to request body
         logger.info(authObj_JSON);
+
         request.write(authObj_JSON);
         request.end();
       /**

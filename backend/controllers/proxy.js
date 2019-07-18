@@ -69,6 +69,7 @@ function fnAuthtoken(){
           host: PROXY_HTTPS,
           path:API_AUTH_TOKEN_PATH,
           method: "POST",
+          timeout: 10000,
           headers: {
             "Content-Type": "application/json",
             'Content-Length': authObj_JSON.length

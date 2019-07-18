@@ -5,6 +5,7 @@ const path = require('path');
 var config = dbConfig.dbParameters;
 const https = require('https')
 const crypto = require('crypto');
+var logger = require("../config/winston");
 
 // SIT Environment: https://ndidproxydev.finnet.co.th
 // UAT Environment: https://ndidproxytest.finnet.co.th
@@ -16,9 +17,9 @@ const API_AUTH_TOKEN_PATH = "/api/auth/token";
 
 
 exports.callback = (req, res, next) => {
-  console.log("Welcome API /callback");
+  console.log("Welcome API /callback" + JSON.stringify(req.body));
   res.status(200).json({
-    result:JSON.stringify(req.body)
+    result:"MPAM callback successful"
   });
 }
 
@@ -45,7 +46,7 @@ function fnAuthtoken(){
 
   return new Promise(function(resolve, reject) {
 
-      var _Path = path.resolve('./backend/merchantasset_CA/proxy/auth.json');
+      var _Path = path.resolve('./backend/merchantasset_CA/proxy/proxy_auth.json');
       let authData = fs.readFileSync(_Path, "utf8"); //ascii,utf8
       let authObj = JSON.parse(authData);
       const _request_time =new Date().toISOString().replace(/\..+/, '') ;
@@ -81,6 +82,7 @@ function fnAuthtoken(){
           res.on('data', (chunk) => {
             _chunk=_chunk.concat(chunk);
           });
+
           res.on('end', () => {
             resolve(_chunk);
           });
@@ -92,6 +94,7 @@ function fnAuthtoken(){
         });
 
         // Write data to request body
+        logger.info(authObj_JSON);
         request.write(authObj_JSON);
         request.end();
       /**

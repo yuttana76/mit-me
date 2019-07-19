@@ -51,18 +51,18 @@ function fnAuthtoken(){
       var _Path = path.resolve('./backend/merchantasset_CA/proxy/proxy_auth.json');
       let authData = fs.readFileSync(_Path, "utf8"); //ascii,utf8
       let authObj = JSON.parse(authData);
-      const _request_time =new Date().toISOString().replace(/\..+/, '') ;
+
+      const _request_time = NOW();
       authObj.request_time = _request_time;
 
       let data = authObj.client_code +"|" +authObj.request_time;
 
-      fnSignPrivateKey(data).then(result=>{
+      fnSignPrivateKey(data).then(signature=>{
 
-        authObj.signature = result;
+        authObj.signature = signature;
 
         authObj_JSON = JSON.stringify(authObj);
-        console.log(` authObj_JSON >> ${authObj_JSON}`);
-
+        // console.log(` authObj_JSON >> ${authObj_JSON}`);
         // resolve(authObj_JSON);
 
       /**
@@ -89,13 +89,13 @@ function fnAuthtoken(){
           });
 
           res.on('end', () => {
-            console.log("RESULT >>" + _chunk);
+            // console.log("RESULT >>" + _chunk);
             resolve(_chunk);
           });
         });
 
         request.on('error', (e) => {
-          console.log('HTTP ERR>>' + e);
+          // console.log('HTTP ERR>>' + e);
           reject(e);
         });
 
@@ -104,7 +104,6 @@ function fnAuthtoken(){
 
         request.write(authObj_JSON);
         request.end();
-
 
       /**
        * HTTPS REQUEST (END)
@@ -122,7 +121,6 @@ function fnSignPrivateKey(data){
 
     // ****************Crypto
       try {
-
 
         var _privateKeyPath = path.resolve('./backend/merchantasset_CA/proxy/private_key.pem');
         let _privateKey = fs.readFileSync(_privateKeyPath, "utf8"); //ascii,utf8
@@ -163,4 +161,37 @@ function fnSignPrivateKey(data){
       }
 
   });
+}
+
+
+function NOW() {
+  var INC_TIME_SEC = 5;
+  var date = new Date();
+  var aaaa = date.getFullYear();
+  var gg = date.getDate();
+  var mm = (date.getMonth() + 1);
+
+  if (gg < 10)
+      gg = "0" + gg;
+
+  if (mm < 10)
+      mm = "0" + mm;
+
+  var cur_day = aaaa + "-" + mm + "-" + gg;
+
+  var hours = date.getHours()
+  var minutes = date.getMinutes()
+  var seconds = date.getSeconds()+INC_TIME_SEC;
+
+  if (hours < 10)
+      hours = "0" + hours;
+
+  if (minutes < 10)
+      minutes = "0" + minutes;
+
+  if (seconds < 10)
+      seconds = "0" + seconds;
+
+  return cur_day + "T" + hours + ":" + minutes + ":" + seconds;
+
 }

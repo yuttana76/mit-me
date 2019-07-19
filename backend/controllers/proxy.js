@@ -25,7 +25,7 @@ exports.callback = (req, res, next) => {
   });
 }
 
-exports.authtoken = (req, res, next) => {
+exports.ProxyAuthtoken = (req, res, next) => {
   console.log("Welcome API /authtoken");
 
   fnAuthtoken().then(result=>{
@@ -90,6 +90,8 @@ function fnAuthtoken(){
 
           res.on('end', () => {
             // console.log("RESULT >>" + _chunk);
+            logger.info(_chunk);
+
             resolve(_chunk);
           });
         });

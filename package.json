@@ -82,6 +82,7 @@
     "soap": "^0.28.0",
     "tedious": "^2.6.4",
     "ts-helpers": "^1.1.2",
+    "urlsafe-base64": "^1.0.0",
     "utf8": "^3.0.0",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.9.0",

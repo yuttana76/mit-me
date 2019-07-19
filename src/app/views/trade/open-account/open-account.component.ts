@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Customer } from '../model/customer.model';
+import { OpenAccount } from '../model/openAccount.model';
 
 @Component({
   selector: 'app-open-account',
@@ -9,19 +11,30 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 export class OpenAccountComponent implements OnInit {
 
   isLinear = true;
+  openAccount = new OpenAccount();
 
   firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
+  fillFormGroup: FormGroup;
 
   constructor(private _formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.firstFormGroup = this._formBuilder.group({
-      firstCtrl: ['', Validators.required]
+      identifier: ['', Validators.required]
     });
-    this.secondFormGroup = this._formBuilder.group({
-      secondCtrl: ['', Validators.required]
+    this.fillFormGroup = this._formBuilder.group({
+      identifier: ['', Validators.required],
+      title: ['', Validators.required],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      sex: ['', Validators.required],
+      dob: ['', Validators.required],
+      cardIssueDate: ['', Validators.required],
+      cardExpDate: ['', Validators.required],
+      nationality: ['', Validators.required],
     });
+
+    this.fillFormGroup.controls['identifier'].disable();
   }
 
 }

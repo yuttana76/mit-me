@@ -17,7 +17,9 @@ const API_AUTH_TOKEN_PATH = "/api/auth/token";
 
 
 exports.callback = (req, res, next) => {
-  console.log("Welcome API /callback" + JSON.stringify(req.body));
+
+  logger.info("/api/proxy/callback " + JSON.stringify(req.body));
+
   res.status(200).json({
     result:"MPAM callback successful"
   });
@@ -58,17 +60,16 @@ function fnAuthtoken(){
 
         authObj.signature = result;
 
-
         authObj_JSON = JSON.stringify(authObj);
         console.log(` authObj_JSON >> ${authObj_JSON}`);
+
+        // resolve(authObj_JSON);
 
       /**
        * HTTPS REQUEST
        */
         var options = {
-          // host: PROXY_HTTPS,
-          host: 'https://ndidproxydev.finnet.co.th',
-          port:'443',
+          host: PROXY_HTTPS,
           path:API_AUTH_TOKEN_PATH,
           method: "POST",
           timeout: 10000,
@@ -79,6 +80,7 @@ function fnAuthtoken(){
         };
 
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
         const request = https.request(options,(res) => {
           var _chunk="";
           res.setEncoding('utf8');
@@ -87,6 +89,7 @@ function fnAuthtoken(){
           });
 
           res.on('end', () => {
+            console.log("RESULT >>" + _chunk);
             resolve(_chunk);
           });
         });
@@ -101,14 +104,15 @@ function fnAuthtoken(){
 
         request.write(authObj_JSON);
         request.end();
+
+
       /**
        * HTTPS REQUEST (END)
        */
-
         },err=>{
-
           reject(err);
         })
+
   });
 }
 
@@ -118,6 +122,7 @@ function fnSignPrivateKey(data){
 
     // ****************Crypto
       try {
+
 
         var _privateKeyPath = path.resolve('./backend/merchantasset_CA/proxy/private_key.pem');
         let _privateKey = fs.readFileSync(_privateKeyPath, "utf8"); //ascii,utf8
@@ -129,7 +134,13 @@ function fnSignPrivateKey(data){
         sign.update(data);
         sign.end();
 
-        const signature = sign.sign(_privateKey,'base64');
+        let signature = sign.sign(_privateKey,'base64');
+
+        // console.log('1>>' + signature);
+
+        var URLSafeBase64 = require('urlsafe-base64');
+        signature = randomURLSafeBase64 = URLSafeBase64.encode(signature);
+        // console.log('2>>' + signature);
 
         resolve(signature);
 

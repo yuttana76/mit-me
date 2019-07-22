@@ -68,46 +68,52 @@ function fnGetProviders(){
 
     let API_BODY= {
        "namespace": "citizen_id",
-       "identifier": identifier,
+       "identifier":identifier,
        "min_ial": 2.1,
        "min_aal": 2.1
      }
-
 
     /**
        * HTTPS REQUEST
        */
       var options = {
         host: PROXY_HTTPS,
-        path:API_GET_PROVIDERS_PATH+`?token=${token}`,
+        path:API_GET_PROVIDERS_PATH +`?token=${token}` ,
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          'Content-Length': API_BODY.length
+          // 'Content-Length': API_BODY.length
         },
       };
 
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
       const request = https.request(options,(res) => {
+
+
         var _chunk="";
-        res.setEncoding('utf8');
+
+        // res.setEncoding('utf8');
+
         res.on('data', (chunk) => {
           _chunk=_chunk.concat(chunk);
         });
 
         res.on('end', () => {
+          console.log("END>>" + JSON.stringify(_chunk));
           logger.info(_chunk);
           resolve(_chunk);
         });
+
       });
 
       request.on('error', (e) => {
+        console.log("ERROR>>" + JSON.stringify(e));
         reject(e);
       });
 
       // Write data to request body
-      logger.info(API_BODY);
+      logger.info(JSON.stringify(API_BODY));
 
       request.write(API_BODY);
       request.end();

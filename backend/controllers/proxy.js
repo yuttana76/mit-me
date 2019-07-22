@@ -13,12 +13,12 @@ var logger = require("../config/winston");
 
 const PROXY_HTTPS = "ndidproxydev.finnet.co.th";
 const API_AUTH_TOKEN_PATH = "/api/auth/token";
-// const API_AUTH_TOKEN = "/api/auth/token";
+const API_GET_PROVIDERS_PATH = "/ndidproxy/api/identity/providers";
 
 
 exports.callback = (req, res, next) => {
 
-  logger.info("/api/proxy/callback " + JSON.stringify(req.body));
+  logger.info("/api/proxy/callback" + JSON.stringify(req.body));
 
   res.status(200).json({
     result:"MPAM callback successful"
@@ -26,7 +26,7 @@ exports.callback = (req, res, next) => {
 }
 
 exports.ProxyAuthtoken = (req, res, next) => {
-  console.log("Welcome API /authtoken");
+  logger.info("Welcome API /authtoken");
 
   fnAuthtoken().then(result=>{
     res.status(200).json({
@@ -40,7 +40,85 @@ exports.ProxyAuthtoken = (req, res, next) => {
   });
 }
 
+exports.ProxyProviders = (req, res, next) => {
+  logger.info("Welcome API /providers");
 
+  fnGetProviders().then(result=>{
+    res.status(200).json({
+      message: "Proxy auth successful",
+      result:result
+    });
+  },err=>{
+    res.status(401).json({
+      message: err
+    });
+  });
+}
+
+
+// **********************FUNCTIONs
+function fnGetProviders(){
+
+  console.log("Welcome Function fnGetProviders()");
+
+  return new Promise(function(resolve, reject) {
+
+    let token ="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkNzkzNzZjOC0wMGRhLTQ5YWQtYmYyYS02MjAxNGM1NDBmNWIiLCJpc3MiOiJORElEIFByb3h5IiwiaWF0IjoiMjAxOS0wNy0yMlQwOTo0Nzo0MS4yNjQiLCJleHAiOiIyMDE5LTA3LTIyVDEwOjQ3OjQxLjI2NCIsIm5hbWUiOiI3ODYvNzg2X2tleS5wdWIifQ.kRS8XzmLbyeIDF-cmoSEq4D0pxagUSUKps0LCBumwNC4vgLoU_HF_p9BJGHwoccecCRDxquDQwaNJKmCgiYk50oUCqW9IImPYLc3Z8UYdVbuzABcI0MjGCQE0UWrLsX2x7Gc2197vBBLJyORjjZway2BKgoIY4pz6NXTjNhT6wGQfCXNWt-L5RvbgmCLAQ-jfEhGr39bXiWaqv6SkQSCIz-4VdjaSAQnahC1whweG6Z90FTqHf0EHnayM3ChCoXozdPAsAWH7rR9bwyTqe_uhEVIM_oHFYavhUilvyYk2wdPRhSLLqHWE03hzbUWxN_2FmrXLqRK3hXZgiz9aQDU0g"
+    let identifier='8258801898731'
+
+    let API_BODY= {
+       "namespace": "citizen_id",
+       "identifier": identifier,
+       "min_ial": 2.1,
+       "min_aal": 2.1
+     }
+
+
+    /**
+       * HTTPS REQUEST
+       */
+      var options = {
+        host: PROXY_HTTPS,
+        path:API_GET_PROVIDERS_PATH+`?token=${token}`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          'Content-Length': API_BODY.length
+        },
+      };
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      const request = https.request(options,(res) => {
+        var _chunk="";
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          _chunk=_chunk.concat(chunk);
+        });
+
+        res.on('end', () => {
+          logger.info(_chunk);
+          resolve(_chunk);
+        });
+      });
+
+      request.on('error', (e) => {
+        reject(e);
+      });
+
+      // Write data to request body
+      logger.info(API_BODY);
+
+      request.write(API_BODY);
+      request.end();
+
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  });
+
+}
 
 function fnAuthtoken(){
 

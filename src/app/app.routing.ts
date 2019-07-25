@@ -11,6 +11,7 @@ import { RegisterComponent } from './views/register/register.component';
 import { AuthGuard } from './views/services/auth/auth.guard';
 import { SuitComponent } from './views/trade/suit/suit.component';
 import { OpenAccountComponent } from './views/trade/open-account/open-account.component';
+import { SetRegistrationComponent } from './views/trade/set-registration/set-registration.component';
 
 export const routes: Routes = [
   {
@@ -59,6 +60,13 @@ export const routes: Routes = [
     component: OpenAccountComponent,
     data: {
       title: 'Open account'
+    }
+  },
+  {
+    path: 'set-regis',
+    component: SetRegistrationComponent,
+    data: {
+      title: 'Streaming For Fund registration'
     }
   },
   {

@@ -10,11 +10,14 @@ export class UtilService {
 
   constructor(private http: HttpClient ) { }
 
-  regisToMailService(name,surName,phone,email){
+  regisToMailService(name,surName,mobile,email){
+
+    console.log(`regisToMailService() ${name};${surName};${mobile};${email} `);
+
     const data ={
       name:name,
       surName:surName,
-      phone:phone,
+      phone:mobile,
       email:email
     }
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/regisToMail', data);

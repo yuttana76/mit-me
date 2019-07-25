@@ -70,6 +70,13 @@ exports.autoGeneratePassword = (req,res,next)=>{
 
 exports.getDateTime = (req,res,next)=>{
 
+  // return year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec;
+
+  return getDateTime();
+}
+
+function getDateTime(){
+
   var date = new Date();
 
   var hour = date.getHours();
@@ -90,8 +97,6 @@ exports.getDateTime = (req,res,next)=>{
   day = (day < 10 ? "0" : "") + day;
 
   return day +"/"+ month +"/"+ year + "  " + hour + ":" + min ;
-
-  // return year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec;
 
 }
 
@@ -128,7 +133,8 @@ function regisToMail(name,surName,phone,email){
   </style>
   </head>
   <body>
-  <h3>Streaming for fund registration</h3>
+  <h3>Streaming for fund registration  </h3>
+  On ${getDateTime()}
   `;
 
   let _msgLedHeader = "";

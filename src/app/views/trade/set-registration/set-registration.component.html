@@ -1,3 +1,50 @@
-<p>
-  set-registration works!
-</p>
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<div class="container" *ngIf="!spinnerLoading" >
+  <div class="row">
+    <div class="col-md-6 mx-auto">
+
+      <mat-horizontal-stepper [linear]="isLinear" #stepper>
+
+        <!-- FILL FORM -->
+        <mat-step [stepControl]="fillFormGroup">
+
+          <form [formGroup]="fillFormGroup">
+            <ng-template matStepLabel>Fill register form</ng-template>
+
+                <mat-form-field class="col-md-12">
+                    <input matInput placeholder="First name" formControlName="firstName" [(ngModel)]="register.firstName"  >
+                </mat-form-field>
+
+                <mat-form-field class="col-md-12">
+                  <input matInput placeholder="Last name" formControlName="lastName" [(ngModel)]="register.lastName"  >
+                </mat-form-field>
+
+            <mat-form-field class="col-md-12">
+                <input matInput placeholder="Mobile" formControlName="mobile" [(ngModel)]="register.mobile"  >
+            </mat-form-field>
+
+            <mat-form-field class="col-md-12">
+                <input matInput placeholder="Email" formControlName="email" [(ngModel)]="register.email"  >
+            </mat-form-field>
+
+            <div>
+                <button type="button" class="btn btn-success" matStepperNext (click)="onSubmit()" >Submit</button>
+            </div>
+          </form>
+
+        </mat-step>
+
+        <!-- Final step -->
+        <mat-step>
+          <ng-template matStepLabel>Final step</ng-template>
+
+          You are now done.
+
+        </mat-step>
+
+      </mat-horizontal-stepper>
+
+    </div>
+  </div>
+</div>

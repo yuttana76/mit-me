@@ -3,10 +3,12 @@ const bcrypt = require('bcryptjs');
 const dbConfig = require('../config/db-config');
 var logger = require('../config/winston');
 var config = dbConfig.dbParameters;
+const mailConfig = require('../config/mail-conf');
+const nodemailer = require('nodemailer');
 
 // const SALT_WORK_FACTOR = 10;
 const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
-
+let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
 
 exports.autoGeneratePassword = (req,res,next)=>{
 
@@ -91,4 +93,85 @@ exports.getDateTime = (req,res,next)=>{
 
   // return year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec;
 
+}
+
+
+exports.regisToMail = (req,res,next)=>{
+  console.log("Welcome API regisToMail/");
+
+  const name = req.body.name;
+  const surName = req.body.surName;
+  const phone = req.body.phone;
+  const email = req.body.email;
+
+  regisToMail(name,surName,phone,email).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+}
+
+function regisToMail(name,surName,phone,email){
+  console.log("Welcome Function regisToMail()");
+  let _msgHtml = `
+  <html>
+  <head>
+  <style>
+  .blog-content-outer {
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding: 0 15px;
+    font-size: 16px;
+  }
+  </style>
+  </head>
+  <body>
+  <h3>Streaming for fund registration</h3>
+  `;
+
+  let _msgLedHeader = "";
+  let _msgContent = `
+        <div class='blog-content-outer'>
+          <p>
+          <B>Name:</B> ${name}
+          </p>
+          <p>
+          <B>SurName:</B> ${surName}
+          </p>
+          <p>
+          <B>Contact number:</B> ${phone}
+          </p>
+          <p>
+          <B>Email:</B> ${email}
+          </p>
+        </div>
+          `;
+
+  return new Promise(function(resolve, reject) {
+
+
+    _msgHtml +=_msgLedHeader;
+    _msgHtml +=_msgContent;
+    _msgHtml +='</body></html>';
+
+    let mailOptions = {
+      from: mailConfig.mail_it,
+      // to: mailConfig.mail_wealthservice,
+      to: 'yuttana@merchantasset.co.th',
+      subject: "Streaming For Fund registration",
+      html: _msgHtml
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        logger.error(error);
+        reject(error);
+      }
+      resolve(info)
+    });
+
+
+  });
 }

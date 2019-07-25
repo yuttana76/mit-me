@@ -11,9 +11,13 @@ var logger = require("../config/winston");
 // UAT Environment: https://ndidproxytest.finnet.co.th
 // Production Environment: https://ndidproxy.finnet.co.th
 
+const HTTPS ='https://';
 const PROXY_HTTPS = "ndidproxydev.finnet.co.th";
 const API_AUTH_TOKEN_PATH = "/api/auth/token";
 const API_GET_PROVIDERS_PATH = "/ndidproxy/api/identity/providers";
+const API_GET_SERVICES_PATH = "/ndidproxy/api/services";
+const API_GET_SERVICES_AS_PATH = "/ndidproxy/api/as/";
+const API_POST_IDEN_VERIFY_PATH = "/ndidproxy/api/identity/verify";
 
 
 exports.callback = (req, res, next) => {
@@ -29,95 +33,153 @@ exports.ProxyAuthtoken = (req, res, next) => {
   logger.info("Welcome API /authtoken");
 
   fnAuthtoken().then(result=>{
-    res.status(200).json({
-      message: "Proxy auth successful",
-      result:result
-    });
+    res.status(200).json(result);
   },err=>{
-    res.status(401).json({
-      message: err
-    });
+    res.status(401).json(err);
   });
 }
 
 exports.ProxyProviders = (req, res, next) => {
   logger.info("Welcome API /providers");
 
-  fnGetProviders().then(result=>{
-    res.status(200).json({
-      message: "Proxy auth successful",
-      result:result
-    });
+  const token = req.body.token;
+  const identifier= req.body.identifier;
+  const namespace = req.body.namespace;
+  const min_ial= req.body.min_ial;
+  const min_aal= req.body.min_aal;
+
+  fnGetProviders(token,identifier,namespace,min_ial,min_aal).then(result=>{
+    res.status(200).json(result);
   },err=>{
-    res.status(401).json({
-      message: err
-    });
+    res.status(401).json(err);
+  });
+}
+
+
+
+exports.ProxyServices = (req, res, next) => {
+  logger.info("Welcome API /services");
+
+  const token = req.body.token;
+
+  fnGetServices(token).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+}
+
+exports.ProxyServiceAs = (req, res, next) => {
+  logger.info("Welcome API /serviceAs");
+
+  const token = req.body.token;
+  const service_id = req.body.service_id;
+
+  fnGetServicesAS(token,service_id).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
   });
 }
 
 
 // **********************FUNCTIONs
-function fnGetProviders(){
-
-  console.log("Welcome Function fnGetProviders()");
+function fnGetServicesAS(token,service_id){
 
   return new Promise(function(resolve, reject) {
 
-    let token ="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkNzkzNzZjOC0wMGRhLTQ5YWQtYmYyYS02MjAxNGM1NDBmNWIiLCJpc3MiOiJORElEIFByb3h5IiwiaWF0IjoiMjAxOS0wNy0yMlQwOTo0Nzo0MS4yNjQiLCJleHAiOiIyMDE5LTA3LTIyVDEwOjQ3OjQxLjI2NCIsIm5hbWUiOiI3ODYvNzg2X2tleS5wdWIifQ.kRS8XzmLbyeIDF-cmoSEq4D0pxagUSUKps0LCBumwNC4vgLoU_HF_p9BJGHwoccecCRDxquDQwaNJKmCgiYk50oUCqW9IImPYLc3Z8UYdVbuzABcI0MjGCQE0UWrLsX2x7Gc2197vBBLJyORjjZway2BKgoIY4pz6NXTjNhT6wGQfCXNWt-L5RvbgmCLAQ-jfEhGr39bXiWaqv6SkQSCIz-4VdjaSAQnahC1whweG6Z90FTqHf0EHnayM3ChCoXozdPAsAWH7rR9bwyTqe_uhEVIM_oHFYavhUilvyYk2wdPRhSLLqHWE03hzbUWxN_2FmrXLqRK3hXZgiz9aQDU0g"
-    let identifier='8258801898731'
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+      /**
+     * HTTPS REQUEST (START)
+     */
+      const request = require('request');
+      const HTTPS_ENDPOIN =`https://${PROXY_HTTPS}${API_GET_SERVICES_AS_PATH}${service_id}`;
 
-    let API_BODY= {
-       "namespace": "citizen_id",
-       "identifier":identifier,
-       "min_ial": 2.1,
-       "min_aal": 2.1
-     }
-
-    /**
-       * HTTPS REQUEST
-       */
-      var options = {
-        host: PROXY_HTTPS,
-        path:API_GET_PROVIDERS_PATH +`?token=${token}` ,
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          // 'Content-Length': API_BODY.length
-        },
+      var propertiesObject = {
+        "token":token,
       };
 
+      request({url:HTTPS_ENDPOIN, qs:propertiesObject}, function(err, response, body) {
+      logger.info(response.body.url);
+      if(err) {
+        logger.error(err);
+        reject(err);
+      }else{
+        logger.info(body);
+        resolve(body)
+      }
+    });
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  });
+
+}
+
+function fnGetServices(token){
+
+  return new Promise(function(resolve, reject) {
+
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+      /**
+     * HTTPS REQUEST (START)
+     */
+      const request = require('request');
+      const HTTPS_ENDPOIN =`https://${PROXY_HTTPS}${API_GET_SERVICES_PATH}`;
 
-      const request = https.request(options,(res) => {
+      var propertiesObject = {
+        "token":token,
+      };
+
+      request({url:HTTPS_ENDPOIN, qs:propertiesObject}, function(err, response, body) {
+      logger.info(response.body.url);
+      if(err) {
+        logger.error(err);
+        reject(err);
+      }else{
+        logger.info(body);
+        resolve(body)
+      }
+    });
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  });
+
+}
 
 
-        var _chunk="";
+function fnGetProviders(token,identifier,namespace,min_ial,min_aal){
 
-        // res.setEncoding('utf8');
+  return new Promise(function(resolve, reject) {
 
-        res.on('data', (chunk) => {
-          _chunk=_chunk.concat(chunk);
-        });
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+      /**
+     * HTTPS REQUEST (START)
+     */
+      const request = require('request');
+      const HTTPS_ENDPOIN =`https://${PROXY_HTTPS}${API_GET_PROVIDERS_PATH}`;
 
-        res.on('end', () => {
-          console.log("END>>" + JSON.stringify(_chunk));
-          logger.info(_chunk);
-          resolve(_chunk);
-        });
+      var propertiesObject = {
+        "token":token,
+        "namespace": namespace,
+        "identifier":identifier,
+        "min_ial": min_ial,
+        "min_aal": min_aal
+      };
 
-      });
-
-      request.on('error', (e) => {
-        console.log("ERROR>>" + JSON.stringify(e));
-        reject(e);
-      });
-
-      // Write data to request body
-      logger.info(JSON.stringify(API_BODY));
-
-      request.write(API_BODY);
-      request.end();
-
+      request({url:HTTPS_ENDPOIN, qs:propertiesObject}, function(err, response, body) {
+      logger.info(response.body.url);
+      if(err) {
+        logger.error(err);
+        reject(err);
+      }else{
+        logger.info(body);
+        resolve(body)
+      }
+    });
     /**
      * HTTPS REQUEST (END)
      */

@@ -7,6 +7,8 @@ const proxyController = require('../controllers/proxy')
 router.post("/callback", proxyController.callback);
 
 router.post("/authtoken", proxyController.ProxyAuthtoken);
-router.get("/providers", proxyController.ProxyProviders);
+router.post("/providers", proxyController.ProxyProviders);
+router.post("/services", proxyController.ProxyServices);
+router.post("/serviceAs", proxyController.ProxyServiceAs);
 
 module.exports = router;

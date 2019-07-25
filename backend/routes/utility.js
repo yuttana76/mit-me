@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.post("/autoGenPwd",utilityController.autoGeneratePassword);
 
+router.post("/regisToMail",utilityController.regisToMail);
+
 module.exports = router;

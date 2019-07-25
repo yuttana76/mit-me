@@ -62,11 +62,11 @@
             </mat-form-field>
 
             <mat-form-field class="col-md-6">
-                <input matInput placeholder="Issue date" formControlName="dob" [(ngModel)]="openAccount.cardIssueDate"  >
+                <input matInput placeholder="Issue date" formControlName="cardIssueDate" [(ngModel)]="openAccount.cardIssueDate"  >
             </mat-form-field>
 
             <mat-form-field class="col-md-6">
-                <input matInput placeholder="Expire date" formControlName="dob" [(ngModel)]="openAccount.cardExpDate"  >
+                <input matInput placeholder="Expire date" formControlName="cardExpDate" [(ngModel)]="openAccount.cardExpDate"  >
             </mat-form-field>
 
             <mat-form-field class="col-md-6">
@@ -75,7 +75,7 @@
 
             <div>
                 <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
-                <button type="button" class="btn btn-success" matStepperNext >Next</button>
+                <button type="button" class="btn btn-success" matStepperNext (click)="onFillFormClick()" >Next</button>
             </div>
           </form>
 
@@ -87,7 +87,7 @@
           You are now done.
           <div>
               <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
-              <button type="button" class="btn btn-success" matStepperNext >Submit</button>
+              <button type="button" class="btn btn-success" matStepperNext (click)="onSubmit()">Submit</button>
           </div>
         </mat-step>
       </mat-horizontal-stepper>

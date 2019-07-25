@@ -61,6 +61,7 @@ import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-in
 import { LedMasDetailComponent } from './dialog/led-mas-detail/led-mas-detail.component';
 import { LedReqStatusPipeComponent } from './pipe/led-req-status-pipe/led-req-status-pipe.component';
 import { OpenAccountComponent } from './open-account/open-account.component';
+import { SetRegistrationComponent } from './set-registration/set-registration.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -130,6 +131,7 @@ import { OpenAccountComponent } from './open-account/open-account.component';
     LedMasDetailComponent,
     LedReqStatusPipeComponent,
     OpenAccountComponent,
+    SetRegistrationComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

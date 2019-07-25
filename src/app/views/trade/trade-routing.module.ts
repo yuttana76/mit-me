@@ -24,6 +24,7 @@ import { LedDetailComponent } from './led-detail/led-detail.component';
 import { LedInspResultComponent } from './led-insp-result/led-insp-result.component';
 import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-insp-cust-detail.component';
 import { OpenAccountComponent } from './open-account/open-account.component';
+import { SetRegistrationComponent } from './set-registration/set-registration.component';
 
 const routes: Routes = [
 
@@ -238,6 +239,13 @@ const routes: Routes = [
         component: OpenAccountComponent,
         data: {
           title: 'Open account'
+        }
+      },
+      {
+        path: 'set-regis',
+        component: SetRegistrationComponent,
+        data: {
+          title: 'Streaming For Fund registration'
         }
       },
 

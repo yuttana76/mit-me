@@ -108,15 +108,16 @@ exports.regisToMail = (req,res,next)=>{
   const surName = req.body.surName;
   const phone = req.body.phone;
   const email = req.body.email;
+  const description = req.body.description || '';
 
-  regisToMail(name,surName,phone,email).then(result=>{
+  regisToMail(name,surName,phone,email,description).then(result=>{
     res.status(200).json(result);
   },err=>{
     res.status(401).json(err);
   });
 }
 
-function regisToMail(name,surName,phone,email){
+function regisToMail(name,surName,phone,email,description){
   console.log("Welcome Function regisToMail()");
   let _msgHtml = `
   <html>
@@ -152,6 +153,9 @@ function regisToMail(name,surName,phone,email){
           <p>
           <B>Email:</B> ${email}
           </p>
+          <p>
+          <B>Description:</B> ${description}
+          </p>
         </div>
           `;
 
@@ -164,8 +168,8 @@ function regisToMail(name,surName,phone,email){
 
     let mailOptions = {
       from: mailConfig.mail_it,
-      // to: mailConfig.mail_wealthservice,
-      to: 'yuttana@merchantasset.co.th',
+      to: mailConfig.mail_wealthservice,
+      // to: 'yuttana@merchantasset.co.th',
       subject: "Streaming For Fund registration",
       html: _msgHtml
     };

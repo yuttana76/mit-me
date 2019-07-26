@@ -21,7 +21,7 @@ exports.MPAM_MailParameters = {
   }
 
   exports.mail_form ='wealthservice@merchantasset.co.th';
-  exports.mail_wealthservice ='wealthservice@merchantasset.co.th,yuttana@merchantasset.co.th';
+  exports.mail_wealthservice ='wealthservice@merchantasset.co.th,yuttana@merchantasset.co.th,nuthatai@merchantasset.co.th';
   exports.mail_it ='it@merchantasset.co.th';
 
 

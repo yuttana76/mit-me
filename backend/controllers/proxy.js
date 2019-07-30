@@ -118,7 +118,8 @@ function fnIdverify(token,namespace,identifier,request_message,idp_id_list,min_i
       /**
        * HTTPS REQUEST
        */
-       var postData={
+
+       var postData=JSON.stringify({
         "namespace": namespace,
         "identifier": identifier,
         "request_message": request_message,
@@ -129,31 +130,27 @@ function fnIdverify(token,namespace,identifier,request_message,idp_id_list,min_i
         "callback_url": callback_url,
         "mode": mode,
         "bypass_identity_check": bypass_identity_check
-       }
+      })
 
       var options = {
-        token:token,
         host: PROXY_HTTPS,
-        path:API_POST_IDEN_VERIFY_PATH,
+        path:'/ndidproxy/api/identity/verify',
         method: "POST",
         timeout: 10000,
         headers: {
           "Content-Type": "application/json",
+          'Content-Length': postData.length,
+          token:token,
         },
       };
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
-console.log("STEP 2")
+      console.log("STEP 2")
       const request = https.request(options,(res) => {
 
-        console.log("statusCode: ", res.statusCode);
-        console.log("headers: ", res.headers);
-
-        console.log("STEP 2.1")
         var _chunk="";
         res.setEncoding('utf8');
         res.on('data', (chunk) => {
-          console.log("RESULT 1 >>" + chunk);
           _chunk=_chunk.concat(chunk);
         });
 
@@ -163,16 +160,16 @@ console.log("STEP 2")
 
           resolve(_chunk);
         });
+
       });
 
       request.on('error', (e) => {
-        // console.log('HTTP ERR>>' + e);
+        console.log('HTTP ERR>>' + e);
         reject(e);
       });
 
       // Write data to request body
-      logger.info(JSON.stringify(postData));
-
+      logger.info(postData);
       request.write(postData);
       request.end();
     /**
@@ -334,7 +331,7 @@ function fnAuthtoken(){
           });
 
           res.on('end', () => {
-            // console.log("RESULT >>" + _chunk);
+            console.log("RESULT >>" + _chunk);
             logger.info(_chunk);
 
             resolve(_chunk);
@@ -342,7 +339,7 @@ function fnAuthtoken(){
         });
 
         request.on('error', (e) => {
-          // console.log('HTTP ERR>>' + e);
+          console.log('HTTP ERR>>' + e);
           reject(e);
         });
 

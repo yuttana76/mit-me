@@ -168,8 +168,8 @@ function regisToMail(name,surName,phone,email,description){
 
     let mailOptions = {
       from: mailConfig.mail_it,
-      to: mailConfig.mail_wealthservice,
-      // to: 'yuttana@merchantasset.co.th',
+      // to: mailConfig.mail_wealthservice,
+      to: 'yuttana@merchantasset.co.th',
       subject: "Streaming For Fund registration",
       html: _msgHtml
     };

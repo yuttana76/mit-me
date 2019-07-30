@@ -62,6 +62,7 @@ import { LedMasDetailComponent } from './dialog/led-mas-detail/led-mas-detail.co
 import { LedReqStatusPipeComponent } from './pipe/led-req-status-pipe/led-req-status-pipe.component';
 import { OpenAccountComponent } from './open-account/open-account.component';
 import { SetRegistrationComponent } from './set-registration/set-registration.component';
+import { RecaptchaModule } from 'angular-google-recaptcha';
 @NgModule({
   imports: [
     CommonModule,
@@ -76,7 +77,11 @@ import { SetRegistrationComponent } from './set-registration/set-registration.co
       useFactory: adapterFactory
     }),
     ChartsModule,
-    TabsModule.forRoot()
+    TabsModule.forRoot(),
+    ReactiveFormsModule,
+    RecaptchaModule.forRoot({
+        siteKey: '6LeupK8UAAAAAECl56nM-7H1Q1L_q1kF6rEN-yxy',
+    }),
   ],
   declarations: [
     SummaryRepComponent,

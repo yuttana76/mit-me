@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { RegisterModel } from '../model/sitRegister.model';
@@ -18,6 +18,7 @@ export class SetRegistrationComponent implements OnInit {
   isLinear = true;
   fillFormGroup: FormGroup;
   register = new RegisterModel();
+  myRecaptcha = new FormControl(false);
 
   dismissibleAlert = true;
   submitSuccess = false;
@@ -43,6 +44,8 @@ export class SetRegistrationComponent implements OnInit {
     private confirmationDialogService: ConfirmationDialogService,
     private utilService: UtilService
     ) {}
+
+
 
   ngOnInit() {
 
@@ -92,5 +95,14 @@ export class SetRegistrationComponent implements OnInit {
 
     }
   }
+
+
+  onScriptLoad() {
+    console.log('Google reCAPTCHA loaded and is ready for use!')
+}
+
+onScriptError() {
+    console.log('Something went long when loading the Google reCAPTCHA')
+}
 
 }

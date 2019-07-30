@@ -43,7 +43,7 @@ import { AppRoutingModule } from './app.routing';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 // import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ChartsModule } from 'ng2-charts/ng2-charts';
-import {FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AuthInterceptor } from './views/services/auth/auth-interceptor';
 import { ErrorInterceptor } from './error-interceptor';
@@ -53,6 +53,8 @@ import { SuitComponent } from './views/trade/suit/suit.component';
 import { SuitTreeViewComponent } from './views/trade/suit-tree-view/suit-tree-view.component';
 import { TradeModule } from './views/trade/trade.module';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+
+import { RecaptchaModule } from 'angular-google-recaptcha';
 
 @NgModule({
   imports: [

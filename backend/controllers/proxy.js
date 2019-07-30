@@ -13,6 +13,7 @@ var logger = require("../config/winston");
 
 const HTTPS ='https://';
 const PROXY_HTTPS = "ndidproxydev.finnet.co.th";
+
 const API_AUTH_TOKEN_PATH = "/api/auth/token";
 const API_GET_PROVIDERS_PATH = "/ndidproxy/api/identity/providers";
 const API_GET_SERVICES_PATH = "/ndidproxy/api/services";
@@ -70,7 +71,7 @@ exports.ProxyServices = (req, res, next) => {
 }
 
 exports.ProxyServiceAs = (req, res, next) => {
-  logger.info("Welcome API /serviceAs");
+  logger.info("Welcome API /as/service");
 
   const token = req.body.token;
   const service_id = req.body.service_id;
@@ -83,7 +84,106 @@ exports.ProxyServiceAs = (req, res, next) => {
 }
 
 
+exports.Idverify = (req, res, next) => {
+  logger.info("Welcome API /identity/verify");
+
+  const token = req.body.token || '';
+  const namespace = req.body.namespace || '';
+  const identifier = req.body.identifier || '';
+  const request_message = req.body.request_message || '';
+  const idp_id_list = req.body.idp_id_list || '' ;
+  const min_idp = req.body.min_idp || '';
+  const min_aal = req.body.min_aal || '';
+  const min_ial = req.body.min_ial || '';
+  const mode = req.body.mode || '';
+  const callback_url = req.body.callback_url || '';
+  const bypass_identity_check = req.body.bypass_identity_check ||'';
+
+  fnIdverify(token,namespace,identifier,request_message,idp_id_list,min_idp,min_aal,min_ial,mode,callback_url,bypass_identity_check).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+}
+
 // **********************FUNCTIONs
+function fnIdverify(token,namespace,identifier,request_message,idp_id_list,min_idp,min_aal,min_ial,mode,callback_url,bypass_identity_check){
+
+  logger.info("Welcome fnIdverify()");
+
+  return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      /**
+       * HTTPS REQUEST
+       */
+       var postData={
+        "namespace": namespace,
+        "identifier": identifier,
+        "request_message": request_message,
+        "idp_id_list": idp_id_list,
+        "min_ial": min_ial,
+        "min_aal": min_aal,
+        "min_idp": min_idp,
+        "callback_url": callback_url,
+        "mode": mode,
+        "bypass_identity_check": bypass_identity_check
+       }
+
+      var options = {
+        token:token,
+        host: PROXY_HTTPS,
+        path:API_POST_IDEN_VERIFY_PATH,
+        method: "POST",
+        timeout: 10000,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+console.log("STEP 2")
+      const request = https.request(options,(res) => {
+
+        console.log("statusCode: ", res.statusCode);
+        console.log("headers: ", res.headers);
+
+        console.log("STEP 2.1")
+        var _chunk="";
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          console.log("RESULT 1 >>" + chunk);
+          _chunk=_chunk.concat(chunk);
+        });
+
+        res.on('end', () => {
+          console.log("RESULT 2 >>" + _chunk);
+          logger.info(JSON.stringify(_chunk));
+
+          resolve(_chunk);
+        });
+      });
+
+      request.on('error', (e) => {
+        // console.log('HTTP ERR>>' + e);
+        reject(e);
+      });
+
+      // Write data to request body
+      logger.info(JSON.stringify(postData));
+
+      request.write(postData);
+      request.end();
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  });
+
+}
+
+
 function fnGetServicesAS(token,service_id){
 
   return new Promise(function(resolve, reject) {
@@ -145,7 +245,6 @@ function fnGetServices(token){
     /**
      * HTTPS REQUEST (END)
      */
-
   });
 
 }

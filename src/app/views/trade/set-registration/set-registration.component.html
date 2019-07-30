@@ -4,7 +4,6 @@
 
   <div class="row">
     <div class="col-md-6 mx-auto">
-
         <div *ngFor="let alert of alerts">
             <alert [type]="alert.type"  [dismissible]="dismissibleAlert"  (onClosed)="onClosedAlert(alert)">{{ alert.msg }}</alert>
         </div>
@@ -41,6 +40,13 @@
                     <textarea matInput placeholder="Leave a comment" formControlName="description" [(ngModel)]="register.description" ></textarea>
                 </mat-form-field>
 
+                <div>
+                    <recaptcha
+                    [formControl]="myRecaptcha"
+                    (scriptLoad)="onScriptLoad()"
+                    (scriptError)="onScriptError()"
+                  ></recaptcha>
+                </div>
             <div>
                 <button type="button" class="btn btn-success" (click)="onSubmit()" >Submit</button>
             </div>
@@ -48,32 +54,32 @@
           </form>
           </mat-card>
         </div>
-
-        <!-- Final step -->
-          <div *ngIf="submitSuccess">
-              <!-- <alert type="info">
-                  <h4 class="alert-heading">Thank you.</h4>
-                </alert> -->
-                <mat-card class="example-card">
-                    <!-- <mat-card-header>
-                      <div mat-card-avatar class="example-header-image"></div>
-                      <mat-card-title>Shiba Inu</mat-card-title>
-                      <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-                    </mat-card-header> -->
-                    <img mat-card-image src="assets/img/mpam/ST2.jpg" alt="Photo of a Shiba Inu">
-                    <mat-card-content>
-                      <h3>Thank you</h3>
-                      <!-- <p>
-                        Thank you
-                      </p> -->
-                    </mat-card-content>
-                    <!-- <mat-card-actions>
-                      <button mat-button  >CLOSE</button>
-                    </mat-card-actions> -->
-                  </mat-card>
-
-          </div>
-
     </div>
+
+    <!-- Final step -->
+    <div *ngIf="submitSuccess">
+        <!-- <alert type="info">
+            <h4 class="alert-heading">Thank you.</h4>
+          </alert> -->
+          <mat-card class="example-card">
+              <!-- <mat-card-header>
+                <div mat-card-avatar class="example-header-image"></div>
+                <mat-card-title>Shiba Inu</mat-card-title>
+                <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+              </mat-card-header> -->
+              <img mat-card-image src="assets/img/mpam/AW_11SET-App.jpg" alt="Photo of a Shiba Inu">
+              <mat-card-content>
+                <h3>Thank you</h3>
+                <!-- <p>
+                  Thank you
+                </p> -->
+              </mat-card-content>
+              <!-- <mat-card-actions>
+                <button mat-button  >CLOSE</button>
+              </mat-card-actions> -->
+            </mat-card>
+    </div>
+
+
   </div>
 </div>

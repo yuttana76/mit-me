@@ -14,5 +14,8 @@ router.post("/identity/verify", proxyController.IdVerify);
 router.post("/identity/verifyStatus", proxyController.IdVerifyStatus);
 
 router.post("/identity/verify-and-request-data", proxyController.IdVerifyRequestData);
+router.post("/identity/verify-and-request-data/data", proxyController.IdVerifyRequestDataGETdata);
+
+router.post("/identity/verify-and-request-data/request-data-removal", proxyController.IdVerifyRequestDataRemoval);
 
 module.exports = router;

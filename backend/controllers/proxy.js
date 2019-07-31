@@ -20,6 +20,8 @@ const API_GET_SERVICES_PATH = "/ndidproxy/api/services";
 const API_GET_SERVICES_AS_PATH = "/ndidproxy/api/as/";
 const API_POST_IDEN_VERIFY_PATH = "/ndidproxy/api/identity/verify/";
 const API_POST_IDEN_VERIFY_REQDATA_PATH = "/ndidproxy/api/identity/verify-and-request-data/";
+const API_POST_IDEN_VERIFY_REQDATA_GETDATA_PATH = "/ndidproxy/api/identity/verify-and-request-data/data/";
+const API_POST_IDEN_VERIFY_REQDATA_REMOVAL_PATH = "/ndidproxy/api/identity/verify-and-request-data/request-data-removal/";
 
 exports.callback = (req, res, next) => {
 
@@ -136,16 +138,13 @@ exports.IdVerifyRequestData = (req, res, next) => {
   const min_aal = req.body.min_aal || '';
   const min_ial = req.body.min_ial || '';
   const mode = req.body.mode || '';
+  const bypass_identity_check = req.body.bypass_identity_check || '';
   const callback_url = req.body.callback_url || '';
-  const bypass_identity_check = req.body.bypass_identity_check ||'';
 
-  const service_id = req.body.service_id ||'';
-  const as_id_list = req.body.as_id_list ||'';
-  const min_as = req.body.min_as ||'';
-  const request_params = req.body.request_params ||'';
+  const data_request_list = req.body.data_request_list;
 
-  fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id_list,min_idp,min_aal,min_ial,mode,callback_url,bypass_identity_check
-    ,service_id,as_id_list,min_as,request_params).then(result=>{
+  fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id_list,min_idp,min_aal,min_ial,mode,bypass_identity_check,callback_url
+    ,data_request_list).then(result=>{
 
     res.status(200).json(result);
   },err=>{
@@ -153,12 +152,132 @@ exports.IdVerifyRequestData = (req, res, next) => {
   });
 }
 
+exports.IdVerifyRequestDataGETdata = (req, res, next) => {
+  logger.info("Welcome API /identity/verify-and-request-data/data");
+
+  const token = req.body.token || '';
+  const reference_id = req.body.reference_id || '';
+
+
+  fnIdVerifyRequestDataGETdata(token,reference_id).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+}
+
+
+exports.IdVerifyRequestDataRemoval = (req, res, next) => {
+  logger.info("Welcome API /identity/verify-and-request-data/request-data-removal");
+
+  const token = req.body.token || '';
+  const reference_id = req.body.reference_id || '';
+
+  fnIdVerifyRequestDataRemoval(token,reference_id).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+}
+
+
 // **********************FUNCTIONs
 
+// POST
+function fnIdVerifyRequestDataRemoval(token,reference_id){
+
+  return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      /**
+       * HTTPS REQUEST
+       */
+       var postData=JSON.stringify({
+      })
+
+      var options = {
+        host: PROXY_HTTPS,
+        path:API_POST_IDEN_VERIFY_REQDATA_REMOVAL_PATH +reference_id+'?token='+token,
+        method: "POST",
+        timeout: 10000,
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Length': postData.length
+        },
+      };
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      const request = https.request(options,(res) => {
+
+        var _chunk="";
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          console.log('ON DATA>' + chunk);
+          _chunk=_chunk.concat(chunk);
+        });
+
+        res.on('end', () => {
+          logger.info(JSON.stringify(_chunk));
+          console.log('ON END>' + _chunk);
+          resolve(_chunk);
+        });
+
+      });
+
+      request.on('error', (e) => {
+        reject(e);
+      });
+
+      // Write data to request body
+      logger.info(`POST DATA>>${postData}`);
+      request.write(postData);
+      request.end();
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  });
+}
+
+// GET
+function fnIdVerifyRequestDataGETdata(token,reference_id){
+
+  return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+      /**
+     * HTTPS REQUEST (START)
+     */
+      const request = require('request');
+      const HTTPS_ENDPOIN =`https://${PROXY_HTTPS}${API_POST_IDEN_VERIFY_REQDATA_GETDATA_PATH}${reference_id}`;
+
+      var propertiesObject = {
+        "token":token,
+      };
+
+      request({url:HTTPS_ENDPOIN, qs:propertiesObject}, function(err, response, body) {
+      logger.info(response.body.url);
+      if(err) {
+        logger.error(err);
+        reject(err);
+      }else{
+        logger.info(body);
+        resolve(body)
+      }
+    });
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  });
+
+}
 
 
-function fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id_list,min_idp,min_aal,min_ial,mode,callback_url,bypass_identity_check,
-  service_id,as_id_list,min_as,request_params){
+// POST
+function fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id_list,min_idp,min_aal,min_ial,mode,bypass_identity_check,callback_url,
+  data_request_list){
 
   logger.info("Welcome fnIdVerifyRequestData()");
 
@@ -180,15 +299,8 @@ function fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id
             "min_idp": min_idp,
             "callback_url":callback_url,
             "mode": mode,
-            "bypass_identity_check":bypass_identity_check,
-            "data_request_list": [
-              {
-                "service_id": service_id,
-                "as_id_list": as_id_list,
-                "min_as": min_as,
-                "request_params": request_params
-              }
-            ]
+            "bypass_identity_check": bypass_identity_check,
+            "data_request_list": data_request_list
       })
 
       var options = {
@@ -225,7 +337,7 @@ function fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id
       });
 
       // Write data to request body
-      logger.info(postData);
+      logger.info(`POST DATA>>${postData}`);
       request.write(postData);
       request.end();
     /**
@@ -236,7 +348,7 @@ function fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id
 
 }
 
-
+// GET
 function fnIdVerifyStatus(token,reference_id){
 
   return new Promise(function(resolve, reject) {

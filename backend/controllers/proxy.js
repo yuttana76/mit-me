@@ -18,8 +18,8 @@ const API_AUTH_TOKEN_PATH = "/api/auth/token";
 const API_GET_PROVIDERS_PATH = "/ndidproxy/api/identity/providers";
 const API_GET_SERVICES_PATH = "/ndidproxy/api/services";
 const API_GET_SERVICES_AS_PATH = "/ndidproxy/api/as/";
-const API_POST_IDEN_VERIFY_PATH = "/ndidproxy/api/identity/verify";
-
+const API_POST_IDEN_VERIFY_PATH = "/ndidproxy/api/identity/verify/";
+const API_POST_IDEN_VERIFY_REQDATA_PATH = "/ndidproxy/api/identity/verify-and-request-data/";
 
 exports.callback = (req, res, next) => {
 
@@ -84,7 +84,7 @@ exports.ProxyServiceAs = (req, res, next) => {
 }
 
 
-exports.Idverify = (req, res, next) => {
+exports.IdVerify = (req, res, next) => {
   logger.info("Welcome API /identity/verify");
 
   const token = req.body.token || '';
@@ -106,7 +106,171 @@ exports.Idverify = (req, res, next) => {
   });
 }
 
+
+exports.IdVerifyStatus = (req, res, next) => {
+  logger.info("Welcome API GET /identity/verifyStatus");
+
+  const token = req.body.token;
+  const reference_id = req.body.reference_id;
+
+  fnIdVerifyStatus(token,reference_id).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+
+}
+
+
+
+
+exports.IdVerifyRequestData = (req, res, next) => {
+  logger.info("Welcome API /identity/verify-and-request-data");
+
+  const token = req.body.token || '';
+  const namespace = req.body.namespace || '';
+  const identifier = req.body.identifier || '';
+  const request_message = req.body.request_message || '';
+  const idp_id_list = req.body.idp_id_list || '' ;
+  const min_idp = req.body.min_idp || '';
+  const min_aal = req.body.min_aal || '';
+  const min_ial = req.body.min_ial || '';
+  const mode = req.body.mode || '';
+  const callback_url = req.body.callback_url || '';
+  const bypass_identity_check = req.body.bypass_identity_check ||'';
+
+  const service_id = req.body.service_id ||'';
+  const as_id_list = req.body.as_id_list ||'';
+  const min_as = req.body.min_as ||'';
+  const request_params = req.body.request_params ||'';
+
+  fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id_list,min_idp,min_aal,min_ial,mode,callback_url,bypass_identity_check
+    ,service_id,as_id_list,min_as,request_params).then(result=>{
+
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+}
+
 // **********************FUNCTIONs
+
+
+
+function fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id_list,min_idp,min_aal,min_ial,mode,callback_url,bypass_identity_check,
+  service_id,as_id_list,min_as,request_params){
+
+  logger.info("Welcome fnIdVerifyRequestData()");
+
+  return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      /**
+       * HTTPS REQUEST
+       */
+
+       var postData=JSON.stringify({
+            "namespace": namespace,
+            "identifier": identifier,
+            "request_message": request_message,
+            "idp_id_list": idp_id_list,
+            "min_ial": min_ial,
+            "min_aal": min_aal,
+            "min_idp": min_idp,
+            "callback_url":callback_url,
+            "mode": mode,
+            "bypass_identity_check":bypass_identity_check,
+            "data_request_list": [
+              {
+                "service_id": service_id,
+                "as_id_list": as_id_list,
+                "min_as": min_as,
+                "request_params": request_params
+              }
+            ]
+      })
+
+      var options = {
+        host: PROXY_HTTPS,
+        path:API_POST_IDEN_VERIFY_REQDATA_PATH +'?token='+token,
+        method: "POST",
+        timeout: 10000,
+        headers: {
+          "Content-Type": "application/json",
+          'Content-Length': postData.length,
+          "X-Auth-Token":token,
+        },
+      };
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      const request = https.request(options,(res) => {
+
+        var _chunk="";
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          _chunk=_chunk.concat(chunk);
+        });
+
+        res.on('end', () => {
+          logger.info(JSON.stringify(_chunk));
+
+          resolve(_chunk);
+        });
+
+      });
+
+      request.on('error', (e) => {
+        reject(e);
+      });
+
+      // Write data to request body
+      logger.info(postData);
+      request.write(postData);
+      request.end();
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  });
+
+}
+
+
+function fnIdVerifyStatus(token,reference_id){
+
+  return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+      /**
+     * HTTPS REQUEST (START)
+     */
+      const request = require('request');
+      const HTTPS_ENDPOIN =`https://${PROXY_HTTPS}${API_POST_IDEN_VERIFY_PATH}${reference_id}`;
+
+      var propertiesObject = {
+        "token":token,
+      };
+
+      request({url:HTTPS_ENDPOIN, qs:propertiesObject}, function(err, response, body) {
+      logger.info(response.body.url);
+      if(err) {
+        logger.error(err);
+        reject(err);
+      }else{
+        logger.info(body);
+        resolve(body)
+      }
+    });
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  });
+
+}
+
+
 function fnIdverify(token,namespace,identifier,request_message,idp_id_list,min_idp,min_aal,min_ial,mode,callback_url,bypass_identity_check){
 
   logger.info("Welcome fnIdverify()");
@@ -129,18 +293,18 @@ function fnIdverify(token,namespace,identifier,request_message,idp_id_list,min_i
         "min_idp": min_idp,
         "callback_url": callback_url,
         "mode": mode,
-        "bypass_identity_check": bypass_identity_check
+        // "bypass_identity_check": bypass_identity_check
       })
 
       var options = {
         host: PROXY_HTTPS,
-        path:'/ndidproxy/api/identity/verify',
+        path:API_POST_IDEN_VERIFY_PATH +'?token='+token,
         method: "POST",
         timeout: 10000,
         headers: {
           "Content-Type": "application/json",
           'Content-Length': postData.length,
-          token:token,
+          "X-Auth-Token":token,
         },
       };
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
@@ -155,7 +319,6 @@ function fnIdverify(token,namespace,identifier,request_message,idp_id_list,min_i
         });
 
         res.on('end', () => {
-          console.log("RESULT 2 >>" + _chunk);
           logger.info(JSON.stringify(_chunk));
 
           resolve(_chunk);
@@ -164,7 +327,6 @@ function fnIdverify(token,namespace,identifier,request_message,idp_id_list,min_i
       });
 
       request.on('error', (e) => {
-        console.log('HTTP ERR>>' + e);
         reject(e);
       });
 

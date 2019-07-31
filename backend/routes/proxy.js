@@ -10,6 +10,9 @@ router.post("/authtoken", proxyController.ProxyAuthtoken);
 router.post("/providers", proxyController.ProxyProviders);
 router.post("/services", proxyController.ProxyServices);
 router.post("/as/service", proxyController.ProxyServiceAs);
-router.post("/identity/verify", proxyController.Idverify);
+router.post("/identity/verify", proxyController.IdVerify);
+router.post("/identity/verifyStatus", proxyController.IdVerifyStatus);
+
+router.post("/identity/verify-and-request-data", proxyController.IdVerifyRequestData);
 
 module.exports = router;

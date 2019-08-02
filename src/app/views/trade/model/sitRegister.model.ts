@@ -3,6 +3,7 @@ export class RegisterModel {
   lastName: string;
   mobile: string;
   email: string;
+  lineId: string;
   description: string;
 
   constructor() {}

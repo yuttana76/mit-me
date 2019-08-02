@@ -63,6 +63,7 @@ import { LedReqStatusPipeComponent } from './pipe/led-req-status-pipe/led-req-st
 import { OpenAccountComponent } from './open-account/open-account.component';
 import { SetRegistrationComponent } from './set-registration/set-registration.component';
 import { RecaptchaModule } from 'angular-google-recaptcha';
+import { NdidProxyComponent } from './ndid-proxy/ndid-proxy.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -137,6 +138,7 @@ import { RecaptchaModule } from 'angular-google-recaptcha';
     LedReqStatusPipeComponent,
     OpenAccountComponent,
     SetRegistrationComponent,
+    NdidProxyComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

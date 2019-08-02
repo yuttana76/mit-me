@@ -68,7 +68,10 @@ export class OpenAccountComponent implements OnInit {
         });
       }
     });
+  }
 
+  ndidDone(currentAcc){
+    console.log("NDID DATA>>" + JSON.stringify(currentAcc));
 
   }
 

@@ -1,3 +1,63 @@
 .DIV_SET_REG{
   margin-top: 5px;
 }
+
+.lineQR_img {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  width: 80px;
+
+  margin-top: 15px;
+  margin-left: 10px;
+}
+
+
+body {margin:25px;}
+
+div.polaroid {
+  width: 80%;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin-bottom: 25px;
+}
+
+div.container {
+  text-align: center;
+  padding: 10px 20px;
+}
+
+/* small desktop */
+@media all and (max-width: 1200px) {
+  .finalImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 50%;
+  }
+}
+
+/* tablet */
+@media all and (max-width: 1024px) {
+  .finalImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: auto;
+  }
+}
+
+/* mobile phone */
+@media all and (max-width: 768px) {
+  .finalImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: auto;
+  }
+}
+
+.divSameLine {
+  display:inline;
+  margin-top: 5px;
+}

@@ -262,7 +262,8 @@ function fnIdVerifyRequestDataGETdata(token,reference_id){
         logger.error(err);
         reject(err);
       }else{
-        logger.info(body);
+        // logger.info(body);
+        logger.info(JSON.stringify(body));
         resolve(body)
       }
     });
@@ -365,7 +366,7 @@ function fnIdVerifyStatus(token,reference_id){
       };
 
       request({url:HTTPS_ENDPOIN, qs:propertiesObject}, function(err, response, body) {
-      logger.info(response.body.url);
+      // logger.info(response.body.url);
       if(err) {
         logger.error(err);
         reject(err);
@@ -540,14 +541,16 @@ function fnGetProviders(token,identifier,namespace,min_ial,min_aal){
         "min_aal": min_aal
       };
 
+      logger.info('POSTDATA>'+JSON.stringify(propertiesObject));
+
       request({url:HTTPS_ENDPOIN, qs:propertiesObject}, function(err, response, body) {
-      logger.info(response.body.url);
+      // logger.info(response.body.url);
       if(err) {
         logger.error(err);
         reject(err);
       }else{
         logger.info(body);
-        resolve(body)
+        resolve(body);
       }
     });
     /**

@@ -108,16 +108,17 @@ exports.regisToMail = (req,res,next)=>{
   const surName = req.body.surName;
   const phone = req.body.phone;
   const email = req.body.email;
+  const lineId = req.body.lineId;
   const description = req.body.description || '';
 
-  regisToMail(name,surName,phone,email,description).then(result=>{
+  regisToMail(name,surName,phone,email,lineId,description).then(result=>{
     res.status(200).json(result);
   },err=>{
     res.status(401).json(err);
   });
 }
 
-function regisToMail(name,surName,phone,email,description){
+function regisToMail(name,surName,phone,email,lineId,description){
   console.log("Welcome Function regisToMail()");
   let _msgHtml = `
   <html>
@@ -152,6 +153,9 @@ function regisToMail(name,surName,phone,email,description){
           </p>
           <p>
           <B>Email:</B> ${email}
+          </p>
+          <p>
+          <B>lineId:</B> ${lineId}
           </p>
           <p>
           <B>Description:</B> ${description}

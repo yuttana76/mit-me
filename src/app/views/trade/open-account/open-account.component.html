@@ -25,9 +25,11 @@
         <mat-step >
             <ng-template matStepLabel>Verify indentify</ng-template>
 
+            <app-ndid-proxy [currentAccount]="openAccount" (ndidDone)="ndidDone($event)" ></app-ndid-proxy>
+
             <div>
                 <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
-                <button type="button" class="btn btn-success" matStepperNext >Next</button>
+                <button  *ngIf="openAccount.firstName" type="button" class="btn btn-success" matStepperNext >Next</button>
             </div>
         </mat-step>
 

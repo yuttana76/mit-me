@@ -14,30 +14,36 @@
           <form [formGroup]="fillFormGroup">
 
                   <alert type="info">
-                      <h4 class="alert-heading">Please fill in your detail Streaming For Fund registration.</h4>
-                      <img src="assets/img/mpam/ST1.jpg" class="img-fluid" >
+                      <h4 class="alert-heading">
+                        กรอกรายละเอียดเพิ่มเติม เพื่อความสะดวกและรวดเร็วในการให้บริการ
+                      </h4>
+                      <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
                       <!-- <p>Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.</p> -->
                       <!-- <p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p> -->
                     </alert>
 
                 <mat-form-field class="col-md-12">
-                    <input matInput placeholder="First name" formControlName="firstName" [(ngModel)]="register.firstName"  >
+                    <input matInput placeholder="ชื่อ / First name" formControlName="firstName" [(ngModel)]="register.firstName"  >
                 </mat-form-field>
 
                 <mat-form-field class="col-md-12">
-                  <input matInput placeholder="Last name" formControlName="lastName" [(ngModel)]="register.lastName"  >
+                  <input matInput placeholder="นามสกุล / Last name" formControlName="lastName" [(ngModel)]="register.lastName"  >
                 </mat-form-field>
 
                 <mat-form-field class="col-md-12">
-                    <input matInput placeholder="Mobile" formControlName="mobile" [(ngModel)]="register.mobile"  >
+                    <input matInput placeholder="โทรศัพท์มือถือ / Mobile Phone" formControlName="mobile" [(ngModel)]="register.mobile"  >
                 </mat-form-field>
 
                 <mat-form-field class="col-md-12">
-                    <input matInput placeholder="Email" formControlName="email" [(ngModel)]="register.email"  >
+                    <input matInput placeholder="อีเมลล์ / Email" formControlName="email" [(ngModel)]="register.email"  >
                 </mat-form-field>
 
                 <mat-form-field class="col-md-12">
-                    <textarea matInput placeholder="Leave a comment" formControlName="description" [(ngModel)]="register.description" ></textarea>
+                    <input matInput placeholder="ไลน์ไอดี / Line ID" formControlName="lineID" [(ngModel)]="register.lineId"  >
+                </mat-form-field>
+
+                <mat-form-field class="col-md-12">
+                    <textarea matInput placeholder="ฝากข้อความ / Leave a comment" formControlName="description" [(ngModel)]="register.description" ></textarea>
                 </mat-form-field>
 
                 <div>
@@ -48,7 +54,7 @@
                   ></recaptcha>
                 </div>
             <div>
-                <button type="button" class="btn btn-success" (click)="onSubmit()" >Submit</button>
+                <button type="button" class="btn btn-primary" (click)="onSubmit()" >SUBMIT</button>
             </div>
 
           </form>
@@ -58,25 +64,30 @@
 
     <!-- Final step -->
     <div *ngIf="submitSuccess">
-        <!-- <alert type="info">
-            <h4 class="alert-heading">Thank you.</h4>
-          </alert> -->
-          <mat-card class="example-card">
-              <!-- <mat-card-header>
-                <div mat-card-avatar class="example-header-image"></div>
-                <mat-card-title>Shiba Inu</mat-card-title>
-                <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-              </mat-card-header> -->
-              <img mat-card-image src="assets/img/mpam/AW_11SET-App.jpg" alt="Photo of a Shiba Inu">
+
+        <!-- <div class="polaroid">
+            <img class="finalImage" src="assets/img/mpam/AW_2fb-boost-post.jpg" alt="5 Terre" style="width:100%">
+            <div class="container">
+            <p>Cinque Terre</p>
+            </div>
+          </div> -->
+
+          <mat-card class="example-card col-md-12">
+              <!-- <img  class="img-fluid" mat-card-image src="assets/img/mpam/AW_2fb-boost-post.jpg" > -->
+                  <img  class="img-fluid finalImage" mat-card-image src="assets/img/mpam/AW_2fb-boost-post.jpg" >
               <mat-card-content>
-                <h3>Thank you</h3>
-                <!-- <p>
-                  Thank you
-                </p> -->
+                <h3>ขอขอบพระคุณลูกค้าทุกท่าน สามารถติดตามรายละเอียดเพิ่มเติมได้ที่</h3>
+                <div class="divSameLine">
+                    <i class="fas fa-2x fa-globe"></i><h4><a href="http://www.merchantasset.co.th">www.merchantasset.co.th</a></h4>
+                </div>
+                <div class="divSameLine">
+                    <i class="fas fa-2x fa-phone"></i> <h4>Wealthservice Tel. 02-6606689</h4>
+                </div>
+
+                <div class="divSameLine">
+                    <i class="fab fa-2x fa-line"></i><img class="lineQR_img" mat-card-image src="assets/img/mpam/mpamLineQR.png" alt="Photo of a Shiba Inu">
+                </div>
               </mat-card-content>
-              <!-- <mat-card-actions>
-                <button mat-button  >CLOSE</button>
-              </mat-card-actions> -->
             </mat-card>
     </div>
 

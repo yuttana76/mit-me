@@ -1,0 +1,82 @@
+<!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+  {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
+</button> -->
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<h3>ID {{currentAccount.identifier}}</h3>
+
+    <input matInput placeholder="token"  required [(ngModel)]="ndidModel.token" >
+
+
+<mat-vertical-stepper [linear]="isLinear" #stepper>
+  <!-- 1 -->
+  <mat-step [stepControl]="firstFormGroup">
+    <form [formGroup]="firstFormGroup">
+      <ng-template matStepLabel>Client get all available IdProvider <button mat-button (click)="getIdp()">REQ IDPs</button>
+        <p>{{ndidModel.idp}}</p>
+      </ng-template>
+
+      <div class='row'>
+          <mat-radio-group formControlName="firstCtrl"
+          [(ngModel)]="ndidModel.idp">
+          <mat-radio-button  *ngFor="let idp of idpList" [value]="idp">
+            {{idp.display_name_th}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <div class='row'>
+          <mat-divider></mat-divider>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+<!-- 2 -->
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Client get service list</ng-template>
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="secondCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <!-- 3 -->
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Client get AS list with service ID</ng-template>
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="secondCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <!-- 4 -->
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Client verify an identity and request data</ng-template>
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="secondCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    You are now done.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="ndidSubmit()">NDID OK</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>

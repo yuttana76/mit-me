@@ -54,6 +54,7 @@ export class SetRegistrationComponent implements OnInit {
       lastName: ['', Validators.required],
       mobile: ['', Validators.required],
       email: ['', Validators.required],
+      lineID: [''],
       description: [''],
     });
 
@@ -69,7 +70,7 @@ export class SetRegistrationComponent implements OnInit {
 
     if(this.fillFormGroup.valid){
 
-      this.utilService.regisToMailService(this.register.firstName,this.register.lastName,this.register.mobile,this.register.email,this.register.description) .subscribe(data =>{
+      this.utilService.regisToMailService(this.register.firstName,this.register.lastName,this.register.mobile,this.register.email,this.register.lineId,this.register.description) .subscribe(data =>{
         this.toastr.success("Register successful." , "Successful", {
           timeOut: 3000,
           closeButton: true,

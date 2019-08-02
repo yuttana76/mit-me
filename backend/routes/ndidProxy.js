@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
-const proxyController = require('../controllers/proxy')
+const proxyController = require('../controllers/ndidProxy')
 
 router.post("/callback", proxyController.callback);
 

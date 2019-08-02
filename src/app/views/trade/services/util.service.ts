@@ -10,7 +10,7 @@ export class UtilService {
 
   constructor(private http: HttpClient ) { }
 
-  regisToMailService(name,surName,mobile,email,description){
+  regisToMailService(name,surName,mobile,email,lineId,description){
 
     console.log(`regisToMailService() ${name};${surName};${mobile};${email} `);
 
@@ -19,6 +19,7 @@ export class UtilService {
       surName:surName,
       phone:mobile,
       email:email,
+      lineId:lineId,
       description:description
     }
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/regisToMail', data);

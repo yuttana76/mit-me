@@ -8,18 +8,18 @@
     <input matInput placeholder="token"  required [(ngModel)]="ndidModel.token" >
 
 
-<mat-vertical-stepper [linear]="isLinear" #stepper>
+<mat-vertical-stepper [linear]="isLinearStepper" #stepper>
   <!-- 1 -->
   <mat-step [stepControl]="firstFormGroup">
     <form [formGroup]="firstFormGroup">
-      <ng-template matStepLabel>Client get all available IdProvider <button mat-button (click)="getIdp()">REQ IDPs</button>
-        <p>{{ndidModel.idp}}</p>
+      <ng-template matStepLabel>Client get all available IdProvider <button mat-button (click)="getIdps()">REQ IDPs</button>
+        <p><b>{{SELIdp_display_name}}</b></p>
       </ng-template>
 
       <div class='row'>
-          <mat-radio-group formControlName="firstCtrl"
+          <mat-radio-group class="example-radio-group" formControlName="firstCtrl"
           [(ngModel)]="ndidModel.idp">
-          <mat-radio-button  *ngFor="let idp of idpList" [value]="idp">
+          <mat-radio-button class="example-radio-button" *ngFor="let idp of idpList" [value]="idp"  (change)="onIdpChange(idp)" >
             {{idp.display_name_th}}
           </mat-radio-button>
         </mat-radio-group>
@@ -34,23 +34,43 @@
 <!-- 2 -->
   <mat-step [stepControl]="secondFormGroup">
     <form [formGroup]="secondFormGroup">
-      <ng-template matStepLabel>Client get service list</ng-template>
-      <mat-form-field>
-        <input matInput placeholder="Address" formControlName="secondCtrl" required>
-      </mat-form-field>
+      <ng-template matStepLabel>Client get service list <button mat-button (click)="getServices()">REQ SERVICEs</button>
+        <p><b>{{SELService_display_name}}</b></p>
+      </ng-template>
+
+      <div class='row'>
+        <mat-radio-group class="example-radio-group" formControlName="secondCtrl"
+        [(ngModel)]="ndidModel.service" >
+        <mat-radio-button  class="example-radio-button" *ngFor="let svr of serviceList" [value]="svr"  (change)="onServiceChange(svr)" >
+          {{svr.service_name}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
       </div>
     </form>
   </mat-step>
+
   <!-- 3 -->
-  <mat-step [stepControl]="secondFormGroup">
+  <mat-step [stepControl]="thirdFormGroup">
     <form [formGroup]="secondFormGroup">
-      <ng-template matStepLabel>Client get AS list with service ID</ng-template>
-      <mat-form-field>
-        <input matInput placeholder="Address" formControlName="secondCtrl" required>
-      </mat-form-field>
+      <ng-template matStepLabel>Client get AS list with service ID
+          <button mat-button (click)="getAS()">REQ AS</button>
+          <p><b>{{SELAS_display_name}}</b></p>
+      </ng-template>
+
+      <div class='row'>
+          <mat-radio-group class="example-radio-group" formControlName="thirdCtrl"
+          [(ngModel)]="ndidModel.AS" >
+          <mat-radio-button  class="example-radio-button" *ngFor="let obj of ASList" [value]="obj"  (change)="onASChange(obj)" >
+            {{obj.node_name}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
@@ -60,10 +80,15 @@
   <!-- 4 -->
   <mat-step [stepControl]="secondFormGroup">
     <form [formGroup]="secondFormGroup">
-      <ng-template matStepLabel>Client verify an identity and request data</ng-template>
-      <mat-form-field>
-        <input matInput placeholder="Address" formControlName="secondCtrl" required>
-      </mat-form-field>
+      <ng-template matStepLabel>Client verify an identity and request data
+          <button mat-button (click)="veriReqData()">Verify & Request Data</button>
+      </ng-template>
+
+      <mat-divider></mat-divider>
+      <button mat-button (click)="getVerifyStatus()">Verify & Request Data</button>
+      <p>Verify status : <b>{{verifyStatus}}</b></p>
+      <mat-divider></mat-divider>
+
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>

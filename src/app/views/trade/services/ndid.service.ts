@@ -42,4 +42,60 @@
       }
 
 
+      getService(token){
+
+        const postData ={
+          "token":token,
+        };
+
+        return this.http.post<{data: any}>(BACKEND_URL + '/services',postData);
+      }
+
+      getAS(token,service_id){
+
+        const postData ={
+          "token":token,
+          "service_id":service_id,
+        };
+
+        return this.http.post<{data: any}>(BACKEND_URL + '/as/service',postData);
+      }
+
+      ndidVeriReqData(token,namespace,identifier,request_message,idp_id_list,min_ial,min_aal,min_idp,callback_url,mode,service_id,as_id_list,min_as,request_params){
+        const postData ={
+            "token":token,
+            "namespace": namespace,
+            "identifier": identifier,
+            "request_message": request_message,
+            "idp_id_list": idp_id_list,
+            "min_ial": min_ial,
+            "min_aal": min_aal,
+            "min_idp": min_idp,
+            "callback_url": callback_url,
+            "mode": mode,
+            "data_request_list": [
+              {
+                "service_id": service_id,
+                "as_id_list":as_id_list,
+                "min_as": min_as,
+                "request_params": request_params
+              }
+            ]
+        };
+
+        return this.http.post<{data: any}>(BACKEND_URL + '/identity/verify-and-request-data',postData);
+      }
+
+
+      getVeriStatus(token,reference_id){
+
+        const postData ={
+          "token":token,
+          "reference_id":reference_id,
+        };
+
+        return this.http.post<{data: any}>(BACKEND_URL + '/identity/verifyStatus',postData);
+      }
+
+
     }

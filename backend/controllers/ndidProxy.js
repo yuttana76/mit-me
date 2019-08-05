@@ -561,6 +561,22 @@ function fnGetProviders(token,identifier,namespace,min_ial,min_aal){
 
 }
 
+
+function ISODateString(d) {
+
+  d.setSeconds(d.getSeconds()+7);
+
+  function pad(n) {return n<10 ? '0'+n : n}
+  return d.getUTCFullYear()+'-'
+       + pad(d.getUTCMonth()+1)+'-'
+       + pad(d.getUTCDate())+'T'
+       + pad(d.getHours())+':'
+       + pad(d.getMinutes())+':'
+       + pad(d.getSeconds())
+
+}
+
+
 function fnAuthtoken(){
 
   console.log("Welcome Function authtoken()");
@@ -571,8 +587,9 @@ function fnAuthtoken(){
       let authData = fs.readFileSync(_Path, "utf8"); //ascii,utf8
       let authObj = JSON.parse(authData);
 
-      const _request_time = NOW();
-      authObj.request_time = _request_time;
+      var _newDate = new Date();
+
+      authObj.request_time = ISODateString(_newDate);
 
       let data = authObj.client_code +"|" +authObj.request_time;
 

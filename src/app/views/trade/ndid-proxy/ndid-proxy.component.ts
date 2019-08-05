@@ -5,6 +5,9 @@ import { NDIDService } from '../services/ndid.service';
 import { ToastrService } from 'ngx-toastr';
 import { ndidProxy } from '../model/ndidProxy.model';
 import { ndidIdp } from '../model/ndidIdp.model';
+import { MatRadioChange } from '@angular/material';
+import { ndidService } from '../model/ndidService.model';
+import { ndidAS } from '../model/ndidAS.model';
 
 @Component({
   selector: 'app-ndid-proxy',
@@ -14,13 +17,27 @@ import { ndidIdp } from '../model/ndidIdp.model';
 export class NdidProxyComponent implements OnInit {
 
   spinnerLoading = false;
-  isLinear = true;
+  isLinearStepper = false;
+  min_ial='2.1';
+  min_aal='2.1';
+
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
+  thirdFormGroup: FormGroup;
 
   ndidModel = new ndidProxy();
   idpList :ndidIdp[]=[];
+  serviceList :ndidService[]=[];
+  ASList :ndidAS[]=[];
+
+SELIdp_display_name ="";
+SELService_display_name ="";
+SELAS_display_name ="";
+
+verifyStatus ="";
+
+
 
   @Input() currentAccount = new OpenAccount();
   @Output() ndidDone: EventEmitter<OpenAccount> = new EventEmitter<OpenAccount>();
@@ -41,6 +58,10 @@ export class NdidProxyComponent implements OnInit {
 
     this.secondFormGroup = this._formBuilder.group({
       secondCtrl: ['', Validators.required]
+    });
+
+    this.thirdFormGroup = this._formBuilder.group({
+      thirdCtrl: ['', Validators.required]
     });
   }
 
@@ -64,19 +85,15 @@ export class NdidProxyComponent implements OnInit {
   }
 
 
-  getIdp() {
+  getIdps() {
 
     this.spinnerLoading = true;
 
-    const _min_ial='2.1';
-    const _min_aal='2.1';
     const _namespace ='citizen_id';
 
-    this.ndidService.getIdp(this.ndidModel.token,_min_ial,_min_aal,_namespace,this.currentAccount.identifier).subscribe(result=> {
+    this.ndidService.getIdp(this.ndidModel.token,this.min_ial,this.min_aal,_namespace,this.currentAccount.identifier).subscribe(result=> {
 
-      // console.log('RS1 >' + result);
       var obj = JSON.parse(`${result}`);
-
       this.idpList=obj.id_providers
 
     }, error => {
@@ -93,6 +110,118 @@ export class NdidProxyComponent implements OnInit {
   }
 
 
+  getServices() {
+
+    this.spinnerLoading = true;
+
+    this.ndidService.getService(this.ndidModel.token).subscribe(result=> {
+
+      var obj = JSON.parse(`${result}`);
+      this.serviceList=obj;
+
+    }, error => {
+      this.toastr.error("Get ID provider error." + error , "IDP error", {
+        timeOut: 3000,
+        closeButton: true,
+        positionClass: "toast-top-center"
+      });
+
+    },() =>{
+      this.spinnerLoading=false;
+    });
+
+  }
+
+
+  getAS() {
+
+    this.spinnerLoading = true;
+
+    this.ndidService.getAS(this.ndidModel.token,this.ndidModel.service.service_id).subscribe(result=> {
+
+      var obj = JSON.parse(`${result}`);
+      this.ASList=obj;
+
+    }, error => {
+      this.toastr.error("Get ID provider error." + error , "IDP error", {
+        timeOut: 3000,
+        closeButton: true,
+        positionClass: "toast-top-center"
+      });
+
+    },() =>{
+      this.spinnerLoading=false;
+    });
+
+  }
+
+
+  veriReqData() {
+
+    this.spinnerLoading = true;
+
+    // PREPARE PARAMs
+    let _idp_id_list=[];
+    _idp_id_list.push(this.ndidModel.idp.id);
+
+    let _as_id_list=[];
+    _as_id_list.push(this.ndidModel.AS.node_id);
+
+    //CALL SERVICE
+    this.ndidService.ndidVeriReqData( this.ndidModel.token
+      ,this.ndidModel.namespace,
+      this.ndidModel.identifier,
+      this.ndidModel.request_message,
+      _idp_id_list,
+      this.ndidModel.min_ial,
+      this.ndidModel.min_aal,
+      this.ndidModel.min_idp,
+      this.ndidModel.callback_url,
+      this.ndidModel.mode,
+      this.ndidModel.service.service_id,
+      _as_id_list,
+      this.ndidModel.min_as,
+      this.ndidModel.request_params).subscribe(result=> {
+
+      const obj = JSON.parse(`${result}`);
+      console.log('veriReqData()>' + JSON.stringify(obj));
+      this.ndidModel.veriReqDataRS = obj;
+
+    }, error => {
+      this.toastr.error('Get ID provider error.' + error , 'IDP error', {
+        timeOut: 3000,
+        closeButton: true,
+        positionClass: 'toast-top-center'
+      });
+
+    }, () => {
+      this.spinnerLoading = false;
+    });
+  }
+
+  getVerifyStatus() {
+
+    this.spinnerLoading = true;
+
+    this.ndidService.getVeriStatus(this.ndidModel.token,this.ndidModel.veriReqDataRS.reference_id).subscribe(result=> {
+
+      const obj = JSON.parse(`${result}`);
+      console.log('getVerifyStatus()>' + JSON.stringify(obj));
+
+    }, error => {
+      this.toastr.error('Get ID provider error.' + error , 'IDP error', {
+        timeOut: 3000,
+        closeButton: true,
+        positionClass: 'toast-top-center'
+      });
+
+    },() =>{
+      this.spinnerLoading = false;
+    });
+
+  }
+
+
   ndidSubmit() {
 
     this.currentAccount.firstName="XXX";
@@ -100,6 +229,24 @@ export class NdidProxyComponent implements OnInit {
 
     this.ndidDone.emit(this.currentAccount);
   }
+
+
+  onIdpChange(obj: ndidIdp) {
+    this.SELIdp_display_name = obj.display_name_th
+
+    console.log(JSON.stringify(this.ndidModel.idp));
+ }
+
+ onServiceChange(obj: ndidService) {
+  this.SELService_display_name = obj.service_name
+
+  console.log(JSON.stringify(this.ndidModel.service));
+}
+ onASChange(obj: ndidAS) {
+  this.SELAS_display_name = obj.node_name
+
+  console.log(JSON.stringify(this.ndidModel.AS));
+}
 
 
 }

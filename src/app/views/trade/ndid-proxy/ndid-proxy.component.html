@@ -56,7 +56,7 @@
 
   <!-- 3 -->
   <mat-step [stepControl]="thirdFormGroup">
-    <form [formGroup]="secondFormGroup">
+    <form [formGroup]="thirdFormGroup">
       <ng-template matStepLabel>Client get AS list with service ID
           <button mat-button (click)="getAS()">REQ AS</button>
           <p><b>{{SELAS_display_name}}</b></p>
@@ -64,7 +64,7 @@
 
       <div class='row'>
           <mat-radio-group class="example-radio-group" formControlName="thirdCtrl"
-          [(ngModel)]="ndidModel.AS" >
+          >
           <mat-radio-button  class="example-radio-button" *ngFor="let obj of ASList" [value]="obj"  (change)="onASChange(obj)" >
             {{obj.node_name}}
           </mat-radio-button>
@@ -78,27 +78,40 @@
     </form>
   </mat-step>
   <!-- 4 -->
-  <mat-step [stepControl]="secondFormGroup">
-    <form [formGroup]="secondFormGroup">
+  <mat-step [stepControl]="forthFormGroup">
+    <form [formGroup]="forthFormGroup">
       <ng-template matStepLabel>Client verify an identity and request data
-          <button mat-button (click)="veriReqData()">Verify & Request Data</button>
+          <p><b>{{verify_reference_id}}</b></p>
       </ng-template>
 
       <mat-divider></mat-divider>
-      <button mat-button (click)="getVerifyStatus()">Verify & Request Data</button>
-      <p>Verify status : <b>{{verifyStatus}}</b></p>
+
+      <p>Verify status : <b>{{verifyStatus_Display}}</b></p>
+      <mat-divider></mat-divider>
+
+      <input matInput placeholder="reference_id" formControlName="forthCtrl"  required [(ngModel)]="verify_reference_id" >
       <mat-divider></mat-divider>
 
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
+
+        <button mat-button (click)="veriReqData()">Verify & Request Data</button>
+        <button mat-button (click)="getVerifyStatus()">Check verify status</button>
+        <button mat-button (click)="getDataVerify()">Get DATA</button>
       </div>
+
     </form>
   </mat-step>
 
   <mat-step>
     <ng-template matStepLabel>Done</ng-template>
-    You are now done.
+
+    <p>Verify status : <b>{{verifyStatus_Display}}</b></p>
+    <button mat-button (click)="getDataVerify()">Get DATA</button>
+
+    <mat-divider></mat-divider>
+
     <div>
       <button mat-button matStepperPrevious>Back</button>
       <button mat-button (click)="ndidSubmit()">NDID OK</button>

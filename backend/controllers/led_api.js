@@ -27,14 +27,13 @@ var mysql = require('mysql');
 const FILE_BAK_PATH = __dirname + '/readFiles/LEDBackup/';
 const FILE_PATH = __dirname + '/readFiles/LED/';
 // const directoryPath = path.join(__dirname, '/readFiles/LED/');
-
+const LED_FILE_NAME= "led_list.txt";
 const LED_LIST_FILE_NAME = 'led_list.txt';
 
 const HTTP_SOAP = 'https://192.168.10.48:444/CrytoService.svc';
 const HOST_LED= "uatdebtor.led.go.th";
 const API_KEY ="328010cc65ecf3a5f0bcdbb51e339d36";
 
-const LED_FILE_NAME= "led_list.txt";
 
 const PATH_GetBankruptList ="/api/public/GetBankruptList";
 const PATH_ReceiverBreezeWebService ="/api/public/ReceiverBreezeWebService";
@@ -180,6 +179,8 @@ exports.cleanCustFromFile = (req, res, next) =>{
 
 function fnCleanCustFromFile(actionBy){
 
+  return new Promise(function(resolve, reject) {
+
   /**
    * GET data SWAN & MFTS
    */
@@ -216,33 +217,39 @@ function fnCleanCustFromFile(actionBy){
                * Send mail to responsibility
                */
               mail.mailLedResponseToday().then(data=>{
-                // console.log("INSERT >>"+JSON.stringify(values));
-                res.status(200).json({ message: 'Successful /checkCustDialy' });
+                resolve('Successful /checkCustDialy');
               },err=>{
-                res.status(401).json({ message: 'LED send mail error SWAP >>'+err });
+                // res.status(401).json({ message: 'LED send mail error SWAP >>'+err });
+                reject(err);
               });
 
-              /**
-               * Incase not found MPAM DB.
-               * Auto response to LED ;
-               */
-               fnReceiverBreezeWebService(req_key,req_status,actionBy).then(result =>{
-                logger.info(result);
-                res.status(200).json({  message: "Successfully!", code:"000", result: result });
-              },err =>{
-                logger.error(err);
-                res.status(400).json({message: err, code:"999"});
-              });
+              // /**
+              //  * In case not found MPAM DB.
+              //  * Auto response to LED ;
+              //  */
+              //  fnReceiverBreezeWebService(req_key,req_status,actionBy).then(result =>{
+              //   logger.info(result);
+              //   resolve(Successfully);
+              //   // res.status(200).json({  message: "Successfully!", code:"000", result: result });
+              // },err =>{
+              //   logger.error(err);
+              //   reject(err);
+              //   // res.status(400).json({message: err, code:"999"});
+              // });
 
             },function(err){
-              res.status(401).json({ message: err });
+              // res.status(401).json({ message: err });
+              logger.error(err);
+                reject(err);
             })
-
         },function(err){
-          res.status(401).json({ message: err });
+          // res.status(401).json({ message: err });
+          logger.error(err);
+          reject(err);
         })
-
     });
+
+  });
 }
 
 exports.ReceiverBreezeWebService = (req, res, next) =>{
@@ -346,6 +353,8 @@ function getLedFiles(){
   let _fileArray=[];
   return new Promise(function(resolve, reject) {
 
+    console.log(`*** FILE_PATH>${FILE_PATH} ;NAME>${LED_FILE_NAME}`);
+
       fs.readdir(FILE_PATH, function (err, files) {
         if (err) {
             reject(err);
@@ -353,11 +362,14 @@ function getLedFiles(){
 
         let num_files=0;
 
+        console.log('file (1)>' + JSON.stringify(files));
+
         files.forEach(function (file,i) {
             // Do whatever you want to do with the file
+            // console.log('file (2)>' + file);
             var j =file.indexOf(LED_FILE_NAME);
-            if(j>0){
-
+            // console.log('file (3)>' + j);
+            if(j != -1){
               // i++;
               num_files++;
 
@@ -369,6 +381,7 @@ function getLedFiles(){
 
               rFile.on('line', function(line) {
                 const dataObj = JSON.parse(line);
+                console.lin
                 _fileArray.push({"twsid": dataObj.TWS_ID ,"Cust_Code":dataObj.DF_ID,"First_Name_T":dataObj.DF_NAME,"Last_Name_T":dataObj.DF_SURNAME});
 
                 });//Read file(line)
@@ -382,7 +395,7 @@ function getLedFiles(){
         }
         );
 
-        console.log("num_files >>" + num_files);
+        console.log("num_files >" + num_files);
         if(num_files==0){
           reject('Not found LED files.');
         }
@@ -392,6 +405,16 @@ function getLedFiles(){
 }
 
 function insertAllFilesMIT_LED_DB_MASTER(userName){
+  console.log("Welcome insertAllFilesMIT_LED_DB_MASTER()");
+
+  var today = new Date();
+  var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  var time = today.getHours() + "-" + today.getMinutes()
+  var dateTime = date+'-'+time+'_';
+
+  var dateTimeStr ="";
+  dateTimeStr = dateTimeStr.concat(today.getFullYear(), (today.getMonth()+1),today.getDate(),today.getHours(),today.getMinutes(),'_');
+
 
   return new Promise(function(resolve, reject) {
 
@@ -407,14 +430,14 @@ function insertAllFilesMIT_LED_DB_MASTER(userName){
         files.forEach(function (file) {
             // Do whatever you want to do with the file
             var i =file.indexOf(LED_FILE_NAME);
-            if(i>0){
+            if(i != -1){
 
               foundFiles++;
 
                 insertMIT_LED_DB_MASTER(FILE_PATH+file,userName).then(result=>{
 
                     //Move file to Backup
-                fs.rename(FILE_PATH+file, FILE_BAK_PATH+file,  (err) => {
+                fs.rename(FILE_PATH+file, FILE_BAK_PATH+ dateTimeStr+ file,  (err) => {
                   if (err) {
                     reject(err);
                   };
@@ -431,7 +454,6 @@ function insertAllFilesMIT_LED_DB_MASTER(userName){
         }
         );
 
-        console.log("foundFiles >>" + foundFiles);
         if(foundFiles==0){
           reject('Not found LED files.');
         }
@@ -721,6 +743,7 @@ function fnLedGetBankruptListSchedule(schStatus,schData){
             fnGetBankruptListByDate(req_key,req_status,startdate,enddate).then(result =>{
               logger.info("Complete LED_JOB download & write files.");
               fnCleanCustFromFile(actionBy);
+
             },err =>{
               logger.info(err);
             });

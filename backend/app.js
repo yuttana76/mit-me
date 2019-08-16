@@ -47,6 +47,7 @@ const ledRoutes = require('./routes/led');
 const ledApiRoutes = require('./routes/led_api');
 const swanRoutes = require('./routes/swan');
 const ndidProxyRoutes = require('./routes/ndidProxy');
+const exportFileRoutes = require('./routes/exportFile');
 
 const app = express();
 
@@ -137,6 +138,8 @@ app.use("/api/swan",swanRoutes);
 
 //NDID Proxy
 app.use("/api/proxy",ndidProxyRoutes);
+
+app.use("/api/export",exportFileRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

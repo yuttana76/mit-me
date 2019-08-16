@@ -352,6 +352,8 @@ function fnIdVerifyRequestData(token,namespace,identifier,request_message,idp_id
 // GET
 function fnIdVerifyStatus(token,reference_id){
 
+  logger.info("fnIdVerifyStatus() " + reference_id);
+
   return new Promise(function(resolve, reject) {
 
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
@@ -564,7 +566,7 @@ function fnGetProviders(token,identifier,namespace,min_ial,min_aal){
 
 function ISODateString(d) {
 
-  d.setSeconds(d.getSeconds()+7);
+  d.setSeconds(d.getSeconds()+10);
 
   function pad(n) {return n<10 ? '0'+n : n}
   return d.getUTCFullYear()+'-'

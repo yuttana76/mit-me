@@ -225,6 +225,7 @@ const LED_INSP_STATUS =1;
 
 
 exports.callGetBankruptList = (req, res, next) =>{
+
   var led_options = {
     host: 'test.example.com',
     port: 443,
@@ -238,7 +239,7 @@ exports.callGetBankruptList = (req, res, next) =>{
     }
   };
 
-  request = https.get(options, function(res){
+  request = https.get(led_options, function(res){
     var body = "";
     res.on('data', function(data) {
        body += data;

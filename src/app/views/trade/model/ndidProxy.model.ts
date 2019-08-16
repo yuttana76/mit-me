@@ -12,20 +12,21 @@ export class ndidProxy{
   AS: ndidAS;
   veriReqDataRS: ndidVeriReqDataRS;
 
-  service_id:string;
-  source_node_id: string;
-
   //Verify
   namespace:string;
   identifier:string;
   request_message:string;
-  min_ial:string;
-  min_aal :string;
-  min_idp:string;
+  min_ial:number;
+  min_aal :number;
+  min_idp:number;
   callback_url:string;
-  mode:string;
-  min_as:string;
+  mode:number;
+  min_as:number;
   request_params:string;
 
+  //Verify RS & data
+  service_id:string;
+  source_node_id: string;
+  data:string;
 
 }

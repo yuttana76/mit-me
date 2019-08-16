@@ -83,6 +83,8 @@
             ]
         };
 
+        console.log("ndidVeriReqData()" + JSON.stringify(postData));
+
         return this.http.post<{data: any}>(BACKEND_URL + '/identity/verify-and-request-data',postData);
       }
 
@@ -97,5 +99,17 @@
         return this.http.post<{data: any}>(BACKEND_URL + '/identity/verifyStatus',postData);
       }
 
+
+      getDataVerify(token,reference_id){
+
+        console.log(`getDataVerify() reference_id >> ${reference_id}  ` );
+
+        const postData ={
+          "token":token,
+          "reference_id":reference_id,
+        };
+
+        return this.http.post<{data: any}>(BACKEND_URL + '/identity/verify-and-request-data/data',postData);
+      }
 
     }

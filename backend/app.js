@@ -48,6 +48,7 @@ const ledApiRoutes = require('./routes/led_api');
 const swanRoutes = require('./routes/swan');
 const ndidProxyRoutes = require('./routes/ndidProxy');
 const exportFileRoutes = require('./routes/exportFile');
+const fundConnextAPIRoutes = require('./routes/fundConnextAPI');
 
 const app = express();
 
@@ -139,7 +140,12 @@ app.use("/api/swan",swanRoutes);
 //NDID Proxy
 app.use("/api/proxy",ndidProxyRoutes);
 
+//Export files
 app.use("/api/export",exportFileRoutes);
+
+// FundConnect API
+app.use("/api/fundConnext",fundConnextAPIRoutes);
+
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

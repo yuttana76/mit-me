@@ -8,12 +8,12 @@ const fs = require('fs');
 const dbConfig = require('../config/db-config');
 
 const utility = require('./utility');
-
+var request = require("request");
 
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
 var mitLog = require('./mitLog');
-
+const smsConfig = require('../config/sms-conf');
 
 const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
 const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
@@ -153,8 +153,215 @@ checkFile.on('close', function(line) {
 
 }
 
-function senMailFromFile(req,res,_PID,_Email,_url){
 
+
+exports.mailStreamingCustFile = (req, res, next) =>{
+
+var today = new Date();
+var date = today.getFullYear()+""+(today.getMonth()+1)+""+today.getDate();
+var time = today.getHours() +""+  today.getMinutes()
+// var time = today.getHours() + "-" + today.getMinutes() + ":" + today.getSeconds();
+var dateTime = date+''+time;
+
+const readPath = __dirname + '/readFiles/Streaming/';
+const readFile = 'STmailCust.txt';
+
+const bakPath = __dirname + '/readFiles/StreamingBackup/';
+const bakFile =  dateTime+'-'+readFile;
+
+let checkFile = readline.createInterface({
+  input: fs.createReadStream(readPath+readFile)
+});
+
+checkFile.on('error', function(){ /*handle error*/
+  res.status(400).json({ message: `${readFile} File not found` });
+});
+
+
+// Check data is correct
+let line_no = 0;
+let numData = 0;
+
+checkFile.on('line', function(line) {
+  line_no++;
+
+  //Get number of data in line #1
+  if (line_no == 1){
+    numData = line;
+  }
+});
+
+// end
+checkFile.on('close', function(line) {
+
+    if(((line_no-1) == numData) && (numData != 0) ){
+
+      line_no = 0;
+      let rFile = readline.createInterface({
+        input: fs.createReadStream(readPath+readFile)
+      });
+
+      rFile.on('line', function(line) {
+          line_no++;
+          console.log('line_no >>:' + line_no);
+          if(line_no >1){
+            var array = line.split("|");
+            // console.log('ARRAY >> ID:' + array[1] + ' ;Email:' + array[2] );
+
+            //SEND mail function
+            mailStreaming(req,res,array[1],array[2]).then(data=>{
+              // res.status(200).json(data);
+              console.log('Success Email >' + array[2]);
+              // res.status(200).json('Send mail completed');
+
+            },err=>{
+              res.status(400).json({
+                message: err,
+                code:"999",
+              });
+            });
+
+          }
+      });
+
+      // end
+      rFile.on('close', function(line) {
+        console.log('Total lines : ' + line_no);
+
+        //Move file to Backup
+        fs.rename(readPath+readFile, bakPath+bakFile,  (err) => {
+          if (err) throw err;
+          console.log('Rename/Move complete!');
+        });
+
+      });
+
+
+      res.status(200).json('Send mail completed');
+    }else{
+      console.log('Data incorrect ; data lines =' + (line_no-1) + ' ;Header =' + numData );
+
+      res.status(501).json({ message: 'Data incorrect' });
+    }
+
+ });
+
+}
+
+
+exports.smsStreamingCustFile = (req, res, next) =>{
+
+  let msg =`เปิดบริการซื้อขายกองทุนรวมกับบลจ. เมอร์ชั่น พาร์ทเนอร์ ผ่าน Mobile App สนใจติดต่อ Wealthservice Tel. 02-6606689 หรือ www.merchantasset.co.th`
+
+  var today = new Date();
+  var date = today.getFullYear()+""+(today.getMonth()+1)+""+today.getDate();
+  var time = today.getHours() +""+  today.getMinutes()
+  // var time = today.getHours() + "-" + today.getMinutes() + ":" + today.getSeconds();
+  var dateTime = date+''+time;
+
+  const readPath = __dirname + '/readFiles/Streaming/';
+  const readFile = 'STsmsCust.txt';
+
+  const bakPath = __dirname + '/readFiles/StreamingBackup/';
+  const bakFile =  dateTime+'-'+readFile;
+
+  let checkFile = readline.createInterface({
+    input: fs.createReadStream(readPath+readFile)
+  });
+
+  checkFile.on('error', function(){ /*handle error*/
+    res.status(400).json({ message: `${readFile} File not found` });
+  });
+
+
+  // Check data is correct
+  let line_no = 0;
+  let numData = 0;
+
+  checkFile.on('line', function(line) {
+    line_no++;
+
+    //Get number of data in line #1
+    if (line_no == 1){
+      numData = line;
+    }
+  });
+
+  // end
+  checkFile.on('close', function(line) {
+
+      if(((line_no-1) == numData) && (numData != 0) ){
+
+        line_no = 0;
+        let rFile = readline.createInterface({
+          input: fs.createReadStream(readPath+readFile)
+        });
+
+        rFile.on('line', function(line) {
+            line_no++;
+            // console.log('line_no >>:' + line_no);
+            if(line_no >1){
+              var array = line.split("|");
+              // console.log('ARRAY >> ID:' + array[1] + ' ;Mobile:' + array[2] );
+              logger.info('Call smsStreamingCustFile API  to ' + array[2]);
+
+              // // SMS
+              smsStreaming(array[2],msg).then(data=>{
+                logger.info('Complete SMS  ' + array[2]);
+
+              },err=>{
+                res.status(400).json({
+                  message: err,
+                  code:"999",
+                });
+              });
+
+            }
+        });
+
+        // end
+        rFile.on('close', function(line) {
+          console.log('Total lines : ' + line_no);
+
+          //Move file to Backup
+          fs.rename(readPath+readFile, bakPath+bakFile,  (err) => {
+            if (err) throw err;
+            console.log('Rename/Move complete!');
+          });
+
+        });
+
+        res.status(200).json('Send SMS completed');
+      }else{
+        console.log('Data incorrect ; data lines =' + (line_no-1) + ' ;Header =' + numData );
+        res.status(501).json({ message: 'Data incorrect' });
+      }
+   });
+  }
+
+function smsStreaming(mobile,msg){
+
+  return new Promise(function(resolve, reject) {
+    var _url = smsConfig.SMSCompleteURL2(mobile,msg);
+    var options = {
+      url: _url,
+      headers: {
+          'User-Agent': 'request'
+      }
+    };
+
+        request.get(options, function(err, resp, body) {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(body);
+          }
+      });
+
+  });
+}
+
+function senMailFromFile(req,res,_PID,_Email,_url){
 
   const _compInfo = mailConfig.mailCompInfo_TH;
   let _from = mailConfig.mail_form;
@@ -298,6 +505,156 @@ function senMailFromFile(req,res,_PID,_Email,_url){
   }
 
 }
+
+
+
+function mailStreaming(req,res,_name,_Email){
+
+  const fileName1='StreamingforFund_Letter.pdf';
+  const attachfile1 = __dirname + '/readFiles/Streaming/'+fileName1;
+
+  // const attachfile2 = __dirname + '/readFiles/Streaming/NDID Specification.pdf';
+
+  const _compInfo = mailConfig.mailCompInfo_TH;
+  let _from = mailConfig.mail_form;
+  let _subject = 'เปิดซื้อขายกองทุนรวม กับบลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App ได้แล้ว'
+
+  let _msgTH = '';
+
+  return new Promise(function(resolve, reject) {
+
+  try {
+    logger.info(`mailStreaming() Name=${_name} ;_Email=${_Email}`);
+
+    // Incase has Email
+      if(_Email){
+
+        // Thai message
+        _msgTH = `
+        <html>
+        <head>
+        <style>
+
+        .blog-content-outer {
+          background: whitesmoke;
+          border: 1px solid #e1e1e1;
+          border-radius: 5px;
+          margin-top: 40px;
+          margin-bottom: 20px;
+          padding: 0 15px;
+          font-size: 16px;
+        }
+
+        .logo-area{
+          margin-top:20px;
+          margin-left:60px;
+          margin-bottom:20px;
+        }
+
+		.tab { margin-left: 40px; }
+        .tab2 { margin-left: 80px; }
+
+        div.a {
+
+		}
+        </style>
+        </head>
+        <body>
+        <br>
+
+        <div class='blog-content-outer'>
+
+        <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+        <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+        </div>
+
+      <div class="a">
+        <p >เรียน ท่านลูกค้า</p>
+
+        <p>เรื่อง ประชาสัมพันธ์ซื้อขายกองทุนรวมกับ บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App </p>
+        <p>
+          เพื่อเพิ่มความสะดวก รวดเร็วในการให้บริการแก่ลูกค้า ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้เปิดให้ลูกค้าสามารถทำรายการในบัญชีกองทุนผ่าน Mobile app ได้ด้วยตนเอง เพื่อซื้อขาย/สับเปลี่ยนหน่วยลงทุน หรือตรวจสอบพอร์ตการลงทุนได้ทุกเวลา ตั้งแต่วันที่ 1 กันยายน 2562
+          หากสนใจหรือต้องการที่จะใช้บริการดังกล่าว สามารถติดต่อ Wealthservice โทร. 02-6606689 หรือติดต่อเจ้าหน้าที่การตลาดผู้ดูแลบัญชีของท่าน นอกจากนี้ยังสามารถดูรายละเอียดเพิ่มเติมได้จาก www.merchantasset.co.th หรือ http://mit.wealth-merchant.com:3000/set-regis
+        </p>
+
+        <p>
+          ขอแสดงความนับถือ
+        </p>
+
+    </div>
+
+        </body>
+        </html>
+        <br>
+        <p>
+        <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+        <p>
+
+        `;
+
+        _msgTH +=_compInfo
+
+
+        // setup email data with unicode symbols
+        let mailOptions = {
+          from: _from,
+          to: _Email,
+          subject: _subject,
+          html: _msgTH,
+          attachments: [{
+            filename: fileName1,
+            path: attachfile1,
+            contentType: 'application/pdf'
+          },
+          // {
+          //   filename: 'file2.pdf',
+          //   path: attachfile2,
+          //   contentType: 'application/pdf'
+          // },
+        ],
+        };
+
+      /**
+       * SEND mail to suctomer
+       */
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            reject(error);
+          }
+
+            // /*
+            // Save MIT_LOG
+            // */
+            // try {
+            //   mitLog.saveMITlog('SYSTEM','SEND_MAIL_CUST_STREAMING',logMsg,req.ip,req.originalUrl,function(){
+            //         // console.log("Save MIT log");
+            //   })
+            // } catch (error) {
+            //   console.log(error);
+            // }
+
+          logger.info(`API /surveyByMailToken -  Send mail successful!`);
+          // res.status(200).json({ message: 'Send mail successful!' });
+          resolve('Send mail successful');
+
+        });
+
+        // Incase No Email
+      }else{
+        logger.error(`API /surveyByMailToken - NO E-mail`);
+
+      }
+  } catch (error) {
+    // res.status(400).json({ message: 'surveyByMailToken' });
+
+    reject(error);
+  }
+
+});
+
+}
+
+
 
 function getCustomerInfo(Cust_Code) {
 

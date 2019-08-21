@@ -40,6 +40,12 @@ exports.downloadFile = (req, res, next) =>{
 
     fnGetDownloadAPI(resultObj.access_token,businessDate,fileType).then(data=>{
       res.status(200).json(data);
+
+    },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
     });
 
   },err =>{
@@ -124,8 +130,7 @@ function fnFCAuth(){
 // GET
 function fnGetDownloadAPI(token,businessDate,fileType){
 
-  console.log('Welcome fnDownloadAPI_2() '+ businessDate + fileType);
-
+  console.log(`Welcome fnGetDownloadAPI() ${businessDate} - ${fileType}`);
 
   var DOWNLOAD_PATH_FILENAME  = DOWNLOAD_PATH  + businessDate+'-'+fileType;
 
@@ -147,6 +152,8 @@ function fnGetDownloadAPI(token,businessDate,fileType){
 
       resolve({paht:DOWNLOAD_PATH_FILENAME});
 
+    },err=>{
+      reject(err);
     });
 
   });

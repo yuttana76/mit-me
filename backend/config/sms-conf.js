@@ -10,7 +10,11 @@ https://member.smsmkt.com/SMSLink/SendMsg/index.php?User=merchant&Password=12345
   }
 
 
+
+
   exports.SMSCompleteURL2 =  function(mobile,msg) {
-    var completeUrl= SMSParameters.url+ `User=${SMSParameters.user}&Password=${SMSParameters.pwd}&Msnlist=${mobile}&Msg=${msg}&Sender=${SMSParameters.sender}`
+    var msgEndcode = encodeURI(msg);
+
+    var completeUrl= SMSParameters.url+ `User=${SMSParameters.user}&Password=${SMSParameters.pwd}&Sender=${SMSParameters.sender}&Msnlist=${mobile}&Msg=${msgEndcode}`
     return(completeUrl);
   }

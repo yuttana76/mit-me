@@ -10,4 +10,9 @@ router.post("/merchant",mailController.sendMail);
 router.post("/surveyByMailToken",selfAuth,mailController.surveyByMailToken);
 router.post("/surveyBulkFile",selfAuth,mailController.surveyBulkFile);
 router.post("/surveyThankCust",mailController.sendMailThankCust);
+
+// Streaming send mail to customer
+router.post("/mailStreamingCustFile",mailController.mailStreamingCustFile);
+router.post("/smsStreamingCustFile",mailController.smsStreamingCustFile);
+
 module.exports = router;

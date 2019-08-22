@@ -7,6 +7,7 @@ var mail = require('./mail');
 const https = require('https')
 const download = require('download');
 const { check, validationResult } = require('express-validator');
+var AdmZip = require('adm-zip');
 
 // https://demo.fundconnext.com/api/auth
 const HOST_FC= "demo.fundconnext.com";
@@ -14,11 +15,12 @@ const FC_AUTH_PATH ="/api/auth"
 const FC_DOWNLOAD_PATH ="/api/files/"
 
 const USER_CONFIG_PATH = path.resolve('./backend/merchantasset_CA/fundConnext/fundConnext_user.json');
+
 const DOWNLOAD_PATH  = './backend/downloadFiles/fundConnext/'
 
 
 
-exports.downloadFile = (req, res, next) =>{
+exports.downloadFileAPI = (req, res, next) =>{
   console.log("Validate  API /downloadFileAPI/");
 
   const errors = validationResult(req);
@@ -30,16 +32,41 @@ exports.downloadFile = (req, res, next) =>{
   // var fileType = 'FundMapping.zip';
   console.log("Welcome to API /downloadFileAPI/");
 
-  var businessDate = req.body.businessDate
-  var fileType = req.body.fileType
+  // var businessDate = req.body.businessDate
+  // var fileType = req.body.fileType
+  const ACCOUNT_PROFILE='AccountProfile.zip';
 
-  fnFCAuth().then(result =>{
+  var businessDate = req.query.businessDate
+  var fileType = req.query.fileType
+  var fileAs = req.query.fileAs
 
-    resultObj =JSON.parse(result);
-    resultObj.access_token
 
-    fnGetDownloadAPI(resultObj.access_token,businessDate,fileType).then(data=>{
-      res.status(200).json(data);
+    fnGetDownloadAPI(businessDate,fileType).then(data=>{
+
+      if(fileAs=='excel'){
+
+        if(fileType ==ACCOUNT_PROFILE){
+
+
+          fnAccToExcel(data.path).then(excelFile=>{
+
+            res.download(excelFile);
+
+          },err=>{
+            res.status(400).json({
+              message: err,
+              code:"999",
+            });
+          })
+
+        }else{
+          res.download(data.path);
+        }
+
+      }else{
+        res.status(200).json(data);
+      }
+
 
     },err=>{
       res.status(400).json({
@@ -47,35 +74,121 @@ exports.downloadFile = (req, res, next) =>{
         code:"999",
       });
     });
+}
 
-  },err =>{
-    console.log("Error" + err);
+// exports.test = (req, res, next) =>{
+//   console.log("Validate  API /test/");
+//   fnAccToExcel("./backend/downloadFiles/fundConnext/20190820-AccountProfile.zip").then(excelFile=>{
+//     res.download(excelFile);
+//     },err=>{
+//       res.status(400).json({
+//         message: err,
+//         code:"999",
+//       });
+//     });
+// }
 
-    res.status(400).json({
-      message: err,
-      code:"999",
+// *****************************************************
+
+function fnAccToExcel(filePaht){
+
+  console.log('Welcome fnAccToExcel() '+ filePaht);
+
+  // Split name
+  var arr = filePaht.toString().split("/");
+
+  var fileName = arr[arr.length-1]
+  var fileNameArr = fileName.toString().split("-");
+  var _prefix =fileNameArr[0];
+
+  // '20190820_MPAM_ACCOUNT.txt'
+  var extAccFileName = _prefix+'_MPAM_ACCOUNT.txt';
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+  const DOWNLOAD_DIR2 = './backend/downloadFiles/fundConnext/';
+  var _zipFile= DOWNLOAD_DIR+'/'+fileName;
+  const EXCEL_FILE_NAME=_prefix+'_MPAM_ACCOUNT.xlsx';
+
+  //EXCEL config
+
+    // Require library
+  var xl = require('excel4node');
+
+  // Create a new instance of a Workbook class
+  var wb = new xl.Workbook();
+
+  // Add Worksheets to the workbook
+  var ws = wb.addWorksheet('Overview');
+  // var ws2 = wb.addWorksheet('Summary');
+
+  // Create a reusable style
+  var style = wb.createStyle({
+    font: {
+      color: '#000000',
+      size: 12,
+    },
+    numberFormat: '$#,##0.00; ($#,##0.00); -',
+  });
+
+  return new Promise(function(resolve, reject) {
+
+    //Unzip file
+    try{
+      var zip = new AdmZip(_zipFile);
+      zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
+    }
+    catch (e) {
+      reject(e)
+    }
+
+    //Read file
+    fs.readFile(DOWNLOAD_DIR +"/"+ extAccFileName, function(err, data) {
+      if(err) {
+        reject(err);
+      }
+      var array = data.toString().split("\n");
+      var attr = array[0].split("|") ;
+
+      if ( attr[2] != (array.length - 1 ) ){
+        logger.error('Download data missing. Try again');
+        reject('Download data missing. Try again');
+      }
+
+    // console.log('Process NEXT !')
+    array.shift(); //removes the first array element
+
+    var _row =1;
+      for(i in array) {
+        var item = array[i].split("|") ;
+
+        // Account ID
+        ws.cell(_row, 1).string(item[1]).style(style);
+        // Gender
+        ws.cell(_row, 2).string(item[34]).style(style);
+        // Title
+        ws.cell(_row, 3).string(item[35]).style(style);
+        // First Name TH
+        ws.cell(_row, 4).string(item[36]).style(style);
+        // Last Name TH
+        ws.cell(_row, 5).string(item[37]).style(style);
+        // First Name EN
+        ws.cell(_row, 6).string(item[38]).style(style);
+        // Last Name EN
+        ws.cell(_row, 7).string(item[39]).style(style);
+
+        _row++;
+
+      }
+      wb.write(DOWNLOAD_DIR2 +"/"+ EXCEL_FILE_NAME, function(err, stats) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(DOWNLOAD_DIR2 +"/"+ EXCEL_FILE_NAME);
+        }
+      });
     });
   });
 }
 
-
-function NOW() {
-  var date = new Date();
-  var aaaa = date.getFullYear();
-  var gg = date.getDate();
-  var mm = (date.getMonth() + 1);
-
-  if (gg < 10)
-      gg = "0" + gg;
-
-  if (mm < 10)
-      mm = "0" + mm;
-
-  var cur_day = aaaa +  mm +  gg;
-
-  return cur_day ;
-
-}
 
 // Login to the FC. system and acquire access tokens
 function fnFCAuth(){
@@ -128,31 +241,36 @@ function fnFCAuth(){
 
 
 // GET
-function fnGetDownloadAPI(token,businessDate,fileType){
+function fnGetDownloadAPI(businessDate,fileType){
 
   console.log(`Welcome fnGetDownloadAPI() ${businessDate} - ${fileType}`);
-
   var DOWNLOAD_PATH_FILENAME  = DOWNLOAD_PATH  + businessDate+'-'+fileType;
-
   return new Promise(function(resolve, reject) {
 
-    const HTTPS_ENDPOIN =`https://${HOST_FC}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
-    const propertiesObject = {
-          "x-auth-token":token,
-          "Content-Type": "application/json"
-        };
+    fnFCAuth().then(result =>{
+      resultObj =JSON.parse(result);
 
-    download(HTTPS_ENDPOIN,{'headers':propertiesObject}).then(data => {
+      const HTTPS_ENDPOIN =`https://${HOST_FC}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
+      const propertiesObject = {
+        "x-auth-token":resultObj.access_token,
+        "Content-Type": "application/json"
+      };
 
-      fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
-        if(err) {
-            reject(err);
-        }
+      download(HTTPS_ENDPOIN,{'headers':propertiesObject}).then(data => {
+
+        fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
+          if(err) {
+              reject(err);
+          }
+
+          resolve({path:DOWNLOAD_PATH_FILENAME});
+        });
+
+      },err=>{
+        reject(err);
       });
 
-      resolve({paht:DOWNLOAD_PATH_FILENAME});
-
-    },err=>{
+    },err =>{
       reject(err);
     });
 

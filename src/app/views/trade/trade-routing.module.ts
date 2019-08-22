@@ -25,6 +25,7 @@ import { LedInspResultComponent } from './led-insp-result/led-insp-result.compon
 import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-insp-cust-detail.component';
 import { OpenAccountComponent } from './open-account/open-account.component';
 import { SetRegistrationComponent } from './set-registration/set-registration.component';
+import { FCAppComponent } from './fcapp/fcapp.component';
 
 const routes: Routes = [
 
@@ -246,6 +247,13 @@ const routes: Routes = [
         component: SetRegistrationComponent,
         data: {
           title: 'Streaming For Fund registration'
+        }
+      },
+      {
+        path: 'FCApp',
+        component: FCAppComponent,
+        data: {
+          title: 'FundConnext Applications'
         }
       },
 

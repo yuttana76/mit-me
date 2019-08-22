@@ -13,7 +13,6 @@
               <div class="col-sm-6">
 
                 <label><strong class="h4">Today</strong></label>
-
                 <mat-form-field class="led_dash_date">
                   <input matInput [matDatepicker]="picker" placeholder="Choose a date" (dateChange)="onChangeDate($event)" [(ngModel)]="chooseDate">
                   <mat-datepicker-toggle matSuffix [for]="picker"  >

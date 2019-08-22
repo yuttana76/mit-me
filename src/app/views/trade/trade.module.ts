@@ -4,6 +4,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TradeRoutingModule } from './trade-routing.module';
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+
+
 import { SummaryRepComponent } from './summary-rep/summary-rep.component';
 import { AngularMaterialModule } from '../../angular-material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -64,6 +67,8 @@ import { OpenAccountComponent } from './open-account/open-account.component';
 import { SetRegistrationComponent } from './set-registration/set-registration.component';
 import { RecaptchaModule } from 'angular-google-recaptcha';
 import { NdidProxyComponent } from './ndid-proxy/ndid-proxy.component';
+import { FCAppComponent } from './fcapp/fcapp.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -83,6 +88,7 @@ import { NdidProxyComponent } from './ndid-proxy/ndid-proxy.component';
     RecaptchaModule.forRoot({
         siteKey: '6LeupK8UAAAAAECl56nM-7H1Q1L_q1kF6rEN-yxy',
     }),
+    BsDropdownModule.forRoot(),
   ],
   declarations: [
     SummaryRepComponent,
@@ -139,6 +145,7 @@ import { NdidProxyComponent } from './ndid-proxy/ndid-proxy.component';
     OpenAccountComponent,
     SetRegistrationComponent,
     NdidProxyComponent,
+    FCAppComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

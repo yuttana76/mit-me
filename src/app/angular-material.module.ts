@@ -25,6 +25,7 @@ import {
   MatRippleModule,
   MatSliderModule,
   MatStepperModule,
+  MatButtonToggleModule,
 
 } from '@angular/material';
 
@@ -55,6 +56,7 @@ import {
     MatRippleModule,
     MatSliderModule,
     MatStepperModule,
+    MatButtonToggleModule,
   ]
 })
 export class AngularMaterialModule {}

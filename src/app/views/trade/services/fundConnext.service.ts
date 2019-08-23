@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { map } from 'rxjs/operators';
-import { FcdownloadAPI } from '../model/fcdownloadAPI.model';
+import { FcDownload } from '../model/FcDownload.model';
+import { jsonpCallbackContext } from '@angular/common/http/src/module';
 
 
 const BACKEND_URL = environment.apiURL + '/fundConnext/';
@@ -14,7 +15,7 @@ const BACKEND_URL = environment.apiURL + '/fundConnext/';
       constructor(private http: HttpClient , private router: Router) { }
 
 // https://localhost:3009/api/fundConnext/downloadFileAPI?fileType=AccountProfile.zip&businessDate=20190820&fileAs=excel
-      getDownloadAPI(model:FcdownloadAPI) {
+      getDownloadAPI(model:FcDownload) {
 
         let queryParams = `?1=1`;
         if(model.fileType){
@@ -24,12 +25,11 @@ const BACKEND_URL = environment.apiURL + '/fundConnext/';
           queryParams += `&businessDate=${model.businessDate}`;
         }
 
-        return this.http.get<{result: any }>(BACKEND_URL+"/downloadFileAPI"+  queryParams)
-        .pipe(map( _data => {
-          return _data.result.map(data => {
-            return data
-          });
-        }));
+        queryParams += `&fileAs=excel`;
+
+        console.log('Welcome getDownloadAPI()' + queryParams );
+        return this.http.get(BACKEND_URL+"/downloadFileAPI"+  queryParams,{ responseType: 'blob' });
+
       }
 
 

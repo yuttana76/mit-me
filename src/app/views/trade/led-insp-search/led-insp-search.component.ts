@@ -151,7 +151,7 @@ export class LedInspSearchComponent implements OnInit {
 
     this.spinnerLoading = true;
 
-    this.ledService.getInsp(this.rowsPerPage, 1, this.inspSearch) .subscribe(data =>{
+    this.ledService.getInsp(this.rowsPerPage, 1, this.inspSearch).subscribe(data =>{
       this.mitLedInspCustList = data;
       this.dataSource.next(this.mitLedInspCustList);
     }

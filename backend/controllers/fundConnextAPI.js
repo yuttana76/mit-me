@@ -45,8 +45,8 @@ exports.downloadFileAPI = (req, res, next) =>{
 
       if(fileAs=='excel'){
 
+        // Download to be excel file.
         if(fileType ==ACCOUNT_PROFILE){
-
 
           fnAccToExcel(data.path).then(excelFile=>{
 
@@ -64,6 +64,7 @@ exports.downloadFileAPI = (req, res, next) =>{
         }
 
       }else{
+        // Export to general  data
         res.status(200).json(data);
       }
 
@@ -256,17 +257,25 @@ function fnGetDownloadAPI(businessDate,fileType){
         "Content-Type": "application/json"
       };
 
+      console.log(' propertiesObject >>' + JSON.stringify(propertiesObject) );
+      console.log('HTTPS_ENDPOIN >>' + HTTPS_ENDPOIN);
+
       download(HTTPS_ENDPOIN,{'headers':propertiesObject}).then(data => {
+        console.log('AIP RS >' );
+        try{
+          fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
+            if(err) {
+                reject(err);
+            }
+            resolve({path:DOWNLOAD_PATH_FILENAME});
+          });
 
-        fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
-          if(err) {
-              reject(err);
-          }
-
-          resolve({path:DOWNLOAD_PATH_FILENAME});
-        });
+        }catch(err){
+          reject(err);
+        }
 
       },err=>{
+        console.log('AIP ERR >' + err);
         reject(err);
       });
 

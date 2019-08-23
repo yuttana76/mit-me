@@ -1,4 +1,4 @@
-export class FcdownloadAPI {
+export class FcDownload {
 
   constructor() {}
   fileType:string;

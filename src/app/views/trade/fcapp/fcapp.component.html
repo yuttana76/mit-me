@@ -6,7 +6,7 @@
         <!-- <mat-card-subtitle>Dog Breed</mat-card-subtitle> -->
       </mat-card-header>
 
-    <form [formGroup]="downloadForm" (submit)="downloadExe()" #custForm="ngForm" *ngIf="!spinnerLoading">
+    <form [formGroup]="downloadForm" (submit)="downloaInfo()" #custForm="ngForm" *ngIf="!spinnerLoading">
 
         <mat-form-field class="row">
             <mat-select formControlName="fileType"  [(ngModel)]="fcdownloadAPI.fileType" placeholder="Download File type">
@@ -16,7 +16,7 @@
 
           <div class="row">
               <mat-form-field>
-                <input matInput formControlName="businessDate"  [matDatepicker]="picker" placeholder="business Date" (dateChange)="onChangeDate($event)"
+                <input matInput formControlName="businessDate"  [matDatepicker]="picker" placeholder="business Date"
                 [(ngModel)]="fcdownloadAPI.businessDate">
                 <mat-datepicker-toggle matSuffix [for]="picker"  >
                   <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
@@ -30,12 +30,14 @@
       </form>
       <hr>
       <div class='row'>
-        <label>Result</label>
         <hr>
-        <mat-button-toggle-group name="fontStyle" aria-label="Font Style" [disabled]="!canExeBtn">
-            <mat-button-toggle value="bold">Excel</mat-button-toggle>
-            <mat-button-toggle value="italic">View data</mat-button-toggle>
-          </mat-button-toggle-group>
+        <label>Result : {{api_records}}</label>
+        <hr>
+        <div>
+          <button mat-raised-button color="basic" [disabled]="api_records==0"  (click)="exportExcel()" >Excel  <i class="far fa-file-excel fa-lg"></i></button>
+          <button mat-raised-button color="basic" [disabled]="api_records==0" (click)="downloadZip()"  >ZIP  <i class="far fa-file-archive fa-lg"></i></button>
+          <button mat-raised-button color="basic" (click)="uploadDB()"  >DB.  <i class="fas fa-angle-double-down fa-lg"></i></button>
+        </div>
       </div>
 </mat-card>
 

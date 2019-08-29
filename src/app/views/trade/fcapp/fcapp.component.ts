@@ -13,6 +13,7 @@ import { FundConnextService } from '../services/fundConnext.service';
 })
 export class FCAppComponent implements OnInit {
 
+
   spinnerLoading = false;
   fileTypeList =[
     {value: 'FundMapping.zip', display: 'FundMapping'},
@@ -33,8 +34,10 @@ export class FCAppComponent implements OnInit {
 
   downloadForm: FormGroup;
   fcdownloadAPI:FcDownload = new FcDownload();
-  canExeBtn:false;
 
+
+  // *********
+  api_records=0;
   constructor(private toastr: ToastrService,public dialog: MatDialog,private fundConnextService:FundConnextService) { }
 
   ngOnInit() {
@@ -50,44 +53,126 @@ export class FCAppComponent implements OnInit {
 
     });
 
+    this.downloadForm.valueChanges.subscribe(dt => this.downloadFormfieldChanges());
   }
 
-  onChangeDate(event: MatDatepickerInputEvent<Date>) {
-    // this.fcdownloadAPI.businessDate = formatDate(event.value, 'yyyyMMdd', 'en');
-    // console.log(" onChangeDate()!!!" + JSON.stringify(this.fcdownloadAPI));
+
+  downloadFormfieldChanges(){
+      this.api_records=0;
   }
 
-  downloadExe(){
-    console.log(" downloadExe()!!!" + JSON.stringify(this.fcdownloadAPI));
+  // downloadExcute(){
+  //   console.log('Welcome downloadExcute()');
+  //   this.downloaInfo();
+  // }
 
-    this.fcdownloadAPI.businessDate = formatDate(this.fcdownloadAPI.businessDate, 'yyyyMMdd', 'en');
+  downloadExcel(){
+    this.fcdownloadAPI.fileAs='excel'
+    this.downloadAPI();
 
-    this.fundConnextService.getDownloadAPI(this.fcdownloadAPI).subscribe(data =>{
+  }
 
-      console.log('start download:',data);
+  downloadZip(){
+    this.fcdownloadAPI.fileAs='zip'
+    this.downloadAPI();
+  }
 
-      const blob: any = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  uploadDB(){
+    console.log('Welcome uploadDB()');
 
+    this.fundConnextService.uploadDB(this.fcdownloadAPI).subscribe(infoData =>{
+      console.log(JSON.stringify(infoData));
+
+    }, error => {
+        console.log("WAS ERR>>" + JSON.stringify(error) );
+        this.toastr.error(``,  error,
+        {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        }
+        );
+      },() => {
+        this.spinnerLoading = false;
+      }
+    );
+  }
+
+  exportExcel(){
+    console.log('Welcome exportExcel()');
+
+    this.fundConnextService.exportExcel(this.fcdownloadAPI).subscribe(data =>{
+
+      // console.log('start data>>',data);
+      const blob: any = new Blob([data], { type: data.type });
       let link = document.createElement("a");
 
-      if (link.download !== undefined) {
+      if (blob) {
         let url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", "downloadExcel");
+        link.setAttribute("download", "downloadFile");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+
+      }else{
+        this.toastr.error(``, 'Not found data.',
+        {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        }
+        );
       }
 
-
-
-    }
-    , error => {
+    }, error => {
         console.log("WAS ERR>>" + JSON.stringify(error) );
-        // this.spinnerLoading = false;
+        this.toastr.error(``,  error,
+        {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        }
+        );
+      },() => {
+        this.spinnerLoading = false;
+      }
+    );
+  }
 
-        this.toastr.error(``,
-        error,
+
+  // ****************************************
+  downloadAPI(){
+
+    console.log(" downloadExe()!!!" + JSON.stringify(this.fcdownloadAPI));
+
+    this.fundConnextService.getDownloadAPI(this.fcdownloadAPI).subscribe(data =>{
+
+      console.log('start data>>',data);
+      const blob: any = new Blob([data], { type: data.type });
+      let link = document.createElement("a");
+
+      if (blob) {
+        let url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "downloadFile");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+      }else{
+        this.toastr.error(``, 'Not found data.',
+        {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        }
+      );
+      }
+
+    }, error => {
+        console.log("WAS ERR>>" + JSON.stringify(error) );
+        this.toastr.error(``,  error,
         {
           timeOut: 5000,
           closeButton: true,
@@ -99,21 +184,47 @@ export class FCAppComponent implements OnInit {
       ,() => {
         // 'onCompleted' callback.
         this.spinnerLoading = false;
-
-        // if(this.mitLedInspCustList.length <= 0){
-        //   this.toastr.warning(``,
-        //       "Not found data",
-        //       {
-        //         timeOut: 5000,
-        //         closeButton: true,
-        //         positionClass: "toast-top-center"
-        //       }
-        //     );
-        // }
-
       }
     );
+  }
 
+  downloaInfo(){
+
+    this.api_records =0;
+
+    this.fundConnextService.getDownloaInfo(this.fcdownloadAPI).subscribe(infoData =>{
+      const infoDataObj = JSON.parse(JSON.stringify(infoData))
+
+      if(infoDataObj){
+        if(infoDataObj.records){
+          this.api_records = infoDataObj.records;
+        }else{
+          this.api_records = 0;
+        }
+
+        if(infoDataObj.extract){
+          this.fcdownloadAPI.extract = infoDataObj.extract;
+        }
+        console.log("***infoDataObj>"+JSON.stringify(infoDataObj));
+      }
+    }
+    , error => {
+        console.log("WAS ERR>>" + JSON.stringify(error) );
+        // this.spinnerLoading = false;
+        this.toastr.error(``,  error,
+        {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        }
+      );
+
+      }
+      ,() => {
+        // 'onCompleted' callback.
+        this.spinnerLoading = false;
+      }
+    );
   }
 
 }

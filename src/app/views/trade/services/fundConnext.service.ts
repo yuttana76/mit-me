@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 import { map } from 'rxjs/operators';
 import { FcDownload } from '../model/FcDownload.model';
 import { jsonpCallbackContext } from '@angular/common/http/src/module';
+import { formatDate } from '@angular/common';
 
 
 const BACKEND_URL = environment.apiURL + '/fundConnext/';
@@ -14,23 +15,80 @@ const BACKEND_URL = environment.apiURL + '/fundConnext/';
 
       constructor(private http: HttpClient , private router: Router) { }
 
-// https://localhost:3009/api/fundConnext/downloadFileAPI?fileType=AccountProfile.zip&businessDate=20190820&fileAs=excel
-      getDownloadAPI(model:FcDownload) {
+      getDownloadAPI(data:FcDownload) {
+
+        var _businessDate = formatDate(data.businessDate, 'yyyyMMdd', 'en');
 
         let queryParams = `?1=1`;
-        if(model.fileType){
-          queryParams += `&fileType=${model.fileType}`;
+        if(data.fileType){
+          queryParams += `&fileType=${data.fileType}`;
         }
-        if(model.businessDate){
-          queryParams += `&businessDate=${model.businessDate}`;
+        if(data.businessDate){
+          queryParams += `&businessDate=${_businessDate}`;
         }
 
-        queryParams += `&fileAs=excel`;
+        if(data.fileAs=='excel'){
+          queryParams += `&fileAs=excel`;
+
+        }else {
+          queryParams += `&fileAs=zip`;
+        }
 
         console.log('Welcome getDownloadAPI()' + queryParams );
-        return this.http.get(BACKEND_URL+"/downloadFileAPI"+  queryParams,{ responseType: 'blob' });
+       return this.http.get(BACKEND_URL+"/downloadFileAPI"+  queryParams,{ responseType: 'blob' });
 
       }
 
+
+      getDownloaInfo(data:FcDownload) {
+
+        var _businessDate = formatDate(data.businessDate, 'yyyyMMdd', 'en');
+
+        let queryParams = `?1=1`;
+        if(data.fileType){
+          queryParams += `&fileType=${data.fileType}`;
+        }
+        if(data.businessDate){
+          queryParams += `&businessDate=${_businessDate}`;
+        }
+
+        // if(data.fileAs=='excel'){
+        //   queryParams += `&fileAs=excel`;
+
+        // }else {
+        //   queryParams += `&fileAs=zip`;
+        // }
+
+        console.log('Welcome downloadToClient()' + queryParams );
+       return this.http.get(BACKEND_URL+"/downloadInfo"+  queryParams);
+
+      }
+
+
+      uploadDB(data:FcDownload) {
+
+        var _businessDate = formatDate(data.businessDate, 'yyyyMMdd', 'en');
+
+        const postData ={
+          "businessDate":_businessDate,
+          "fileType":data.fileType,
+          "extract":data.extract,
+        };
+
+        return this.http.post(BACKEND_URL + '/uploadDB/', postData);
+      }
+
+      exportExcel(data:FcDownload) {
+
+        var _businessDate = formatDate(data.businessDate, 'yyyyMMdd', 'en');
+
+        const postData ={
+          "businessDate":_businessDate,
+          "fileType":data.fileType,
+          "extract":data.extract,
+        };
+
+        return this.http.post(BACKEND_URL + '/exportExcel/', postData,{ responseType: 'blob' });
+      }
 
     }

@@ -94,10 +94,6 @@ exports.downloadInfo = (req, res, next) =>{
 
   fnGetDownloadAPI(businessDate,fileType).then(data=>{
 
-    console.log('fnGetDownloadAPI()'+data.path);
-    console.log('fileAs>'+fileAs);
-    console.log('fileType>'+fileType);
-
      // Split name
   var arr = data.path.toString().split("/");
 
@@ -105,7 +101,7 @@ exports.downloadInfo = (req, res, next) =>{
   var fileNameArr = fileName.toString().split("-");
   var _prefix =fileNameArr[0];
 
-  var extAccFileName;
+  var extAccFileNameList=[];
 
   const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
   const DOWNLOAD_DIR2 = './backend/downloadFiles/fundConnext/';
@@ -119,33 +115,39 @@ exports.downloadInfo = (req, res, next) =>{
 
       var zipEntries = zip.getEntries();
       zipEntries.forEach(function(zipEntry) {
-        extAccFileName = zipEntry.entryName
+        var extAccFileName = zipEntry.entryName
+        zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
+        extAccFileNameList.push(extAccFileName);
     });
 
-    // console.log('_zipFile>' + _zipFile);
-    // console.log('extAccFileName>' + extAccFileName);
-    // console.log('DOWNLOAD_DIR>' + DOWNLOAD_DIR);
-
-    zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
+    // zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
         //Read file
-      fs.readFile(DOWNLOAD_DIR +"/"+ extAccFileName, function(err, data) {
-        if(err) {
-          // reject(err);
-          res.status(400).json({
-            message: err,
-            code:"999",
-          });
-        }
-        var array = data.toString().split("\n");
-        var attr = array[0].split("|") ;
+      if(extAccFileNameList.length==1){
+        fs.readFile(DOWNLOAD_DIR +"/"+ extAccFileNameList[0], function(err, data) {
+          if(err) {
+            // reject(err);
+            res.status(400).json({
+              message: err,
+              code:"999",
+            });
+          }
+          var array = data.toString().split("\n");
+          var attr = array[0].split("|") ;
 
-          res.status(200).json({
-          records: attr[2],
-          fileType:fileType,
-          extract:extAccFileName
-          // path:DOWNLOAD_DIR,
+            res.status(200).json({
+              records: attr[2],
+              fileType:fileType,
+              extract:JSON.parse(JSON.stringify(extAccFileNameList))
+            });
         });
-      });
+      }else{
+        res.status(200).json({
+          records: extAccFileNameList.length,
+          fileType:fileType,
+          extract:JSON.parse(JSON.stringify(extAccFileNameList))
+        });
+      }
+
     }
     catch (e) {
       // reject(e)
@@ -155,11 +157,10 @@ exports.downloadInfo = (req, res, next) =>{
         code:"999",
       });
     }
+
+    // fnGetDownloadAPI
   },err=>{
-    res.status(400).json({
-      message: err,
-      code:"999",
-    });
+    res.status(400).json({message: err,code:"999"});
   });
 }
 
@@ -205,7 +206,9 @@ exports.exportExcel = (req, res, next) =>{
   var fileType = req.body.fileType;
   var extract = req.body.extract;
 
-  logger.info(`API uploadDB  // businessDate=${businessDate} ;fileType=${fileType} ;extract=${extract}`);
+  console.log('File Name>'+extract[0]);
+
+  logger.info(`API exportExcel  // businessDate=${businessDate} ;fileType=${fileType} ;extract=${extract}`);
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -217,18 +220,21 @@ exports.exportExcel = (req, res, next) =>{
       case 'Nav.zip':
 
           fcNAV_ToExcel(extract,businessDate).then(file=>{
-
-            console.log('fcNAV_ToExcel>>' + file);
-
           res.download(file);
-
         },err=>{
           res.status(422).json({error: err});
         });
 
         break
 
-      case 'value2':  // if (x === 'value2')
+      case 'CustomerProfile.zip':
+
+        fcCustomerProfile_ToExcel(extract,businessDate).then(file=>{
+          res.download(file);
+        },err=>{
+          res.status(422).json({error: err});
+        });
+
         break
 
       default:
@@ -240,6 +246,185 @@ exports.exportExcel = (req, res, next) =>{
 }
 
 // *****************************************************
+
+function fcCustomerProfile_ToExcel(fileName,businessDate){
+  logger.info('Function fcCustomerProfile_ToExcel() // fileName='+fileName +' ;businessDate='+ businessDate);
+
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+  const EXCEL_FILE_NAME ='CustomerProfile.xlsx';
+
+  // Require library
+  var xl = require('excel4node');
+
+  // Create a new instance of a Workbook class
+  var wb = new xl.Workbook();
+
+  // Add Worksheets to the workbook
+  var ws = wb.addWorksheet('NAV_'+ businessDate);
+  // var ws2 = wb.addWorksheet('Summary');
+
+  // Create a reusable style
+  var HeaderStyle = wb.createStyle({
+    font: {
+      bold: true,
+      color: '#000000',
+      size: 12,
+    },
+    // numberFormat: '$#,##0.00; ($#,##0.00); -',
+  });
+
+  var style = wb.createStyle({
+    font: {
+      color: '#000000',
+      size: 12,
+    },
+    // numberFormat: '$#,##0.00; ($#,##0.00); -',
+  });
+
+  return new Promise(function(resolve, reject) {
+
+      //Read file
+      try{
+
+        let jsonData = {}
+        fs.readFile(DOWNLOAD_DIR +"/"+ fileName, 'utf-8', (err, data) => {
+          if (err) reject(err);
+
+          var jsonData =JSON.parse(data);
+          var _row =1;
+          ws.cell(_row, 1).string(`DATE ${businessDate}`).style(HeaderStyle);
+
+          _row++;
+          ws.cell(_row, 1).string('IdentificationCard Type').style(HeaderStyle);
+          ws.cell(_row, 2).string('Passport Country').style(HeaderStyle);
+          ws.cell(_row, 3).string('Card Number').style(HeaderStyle);
+          ws.cell(_row, 4).string('Card Expiry Date').style(HeaderStyle);
+          ws.cell(_row, 5).string('Accompanying Document').style(HeaderStyle);
+          ws.cell(_row, 6).string('Gender').style(HeaderStyle);
+          ws.cell(_row, 7).string('Title').style(HeaderStyle);
+          ws.cell(_row, 8).string('Title Other').style(HeaderStyle);
+          ws.cell(_row, 9).string('En First Name').style(HeaderStyle);
+          ws.cell(_row, 10).string('En Last Name').style(HeaderStyle);
+          ws.cell(_row, 11).string('Th First Name').style(HeaderStyle);
+          ws.cell(_row, 12).string('Th Last Name').style(HeaderStyle);
+          ws.cell(_row, 13).string('Birth Date').style(HeaderStyle);
+          ws.cell(_row, 14).string('Nationality').style(HeaderStyle);
+          ws.cell(_row, 15).string('Mobile').style(HeaderStyle);
+          ws.cell(_row, 16).string('Email').style(HeaderStyle);
+          ws.cell(_row, 17).string('Marital Status').style(HeaderStyle);
+          // spouse
+          ws.cell(_row, 18).string('Ooccupation Id').style(HeaderStyle);
+          ws.cell(_row, 19).string('Occupation Other').style(HeaderStyle);
+          ws.cell(_row, 20).string('BusinessType Id').style(HeaderStyle);
+          ws.cell(_row, 21).string('BusinessType Other').style(HeaderStyle);
+          ws.cell(_row, 22).string('MonthlyIncome Level').style(HeaderStyle);
+          ws.cell(_row, 23).string('Income Source').style(HeaderStyle);
+          ws.cell(_row, 24).string('IncomeSource Other').style(HeaderStyle);
+          // residence
+          ws.cell(_row, 25).string('Contact AddressSameAsFlag').style(HeaderStyle);
+          ws.cell(_row, 26).string('Company Name').style(HeaderStyle);
+          // work
+          ws.cell(_row, 27).string('committedMoneyLaundering').style(HeaderStyle);
+          ws.cell(_row, 28).string('politicalRelatedPerson').style(HeaderStyle);
+          ws.cell(_row, 29).string('rejectFinancialTransaction').style(HeaderStyle);
+          ws.cell(_row, 30).string('confirmTaxDeduction').style(HeaderStyle);
+          ws.cell(_row, 31).string('canAcceptFxRisk').style(HeaderStyle);
+          ws.cell(_row, 32).string('canAcceptDerivativeInvestment').style(HeaderStyle);
+          ws.cell(_row, 33).string('suitabilityRiskLevel').style(HeaderStyle);
+          ws.cell(_row, 34).string('suitabilityEvaluationDate').style(HeaderStyle);
+          ws.cell(_row, 35).string('fatca').style(HeaderStyle);
+          ws.cell(_row, 36).string('fatcaDeclarationDate').style(HeaderStyle);
+          ws.cell(_row, 37).string('cddScore').style(HeaderStyle);
+          ws.cell(_row, 38).string('cddDate').style(HeaderStyle);
+          ws.cell(_row, 39).string('referalPerson').style(HeaderStyle);
+          ws.cell(_row, 40).string('applicationDate').style(HeaderStyle);
+          ws.cell(_row, 41).string('incomeSourceCountry').style(HeaderStyle);
+          ws.cell(_row, 42).string('acceptBy').style(HeaderStyle);
+          // children
+          // accounts
+          // -mailing
+          // -redemptionBankAccounts
+          // -subscriptionBankAccounts
+
+            _row++;
+            for(i in jsonData){
+              obj = jsonData[i]
+              // for(var key in jsonData[i]){
+                // console.log( `${i} >>` +key);
+
+                ws.cell(_row, 1).string(obj['identificationCardType']).style(style);
+                ws.cell(_row, 2).string(obj['passportCountry']).style(style);
+                ws.cell(_row, 3).string(obj['cardNumber']).style(style);
+                ws.cell(_row, 4).string(obj['cardExpiryDate']).style(style);
+                ws.cell(_row, 5).string(obj['accompanyingDocument']).style(style);
+                ws.cell(_row, 6).string(obj['gender']).style(style);
+                ws.cell(_row, 7).string(obj['title']).style(style);
+                ws.cell(_row, 8).string(obj['titleOther']).style(style);
+                ws.cell(_row, 9).string(obj['enFirstName']).style(style);
+                ws.cell(_row, 10).string(obj['enLastName']).style(style);
+                ws.cell(_row, 11).string(obj['thFirstName']).style(style);
+                ws.cell(_row, 12).string(obj['thLastName']).style(style);
+                ws.cell(_row, 13).string(obj['birthDate']).style(style);
+                ws.cell(_row, 14).string(obj['nationality']).style(style);
+                ws.cell(_row, 15).string(obj['mobileNumber']).style(style);
+                ws.cell(_row, 16).string(obj['email']).style(style);
+                ws.cell(_row, 17).string(obj['maritalStatus']).style(style);
+                // spouse
+                ws.cell(_row, 18).string(obj['occupationId']).style(style);
+                ws.cell(_row, 19).string(obj['occupationOther']).style(style);
+                ws.cell(_row, 20).string(obj['businessTypeId']).style(style);
+                ws.cell(_row, 21).string(obj['businessTypeOther']).style(style);
+                ws.cell(_row, 22).string(obj['monthlyIncomeLevel']).style(style);
+                ws.cell(_row, 23).string(obj['incomeSource']).style(style);
+                ws.cell(_row, 24).string(obj['incomeSourceOther']).style(style);
+                // residence
+                ws.cell(_row, 25).string(obj['contactAddressSameAsFlag']).style(style);
+                ws.cell(_row, 26).string(obj['companyName']).style(style);
+                // work
+                ws.cell(_row, 27).string(obj['committedMoneyLaundering']).style(style);
+                ws.cell(_row, 28).string(obj['politicalRelatedPerson']).style(style);
+                ws.cell(_row, 29).string(obj['rejectFinancialTransaction']).style(style);
+                ws.cell(_row, 30).string(obj['confirmTaxDeduction']).style(style);
+                ws.cell(_row, 31).string(obj['canAcceptFxRisk']).style(style);
+                ws.cell(_row, 32).string(obj['canAcceptDerivativeInvestment']).style(style);
+                ws.cell(_row, 33).string(obj['suitabilityRiskLevel']).style(style);
+                ws.cell(_row, 34).string(obj['suitabilityEvaluationDate']).style(style);
+                ws.cell(_row, 35).string(obj['fatca']).style(style);
+                ws.cell(_row, 36).string(obj['fatcaDeclarationDate']).style(style);
+                ws.cell(_row, 37).string(obj['cddScore']).style(style);
+                ws.cell(_row, 38).string(obj['cddDate']).style(style);
+                ws.cell(_row, 39).string(obj['referalPerson']).style(style);
+                ws.cell(_row, 40).string(obj['applicationDate']).style(style);
+                ws.cell(_row, 41).string(obj['incomeSourceCountry']).style(style);
+                ws.cell(_row, 42).string(obj['acceptBy']).style(style);
+                // children
+
+                  _row++;
+
+              // }
+            }
+
+          wb.write(DOWNLOAD_DIR +"/"+ EXCEL_FILE_NAME, function(err, stats) {
+            if (err) {
+              logger.error(err);
+              reject(err);
+            } else {
+              resolve(DOWNLOAD_DIR +"/"+ EXCEL_FILE_NAME);
+            }
+          });
+
+        })
+
+    }catch(e){
+      logger.error(e);
+      reject(e);
+    }
+  });
+}
+
+function removeByteOrderMark(str){
+  return str.replace(/^\ufeff/g,"")
+}
 
 function fcNAV_ToExcel(fileName,businessDate){
   logger.info('Function fcNAV_ToExcel() // fileName='+fileName +' ;businessDate='+ businessDate);
@@ -299,7 +484,7 @@ function fcNAV_ToExcel(fileName,businessDate){
         ws.cell(_row, 11).string('Total Unit').style(style);
         ws.cell(_row, 12).string('Total AUM').style(style);
 
-        _row = _row+2;
+        _row++;
           for(i in array) {
 
             var item = array[i].split("|") ;

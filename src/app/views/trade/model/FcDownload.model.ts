@@ -6,6 +6,7 @@ export class FcDownload {
   fileAs:string;
 
   extract:string;
+  extractArray=[];
   records: string;
   message: string;
 

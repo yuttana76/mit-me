@@ -99,7 +99,9 @@ export class FCAppComponent implements OnInit {
   }
 
   exportExcel(){
-    console.log('Welcome exportExcel()');
+    console.log('Welcome exportExcel()' + this.fcdownloadAPI.extractArray[0]);
+
+    this.fcdownloadAPI.extract = this.fcdownloadAPI.extractArray[0];
 
     this.fundConnextService.exportExcel(this.fcdownloadAPI).subscribe(data =>{
 
@@ -203,7 +205,8 @@ export class FCAppComponent implements OnInit {
         }
 
         if(infoDataObj.extract){
-          this.fcdownloadAPI.extract = infoDataObj.extract;
+          // this.fcdownloadAPI.extract = infoDataObj.extract;
+          this.fcdownloadAPI.extractArray = infoDataObj.extract;
         }
         console.log("***infoDataObj>"+JSON.stringify(infoDataObj));
       }

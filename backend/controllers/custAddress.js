@@ -10,7 +10,7 @@ exports.getAddress = (req, res, next) => {
   var custCode = req.params.cusCode;
 
   var queryStr = `select *
-  FROM [MFTS].[dbo].[Account_Address]
+  FROM [dbo].[Account_Address]
   WHERE Cust_Code='${custCode}'`;
 
   const sql = require('mssql')

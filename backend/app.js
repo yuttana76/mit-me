@@ -49,6 +49,7 @@ const swanRoutes = require('./routes/swan');
 const ndidProxyRoutes = require('./routes/ndidProxy');
 const exportFileRoutes = require('./routes/exportFile');
 const fundConnextAPIRoutes = require('./routes/fundConnextAPI');
+const streamingRoutes = require('./routes/streaming');
 
 const app = express();
 
@@ -145,6 +146,9 @@ app.use("/api/export",exportFileRoutes);
 
 // FundConnect API
 app.use("/api/fundConnext",fundConnextAPIRoutes);
+
+// Streaming
+app.use("/api/stream",streamingRoutes);
 
 
 app.use((req, res, next) => {

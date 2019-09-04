@@ -6,6 +6,7 @@
   <div class="row">
     <div class="col-md-6 mx-auto">
 
+<!-- *************** Fill in register information Step -->
 <mat-horizontal-stepper [linear]="isStepperLinear" labelPosition="bottom" #stepper>
   <mat-step [stepControl]="firstFormGroup">
       <form [formGroup]="firstFormGroup">
@@ -88,13 +89,17 @@
           </div>
 
   </mat-step>
+
+  <!-- *************** Final Step -->
   <mat-step>
       <ng-template matStepLabel>Done</ng-template>
-      Thank you. already send data.Please check your E-Mail.
-      <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <!-- <button mat-button (click)="stepper.reset()">Reset</button> -->
-      </div>
+
+      <alert type="info">
+          <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
+          <br>
+          <p>Contraturation, We already send data.Please check your E-Mail.</p>
+        </alert>
+
   </mat-step>
 </mat-horizontal-stepper>
 

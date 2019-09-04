@@ -27,7 +27,17 @@ router.post("/regis",[
 ],streamingController.addRegis);
 
 //Update register information
-router.put("/regis",streamingController.updateRegis);
+router.put("/regisAccept",[
+  check('idCard')
+  .exists().withMessage('must have param idCard')
+  .isLength({ min: 1 }).withMessage('idCard must have value '),
+check('acceptFlag')
+  .exists().withMessage('must have Param acceptFlag')
+  .isLength({ min: 1 }).withMessage('acceptFlag must have value '),
+check('otp')
+  .exists().withMessage('must have Param otp')
+  .isLength({ min: 1 }).withMessage('otp must have value ')
+],streamingController.updateAcceptInfo);
 
 //get request OTP to mobile
 router.get("/reqOTP",streamingController.reqOTP);

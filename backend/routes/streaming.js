@@ -26,8 +26,8 @@ router.post("/regis",[
     .isLength({ min: 1 }).withMessage('mobile must have value '),
 ],streamingController.addRegis);
 
-//Update register information
-router.put("/regisAccept",[
+//Verify OTP
+router.post("/verifyOTP",[
   check('idCard')
   .exists().withMessage('must have param idCard')
   .isLength({ min: 1 }).withMessage('idCard must have value '),
@@ -37,14 +37,6 @@ check('acceptFlag')
 check('otp')
   .exists().withMessage('must have Param otp')
   .isLength({ min: 1 }).withMessage('otp must have value ')
-],streamingController.updateAcceptInfo);
-
-//get request OTP to mobile
-router.get("/reqOTP",streamingController.reqOTP);
-
-//Send data to customer(E-mail)
-router.post("/sendData",streamingController.sendData);
-
-
+],streamingController.verifyOTP);
 
 module.exports = router;

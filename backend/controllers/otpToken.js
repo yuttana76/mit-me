@@ -38,7 +38,7 @@ exports.OTPtokenToSMS = (req, res, next) => {
   const _mobile = req.body.m
 
   let token = totp.generate();
-  let token_date = new Date();
+  // let token_date = new Date();
 
   let _msg = `OTP = ${token}`;
   var _url = smsConfig.SMSCompleteURL2(_mobile,_msg);
@@ -188,6 +188,68 @@ exports.verityOTPtoken = (req, res, next) => {
         });
     }
 }
+
+
+// function verifyOTP_OnStreamRegis(_idCard,_otp,_ip,_originalUrl){
+  module.exports.verifyOTP_OnStreamRegis = (_idCard,_otp,_ip,_originalUrl) => {
+
+  logger.info(`Welcome /verifyOTP API. - IdCard= ${_idCard}; OTP= ${_otp} ;IP= ${_ip}  ;URL=${_originalUrl}`);
+  let rsp_code="";
+  return new Promise(function(resolve, reject) {
+
+    /*
+    0: ok
+    -1: token expired (1 period)
+    null: not found
+    */
+  //  let totp = new OTPAuth.TOTP({
+  //   issuer: 'ACME',
+  //   label: 'AzureDiamond',
+  //   algorithm: 'SHA1',
+  //   digits: 6,
+  //   period: TOKEN_PERIOD, //sec
+  //   secret: OTPAuth.Secret.fromB32('NB2W45DFOIZA')
+  //   });
+
+    let delta = totp.validate({
+        token: _otp,
+        window: 10
+    });
+
+    if (delta===0){
+      rsp_code = "000";
+      let logMsg = `Result /verifyOTP_OnStreamRegis -${prop.getRespMsg(rsp_code)} - ${_otp}  - _idCard: ${_idCard}`
+      logger.info(logMsg);
+
+      mitLog.saveMITlog(_idCard,'ST_REG_VERIFY_OTP',logMsg,_ip,_originalUrl,function(){});
+        // return res.status(200).json({
+        //   code: rsp_code,
+        //   msg: prop.getRespMsg(rsp_code),
+        // });
+
+    }else if(delta < 0 ){
+      rsp_code = "207";  //OTP  Expired
+
+      logger.info(`Result /verityOTPtoken  -${prop.getRespMsg(rsp_code)} - ${_otp}  - _idCard: ${_idCard}`);
+        // return res.status(422).json({
+        //   code: rsp_code,
+        //   msg: prop.getRespMsg(rsp_code),
+        // });
+
+    }else {
+      rsp_code = "206"; //"ไม่พบข้อมูล",
+      logger.info(`Result /verityOTPtoken  -${prop.getRespMsg(rsp_code)} - ${_otp}  - _idCard: ${_idCard}`);
+        // return res.status(422).json({
+        //   code: rsp_code,
+        //   msg: prop.getRespMsg(rsp_code),
+        // });
+    }
+
+    resolve(rsp_code)
+
+  });
+}
+
 
 
 exports.verityByDOB = (req, res, next) => {

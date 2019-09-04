@@ -12,6 +12,7 @@ import { AuthGuard } from './views/services/auth/auth.guard';
 import { SuitComponent } from './views/trade/suit/suit.component';
 import { OpenAccountComponent } from './views/trade/open-account/open-account.component';
 import { SetRegistrationComponent } from './views/trade/set-registration/set-registration.component';
+import { SetRegis2Component } from './views/trade/set-regis2/set-regis2.component';
 
 export const routes: Routes = [
   {
@@ -67,6 +68,13 @@ export const routes: Routes = [
     component: SetRegistrationComponent,
     data: {
       title: 'Streaming For Fund registration'
+    }
+  },
+  {
+    path: 'set-regis2',
+    component: SetRegis2Component,
+    data: {
+      title: 'Streaming For Fund registration V.2'
     }
   },
   {

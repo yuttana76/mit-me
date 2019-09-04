@@ -26,6 +26,7 @@ import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-in
 import { OpenAccountComponent } from './open-account/open-account.component';
 import { SetRegistrationComponent } from './set-registration/set-registration.component';
 import { FCAppComponent } from './fcapp/fcapp.component';
+import { SetRegis2Component } from './set-regis2/set-regis2.component';
 
 const routes: Routes = [
 
@@ -249,6 +250,7 @@ const routes: Routes = [
           title: 'Streaming For Fund registration'
         }
       },
+
       {
         path: 'FCApp',
         component: FCAppComponent,
@@ -256,7 +258,13 @@ const routes: Routes = [
           title: 'FundConnext Applications'
         }
       },
-
+      {
+        path: 'set-regis2',
+        component: SetRegis2Component,
+        data: {
+          title: 'Streaming For Fund registration(V.2)'
+        }
+      },
     ]
   },
   // {path: '**', redirectTo: '/404'}

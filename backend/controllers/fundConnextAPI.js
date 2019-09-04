@@ -10,8 +10,8 @@ const download = require('download');
 const { check, validationResult } = require('express-validator');
 var AdmZip = require('adm-zip');
 
-const HOST_FC= FC_API_Config.fundConnextApi_STAGE.host
-const USER_API=FC_API_Config.fundConnextApi_STAGE.auth
+const HOST_FC= FC_API_Config.fundConnextApi_PROD.host
+const USER_API=FC_API_Config.fundConnextApi_PROD.auth
 
 const FC_AUTH_PATH = FC_API_Config.FC_API_PATH.AUTH_PATH
 const FC_DOWNLOAD_PATH = FC_API_Config.FC_API_PATH.DOWNLOAD_PATH
@@ -120,8 +120,7 @@ exports.downloadInfo = (req, res, next) =>{
         extAccFileNameList.push(extAccFileName);
     });
 
-    // zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
-        //Read file
+      //Read file
       if(extAccFileNameList.length==1){
         fs.readFile(DOWNLOAD_DIR +"/"+ extAccFileNameList[0], function(err, data) {
           if(err) {
@@ -752,15 +751,6 @@ function fnFCAuth(){
 
   return new Promise(function(resolve, reject) {
 
-    // const userData = fs.readFileSync(USER_CONFIG_PATH, "utf8"); //ascii,utf8
-    // let userDataObj  = JSON.parse(userData);
-    // let userDataObj  = fundConnextAPIConfig.fundConnextApi_DEMO.auth;
-
-    // const postData = JSON.stringify({
-    //   username:USER_API.username,
-    //   password:USER_API.password
-    // });
-
     var options = {
       host: HOST_FC,
       path:FC_AUTH_PATH,
@@ -786,6 +776,7 @@ function fnFCAuth(){
   });
 
   request.on('error', (e) => {
+    console.log('err fnFCAuth>' + e);
     reject(e);
   });
 
@@ -836,9 +827,89 @@ function fnGetDownloadAPI(businessDate,fileType){
       });
 
     },err =>{
+      console.log('ERR AUTH>>'+err);
       reject(err);
     });
 
   });
 
+}
+
+
+function fnNAVProcess(){
+
+  console.log(`Welcome fnNAVProcess()`);
+  return new Promise(function(resolve, reject) {
+
+//     BEGIN
+//     DECLARE @Fund_Id int;
+//     DECLARE @AMCCode  varchar(15);
+// 	DECLARE @FundCode varchar(30);
+// 	DECLARE @AUM [decimal](18, 2)=0;
+// 	DECLARE @NAV [decimal](18, 4)=0;
+// 	DECLARE @OfferNAV [decimal](18, 4)=0;
+// 	DECLARE @BidNAV [decimal](18, 4)=0;
+// 	DECLARE @SwitchOutNAV [decimal](18, 4)=0;
+// 	DECLARE @SwitchInNAV [decimal](18, 4)=0;
+// 	DECLARE @NAVDate varchar(8) ='20190828';
+// 	DECLARE @SACode varchar(15);
+// 	DECLARE @TotalUnit [decimal](18, 4)=0;
+// 	DECLARE @TotalAUM [decimal](18, 2)=0;
+
+//     DECLARE FC_NAV_cursor CURSOR LOCAL  FOR
+
+//     select A.[Fund_Id],
+//     B.AMCCode,B.FundCode,B.AUM,B.NAV,B.OfferNAV,B.BidNAV,B.SwitchOutNAV,B.SwitchInNAV,B.SACode,B.TotalUnit,B.TotalAUM
+//     from MFTS_Fund A,MIT_FC_NAV B
+//     WHERE  A.Fund_Code=B.FundCode
+//     AND B.NAVDate=@NAVDate;
+
+//     OPEN FC_NAV_cursor
+//         FETCH NEXT FROM FC_NAV_cursor INTO @Fund_Id,@AMCCode,@FundCode,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchOutNAV,@SwitchInNAV,@SACode,@TotalUnit,@TotalAUM
+
+//             WHILE @@FETCH_STATUS = 0
+//             BEGIN
+
+//                 SELECT  *
+//                 FROM MFTS_NavTable
+//                 WHERE  convert(varchar, Close_Date, 112)=@NAVDate
+//                 AND Fund_Id =@Fund_Id
+
+//                 IF @@ROWCOUNT > 0
+//                     BEGIN
+//                         PRINT 'Update'
+//                         update MFTS_NavTable
+//                         SET [Fund_Id]=@Fund_Id,
+//                         [Close_Date]=@NAVDate,
+//                         [Asset_Size]=@AUM,
+//                         [Nav_Price]=@NAV ,
+//                         [Offer_Price]= @OfferNAV,
+//                         [Bid_Price]=@BidNAV,
+//                         [OfferSwitch_Price]=@SwitchInNAV,
+//                         [BidSwitch_Price] =@SwitchOutNAV,
+//                         [Modify_By] ='MIT_SYSTEM',
+//                         [Modify_Date] =getdate()
+//                         WHERE  convert(varchar, Close_Date, 112)=@NAVDate
+//                         AND Fund_Id =@Fund_Id
+
+//                     END
+//                 ELSE
+//                     BEGIN
+//                         PRINT 'Insert '
+//                         Insert into MFTS_NavTable
+//                         ([Fund_Id],[Close_Date],[Asset_Size],[Nav_Price] ,[Offer_Price] ,[Bid_Price],[OfferSwitch_Price],[BidSwitch_Price],[Create_By] ,[Create_Date])
+//                         VALUES(@Fund_Id,@NAVDate,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchOutNAV,@SwitchInNAV,'MIT_SYSTEM',getdate())
+//                     END
+//                 FETCH NEXT FROM FC_NAV_cursor INTO @Fund_Id,@AMCCode,@FundCode,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchOutNAV,@SwitchInNAV,@SACode,@TotalUnit,@TotalAUM
+//             END
+
+//     CLOSE FC_NAV_cursor
+//     DEALLOCATE FC_NAV_cursor
+
+// -- 1. Get FC NAV list
+// -- 2. Check for insert or update
+
+// END
+
+  });
 }

@@ -1,0 +1,59 @@
+.DIV_SET_REG{
+  margin-top: 10px;
+}
+
+body {
+  margin:25px;
+}
+
+/* small desktop */
+@media all and (max-width: 1200px) {
+  .finalImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 50%;
+  }
+}
+
+/* tablet */
+@media all and (max-width: 1024px) {
+  .finalImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: auto;
+  }
+}
+
+/* mobile phone */
+@media all and (max-width: 768px) {
+  .finalImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: auto;
+  }
+}
+
+button{
+  margin-top: 10px;
+}
+
+.STEP1_HEADER p{
+ margin-top: 15px;
+ color:red;
+//  font-size: 10px;
+}
+
+.termCondition{
+  background-color: darkgrey;
+  border-radius: 5px;
+}
+
+.termCondition p{
+  text-align: justify;
+
+  margin-left: 10px;
+  margin-right: 10px;
+}

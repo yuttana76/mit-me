@@ -15,6 +15,14 @@ exports.fundConnextApi_STAGE = {
   }
 }
 
+exports.fundConnextApi_PROD = {
+  host: 'www.fundconnext.com',
+  auth: {
+    "username":"API_MPAM01",
+    "password":"Ea7!d!Kt-)(2*%F3"
+  }
+}
+
 exports.FC_API_PATH = {
   AUTH_PATH :"/api/auth",
   DOWNLOAD_PATH :"/api/files/"

@@ -68,6 +68,7 @@ import { SetRegistrationComponent } from './set-registration/set-registration.co
 import { RecaptchaModule } from 'angular-google-recaptcha';
 import { NdidProxyComponent } from './ndid-proxy/ndid-proxy.component';
 import { FCAppComponent } from './fcapp/fcapp.component';
+import { SetRegis2Component } from './set-regis2/set-regis2.component';
 
 @NgModule({
   imports: [
@@ -146,6 +147,7 @@ import { FCAppComponent } from './fcapp/fcapp.component';
     SetRegistrationComponent,
     NdidProxyComponent,
     FCAppComponent,
+    SetRegis2Component,
   ],
   providers: [DatePipe],
   entryComponents: [

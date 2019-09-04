@@ -1,4 +1,5 @@
 export class RegisterModel {
+  idCard: string;
   firstName: string;
   lastName: string;
   mobile: string;
@@ -7,5 +8,7 @@ export class RegisterModel {
   description: string;
 
   constructor() {}
+
+
 
 }

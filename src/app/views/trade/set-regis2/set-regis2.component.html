@@ -1,0 +1,103 @@
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<div  class="container DIV_SET_REG" *ngIf="!spinnerLoading" >
+
+
+  <div class="row">
+    <div class="col-md-6 mx-auto">
+
+<mat-horizontal-stepper [linear]="isStepperLinear" labelPosition="bottom" #stepper>
+  <mat-step [stepControl]="firstFormGroup">
+      <form [formGroup]="firstFormGroup">
+
+        <ng-template matStepLabel>Fill out your info</ng-template>
+
+
+          <!-- <alert type="info">
+              <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
+              <br>
+              <p>กรุณากรอกข้อมูลที่ได้ลงทะเบียนกับบริษัท</p>
+            </alert> -->
+          <div class="STEP1_HEADER">
+              <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
+              <p>กรุณากรอกข้อมูลที่ได้ลงทะเบียนกับบริษัท</p>
+          </div>
+
+          <mat-form-field class="col-md-12">
+            <input matInput placeholder="เลขประจำตัวประชาชน/ ID card" formControlName="idCard" [(ngModel)]="register.idCard"  >
+        </mat-form-field>
+
+          <mat-form-field class="col-md-12">
+            <input matInput placeholder="ชื่อ / First name" formControlName="firstName" [(ngModel)]="register.firstName"  >
+        </mat-form-field>
+
+        <mat-form-field class="col-md-12">
+          <input matInput placeholder="นามสกุล / Last name" formControlName="lastName" [(ngModel)]="register.lastName"  >
+        </mat-form-field>
+
+        <mat-form-field class="col-md-12">
+            <input matInput placeholder="โทรศัพท์มือถือ / Mobile Phone" formControlName="mobile" [(ngModel)]="register.mobile"  >
+        </mat-form-field>
+
+        <mat-form-field class="col-md-12">
+            <input matInput placeholder="อีเมลล์ / Email" formControlName="email" [(ngModel)]="register.email"  >
+        </mat-form-field>
+
+
+        <div>
+            <recaptcha
+            [formControl]="myRecaptcha"
+            (scriptLoad)="onScriptLoad()"
+            (scriptError)="onScriptError()"
+          ></recaptcha>
+        </div>
+
+          <div>
+              <button type="button" matStepperNext class="btn btn-primary" (click)="onSubmit()" >Next</button>
+          </div>
+
+      </form>
+  </mat-step>
+
+  <!-- *************** Term of Condiftion Step -->
+  <mat-step optional>
+
+          <ng-template matStepLabel>Verify</ng-template>
+
+          <section >
+              <div class="termCondition">
+                  <p *ngFor="let txt of ST_TermCondition">{{txt}}</p>
+
+                </div>
+              <mat-checkbox  [(ngModel)]="checkCond">Agree to terms and conditions</mat-checkbox>
+            </section>
+
+             <div class="row div_otp">
+                <div class="col-md-3 mb-3">
+                    <!-- <label>OTP</label> -->
+                    <input type="text" class="form-control"  placeholder="OTP" required>
+                  </div>
+
+                  <div class="col-md-3 mb-3" >
+                      <button type="button" class="btn" (click)="sendOTP()" [disabled]="!checkCond" >Resend OTP</button>
+                  </div>
+             </div>
+
+          <div>
+              <button type="button" matStepperNext class="btn btn-primary" (click)="onProcData()" [disabled]="!checkCond">Done</button>
+          </div>
+
+  </mat-step>
+  <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      Thank you. already send data.Please check your E-Mail.
+      <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <!-- <button mat-button (click)="stepper.reset()">Reset</button> -->
+      </div>
+  </mat-step>
+</mat-horizontal-stepper>
+
+    </div>
+  </div>
+</div>

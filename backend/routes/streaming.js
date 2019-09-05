@@ -1,6 +1,11 @@
 const express = require('express');
 
 const streamingController = require('../controllers/streaming');
+const createStreamUserHTMLController = require('../controllers/exmPDF/createStreamUserHTML');
+const createStreamUserPdfController = require('../controllers/exmPDF/createStreamUserPdf');
+
+const genStreamPDFController = require('../controllers/exmPDF/genStreamPDF');
+
 const checkAuth = require('../middleware/check-auth');
 const router = express.Router();
 const { check } = require('express-validator');
@@ -38,5 +43,9 @@ check('otp')
   .exists().withMessage('must have Param otp')
   .isLength({ min: 1 }).withMessage('otp must have value ')
 ],streamingController.verifyOTP);
+
+router.post("/sendDataMail",streamingController.sendDataMail);
+
+router.post("/generatePDF",genStreamPDFController.generatePDF);
 
 module.exports = router;

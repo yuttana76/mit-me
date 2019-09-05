@@ -4,12 +4,15 @@ var logger = require('../config/winston');
 var config = dbConfig.dbParameters;
 const mailConfig = require('../config/mail-conf');
 var prop = require("../config/backend-property");
-
+const path = require('path');
+const fs = require('fs');
 const otpTokenController = require('./otpToken');
 const mailController = require('./mail');
 
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
+
+const genStreamPDFController = require('./exmPDF/genStreamPDF');
 
 const  YES_VAL = 'Y';
 const  NO_VAL = 'N';
@@ -78,6 +81,7 @@ exports.addRegis = (req,res,next)=>{
 
 
 exports.verifyOTP = (req,res,next)=>{
+
   console.log("Welcome API verifyOTP/");
 
   const errors = validationResult(req);
@@ -85,12 +89,15 @@ exports.verifyOTP = (req,res,next)=>{
     return res.status(422).json({ errors: errors.array() });
   }
 
-    const _idCard = req.body.idCard;
-    const _otp = req.body.otp;
-    const _acceptFlag = req.body.acceptFlag;
+  const DOWNLOAD_DIR = path.resolve('./backend/controllers/readFiles/Streaming/');
+  const fileName ='streamUsers.txt';
+  const _idCard = req.body.idCard;
+  const _otp = req.body.otp;
+  const _acceptFlag = req.body.acceptFlag;
+  const _ip = req.ip;
+  const _originalUrl = req.originalUrl;
 
-    const _ip = req.ip;
-    const _originalUrl = req.originalUrl;
+  let userPwdObj
 
     // 1.Verify OTP
   otpTokenController.verifyOTP_OnStreamRegis(_idCard,_otp,_ip,_originalUrl).then(data=>{
@@ -110,11 +117,40 @@ exports.verifyOTP = (req,res,next)=>{
             getCustomerInfo(_idCard).then(data=>{
 
               console.log("3-1 Info >>" + JSON.stringify(data));
+              // 3.1 Has user / password ?
+              // Redad user/pwd file
 
-              //4. Send E-mail
-              mailController.mailStreamingUserSecret(data.Email,_idCard,data.First_Name,data.Last_Name,data.Birth_Day_1).then(data=>{
+              fs.readFile(DOWNLOAD_DIR +"/"+ fileName, 'utf-8', (err, file_data) => {
 
-                console.log("4. Send E-mail sussful " + data);
+                if (err) reject(err);
+
+                var array = file_data.toString().split("\n");
+                for(i in array) {
+
+                  var item = array[i].split("|") ;
+
+                  console.log('**ITEM>' + JSON.stringify(item));
+                  console.log('**_idCard>' + _idCard);
+
+                  if(item[0]==_idCard){
+                    console.log( `item  ${item[0]}  ${item[1]}  ${item[2]}` );
+                    userPwdObj = { "cusCode":item[0],"user":item[1],"password":item[2],"dob":data.Birth_Day_1}
+                    break;
+                  }
+                }
+
+                console.log('USER is >' +JSON.stringify(userPwdObj));
+
+                // Create PDF
+                genStreamPDFController.FNgenerateStreamingPDF(userPwdObj).then(result=>{
+                  console.log('genStreamPDFController Result >' + JSON.stringify(result));
+
+                    //4. Send E-mail
+                    mailController.mailStreamingUserSecret(data.Email,_idCard,data.First_Name,data.Last_Name,data.Birth_Day_1,result.filePDF).then(data=>{
+                      console.log("4. Send E-mail sussful " + data);
+                    });
+                });
+
               });
 
             });
@@ -149,9 +185,41 @@ exports.verifyOTP = (req,res,next)=>{
 
 }
 
+exports.sendDataMail = (req,res,next)=>{
 
+  //4. Send E-mail
+  _Email='yuttana76@gmail.com'
+  _idCard='3560100350330'
+  _First_Name='Yuttana'
+  _Last_Name='Khumnual'
+  _Birth_Day_1='01 Jan 1976'
+
+
+  mailController.mailStreamingUserSecret(_Email,_idCard,_First_Name,_Last_Name,_Birth_Day_1,'123.pdf').then(data=>{
+
+    console.log("4. Send E-mail sussful " + data);
+
+    res.status(200).json({
+      code: '000',
+      data:data
+    });
+
+  });
+
+}
+
+
+
+exports.creatPDF = (req,res,next)=>{
+
+    res.status(200).json({
+      code: '000',
+    });
+
+}
 
 // ********************* Functions
+
 
 function hasExistAcc(ID,Email,Mobile){
 

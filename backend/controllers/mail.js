@@ -1129,20 +1129,20 @@ function getLedMaster(twsid) {
   });
 }
 
-module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdayStr) => {
+module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdayStr,userFilePDF) => {
 
-  console.log(`Function mailStreamingUserSecret ${_Email} - ${fname} - ${lname} - ${birthdayStr}`);
+  console.log(`Function mailStreamingUserSecret ${_Email} - ${fname} - ${lname} - ${birthdayStr} - ${userFilePDF}`);
 
   const fileName1='StreamingforFund_Letter.pdf';
-  const attachfile1 = __dirname + '/readFiles/Streaming/'+fileName1;
-  const fullName = fname+' ' +lname + ' ' + birthdayStr
 
-  // const attachfile2 = __dirname + '/readFiles/Streaming/NDID Specification.pdf';
+  const attachfile1 = __dirname + '/readFiles/Streaming/'+fileName1;
+  const attachfile2 = __dirname + '/readFiles/Streaming/'+userFilePDF;
+
+  const fullName = fname+' ' +lname + ' '
 
   const _compInfo = mailConfig.mailCompInfo_TH;
   let _from = mailConfig.mail_form;
   let _subject = 'แจ้งขอเปิดใช้ระบบ Streaming For Fund'
-
   let _msgTH = '';
 
   return new Promise(function(resolve, reject) {
@@ -1150,125 +1150,130 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
   try {
     logger.info(`mailStreaming() Name=${fullName} ;_Email=${_Email}`);
 
-    // Incase has Email
-      if(_Email){
+        // Incase has Email
+        if(_Email){
 
-        // Thai message
-        _msgTH = `
-        <html>
-        <head>
-        <style>
+          // Thai message
+          _msgTH = `
+          <html>
+          <head>
+          <style>
 
-        .blog-content-outer {
-          background: whitesmoke;
-          border: 1px solid #e1e1e1;
-          border-radius: 5px;
-          margin-top: 40px;
-          margin-bottom: 20px;
-          padding: 0 15px;
-          font-size: 16px;
-        }
-
-        .logo-area{
-          margin-top:20px;
-          margin-left:60px;
-          margin-bottom:20px;
-        }
-
-		.tab { margin-left: 40px; }
-        .tab2 { margin-left: 80px; }
-
-        div.a {
-
-		}
-        </style>
-        </head>
-        <body>
-        <br>
-
-        <div class='blog-content-outer'>
-
-        <div class="logo-area col-xs-12 col-sm-12 col-md-3">
-        <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
-        </div>
-
-      <div class="a">
-        <p >เรียน ท่านลูกค้า</p>
-        <p >เรียน ${fullName}</p>
-
-        <p>เรื่อง ประชาสัมพันธ์ซื้อขายกองทุนรวมกับ บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App </p>
-        <p>
-          เพื่อเพิ่มความสะดวก รวดเร็วในการให้บริการแก่ลูกค้า ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้เปิดให้ลูกค้าสามารถทำรายการในบัญชีกองทุนผ่าน Mobile app ได้ด้วยตนเอง เพื่อซื้อขาย/สับเปลี่ยนหน่วยลงทุน หรือตรวจสอบพอร์ตการลงทุนได้ทุกเวลา ตั้งแต่วันที่ 1 กันยายน 2562
-          หากสนใจหรือต้องการที่จะใช้บริการดังกล่าว สามารถติดต่อ Wealthservice โทร. 02-6606689 หรือติดต่อเจ้าหน้าที่การตลาดผู้ดูแลบัญชีของท่าน นอกจากนี้ยังสามารถดูรายละเอียดเพิ่มเติมได้จาก www.merchantasset.co.th หรือ http://mit.wealth-merchant.com:3000/set-regis
-        </p>
-
-        <p>
-          ขอแสดงความนับถือ
-        </p>
-
-    </div>
-
-        </body>
-        </html>
-        <br>
-        <p>
-        <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
-        <p>
-
-        `;
-
-        _msgTH +=_compInfo
-
-
-        // setup email data with unicode symbols
-        let mailOptions = {
-          from: _from,
-          to: _Email,
-          subject: _subject,
-          html: _msgTH,
-          attachments: [{
-            filename: fileName1,
-            path: attachfile1,
-            contentType: 'application/pdf'
-          },
-          // {
-          //   filename: 'file2.pdf',
-          //   path: attachfile2,
-          //   contentType: 'application/pdf'
-          // },
-        ],
-        };
-
-      /**
-       * SEND mail to suctomer
-       */
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            reject(error);
+          .blog-content-outer {
+            background: whitesmoke;
+            border: 1px solid #e1e1e1;
+            border-radius: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 0 15px;
+            font-size: 16px;
           }
 
-            // /*
-            // Save MIT_LOG
-            // */
-            // try {
-            //   mitLog.saveMITlog('SYSTEM','SEND_MAIL_CUST_STREAMING',logMsg,req.ip,req.originalUrl,function(){
-            //         // console.log("Save MIT log");
-            //   })
-            // } catch (error) {
-            //   console.log(error);
-            // }
+          .logo-area{
+            margin-top:20px;
+            margin-left:60px;
+            margin-bottom:20px;
+          }
 
-          logger.info(`API /surveyByMailToken -  Send mail successful!`);
-          // res.status(200).json({ message: 'Send mail successful!' });
-          resolve('Send mail successful');
+        .tab { margin-left: 40px; }
+          .tab2 { margin-left: 80px; }
 
-        });
+          div.a {
 
-        // Incase No Email
-      }else{
-        logger.error(`API /surveyByMailToken - NO E-mail`);
+        }
+          </style>
+          </head>
+          <body>
+          <br>
 
-      }
+          <div class='blog-content-outer'>
+
+          <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+          <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+          </div>
+
+        <div class="a">
+          <p >เรียน ท่านลูกค้า</p>
+          <p >เรียน ${fullName}</p>
+
+          <p>เรื่อง xxx</p>
+          <p>
+            เพื่อเพิ่มความสะดวก รวดเร็วในการให้บริการแก่ลูกค้า ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้เปิดให้ลูกค้าสามารถทำรายการในบัญชีกองทุนผ่าน Mobile app ได้ด้วยตนเอง เพื่อซื้อขาย/สับเปลี่ยนหน่วยลงทุน หรือตรวจสอบพอร์ตการลงทุนได้ทุกเวลา ตั้งแต่วันที่ 1 กันยายน 2562
+            หากสนใจหรือต้องการที่จะใช้บริการดังกล่าว สามารถติดต่อ Wealthservice โทร. 02-6606689 หรือติดต่อเจ้าหน้าที่การตลาดผู้ดูแลบัญชีของท่าน นอกจากนี้ยังสามารถดูรายละเอียดเพิ่มเติมได้จาก www.merchantasset.co.th หรือ http://mit.wealth-merchant.com:3000/set-regis
+          </p>
+
+
+            ขอแสดงความนับถือ
+          </p>
+
+        </div>
+
+          </body>
+          </html>
+          <br>
+          <p>
+          <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+          <p>
+
+          `;
+
+          _msgTH +=_compInfo
+
+
+          // setup email data with unicode symbols
+          let mailOptions = {
+            from: _from,
+            to: _Email,
+            subject: _subject,
+            html: _msgTH,
+            attachments: [{
+              filename: fileName1,
+              path: attachfile1,
+              contentType: 'application/pdf'
+            },
+            {
+              filename: 'streamingUser.pdf',
+              path: attachfile2,
+              contentType: 'application/pdf'
+            },
+          ],
+          };
+
+        /**
+         * SEND mail to suctomer
+         */
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              reject(error);
+            }
+
+              // /*
+              // Save MIT_LOG
+              // */
+              // try {
+              //   mitLog.saveMITlog('SYSTEM','SEND_MAIL_CUST_STREAMING',logMsg,req.ip,req.originalUrl,function(){
+              //         // console.log("Save MIT log");
+              //   })
+              // } catch (error) {
+              //   console.log(error);
+              // }
+
+            logger.info(`API /surveyByMailToken -  Send mail successful!`);
+            // res.status(200).json({ message: 'Send mail successful!' });
+            resolve('Send mail successful');
+
+          });
+
+          // Incase No Email
+        }else{
+          logger.error(`API /surveyByMailToken - NO E-mail`);
+        }
+
+
+    // });
+
+
+
   } catch (error) {
     // res.status(400).json({ message: 'surveyByMailToken' });
 

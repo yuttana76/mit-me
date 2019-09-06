@@ -20,9 +20,8 @@ export class SetRegis2Component implements OnInit {
   verifyFormGroup: FormGroup;
   myRecaptcha = new FormControl(false);
 
-  isStepperLinear = false;
+  isStepperLinear = true;
   spinnerLoading = false;
-  // Streaming_TermCondition = [ ];
 
   public ST_TermCondition = [
     ' GENERAL. This SALES ORDER CONTRACT (“SALES CONTRACT”) sets forth the terms and conditions pursuant to which the purchaser identified on the front page hereof ("Pur¬chaser") will purchase and Star Automation, Inc. ("Seller") will sell the product, and any accessories and attach¬ments (collectively, ¬the "Product") described on the front page of this SALES CONTRACT. These Terms and Con¬ditions shall govern and apply to the sale of the Product to Purchaser, regardless of any terms and conditions appearing on any purchase order or other forms submitted by Purchaser to Seller.',
@@ -50,23 +49,28 @@ export class SetRegis2Component implements OnInit {
   }
 
 
-  onRegister(stepper: MatStepper){
+  onRegister(stepper:MatStepper){
+
 
     if(this.firstFormGroup.valid){
 
-      // this.spinnerLoading = true;
-      console.log("Regis 1");
+      // this.spinnerLoading = true; //Not work in stepper
+
       this.streamingService.addRegister(this.register) .subscribe(data =>{
-        this.toastr.success("Register successful." , "Successful", {
-          timeOut: 3000,
-          closeButton: true,
-          positionClass: "toast-top-center"
-        });
+
+        // this.toastr.success("Register successful." , "Successful", {
+        //   timeOut: 3000,
+        //   closeButton: true,
+        //   positionClass: "toast-top-center"
+        // });
 
         this.regisFail = 0;
         stepper.next();
+
       } , error => {
-        console.log("Regis 2" + JSON.stringify(error));
+
+        console.log("Regis ERROR>" + JSON.stringify(error));
+        this.spinnerLoading = false;
         this.regisFail++;
 
         this.toastr.error("Register incomplete  Regis fail: " +  this.regisFail, "Error", {
@@ -75,18 +79,42 @@ export class SetRegis2Component implements OnInit {
           positionClass: "toast-top-center"
         });
       }, () => {
-        console.log("Regis 3");
-        // this.spinnerLoading = false;
+        this.spinnerLoading = false;
       });
 
     }
+
   }
 
-  onProcData(stepper: MatStepper){
-    // if(this.firstFormGroup.valid){
+  onProcData(stepper:MatStepper){
+    if(this.firstFormGroup.valid){
 
-    // }
-    stepper.next();
+      this.streamingService.regisAccept(this.register) .subscribe(data =>{
+
+        console.log('onProcData() result' + JSON.stringify(data));
+        let _dataObj = JSON.parse(JSON.stringify(data));
+
+        if(_dataObj.code==='000'){
+          stepper.next();
+        }else{
+          this.toastr.error("Stremaing registration process was error. " + _dataObj.msg, "Error", {
+            timeOut: 6000,
+            closeButton: true,
+            positionClass: "toast-top-center"
+          });
+        }
+
+
+      } , error => {
+        console.log("Stremaing registration process was error." + JSON.stringify(error));
+        this.toastr.error("Stremaing registration process was error. ", "Error", {
+          timeOut: 6000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+      });
+    }
+
   }
 
   onScriptLoad() {
@@ -100,27 +128,7 @@ export class SetRegis2Component implements OnInit {
   OnConditionChange() {
 
     // if(this.register.acceptFlag){
-
-      // this.streamingService.requestOTP(this.register) .subscribe(data =>{
-      //   this.toastr.success("Register successful." , "Successful", {
-      //     timeOut: 3000,
-      //     closeButton: true,
-      //     positionClass: "toast-top-center"
-      //   });
-
-      // }, error => {
-      //   console.log("WAS ERR>>" + JSON.stringify(error) );
-      //   this.spinnerLoading = false;
-      //   this.toastr.error("Register incomplete  "   , "Error", {
-      //     timeOut: 6000,
-      //     closeButton: true,
-      //     positionClass: "toast-top-center"
-      //   });
-      // },
-      // () => {
-      //  this.spinnerLoading = false;
-      // });
-
+    //   // Auto  request OTP
     // }
 
 }
@@ -139,6 +147,7 @@ requestOTP(){
 
     }, error => {
       console.log("WAS ERR>>" + JSON.stringify(error) );
+
       this.spinnerLoading = false;
       this.toastr.error("Send OTP error "   , "Error", {
         timeOut: 6000,

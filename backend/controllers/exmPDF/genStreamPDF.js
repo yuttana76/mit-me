@@ -73,30 +73,30 @@ exports.FNgenerateStreamingPDF=(data)=>{
   const fileHTML = data.cusCode+".html";
   const filePDF = data.cusCode+".pdf";
 
-  buildStreamPathHtml = buildStreamPathHtml+"/"+fileHTML;
-  buildStreamPathPdf = buildStreamPathPdf+"/"+filePDF
-  buildStreamPathPdfX = buildStreamPathPdf+"/x"+filePDF
+  var _buildStreamPathHtml = buildStreamPathHtml+"/"+fileHTML;
+  var _buildStreamPathPdf = buildStreamPathPdf+"/"+filePDF
+  // buildStreamPathPdfX = buildStreamPathPdf+"/x"+filePDF
 
   return new Promise(function(resolve, reject) {
 
     /* Check if the file for `html` build exists in system or not */
-    if (doesFileExist(buildStreamPathHtml)) {
+    if (doesFileExist(_buildStreamPathHtml)) {
       console.log('Deleting old build file');
       /* If the file exists delete the file from system */
-      fs.unlinkSync(buildStreamPathHtml);
+      fs.unlinkSync(_buildStreamPathHtml);
     }
 
     const content = createContent(data);
     const html = createHtml(content);
 
     /* write the generated html to file */
-    fs.writeFileSync(buildStreamPathHtml, html);
+    fs.writeFileSync(_buildStreamPathHtml, html);
     // console.log('Succesfully created an HTML table');
 
-    createStreamUserPdfController.creatPDFByPath(buildStreamPathHtml,buildStreamPathPdf).then(result=>{
+    createStreamUserPdfController.creatPDFByPath(_buildStreamPathHtml,_buildStreamPathPdf).then(result=>{
 
       resolve({
-        pdfPath:buildStreamPathPdf,
+        pdfPath:_buildStreamPathPdf,
         filePDF:filePDF
       }
       );

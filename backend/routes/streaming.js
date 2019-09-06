@@ -32,7 +32,7 @@ router.post("/regis",[
 ],streamingController.addRegis);
 
 //Verify OTP
-router.post("/verifyOTP",[
+router.post("/regisProcess",[
   check('idCard')
   .exists().withMessage('must have param idCard')
   .isLength({ min: 1 }).withMessage('idCard must have value '),
@@ -42,10 +42,10 @@ check('acceptFlag')
 check('otp')
   .exists().withMessage('must have Param otp')
   .isLength({ min: 1 }).withMessage('otp must have value ')
-],streamingController.verifyOTP);
+],streamingController.regisProcess);
+
 
 router.post("/sendDataMail",streamingController.sendDataMail);
-
 router.post("/generatePDF",genStreamPDFController.generatePDF);
 
 module.exports = router;

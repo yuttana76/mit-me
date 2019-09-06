@@ -83,20 +83,22 @@ exports.addRegis = (req,res,next)=>{
 }
 
 
-exports.verifyOTP = (req,res,next)=>{
+exports.regisProcess = (req,res,next)=>{
 
-  console.log("Welcome API verifyOTP/");
+  console.log("Welcome API regisProcess/");
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
 
-  const DOWNLOAD_DIR = path.resolve('./backend/controllers/readFiles/Streaming/');
-  const fileName ='streamUsers.txt';
+  // const DOWNLOAD_DIR = path.resolve('./backend/controllers/readFiles/Streaming/');
+  // const fileName ='streamUsers.txt';
+
   const _idCard = req.body.idCard;
   const _otp = req.body.otp;
   const _acceptFlag = req.body.acceptFlag;
+
   const _ip = req.ip;
   const _originalUrl = req.originalUrl;
 
@@ -120,30 +122,14 @@ exports.verifyOTP = (req,res,next)=>{
             getCustomerInfo(_idCard).then(data=>{
 
               console.log("3-1 Info >>" + JSON.stringify(data));
-              // 3.1 Has user / password ?
-              // Redad user/pwd file
 
-              fs.readFile(DOWNLOAD_DIR +"/"+ fileName, 'utf-8', (err, file_data) => {
+              if(!data.UserName){
+                res.status(422).json({ code: 102,msg:'Not found streaming user' });
 
-                if (err) reject(err);
+              }else{
 
-                var array = file_data.toString().split("\n");
-                for(i in array) {
-
-                  var item = array[i].split("|") ;
-
-                  console.log('**ITEM>' + JSON.stringify(item));
-                  console.log('**_idCard>' + _idCard);
-
-                  if(item[0]==_idCard){
-                    console.log( `item  ${item[0]}  ${item[1]}  ${item[2]}` );
-                    userPwdObj = { "cusCode":item[0],"user":item[1],"password":item[2],"dob":data.Birth_Day_1}
-                    break;
-                  }
-                }
-
-                console.log('USER is >' +JSON.stringify(userPwdObj));
-
+                userPwdObj = { "cusCode":data.Cust_Code,"user":data.UserName,"password":data.PWD,"dob":data.Birth_Day_2}
+                console.log("3-3 userPwdObj >>" + JSON.stringify(userPwdObj));
                 // Create PDF
                 genStreamPDFController.FNgenerateStreamingPDF(userPwdObj).then(result=>{
                   console.log('genStreamPDFController Result >' + JSON.stringify(result));
@@ -154,14 +140,43 @@ exports.verifyOTP = (req,res,next)=>{
                     });
                 });
 
-              });
+                res.status(200).json({
+                  code: '000',
+                  data:data
+                });
 
+              }
+              // 3.2 Has user / password ?
+              // Redad user/pwd file
+              // fs.readFile(DOWNLOAD_DIR +"/"+ fileName, 'utf-8', (err, file_data) => {
+
+              //   if (err) reject(err);
+              //   var array = file_data.toString().split("\n");
+              //   for(i in array) {
+
+              //     var item = array[i].split("|") ;
+              //     console.log('**ITEM>' + JSON.stringify(item));
+              //     console.log('**_idCard>' + _idCard);
+              //     if(item[0]==_idCard){
+              //       console.log( `item  ${item[0]}  ${item[1]}  ${item[2]}` );
+              //       userPwdObj = { "cusCode":item[0],"user":item[1],"password":item[2],"dob":data.Birth_Day_1}
+              //       break;
+              //     }
+              //   }
+
+              //   console.log('USER is >' +JSON.stringify(userPwdObj));
+              //   // Create PDF
+              //   genStreamPDFController.FNgenerateStreamingPDF(userPwdObj).then(result=>{
+              //     console.log('genStreamPDFController Result >' + JSON.stringify(result));
+
+              //       //4. Send E-mail
+              //       mailController.mailStreamingUserSecret(data.Email,_idCard,data.First_Name,data.Last_Name,data.Birth_Day_1,result.filePDF).then(data=>{
+              //         console.log("4. Send E-mail sussful " + data);
+              //       });
+              //   });
+              // });
             });
 
-            res.status(200).json({
-              code: '000',
-              data:data
-            });
           }
 
         },err=>{
@@ -288,9 +303,15 @@ function fnUpdateAcceptInfo(ID,acceptFlag,acceptOTP,acceptClientInfo){
   return new Promise(function(resolve, reject) {
 
   var queryStr = `
-  Update MIT_ST_Register
-  SET AcceptCond='${acceptFlag}',AcceptOTP='${acceptOTP}',AcceptDate=getdate(),AcceptClientInfo='${acceptClientInfo}'
-  where ID='${ID}'
+  BEGIN
+
+    Update MIT_ST_Register
+    SET AcceptCond='${acceptFlag}',AcceptOTP='${acceptOTP}',AcceptDate=getdate(),AcceptClientInfo='${acceptClientInfo}'
+    where ID='${ID}'
+
+    UPDATE MIT_ST_User SET Status='1',UpdateDate=GETDATE() WHERE ID='${ID}'
+
+  END;
 `;
 
   const sql = require('mssql')
@@ -324,14 +345,32 @@ function getCustomerInfo(ID){
 
   return new Promise(function(resolve, reject) {
 
-  var queryStr = `SELECT [First_Name_T]
+  // var queryStr = `
+  // SELECT
+  // [First_Name_T]
+  // ,[Last_Name_T]
+  // ,[Mobile]
+  // ,[Email]
+  // ,Birth_Day
+  // ,convert(varchar, Birth_Day, 111) as Birth_Day_1
+  // , convert(varchar, Birth_Day, 106) as Birth_Day_2
+  // FROM [dbo].[Account_Info]
+  // WHERE Cust_Code='${ID}'
+  // `;
+
+  var queryStr = `
+  SELECT
+  Cust_Code
+  ,[First_Name_T]
   ,[Last_Name_T]
   ,[Mobile]
   ,[Email]
   ,Birth_Day
   ,convert(varchar, Birth_Day, 111) as Birth_Day_1
   , convert(varchar, Birth_Day, 106) as Birth_Day_2
-  FROM [dbo].[Account_Info]
+  ,B.UserName
+  ,B.PWD
+  FROM [dbo].[Account_Info]  A LEFT JOIN MIT_ST_User B ON A.Cust_Code=B.ID
   WHERE Cust_Code='${ID}'
   `;
 
@@ -344,6 +383,7 @@ function getCustomerInfo(ID){
         }else {
           // resolve(result.recordset[0])
           resolve({
+            Cust_Code:result.recordset[0].Cust_Code,
             First_Name:result.recordset[0].First_Name_T,
             Last_Name:result.recordset[0].Last_Name_T,
             Mobile:result.recordset[0].Mobile,
@@ -351,6 +391,8 @@ function getCustomerInfo(ID){
             Birth_Day:result.recordset[0].Birth_Day,
             Birth_Day_1:result.recordset[0].Birth_Day_1,
             Birth_Day_2:result.recordset[0].Birth_Day_2,
+            UserName:result.recordset[0].UserName,
+            PWD:result.recordset[0].PWD,
           });
         }
     })

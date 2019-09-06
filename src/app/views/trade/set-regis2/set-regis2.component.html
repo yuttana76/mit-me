@@ -9,19 +9,13 @@
     </div>
     <div class="col-md-6 mx-auto">
 
-<!-- *************** Fill in register information Step -->
+
 <mat-horizontal-stepper [linear]="isStepperLinear" labelPosition="bottom" #stepper>
   <mat-step [stepControl]="firstFormGroup">
       <form [formGroup]="firstFormGroup">
 
         <ng-template matStepLabel>Fill out your info</ng-template>
 
-
-          <!-- <alert type="info">
-              <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
-              <br>
-              <p>กรุณากรอกข้อมูลที่ได้ลงทะเบียนกับบริษัท</p>
-            </alert> -->
           <div class="STEP1_HEADER">
               <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
               <p>กรุณากรอกข้อมูลที่ได้ลงทะเบียนกับบริษัท</p>
@@ -47,7 +41,6 @@
             <input matInput placeholder="อีเมลล์ / Email" formControlName="email" [(ngModel)]="register.email"  >
         </mat-form-field>
 
-
         <div>
             <recaptcha
             [formControl]="myRecaptcha"
@@ -55,15 +48,13 @@
             (scriptError)="onScriptError()"
           ></recaptcha>
         </div>
-
+        <hr>
           <div>
               <button type="button" class="btn btn-primary" (click)="onRegister(stepper)" >Next</button>
           </div>
-
       </form>
   </mat-step>
 
-  <!-- *************** Term of Condiftion Step -->
   <mat-step>
 
           <ng-template matStepLabel>Verify</ng-template>
@@ -77,7 +68,6 @@
 
              <div class="row div_otp">
                 <div class="col-md-3 mb-3">
-                    <!-- <label>OTP</label> -->
                     <input type="text" [(ngModel)]="register.otp" class="form-control"  placeholder="OTP" [disabled]="!register.acceptFlag" required>
                   </div>
 
@@ -85,14 +75,13 @@
                       <button type="button" class="btn" (click)="requestOTP()" [disabled]="!register.acceptFlag" >Request OTP</button>
                   </div>
              </div>
-
+          <hr>
           <div>
               <button type="button" matStepperNext class="btn btn-primary" (click)="onProcData(stepper)" [disabled]="!register.acceptFlag || !register.otp ">Done</button>
           </div>
 
   </mat-step>
 
-  <!-- *************** Final Step -->
   <mat-step>
       <ng-template matStepLabel>Finish</ng-template>
 
@@ -107,4 +96,5 @@
 
     </div>
   </div>
+
 </div>

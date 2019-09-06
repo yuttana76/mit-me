@@ -47,14 +47,19 @@ const BACKEND_OTP_URL = environment.apiURL + '/otp/';
 
       regisAccept(data:RegisterModel) {
 
+          let _acceptFlag ='N'
+
+          if(data.acceptFlag)
+          _acceptFlag ='Y'
+
         const postData ={
-          "m":data.idCard,
-          "acceptFlag":data.acceptFlag,
+          "idCard":data.idCard,
           "otp":data.otp,
+          "acceptFlag":_acceptFlag
 
         };
         console.log('regisAccept()' + JSON.stringify(postData));
-        return this.http.post(BACKEND_URL + '/regisAccept/', postData);
+        return this.http.post(BACKEND_URL + '/regisProcess/', postData);
       }
 
 

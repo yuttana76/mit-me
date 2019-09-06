@@ -29,6 +29,7 @@ exports.addRegis = (req,res,next)=>{
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    logger.info("Validate API regis/ FAIL!");
     return res.status(422).json({ errors: errors.array() });
   }
 
@@ -48,10 +49,12 @@ exports.addRegis = (req,res,next)=>{
   //Check is customer
   hasExistAcc(idCard,email,mobile).then(data=>{
 
+    console.log('hasExistAcc()' > JSON.stringify(data))
+
   if(data ===YES_VAL){
 
     // Insert new registration
-    fnAddNewRegister(ID,Fname,Lname,Email,Mobile,clientInfo).then(data=>{
+    fnAddNewRegister(idCard,fname,lname,email,mobile,ip).then(data=>{
       res.status(200).json({
           code: '000',
           data:data
@@ -64,7 +67,7 @@ exports.addRegis = (req,res,next)=>{
     });
 
   }else{
-    res.status(200).json({
+    res.status(401).json({
       code: '100',
       data: 'Not found customer'
     });

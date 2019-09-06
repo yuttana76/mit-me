@@ -6,6 +6,8 @@ export class RegisterModel {
   email: string;
   lineId: string;
   description: string;
+  acceptFlag: false;
+  otp:string;
 
   constructor() {}
 

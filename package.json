@@ -78,6 +78,7 @@
     "ngx-perfect-scrollbar": "^6.3.0",
     "ngx-toastr": "^9.2.0",
     "node-cron": "^2.0.3",
+    "node-qpdf": "^1.0.3",
     "nodemailer": "^4.6.8",
     "object-to-xml": "^2.0.0",
     "otpauth": "^3.2.3",

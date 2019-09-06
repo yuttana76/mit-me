@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { RegisterModel } from '../model/sitRegister.model';
+import { ToastrService } from 'ngx-toastr';
+import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
+import { StreamingService } from '../services/streaming.service';
+import { MatStepper } from '@angular/material';
 
 @Component({
   selector: 'app-set-regis2',
@@ -10,7 +14,7 @@ import { RegisterModel } from '../model/sitRegister.model';
 export class SetRegis2Component implements OnInit {
 
   register = new RegisterModel();
-  checkCond = false;
+  regisFail=0;
 
   firstFormGroup: FormGroup;
   verifyFormGroup: FormGroup;
@@ -27,7 +31,12 @@ export class SetRegis2Component implements OnInit {
     'PAYMENT, DELINQUENCY CHARGE. Payment shall be made in accordance with the terms of this SALES CONTRACT, unless otherwise agreed: (1) Purchaser shall pay Seller 25% prior to shipment and the remaining 75% net 30 days after ship date. Seller reserves the right to charge interest at the rate of 1.5% per month (but not more than the maximum percentage permitted by law) on all balances not paid by Purchaser within the designated net terms. Seller reserves the right at any time to revoke any credit extended to Purchaser because of Purchaser\'s failure to pay for any goods when due or for any other reason deemed to be good and sufficient by Seller. Seller shall have no obligation to make sale or shipment of any products to Purchaser, in any manner, if at any time the Seller has reason to believe that the financial responsibility of Purchaser is impaired or unsatis¬factory to Seller, or if at the time of such sale or shipment, Purchaser is delinquent in the payment of any account to Seller. In the event Purchaser shall be in default of any terms and conditions hereof, or becomes insolvent or proceedings are instituted to declare Purchaser bankrupt, or a receiver is appointed for Purchaser in any court, Seller may at its option terminate this SALES CONTRACT and/or declare any and all claims or demands against Purchaser held by Seller immediate¬ly due and payable, together with any and all attorneys’ fees and costs incurred by Seller in enforcing its rights hereunder, all of which Seller may sue for and recover from Purchaser.'
   ];
 
-  constructor(private _formBuilder: FormBuilder) {}
+  constructor(private _formBuilder: FormBuilder,
+    private toastr: ToastrService,
+    private confirmationDialogService: ConfirmationDialogService,
+    private streamingService:StreamingService
+    ) {}
+
   ngOnInit() {
     this.firstFormGroup = this._formBuilder.group({
       idCard: ['', Validators.required],
@@ -41,16 +50,43 @@ export class SetRegis2Component implements OnInit {
   }
 
 
-  onSubmit(){
+  onRegister(stepper: MatStepper){
+
     if(this.firstFormGroup.valid){
+
+      // this.spinnerLoading = true;
+      console.log("Regis 1");
+      this.streamingService.addRegister(this.register) .subscribe(data =>{
+        this.toastr.success("Register successful." , "Successful", {
+          timeOut: 3000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+
+        this.regisFail = 0;
+        stepper.next();
+      } , error => {
+        console.log("Regis 2" + JSON.stringify(error));
+        this.regisFail++;
+
+        this.toastr.error("Register incomplete  Regis fail: " +  this.regisFail, "Error", {
+          timeOut: 6000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+      }, () => {
+        console.log("Regis 3");
+        // this.spinnerLoading = false;
+      });
 
     }
   }
 
-  onProcData(){
+  onProcData(stepper: MatStepper){
     // if(this.firstFormGroup.valid){
 
     // }
+    stepper.next();
   }
 
   onScriptLoad() {
@@ -61,8 +97,59 @@ export class SetRegis2Component implements OnInit {
       console.log('Something went long when loading the Google reCAPTCHA')
   }
 
+  OnConditionChange() {
 
-  sendOTP(){
+    // if(this.register.acceptFlag){
+
+      // this.streamingService.requestOTP(this.register) .subscribe(data =>{
+      //   this.toastr.success("Register successful." , "Successful", {
+      //     timeOut: 3000,
+      //     closeButton: true,
+      //     positionClass: "toast-top-center"
+      //   });
+
+      // }, error => {
+      //   console.log("WAS ERR>>" + JSON.stringify(error) );
+      //   this.spinnerLoading = false;
+      //   this.toastr.error("Register incomplete  "   , "Error", {
+      //     timeOut: 6000,
+      //     closeButton: true,
+      //     positionClass: "toast-top-center"
+      //   });
+      // },
+      // () => {
+      //  this.spinnerLoading = false;
+      // });
+
+    // }
+
+}
+
+requestOTP(){
+  if(this.register.acceptFlag){
+
+    // console.log("Call requestOTP");
+
+    this.streamingService.requestOTP(this.register) .subscribe(data =>{
+      this.toastr.success("Already send OTP" , "Successful", {
+        timeOut: 3000,
+        closeButton: true,
+        positionClass: "toast-top-center"
+      });
+
+    }, error => {
+      console.log("WAS ERR>>" + JSON.stringify(error) );
+      this.spinnerLoading = false;
+      this.toastr.error("Send OTP error "   , "Error", {
+        timeOut: 6000,
+        closeButton: true,
+        positionClass: "toast-top-center"
+      });
+    },
+    () => {
+     this.spinnerLoading = false;
+    });
+  }
 
   }
 }

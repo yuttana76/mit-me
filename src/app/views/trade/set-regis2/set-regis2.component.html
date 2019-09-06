@@ -4,6 +4,9 @@
 
 
   <div class="row">
+    <div>
+      <p>Regis Fail:{{regisFail}}</p>
+    </div>
     <div class="col-md-6 mx-auto">
 
 <!-- *************** Fill in register information Step -->
@@ -54,45 +57,44 @@
         </div>
 
           <div>
-              <button type="button" matStepperNext class="btn btn-primary" (click)="onSubmit()" >Next</button>
+              <button type="button" class="btn btn-primary" (click)="onRegister(stepper)" >Next</button>
           </div>
 
       </form>
   </mat-step>
 
   <!-- *************** Term of Condiftion Step -->
-  <mat-step optional>
+  <mat-step>
 
           <ng-template matStepLabel>Verify</ng-template>
 
-          <section >
+
               <div class="termCondition">
                   <p *ngFor="let txt of ST_TermCondition">{{txt}}</p>
+              </div>
 
-                </div>
-              <mat-checkbox  [(ngModel)]="checkCond">Agree to terms and conditions</mat-checkbox>
-            </section>
+          <mat-checkbox  [(ngModel)]="register.acceptFlag"  (change)="OnConditionChange()"  >Agree to terms and conditions</mat-checkbox>
 
              <div class="row div_otp">
                 <div class="col-md-3 mb-3">
                     <!-- <label>OTP</label> -->
-                    <input type="text" class="form-control"  placeholder="OTP" required>
+                    <input type="text" [(ngModel)]="register.otp" class="form-control"  placeholder="OTP" [disabled]="!register.acceptFlag" required>
                   </div>
 
                   <div class="col-md-3 mb-3" >
-                      <button type="button" class="btn" (click)="sendOTP()" [disabled]="!checkCond" >Resend OTP</button>
+                      <button type="button" class="btn" (click)="requestOTP()" [disabled]="!register.acceptFlag" >Request OTP</button>
                   </div>
              </div>
 
           <div>
-              <button type="button" matStepperNext class="btn btn-primary" (click)="onProcData()" [disabled]="!checkCond">Done</button>
+              <button type="button" matStepperNext class="btn btn-primary" (click)="onProcData(stepper)" [disabled]="!register.acceptFlag || !register.otp ">Done</button>
           </div>
 
   </mat-step>
 
   <!-- *************** Final Step -->
   <mat-step>
-      <ng-template matStepLabel>Done</ng-template>
+      <ng-template matStepLabel>Finish</ng-template>
 
       <alert type="info">
           <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >

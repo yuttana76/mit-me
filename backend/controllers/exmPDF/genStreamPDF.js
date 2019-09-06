@@ -1,6 +1,6 @@
 const fs = require('fs');
-// JSON data
-// const data = require('./data.json');
+var qpdf = require('node-qpdf');
+
 
 // Build paths
 let { buildStreamPathHtml,buildStreamPathPdf } = require('./buildPaths');
@@ -75,6 +75,7 @@ exports.FNgenerateStreamingPDF=(data)=>{
 
   buildStreamPathHtml = buildStreamPathHtml+"/"+fileHTML;
   buildStreamPathPdf = buildStreamPathPdf+"/"+filePDF
+  buildStreamPathPdfX = buildStreamPathPdf+"/x"+filePDF
 
   return new Promise(function(resolve, reject) {
 
@@ -93,6 +94,7 @@ exports.FNgenerateStreamingPDF=(data)=>{
     // console.log('Succesfully created an HTML table');
 
     createStreamUserPdfController.creatPDFByPath(buildStreamPathHtml,buildStreamPathPdf).then(result=>{
+
       resolve({
         pdfPath:buildStreamPathPdf,
         filePDF:filePDF

@@ -1129,6 +1129,7 @@ function getLedMaster(twsid) {
   });
 }
 
+
 module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdayStr,userFilePDF) => {
 
   console.log(`Function mailStreamingUserSecret ${_Email} - ${fname} - ${lname} - ${birthdayStr} - ${userFilePDF}`);
@@ -1301,6 +1302,112 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
   } catch (error) {
     // res.status(400).json({ message: 'surveyByMailToken' });
 
+    reject(error);
+  }
+
+});
+
+}
+
+
+
+module.exports.mailStreamingToStaff = (_to,_subject,_content) => {
+
+  console.log(`Function mailStreamingToStaff ${_to} - ${_content} `);
+
+  const _compInfo = mailConfig.mailCompInfo_TH;
+  let _from = mailConfig.mail_form;
+  let _msgTH = '';
+
+
+  var today = new Date();
+  var date = today.getFullYear()+"/"+(today.getMonth()+1)+"/"+today.getDate();
+  var time = today.getHours() +":"+  today.getMinutes()
+
+  var dateTime = date+' '+time;
+
+  return new Promise(function(resolve, reject) {
+
+  try {
+        // Incase has Email
+        if(_to){
+          // Thai message
+          _msgTH = `
+          <html>
+          <head>
+          <style>
+
+          .blog-content-outer {
+            background: whitesmoke;
+            border: 1px solid #e1e1e1;
+            border-radius: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 0 15px;
+            font-size: 16px;
+          }
+
+          .logo-area{
+            margin-top:20px;
+            margin-left:60px;
+            margin-bottom:20px;
+          }
+
+        .tab { margin-left: 40px; }
+          .tab2 { margin-left: 80px; }
+          div.a {
+
+        }
+        .content{
+          text-align: justify;
+          margin-left: 10px;
+          margin-right: 10px;
+        }
+
+          </style>
+          </head>
+          <body>
+
+          <p>${_subject}  ON:${dateTime}<p>
+          <br>
+          ${_content}
+          </body>
+          </html>
+          <br>
+          <p>
+          <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+          <p>
+          `;
+          _msgTH +=_compInfo
+
+          // setup email data with unicode symbols
+          let mailOptions = {
+            from: _from,
+            to: _to,
+            subject: _subject,
+            html: _msgTH,
+
+          };
+
+        /**
+         * SEND mail to suctomer
+         */
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              reject(error);
+            }
+
+            logger.info(`API /mailStreamingToStaff -  Send mail successful!`);
+            // res.status(200).json({ message: 'Send mail successful!' });
+            resolve('Send mail successful');
+          });
+
+          // Incase No Email
+        }else{
+          logger.error(`API /mailStreamingToStaff - NO E-mail`);
+        }
+  } catch (error) {
+    // res.status(400).json({ message: 'surveyByMailToken' });
     reject(error);
   }
 

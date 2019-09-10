@@ -40,13 +40,14 @@ https://www.npmjs.com/package/ngx-toastr
 
 */
 
-        this.toastr.error(errorMessage, 'ERROR', {
-          timeOut: 5000,
-          closeButton: true,
-          positionClass: 'toast-top-center'
-        });
+        // this.toastr.error(errorMessage, 'ERROR', {
+        //   timeOut: 5000,
+        //   closeButton: true,
+        //   positionClass: 'toast-top-center'
+        // });
 
         // this.dialog.open(CustomErrorComponent, {data: {message: errorMessage}});
+        console.log(JSON.stringify(errorMessage));
 
         return throwError(error);
       })

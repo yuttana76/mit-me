@@ -17,14 +17,15 @@ const BACKEND_OTP_URL = environment.apiURL + '/otp/';
 
       constructor(private http: HttpClient , private router: Router) { }
 
-      addRegister(data:RegisterModel) {
+      addRegister(data:RegisterModel,counter) {
 
         const postData ={
           "idCard":data.idCard,
           "fname":data.firstName,
           "lname":data.lastName,
           "email":data.email,
-          "mobile":data.mobile
+          "mobile":data.mobile,
+          "counter":counter
         };
 
         console.log('addRegister()' + JSON.stringify(postData));
@@ -56,6 +57,7 @@ const BACKEND_OTP_URL = environment.apiURL + '/otp/';
           "idCard":data.idCard,
           "otp":data.otp,
           "acceptFlag":_acceptFlag
+          // "otpCounter":otpCounter
 
         };
         console.log('regisAccept()' + JSON.stringify(postData));

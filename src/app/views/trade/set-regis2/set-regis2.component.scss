@@ -49,11 +49,46 @@ button{
 .termCondition{
   background-color: darkgrey;
   border-radius: 5px;
+  padding-top: 20px;
 }
+
+.div_otp{
+  // background-color: floralwhite;
+
+  border-radius: 5px;
+  // margin-top: 20px;
+  align-items: end;
+
+
+}
+
+.div_otp input{
+  width: 30%;
+  margin: 10px;
+}
+
 
 .termCondition p{
   text-align: justify;
 
   margin-left: 10px;
   margin-right: 10px;
+}
+
+.termCondition #header{
+  text-align: center;
+  font-weight: bold;
+}
+
+
+.DIV_ALERT{
+  margin-top: 10px;
+}
+
+
+.div_final{
+  margin-top: 30px;
+  font-size: x-large;
+  font-family: sans-serif;
+  text-align: center;
 }

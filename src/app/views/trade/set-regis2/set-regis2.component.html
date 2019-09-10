@@ -2,99 +2,156 @@
 
 <div  class="container DIV_SET_REG" *ngIf="!spinnerLoading" >
 
+<!-- <div class="row" *ngIf="regisFail || OTPFail">
+  </div> -->
 
-  <div class="row">
-    <div>
-      <p>Regis Fail:{{regisFail}}</p>
-    </div>
-    <div class="col-md-6 mx-auto">
+  <mat-card class="col-md-6 mx-auto" *ngIf="regisFail || OTPFail">
+      <!-- <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title>Shiba Inu</mat-card-title>
+        <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+      </mat-card-header> -->
+      <img mat-card-image src="assets/img/mpam/AW_3fb-click.jpg" alt="Photo of a Shiba Inu">
+      <mat-card-content>
 
+          <!-- <div class="DIV_ALERT alert alert-danger" role="alert" *ngIf="regisFail">
+              This is a danger alert—check it out!
+            </div> -->
 
-<mat-horizontal-stepper [linear]="isStepperLinear" labelPosition="bottom" #stepper>
-  <mat-step [stepControl]="firstFormGroup">
-      <form [formGroup]="firstFormGroup">
+          <!-- <div class="DIV_ALERT alert alert-danger" *ngIf="regisFail"> -->
+          <div class="DIV_ALERT alert alert-danger" role="alert" *ngIf="regisFail">
+            <!-- <p>ข้อมูลที่ระบุไม่ตรงกับข้อมูลในระบบบริษัท </p> -->
+            <p>กรอกข้อมูลไม่ถูกต้องเกินจำนวนที่กำหนด {{regisCount}} ครั้ง</p>
+            <p>บริษัทขอขอบพระคุณในความสนใจของท่าน จะมีเจ้าหน้าที่ติดต่อกลับ หรือ สามารถติดต่อบริษัทตามข้อมูลด้านล่าง</p>
 
-        <ng-template matStepLabel>Fill out your info</ng-template>
-
-          <div class="STEP1_HEADER">
-              <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
-              <p>กรุณากรอกข้อมูลที่ได้ลงทะเบียนกับบริษัท</p>
+          </div>
+          <div class="DIV_ALERT" *ngIf="OTPFail">
+            <p>Verify Fail over limited {{OTPCount}}.</p>
           </div>
 
-          <mat-form-field class="col-md-12">
-            <input matInput placeholder="เลขประจำตัวประชาชน/ ID card" formControlName="idCard" [(ngModel)]="register.idCard"  >
-        </mat-form-field>
 
-          <mat-form-field class="col-md-12">
-            <input matInput placeholder="ชื่อ / First name" formControlName="firstName" [(ngModel)]="register.firstName"  >
-        </mat-form-field>
+          <br>
+          <hr>
+          <p> {{MPAM_WEALTH_CONTACT}} </p>
 
-        <mat-form-field class="col-md-12">
-          <input matInput placeholder="นามสกุล / Last name" formControlName="lastName" [(ngModel)]="register.lastName"  >
-        </mat-form-field>
-
-        <mat-form-field class="col-md-12">
-            <input matInput placeholder="โทรศัพท์มือถือ / Mobile Phone" formControlName="mobile" [(ngModel)]="register.mobile"  >
-        </mat-form-field>
-
-        <mat-form-field class="col-md-12">
-            <input matInput placeholder="อีเมลล์ / Email" formControlName="email" [(ngModel)]="register.email"  >
-        </mat-form-field>
-
-        <div>
-            <recaptcha
-            [formControl]="myRecaptcha"
-            (scriptLoad)="onScriptLoad()"
-            (scriptError)="onScriptError()"
-          ></recaptcha>
-        </div>
-        <hr>
-          <div>
-              <button type="button" class="btn btn-primary" (click)="onRegister(stepper)" >Next</button>
-          </div>
-      </form>
-  </mat-step>
-
-  <mat-step>
-
-          <ng-template matStepLabel>Verify</ng-template>
+      </mat-card-content>
+      <mat-card-actions>
+        <!-- <button mat-button [routerLink]="['/set-regis2']" >Register again</button> -->
+      </mat-card-actions>
+    </mat-card>
 
 
-              <div class="termCondition">
-                  <p *ngFor="let txt of ST_TermCondition">{{txt}}</p>
+
+
+<div class="row" *ngIf="!(regisFail || OTPFail)">
+<!-- <div class="row" > -->
+  <div>
+    <p>Regis Fail:{{regisCount}}</p>
+  </div>
+  <div class="col-md-6 mx-auto">
+
+    <mat-horizontal-stepper [linear]="isStepperLinear" labelPosition="bottom" #stepper>
+      <mat-step [stepControl]="firstFormGroup">
+          <form [formGroup]="firstFormGroup">
+
+            <ng-template matStepLabel>Fill out your info</ng-template>
+
+              <div class="STEP1_HEADER ">
+                  <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
+                  <p>กรุณากรอกข้อมูลที่ได้ลงทะเบียนกับบริษัท</p>
               </div>
 
-          <mat-checkbox  [(ngModel)]="register.acceptFlag"  (change)="OnConditionChange()"  >Agree to terms and conditions</mat-checkbox>
+              <mat-form-field class="col-md-12">
+                <input matInput placeholder="เลขประจำตัวประชาชน/ ID card" formControlName="idCard" [(ngModel)]="register.idCard"  >
+            </mat-form-field>
 
-             <div class="row div_otp">
-                <div class="col-md-3 mb-3">
-                    <input type="text" [(ngModel)]="register.otp" class="form-control"  placeholder="OTP" [disabled]="!register.acceptFlag" required>
+              <mat-form-field class="col-md-12">
+                <input matInput placeholder="ชื่อ / First name" formControlName="firstName" [(ngModel)]="register.firstName"  >
+            </mat-form-field>
+
+            <mat-form-field class="col-md-12">
+              <input matInput placeholder="นามสกุล / Last name" formControlName="lastName" [(ngModel)]="register.lastName"  >
+            </mat-form-field>
+
+            <mat-form-field class="col-md-12">
+                <input matInput placeholder="โทรศัพท์มือถือ / Mobile Phone" formControlName="mobile" [(ngModel)]="register.mobile"  >
+            </mat-form-field>
+
+            <mat-form-field class="col-md-12">
+                <input matInput placeholder="อีเมลล์ / Email" formControlName="email" [(ngModel)]="register.email"  >
+            </mat-form-field>
+
+            <div>
+                <recaptcha
+                [formControl]="myRecaptcha"
+                (scriptLoad)="onScriptLoad()"
+                (scriptError)="onScriptError()"
+              ></recaptcha>
+            </div>
+            <hr>
+              <div>
+                  <!-- <button type="button" class="btn btn-primary" (click)="onRegister(stepper)" >Next</button> -->
+
+                  <button mat-raised-button color="primary" (click)="onRegister(stepper)" [disabled]="!firstFormGroup.valid " >ต่อไป</button>
+              </div>
+          </form>
+      </mat-step>
+
+      <mat-step>
+
+              <ng-template matStepLabel>Verify</ng-template>
+
+
+                  <div class="termCondition">
+                      <p id="header">ข้อตกลงและเงื่อนไขของการใช้บริการ Online</p>
+                      <p *ngFor="let txt of ST_TermCondition">{{txt}}</p>
                   </div>
 
-                  <div class="col-md-3 mb-3" >
-                      <button type="button" class="btn" (click)="requestOTP()" [disabled]="!register.acceptFlag" >Request OTP</button>
-                  </div>
-             </div>
-          <hr>
-          <div>
-              <button type="button" matStepperNext class="btn btn-primary" (click)="onProcData(stepper)" [disabled]="!register.acceptFlag || !register.otp ">Done</button>
-          </div>
+              <mat-checkbox  [(ngModel)]="register.acceptFlag"  (change)="OnConditionChange()"  >Agree to terms and conditions</mat-checkbox>
 
-  </mat-step>
+                <div class="row div_otp">
 
-  <mat-step>
-      <ng-template matStepLabel>Finish</ng-template>
+                  <input   type="text" [(ngModel)]="register.otp" class="form-control"  placeholder="OTP" [disabled]="!register.acceptFlag" required>
+                  <button  mat-flat-button color="accent" (click)="requestOTP()" [disabled]="!register.acceptFlag" >Request OTP</button>
 
-      <alert type="info">
+                    <!-- <div class="col-md-3 mb-3">
+                        <input   type="text" [(ngModel)]="register.otp" class="form-control"  placeholder="OTP" [disabled]="!register.acceptFlag" required>
+                      </div>
+
+                      <div class="col-md-3 mb-3" >
+                          <button  type="button" class="btn" (click)="requestOTP()" [disabled]="!register.acceptFlag" >Request OTP</button>
+                      </div> -->
+                </div>
+              <hr>
+              <div>
+                  <!-- <button type="button"  class="btn btn-primary" (click)="onProcData(stepper)" [disabled]="!register.acceptFlag || !register.otp ">Done</button> -->
+                  <button mat-raised-button color="primary" (click)="onProcData(stepper)" [disabled]="!register.acceptFlag || !register.otp " >ดำเนินการ</button>
+              </div>
+
+      </mat-step>
+
+      <mat-step>
+          <ng-template matStepLabel>Finish</ng-template>
           <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
-          <br>
-          <p>Contraturation, We already send data.Please check your E-Mail.</p>
-        </alert>
 
-  </mat-step>
-</mat-horizontal-stepper>
+          <div class='div_final'>
+              <!-- <p>Contraturation, Already send data.Please check your E-Mail.</p> -->
+              <p>ระบบได้ส่งข้อมูลการเข้าระบบ Streaming For Fund ไปยัง E-mail ของท่านแล้ว </p>
+                <p>หากมีข้อสงสัยสามารถติดต่อบริษรัทได้ที่</p>
+                <p> {{MPAM_WEALTH_CONTACT}} </p>
+            </div>
 
-    </div>
+          <!-- <alert type="info">
+              <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
+
+            </alert> -->
+
+
+
+      </mat-step>
+    </mat-horizontal-stepper>
+
   </div>
+</div>
 
 </div>

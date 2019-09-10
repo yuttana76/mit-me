@@ -52,7 +52,7 @@ const createHtml = (content) => `
     <IMG SRC="${logoPath}" >
 
     <br>
-    <p class='txtRight'>วันที่ (Date) ${formatDate(new Date())}</p>
+    <p class='txtRight'>วันที่ ${formatDate(new Date())}</p>
       <br>
     <p class='content'>
         ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด มีความยินดีที่ลูกค้าประสงค์ใช้บริการซื้อขายกองทุนผ่าน Mobile App ดังนั้นทางบริษัทจัดการฯ ขอนำส่ง User and Password ให้กับลูกค้าตามที่แนบมานี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป

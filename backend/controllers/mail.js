@@ -1134,10 +1134,22 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
 
   console.log(`Function mailStreamingUserSecret ${_Email} - ${fname} - ${lname} - ${birthdayStr} - ${userFilePDF}`);
 
-  const fileName1='StreamingforFund_Letter.pdf';
+  // const fileName1='StreamingforFund_Letter.pdf';
+  // const attachfile1 = __dirname + '/readFiles/Streaming/'+fileName1;
 
-  const attachfile1 = __dirname + '/readFiles/Streaming/'+fileName1;
-  const attachfile2 = __dirname + '/readFiles/Streaming/'+userFilePDF;
+  const attachUserFilePDF = __dirname + '/readFiles/Streaming/'+userFilePDF;
+
+  const fileName1 ="คาขอใช้บริการธุรกรรมผ่านทางอินเตอร์เน็ต.pdf";
+  const fileName2 ="หนังสือขอให้หักบัญชีเงินฝาก.pdf";
+  const fileName3 ="ขั้นตอนการสมัครยินยอมให้หักบัญชีเงินฝาก SCB CallCenter.pdf";
+  const fileName4 ="ขั้นตอนการสมัครยินยอมให้หักบัญชีเงินฝาก ช่องทาง SCB Easy Net.pdf";
+  const fileName5 ="ขั้นตอนการสมัครยินยอมให้หักบัญชีเงินฝาก ช่องทาง ตู้ ATM.pdf";
+
+  const attachfile1 = __dirname + '/readFiles/Streaming/คำขอใช้บริการอินเตอร์เน็ต_MPAM_050919_Final.pdf';
+  const attachfile2 = __dirname + '/readFiles/Streaming/หนังสือขอให้หักบัญชีเงินฝากATS_070819.pdf'
+  const attachfile3 = __dirname + '/readFiles/Streaming/ขั้นตอนการสมัครยินยอมให้หักบัญชีเงินฝาก_SCB_Call_Center.pdf';
+  const attachfile4 = __dirname + '/readFiles/Streaming/ขั้นตอนการสมัครยินยอมให้หักบัญชีเงินฝาก_SCB_Easy_Net.pdf';
+  const attachfile5 = __dirname + '/readFiles/Streaming/ขั้นตอนการสมัครยินยอมให้หักบัญชีเงินฝาก_ตู้_ATM.pdf';
 
   const fullName = fname+' ' +lname + ' '
 
@@ -1191,13 +1203,12 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
           </style>
           </head>
           <body>
-          <br>
+          <IMG SRC="https://www.merchantasset.co.th/assets/images/logo.png" >
 
+
+          <br>
           <div class='blog-content-outer'>
 
-          <div class="logo-area col-xs-12 col-sm-12 col-md-3">
-          <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
-          </div>
 
         <div class="a">
           <p >เรียน ท่านลูกค้า</p>
@@ -1251,16 +1262,38 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
             to: _Email,
             subject: _subject,
             html: _msgTH,
-            attachments: [{
+            attachments: [
+              {
+                filename: 'streamingUser.pdf',
+                path: attachUserFilePDF,
+                contentType: 'application/pdf'
+              },
+              {
               filename: fileName1,
               path: attachfile1,
               contentType: 'application/pdf'
-            },
-            {
-              filename: 'streamingUser.pdf',
+              },
+              {
+              filename: fileName2,
               path: attachfile2,
               contentType: 'application/pdf'
-            },
+              },
+              {
+              filename: fileName3,
+              path: attachfile3,
+              contentType: 'application/pdf'
+              },
+              {
+              filename: fileName4,
+              path: attachfile4,
+              contentType: 'application/pdf'
+              },
+              {
+              filename: fileName5,
+              path: attachfile5,
+              contentType: 'application/pdf'
+              },
+
           ],
           };
 

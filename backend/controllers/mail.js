@@ -1447,3 +1447,80 @@ module.exports.mailStreamingToStaff = (_to,_subject,_content) => {
 });
 
 }
+
+
+module.exports.regisToMail = (name,surName,phone,email,lineId,description) => {
+
+  console.log("Welcome Function regisToMail()");
+
+
+  let _msgHtml = `
+  <html>
+  <head>
+  <style>
+  .blog-content-outer {
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding: 0 15px;
+    font-size: 16px;
+  }
+  </style>
+  </head>
+  <body>
+  <h3>Streaming for fund registration  </h3>
+  New customer register form On ${utility.getDateTime()}
+  `;
+
+
+  let _msgLedHeader = "";
+  let _msgContent = `
+        <div class='blog-content-outer'>
+          <p>
+          <B>Name:</B> ${name}
+          </p>
+          <p>
+          <B>SurName:</B> ${surName}
+          </p>
+          <p>
+          <B>Contact number:</B> ${phone}
+          </p>
+          <p>
+          <B>Email:</B> ${email}
+          </p>
+          <p>
+          <B>lineId:</B> ${lineId}
+          </p>
+          <p>
+          <B>Description:</B> ${description}
+          </p>
+        </div>
+          `;
+
+  return new Promise(function(resolve, reject) {
+
+
+    _msgHtml +=_msgLedHeader;
+    _msgHtml +=_msgContent;
+    _msgHtml +='</body></html>';
+
+    let mailOptions = {
+      from: mailConfig.mail_it,
+      // to: mailConfig.mail_wealthservice,
+      to: 'yuttana@merchantasset.co.th',
+      subject: "New Cust Streaming For Fund registration",
+      html: _msgHtml
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        logger.error(error);
+        reject(error);
+      }
+      resolve(info)
+    });
+
+
+  });
+}

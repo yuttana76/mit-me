@@ -69,6 +69,7 @@ import { RecaptchaModule } from 'angular-google-recaptcha';
 import { NdidProxyComponent } from './ndid-proxy/ndid-proxy.component';
 import { FCAppComponent } from './fcapp/fcapp.component';
 import { SetRegis2Component } from './set-regis2/set-regis2.component';
+import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 
 @NgModule({
   imports: [
@@ -148,6 +149,7 @@ import { SetRegis2Component } from './set-regis2/set-regis2.component';
     NdidProxyComponent,
     FCAppComponent,
     SetRegis2Component,
+    SetWelcomeComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

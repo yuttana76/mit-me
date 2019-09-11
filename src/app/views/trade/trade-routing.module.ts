@@ -27,6 +27,7 @@ import { OpenAccountComponent } from './open-account/open-account.component';
 import { SetRegistrationComponent } from './set-registration/set-registration.component';
 import { FCAppComponent } from './fcapp/fcapp.component';
 import { SetRegis2Component } from './set-regis2/set-regis2.component';
+import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 
 const routes: Routes = [
 
@@ -263,6 +264,13 @@ const routes: Routes = [
         component: SetRegis2Component,
         data: {
           title: 'Streaming For Fund registration(V.2)'
+        }
+      },
+      {
+        path: 'set-welcome',
+        component: SetWelcomeComponent,
+        data: {
+          title: 'Welcome Streaming For Fund'
         }
       },
     ]

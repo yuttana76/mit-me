@@ -136,7 +136,7 @@ function regisToMail(name,surName,phone,email,lineId,description){
   </head>
   <body>
   <h3>Streaming for fund registration  </h3>
-  On ${getDateTime()}
+  New customer submit on register form On ${getDateTime()}
   `;
 
   let _msgLedHeader = "";

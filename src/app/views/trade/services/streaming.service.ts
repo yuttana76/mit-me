@@ -65,5 +65,19 @@ const BACKEND_OTP_URL = environment.apiURL + '/otp/';
       }
 
 
+      newCustRegisToMailService(name,surName,mobile,email,lineId,description){
+
+        console.log(`regisToMailService() ${name};${surName};${mobile};${email} `);
+
+        const data ={
+          name:name,
+          surName:surName,
+          phone:mobile,
+          email:email,
+          lineId:lineId,
+          description:description
+        }
+        return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/regisNewCustToMail', data);
+      }
 
     }

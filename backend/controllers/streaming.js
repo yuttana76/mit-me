@@ -79,13 +79,14 @@ exports.addRegis = (req,res,next)=>{
 
         //Send mail to staff
         _content =`
+        <h3>SExist Customer register  Streaming For Fund </h3>
         <p>ID card: ${idCard}</p>
         <p>Name:  ${fname}  ${lname}</p>
         <p>Mobile: ${mobile}</p>
         <p>Email: ${email}</p>
 
         `;
-        mailController.mailStreamingToStaff(EMAIL_WEALTH,'Streaming For Fund registration (FAIL)',_content).then(mailRs=>{});
+        mailController.mailStreamingToStaff(EMAIL_WEALTH,'Exist Customer register  Streaming For Fund  (FAIL)',_content).then(mailRs=>{});
 
       });
 
@@ -175,6 +176,7 @@ exports.regisProcess = (req,res,next)=>{
 
                       //Send mail to staff
                       _content =`
+                      <h3>SExist Customer register  Streaming For Fund </h3>
                       <p>ID card: ${_idCard}</p>
                       <p>Name:  ${data.First_Name}  ${data.Last_Name}</p>
                       <p>Mobile: ${data.Mobile}</p>
@@ -182,7 +184,7 @@ exports.regisProcess = (req,res,next)=>{
 
                       `;
 
-                      mailController.mailStreamingToStaff(EMAIL_WEALTH,'Streaming For Fund registration (Successful)',_content).then(mailRs=>{});
+                      mailController.mailStreamingToStaff(EMAIL_WEALTH,'Exist Customer register  Streaming For Fund  (Successful)',_content).then(mailRs=>{});
 
                     });
 
@@ -287,6 +289,25 @@ exports.creatPDF = (req,res,next)=>{
     });
 
 }
+
+
+exports.regisNewCustToMail = (req,res,next)=>{
+  console.log("Welcome API regisNewCustToMail/");
+
+  const name = req.body.name;
+  const surName = req.body.surName;
+  const phone = req.body.phone;
+  const email = req.body.email;
+  const lineId = req.body.lineId;
+  const description = req.body.description || '';
+
+  mailController.regisToMail(name,surName,phone,email,lineId,description).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+}
+
 
 // ********************* Functions
 

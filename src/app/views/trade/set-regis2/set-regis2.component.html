@@ -45,16 +45,18 @@
 
 <div class="row" *ngIf="!(regisFail || OTPFail)">
 <!-- <div class="row" > -->
-  <div>
+  <!-- <div>
     <p>Regis Fail:{{regisCount}}</p>
   </div>
+   -->
   <div class="col-md-6 mx-auto">
 
     <mat-horizontal-stepper [linear]="isStepperLinear" labelPosition="bottom" #stepper>
       <mat-step [stepControl]="firstFormGroup">
           <form [formGroup]="firstFormGroup">
 
-            <ng-template matStepLabel>Fill out your info</ng-template>
+            <!-- <ng-template matStepLabel>Fill out your info</ng-template> -->
+            <ng-template matStepLabel>กรอกข้อมูล</ng-template>
 
               <div class="STEP1_HEADER ">
                   <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
@@ -99,7 +101,8 @@
 
       <mat-step>
 
-              <ng-template matStepLabel>Verify</ng-template>
+              <!-- <ng-template matStepLabel></ng-template> -->
+              <ng-template matStepLabel>ยืนยัน</ng-template>
 
 
                   <div class="termCondition">
@@ -131,7 +134,8 @@
       </mat-step>
 
       <mat-step>
-          <ng-template matStepLabel>Finish</ng-template>
+          <!-- <ng-template matStepLabel>Finish</ng-template> -->
+          <ng-template matStepLabel>จัดส่ง</ng-template>
           <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
 
           <div class='div_final'>

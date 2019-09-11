@@ -9,8 +9,9 @@
         </div>
 
         <!-- FILL FORM -->
-          <div *ngIf="!submitSuccess">
-              <mat-card>
+          <div *ngIf="!submitSuccess" >
+
+          <mat-card >
           <form [formGroup]="fillFormGroup">
 
                   <alert type="info">
@@ -63,7 +64,7 @@
     </div>
 
     <!-- Final step -->
-    <div *ngIf="submitSuccess">
+    <div *ngIf="submitSuccess" >
 
         <!-- <div class="polaroid">
             <img class="finalImage" src="assets/img/mpam/AW_2fb-boost-post.jpg" alt="5 Terre" style="width:100%">
@@ -72,7 +73,7 @@
             </div>
           </div> -->
 
-          <mat-card class="example-card col-md-12">
+          <mat-card class="col-md-6 mx-auto" >
               <!-- <img  class="img-fluid" mat-card-image src="assets/img/mpam/AW_2fb-boost-post.jpg" > -->
                   <img  class="img-fluid finalImage" mat-card-image src="assets/img/mpam/AW_2fb-boost-post.jpg" >
               <mat-card-content>

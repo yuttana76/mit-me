@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { RegisterModel } from '../model/sitRegister.model';
 import { UtilService } from '../services/util.service';
+import { StreamingService } from '../services/streaming.service';
 
 
 
@@ -42,7 +43,8 @@ export class SetRegistrationComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder,
     private toastr: ToastrService,
     private confirmationDialogService: ConfirmationDialogService,
-    private utilService: UtilService
+    // private utilService: UtilService
+    private streamingService:StreamingService
     ) {}
 
 
@@ -70,12 +72,19 @@ export class SetRegistrationComponent implements OnInit {
 
     if(this.fillFormGroup.valid){
 
-      this.utilService.regisToMailService(this.register.firstName,this.register.lastName,this.register.mobile,this.register.email,this.register.lineId,this.register.description) .subscribe(data =>{
+      this.streamingService.newCustRegisToMailService(this.register.firstName,this.register.lastName,this.register.mobile,this.register.email,this.register.lineId,this.register.description) .subscribe(data =>{
         this.toastr.success("Register successful." , "Successful", {
           timeOut: 3000,
           closeButton: true,
           positionClass: "toast-top-center"
         });
+
+      // this.utilService.regisToMailService(this.register.firstName,this.register.lastName,this.register.mobile,this.register.email,this.register.lineId,this.register.description) .subscribe(data =>{
+      //   this.toastr.success("Register successful." , "Successful", {
+      //     timeOut: 3000,
+      //     closeButton: true,
+      //     positionClass: "toast-top-center"
+      //   });
 
         this.submitSuccess = true;
         this.spinnerLoading = false;

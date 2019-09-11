@@ -13,6 +13,7 @@ import { SuitComponent } from './views/trade/suit/suit.component';
 import { OpenAccountComponent } from './views/trade/open-account/open-account.component';
 import { SetRegistrationComponent } from './views/trade/set-registration/set-registration.component';
 import { SetRegis2Component } from './views/trade/set-regis2/set-regis2.component';
+import { SetWelcomeComponent } from './views/trade/set-welcome/set-welcome.component';
 
 export const routes: Routes = [
   {
@@ -75,6 +76,13 @@ export const routes: Routes = [
     component: SetRegis2Component,
     data: {
       title: 'Streaming For Fund registration V.2'
+    }
+  },
+  {
+    path: 'set-welcome',
+    component: SetWelcomeComponent,
+    data: {
+      title: 'Welcome Streaming For Fund 1'
     }
   },
   {

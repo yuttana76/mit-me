@@ -48,4 +48,7 @@ check('otp')
 router.post("/sendDataMail",streamingController.sendDataMail);
 router.post("/generatePDF",genStreamPDFController.generatePDF);
 
+router.post("/regisNewCustToMail",streamingController.regisNewCustToMail);
+
+
 module.exports = router;

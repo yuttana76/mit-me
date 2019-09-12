@@ -88,7 +88,7 @@ export class SetRegis2Component implements OnInit {
 
         this.regisCount++;
 
-        this.toastr.error("ข้อมูลที่ระบุไม่ตรงกับข้อมูลในระบบบริษัท " +  this.regisFail, "Error", {
+        this.toastr.error("ข้อมูลที่ระบุของท่านไม่ตรงกับข้อมูลที่อยู่ในระบบของบริษัท", "Error", {
           timeOut: 6000,
           closeButton: true,
           positionClass: "toast-top-center"

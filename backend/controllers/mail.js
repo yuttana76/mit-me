@@ -1242,16 +1242,16 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
               <p>
               <p class='content txtCenter'>
               บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
-              <p>
+              </p>
 
-              <p class='content txtCenter'>แนบมาด้วยนี้</p>
-              <p class='content txtCenter'>1. User and password</p>
-              <p class='content txtCenter'>2. วิธีการดาวน์โหลด App for iOS และ Android</p>
-              <p class='content txtCenter'>3. วิธีการใช้ Streaming for fund</p>
-              <p class='content txtCenter'>4. หนังสือการขอใช้บริการตัดบัญชีอัตโนมัติ (ATS)</p>
-              <p class='content txtCenter'>5. วิธีการสมัคร ATS ผ่าน SCB Call Center</p>
-              <p class='content txtCenter'>6. วิธีการสมัคร ATS ผ่านทางตู้ ATM </p>
-              <p class='content txtCenter'>7. วิธีการสมัคร ATS ผ่านทาง SCB Easy Net</p>
+              <p class='content '>แนบมาด้วยนี้</p>
+              <p class='content '>1. User and password</p>
+              <p class='content '>2. วิธีการดาวน์โหลด App for iOS และ Android</p>
+              <p class='content '>3. วิธีการใช้ Streaming for fund</p>
+              <p class='content '>4. หนังสือการขอใช้บริการตัดบัญชีอัตโนมัติ (ATS)</p>
+              <p class='content '>5. วิธีการสมัคร ATS ผ่าน SCB Call Center</p>
+              <p class='content '>6. วิธีการสมัคร ATS ผ่านทางตู้ ATM </p>
+              <p class='content '>7. วิธีการสมัคร ATS ผ่านทาง SCB Easy Net</p>
 
             </div>
 

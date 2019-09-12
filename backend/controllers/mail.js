@@ -1155,7 +1155,7 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
 
   const _compInfo = mailConfig.mailCompInfo_TH;
   let _from = mailConfig.mail_form;
-  let _subject = 'แจ้งขอเปิดใช้ระบบ Streaming For Fund'
+  let _subject = 'จัดส่ง User and Password'
   let _msgTH = '';
 
   return new Promise(function(resolve, reject) {
@@ -1195,52 +1195,63 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
 
         }
         .content{
+          text-indent: 50px;
           text-align: justify;
           margin-left: 10px;
           margin-right: 10px;
         }
 
+        .txtCenter{
+          text-align: center;
+        }
           </style>
           </head>
           <body>
           <IMG SRC="https://www.merchantasset.co.th/assets/images/logo.png" >
 
-
           <br>
           <div class='blog-content-outer'>
 
-
             <div class="a">
-              <p >เรียน ท่านลูกค้า</p>
 
-              <p>เรื่อง ประชาสัมพันธ์ซื้อขายกองทุนรวมกับ บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App </p>
 
-              <p class='content'>
-                เพื่อเพิ่มความสะดวก รวดเร็วในการให้บริการแก่ลูกค้า ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้เปิดให้ลูกค้าสามารถทำรายการในบัญชีกองทุนผ่าน Mobile app ได้ด้วยตนเอง เพื่อซื้อขาย/สับเปลี่ยนหน่วยลงทุน หรือตรวจสอบพอร์ตการลงทุนได้ทุกเวลา ตั้งแต่วันที่ 1 ตุลาคม 2562
-              </p>
+            <p>เรื่อง   การจัดส่ง User and Password<p>
+            <p>เรียน   ลูกค้าบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด<p>
 
               <p class='content'>
-                หากสนใจหรือต้องการที่จะใช้บริการดังกล่าว สามารถติดต่อ Wealthservice โทร. 02-6606689 หรือติดต่อเจ้าหน้าที่การตลาดผู้ดูแลบัญชีของท่าน นอกจากนี้ยังสามารถดูรายละเอียดเพิ่มเติมได้จาก www.merchantasset.co.th หรือ http://mit.wealth-merchant.com:3000/set-regis2
+              ตามที่ท่านมีความประสงค์ใช้บริการซื้อขายกองทุนผ่าน Mobile App ดังนั้นทางบริษัทจัดการฯ ได้แนบรหัส User และ Password ในอีเมลฉบับนี้ ซึ่งท่านสามารถดูโดยคลิกไฟล์ (PDF file) และใส่รหัสส่วนตัวของท่านตามวิธีดังต่อไปนี้
               </p>
 
               <br>
+              <p class='content'>
+              กรุณาใส่รหัสผ่านในรูปแบบ ddMmmyyyy
+              </p>
+              <p class='content'>dd : วันเกิดของท่าน 2 หลัก</p>
+              <p class='content'>Mmm : ตัวอักษรย่อ เดือนเกิดของท่าน 3 หลักเป็นภาษาอังกฤษ (อักษรตัวแรกเป็นตัวพิมพ์ใหญ่)</p>
+              <p class='content'>yyyy : ปีเกิดของท่าน 4 หลักเป็นปี ค.ศ. (ตัวอย่าง 1970)</p>
+              <p class='content'>ตัวอย่างเช่น ท่านที่เกิดวันที่ 9 มกราคม 2529 กรุณาใส่รหัส 09Jan1986</p>
+
               <br>
               <p class='content'>
-              สำหรับเปิดบนมือถือ
-              </p>
-              <p class='content'>
-              Link ที่ใช้โหลด App สำหรับ IOS
-              https://apps.apple.com/th/app/streaming-for-fund/id1170482366?l=th
-              </p>
-
-              <p class='content'>
-              Link ที่ใช้โหลด App สำหรับ Android
-              https://play.google.com/store/apps/details?id=com.settrade.streaming.fund&hl=th
-              </p>
-
+              หมายเหตุ : จดหมายอิเล็กทรอนิกส์ฉบับนี้ เป็นการส่งจากระบบอัตโนมัติ ไม่สามารถตอบกลับได้ หากท่านต้องการติดต่อบริษัทฯ กรุณาติดต่อ Wealthservice โทร. 02-6606689 ทุกวันทำการ เวลา 9.00-17.00 น. หรือ e-mail : Wealthservice@merchantasset.co.th
               <p>
-                ขอแสดงความนับถือ
-              </p>
+
+              <br>
+              <p class='content txtCenter'>
+              ขอแสดงความนับถือ
+              <p>
+              <p class='content txtCenter'>
+              บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
+              <p>
+
+              <p class='content txtCenter'>แนบมาด้วยนี้</p>
+              <p class='content txtCenter'>1. User and password</p>
+              <p class='content txtCenter'>2. วิธีการดาวน์โหลด App for iOS และ Android</p>
+              <p class='content txtCenter'>3. วิธีการใช้ Streaming for fund</p>
+              <p class='content txtCenter'>4. หนังสือการขอใช้บริการตัดบัญชีอัตโนมัติ (ATS)</p>
+              <p class='content txtCenter'>5. วิธีการสมัคร ATS ผ่าน SCB Call Center</p>
+              <p class='content txtCenter'>6. วิธีการสมัคร ATS ผ่านทางตู้ ATM </p>
+              <p class='content txtCenter'>7. วิธีการสมัคร ATS ผ่านทาง SCB Easy Net</p>
 
             </div>
 

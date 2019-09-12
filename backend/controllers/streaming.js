@@ -257,17 +257,17 @@ exports.regisProcess = (req,res,next)=>{
 
 }
 
-exports.sendDataMail = (req,res,next)=>{
+exports.demoSendDataMail = (req,res,next)=>{
 
   //4. Send E-mail
   _Email='yuttana76@gmail.com'
-  _idCard='3560100350330'
+  _idCard='3101400507760'
   _First_Name='Yuttana'
   _Last_Name='Khumnual'
   _Birth_Day_1='01 Jan 1976'
 
 
-  mailController.mailStreamingUserSecret(_Email,_idCard,_First_Name,_Last_Name,_Birth_Day_1,'123.pdf').then(data=>{
+  mailController.mailStreamingUserSecret(_Email,_idCard,_First_Name,_Last_Name,_Birth_Day_1,_idCard+'.pdf').then(data=>{
 
     console.log("4. Send E-mail sussful " + data);
 

@@ -45,7 +45,7 @@ check('otp')
 ],streamingController.regisProcess);
 
 
-router.post("/sendDataMail",streamingController.sendDataMail);
+router.post("/demoSendDataMail",streamingController.demoSendDataMail);
 router.post("/generatePDF",genStreamPDFController.generatePDF);
 
 router.post("/regisNewCustToMail",streamingController.regisNewCustToMail);

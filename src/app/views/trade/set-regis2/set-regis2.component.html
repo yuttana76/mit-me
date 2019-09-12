@@ -21,8 +21,9 @@
           <!-- <div class="DIV_ALERT alert alert-danger" *ngIf="regisFail"> -->
           <div class="DIV_ALERT alert alert-danger" role="alert" *ngIf="regisFail">
             <!-- <p>ข้อมูลที่ระบุไม่ตรงกับข้อมูลในระบบบริษัท </p> -->
-            <p>กรอกข้อมูลไม่ถูกต้องเกินจำนวนที่กำหนด {{regisCount}} ครั้ง</p>
-            <p>บริษัทขอขอบพระคุณในความสนใจของท่าน จะมีเจ้าหน้าที่ติดต่อกลับ หรือ สามารถติดต่อบริษัทตามข้อมูลด้านล่าง</p>
+
+            <p>1.ข้อมูลที่ระบุของท่านไม่ตรงกับข้อมูลที่อยู่ในระบบของบริษัท</p>
+            <p>2.ท่านกรอกข้อมูลเกินจำนวนครั้งที่กำหนด จะมีเจ้าหน้าที่ติดต่อกลับ</p>
 
           </div>
           <div class="DIV_ALERT" *ngIf="OTPFail">
@@ -60,27 +61,27 @@
 
               <div class="STEP1_HEADER ">
                   <img src="assets/img/mpam/AW_3fb-click.jpg" class="img-fluid" >
-                  <p>กรุณากรอกข้อมูลที่ได้ลงทะเบียนกับบริษัท</p>
+                  <p>กรุณากรอกข้อมูลที่ได้ให้ไว้กับทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
               </div>
 
               <mat-form-field class="col-md-12">
-                <input matInput placeholder="เลขประจำตัวประชาชน/ ID card" formControlName="idCard" [(ngModel)]="register.idCard"  >
+                <input matInput placeholder="เลขประจำตัวประชาชน/ ID card" formControlName="idCard" [(ngModel)]="register.idCard"  required>
             </mat-form-field>
 
               <mat-form-field class="col-md-12">
-                <input matInput placeholder="ชื่อ / First name" formControlName="firstName" [(ngModel)]="register.firstName"  >
+                <input matInput placeholder="ชื่อ / First name " formControlName="firstName" [(ngModel)]="register.firstName" required >
             </mat-form-field>
 
             <mat-form-field class="col-md-12">
-              <input matInput placeholder="นามสกุล / Last name" formControlName="lastName" [(ngModel)]="register.lastName"  >
+              <input matInput placeholder="นามสกุล / Last name " formControlName="lastName" [(ngModel)]="register.lastName"  required>
             </mat-form-field>
 
             <mat-form-field class="col-md-12">
-                <input matInput placeholder="โทรศัพท์มือถือ / Mobile Phone" formControlName="mobile" [(ngModel)]="register.mobile"  >
+                <input matInput placeholder="โทรศัพท์มือถือ / Mobile Phone " formControlName="mobile" [(ngModel)]="register.mobile"  required>
             </mat-form-field>
 
             <mat-form-field class="col-md-12">
-                <input matInput placeholder="อีเมลล์ / Email" formControlName="email" [(ngModel)]="register.email"  >
+                <input matInput placeholder="อีเมลล์ / Email " formControlName="email" [(ngModel)]="register.email"  required>
             </mat-form-field>
 
             <div>
@@ -110,20 +111,15 @@
                       <p *ngFor="let txt of ST_TermCondition">{{txt}}</p>
                   </div>
 
-              <mat-checkbox  [(ngModel)]="register.acceptFlag"  (change)="OnConditionChange()"  >Agree to terms and conditions</mat-checkbox>
+              <!-- <mat-checkbox  [(ngModel)]="register.acceptFlag"  (change)="OnConditionChange()"  >Agree to terms and conditions</mat-checkbox> -->
+              <mat-checkbox  [(ngModel)]="register.acceptFlag"  (change)="OnConditionChange()" class="blue_txt" >ข้าพเจ้ายอมรับในข้อตกลงและเงื่อนไข</mat-checkbox>
 
                 <div class="row div_otp">
 
                   <input   type="text" [(ngModel)]="register.otp" class="form-control"  placeholder="OTP" [disabled]="!register.acceptFlag" required>
                   <button  mat-flat-button color="accent" (click)="requestOTP()" [disabled]="!register.acceptFlag" >Request OTP</button>
 
-                    <!-- <div class="col-md-3 mb-3">
-                        <input   type="text" [(ngModel)]="register.otp" class="form-control"  placeholder="OTP" [disabled]="!register.acceptFlag" required>
-                      </div>
-
-                      <div class="col-md-3 mb-3" >
-                          <button  type="button" class="btn" (click)="requestOTP()" [disabled]="!register.acceptFlag" >Request OTP</button>
-                      </div> -->
+                   <p>กรุณาระบุรหัสรักษาความปลอดภัย SMS-OTP ที่ได้รับ ภายใน 1 นาที ถ้าไม่ได้รับให้ Request OTP อีกครั้ง </p>
                 </div>
               <hr>
               <div>
@@ -143,15 +139,20 @@
               <p>ระบบได้ส่งข้อมูลการเข้าระบบ Streaming For Fund ไปยัง E-mail ของท่านแล้ว </p>
             </div> -->
             <div class='div_final'>
-            <h3>ระบบได้ส่งข้อมูลการเข้าระบบ Streaming For Fund ไปยัง E-mail ของท่านแล้ว</h3>
+
+            <h3>ระบบได้รับข้อมูลเรียบร้อยแล้ว จะส่งอีเมลยืนยันไปให้ท่าน หากท่านไม่ได้รับอีเมล กรุณาเช็ค junk mail หรือ spam mail หรือหากไม่ได้รับอีเมล กรุณาติดต่อเบอร์ 02-6606689 หรือ e-mail : wealthservice@merchantasset.co.th</h3>
+
+            <!-- <h3>ระบบได้ส่งข้อมูลการเข้าระบบ Streaming For Fund ไปยัง E-mail ของท่านแล้ว</h3> -->
             <br>
-            <h3>ขอขอบพระคุณลูกค้าทุกท่าน สามารถติดตามรายละเอียดเพิ่มเติมได้ที่</h3>
+            <!-- <h3>ขอขอบพระคุณลูกค้าทุกท่าน สามารถติดตามรายละเอียดเพิ่มเติมได้ที่</h3> -->
             <br>
             <div class="divSameLine">
-                <i class="fas fa-2x fa-globe"></i><h4><a href="http://www.merchantasset.co.th">www.merchantasset.co.th</a></h4>
+                <!-- <i class="fas fa-2x fa-globe"></i> -->
+                <h4><a href="http://www.merchantasset.co.th">www.merchantasset.co.th</a></h4>
             </div>
             <div class="divSameLine">
-                <i class="fas fa-2x fa-phone"></i> <h4>Wealthservice Tel. 02-6606689</h4>
+                <!-- <i class="fas fa-2x fa-phone"></i>  -->
+                <h4>Wealthservice Tel. 02-6606689</h4>
             </div>
 
             <div class="divSameLine">

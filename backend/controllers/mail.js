@@ -1210,39 +1210,39 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
           <div class='blog-content-outer'>
 
 
-        <div class="a">
-          <p >เรียน ท่านลูกค้า</p>
+            <div class="a">
+              <p >เรียน ท่านลูกค้า</p>
 
-          <p>เรื่อง ประชาสัมพันธ์ซื้อขายกองทุนรวมกับ บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App </p>
+              <p>เรื่อง ประชาสัมพันธ์ซื้อขายกองทุนรวมกับ บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App </p>
 
-          <p class='content'>
-            เพื่อเพิ่มความสะดวก รวดเร็วในการให้บริการแก่ลูกค้า ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้เปิดให้ลูกค้าสามารถทำรายการในบัญชีกองทุนผ่าน Mobile app ได้ด้วยตนเอง เพื่อซื้อขาย/สับเปลี่ยนหน่วยลงทุน หรือตรวจสอบพอร์ตการลงทุนได้ทุกเวลา ตั้งแต่วันที่ 1 ตุลาคม 2562
-          </p>
+              <p class='content'>
+                เพื่อเพิ่มความสะดวก รวดเร็วในการให้บริการแก่ลูกค้า ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้เปิดให้ลูกค้าสามารถทำรายการในบัญชีกองทุนผ่าน Mobile app ได้ด้วยตนเอง เพื่อซื้อขาย/สับเปลี่ยนหน่วยลงทุน หรือตรวจสอบพอร์ตการลงทุนได้ทุกเวลา ตั้งแต่วันที่ 1 ตุลาคม 2562
+              </p>
 
-          <p class='content'>
-            หากสนใจหรือต้องการที่จะใช้บริการดังกล่าว สามารถติดต่อ Wealthservice โทร. 02-6606689 หรือติดต่อเจ้าหน้าที่การตลาดผู้ดูแลบัญชีของท่าน นอกจากนี้ยังสามารถดูรายละเอียดเพิ่มเติมได้จาก www.merchantasset.co.th หรือ http://mit.wealth-merchant.com:3000/set-regis2
-          </p>
+              <p class='content'>
+                หากสนใจหรือต้องการที่จะใช้บริการดังกล่าว สามารถติดต่อ Wealthservice โทร. 02-6606689 หรือติดต่อเจ้าหน้าที่การตลาดผู้ดูแลบัญชีของท่าน นอกจากนี้ยังสามารถดูรายละเอียดเพิ่มเติมได้จาก www.merchantasset.co.th หรือ http://mit.wealth-merchant.com:3000/set-regis2
+              </p>
 
-          <br>
-          <br>
-          <p class='content'>
-          สำหรับเปิดบนมือถือ
-          </p>
-          <p class='content'>
-          Link ที่ใช้โหลด App สำหรับ IOS
-          https://apps.apple.com/th/app/streaming-for-fund/id1170482366?l=th
-          </p>
+              <br>
+              <br>
+              <p class='content'>
+              สำหรับเปิดบนมือถือ
+              </p>
+              <p class='content'>
+              Link ที่ใช้โหลด App สำหรับ IOS
+              https://apps.apple.com/th/app/streaming-for-fund/id1170482366?l=th
+              </p>
 
-          <p class='content'>
-          Link ที่ใช้โหลด App สำหรับ Android
-          https://play.google.com/store/apps/details?id=com.settrade.streaming.fund&hl=th
-          </p>
+              <p class='content'>
+              Link ที่ใช้โหลด App สำหรับ Android
+              https://play.google.com/store/apps/details?id=com.settrade.streaming.fund&hl=th
+              </p>
 
-          <p>
-            ขอแสดงความนับถือ
-          </p>
+              <p>
+                ขอแสดงความนับถือ
+              </p>
 
-        </div>
+            </div>
 
           </body>
           </html>

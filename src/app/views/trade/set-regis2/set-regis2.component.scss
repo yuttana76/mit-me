@@ -47,7 +47,7 @@ button{
 }
 
 .termCondition{
-  background-color: darkgrey;
+  background-color: lightgray;
   border-radius: 5px;
   padding-top: 20px;
 }
@@ -91,4 +91,51 @@ button{
   font-size: x-large;
   font-family: sans-serif;
   text-align: center;
+}
+
+
+
+/* small desktop */
+@media all and (max-width: 1200px) {
+  .finalImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 50%;
+  }
+}
+
+/* tablet */
+@media all and (max-width: 1024px) {
+  .finalImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: auto;
+  }
+}
+
+/* mobile phone */
+@media all and (max-width: 768px) {
+  .finalImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: auto;
+  }
+}
+
+.divSameLine {
+  display:inline;
+  margin-top: 5px;
+}
+
+.lineQR_img {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  width: 80px;
+
+  margin-top: 15px;
+  margin-left: 10px;
 }

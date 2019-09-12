@@ -26,6 +26,28 @@ const createHtml = (content) => `
   <html>
     <head>
       <style>
+
+      html, body{ height:100%; margin:0; }
+      header{ height:50px; background:lightcyan; }
+      footer{ height:50px; background:PapayaWhip; }
+
+      /* Trick */
+      body{
+        display:flex;
+        flex-direction:column;
+      }
+
+      footer{
+        margin-top:auto;
+      }
+
+
+      body{
+        display:flex;
+        width: 21cm;
+        height: 29.7cm;
+        margin: 30mm 45mm 30mm 45mm;
+        }
       .txtRight{
         text-align: right;
         margin-left: 10px;
@@ -49,14 +71,28 @@ const createHtml = (content) => `
       </style>
     </head>
     <body>
-    <IMG SRC="${logoPath}" >
+    <header><IMG SRC="${logoPath}" ></header>
+
 
     <br>
     <p class='txtRight'>วันที่ ${formatDate(new Date())}</p>
       <br>
     <p class='content'>
-        ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด มีความยินดีที่ลูกค้าประสงค์ใช้บริการซื้อขายกองทุนผ่าน Mobile App ดังนั้นทางบริษัทจัดการฯ ขอนำส่ง User and Password ให้กับลูกค้าตามที่แนบมานี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป
+        ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด มีความยินดีที่ให้บริการแก่ลูกค้าผู้ประสงค์ใช้บริการซื้อขายกองทุนผ่าน Mobile App โดยการโหลด Streaming for fund ได้ทั้งทาง iOS และ Android
     </p>
+
+    <p class='content'>
+        <a href="https://apps.apple.com/th/app/streaming-for-fund/id1170482366?l=th">https://apps.apple.com/th/app/streaming-for-fund/id1170482366?l=th</a>
+    </p>
+
+    <p class='content'>
+        <a href="https://play.google.com/store/apps/details?id=com.settrade.streaming.fund&hl=th">https://play.google.com/store/apps/details?id=com.settrade.streaming.fund&hl=th</a>
+    </p>
+
+    <p class='content'>
+    ดังนั้นทางบริษัทจัดการฯ ขอนำส่ง User and Password ให้กับลูกค้าตามที่แนบมานี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป
+    </p>
+
       <br>
 
       <div class='content_user'>
@@ -67,6 +103,14 @@ const createHtml = (content) => `
       <p class='txtCenter'>ขอแสดงความนับถือ</p>
 			<p class='txtCenter' >บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
 
+      <footer>
+      <div >
+        <p>ติดต่อสอบถามเพิ่มเติมได้ที่</p>
+        <p>เบอร์โทร. Wealthservice : 02-6606689</p>
+        <p>E-mail : Wealthservice@merchantasset.co.th</p>
+        </p>
+      </div>
+      </footer>
     </body>
   </html>
 `;

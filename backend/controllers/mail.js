@@ -1412,7 +1412,8 @@ module.exports.mailStreamingToStaff = (_to,_subject,_content) => {
           </head>
           <body>
 
-          <p>${_subject}  ON:${dateTime}<p>
+          <h3>${_subject}  ON:${dateTime}<h3>
+          <p>Already send all files. </p>
           <br>
           ${_content}
           </body>

@@ -173,16 +173,14 @@ exports.regisProcess = (req,res,next)=>{
                     });
 
                     var regisStatus = 0;//Successful
-                    fnUpdateRegisStatus(_idCard,data.First_Name,data.Last_Name,data.Email,data.Mobile,_ip,regisStatus).then(data=>{
+                    fnUpdateRegisStatus(_idCard,data.First_Name,data.Last_Name,data.Email,data.Mobile,_ip,regisStatus).then(result=>{
 
                       //Send mail to staff
                       _content =`
-                      <h3>SExist Customer register  Streaming For Fund </h3>
                       <p>ID card: ${_idCard}</p>
                       <p>Name:  ${data.First_Name}  ${data.Last_Name}</p>
                       <p>Mobile: ${data.Mobile}</p>
                       <p>Email: ${data.Email}</p>
-
                       `;
 
                       mailController.mailStreamingToStaff(EMAIL_WEALTH,'Exist Customer register  Streaming For Fund  (Successful)',_content).then(mailRs=>{});
@@ -197,35 +195,7 @@ exports.regisProcess = (req,res,next)=>{
                 });
 
               }
-              // 3.2 Has user / password ?
-              // Redad user/pwd file
-              // fs.readFile(DOWNLOAD_DIR +"/"+ fileName, 'utf-8', (err, file_data) => {
 
-              //   if (err) reject(err);
-              //   var array = file_data.toString().split("\n");
-              //   for(i in array) {
-
-              //     var item = array[i].split("|") ;
-              //     console.log('**ITEM>' + JSON.stringify(item));
-              //     console.log('**_idCard>' + _idCard);
-              //     if(item[0]==_idCard){
-              //       console.log( `item  ${item[0]}  ${item[1]}  ${item[2]}` );
-              //       userPwdObj = { "cusCode":item[0],"user":item[1],"password":item[2],"dob":data.Birth_Day_1}
-              //       break;
-              //     }
-              //   }
-
-              //   console.log('USER is >' +JSON.stringify(userPwdObj));
-              //   // Create PDF
-              //   genStreamPDFController.FNgenerateStreamingPDF(userPwdObj).then(result=>{
-              //     console.log('genStreamPDFController Result >' + JSON.stringify(result));
-
-              //       //4. Send E-mail
-              //       mailController.mailStreamingUserSecret(data.Email,_idCard,data.First_Name,data.Last_Name,data.Birth_Day_1,result.filePDF).then(data=>{
-              //         console.log("4. Send E-mail sussful " + data);
-              //       });
-              //   });
-              // });
             });
 
           }

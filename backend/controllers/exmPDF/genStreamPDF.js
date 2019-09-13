@@ -90,7 +90,7 @@ const createHtml = (content) => `
     </p>
 
     <p class='content'>
-    ดังนั้นทางบริษัทจัดการฯ ขอนำส่ง User and Password ให้กับลูกค้าตามที่แนบมานี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป
+    ดังนั้นทางบริษัทจัดการฯ ขอนำส่ง User and Password ให้กับลูกค้าตามตามรายละเอียดข้างล่างนี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป
     </p>
 
       <br>
@@ -200,7 +200,8 @@ exports.FNgenerateStreamingPDF=(data)=>{
 
       resolve({
         pdfPath:_buildStreamPathPdf,
-        filePDF:filePDF
+        // filePDF:filePDF
+        filePDF:secPDF
       }
       );
 

@@ -132,7 +132,7 @@ const doesFileExist = (filePath) => {
 
 exports.generatePDF = (req,res,next)=>{
 
-  const data = { "cusCode":"123","user":"MPAM001","password":"123"}
+  const data = { "cusCode":"123","user":"MPAM001","password":"123","dob":"01Jan1976"}
 
 try {
 
@@ -157,9 +157,14 @@ try {
 exports.FNgenerateStreamingPDF=(data)=>{
   const fileHTML = data.cusCode+".html";
   const filePDF = data.cusCode+".pdf";
+  const secPDF = data.cusCode+"_SEC.pdf";
+  const _dob = data.dob;
 
   var _buildStreamPathHtml = buildStreamPathHtml+"/"+fileHTML;
   var _buildStreamPathPdf = buildStreamPathPdf+"/"+filePDF
+  var _secBuildStreamPathPdf = buildStreamPathPdf+"/"+secPDF
+
+  const HummusRecipe = require('hummus-recipe');
 
   return new Promise(function(resolve, reject) {
 
@@ -179,12 +184,30 @@ exports.FNgenerateStreamingPDF=(data)=>{
 
     createStreamUserPdfController.creatPDFByPath(_buildStreamPathHtml,_buildStreamPathPdf).then(result=>{
 
+      // Create security PDF
+      const pdfDoc = new HummusRecipe(_buildStreamPathPdf, _secBuildStreamPathPdf);
+      pdfDoc.encrypt({
+              userPassword: _dob,
+              ownerPassword: _dob,
+              userProtectionFlag: 4
+          }).endPDF(()=>{
+            /* done! */
+            fs.unlink(_buildStreamPathHtml, function (err) {
+              console.log('html File deleted!');
+            });
+
+          });
+
       resolve({
         pdfPath:_buildStreamPathPdf,
         filePDF:filePDF
       }
       );
 
+    },()=>{
+      fs.unlink(_buildStreamPathPdf, function (err) {
+                    console.log('pdf File deleted!');
+                  });
     });
   });
 }

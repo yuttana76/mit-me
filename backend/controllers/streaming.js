@@ -160,15 +160,16 @@ exports.regisProcess = (req,res,next)=>{
               if(!data.UserName){
                 res.status(422).json({ code: 102,msg:'Not found streaming user' });
               }else{
-                userPwdObj = { "cusCode":data.Cust_Code,"user":data.UserName,"password":data.PWD,"dob":data.Birth_Day_2}
+
+                userPwdObj = { "cusCode":data.Cust_Code,"user":data.UserName,"password":data.PWD,"dob":data.Birth_Day_2.replace(/\s/g, '')}
                 console.log("3-3 userPwdObj >>" + JSON.stringify(userPwdObj));
                 // Create PDF
                 genStreamPDFController.FNgenerateStreamingPDF(userPwdObj).then(result=>{
-                  console.log('genStreamPDFController Result >' + JSON.stringify(result));
+                  // console.log('genStreamPDFController Result >' + JSON.stringify(result));
 
                     //4. Send E-mail
                     mailController.mailStreamingUserSecret(data.Email,_idCard,data.First_Name,data.Last_Name,data.Birth_Day_1,result.filePDF).then(data=>{
-                      console.log("4. Send E-mail sussful " + data);
+                      // console.log("4. Send E-mail sussful " + data);
                     });
 
                     var regisStatus = 0;//Successful
@@ -281,12 +282,25 @@ exports.demoSendDataMail = (req,res,next)=>{
 }
 
 
+exports.pdfEncrypt = (req,res,next)=>{
+  console.log('Welcome pdfEncrypt API');
+  const HummusRecipe = require('hummus-recipe');
 
-exports.creatPDF = (req,res,next)=>{
+  const attachUserFilePDF = __dirname + '/readFiles/Streaming/3101400507760.pdf';
+  const output = __dirname + '/readFiles/Streaming/3101400507760_SEC.pdf';
 
-    res.status(200).json({
-      code: '000',
-    });
+  const pdfDoc = new HummusRecipe(attachUserFilePDF, output);
+      pdfDoc
+          .encrypt({
+              userPassword: '123',
+              ownerPassword: '123',
+              userProtectionFlag: 4
+          })
+          .endPDF();
+
+          res.status(200).json({
+            code: '000',
+          });
 
 }
 

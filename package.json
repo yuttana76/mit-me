@@ -66,6 +66,7 @@
     "flag-icon-css": "^3.3.0",
     "fluentreports": "^1.2.3",
     "font-awesome": "^4.7.0",
+    "hummus-recipe": "^1.8.16",
     "jsonwebtoken": "^8.5.1",
     "jspdf": "^1.5.3",
     "moment": "^2.24.0",

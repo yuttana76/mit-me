@@ -50,5 +50,6 @@ router.post("/generatePDF",genStreamPDFController.generatePDF);
 
 router.post("/regisNewCustToMail",streamingController.regisNewCustToMail);
 
+router.get("/pdfEncrypt",streamingController.pdfEncrypt);
 
 module.exports = router;

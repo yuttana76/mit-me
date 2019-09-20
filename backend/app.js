@@ -50,6 +50,7 @@ const ndidProxyRoutes = require('./routes/ndidProxy');
 const exportFileRoutes = require('./routes/exportFile');
 const fundConnextAPIRoutes = require('./routes/fundConnextAPI');
 const streamingRoutes = require('./routes/streaming');
+const smsRoutes = require('./routes/sms');
 
 const app = express();
 
@@ -149,6 +150,8 @@ app.use("/api/fundConnext",fundConnextAPIRoutes);
 
 // Streaming
 app.use("/api/stream",streamingRoutes);
+//SMS API
+app.use("/api/sms",smsRoutes);
 
 
 app.use((req, res, next) => {

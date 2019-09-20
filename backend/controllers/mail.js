@@ -251,7 +251,9 @@ checkFile.on('close', function(line) {
 
 exports.smsStreamingCustFile = (req, res, next) =>{
 
-  let msg =`เปิดบริการซื้อขายกองทุนรวมกับบลจ. เมอร์ชั่น พาร์ทเนอร์ ผ่าน Mobile App สนใจติดต่อ Wealthservice Tel. 02-6606689 หรือ www.merchantasset.co.th`
+  // let msg =`เปิดบริการซื้อขายกองทุนรวมกับบลจ. เมอร์ชั่น พาร์ทเนอร์ ผ่าน Mobile App สนใจติดต่อ Wealthservice Tel. 02-6606689 หรือ www.merchantasset.co.th`
+  let msg =`ซื้อขายกองทุนรวมกับบลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App สนใจติดต่อ Wealthservice Tel. 02-6606689 หรือ http://mit.wealth-merchant.com:3000/set-welcome`
+
 
   var today = new Date();
   var date = today.getFullYear()+""+(today.getMonth()+1)+""+today.getDate();
@@ -536,7 +538,7 @@ function mailStreaming(req,res,_name,_Email){
         <style>
 
         .blog-content-outer {
-          background: whitesmoke;
+          --background: whitesmoke;
           border: 1px solid #e1e1e1;
           border-radius: 5px;
           margin-top: 40px;
@@ -551,12 +553,13 @@ function mailStreaming(req,res,_name,_Email){
           margin-bottom:20px;
         }
 
-		.tab { margin-left: 40px; }
+		    .tab { margin-left: 40px; }
         .tab2 { margin-left: 80px; }
 
         div.a {
+          text-indent: 50px;
+        }
 
-		}
         </style>
         </head>
         <body>
@@ -565,23 +568,24 @@ function mailStreaming(req,res,_name,_Email){
         <div class='blog-content-outer'>
 
         <div class="logo-area col-xs-12 col-sm-12 col-md-3">
-        <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+        <a href="https://www.merchantasset.co.th/home.html"><img src="https://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
         </div>
 
-      <div class="a">
+
         <p >เรียน ท่านลูกค้า</p>
 
         <p>เรื่อง ประชาสัมพันธ์ซื้อขายกองทุนรวมกับ บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App </p>
+        <div class="a">
         <p>
           เพื่อเพิ่มความสะดวก รวดเร็วในการให้บริการแก่ลูกค้า ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้เปิดให้ลูกค้าสามารถทำรายการในบัญชีกองทุนผ่าน Mobile app ได้ด้วยตนเอง เพื่อซื้อขาย/สับเปลี่ยนหน่วยลงทุน หรือตรวจสอบพอร์ตการลงทุนได้ทุกเวลา ตั้งแต่วันที่ 1 กันยายน 2562
-          หากสนใจหรือต้องการที่จะใช้บริการดังกล่าว สามารถติดต่อ Wealthservice โทร. 02-6606689 หรือติดต่อเจ้าหน้าที่การตลาดผู้ดูแลบัญชีของท่าน นอกจากนี้ยังสามารถดูรายละเอียดเพิ่มเติมได้จาก www.merchantasset.co.th หรือ http://mit.wealth-merchant.com:3000/set-regis
+         </p>
+         <p>
+          หากสนใจหรือต้องการที่จะใช้บริการดังกล่าว สามารถติดต่อ Wealthservice โทร. 02-6606689 หรือติดต่อเจ้าหน้าที่การตลาดผู้ดูแลบัญชีของท่าน นอกจากนี้ยังสามารถดูรายละเอียดเพิ่มเติมได้จาก www.merchantasset.co.th หรือ http://mit.wealth-merchant.com:3000/set-welcome
         </p>
-
         <p>
           ขอแสดงความนับถือ
         </p>
-
-    </div>
+        </div>
 
         </body>
         </html>
@@ -1151,6 +1155,13 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
   const attachfile4 = __dirname + '/readFiles/Streaming/ขั้นตอนการสมัครยินยอมให้หักบัญชีเงินฝาก_SCB_Easy_Net.pdf';
   const attachfile5 = __dirname + '/readFiles/Streaming/ขั้นตอนการสมัครยินยอมให้หักบัญชีเงินฝาก_ตู้_ATM.pdf';
 
+  const _link1 ="https://www.merchantasset.co.th/home.html";
+  const _link2 ="https://www.merchantasset.co.th/home.html";
+  const _link3 ="https://www.merchantasset.co.th/home.html";
+  const _link4 ="https://www.merchantasset.co.th/home.html";
+  const _link5 ="https://www.merchantasset.co.th/home.html";
+  const _link6 ="https://www.merchantasset.co.th/home.html";
+
   const fullName = fname+' ' +lname + ' '
 
   const _compInfo = mailConfig.mailCompInfo_TH;
@@ -1246,12 +1257,24 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
 
               <p class='content '>แนบมาด้วยนี้</p>
               <p class='content '>1. User and password</p>
-              <p class='content '>2. วิธีการดาวน์โหลด App for iOS และ Android</p>
-              <p class='content '>3. วิธีการใช้ Streaming for fund</p>
-              <p class='content '>4. หนังสือการขอใช้บริการตัดบัญชีอัตโนมัติ (ATS)</p>
-              <p class='content '>5. วิธีการสมัคร ATS ผ่าน SCB Call Center</p>
-              <p class='content '>6. วิธีการสมัคร ATS ผ่านทางตู้ ATM </p>
-              <p class='content '>7. วิธีการสมัคร ATS ผ่านทาง SCB Easy Net</p>
+              <p class='content '>
+                <a href="${_link1}" target="_blank">2. วิธีการดาวน์โหลด App for iOS และ Android</a>
+              </p>
+              <p class='content '>
+                <a href="${_link2}" target="_blank">3. วิธีการใช้ Streaming for fund</a>
+              </p>
+              <p class='content '>
+                <a href="${_link3}" target="_blank">4. หนังสือการขอใช้บริการตัดบัญชีอัตโนมัติ (ATS)</a>
+              </p>
+              <p class='content '>
+                <a href="${_link4}" target="_blank">5. วิธีการสมัคร ATS ผ่าน SCB Call Center</a>
+              </p>
+              <p class='content '>
+                <a href="${_link5}" target="_blank">6. วิธีการสมัคร ATS ผ่านทางตู้ ATM
+              </p>
+              <p class='content '>
+                <a href="${_link6}" target="_blank">7. วิธีการสมัคร ATS ผ่านทาง SCB Easy Net
+              </p>
 
             </div>
 
@@ -1279,31 +1302,31 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
                 path: attachUserFilePDF,
                 contentType: 'application/pdf'
               },
-              {
-              filename: fileName1,
-              path: attachfile1,
-              contentType: 'application/pdf'
-              },
-              {
-              filename: fileName2,
-              path: attachfile2,
-              contentType: 'application/pdf'
-              },
-              {
-              filename: fileName3,
-              path: attachfile3,
-              contentType: 'application/pdf'
-              },
-              {
-              filename: fileName4,
-              path: attachfile4,
-              contentType: 'application/pdf'
-              },
-              {
-              filename: fileName5,
-              path: attachfile5,
-              contentType: 'application/pdf'
-              },
+              // {
+              // filename: fileName1,
+              // path: attachfile1,
+              // contentType: 'application/pdf'
+              // },
+              // {
+              // filename: fileName2,
+              // path: attachfile2,
+              // contentType: 'application/pdf'
+              // },
+              // {
+              // filename: fileName3,
+              // path: attachfile3,
+              // contentType: 'application/pdf'
+              // },
+              // {
+              // filename: fileName4,
+              // path: attachfile4,
+              // contentType: 'application/pdf'
+              // },
+              // {
+              // filename: fileName5,
+              // path: attachfile5,
+              // contentType: 'application/pdf'
+              // },
 
           ],
           };

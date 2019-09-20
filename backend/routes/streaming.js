@@ -1,9 +1,9 @@
 const express = require('express');
 
 const streamingController = require('../controllers/streaming');
-const createStreamUserHTMLController = require('../controllers/exmPDF/createStreamUserHTML');
-const createStreamUserPdfController = require('../controllers/exmPDF/createStreamUserPdf');
-
+// const createStreamUserHTMLController = require('../controllers/exmPDF/createStreamUserHTML');
+// const createStreamUserPdfController = require('../controllers/exmPDF/createStreamUserPdf');
+const mailController = require('../controllers/mail')
 const genStreamPDFController = require('../controllers/exmPDF/genStreamPDF');
 
 const checkAuth = require('../middleware/check-auth');
@@ -45,6 +45,13 @@ check('otp')
 ],streamingController.regisProcess);
 
 
+// Send mail streaming to customer bulk file
+router.post("/mailStreamingCustFile",mailController.mailStreamingCustFile);
+//Send sms streaming bulk file
+router.post("/smsStreamingCustFile",mailController.smsStreamingCustFile);
+
+
+// TEST
 router.post("/demoSendDataMail",streamingController.demoSendDataMail);
 router.post("/generatePDF",genStreamPDFController.generatePDF);
 

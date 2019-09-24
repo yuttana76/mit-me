@@ -69,17 +69,13 @@ export class SetRegis2Component implements OnInit {
 
       this.streamingService.addRegister(this.register,this.regisCount) .subscribe(data =>{
 
-        // this.toastr.success("Register successful." , "Successful", {
-        //   timeOut: 3000,
-        //   closeButton: true,
-        //   positionClass: "toast-top-center"
-        // });
-
         this.regisCount = 0;
         stepper.next();
 
-      } , error => {
-        console.log("Regis ERROR>" + JSON.stringify(error));
+      } , rs => {
+
+        console.log("Regis ERROR>" + JSON.stringify(rs));
+
         this.spinnerLoading = false;
 
         if (this.regisCount===3){
@@ -88,11 +84,13 @@ export class SetRegis2Component implements OnInit {
 
         this.regisCount++;
 
-        this.toastr.error("ข้อมูลที่ระบุของท่านไม่ตรงกับข้อมูลที่อยู่ในระบบของบริษัท", "Error", {
+
+        this.toastr.error(rs.error.data, "Error", {
           timeOut: 6000,
           closeButton: true,
           positionClass: "toast-top-center"
         });
+
       }, () => {
         this.spinnerLoading = false;
       });

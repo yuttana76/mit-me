@@ -336,7 +336,17 @@ exports.uploadBulkFileDialy = (req, res, next) =>{
 
               //On action what to do?
               // isEmpty()
-              table.rows.add(array[0].trim(), array[1].trim(), array[2].trim(), array[3].trim(), array[4].trim(), array[5].trim(), array[6].trim(), array[7].trim(), array[8].trim(), array[9].trim(), array[10].trim()
+              table.rows.add(array[0].trim()
+                , array[1].trim()
+                , array[2].trim()
+                , array[3].trim()
+                , array[4].trim()
+                , array[5].trim()
+                , array[6].trim()
+                , array[7].trim()
+                , array[8].trim()
+                , array[9].trim()
+                , array[10].trim()
                 , array[11].trim(), array[12].trim(), array[13].trim(), array[14].trim(), array[15].trim(), array[16].trim(), array[17].trim(), array[18].trim(), array[19].trim(), array[20].trim(), array[21].trim(), array[22].trim()
                 , userCode,new Date,'',null,LED_Status);
 

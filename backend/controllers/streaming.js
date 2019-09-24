@@ -48,64 +48,87 @@ exports.addRegis = (req,res,next)=>{
 
   console.log(`Params idCard ${idCard}; fname=${fname} ;lname=${lname} ;email=${email} ;mobile=${mobile} ; ip=${ip}`);
 
-  //Check is customer
-  hasExistAcc(idCard,email,mobile).then(data=>{
 
-    console.log('hasExistAcc()' > JSON.stringify(data))
+  //ValidateCheck is customer
+  hasAccount_Info(idCard,email,mobile).then(acc_data=>{
 
-  if(data ===YES_VAL){
+    console.log('hasAccount_Info()' + JSON.stringify(acc_data))
 
-    // Insert new registration
-    fnAddNewRegister(idCard,fname,lname,email,mobile,ip,"0").then(data=>{
-      res.status(200).json({
-          code: '000',
-          data:data
+    if(acc_data ===YES_VAL){
+
+      //Validate  Streaming user?
+      hasStreamUser(idCard).then(user_data=>{
+
+        console.log('hasStreamUser()' + JSON.stringify(user_data))
+
+        if(user_data !==YES_VAL){
+          res.status(401).json({
+            code: '101',
+            data: 'ไม่พบข้อมูล User Streaming For Fund ในระบบ'
+          });
+        }
+
+        // Validate available user
+        availableStreamUser(idCard).then(status_data=>{
+
+          console.log('availableStreamUser()' + JSON.stringify(status_data))
+
+          if(status_data !==YES_VAL){
+            res.status(401).json({
+              code: '102',
+              data: 'ข้อมูล User Streaming มีการร้องขอแล้ว กรุณาติดต่อเจ้าหน้าที่เพื่อตรวจสอบ'
+            });
+          }
+
+          // Insert new registration
+          fnAddNewRegister(idCard,fname,lname,email,mobile,ip,"0").then(data=>{
+            res.status(200).json({
+                code: '000',
+                data:data
+              });
+          });
+
+        })
+
+      },err=>{
+
+        res.status(400).json({
+          message: err,
+          code:"999",
         });
-    },err=>{
-      res.status(400).json({
-        message: err,
-        code:"999",
       });
-    });
 
-  }else{
+    }else{
 
-    //Send mail to officer
-      // Save to log
-    if(counter ===3){
+      //Send mail to officer
+      if(counter ===3){
 
-      var regisStatus = 1;
-      fnUpdateRegisStatus(idCard,fname,lname,email,mobile,ip,regisStatus).then(data=>{
+        var regisStatus = 1;
+        fnUpdateRegisStatus(idCard,fname,lname,email,mobile,ip,regisStatus).then(data=>{
 
-        //Send mail to staff
-        _content =`
-        <h3>SExist Customer register  Streaming For Fund </h3>
-        <p>ID card: ${idCard}</p>
-        <p>Name:  ${fname}  ${lname}</p>
-        <p>Mobile: ${mobile}</p>
-        <p>Email: ${email}</p>
+          //Send mail to staff
+          _content =`
+          <h3>SExist Customer register  Streaming For Fund </h3>
+          <p>ID card: ${idCard}</p>
+          <p>Name:  ${fname}  ${lname}</p>
+          <p>Mobile: ${mobile}</p>
+          <p>Email: ${email}</p>
 
-        `;
-        mailController.mailStreamingToStaff(EMAIL_WEALTH,'Exist Customer register  Streaming For Fund  (FAIL)',_content).then(mailRs=>{});
+          `;
+          mailController.mailStreamingToStaff(EMAIL_WEALTH,'Exist Customer register  Streaming For Fund  (FAIL)',_content).then(mailRs=>{});
 
-      });
+        });
+      }
+
+        res.status(401).json({
+          code: '100',
+          data: 'ข้อมูลที่ระบุของท่านไม่ตรงกับข้อมูลที่อยู่ในระบบของบริษัท'
+        });
 
     }
 
-      res.status(401).json({
-        code: '100',
-        data: 'Not found customer'
-      });
-
-  }
-
-},err=>{
-
-  res.status(400).json({
-    message: err,
-    code:"999",
-  });
 });
+
 
 }
 
@@ -296,7 +319,7 @@ exports.regisNewCustToMail = (req,res,next)=>{
 // ********************* Functions
 
 
-function hasExistAcc(ID,Email,Mobile){
+function hasAccount_Info(ID,Email,Mobile){
 
   return new Promise(function(resolve, reject) {
 
@@ -322,7 +345,70 @@ function hasExistAcc(ID,Email,Mobile){
         }
     })
   })
+  pool1.on('error', err => {
+    reject(err)
+  })
+  });
+}
 
+function hasStreamUser(ID){
+
+  return new Promise(function(resolve, reject) {
+
+  var queryStr = `SELECT count(*) AS cnt
+  FROM MIT_ST_User
+  WHERE ID='${ID}'
+  `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request()
+    .query(queryStr, (err, result) => {
+        if(err){
+          reject(err)
+        }else {
+          _obj= JSON.parse(JSON.stringify(result));
+          if(_obj.recordset[0].cnt === 0){
+            resolve(NO_VAL)
+          }else{
+            resolve(YES_VAL)
+          }
+        }
+    })
+  })
+  pool1.on('error', err => {
+    reject(err)
+  })
+  });
+}
+
+
+function availableStreamUser(ID){
+
+  return new Promise(function(resolve, reject) {
+
+  var queryStr = `SELECT count(*) AS cnt
+  FROM MIT_ST_User
+  WHERE ID='${ID}'
+  AND  Status='0'
+  `;
+
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request()
+    .query(queryStr, (err, result) => {
+        if(err){
+          reject(err)
+        }else {
+          _obj= JSON.parse(JSON.stringify(result));
+          if(_obj.recordset[0].cnt === 0){
+            resolve(NO_VAL)
+          }else{
+            resolve(YES_VAL)
+          }
+        }
+    })
+  })
   pool1.on('error', err => {
     reject(err)
   })

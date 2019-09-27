@@ -26,7 +26,7 @@
             <!-- <p>1.ข้อมูลที่ระบุของท่านไม่ตรงกับข้อมูลที่อยู่ในระบบของบริษัท</p>
             <p>2.ท่านกรอกข้อมูลเกินจำนวนครั้งที่กำหนด จะมีเจ้าหน้าที่ติดต่อกลับ</p> -->
 
-            <p>ท่านกรอกข้อมูลผิดเกินจำนวนครั้งที่กำหนด สามารถติดต่อบริษัทตามข้อมูลด้านล่าง</p>
+            <p>ท่านกรอกข้อมูลผิดเกินจำนวนที่กำหนด สามารถติดต่อบริษัทตามข้อมูลด้านล่าง</p>
 
           </div>
           <div class="DIV_ALERT" *ngIf="OTPFail">
@@ -64,7 +64,7 @@
 
               <div class="STEP1_HEADER div_back">
                   <img src="assets/img/mpam/MPAM_ST_2.png" class="img-fluid" >
-                  <p>กรุณากรอกข้อมูลที่ได้ให้ไว้กับทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
+                  <p>กรุณากรอกข้อมูลที่ได้ให้ไว้กับบริษัท</p>
               </div>
 
 
@@ -86,9 +86,13 @@
 
             <mat-form-field class="col-md-12">
                 <input matInput placeholder="อีเมลล์ / Email " formControlName="email" [(ngModel)]="register.email"  required>
-            </mat-form-field>
 
-            <div>
+            </mat-form-field>
+            <span *ngIf="firstFormGroup.hasError('email', 'email') && firstFormGroup.get('email').touched" class="warningText">
+              กรุณากรอกข้อมูลในรูปแบบ email
+            </span>
+
+            <div class="recaptcha">
                 <recaptcha
                 [formControl]="myRecaptcha"
                 (scriptLoad)="onScriptLoad()"
@@ -146,7 +150,7 @@
             </div> -->
             <div class='div_final'>
 
-            <h3>ระบบได้รับข้อมูลเรียบร้อยแล้ว จะส่งอีเมลยืนยันไปให้ท่าน หากท่านไม่ได้รับอีเมล กรุณาติดต่อเบอร์ 02-6606689 หรือ e-mail : wealthservice@merchantasset.co.th</h3>
+            <h3>ระบบได้รับข้อมูลเรียบร้อยแล้ว จะส่งอีเมลยืนยันไปให้ท่าน หากท่านไม่ได้รับอีเมล กรุณาติดต่อเบอร์ 02-6606689 หรือ <span class="nowrap">e-mail : wealthservice@merchantasset.co.th</span>></h3>
 
             <!-- <h3>ระบบได้ส่งข้อมูลการเข้าระบบ Streaming For Fund ไปยัง E-mail ของท่านแล้ว</h3> -->
             <br>

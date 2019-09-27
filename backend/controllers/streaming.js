@@ -258,10 +258,10 @@ exports.demoSendDataMail = (req,res,next)=>{
   _idCard='3101400507760'
   _First_Name='Yuttana'
   _Last_Name='Khumnual'
-  _Birth_Day_1='01 Jan 1976'
+  _Birth_Day_1='01Jan1976'
 
 
-  mailController.mailStreamingUserSecret(_Email,_idCard,_First_Name,_Last_Name,_Birth_Day_1,_idCard+'.pdf').then(data=>{
+  mailController.mailStreamingUserSecret(_Email,_idCard,_First_Name,_Last_Name,_Birth_Day_1,_idCard+'_SEC.pdf').then(data=>{
 
     console.log("4. Send E-mail sussful " + data);
 

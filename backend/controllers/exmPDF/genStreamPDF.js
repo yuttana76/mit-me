@@ -6,6 +6,8 @@ const path = require('path');
 let { buildStreamPathHtml,buildStreamPathPdf } = require('./buildPaths');
 const  createStreamUserPdfController = require('./createStreamUserPdf');
 const logoPath = path.resolve('./backend/images/MPAM-logo.png');
+const download_applePath = path.resolve('./backend/images/download_apple.png');
+const download_googlePath = path.resolve('./backend/images/download_google.png');
 
 const createContent = (item) => `
 
@@ -28,26 +30,23 @@ const createHtml = (content) => `
       <style>
 
       html, body{ height:100%; margin:0; }
-      header{ height:50px; background:lightcyan; }
-      footer{ height:50px; background:PapayaWhip; }
+      header{ height:50px;  }
+      footer{ height:50px;  }
 
       /* Trick */
       body{
         display:flex;
         flex-direction:column;
+        width: 17cm;
+        height: 27.7cm;
+        margin-top:50px;
+        margin-left:50px;
       }
 
       footer{
-        margin-top:auto;
+        height: 150px;
       }
 
-
-      body{
-        display:flex;
-        width: 21cm;
-        height: 29.7cm;
-        margin: 30mm 45mm 30mm 45mm;
-        }
       .txtRight{
         text-align: right;
         margin-left: 10px;
@@ -68,6 +67,15 @@ const createHtml = (content) => `
         text-indent: 30%;
       }
 
+      .download{
+        margin:auto;
+      }
+      .download img{
+        width:150px;
+      }
+
+      .nowrap{white-space: nowrap;}
+
       </style>
     </head>
     <body>
@@ -77,20 +85,9 @@ const createHtml = (content) => `
     <br>
     <p class='txtRight'>วันที่ ${formatDate(new Date())}</p>
       <br>
-    <p class='content'>
-        ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด มีความยินดีที่ให้บริการแก่ลูกค้าผู้ประสงค์ใช้บริการซื้อขายกองทุนผ่าน Mobile App โดยการโหลด Streaming for fund ได้ทั้งทาง iOS และ Android
-    </p>
 
     <p class='content'>
-        <a href="https://apps.apple.com/th/app/streaming-for-fund/id1170482366?l=th">https://apps.apple.com/th/app/streaming-for-fund/id1170482366?l=th</a>
-    </p>
-
-    <p class='content'>
-        <a href="https://play.google.com/store/apps/details?id=com.settrade.streaming.fund&hl=th">https://play.google.com/store/apps/details?id=com.settrade.streaming.fund&hl=th</a>
-    </p>
-
-    <p class='content'>
-    ดังนั้นทางบริษัทจัดการฯ ขอนำส่ง User and Password ให้กับลูกค้าตามตามรายละเอียดข้างล่างนี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป
+    ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ขอนำส่ง User and Password ให้กับลูกค้าตามที่แนบมานี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป
     </p>
 
       <br>
@@ -98,18 +95,30 @@ const createHtml = (content) => `
       <div class='content_user'>
       ${content}
       </div>
+      <br>
 
+
+
+      <div>
       <br>
       <p class='txtCenter'>ขอแสดงความนับถือ</p>
 			<p class='txtCenter' >บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
+      </div>
+
+      <br>
+      <div class="download">
+      <a href="https://itunes.apple.com/th/app/streaming-for-fund/id1170482366?l=th&amp;mt=8" target="_blank">
+        <img src="${download_applePath}" class="img-responsive" width="200"></a>
+
+      <a href="https://play.google.com/store/apps/details?id=com.settrade.streaming.fund" target="_blank">
+        <img src="${download_googlePath}" class="img-responsive" width="220"></a>
+      </div>
 
       <footer>
-      <div >
-        <p>ติดต่อสอบถามเพิ่มเติมได้ที่</p>
-        <p>เบอร์โทร. Wealthservice : 02-6606689</p>
-        <p>E-mail : Wealthservice@merchantasset.co.th</p>
-        </p>
-      </div>
+        <div class="footer">
+          <p>ติดต่อสอบถามเพิ่มเติมได้ที่</p>
+          <p>เบอร์โทร. Wealthservice : 02-6606689  E-mail : Wealthservice@merchantasset.co.th</p>
+        </div>
       </footer>
     </body>
   </html>
@@ -132,7 +141,7 @@ const doesFileExist = (filePath) => {
 
 exports.generatePDF = (req,res,next)=>{
 
-  const data = { "cusCode":"123","user":"MPAM001","password":"123","dob":"01Jan1976"}
+  const data = { "cusCode":"3101400507760","user":"MPAM001","password":"123","dob":"01Jan1976"}
 
 try {
 
@@ -191,9 +200,10 @@ exports.FNgenerateStreamingPDF=(data)=>{
               ownerPassword: _dob,
               userProtectionFlag: 4
           }).endPDF(()=>{
-            /* done! */
+            console.log("Succesfully created  >>" + _buildStreamPathPdf);
+
             fs.unlink(_buildStreamPathHtml, function (err) {
-              console.log('html File deleted!');
+              console.log('html File deleted!' + _buildStreamPathHtml );
             });
 
           });

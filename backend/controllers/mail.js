@@ -1162,6 +1162,9 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
   const _link5 ="https://www.merchantasset.co.th/home.html";
   const _link6 ="https://www.merchantasset.co.th/home.html";
 
+  const download_applePath = path.resolve('./backend/images/download_apple.png');
+  const download_googlePath = path.resolve('./backend/images/download_google.png');
+
   const fullName = fname+' ' +lname + ' '
 
   const _compInfo = mailConfig.mailCompInfo_TH;
@@ -1183,6 +1186,12 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
           <head>
           <style>
 
+          html, body{ height:100%; margin:0; }
+          header{ height:50px;  }
+          footer{ height:50px;  }
+
+          .nowrap{white-space: nowrap;}
+
           .blog-content-outer {
             background: whitesmoke;
             border: 1px solid #e1e1e1;
@@ -1191,6 +1200,7 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
             margin-bottom: 20px;
             padding: 0 15px;
             font-size: 16px;
+            width:70%;
           }
 
           .logo-area{
@@ -1202,9 +1212,7 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
         .tab { margin-left: 40px; }
           .tab2 { margin-left: 80px; }
 
-          div.a {
 
-        }
         .content{
           text-indent: 50px;
           text-align: justify;
@@ -1225,9 +1233,7 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
 
             <div class="a">
 
-
-            <p>เรื่อง   การจัดส่ง User and Password<p>
-            <p>เรียน   ลูกค้าบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด<p>
+            <p>เรียน ${fname} ${lname} <p>
 
               <p class='content'>
               ตามที่ท่านมีความประสงค์ใช้บริการซื้อขายกองทุนผ่าน Mobile App ดังนั้นทางบริษัทจัดการฯ ได้แนบรหัส User และ Password ในอีเมลฉบับนี้ ซึ่งท่านสามารถดูโดยคลิกไฟล์ (PDF file) และใส่รหัสส่วนตัวของท่านตามวิธีดังต่อไปนี้
@@ -1243,9 +1249,15 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
               <p class='content'>ตัวอย่างเช่น ท่านที่เกิดวันที่ 9 มกราคม 2529 กรุณาใส่รหัส 09Jan1986</p>
 
               <br>
-              <p class='content'>
-              หมายเหตุ : จดหมายอิเล็กทรอนิกส์ฉบับนี้ เป็นการส่งจากระบบอัตโนมัติ ไม่สามารถตอบกลับได้ หากท่านต้องการติดต่อบริษัทฯ กรุณาติดต่อ Wealthservice โทร. 02-6606689 ทุกวันทำการ เวลา 9.00-17.00 น. หรือ e-mail : Wealthservice@merchantasset.co.th
-              <p>
+
+              <br>
+              <div class="download">
+              <a href="https://itunes.apple.com/th/app/streaming-for-fund/id1170482366?l=th&amp;mt=8" target="_blank">
+                <img src="${download_applePath}" class="img-responsive" width="200"></a>
+
+              <a href="https://play.google.com/store/apps/details?id=com.settrade.streaming.fund" target="_blank">
+                <img src="${download_googlePath}" class="img-responsive" width="220"></a>
+              </div>
 
               <br>
               <p class='content txtCenter'>
@@ -1255,39 +1267,24 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
               บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
               </p>
 
-              <p class='content '>แนบมาด้วยนี้</p>
-              <p class='content '>1. User and password</p>
-              <p class='content '>
-                <a href="${_link1}" target="_blank">2. วิธีการดาวน์โหลด App for iOS และ Android</a>
-              </p>
-              <p class='content '>
-                <a href="${_link2}" target="_blank">3. วิธีการใช้ Streaming for fund</a>
-              </p>
-              <p class='content '>
-                <a href="${_link3}" target="_blank">4. หนังสือการขอใช้บริการตัดบัญชีอัตโนมัติ (ATS)</a>
-              </p>
-              <p class='content '>
-                <a href="${_link4}" target="_blank">5. วิธีการสมัคร ATS ผ่าน SCB Call Center</a>
-              </p>
-              <p class='content '>
-                <a href="${_link5}" target="_blank">6. วิธีการสมัคร ATS ผ่านทางตู้ ATM
-              </p>
-              <p class='content '>
-                <a href="${_link6}" target="_blank">7. วิธีการสมัคร ATS ผ่านทาง SCB Easy Net
-              </p>
+
 
             </div>
+            <br>
+            <br>
+            <footer >
+            <p>หมายเหตุ : จดหมายอิเล็กทรอนิกส์ฉบับนี้ เป็นการส่งจากระบบอัตโนมัติ ไม่สามารถตอบกลับได้ หากท่านต้องการติดต่อบริษัทฯ กรุณาติดต่อ Wealthservice <span class="nowrap">โทร. 02-6606689 ทุกวันทำการ เวลา 9.00-17.00 น. หรือ<span class="nowrap"> e-mail : Wealthservice@merchantasset.co.th</span></p>
+            </footer>
 
           </body>
           </html>
           <br>
-          <p>
-          <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
-          <p>
+
+
 
           `;
 
-          _msgTH +=_compInfo
+          // _msgTH +=_compInfo
 
 
           // setup email data with unicode symbols

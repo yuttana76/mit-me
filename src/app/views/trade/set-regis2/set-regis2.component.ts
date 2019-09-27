@@ -53,7 +53,7 @@ export class SetRegis2Component implements OnInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       mobile: ['', Validators.required],
-      email: ['', Validators.required]
+      email: ['', Validators.email]
     });
 
 

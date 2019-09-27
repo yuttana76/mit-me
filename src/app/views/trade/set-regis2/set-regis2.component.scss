@@ -6,7 +6,16 @@ body {
   margin:25px;
 }
 
+.nowrap{white-space: nowrap;}
 
+.warningText{
+  color: red;
+};
+
+.recaptcha{
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
 /* small desktop */
 @media all and (max-width: 1200px) {
   .finalImage {

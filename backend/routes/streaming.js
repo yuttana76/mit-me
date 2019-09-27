@@ -54,9 +54,7 @@ router.post("/smsStreamingCustFile",mailController.smsStreamingCustFile);
 // TEST
 router.post("/demoSendDataMail",streamingController.demoSendDataMail);
 router.post("/generatePDF",genStreamPDFController.generatePDF);
-
 router.post("/regisNewCustToMail",streamingController.regisNewCustToMail);
-
 router.get("/pdfEncrypt",streamingController.pdfEncrypt);
 
 module.exports = router;

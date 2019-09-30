@@ -69,9 +69,18 @@ const createHtml = (content) => `
 
       .download{
         margin:auto;
+        margin-top: 10px;
+        margin-bottom: 50px;
       }
       .download img{
         width:150px;
+        height: 49px;
+      }
+
+      .div_regards{
+        margin: auto;
+        margin-top: 5px;
+        margin-bottom: 50;
       }
 
       .nowrap{white-space: nowrap;}
@@ -87,7 +96,7 @@ const createHtml = (content) => `
       <br>
 
     <p class='content'>
-    ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ขอนำส่ง User and Password ให้กับลูกค้าตามที่แนบมานี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป
+    ทาง บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ขอนำส่ง User and Password ให้กับลูกค้าตามที่แนบมานี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป
     </p>
 
       <br>
@@ -97,21 +106,20 @@ const createHtml = (content) => `
       </div>
       <br>
 
-
-
-      <div>
       <br>
-      <p class='txtCenter'>ขอแสดงความนับถือ</p>
-			<p class='txtCenter' >บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
-      </div>
 
-      <br>
       <div class="download">
+      <p>ดาวน์โหลด Streaming For Fund ได้ที่</p>
       <a href="https://itunes.apple.com/th/app/streaming-for-fund/id1170482366?l=th&amp;mt=8" target="_blank">
         <img src="${download_applePath}" class="img-responsive" width="200"></a>
 
       <a href="https://play.google.com/store/apps/details?id=com.settrade.streaming.fund" target="_blank">
         <img src="${download_googlePath}" class="img-responsive" width="220"></a>
+      </div>
+
+      <div class="div_regards">
+      <p class='txtCenter'>ขอแสดงความนับถือ</p>
+			<p class='txtCenter' >บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
       </div>
 
       <footer>
@@ -202,9 +210,9 @@ exports.FNgenerateStreamingPDF=(data)=>{
           }).endPDF(()=>{
             console.log("Succesfully created  >>" + _buildStreamPathPdf);
 
-            fs.unlink(_buildStreamPathHtml, function (err) {
-              console.log('html File deleted!' + _buildStreamPathHtml );
-            });
+            // fs.unlink(_buildStreamPathHtml, function (err) {
+            //   console.log('html File deleted!' + _buildStreamPathHtml );
+            // });
 
           });
 

@@ -1162,8 +1162,8 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
   const _link5 ="https://www.merchantasset.co.th/home.html";
   const _link6 ="https://www.merchantasset.co.th/home.html";
 
-  const download_applePath = path.resolve('./backend/images/download_apple.png');
-  const download_googlePath = path.resolve('./backend/images/download_google.png');
+  const download_applePath = 'https://www.merchantasset.co.th/assets/images/download_apple.png'
+  const download_googlePath = 'https://www.merchantasset.co.th/assets/images/download_google.png'
 
   const fullName = fname+' ' +lname + ' '
 
@@ -1186,7 +1186,16 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
           <head>
           <style>
 
-          html, body{ height:100%; margin:0; }
+          html, body{ height:100%; margin:0;
+            display:flex;
+            flex-direction:column;
+            width: 17cm;
+            height: 27.7cm;
+            margin-top:50px;
+            margin-left:50px;
+          }
+
+
           header{ height:50px;  }
           footer{ height:50px;  }
 
@@ -1223,6 +1232,16 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
         .txtCenter{
           text-align: center;
         }
+
+        .download{
+          margin:auto;
+          margin-left: 100px;
+        }
+        .download img{
+          width:150px;
+          height: 49px;
+        }
+
           </style>
           </head>
           <body>
@@ -1252,6 +1271,7 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
 
               <br>
               <div class="download">
+              <p>ดาวน์โหลด Streaming For Fund ได้ที่</p>
               <a href="https://itunes.apple.com/th/app/streaming-for-fund/id1170482366?l=th&amp;mt=8" target="_blank">
                 <img src="${download_applePath}" class="img-responsive" width="200"></a>
 
@@ -1263,18 +1283,21 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
               <p class='content txtCenter'>
               ขอแสดงความนับถือ
               <p>
-              <p class='content txtCenter'>
-              บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
-              </p>
+              <!--<p class='content txtCenter'>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>-->
+              <p class='content txtCenter'>บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
 
 
 
             </div>
             <br>
             <br>
-            <footer >
-            <p>หมายเหตุ : จดหมายอิเล็กทรอนิกส์ฉบับนี้ เป็นการส่งจากระบบอัตโนมัติ ไม่สามารถตอบกลับได้ หากท่านต้องการติดต่อบริษัทฯ กรุณาติดต่อ Wealthservice <span class="nowrap">โทร. 02-6606689 ทุกวันทำการ เวลา 9.00-17.00 น. หรือ<span class="nowrap"> e-mail : Wealthservice@merchantasset.co.th</span></p>
-            </footer>
+            <!--<footer >-->
+            <div>
+            <p>หมายเหตุ :</p>
+            <p>
+            จดหมายอิเล็กทรอนิกส์ฉบับนี้ เป็นการส่งจากระบบอัตโนมัติ ไม่สามารถตอบกลับได้ หากท่านต้องการติดต่อบริษัทฯ กรุณาติดต่อ Wealthservice <span class="nowrap">โทร. 02-6606689 ทุกวันทำการ เวลา 9.00-17.00 น. หรือ<span class="nowrap"> e-mail : Wealthservice@merchantasset.co.th</span>
+            </p>
+            </div>
 
           </body>
           </html>

@@ -11,8 +11,8 @@ const download_googlePath = path.resolve('./backend/images/download_google.png')
 
 const createContent = (item) => `
 
-  <p>User : ${item.user}</p>
-  <p>Password: ${item.password}</p>
+  <p>User name  ${item.user}</p>
+  <p>Password  ${item.password}</p>
 
 `;
 /**
@@ -96,7 +96,7 @@ const createHtml = (content) => `
       <br>
 
     <p class='content'>
-    ทาง บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ขอนำส่ง User and Password ให้กับลูกค้าตามที่แนบมานี้ โดยการเข้าระบบในครั้งแรก ลูกค้าจะต้องเปลี่ยน password ใหม่ เพื่อความสะดวกและจดจำได้ง่ายในการใช้งานครั้งต่อไป
+    ทางบริษัทนำส่ง User name และ Password ให้กับท่าน ในการเข้าระบบครั้งแรกท่านจะต้องเปลี่ยน Password เพื่อความปลอดภัยของท่าน
     </p>
 
       <br>

@@ -252,7 +252,7 @@ checkFile.on('close', function(line) {
 exports.smsStreamingCustFile = (req, res, next) =>{
 
   // let msg =`เปิดบริการซื้อขายกองทุนรวมกับบลจ. เมอร์ชั่น พาร์ทเนอร์ ผ่าน Mobile App สนใจติดต่อ Wealthservice Tel. 02-6606689 หรือ www.merchantasset.co.th`
-  let msg =`ซื้อขายกองทุนรวมกับบลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App สนใจติดต่อ Wealthservice Tel. 02-6606689 หรือ http://mit.wealth-merchant.com:3000/set-welcome`
+  let msg =`!!! ดูพอร์ต ซื้อขาย สับเปลี่ยนกองทุนรวมผ่าน Mobile App ได้แล้ววันนี้ คลิก http://mit.wealth-merchant.com:3000/set-welcome `
 
 
   var today = new Date();
@@ -538,13 +538,14 @@ function mailStreaming(req,res,_name,_Email){
         <style>
 
         .blog-content-outer {
-          --background: whitesmoke;
+          background: whitesmoke;
           border: 1px solid #e1e1e1;
           border-radius: 5px;
           margin-top: 40px;
           margin-bottom: 20px;
           padding: 0 15px;
           font-size: 16px;
+          width:70%;
         }
 
         .logo-area{
@@ -560,6 +561,21 @@ function mailStreaming(req,res,_name,_Email){
           text-indent: 50px;
         }
 
+        .nowrap{white-space: nowrap;}
+
+        .txtCenter{
+          text-align: center;
+        }
+
+        .download{
+          margin:auto;
+          margin-left: 100px;
+        }
+        .download img{
+          width:150px;
+          height: 49px;
+        }
+
         </style>
         </head>
         <body>
@@ -571,21 +587,30 @@ function mailStreaming(req,res,_name,_Email){
         <a href="https://www.merchantasset.co.th/home.html"><img src="https://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
         </div>
 
-
-        <p >เรียน ท่านลูกค้า</p>
-
-        <p>เรื่อง ประชาสัมพันธ์ซื้อขายกองทุนรวมกับ บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App </p>
+        <br>
+        <p >เรียน ท่านผู้ถือหน่วยลงทุน</p>
+        <br>
+        <p>เรื่อง  การทำรายการซื้อขายกองทุนรวมผ่าน Mobile App</p>
+        <br>
         <div class="a">
         <p>
-          เพื่อเพิ่มความสะดวก รวดเร็วในการให้บริการแก่ลูกค้า ทางบริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ได้เปิดให้ลูกค้าสามารถทำรายการในบัญชีกองทุนผ่าน Mobile app ได้ด้วยตนเอง เพื่อซื้อขาย/สับเปลี่ยนหน่วยลงทุน หรือตรวจสอบพอร์ตการลงทุนได้ทุกเวลา ตั้งแต่วันที่ 1 กันยายน 2562
-         </p>
-         <p>
-          หากสนใจหรือต้องการที่จะใช้บริการดังกล่าว สามารถติดต่อ Wealthservice โทร. 02-6606689 หรือติดต่อเจ้าหน้าที่การตลาดผู้ดูแลบัญชีของท่าน นอกจากนี้ยังสามารถดูรายละเอียดเพิ่มเติมได้จาก www.merchantasset.co.th หรือ http://mit.wealth-merchant.com:3000/set-welcome
+        ตั้งแต่วันที่ 4 ตุลาคม 2562 เป็นต้นไป ท่านสามารถดูพอร์ต ซื้อขาย หรือสับเปลี่ยนกองทุนรวมผ่าน Mobile App ด้วยตัวท่านเอง <span class='nowrap'><a href='http://mit.wealth-merchant.com:3000/set-welcome'>ลงทะเบียนคลิกที่นี่ </a></span>
         </p>
-        <p>
-          ขอแสดงความนับถือ
-        </p>
+
         </div>
+
+        <br>
+        <br>
+        <p>
+        ขอแสดงความนับถือ
+        </p>
+
+      <br>
+      <p>Wealthservice โทร. 02-6606689</p>
+      <p>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
+      <p>E-mail : <a href='mailto:wealthservice@merchantasset.co.th'>wealthservice@merchantasset.co.th</a></p>
+      <p><a href='https://www.merchantasset.co.th/detail/Streaming-for-Fund-168.html'>www.merchantasset.co.th</a></p>
+      <br>
 
         </body>
         </html>
@@ -596,7 +621,7 @@ function mailStreaming(req,res,_name,_Email){
 
         `;
 
-        _msgTH +=_compInfo
+        // _msgTH +=_compInfo
 
 
         // setup email data with unicode symbols
@@ -1169,7 +1194,7 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
 
   const _compInfo = mailConfig.mailCompInfo_TH;
   let _from = mailConfig.mail_form;
-  let _subject = 'จัดส่ง User and Password'
+  let _subject = 'User name และ Password';
   let _msgTH = '';
 
   return new Promise(function(resolve, reject) {
@@ -1199,7 +1224,6 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
           header{ height:50px;  }
           footer{ height:50px;  }
 
-          .nowrap{white-space: nowrap;}
 
           .blog-content-outer {
             background: whitesmoke;
@@ -1229,6 +1253,8 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
           margin-right: 10px;
         }
 
+        .nowrap{white-space: nowrap;}
+
         .txtCenter{
           text-align: center;
         }
@@ -1252,10 +1278,10 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
 
             <div class="a">
 
-            <p>เรียน ${fname} ${lname} <p>
+            <p>เรียน ผู้ถือหน่วยลงทุน</p>
 
               <p class='content'>
-              ตามที่ท่านมีความประสงค์ใช้บริการซื้อขายกองทุนผ่าน Mobile App ดังนั้นทางบริษัทจัดการฯ ได้แนบรหัส User และ Password ในอีเมลฉบับนี้ ซึ่งท่านสามารถดูโดยคลิกไฟล์ (PDF file) และใส่รหัสส่วนตัวของท่านตามวิธีดังต่อไปนี้
+              ตามที่ท่านมีความประสงค์ใช้บริการซื้อขายกองทุนผ่าน Mobile App บริษัทขอส่ง User name และ Password  ซึ่งท่านสามารถดูโดยคลิกไฟล์ (PDF file) และใส่รหัสส่วนตัวของท่านตามวิธีดังต่อไปนี้
               </p>
 
               <br>

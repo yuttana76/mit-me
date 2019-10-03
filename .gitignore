@@ -7,6 +7,7 @@
 /backend/controllers/readFiles/LEDBackup
 /backend/controllers/readFiles/smsBackup
 /backend/controllers/readFiles/StreamingBackup
+/backend/controllers/readFiles/SURVEYBackup
 /backend/.env
 backend/angular
 /dist-server

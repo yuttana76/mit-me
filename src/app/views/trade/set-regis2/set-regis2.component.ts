@@ -55,13 +55,10 @@ export class SetRegis2Component implements OnInit {
       mobile: ['', Validators.required],
       email: ['', Validators.email]
     });
-
-
   }
 
-
   onRegister(stepper:MatStepper){
-
+    const REGIS_FAIL_ATTEMP = 5;
 
     if(this.firstFormGroup.valid){
 
@@ -78,12 +75,13 @@ export class SetRegis2Component implements OnInit {
 
         this.spinnerLoading = false;
 
-        if (this.regisCount===3){
+        if (this.regisCount===REGIS_FAIL_ATTEMP){
           this.regisFail=true;
         }
 
         this.regisCount++;
 
+        var warn_msg = "ข้อมูลไม่ถูกต้องในระบบของบริษัท";
 
         this.toastr.error(rs.error.data, "Error", {
           timeOut: 6000,

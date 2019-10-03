@@ -4,7 +4,7 @@ exports.MPAM_MailParameters = {
     secure: false, // true for 465, false for other ports
     auth: {
         user: 'wealthservice@merchantasset.co.th',//process.env.MAIL_USER, // generated ethereal user
-        pass: 'Merchant@2019**'//process.env.MAIL_PASS // generated ethereal password
+        pass: 'Merchantam@pw009**'//process.env.MAIL_PASS // generated ethereal password
         // user: 'italert@merchantasset.co.th',//process.env.MAIL_USER, // generated ethereal user
         // pass: 'Merchant@2018**'//process.env.MAIL_PASS // generated ethereal password
     }

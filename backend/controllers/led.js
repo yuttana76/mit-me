@@ -8,6 +8,8 @@ const utility = require('./utility');
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
 var mitLog = require('./mitLog');
+var windows874 = require('windows-874');
+
 var config = dbConfig.dbParameters;
 var config_BULK = dbConfig.dbParameters_BULK;
 var config_stream = dbConfig.dbParameters_stream;
@@ -222,48 +224,51 @@ const LED_INSP_STATUS =1;
 // }
 
 
+// exports.callGetBankruptList = (req, res, next) =>{
 
+//   var led_options = {
+//     host: 'test.example.com',
+//     port: 443,
+//     path: '/api/service/'+servicename,
+//     // authentication headers
+//     headers: {
+//        'username': 'MPAM',
+//        'password': 'MPAM123',
+//        'api-key': '328010cc65ecf3a5f0bcdbb51e339d36',
+//       //  'api-key': 'Basic ' + new Buffer(username + ':' + passw).toString('base64')
+//     }
+//   };
 
-exports.callGetBankruptList = (req, res, next) =>{
+//   request = https.get(led_options, function(res){
+//     var body = "";
+//     res.on('data', function(data) {
+//        body += data;
+//     });
+//     res.on('end', function() {
+//      //here we have the full response, html or json object
+//        console.log(body);
+//     })
+//     res.on('error', function(e) {
+//        onsole.log("Got error: " + e.message);
+//     });
+//    });
+// }
 
-  var led_options = {
-    host: 'test.example.com',
-    port: 443,
-    path: '/api/service/'+servicename,
-    // authentication headers
-    headers: {
-       'username': 'MPAM',
-       'password': 'MPAM123',
-       'api-key': '328010cc65ecf3a5f0bcdbb51e339d36',
-      //  'api-key': 'Basic ' + new Buffer(username + ':' + passw).toString('base64')
-    }
-  };
-
-  request = https.get(led_options, function(res){
-    var body = "";
-    res.on('data', function(data) {
-       body += data;
-    });
-    res.on('end', function() {
-     //here we have the full response, html or json object
-       console.log(body);
-    })
-    res.on('error', function(e) {
-       onsole.log("Got error: " + e.message);
-    });
-   });
-}
-
-exports.uploadBulkFileDialy = (req, res, next) =>{
+/*
+Update initial data here /readFiles/LED/exp_lom.txt;
+and insert in MIT_LED_DB_DIALY
+ */
+exports.uploadBulkFileToDialy = (req, res, next) =>{
 
   logger.info('Welcome uploadBulkFileDialy()');
+
   const userCode = req.body.userCode;
 
   var today = new Date();
   var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
   var time = today.getHours() + "-" + today.getMinutes()
   var dateTime = date+'-'+time;
-  const bakFile =  dateTime+'-exp_lom.txt';
+  const bakFile =  dateTime+'-'+readFile;
   var LED_Status ='A';
 
   // Check userCode
@@ -314,6 +319,7 @@ exports.uploadBulkFileDialy = (req, res, next) =>{
         table.columns.add('bkr_prot_mm', sql.VarChar(2), { nullable: true });
         table.columns.add('bkr_prot_yy', sql.VarChar(4), { nullable: true });
         table.columns.add('statusdf', sql.VarChar(1), { nullable: true });
+
         table.columns.add('createBy', sql.VarChar(20), { nullable: true });
         table.columns.add('createDate', sql.Date, { nullable: true });
         table.columns.add('updateBy', sql.VarChar(20), { nullable: true });
@@ -324,15 +330,23 @@ exports.uploadBulkFileDialy = (req, res, next) =>{
       line_no = 0;
 
       let rFile = readline.createInterface({
-        input: fs.createReadStream(readPath+readFile, 'utf8')
+        // input: fs.createReadStream(readPath+readFile, 'utf8')
+        input: fs.createReadStream(readPath+readFile)
       });
 
       rFile.on('line', function(line) {
+
           line_no++;
-          console.log('line_no >>:' + line_no);
+          // console.log('line_no >>:' + line_no);
             if(line_no >0){
+
+              console.log( 'line >>' + line);
+
               var array = line.split("|");
-              // console.log( 'DATA(1)>>' + array[22] );
+
+              // var result = encoding.convert(line, "ISO-8859-11");
+              // var array = result.split("|");
+
 
               //On action what to do?
               // isEmpty()
@@ -347,8 +361,24 @@ exports.uploadBulkFileDialy = (req, res, next) =>{
                 , array[8].trim()
                 , array[9].trim()
                 , array[10].trim()
-                , array[11].trim(), array[12].trim(), array[13].trim(), array[14].trim(), array[15].trim(), array[16].trim(), array[17].trim(), array[18].trim(), array[19].trim(), array[20].trim(), array[21].trim(), array[22].trim()
-                , userCode,new Date,'',null,LED_Status);
+                , array[11].trim()
+                , array[12].trim()
+                , array[13].trim()
+                , array[14].trim()
+                , array[15].trim()
+                , array[16].trim()
+                , array[17].trim()
+                , array[18].trim()
+                , array[19].trim()
+                , array[20].trim()
+                , array[21].trim()
+                , array[22].trim()
+                , userCode
+                ,new Date
+                ,''
+                ,null
+                ,LED_Status
+                );
 
             }
         });

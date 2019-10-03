@@ -16,7 +16,7 @@ const genStreamPDFController = require('./exmPDF/genStreamPDF');
 
 const  YES_VAL = 'Y';
 const  NO_VAL = 'N';
-const EMAIL_WEALTH ='yuttana76@gmail.com';
+const EMAIL_WEALTH ='yuttana76@gmail.com,Wealthservice@merchantasset.co.th';
 
 /*
 // Response code

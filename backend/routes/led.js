@@ -52,10 +52,10 @@ const storage = multer.diskStorage({
 
 // router.post("/uploadFile",selfAuth,ledController.uploadFile);
 // router.post("/uploadBulkFileMaster",selfAuth,ledController.uploadBulkFileMaster);
-router.get("/CallGetBankruptList",selfAuth,ledController.callGetBankruptList);
+// router.get("/CallGetBankruptList",selfAuth,ledController.callGetBankruptList);
 
-router.post("/uploadBulkFileDialy",selfAuth,ledController.uploadBulkFileDialy);
-
+//Run on initial data only
+router.post("/uploadBulkFileToDialy",selfAuth,ledController.uploadBulkFileToDialy);
 router.post("/checkCustDialy",selfAuth,ledController.checkCustDialy);
 // router.post("/checkCustByID",selfAuth,ledController.checkCustByID);
 

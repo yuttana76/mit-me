@@ -31,8 +31,19 @@ const LED_FILE_NAME= "led_list.txt";
 const LED_LIST_FILE_NAME = 'led_list.txt';
 
 const HTTP_SOAP = 'https://192.168.10.48:444/CrytoService.svc';
-const HOST_LED= "uatdebtor.led.go.th";
-const API_KEY ="328010cc65ecf3a5f0bcdbb51e339d36";
+
+/*
+Production Endpoint
+https://debtor.led.go.th/api/public/GetBankruptList
+*/
+// const HOST_LED= "uatdebtor.led.go.th";
+const HOST_LED= "debtor.led.go.th";
+
+var userPath = path.resolve('./backend/merchantasset_CA/led/led_user.json');
+var userData = fs.readFileSync(userPath, "utf8"); //ascii,utf8
+
+// const API_KEY ="328010cc65ecf3a5f0bcdbb51e339d36";//UAT
+const API_KEY =JSON.parse(userData).apikey;
 
 
 const PATH_GetBankruptList ="/api/public/GetBankruptList";
@@ -786,10 +797,14 @@ function fnGetBankruptList(){
       fncSOAPEncrypt().then(result =>{
 
         input= result.EncryptResult;
+
+        // console.log("Input >>" + JSON.stringify(input));
+
         // #2 Call APIs
         fnCallLEDapis(PATH_GetBankruptList,input).then(result =>{
 
-          // console.log(result);
+          // console.log("fnCallLEDapis>> "+ result);
+
           var resultObj =  JSON.parse(result);
 
           if(resultObj.responseCode == "000"){
@@ -898,12 +913,12 @@ function fnCallLEDapis(path,input){
   return new Promise(function(resolve, reject) {
 
   const https = require('https')
-  // var input = req.body.input;
   const postData = JSON.stringify({
     input:input
   });
 
-  // // https://uatdebtor.led.go.th/api/public/GetBankruptList
+  // console.log('input>>'+ input);
+  // // https://debtor.led.go.th/api/public/GetBankruptList
   var options_1 = {
     host: HOST_LED,
     path:path,
@@ -915,12 +930,13 @@ function fnCallLEDapis(path,input){
     },
   };
 
+  console.log('options_1>>' + JSON.stringify(options_1));
+
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
   const request = https.request(options_1,(res) => {
     var _chunk="";
     res.setEncoding('utf8');
     res.on('data', (chunk) => {
-      // console.log(`BODY: ${chunk}`);
       _chunk=_chunk.concat(chunk);
     });
     res.on('end', () => {
@@ -947,8 +963,8 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
 
   return new Promise(function(resolve, reject) {
 
-    var userPath = path.resolve('./backend/merchantasset_CA/led/led_user.json');
-    var userData = fs.readFileSync(userPath, "utf8"); //ascii,utf8
+    // var userPath = path.resolve('./backend/merchantasset_CA/led/led_user.json');
+    // var userData = fs.readFileSync(userPath, "utf8"); //ascii,utf8
 
     var signerPath = path.resolve('./backend/merchantasset_CA/led/mpam_cert.pem');
     var signerCert = fs.readFileSync(signerPath, "utf8");  //ascii,utf8
@@ -979,7 +995,7 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
 
     }
 
-    // console.log("userDataObj >>" + JSON.stringify(userDataObj));
+    console.log("input encrypt >>" + JSON.stringify(userDataObj));
     //GetBankruptList
     var args = {
       'input': `${JSON.stringify(userDataObj)}`,
@@ -987,7 +1003,6 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
       'recipientCertificate':recipientCert
     };
 
-    // console.log('wsdlData>>' + wsdlData);
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
     soap.createClient(url, function(err, client) {
       if(err){

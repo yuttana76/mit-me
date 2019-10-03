@@ -10,8 +10,6 @@ https://member.smsmkt.com/SMSLink/SendMsg/index.php?User=merchant&Password=12345
   }
 
 
-
-
   exports.SMSCompleteURL2 =  function(mobile,msg) {
     var msgEndcode = encodeURI(msg);
 

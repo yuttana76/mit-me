@@ -4,9 +4,13 @@
 /dist
 /backend/angular
 /backend/downloadFiles
+/backend/controllers/readFiles/LED
 /backend/controllers/readFiles/LEDBackup
+/backend/controllers/readFiles/sms
 /backend/controllers/readFiles/smsBackup
 /backend/controllers/readFiles/StreamingBackup
+/backend/controllers/readFiles/Streaming
+/backend/controllers/readFiles/SURVEY
 /backend/controllers/readFiles/SURVEYBackup
 /backend/.env
 backend/angular

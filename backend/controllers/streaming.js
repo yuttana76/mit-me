@@ -76,7 +76,7 @@ exports.addRegis = (req,res,next)=>{
           if(status_data !==YES_VAL){
             res.status(401).json({
               code: '102',
-              data: 'ข้อมูล User Streaming มีการร้องขอแล้ว กรุณาติดต่อเจ้าหน้าที่เพื่อตรวจสอบ'
+              data: 'ข้อมูล User name Streaming มีการใช้งานแล้ว กรุณาติดต่อเจ้าหน้าที่เพื่อตรวจสอบ'
             });
           }
 

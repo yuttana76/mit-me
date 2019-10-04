@@ -16,7 +16,7 @@ const genStreamPDFController = require('./exmPDF/genStreamPDF');
 
 const  YES_VAL = 'Y';
 const  NO_VAL = 'N';
-const EMAIL_WEALTH ='yuttana76@gmail.com,Wealthservice@merchantasset.co.th';
+const EMAIL_WEALTH = mailConfig.mail_wealthservice;
 
 /*
 // Response code
@@ -101,14 +101,14 @@ exports.addRegis = (req,res,next)=>{
     }else{
 
       //Send mail to officer
-      if(counter ===3){
+      if(counter ===5){
 
         var regisStatus = 1;
         fnUpdateRegisStatus(idCard,fname,lname,email,mobile,ip,regisStatus).then(data=>{
 
           //Send mail to staff
           _content =`
-          <h3>SExist Customer register  Streaming For Fund </h3>
+          <h3>Exist Customer register  Streaming For Fund </h3>
           <p>ID card: ${idCard}</p>
           <p>Name:  ${fname}  ${lname}</p>
           <p>Mobile: ${mobile}</p>

@@ -128,7 +128,7 @@
                   <input   type="text" [(ngModel)]="register.otp" class="form-control"  placeholder="OTP" [disabled]="!register.acceptFlag" required>
                   <button  mat-flat-button color="accent" (click)="requestOTP()" [disabled]="!register.acceptFlag" >Request OTP</button>
 
-                   <p>กรุณาระบุรหัสรักษาความปลอดภัย SMS-OTP ที่ได้รับ ภายใน 1 นาที ถ้าไม่ได้รับให้ Request OTP อีกครั้ง </p>
+                   <p>กรุณาระบุรหัสรักษาความปลอดภัย SMS-OTP ที่ได้รับ ภายใน 30 วินาที ถ้าไม่ได้รับให้ Request OTP อีกครั้ง </p>
                 </div>
               <hr>
               <div>

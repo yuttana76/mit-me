@@ -1,5 +1,5 @@
-// var HOST_SERVER = '192.168.10.25'; // PROD
-var HOST_SERVER = '192.168.10.48';  // DEV
+var HOST_SERVER = '192.168.10.25'; // PROD
+// var HOST_SERVER = '192.168.10.48';  // DEV
 
 exports.dbParameters = {
   server: HOST_SERVER,//PROD

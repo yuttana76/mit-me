@@ -21,12 +21,13 @@ exports.MPAM_MailParameters = {
   }
 
   exports.mail_form ='wealthservice@merchantasset.co.th';
-  exports.mail_wealthservice ='wealthservice@merchantasset.co.th,yuttana@merchantasset.co.th,nuthatai@merchantasset.co.th';
+  exports.mail_wealthservice ='wealthservice@merchantasset.co.th,yuttana@merchantasset.co.th';
   exports.mail_it ='it@merchantasset.co.th';
 
 
   // exports.mail_toRM ='PW@merchantasset.co.th'; //
-  exports.mailRM ='yuttana@merchantasset.co.th';
+  exports.mailRM ='PW@merchantasset.co.th';
+  // exports.mailWealthService ='wealthservice@merchantasset.co.th,yuttana@merchantasset.co.th';
 
   //LED
   exports.FROM_LED_SYS ='yuttana@merchantasset.co.th';

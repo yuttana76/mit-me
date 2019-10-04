@@ -1588,8 +1588,7 @@ module.exports.regisToMail = (name,surName,phone,email,lineId,description) => {
 
     let mailOptions = {
       from: mailConfig.mail_it,
-      // to: mailConfig.mail_wealthservice,
-      to: 'yuttana@merchantasset.co.th',
+      to: mailConfig.mail_wealthservice,
       subject: "New Cust Streaming For Fund registration",
       html: _msgHtml
     };

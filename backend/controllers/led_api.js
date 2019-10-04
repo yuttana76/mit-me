@@ -930,13 +930,18 @@ function fnCallLEDapis(path,input){
     },
   };
 
-  console.log('options_1>>' + JSON.stringify(options_1));
+  // console.log('options_1>>' + JSON.stringify(options_1));
 
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
   const request = https.request(options_1,(res) => {
     var _chunk="";
+    var i=0;
     res.setEncoding('utf8');
     res.on('data', (chunk) => {
+
+      // console.log("(chunk)>>"+ JSON.stringify(chunk));
+      i++;
+      // console.log("i>>"+i);
       _chunk=_chunk.concat(chunk);
     });
     res.on('end', () => {
@@ -995,7 +1000,7 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
 
     }
 
-    console.log("input encrypt >>" + JSON.stringify(userDataObj));
+    // console.log("input encrypt >>" + JSON.stringify(userDataObj));
     //GetBankruptList
     var args = {
       'input': `${JSON.stringify(userDataObj)}`,
@@ -1063,7 +1068,8 @@ function fncSOAPDecrypt(reqInput){
               // console.log('**** OK>>' + resultObj["DecryptResult"]);
               rsObj=JSON.parse(resultObj["DecryptResult"]) ;
 
-              resolve(JSON.stringify(rsObj[0]));
+              // resolve(JSON.stringify(rsObj[0]));
+              resolve(JSON.stringify(rsObj));
             }else{
               reject({"msg":"Not found result"})
             }

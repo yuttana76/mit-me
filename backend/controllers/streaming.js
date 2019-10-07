@@ -248,8 +248,64 @@ exports.regisProcess = (req,res,next)=>{
     });
 
   });
+}
+
+exports.userPwdToCust = (req,res,next)=>{
+
+  const _idCard = req.body.custCode;
+  const actionBy = req.body.actionBy;
+
+logger.info("Welcome  userPwdToCust :" + _idCard + " ;actionBy:" + actionBy);
+
+   //1. Get customer information
+   getCustomerInfo(_idCard).then(data=>{
+
+    console.log("1 Info >>" + JSON.stringify(data));
+    if(!data.UserName){
+      res.status(422).json({ code: 102,msg:'Not found streaming user' });
+    }else{
+
+      userPwdObj = { "cusCode":data.Cust_Code,"user":data.UserName,"password":data.PWD,"dob":data.Birth_Day_2.replace(/\s/g, '')}
+      console.log("2 >>" + JSON.stringify(userPwdObj));
+
+      // Create PDF
+      genStreamPDFController.FNgenerateStreamingPDF(userPwdObj).then(result=>{
+        // console.log('genStreamPDFController Result >' + JSON.stringify(result));
+
+        console.log("4. Send E-mail sussful> " + _idCard + " ;Email:" + data.Email);
+          //4. Send E-mail
+          // mailController.mailStreamingUserSecret(data.Email,_idCard,data.First_Name,data.Last_Name,data.Birth_Day_1,result.filePDF).then(data=>{
+          //   // console.log("4. Send E-mail sussful " + data);
+          // });
+
+          var regisStatus = 0;//Successful
+          fnUpdateRegisStatus(_idCard,data.First_Name,data.Last_Name,data.Email,data.Mobile,_ip,regisStatus).then(result=>{
+
+            //Send mail to staff
+            _content =`
+            <p>ID card: ${_idCard}</p>
+            <p>Name:  ${data.First_Name}  ${data.Last_Name}</p>
+            <p>Mobile: ${data.Mobile}</p>
+            <p>Email: ${data.Email}</p>
+            `;
+
+            mailController.mailStreamingToStaff(EMAIL_WEALTH,'Exist Customer register  Streaming For Fund  (Successful)',_content).then(mailRs=>{});
+
+          });
+
+      });
+
+      res.status(200).json({
+        code: '000',
+        messgae: 'successful'
+      });
+
+    }
+
+  });
 
 }
+
 
 exports.demoSendDataMail = (req,res,next)=>{
 

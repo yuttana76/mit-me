@@ -1,5 +1,3 @@
-4
-1|A|yuttana76@gmail.com
-2|B|Nuthatai_aoy@yahoo.com
-3|C|Nuthatai53@hotmail.com
-4|D|Nuthatai.aoy@gmail.com
+version https://git-lfs.github.com/spec/v1
+oid sha256:979951adeecc9132afe0c365af5a41ef1b8edc7d0e987e62e29000e8597544a1
+size 356

@@ -7,6 +7,7 @@ const mailController = require('../controllers/mail')
 const genStreamPDFController = require('../controllers/exmPDF/genStreamPDF');
 
 const checkAuth = require('../middleware/check-auth');
+const selfAuth = require('../middleware/self-auth');
 const router = express.Router();
 const { check } = require('express-validator');
 
@@ -43,6 +44,11 @@ check('otp')
   .exists().withMessage('must have Param otp')
   .isLength({ min: 1 }).withMessage('otp must have value ')
 ],streamingController.regisProcess);
+
+
+//Send user/pwd to cust  by MPAM
+router.post("/userPwdToCust",selfAuth
+,streamingController.userPwdToCust);
 
 
 // New customer register

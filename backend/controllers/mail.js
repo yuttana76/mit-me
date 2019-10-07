@@ -538,7 +538,6 @@ function mailStreaming(req,res,_name,_Email){
         <style>
 
         .blog-content-outer {
-          background: whitesmoke;
           border: 1px solid #e1e1e1;
           border-radius: 5px;
           margin-top: 40px;
@@ -1384,13 +1383,11 @@ module.exports.mailStreamingUserSecret = (_Email,custCode,fname,lname,birthdaySt
             if (error) {
               reject(error);
             }
-
-              // /*
-              // Save MIT_LOG
-              // */
+              /*
+              Save MIT_LOG
+              */
               // try {
               //   mitLog.saveMITlog('SYSTEM','SEND_MAIL_CUST_STREAMING',logMsg,req.ip,req.originalUrl,function(){
-              //         // console.log("Save MIT log");
               //   })
               // } catch (error) {
               //   console.log(error);

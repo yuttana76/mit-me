@@ -966,7 +966,7 @@ Send mail  to Whom response LED
 */
 exports.mailLedResponseToday = function(){
 
-  console.log( "Welcome mailLedResponse()");
+  // console.log( "Welcome mailLedResponse()");
 
 
   const FROM_LED_SYS = mailConfig.FROM_LED_SYS;
@@ -989,13 +989,11 @@ exports.mailLedResponseToday = function(){
     font-size: 16px;
   }
 
-
-
   </style>
   </head>
   <body>
 
-  <h3>LED Cleaning data result on ${utility.getDateTime()} </h3>`;
+  <h3>MPAM - LED  Cleaning data on ${utility.getDateTime()} </h3>`;
 
   let _msgLedHeader = "";
   let _msgContent = "";
@@ -1004,12 +1002,12 @@ exports.mailLedResponseToday = function(){
 
     getInspToday().then(value=>{
 
-console.log(" getInspToday() >>" + JSON.stringify(value));
+      // console.log(" getInspToday() >>" + JSON.stringify(value));
 
       value.forEach(function(data,i) {
 
-
-        _msgLedHeader =`<h3>LED amount ${data.CNT_LED_DATA} </h3>`;
+        _msgLedHeader =`<h3>LED today amount ${data.CNT_LED_DATA} </h3>`;
+        _msgLedHeader +=`<h3>Cleaning result found ${value.length} records. </h3>`;
 
         _msgContent += `
         <div class='blog-content-outer'>

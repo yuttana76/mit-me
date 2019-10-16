@@ -210,20 +210,21 @@ function fnCleanCustFromFile(actionBy){
       Promise.all([
         led.compareLED_2(values[2],values[0]).catch(err => { res.status(401).json({ message: 'Error Compare LED & SWAN >>'+err }); }),
         led.compareLED_2(values[2],values[1]).catch(err => { res.status(401).json({ message: 'Error Compare LED & MFTS >>'+err }); }),
-        ]).then(values => {
+        ]).then(values2 => {
 
           /**
-           * Incase Found
+           * Incase Found  has data in values[] array
            *1.Insert to MIT_LED_INSP_CUST
            *2.Insert all LED list to MIT_LED_DB_MASTER
            *3.Move LED download file to backup folder
            */
           Promise.all([
-            led.insertLEDInspect(values[0],"SWAN",actionBy).catch(err => { res.status(401).json({ message: 'Error SWAN to inspection >>'+err }); }),
-            led.insertLEDInspect(values[1],"MFTS",actionBy).catch(err => { res.status(401).json({ message: 'Error MFTS  to inspection>>'+err }); }),
+            led.insertLEDInspect(values2[0],"SWAN",actionBy).catch(err => { res.status(401).json({ message: 'Error SWAN to inspection >>'+err }); }),
+            led.insertLEDInspect(values2[1],"MFTS",actionBy).catch(err => { res.status(401).json({ message: 'Error MFTS  to inspection>>'+err }); }),
             insertAllFilesMIT_LED_DB_MASTER(actionBy).catch(err => { res.status(401).json({ message: 'Error SWAP >>'+err }); })
             ]).then(values => {
 
+              logger.info(`LED found>> SWAN(${values2[0].length})  ;MFTS(${values2[1].length}) `);
               /**
                * Send mail to responsibility
                */
@@ -363,9 +364,7 @@ function getLedFiles(){
 
   let _fileArray=[];
   return new Promise(function(resolve, reject) {
-
-    console.log(`*** FILE_PATH>${FILE_PATH} ;NAME>${LED_FILE_NAME}`);
-
+    // console.log(`*** FILE_PATH>${FILE_PATH} ;NAME>${LED_FILE_NAME}`);
       fs.readdir(FILE_PATH, function (err, files) {
         if (err) {
             reject(err);
@@ -373,8 +372,7 @@ function getLedFiles(){
 
         let num_files=0;
 
-        console.log('file (1)>' + JSON.stringify(files));
-
+        // console.log('file (1)>' + JSON.stringify(files));
         files.forEach(function (file,i) {
             // Do whatever you want to do with the file
             // console.log('file (2)>' + file);
@@ -392,8 +390,25 @@ function getLedFiles(){
 
               rFile.on('line', function(line) {
                 const dataObj = JSON.parse(line);
-                console.lin
-                _fileArray.push({"twsid": dataObj.TWS_ID ,"Cust_Code":dataObj.DF_ID,"First_Name_T":dataObj.DF_NAME,"Last_Name_T":dataObj.DF_SURNAME});
+
+
+                for (i in dataObj) {
+                  // console.log( "TWS_KEY>>"+ dataObj[i].TWS_KEY);
+                // console.lin
+                // _fileArray.push({"twsid": dataObj.TWS_ID ,"Cust_Code":dataObj.DF_ID,"First_Name_T":dataObj.DF_NAME,"Last_Name_T":dataObj.DF_SURNAME});
+
+                let _twsid;
+                if(dataObj[i].TWS_ID ){
+                  _twsid=dataObj[i].TWS_ID
+                }
+
+                if(dataObj[i].TWS_KEY ){
+                  _twsid=dataObj[i].TWS_KEY
+                }
+
+                _fileArray.push({"twsid": _twsid ,"Cust_Code":dataObj[i].DF_ID,"First_Name_T":dataObj[i].DF_NAME,"Last_Name_T":dataObj[i].DF_SURNAME});
+
+                }
 
                 });//Read file(line)
                 rFile.on('close', function(line) {
@@ -431,14 +446,14 @@ function insertAllFilesMIT_LED_DB_MASTER(userName){
 
     fs.readdir(FILE_PATH, function (err, files) {
         if (err) {
-            // return console.log('Unable to scan directory: ' + err);
+            logger.error('Unable to scan directory: ' + err);
             reject(err);
         }
         //listing all files using forEach
         var foundFiles=0;
         // var ledArray = new Array();
-
         files.forEach(function (file) {
+
             // Do whatever you want to do with the file
             var i =file.indexOf(LED_FILE_NAME);
             if(i != -1){
@@ -509,7 +524,6 @@ function insertMIT_LED_DB_MASTER(path_file,userName){
         table.columns.add('bkr_prot_mm ', sql.VarChar(2), { nullable: true });
         table.columns.add('bkr_prot_yy ', sql.VarChar(4), { nullable: true });
         table.columns.add('statusdf ', sql.VarChar(1), { nullable: true });
-
         table.columns.add('RECV_NO', sql.VarChar(50), { nullable: true });
         table.columns.add('RECV_YR', sql.VarChar(4), { nullable: true });
         table.columns.add('DF_NO', sql.VarChar(3), { nullable: true });
@@ -540,73 +554,89 @@ function insertMIT_LED_DB_MASTER(path_file,userName){
       });
 
       rFile.on('line', function(line) {
+
         const dataObj = JSON.parse(line);
-        // console.log("LINE(MAS) >>" + JSON.stringify(dataObj));
 
-        table.rows.add(
-          dataObj['TWS_ID'],// twsid
-          dataObj['BLACK_CASE'],// black_case
-          dataObj['BLACK_YY'],// black_yy
-          dataObj['RED_CASE'],// red_case
-          dataObj['RED_YY'],// red_yy
-          dataObj['COURT_NAME'],// court_name
-          dataObj['PLAINTIFF1'],// plaintiff1
-          dataObj['DF_ID'],// df_id
-          dataObj['DF_NAME'],// df_name
-          dataObj['DF_SURNAME'],// df_surname
-        '',// tmp_prot_dd
-        '',// tmp_prot_mm
-        '',// tmp_prot_yy
-        dataObj['ABS_PROT_DD'],// abs_prot_dd
-        dataObj['ABS_PROT_MM'],// abs_prot_mm
-        dataObj['ABS_PROT_YY'],// abs_prot_yy
-        '',// df_manage_dd
-        '',// df_manage_mm
-        '',// df_manage_yy
-        '',// bkr_prot_dd
-        '',// bkr_prot_mm
-        '',// bkr_prot_yy
-        '',// statusdf
-// API fields.
-          dataObj['RECV_NO'],
-          dataObj['RECV_YR'],
-          dataObj['DF_NO'],
-          dataObj['COURT_TYPE'],
-          dataObj['PLAINTIFF2'],
-          dataObj['PLAINTIFF3'],
-          dataObj['DEFENDANT1'],
-          dataObj['DEFENDANT2'],
-          dataObj['DEFENDANT3'],
-          dataObj['IMAGE_COURT'],
-          dataObj['CASE_CAPITAL'],
-          dataObj['OWN_NAME'],
-          dataObj['OWN_DEPT'],
-          dataObj['OWN_TEL'],
-          dataObj['RCV_DATE'],
-          dataObj['REQ_KEY'],
-          userName  //createBy
-          ,new Date //createDate
-          ,null //updateBy
-          ,null //updateDate
-          ,LEDSTATUS  //ledStatus
-          ,SOURCE //source
-          );
 
+          for (i in dataObj) {
+            // console.log( "TWS_KEY>>"+ dataObj[i].TWS_KEY);
+
+            let _TWS_ID;
+            if(dataObj[i].TWS_ID){
+              _TWS_ID =dataObj[i].TWS_ID
+              // console.log("_TWS_ID 1>>" + _TWS_ID);
+            }
+
+            if(dataObj[i].TWS_KEY){
+              _TWS_ID =dataObj[i].TWS_KEY
+              // console.log("_TWS_ID 2>>" + _TWS_ID);
+            }
+
+              table.rows.add(
+              _TWS_ID// twsid
+              ,dataObj[i].BLACK_CASE//dataObj['BLACK_CASE'],// black_case
+              ,dataObj[i].BLACK_YY//dataObj['BLACK_YY'],// black_yy
+              ,dataObj[i].RED_CASE//dataObj['RED_CASE'],// red_case
+              ,dataObj[i].RED_YY//dataObj['RED_YY'],// red_yy
+              ,dataObj[i].COURT_NAME//dataObj['COURT_NAME'],// court_name
+              ,dataObj[i].PLAINTIFF1//dataObj['PLAINTIFF1'],// plaintiff1
+              ,dataObj[i].DF_ID//dataObj['DF_ID'],// df_id
+              ,dataObj[i].DF_NAME//dataObj['DF_NAME'],// df_name
+              ,dataObj[i].DF_SURNAME//dataObj['DF_SURNAME'],// df_surname
+            ,''// tmp_prot_dd
+            ,''// tmp_prot_mm
+            ,''// tmp_prot_yy
+            ,dataObj[i].ABS_PROT_DD//dataObj['ABS_PROT_DD'],// abs_prot_dd
+            ,dataObj[i].ABS_PROT_MM//dataObj['ABS_PROT_MM'],// abs_prot_mm
+            ,dataObj[i].ABS_PROT_YY//dataObj['ABS_PROT_YY'],// abs_prot_yy
+            ,''// df_manage_dd
+            ,''// df_manage_mm
+            ,''// df_manage_yy
+            ,''// bkr_prot_dd
+            ,''// bkr_prot_mm
+            ,''// bkr_prot_yy
+            ,''// statusdf
+    // API fields.
+            ,dataObj[i].RECV_NO//dataObj['RECV_NO'],
+            ,dataObj[i].RECV_YR//dataObj['RECV_YR'],
+            ,dataObj[i].DF_NO//dataObj['DF_NO'],
+            ,dataObj[i].COURT_TYPE//dataObj['COURT_TYPE'],
+            ,dataObj[i].PLAINTIFF2//dataObj['PLAINTIFF2'],
+            ,dataObj[i].PLAINTIFF3//dataObj['PLAINTIFF3'],
+            ,dataObj[i].DEFENDANT1//dataObj['DEFENDANT1'],
+            ,dataObj[i].DEFENDANT2//dataObj['DEFENDANT2'],
+            ,dataObj[i].DEFENDANT3//dataObj['DEFENDANT3'],
+            ,dataObj[i].IMAGE_COURT//dataObj['IMAGE_COURT'],
+            ,dataObj[i].CASE_CAPITAL//dataObj['CASE_CAPITAL'],
+            ,dataObj[i].OWN_NAME//dataObj['OWN_NAME'],
+            ,dataObj[i].OWN_DEPT//dataObj['OWN_DEPT'],
+            ,dataObj[i].OWN_TEL//dataObj['OWN_TEL'],
+            ,dataObj[i].RCV_DATE//dataObj['RCV_DATE'],
+            ,dataObj[i].REQ_KEY//dataObj['REQ_KEY'],
+              ,userName  //createBy
+              ,new Date //createDate
+              ,null //updateBy
+              ,null //updateDate
+              ,LEDSTATUS  //ledStatus
+              ,SOURCE //source
+              );
+
+          }//end for
 
         });//Read file(line)
 
         rFile.on('close', function(line) {
-          // console.log("close >>");
+          console.log("close >>");
 
           // Execute insert Bulk data to  MIT_LED table
           const request = new sql.Request(pool1)
           request.bulk(table, (err, result) => {
 
             if(err){
-              // console.log("BULK ERR>>" +err);
+              logger.error("BULK ERR>>" +err);
               reject(err);
             }else{
-              // console.log("BULK-> "+ JSON.stringify(result));
+              console.log("BULK-> "+ JSON.stringify(result));
               resolve(result);
             }
           });
@@ -614,6 +644,8 @@ function insertMIT_LED_DB_MASTER(path_file,userName){
         });//Read file(close)
 
       });// SQL ConnectionPool
+
+
 
     });//Promise
 }

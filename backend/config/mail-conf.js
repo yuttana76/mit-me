@@ -32,7 +32,7 @@ exports.MPAM_MailParameters = {
   //LED
   exports.FROM_LED_SYS ='yuttana@merchantasset.co.th';
   exports.TO_LED_RES ='yuttana@merchantasset.co.th';
-  exports.LED_CLEANING_SUBJECT = 'LED Cleaning data result';
+  exports.LED_CLEANING_SUBJECT = 'MPAM - LED  Cleaning data';
 
   exports.mailCompInfo_TH = `
   <br>

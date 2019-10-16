@@ -992,20 +992,15 @@ END
   }
 
 
-
-// function compareLED_2(_ledData,_custData){
   exports.compareLED_2 = function(_ledData,_custData) {
 
-  const finalarray =[];
-  return new Promise(function(resolve, reject) {
-
+    const finalarray =[];
+    return new Promise(function(resolve, reject) {
         for (var i = 0; i < _ledData.length; i++){
           // console.log( 'LED>>' +_ledData[i].Cust_Code)
           for (var j = 0; j < _custData.length; j++){
-
             // console.log("COMP>> " +_ledData[i].Cust_Code + "  & " +_custData[j].Cust_Code);
               if (_ledData[i].Cust_Code === _custData[j].Cust_Code){
-                console.log("_custData>>" + JSON.stringify(_custData[j]))
                 finalarray.push('{"twsid":"' +_ledData[i].twsid + '","LED_CUST_CODE":"' + _ledData[i].Cust_Code + '","MPAM_CUST_CODE":"' + _custData[j].Cust_Code + '","firstName":"'+_custData[j].First_Name_T+'" ,"lastName":"'+_custData[j].Last_Name_T+'"}');
               }
           }
@@ -1019,13 +1014,14 @@ exports.insertLEDInspect =function (inspectData,cust_source,_createBy){
 
   return new Promise(function(resolve, reject) {
 
+    // console.log(`insertLEDInspect() ${cust_source}>> '+ ${inspectData.length} `);
+
     if(inspectData.length == 0){
       resolve("0")
     }
 
     for (var i = 0; i < inspectData.length; i++){
       _obj = JSON.parse(inspectData[i]);
-
         insertInspCust(_obj.MPAM_CUST_CODE,_obj.twsid,cust_source,_obj.firstName,_obj.lastName,LED_INSP_STATUS,LED_INSP_LED_CODE,_createBy).then(result => {
           resolve(result);
         },err=>{
@@ -1073,6 +1069,9 @@ function insertInspCust(cust_code,twsid,cust_source,firstName,lastName,status,le
         .input('createBy', sql.VarChar(50), createBy)
         .query(queryStr, (err, result) => {
             if(err){
+
+              logger.error("insertInspCust error >>" +err);
+
               reject(err);
             }else {
               resolve(result.recordset);

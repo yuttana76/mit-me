@@ -32,6 +32,8 @@ const LED_LIST_FILE_NAME = 'led_list.txt';
 
 const HTTP_SOAP = 'https://192.168.10.48:444/CrytoService.svc';
 
+// const HTTP_SOAP = 'http://192.168.10.48:8080/CrytoService.svc';
+
 /*
 Production Endpoint
 https://debtor.led.go.th/api/public/GetBankruptList
@@ -1032,7 +1034,10 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
 
     }
 
-    // console.log("input encrypt >>" + JSON.stringify(userDataObj));
+    // console.log("input>" + JSON.stringify(userDataObj));
+    // console.log("signerCertificate>" + JSON.stringify(signerCert));
+    // console.log("recipientCertificate>" + JSON.stringify(recipientCert));
+
     //GetBankruptList
     var args = {
       'input': `${JSON.stringify(userDataObj)}`,
@@ -1040,10 +1045,11 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
       'recipientCertificate':recipientCert
     };
 
+    // console.log('input>' + JSON.stringify(args));
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
     soap.createClient(url, function(err, client) {
       if(err){
-        // console.log('WAS ERROR  createClient() >>'+err)
+        console.log('WAS ERROR  createClient() >>'+err)
         reject(err);
       }else{
         // console.log('setEndpoint>>' +HTTP_SOAP);

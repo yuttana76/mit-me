@@ -18,6 +18,7 @@ const FC_DOWNLOAD_PATH = FC_API_Config.FC_API_PATH.DOWNLOAD_PATH
 const DOWNLOAD_PATH  = FC_API_Config.LOCAL.DOWNLOAD_PATH
 
 var config_BULK = dbConfig.dbParameters_BULK;
+var config = dbConfig.dbParameters;
 
 exports.downloadFileAPI = (req, res, next) =>{
   console.log("Validate  API /downloadFileAPI/");
@@ -42,33 +43,39 @@ exports.downloadFileAPI = (req, res, next) =>{
       console.log('fileAs>'+fileAs);
       console.log('fileType>'+fileType);
 
-      if(fileAs=='excel'){
+
 
         // Download to be excel file.
         if(fileType ==ACCOUNT_PROFILE){
 
-          fnAccToExcel(data.path).then(excelFile=>{
-
+          if(fileAs=='excel'){
+            fnAccToExcel(data.path).then(excelFile=>{
             res.download(excelFile);
-
-          },err=>{
-            res.status(400).json({
-              message: err,
-              code:"999",
+            },err=>{
+              res.status(400).json({
+                message: err,
+                code:"999",
+              });
             });
-          })
+          }else{
+            console.log('STEP 2');
+            res.download(data.path);
+            // Export to general  data
+            // res.status(200).json(data);
+          }
+        }else{  // Other file Nav.zip
 
-        }else{
           console.log('STEP 1-2');
-          res.download(data.path);
+          // res.download(data.path);
+          unZipFile(data.path).then(unzipedPath=>{
+            res.status(200).json(unzipedPath);
+          },err=>{
+              res.status(422).json(err);
+
+          });
         }
 
-      }else{
-        console.log('STEP 2');
-        res.download(data.path);
-        // Export to general  data
-        // res.status(200).json(data);
-      }
+
 
 
     },err=>{
@@ -164,13 +171,15 @@ exports.downloadInfo = (req, res, next) =>{
 }
 
 
-exports.uploadDB = (req, res, next) =>{
+exports.uploadMITdb = (req, res, next) =>{
 
-  var businessDate = req.body.businessDate;
+  // var businessDate = req.body.businessDate;
+  // var extract = req.body.extract;
   var fileType = req.body.fileType;
-  var extract = req.body.extract;
+  var fileName = req.body.fileName;
 
-  logger.info(`API uploadDB  // businessDate=${businessDate} ;fileType=${fileType} ;extract=${extract}`);
+  // logger.info(`API uploadDB  // businessDate=${businessDate} ;fileType=${fileType} ;extract=${extract}`);
+  logger.info(`API uploadMITdb  ;fileType=${fileType} ;fileName=${fileName}`);
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -179,8 +188,8 @@ exports.uploadDB = (req, res, next) =>{
   }
 
     switch(fileType) {
-      case 'Nav.zip':
-          fcNAV_ToDB(extract).then(data=>{
+      case 'Nav':
+          fcNAV_ToDB(fileName).then(data=>{
           res.status(200).json({data: data});
         },err=>{
           res.status(422).json({error: err});
@@ -197,6 +206,28 @@ exports.uploadDB = (req, res, next) =>{
           });
         break
     }
+}
+/**
+ * check
+ */
+
+exports.navSync = (req, res, next) =>{
+
+  var createDate = req.body.createDate;
+  logger.info(`API navSysc()  createDate=${createDate}`);
+
+  // Validate parameter
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    logger.error('API validate params ' + JSON.stringify({ errors: errors.array() }));
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  navSyncFunc(createDate).then(syncData=>{
+    res.status(200).json({message: syncData});
+  },syncErr=>{
+    res.status(422).json({error: syncErr});
+  })
 }
 
 exports.exportExcel = (req, res, next) =>{
@@ -245,6 +276,122 @@ exports.exportExcel = (req, res, next) =>{
 }
 
 // *****************************************************
+// createDate format  yyyymmdd(20191030)
+function navSyncFunc(createDate){
+
+  return new Promise(function(resolve, reject) {
+    try{
+
+// ********************************************
+var queryStr = `
+--Has in MIT_FC_NAV create date
+-- Has in MFTS_Fund  Not expire ([Start_Date]      ,[End_Date_Flag]      ,[End_Date])
+
+BEGIN
+
+DECLARE @createDate VARCHAR(20) ='${createDate}';
+DECLARE @Fund_Id [varchar](50);
+DECLARE @FundCode [varchar](50);
+DECLARE @NAVDate [varchar](10);
+DECLARE @AUM [numeric](18, 2);
+DECLARE @NAV [numeric](18, 4) ;
+DECLARE @OfferNAV [numeric](18, 4) ;
+DECLARE @BidNAV [numeric](18, 4) ;
+DECLARE @SwitchOutNAV [numeric](18, 4) ;
+DECLARE @SwitchInNAV [numeric](18, 4) ;
+DECLARE @createBy [varchar](50)='MIT_SYSTEM';
+
+DECLARE MIT_FC_NAV_cursor CURSOR LOCAL  FOR
+  SELECT B.Fund_Id
+  ,[FundCode]
+,[NAVDate]
+,[AUM]
+,[NAV]
+,[OfferNAV]
+,[BidNAV]
+,[SwitchOutNAV]
+,[SwitchInNAV]
+  FROM MIT_FC_NAV A,MFTS_Fund B
+  WHERE CONVERT(varchar, A.createDate , 112)=@createDate
+  AND A.FundCode=B.Fund_Code
+  AND B.End_Date_Flag='0'
+  AND ISNULL(B.End_Date,getdate()) >=getdate()
+  order by A.NAVDate
+
+OPEN MIT_FC_NAV_cursor
+  FETCH NEXT FROM MIT_FC_NAV_cursor INTO @Fund_Id,@FundCode,@NAVDate,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchOutNAV,@SwitchInNAV
+
+    WHILE @@FETCH_STATUS = 0
+        BEGIN
+
+            if exists (
+            SELECT * FROM MFTS_NavTable WHERE Fund_Id= @Fund_Id AND convert(varchar, Close_Date, 112)=@NAVDate
+            )
+            BEGIN
+              -- print 'Update '+@Fund_Id
+              UPDATE MFTS_NavTable
+              SET [Asset_Size]=@AUM
+                  ,[Nav_Price]=@NAV
+                  ,[Offer_Price]=@OfferNAV
+                  ,[Bid_Price]=@BidNAV
+                  ,[OfferSwitch_Price]=@SwitchInNAV
+                  ,[BidSwitch_Price]=@SwitchOutNAV
+                  ,[Modify_By]='MIT-SYSTEM'
+                  ,[Modify_Date] =getdate()
+              WHERE  Fund_Id= @Fund_Id  AND Close_Date=@NAVDate
+
+            END
+            ELSE
+            BEGIN
+                -- print 'Insert '+ @Fund_Id
+                INSERT INTO MFTS_NavTable
+                ([Fund_Id]
+                ,[Close_Date]
+                ,[Asset_Size]
+                ,[Nav_Price]
+                ,[Offer_Price]
+                ,[Bid_Price]
+                ,[OfferSwitch_Price]
+                ,[BidSwitch_Price]
+                ,[Create_By]
+                ,[Create_Date]   )
+                VALUES(@Fund_Id,@NAVDate,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchInNAV,@SwitchOutNAV,@createBy,@createDate)
+
+            END
+            FETCH NEXT FROM MIT_FC_NAV_cursor INTO @Fund_Id,@FundCode,@NAVDate,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchOutNAV,@SwitchInNAV
+        END;
+    CLOSE MIT_FC_NAV_cursor
+    DEALLOCATE MIT_FC_NAV_cursor
+END
+`;
+  const sql = require('mssql')
+
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        if(err){
+          logger.error('SQL Error >' +err);
+          reject(err);
+        }else {
+          // logger.info(JSON.stringify(result))
+          resolve(`Effect ${result.rowsAffected.length} records`)
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    logger.error('POOL Error >'+err);
+  })
+
+// ********************************************
+
+    }catch(e){
+      logger.error('CATCH >' + e);
+      reject(e);
+    }
+
+  });
+}
 
 function fcCustomerProfile_ToExcel(fileName,businessDate){
   logger.info('Function fcCustomerProfile_ToExcel() // fileName='+fileName +' ;businessDate='+ businessDate);
@@ -541,6 +688,7 @@ function fcNAV_ToDB(fileName){
   logger.info('Function fcNAV_ToDB() //'+fileName);
 
   const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+  const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
   const userCode='SYSTEM';
 
   return new Promise(function(resolve, reject) {
@@ -576,56 +724,79 @@ function fcNAV_ToDB(fileName){
         table.columns.add('createBy', sql.VarChar(50), { nullable: true });
         table.columns.add('createDate', sql.SmallDateTime, { nullable: true });
 
+        console.log('STEP1 >' + data);
         var array = data.toString().split("\n");
-        var attr = array[0].split("|") ;
-
+        // var attr = array[0].split("|") ;
          // console.log('Process NEXT !')
         array.shift(); //removes the first array element
 
         var _row =0;
+        // console.log('STEP2 >' + array);
 
           for(i in array) {
 
             var item = array[i].split("|") ;
 
-             AMCCode_Str = String(item[0].trim());
-             FundCode_Str = String(item[1].trim());
+            // console.log("item >> "+item);
+             AMCCode_Str = String(item[0]).trim();
+             FundCode_Str = String(item[1]).trim();
              AUM_int = item[2]?item[2].trim():'';
               NAV_int =item[3]?item[3].trim():'';
               OfferNAV_int =item[4]?item[4].trim():'';
               BidNAV_int =item[5]?item[5].trim():'';
               SwitchOutNAV_int= item[6]?item[6].trim():'';
               SwitchInNAV_int= item[7]?item[7].trim():'';
-              NAVDate_date= item[8];
-              SACode_str= item[9];
+              NAVDate_date= item[8]?item[8]:'';
+              SACode_str= item[9]?item[9]:'';
               TotalUnit_int= item[10]?item[10].trim():'';
               TotalAUM_int=item[11]?item[11].trim():'';
 
               if(item[0]){
-                table.rows.add(AMCCode_Str,FundCode_Str,AUM_int,NAV_int,OfferNAV_int,BidNAV_int,SwitchOutNAV_int,SwitchInNAV_int,NAVDate_date,SACode_str,TotalUnit_int,TotalAUM_int
-                  ,userCode,new Date);
+                table.rows.add(AMCCode_Str
+                  ,FundCode_Str
+                  ,AUM_int
+                  ,NAV_int
+                  ,OfferNAV_int
+                  ,BidNAV_int
+                  ,SwitchOutNAV_int
+                  ,SwitchInNAV_int
+                  ,NAVDate_date
+                  ,SACode_str
+                  ,TotalUnit_int
+                  ,TotalAUM_int
+                  ,userCode
+                  ,new Date);
               }
               _row++;
           }
 
-          // Execute insert Bulk data to  MIT_LED table
+          // ***************** EXECUTE insert Bulk data to  MIT_LED table
           const request = new sql.Request(pool1)
           request.bulk(table, (err, result) => {
               // ... error checks
+              console.log('ERROR BULK>>' + err);
             if(err){
               // console.log(err);
               logger.error(err);
               reject(err);
-
             }
 
             if(result){
               //Move file to Backup
               msg={msg:'Insert NAV DB. successful.',records:_row}
               logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
-              resolve(msg);
+
+              //Move to backup folder
+              fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
+                if (err) {
+                  reject(err);
+                };
+                resolve(msg);
+              });
+
             }
           });
+          // ***************** Execute insert Bulk data to  MIT_LED table
 
         });//sql.ConnectionPool
       });//fs.readFile
@@ -637,13 +808,53 @@ function fcNAV_ToDB(fileName){
   });
 }
 
+function unZipFile(filePaht){
+
+  console.log('Welcome unZipFile() '+ filePaht);
+
+  var arr = filePaht.toString().split("/");
+  var fileName = arr[arr.length-1]
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+  const DOWNLOAD_DIR2 = './backend/downloadFiles/fundConnext/';
+  var _zipFile= DOWNLOAD_DIR+'/'+fileName;
+  var _unzipPath="";
+
+
+  return new Promise(function(resolve, reject) {
+
+    //Unzip file
+    try{
+      var zip = new AdmZip(_zipFile);
+
+      var zipEntries = zip.getEntries();
+      zipEntries.forEach(function(zipEntry) {
+        extAccFileName = zipEntry.entryName
+    });
+
+      zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
+
+      //file removed
+      fs.unlink(_zipFile, (err) => {
+        if (err) {
+          reject(err)
+        }
+        _unzipPath=_unzipPath.concat(DOWNLOAD_DIR,"/",extAccFileName);
+        resolve(_unzipPath);
+      })
+
+    }
+    catch (e) {
+      reject(e)
+    }
+
+  });
+}
+
 function fnAccToExcel(filePaht){
 
   console.log('Welcome fnAccToExcel() '+ filePaht);
-
   // Split name
   var arr = filePaht.toString().split("/");
-
   var fileName = arr[arr.length-1]
   var fileNameArr = fileName.toString().split("-");
   var _prefix =fileNameArr[0];

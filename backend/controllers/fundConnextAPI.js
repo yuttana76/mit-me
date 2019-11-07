@@ -9,9 +9,11 @@ const https = require('https')
 const download = require('download');
 const { check, validationResult } = require('express-validator');
 var AdmZip = require('adm-zip');
+var CronJob = require('cron').CronJob;
 
-const HOST_FC= FC_API_Config.fundConnextApi_PROD.host
-const USER_API=FC_API_Config.fundConnextApi_PROD.auth
+
+const FC_API_URI= FC_API_Config.FC_API_URI
+const FC_API_AUTH=FC_API_Config.FC_API_AUTH
 
 const FC_AUTH_PATH = FC_API_Config.FC_API_PATH.AUTH_PATH
 const FC_DOWNLOAD_PATH = FC_API_Config.FC_API_PATH.DOWNLOAD_PATH
@@ -38,12 +40,6 @@ exports.downloadFileAPI = (req, res, next) =>{
 
 
     fnGetDownloadAPI(businessDate,fileType).then(data=>{
-
-      console.log('fnGetDownloadAPI()'+data.path);
-      console.log('fileAs>'+fileAs);
-      console.log('fileType>'+fileType);
-
-
 
         // Download to be excel file.
         if(fileType ==ACCOUNT_PROFILE){
@@ -76,8 +72,6 @@ exports.downloadFileAPI = (req, res, next) =>{
         }
 
 
-
-
     },err=>{
       res.status(400).json({
         message: err,
@@ -87,6 +81,214 @@ exports.downloadFileAPI = (req, res, next) =>{
 }
 
 
+exports.downloadFileNavAPI = (req, res, next) =>{
+  logger.info("Validate  API /downloadFileNavAPI/");
+  const fileType = 'Nav.zip';
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  logger.info("Welcome to API /downloadFileNavAPI/");
+  var businessDate = req.query.businessDate
+
+    fnGetDownloadAPI(businessDate,fileType).then(data=>{
+
+        unZipFile(data.path).then(fileName=>{
+
+          // res.status(200).json(fileName);
+          fcNAV_ToDB(fileName).then(data=>{
+            res.status(200).json({data: data});
+
+          },err=>{
+            res.status(422).json({error: err});
+          });
+
+          //Update to
+        },err=>{
+            res.status(422).json(err);
+        });
+
+    },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+    });
+}
+
+exports.downloadNavAPI_V2 = (req, res, next) =>{
+
+  logger.info("Validate  API /downloadNavAPI_V2/");
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  logger.info("Welcome to API /downloadNavAPI_V2/");
+  var businessDate = req.body.businessDate
+
+  downloadNavAPIproc(businessDate).then(dwRs=>{
+    res.status(200).json({message: dwRs});
+  },err=>{
+    res.status(422).json(err);
+  });
+}
+
+
+
+exports.downloadAllottedAPI = (req, res, next) =>{
+
+  logger.info("Validate  API /downloadAllottedAPI/");
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  logger.info("Welcome to API /downloadAllottedAPI/");
+  var businessDate = req.body.businessDate
+
+  downloadAllotedAPIproc(businessDate).then(dwRs=>{
+    res.status(200).json({message: dwRs});
+  },err=>{
+    res.status(422).json(err);
+  });
+}
+
+
+exports.allotedFile = (req, res, next) =>{
+
+  fileName = '20191104_MPAM_ALLOTTEDTRANSACTIONS.txt';
+
+  fcAlloted_ToDB(fileName).then(allottedToDB_RS=>{
+    res.status(200).json({message: allottedToDB_RS});
+  },err=>{
+    res.status(422).json(err);
+  });
+}
+
+function downloadAllotedAPIproc(businessDate){
+
+  return new Promise(function(resolve, reject) {
+
+    const fileType = 'AllottedTransactions.zip';
+
+      // STEP 1: CALL API download
+      fnGetDownloadAPI(businessDate,fileType).then(data=>{
+
+          // //STEP 2: Upzip downloaded file.
+          unZipFile(data.path).then(fileName=>{
+
+          //   //STEP 3: Insert to DB.(MIT_FC_NAV)
+            fcAlloted_ToDB(fileName).then(allottedToDB_RS=>{
+
+              resolve(allottedToDB_RS)
+
+          //     //STEP 4: Syncy to MFTS (MFTS_NavTable)
+          //     navSyncFunc(navToDB_RS.businessDate).then(syncData=>{
+
+          //       resolve(syncData)
+          //       // res.status(200).json({message: syncData});
+
+          //     },syncErr=>{
+          //       // res.status(422).json({error: syncErr});
+          //       reject(syncErr);
+          //     })
+
+            },err=>{
+              reject(err);
+              // res.status(422).json({error: err});
+            });
+
+          //   //Update to
+          },err=>{
+            reject(err);
+              // res.status(422).json(err);
+          });
+
+      },err=>{
+        reject(err);
+      });
+
+  });
+
+}
+
+
+
+function downloadNavAPIproc(businessDate){
+
+  return new Promise(function(resolve, reject) {
+
+    const fileType = 'Nav.zip';
+
+      // STEP 1: CALL API download
+      fnGetDownloadAPI(businessDate,fileType).then(data=>{
+
+          //STEP 2: Upzip downloaded file.
+          unZipFile(data.path).then(fileName=>{
+
+            //STEP 3: Insert to DB.(MIT_FC_NAV)
+            fcNAV_ToDB(fileName).then(navToDB_RS=>{
+              // res.status(200).json({data: data});
+
+              //STEP 4: Syncy to MFTS (MFTS_NavTable)
+              navSyncFunc(navToDB_RS.businessDate).then(syncData=>{
+
+                resolve(syncData)
+                // res.status(200).json({message: syncData});
+
+              },syncErr=>{
+                // res.status(422).json({error: syncErr});
+                reject(syncErr);
+              })
+
+            },err=>{
+              reject(err);
+              // res.status(422).json({error: err});
+            });
+
+            //Update to
+          },err=>{
+            reject(err);
+              // res.status(422).json(err);
+          });
+
+      },err=>{
+        reject(err);
+      });
+
+  });
+
+}
+
+
+
+exports.downloadNavSchedule = (req, res, next) =>{
+
+  logger.info("Validate  API /downloadNavSchedule/");
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  var schStatus = req.body.schStatus
+  logger.info("downloadNavSchedule/" + schStatus);
+
+  try{
+
+    downloadNavSchedule(schStatus);
+    res.status(200).json({message: 'NAV download on schedual was:' +schStatus});
+
+  }catch(err){
+    res.status(400).json({
+      message: err,
+      code:"999",
+    });
+  }
+
+
+};
 
 exports.downloadInfo = (req, res, next) =>{
 
@@ -140,6 +342,7 @@ exports.downloadInfo = (req, res, next) =>{
           var array = data.toString().split("\n");
           var attr = array[0].split("|") ;
 
+          console.log('STEP 1');
             res.status(200).json({
               records: attr[2],
               fileType:fileType,
@@ -147,6 +350,7 @@ exports.downloadInfo = (req, res, next) =>{
             });
         });
       }else{
+        console.log('STEP 2');
         res.status(200).json({
           records: extAccFileNameList.length,
           fileType:fileType,
@@ -171,7 +375,7 @@ exports.downloadInfo = (req, res, next) =>{
 }
 
 
-exports.uploadMITdb = (req, res, next) =>{
+exports.uploadMITNAV_db = (req, res, next) =>{
 
   // var businessDate = req.body.businessDate;
   // var extract = req.body.extract;
@@ -189,7 +393,7 @@ exports.uploadMITdb = (req, res, next) =>{
 
     switch(fileType) {
       case 'Nav':
-          fcNAV_ToDB(fileName).then(data=>{
+        fcNAV_ToDB(fileName).then(data=>{
           res.status(200).json({data: data});
         },err=>{
           res.status(422).json({error: err});
@@ -278,7 +482,7 @@ exports.exportExcel = (req, res, next) =>{
 // *****************************************************
 // createDate format  yyyymmdd(20191030)
 function navSyncFunc(createDate){
-
+  logger.info('navSyncFunc-' + createDate);
   return new Promise(function(resolve, reject) {
     try{
 
@@ -355,7 +559,7 @@ OPEN MIT_FC_NAV_cursor
                 ,[BidSwitch_Price]
                 ,[Create_By]
                 ,[Create_Date]   )
-                VALUES(@Fund_Id,@NAVDate,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchInNAV,@SwitchOutNAV,@createBy,@createDate)
+                VALUES(@Fund_Id,@NAVDate,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchInNAV,@SwitchOutNAV,@createBy,getdate())
 
             END
             FETCH NEXT FROM MIT_FC_NAV_cursor INTO @Fund_Id,@FundCode,@NAVDate,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchOutNAV,@SwitchInNAV
@@ -684,6 +888,142 @@ function fcNAV_ToExcel(fileName,businessDate){
   });
 }
 
+function fcAlloted_ToDB(fileName){
+  logger.info('Function fcAlloted_ToDB() //'+fileName);
+
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+  const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
+  const userCode='SYSTEM';
+
+  return new Promise(function(resolve, reject) {
+
+      //Read file
+      try{
+
+      fs.readFile(DOWNLOAD_DIR +"/"+ fileName, function(err, data) {
+
+        if(err) {
+          logger.error(err);
+          reject(err);
+        }
+
+        var array = data.toString().split("\n");
+        array.shift(); //removes the first array element
+
+        var _row =0;
+          for(i in array) {
+
+            var item = array[i].split("|") ;
+
+// 1	SA Order Reference No
+var referenceNo = item[0]?item[0].trim():''
+// 2	Transaction Date-Time(YYYYMMDDHHMMSS)
+var transactionDate = item[1]?item[1].trim():''
+// 3	Filler
+// 4	AMC Code
+var amc = item[3]?item[3].trim():''
+// 5	Unitholder ID
+var unitholderID = item[4]?item[4].trim():''
+// 6	New Unitholder Reference No
+// 7	Transaction Code
+var transactionCode = item[6]?item[6].trim():''
+// 8	Fund Code
+var fundCode =item[7]?item[7].trim():''
+// 9	Override RisK Profile Flag
+// 10	Override FX Risk Flag
+// 11	Redemption Type
+var redemptionType=item[10]?item[10].trim():''
+// 12	Amount
+var amount =item[11]?item[11].trim():''
+// 13	Unit
+var unit =item[12]?item[12].trim():''
+// 14	Effective Date
+var effectiveDate =item[13]?item[13].trim():''
+// 15	Filler
+// 16	Filler
+// 17	Payment Type
+var paymentType =item[16]?item[16].trim():''
+// 18	Bank Code
+var bankCode =item[17]?item[17].trim():''
+// 19	Bank Account / Credit Card Number
+var bankAccount =item[18]?item[18].trim():''
+// 20	Cheque No
+// 21	Cheque Date
+// 22	IC License
+// 23	Branch No
+// 24	Channel
+// 25	Force Entry
+// 26	LTF Condition
+// 27	Reason to sell LTF/RMF
+// 28	RMF Capital gain withholding tax choice
+// 29	RMF Capital amount redeem choice
+// 30	Auto redeem fund code
+// 31	Transaction ID
+// 32	Status
+// 33	AMC Order Reference No
+// 34	Allotment Date
+// 35	Allotted NAV
+// 36	Allotted Amount
+// 37	Alloted Unit
+// 38	Fee
+// 39	Withholding Tax
+// 40	VAT
+// 41	Brokerage fee
+// 42	Withholding Tax for LTF/RMF
+// 43	AMC Pay Date
+// 44	Registrar Transaction Flag
+// 45	Sell all unit flag
+// 46	Settlement Bank Code
+// 47	Settlement Bank Account
+// 48	Reject Reason
+// 49	CHQ Branch
+// 50	Tax Invoice No
+// 51	AMC Switching Order Reference No
+// 52	IC Code
+// 53	Brokerage fee  VAT
+// 54	Filler
+// 55	NAV Date
+
+
+              if(transactionDate){
+                console.log(`referenceNo=${referenceNo}
+                ;transactionDate=${transactionDate}
+                ;amc=${amc}
+                ;unitholderID=${unitholderID}
+                ;transactionCode=${transactionCode}
+                ;fundCode=${fundCode}
+                ;redemptionType=${redemptionType}
+                ;amount=${amount}
+                ;unit=${unit}
+                ;effectiveDate=${effectiveDate}
+                ;paymentType=${paymentType}
+                ;bankCode=${bankCode}
+                ;bankAccount=${bankAccount}
+                `)
+                _row++;
+              }
+
+          }
+
+          resolve('Read allocated file successful >>' + _row);
+
+          // //Move to backup folder
+          // fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
+          //   if (err) {
+          //     reject(err);
+          //   };
+          //   resolve('Read allocated file successful >>' + _row);
+          // });
+
+      });//fs.readFile
+
+    }catch(e){
+      logger.error(e);
+      reject(e);
+    }
+  });
+}
+
 function fcNAV_ToDB(fileName){
   logger.info('Function fcNAV_ToDB() //'+fileName);
 
@@ -724,15 +1064,10 @@ function fcNAV_ToDB(fileName){
         table.columns.add('createBy', sql.VarChar(50), { nullable: true });
         table.columns.add('createDate', sql.SmallDateTime, { nullable: true });
 
-        console.log('STEP1 >' + data);
         var array = data.toString().split("\n");
-        // var attr = array[0].split("|") ;
-         // console.log('Process NEXT !')
         array.shift(); //removes the first array element
 
         var _row =0;
-        // console.log('STEP2 >' + array);
-
           for(i in array) {
 
             var item = array[i].split("|") ;
@@ -782,22 +1117,23 @@ function fcNAV_ToDB(fileName){
             }
 
             if(result){
-              //Move file to Backup
-              msg={msg:'Insert NAV DB. successful.',records:_row}
-              logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
+              var today = new Date();
+              var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+              msg={msg:'Insert NAV DB. successful.',records:_row,'businessDate': yyyymmddDate}
 
+              logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
               //Move to backup folder
               fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
                 if (err) {
                   reject(err);
                 };
+
                 resolve(msg);
               });
 
             }
           });
           // ***************** Execute insert Bulk data to  MIT_LED table
-
         });//sql.ConnectionPool
       });//fs.readFile
 
@@ -839,7 +1175,8 @@ function unZipFile(filePaht){
           reject(err)
         }
         _unzipPath=_unzipPath.concat(DOWNLOAD_DIR,"/",extAccFileName);
-        resolve(_unzipPath);
+        // resolve(_unzipPath);
+        resolve(extAccFileName);
       })
 
     }
@@ -963,7 +1300,7 @@ function fnFCAuth(){
   return new Promise(function(resolve, reject) {
 
     var options = {
-      host: HOST_FC,
+      host: FC_API_URI,
       path:FC_AUTH_PATH,
       method: "POST",
       headers: {
@@ -992,7 +1329,7 @@ function fnFCAuth(){
   });
 
   // Write data to request body
-  request.write(JSON.stringify(USER_API));
+  request.write(JSON.stringify(FC_API_AUTH));
   request.end();
 
   });
@@ -1003,13 +1340,14 @@ function fnFCAuth(){
 function fnGetDownloadAPI(businessDate,fileType){
 
   console.log(`Welcome fnGetDownloadAPI() ${businessDate} - ${fileType}`);
+
   var DOWNLOAD_PATH_FILENAME  = DOWNLOAD_PATH  + businessDate+'-'+fileType;
   return new Promise(function(resolve, reject) {
 
     fnFCAuth().then(result =>{
       resultObj =JSON.parse(result);
 
-      const HTTPS_ENDPOIN =`https://${HOST_FC}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
+      const HTTPS_ENDPOIN =`https://${FC_API_URI}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
       const propertiesObject = {
         "x-auth-token":resultObj.access_token,
         "Content-Type": "application/json"
@@ -1046,81 +1384,62 @@ function fnGetDownloadAPI(businessDate,fileType){
 
 }
 
+// field          allowed values
+// -----          --------------
+// minute         0-59
+// hour           0-23
+// day of month   0-31
+// month          0-12 (or names, see below)
+// day of week    0-7 (0 or 7 is Sun, or use names)
 
-function fnNAVProcess(){
+var SCH_JOB;
+function downloadNavSchedule(schStatus){
 
-  console.log(`Welcome fnNAVProcess()`);
-  return new Promise(function(resolve, reject) {
+  const SCH_STOP = 'STOP';
+  const SCH_START = 'START';
 
-//     BEGIN
-//     DECLARE @Fund_Id int;
-//     DECLARE @AMCCode  varchar(15);
-// 	DECLARE @FundCode varchar(30);
-// 	DECLARE @AUM [decimal](18, 2)=0;
-// 	DECLARE @NAV [decimal](18, 4)=0;
-// 	DECLARE @OfferNAV [decimal](18, 4)=0;
-// 	DECLARE @BidNAV [decimal](18, 4)=0;
-// 	DECLARE @SwitchOutNAV [decimal](18, 4)=0;
-// 	DECLARE @SwitchInNAV [decimal](18, 4)=0;
-// 	DECLARE @NAVDate varchar(8) ='20190828';
-// 	DECLARE @SACode varchar(15);
-// 	DECLARE @TotalUnit [decimal](18, 4)=0;
-// 	DECLARE @TotalAUM [decimal](18, 2)=0;
+  if(schStatus.toUpperCase() === SCH_START){
 
-//     DECLARE FC_NAV_cursor CURSOR LOCAL  FOR
+    // START SCH
+    var SCH_JOB_SCH = '30 09 * * Mon-Fri';  // Run at Mon-Fri on 09:30 AM
+    // var SCH_JOB_SCH = '31 16 * * Mon-Fri';  // Run at Mon-Fri on 09:30 AM
 
-//     select A.[Fund_Id],
-//     B.AMCCode,B.FundCode,B.AUM,B.NAV,B.OfferNAV,B.BidNAV,B.SwitchOutNAV,B.SwitchInNAV,B.SACode,B.TotalUnit,B.TotalAUM
-//     from MFTS_Fund A,MIT_FC_NAV B
-//     WHERE  A.Fund_Code=B.FundCode
-//     AND B.NAVDate=@NAVDate;
+    logger.info("START NAV SCH>" + SCH_JOB_SCH);
+    SCH_JOB = new CronJob(SCH_JOB_SCH, function() {
 
-//     OPEN FC_NAV_cursor
-//         FETCH NEXT FROM FC_NAV_cursor INTO @Fund_Id,@AMCCode,@FundCode,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchOutNAV,@SwitchInNAV,@SACode,@TotalUnit,@TotalAUM
+      logger.info("Nav schedual running..."+new Date());
 
-//             WHILE @@FETCH_STATUS = 0
-//             BEGIN
+      var today = new Date();
+      var navDate_yyyymmddDate;
+      // var navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
 
-//                 SELECT  *
-//                 FROM MFTS_NavTable
-//                 WHERE  convert(varchar, Close_Date, 112)=@NAVDate
-//                 AND Fund_Id =@Fund_Id
+      // Check is monday ?
+      // if is monday use friday date instead
+      if(today.getDay() == 1 ){
+        // logger.info(`To day(${yyyymmddDate}) is monday backword to friday`);
+        today.setDate(today.getDate()-3);
+        navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+      }else{
+        today.setDate(today.getDate()-1);
+        navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+      }
 
-//                 IF @@ROWCOUNT > 0
-//                     BEGIN
-//                         PRINT 'Update'
-//                         update MFTS_NavTable
-//                         SET [Fund_Id]=@Fund_Id,
-//                         [Close_Date]=@NAVDate,
-//                         [Asset_Size]=@AUM,
-//                         [Nav_Price]=@NAV ,
-//                         [Offer_Price]= @OfferNAV,
-//                         [Bid_Price]=@BidNAV,
-//                         [OfferSwitch_Price]=@SwitchInNAV,
-//                         [BidSwitch_Price] =@SwitchOutNAV,
-//                         [Modify_By] ='MIT_SYSTEM',
-//                         [Modify_Date] =getdate()
-//                         WHERE  convert(varchar, Close_Date, 112)=@NAVDate
-//                         AND Fund_Id =@Fund_Id
+      downloadNavAPIproc(navDate_yyyymmddDate).then(dwRs=>{
+        logger.info(`Download NAV(${navDate_yyyymmddDate}) API schedual on  ${new Date()}successful `  );
+      },err=>{
+        logger.error(`Download NAV(${navDate_yyyymmddDate}) API schedual on  ${new Date()} Error: ${err}`  );
+      });
 
-//                     END
-//                 ELSE
-//                     BEGIN
-//                         PRINT 'Insert '
-//                         Insert into MFTS_NavTable
-//                         ([Fund_Id],[Close_Date],[Asset_Size],[Nav_Price] ,[Offer_Price] ,[Bid_Price],[OfferSwitch_Price],[BidSwitch_Price],[Create_By] ,[Create_Date])
-//                         VALUES(@Fund_Id,@NAVDate,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchOutNAV,@SwitchInNAV,'MIT_SYSTEM',getdate())
-//                     END
-//                 FETCH NEXT FROM FC_NAV_cursor INTO @Fund_Id,@AMCCode,@FundCode,@AUM,@NAV,@OfferNAV,@BidNAV,@SwitchOutNAV,@SwitchInNAV,@SACode,@TotalUnit,@TotalAUM
-//             END
+    });
 
-//     CLOSE FC_NAV_cursor
-//     DEALLOCATE FC_NAV_cursor
+    SCH_JOB.start();
+  }else if(schStatus.toUpperCase() === SCH_STOP){
 
-// -- 1. Get FC NAV list
-// -- 2. Check for insert or update
+    SCH_JOB.stop();
+    logger.info("STOP SCH_JOB");
 
-// END
+  }else{
 
-  });
+  }
+
 }

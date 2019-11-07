@@ -4,7 +4,9 @@
 /dist
 /backend/angular
 /backend/downloadFiles
+/backend/controllers/readFiles
 /backend/controllers/readFiles/LED
+/backend/controllers/readFiles/LED - PROD
 /backend/controllers/readFiles/LEDBackup
 /backend/controllers/readFiles/sms
 /backend/controllers/readFiles/smsBackup
@@ -19,6 +21,8 @@ backend/angular
 /out-tsc
 /logs
 
+/environments
+
 # dependencies
 /node_modules
 package-lock.json
@@ -32,6 +36,7 @@ package-lock.json
 .settings/
 *.sublime-workspace
 .env
+
 
 # IDE - VSCode
 .vscode/*

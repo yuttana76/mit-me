@@ -806,7 +806,7 @@ function fnLedGetBankruptListSchedule(schStatus,schData){
             //   logger.error(err);
             // });
 
-          }, null, true, 'America/Los_Angeles');
+          });
 
           resolve("000");
 

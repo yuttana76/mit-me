@@ -77,6 +77,13 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
+//STAGE
+// const HOST_FC= FC_API_Config.fundConnextApi_STAGE.host
+// const USER_API=FC_API_Config.fundConnextApi_STAGE.auth
+
+
 app.use("/api/connex",connexRoutes);
 app.use("/api/fund",fundRoutes);
 

@@ -78,7 +78,7 @@ router.post("/downloadAllottedAPI",[selfAuth
     .isLength({ min: 1 }).withMessage('must have businessDate value')
   ],fundConnextAPIController.downloadAllottedAPI);
 
-  router.post("/allotedFile"
+  router.post("/test_allotedFile"
     ,fundConnextAPIController.allotedFile);
 
 

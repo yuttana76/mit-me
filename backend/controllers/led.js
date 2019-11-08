@@ -991,7 +991,6 @@ END
     })
   }
 
-
   exports.compareLED_2 = function(_ledData,_custData) {
 
     const finalarray =[];
@@ -999,7 +998,7 @@ END
         for (var i = 0; i < _ledData.length; i++){
           // console.log( 'LED>>' +_ledData[i].Cust_Code)
           for (var j = 0; j < _custData.length; j++){
-            // console.log("COMP>> " +_ledData[i].Cust_Code + "  & " +_custData[j].Cust_Code);
+            console.log("COMP>> " +_ledData[i].Cust_Code + "  & " +_custData[j].Cust_Code);
               if (_ledData[i].Cust_Code === _custData[j].Cust_Code){
                 finalarray.push('{"twsid":"' +_ledData[i].twsid + '","LED_CUST_CODE":"' + _ledData[i].Cust_Code + '","MPAM_CUST_CODE":"' + _custData[j].Cust_Code + '","firstName":"'+_custData[j].First_Name_T+'" ,"lastName":"'+_custData[j].Last_Name_T+'"}');
               }
@@ -1009,13 +1008,29 @@ END
     });
 }
 
+// User array input parameter
+exports.compareLED_3array = function(_ledArray,_custData) {
+
+  const finalarray =[];
+  return new Promise(function(resolve, reject) {
+
+    for (var j = 0; j < _custData.length; j++){
+      foundIndex=_ledArray.indexOf(_custData[j].Cust_Code)
+      // console.log( _custData[j].Cust_Code + " ;foundIndex= " + foundIndex);
+      if(foundIndex > -1){
+        finalarray.push('{"twsid":"' +_ledArray[foundIndex+1] + '","LED_CUST_CODE":"' + _custData[j].Cust_Code + '","MPAM_CUST_CODE":"' + _custData[j].Cust_Code + '","firstName":"'+_custData[j].First_Name_T+'" ,"lastName":"'+_custData[j].Last_Name_T+'"}');
+      }
+
+    }
+      resolve(finalarray);
+  });
+}
+
 // function insertLEDInspect(inspectData,cust_source,_createBy){
 exports.insertLEDInspect =function (inspectData,cust_source,_createBy){
 
   return new Promise(function(resolve, reject) {
-
     // console.log(`insertLEDInspect() ${cust_source}>> '+ ${inspectData.length} `);
-
     if(inspectData.length == 0){
       resolve("0")
     }

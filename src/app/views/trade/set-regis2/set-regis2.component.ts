@@ -24,7 +24,7 @@ export class SetRegis2Component implements OnInit {
   verifyFormGroup: FormGroup;
   myRecaptcha = new FormControl(false);
 
-  isStepperLinear = false;
+  isStepperLinear = true;
   spinnerLoading = false;
 
   public MPAM_WEALTH_CONTACT="บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด โทร. 02-660 6689";

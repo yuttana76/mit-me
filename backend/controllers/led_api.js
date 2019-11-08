@@ -24,8 +24,9 @@ const mysql_dbConfig = require("../config/mysql-config");
 var swan_config = mysql_dbConfig.swan_dbParameters;
 var mysql = require('mysql');
 
-const FILE_BAK_PATH = __dirname + '/readFiles/LEDBackup/';
-const FILE_PATH = __dirname + '/readFiles/LED/';
+const LED_FILE_BAK_PATH = __dirname + '/readFiles/LEDBackup/';
+const LED_FILE_PATH = __dirname + '/readFiles/LED/';
+
 // const directoryPath = path.join(__dirname, '/readFiles/LED/');
 const LED_FILE_NAME= "led_list.txt";
 const LED_LIST_FILE_NAME = 'led_list.txt';
@@ -173,7 +174,6 @@ exports.ledGetBankruptListSchedule = (req, res, next) =>{
 }
 
 
-
 exports.cleanCustFromFile = (req, res, next) =>{
 
   const actionBy = req.body.actionBy
@@ -183,13 +183,106 @@ exports.cleanCustFromFile = (req, res, next) =>{
   },err=>{
     res.status(400).json({message: err, code:"999"});
   });
-
 }
+
+exports.cleanInitial = (req, res, next) =>{
+
+  const actionBy = req.body.actionBy
+
+    // getLedInitialFile(actionBy).then(result=>{
+
+  fnCleanInitial(actionBy).then(result=>{
+    res.status(200).json({ message: "Successfully!",code:"000", result: result });
+  },err=>{
+    res.status(400).json({message: err, code:"999"});
+  });
+}
+
 
 /**
  * Compare ledFile & SWAN & MFTS
  */
+function fnCleanInitial(actionBy){
 
+  return new Promise(function(resolve, reject) {
+
+  /**
+   * GET data SWAN & MFTS
+   */
+   Promise.all([
+    led.getSWANCustomers().catch(err => { res.status(401).json({ message: 'Error getSWANCustomers()'+err }); }),
+    led.getMFTSCustomers().catch(err => { res.status(401).json({ message: 'Error getMFTSCustomers()'+err }); }),
+    getLedInitialFile().catch(err => { res.status(401).json({ message: 'Error getLedFiles()' +err }); }),
+    ]).then(values => {
+
+      /**
+       * Compare LED list with SWAN & MFTS
+       * values[0] = SWAN
+       * values[1] = MFTS
+       * values[2] = LED list
+       */
+
+      //  Convert to  array
+      var ledArray = [];
+      for(var i in values[2])
+      ledArray.push(values[2][i].Cust_Code,values[2][i].twsid);
+
+      // *Test set led id
+      // values[1].push({"Cust_Code":"5100900112000","First_Name_T":"x1","Last_Name_T":"YYY"});
+      // values[1].push({"Cust_Code":"3810400269314","First_Name_T":"x2","Last_Name_T":"YYY"});
+
+      // *Show array data
+      // ledArray.forEach(function(element) {
+      //   console.log(element);
+      // });
+
+      Promise.all([
+        led.compareLED_3array(ledArray,values[0]).catch(err => { res.status(401).json({ message: 'Error Compare LED & SWAN >>'+err }); }),
+        led.compareLED_3array(ledArray,values[1]).catch(err => { res.status(401).json({ message: 'Error Compare LED & MFTS >>'+err }); }),
+        ]).then(values2 => {
+
+          /**
+           * Incase Found  has data in values[] array
+           *1.Insert to MIT_LED_INSP_CUST
+           *2.Insert all LED list to MIT_LED_DB_MASTER
+           *3.Move LED download file to backup folder
+           */
+          Promise.all([
+            led.insertLEDInspect(values2[0],"SWAN",actionBy).catch(err => { res.status(401).json({ message: 'Error SWAN to inspection >>'+err }); }),
+            led.insertLEDInspect(values2[1],"MFTS",actionBy).catch(err => { res.status(401).json({ message: 'Error MFTS  to inspection>>'+err }); }),
+            insertInitialMIT_LED_DB_MASTER(actionBy).catch(err => { res.status(401).json({ message: 'Error SWAP >>'+err }); })
+            ]).then(values => {
+
+              logger.info(`LED found>> SWAN(${values2[0].length})  ;MFTS(${values2[1].length}) `);
+              /**
+               * Send mail to responsibility
+               */
+              mail.mailLedResponseToday().then(data=>{
+                resolve('Successful /checkCustDialy');
+              },err=>{
+                reject(err);
+              });
+
+
+            },function(err){
+              logger.error(err);
+                reject(err);
+            })
+
+        },function(err){
+          // res.status(401).json({ message: err });
+          logger.error(err);
+          reject(err);
+        })
+    });
+
+  });
+}
+
+
+/**
+ * Compare ledFile & SWAN & MFTS
+ */
 function fnCleanCustFromFile(actionBy){
 
   return new Promise(function(resolve, reject) {
@@ -362,12 +455,86 @@ function updateResponseMIT_LED_DB_MASTER(REQ_KEY,REQ_STATUS,RESPONSE_BY){
   }
 
 
+  function getLedInitialFile(){
+
+    logger.info('Welcome getLedInitialFile(); ' );
+    var fileInitial ='init.txt';
+
+    let _fileArray=[];
+    return new Promise(function(resolve, reject) {
+
+      let rFile = readline.createInterface({
+        input: fs.createReadStream(LED_FILE_PATH+fileInitial, 'utf8')
+      });
+
+      // logger.info('STEP 1>> ' + LED_FILE_PATH+fileInitial);
+      rFile.on('line', function(line) {
+        // const dataObj = JSON.parse(line);
+
+        // console.log( "line>>"+ line);
+        lineArray = line.split("|");
+
+        // 1	twsid
+        _twsid = lineArray[0];
+        // 2	black_case
+        // 3	black_yy
+        // 4	red_case
+        // 5	red_yy
+        // 6	court_name
+        // 7	plaintiff1
+        // 8	df_id
+        _df_id = lineArray[7];
+        // 9	df_name
+        _df_name = lineArray[8];
+        // 10	df_surname
+        _df_surname = lineArray[9];
+        // 11	tmp_prot_dd
+        // 12	tmp_prot_mm
+        // 13	tmp_prot_yy
+        // 14	abs_prot_dd
+        // 15	abs_prot_mm
+        // 16	abs_prot_yy
+        // 17	df_manage_dd
+        // 18	df_manage_mm
+        // 19	df_manage_yy
+        // 20	bkr_prot_dd
+        // 21	bkr_prot_mm
+        // 22	bkr_prot_yy
+        // 23	statusdf
+
+        // for (i in dataObj) {
+
+        //   // console.log( "TWS_KEY>>"+ dataObj[i].TWS_KEY);
+        // // console.lin
+        _fileArray.push({"twsid": _twsid ,"Cust_Code":_df_id,"First_Name_T":_df_name,"Last_Name_T":_df_surname});
+
+        // let _twsid;
+        // if(dataObj[i].TWS_ID ){
+        //   _twsid=dataObj[i].TWS_ID
+        // }
+
+        // if(dataObj[i].TWS_KEY ){
+        //   _twsid=dataObj[i].TWS_KEY
+        // }
+
+        // _fileArray.push({"twsid": _twsid ,"Cust_Code":dataObj[i].DF_ID,"First_Name_T":dataObj[i].DF_NAME,"Last_Name_T":dataObj[i].DF_SURNAME});
+
+        // }
+
+        });//Read file(line)
+        rFile.on('close', function(line) {
+          resolve(_fileArray);
+        });//Read file(close)
+    });
+  }
+
+
 function getLedFiles(){
 
   let _fileArray=[];
   return new Promise(function(resolve, reject) {
-    // console.log(`*** FILE_PATH>${FILE_PATH} ;NAME>${LED_FILE_NAME}`);
-      fs.readdir(FILE_PATH, function (err, files) {
+    // console.log(`*** LED_FILE_PATH>${LED_FILE_PATH} ;NAME>${LED_FILE_NAME}`);
+      fs.readdir(LED_FILE_PATH, function (err, files) {
         if (err) {
             reject(err);
         }
@@ -384,10 +551,10 @@ function getLedFiles(){
               // i++;
               num_files++;
 
-              // console.log("File>>" +FILE_PATH+file);
+              // console.log("File>>" +LED_FILE_PATH+file);
               // Read file
               let rFile = readline.createInterface({
-                input: fs.createReadStream(FILE_PATH+file, 'utf8')
+                input: fs.createReadStream(LED_FILE_PATH+file, 'utf8')
               });
 
               rFile.on('line', function(line) {
@@ -446,7 +613,7 @@ function insertAllFilesMIT_LED_DB_MASTER(userName){
 
   return new Promise(function(resolve, reject) {
 
-    fs.readdir(FILE_PATH, function (err, files) {
+    fs.readdir(LED_FILE_PATH, function (err, files) {
         if (err) {
             logger.error('Unable to scan directory: ' + err);
             reject(err);
@@ -462,10 +629,71 @@ function insertAllFilesMIT_LED_DB_MASTER(userName){
 
               foundFiles++;
 
-                insertMIT_LED_DB_MASTER(FILE_PATH+file,userName).then(result=>{
+                insertMIT_LED_DB_MASTER(LED_FILE_PATH+file,userName).then(result=>{
 
                     //Move file to Backup
-                fs.rename(FILE_PATH+file, FILE_BAK_PATH+ dateTimeStr+ file,  (err) => {
+                // fs.rename(LED_FILE_PATH+file, LED_FILE_BAK_PATH+ dateTimeStr+ file,  (err) => {
+                fs.rename(LED_FILE_PATH+file, LED_FILE_BAK_PATH+ file,  (err) => {
+                  if (err) {
+                    reject(err);
+                  };
+                });
+
+                resolve(result);
+              },err=>{
+                reject(err);
+              });
+
+            }else{
+              resolve('success');
+            }
+        }
+        );
+
+        if(foundFiles==0){
+          reject('Not found LED files.');
+        }
+    });
+
+  });
+}
+
+function insertInitialMIT_LED_DB_MASTER(userName){
+
+  logger.info('Welcome insertInitialMIT_LED_DB_MASTER(); ' );
+
+  var today = new Date();
+  var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  var time = today.getHours() + "-" + today.getMinutes()
+  var dateTime = date+'-'+time+'_';
+
+  var dateTimeStr ="";
+  dateTimeStr = dateTimeStr.concat(today.getFullYear(), (today.getMonth()+1),today.getDate(),today.getHours(),today.getMinutes(),'_');
+
+
+  return new Promise(function(resolve, reject) {
+
+    fs.readdir(LED_FILE_PATH, function (err, files) {
+        if (err) {
+            logger.error('Unable to scan directory: ' + err);
+            reject(err);
+        }
+        //listing all files using forEach
+        var foundFiles=0;
+        // var ledArray = new Array();
+        files.forEach(function (file) {
+
+            // Do whatever you want to do with the file
+            var i =file.indexOf('init.txt');
+            if(i != -1){
+
+              foundFiles++;
+
+                insertInitialMIT_LED_DB_MASTER_detail(LED_FILE_PATH+file,userName).then(result=>{
+
+                    //Move file to Backup
+                // fs.rename(LED_FILE_PATH+file, LED_FILE_BAK_PATH+ dateTimeStr+ file,  (err) => {
+                fs.rename(LED_FILE_PATH+file, LED_FILE_BAK_PATH+ file,  (err) => {
                   if (err) {
                     reject(err);
                   };
@@ -558,11 +786,8 @@ function insertMIT_LED_DB_MASTER(path_file,userName){
       rFile.on('line', function(line) {
 
         const dataObj = JSON.parse(line);
-
-
           for (i in dataObj) {
-            // console.log( "TWS_KEY>>"+ dataObj[i].TWS_KEY);
-
+            console.log( "TWS_KEY>>"+ dataObj[i].TWS_KEY);
             let _TWS_ID;
             if(dataObj[i].TWS_ID){
               _TWS_ID =dataObj[i].TWS_ID
@@ -624,6 +849,193 @@ function insertMIT_LED_DB_MASTER(path_file,userName){
               );
 
           }//end for
+        });//Read file(line)
+
+        rFile.on('close', function(line) {
+          console.log("close >>");
+
+          // Execute insert Bulk data to  MIT_LED table
+          const request = new sql.Request(pool1)
+          request.bulk(table, (err, result) => {
+
+            if(err){
+              logger.error("BULK ERR>>" +err);
+              reject(err);
+            }else{
+              console.log("BULK-> "+ JSON.stringify(result));
+              resolve(result);
+            }
+          });
+
+        });//Read file(close)
+      });// SQL ConnectionPool
+    });//Promise
+}
+function insertInitialMIT_LED_DB_MASTER_detail(path_file,userName){
+
+  const LEDSTATUS='A';
+  const SOURCE='INIT';
+
+  return new Promise(function(resolve,reject){
+
+     //Table config
+     const sql = require('mssql');
+     const pool1 = new sql.ConnectionPool(config_BULK, err => {
+         const table = new sql.Table('MIT_LED_DB_MASTER');
+         table.create = true;
+         // 1-10
+        table.columns.add('twsid', sql.Int, {nullable: false, primary: true});
+        table.columns.add('black_case', sql.NVarChar(20));
+        table.columns.add('black_yy', sql.NVarChar(4), { nullable: true });
+        table.columns.add('red_case', sql.NVarChar(20), { nullable: true });
+        table.columns.add('red_yy', sql.VarChar(4), { nullable: true });
+        table.columns.add('court_name ', sql.NVarChar(180), { nullable: true });
+        table.columns.add('plaintiff1 ', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('df_id ', sql.NVarChar(50), { nullable: true });
+        table.columns.add('df_name ', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('df_surname ', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('tmp_prot_dd ', sql.VarChar(2), { nullable: true });
+        table.columns.add('tmp_prot_mm ', sql.VarChar(2), { nullable: true });
+        table.columns.add('tmp_prot_yy ', sql.VarChar(4), { nullable: true });
+        table.columns.add('abs_prot_dd ', sql.VarChar(2), { nullable: true });
+        table.columns.add('abs_prot_mm ', sql.VarChar(2), { nullable: true });
+        table.columns.add('abs_prot_yy ', sql.VarChar(4), { nullable: true });
+        table.columns.add('df_manage_dd ', sql.VarChar(2), { nullable: true });
+        table.columns.add('df_manage_mm ', sql.VarChar(2), { nullable: true });
+        table.columns.add('df_manage_yy ', sql.VarChar(4), { nullable: true });
+        table.columns.add('bkr_prot_dd ', sql.VarChar(2), { nullable: true });
+        table.columns.add('bkr_prot_mm ', sql.VarChar(2), { nullable: true });
+        table.columns.add('bkr_prot_yy ', sql.VarChar(4), { nullable: true });
+        table.columns.add('statusdf ', sql.VarChar(1), { nullable: true });
+        table.columns.add('RECV_NO', sql.VarChar(50), { nullable: true });
+        table.columns.add('RECV_YR', sql.VarChar(4), { nullable: true });
+        table.columns.add('DF_NO', sql.VarChar(3), { nullable: true });
+        table.columns.add('COURT_TYPE', sql.VarChar(3), { nullable: true });
+        table.columns.add('PLAINTIFF2', sql.NVarChar(500), { nullable: true });
+        table.columns.add('PLAINTIFF3', sql.NVarChar(500), { nullable: true });
+        table.columns.add('DEFENDANT1', sql.NVarChar(500), { nullable: true });
+        table.columns.add('DEFENDANT2', sql.NVarChar(500), { nullable: true });
+        table.columns.add('DEFENDANT3', sql.NVarChar(500), { nullable: true });
+        table.columns.add('IMAGE_COURT', sql.NVarChar(1024), { nullable: true });
+        table.columns.add('CASE_CAPITA', sql.VarChar(16), { nullable: true });
+        table.columns.add('OWN_NAME', sql.NVarChar(500), { nullable: true });
+        table.columns.add('OWN_DEPT', sql.NVarChar(500), { nullable: true });
+        table.columns.add('OWN_TEL', sql.VarChar(100), { nullable: true });
+        table.columns.add('RCV_DATE', sql.VarChar(50), { nullable: true });
+        table.columns.add('REQ_KEY', sql.VarChar(50), { nullable: true });
+
+        table.columns.add('createBy ', sql.VarChar(20), { nullable: true });
+        table.columns.add('createDate ', sql.Date, { nullable: true });
+        table.columns.add('updateBy ', sql.VarChar(20), { nullable: true });
+        table.columns.add('updateDate ', sql.Date, { nullable: true });
+        table.columns.add('ledStatus ', sql.Char(2), { nullable: true });
+        table.columns.add('source ', sql.Char(5), { nullable: true });
+
+      // Read file
+      let rFile = readline.createInterface({
+        input: fs.createReadStream(path_file, 'utf8')
+      });
+
+      rFile.on('line', function(line) {
+
+        // console.log( "line>>"+ line);
+        lineArray = line.split("|");
+
+        // 1	twsid
+        _twsid = lineArray[0];
+        // 2	black_case
+        _black_case = lineArray[1];
+        // 3	black_yy
+        _black_yy = lineArray[2];
+        // 4	red_case
+        _red_case = lineArray[3];
+        // 5	red_yy
+        _red_yy = lineArray[4];
+        // 6	court_name
+        _court_name = lineArray[5];
+        // 7	plaintiff1
+        _plaintiff1 = lineArray[6];
+        // 8	df_id
+        _df_id = lineArray[7];
+        // 9	df_name
+        _df_name = lineArray[8];
+        // 10	df_surname
+        _df_surname = lineArray[9];
+        // 11	tmp_prot_dd
+        _tmp_prot_dd = lineArray[10];
+        // 12	tmp_prot_mm
+        _tmp_prot_mm = lineArray[11];
+        // 13	tmp_prot_yy
+        _tmp_prot_yy = lineArray[12];
+        // 14	abs_prot_dd
+        _abs_prot_dd = lineArray[13];
+        // 15	abs_prot_mm
+        _abs_prot_mm = lineArray[14];
+        // 16	abs_prot_yy
+        _abs_prot_yy = lineArray[15];
+        // 17	df_manage_dd
+        _df_manage_dd = lineArray[16];
+        // 18	df_manage_mm
+        _df_manage_mm = lineArray[17];
+        // 19	df_manage_yy
+        _df_manage_yy = lineArray[18];
+        // 20	bkr_prot_dd
+        _bkr_prot_dd = lineArray[19];
+        // 21	bkr_prot_mm
+        _bkr_prot_mm = lineArray[20];
+        // 22	bkr_prot_yy
+        _bkr_prot_yy = lineArray[21];
+        // 23	statusdf
+        _statusdf = lineArray[22];
+
+              table.rows.add(
+                _twsid// twsid
+              ,_black_case// black_case
+              ,_black_yy// black_yy
+              ,_red_case// red_case
+              ,_red_yy// red_yy
+              ,_court_name// court_name
+              ,_plaintiff1// plaintiff1
+              ,_df_id// df_id
+              ,_df_name// df_name
+              ,_df_surname// df_surname
+            ,_tmp_prot_dd// tmp_prot_dd
+            ,_tmp_prot_mm// tmp_prot_mm
+            ,_tmp_prot_yy// tmp_prot_yy
+            ,_abs_prot_dd// abs_prot_dd
+            ,_abs_prot_mm// abs_prot_mm
+            ,_abs_prot_yy// abs_prot_yy
+            ,_df_manage_dd// df_manage_dd
+            ,_df_manage_mm// df_manage_mm
+            ,_df_manage_yy// df_manage_yy
+            ,_bkr_prot_dd// bkr_prot_dd
+            ,_bkr_prot_mm// bkr_prot_mm
+            ,_bkr_prot_yy// bkr_prot_yy
+            ,_statusdf// statusdf
+    // API fields.
+            ,''//dataObj['RECV_NO'],
+            ,''//dataObj['RECV_YR'],
+            ,''//dataObj['DF_NO'],
+            ,''//dataObj['COURT_TYPE'],
+            ,''//dataObj['PLAINTIFF2'],
+            ,''//dataObj['PLAINTIFF3'],
+            ,''//dataObj['DEFENDANT1'],
+            ,''//dataObj['DEFENDANT2'],
+            ,''//dataObj['DEFENDANT3'],
+            ,''//dataObj['IMAGE_COURT'],
+            ,''//dataObj['CASE_CAPITAL'],
+            ,''//dataObj['OWN_NAME'],
+            ,''//dataObj['OWN_DEPT'],
+            ,''//dataObj['OWN_TEL'],
+            ,''//dataObj['RCV_DATE'],
+            ,''//dataObj['REQ_KEY'],
+              ,userName  //createBy
+              ,new Date //createDate
+              ,null //updateBy
+              ,null //updateDate
+              ,LEDSTATUS  //ledStatus
+              ,SOURCE //source
+              );
 
         });//Read file(line)
 
@@ -644,13 +1056,11 @@ function insertMIT_LED_DB_MASTER(path_file,userName){
           });
 
         });//Read file(close)
-
       });// SQL ConnectionPool
-
-
-
     });//Promise
 }
+
+
 function insertMIT_LED_GetBankruptList(path_file,userName){
 
   return new Promise(function(resolve,reject){
@@ -931,7 +1341,7 @@ function writeLocalFile(data,fileName) {
 
   return new Promise(function(resolve, reject) {
     // #4 write file
-    let writeStream = fs.createWriteStream(FILE_PATH+_fileName);
+    let writeStream = fs.createWriteStream(LED_FILE_PATH+_fileName);
     writeStream.write(data, 'utf8');
     // the finish event is emitted when all data has been flushed from the stream
     writeStream.on('finish', () => {

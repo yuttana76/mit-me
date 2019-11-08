@@ -18,10 +18,14 @@ router.post("/mpamReceiverBreezeWebService/",led_apiController.ReceiverBreezeWeb
 router.post("/mpamGetBankruptListByDate/",led_apiController.GetBankruptListByDate);
 
 // #1 Run schedule
+// 1. Download
+// 2. Cleaning data
 router.post("/ledGetBankruptListSchedule/",led_apiController.ledGetBankruptListSchedule);
 
 // #2 Run Cleaning data
 router.post("/cleanFromFile/",led_apiController.cleanCustFromFile);
 
+//initial Cleaning
+router.post("/cleanInitial/",led_apiController.cleanInitial);
 
 module.exports = router;

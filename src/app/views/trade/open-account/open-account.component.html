@@ -9,7 +9,7 @@
         <mat-step [stepControl]="firstFormGroup">
 
           <form [formGroup]="firstFormGroup" class="col-md-6">
-            <ng-template matStepLabel>Identify</ng-template>
+            <ng-template matStepLabel>Entry ID</ng-template>
 
             <mat-form-field >
               <input matInput placeholder="ID card" formControlName="identifier" [(ngModel)]="openAccount.identifier"  >
@@ -23,7 +23,7 @@
         </mat-step>
         <!-- VERIFY -->
         <mat-step >
-            <ng-template matStepLabel>Verify indentify</ng-template>
+            <ng-template matStepLabel>Verify indentify(NDID)</ng-template>
 
             <app-ndid-proxy [currentAccount]="openAccount" (ndidDone)="ndidDone($event)" ></app-ndid-proxy>
 

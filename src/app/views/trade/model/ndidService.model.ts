@@ -4,5 +4,6 @@ export class ndidService{
 
   service_id: string;
   service_name: string;
-  active: string;
+  active: boolean;
+  // active: string;
 }

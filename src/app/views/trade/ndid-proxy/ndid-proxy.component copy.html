@@ -1,0 +1,141 @@
+<!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+  {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
+</button> -->
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<h3>ID {{currentAccount.identifier}}</h3>
+
+    <input matInput placeholder="token"  required [(ngModel)]="ndidModel.token" >
+
+
+<mat-vertical-stepper [linear]="isLinearStepper" #stepper>
+
+  <!-- /*
+    1. get all available IdProvider list
+    2. get service list
+    3. get AS list with service ID
+    4.1 verify an identity
+    4.2 verify an identity and request data
+
+  */ -->
+  <!-- 1 -->
+  <mat-step [stepControl]="firstFormGroup">
+    <form [formGroup]="firstFormGroup">
+      <ng-template matStepLabel>Client get all available IdProvider
+        <p><b>{{SELIdp_display_name}}</b></p>
+      </ng-template>
+
+      <div class='row'>
+
+
+          <mat-radio-group class="example-radio-group" formControlName="firstCtrl"
+          [(ngModel)]="ndidModel.idp">
+          <mat-radio-button class="example-radio-button" *ngFor="let idp of idpList" [value]="idp"  (change)="onIdpChange(idp)" >
+            {{idp.display_name_th}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <div class='row'>
+          <mat-divider></mat-divider>
+        <button mat-flat-button color="primary" matStepperNext>Next</button>
+        <button mat-stroked-button color="accent" (click)="getIdps()"><i class="fas fa-sync-alt fa-2x" ></i></button>
+      </div>
+
+    </form>
+  </mat-step>
+<!-- 2 -->
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Client get service list
+        <p><b>{{SELService_display_name}}</b></p>
+      </ng-template>
+
+      <div class='row'>
+          <!-- <button mat-stroked-button color="accent" (click)="getServices()">REQ SERVICEs</button> -->
+
+        <mat-radio-group class="example-radio-group" formControlName="secondCtrl"
+        [(ngModel)]="ndidModel.service" >
+        <mat-radio-button  class="example-radio-button" *ngFor="let svr of serviceList" [value]="svr"  (change)="onServiceChange(svr)" >
+          {{svr.service_name}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+      <div>
+        <button mat-raised-button matStepperPrevious>Back</button>
+        <button mat-raised-button color="primary" matStepperNext>Next</button>
+        <button mat-stroked-button color="accent" (click)="getServices()"><i class="fas fa-sync-alt fa-2x" ></i></button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- 3 -->
+  <mat-step [stepControl]="thirdFormGroup">
+    <form [formGroup]="thirdFormGroup">
+      <ng-template matStepLabel>Client get AS list with service ID
+
+          <p><b>{{SELAS_display_name}}</b></p>
+      </ng-template>
+
+      <div class='row'>
+          <!-- <button mat-stroked-button color="accent" (click)="getAS()">REQ AS</button> -->
+
+          <mat-radio-group class="example-radio-group" formControlName="thirdCtrl" >
+          <mat-radio-button  class="example-radio-button" *ngFor="let obj of ASList" [value]="obj"  (change)="onASChange(obj)" >
+            {{obj.node_name}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <div>
+          <button mat-raised-button matStepperPrevious>Back</button>
+          <button mat-raised-button color="primary" matStepperNext>Next</button>
+          <button mat-stroked-button color="accent" (click)="getAS()"><i class="fas fa-sync-alt fa-2x" ></i></button>
+        </div>
+    </form>
+  </mat-step>
+  <!-- 4 -->
+  <mat-step [stepControl]="forthFormGroup">
+    <form [formGroup]="forthFormGroup">
+      <ng-template matStepLabel>Client verify an identity and request data
+          <p><b>{{verify_reference_id}}</b></p>
+      </ng-template>
+
+      <mat-divider></mat-divider>
+
+      <p>Verify status : <b>{{verifyStatus_Display}}</b></p>
+      <mat-divider></mat-divider>
+
+      <input matInput placeholder="reference_id" formControlName="forthCtrl"  required [(ngModel)]="verify_reference_id" >
+      <mat-divider></mat-divider>
+
+      <div>
+        <!-- <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button> -->
+        <button mat-raised-button matStepperPrevious>Back</button>
+        <button mat-raised-button color="primary" matStepperNext>Next</button>
+
+
+        <button mat-button (click)="veriReqData()">Verify & Request Data</button>
+        <button mat-button (click)="getVerifyStatus()">Check verify status</button>
+        <button mat-button (click)="getDataVerify()">Get DATA</button>
+      </div>
+
+    </form>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+
+    <p>Verify status : <b>{{verifyStatus_Display}}</b></p>
+    <button mat-button (click)="getDataVerify()">Get DATA</button>
+
+    <mat-divider></mat-divider>
+
+    <div>
+      <button mat-raised-button matStepperPrevious>Back</button>
+      <button mat-raised-button color="primary" matStepperNext (click)="ndidSubmit()" >NDID OK</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>

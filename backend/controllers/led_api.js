@@ -189,8 +189,6 @@ exports.cleanInitial = (req, res, next) =>{
 
   const actionBy = req.body.actionBy
 
-    // getLedInitialFile(actionBy).then(result=>{
-
   fnCleanInitial(actionBy).then(result=>{
     res.status(200).json({ message: "Successfully!",code:"000", result: result });
   },err=>{

@@ -33,6 +33,7 @@ export class NdidProxyComponent implements OnInit {
   serviceList :ndidService[]=[];
   ASList :ndidAS[]=[];
 
+
 SELIdp_display_name ="";
 SELService_display_name ="";
 SELAS_display_name ="";
@@ -57,7 +58,9 @@ verifyStatus_Display ="";
     // this.getNididToken();
 
     this.firstFormGroup = this._formBuilder.group({
-      firstCtrl: ['', Validators.required]
+      firstCtrl1: ['', Validators.required],
+      firstCtrl2: ['', Validators.required],
+      firstCtrl3: ['', Validators.required]
     });
 
     this.secondFormGroup = this._formBuilder.group({
@@ -72,7 +75,22 @@ verifyStatus_Display ="";
       forthCtrl: ['', Validators.required]
     });
 
+    // *** Mockup data for develop
+    this.idpList= [
+      {
+         "id": "idp1",
+         "display_name": "FINNET",
+         "display_name_th": "บริษัท ฟินเน็ต (ประเทศไทย) จำกัด"
+       }
+     ]
+
+     this.serviceList =  [{"service_id":"bank_statement","service_name":"All transactions in the past 3 months","active":true},{"service_id":"customer_info","service_name":"Customer Information","active":true},{"service_id":"001.cust_info_001","service_name":"For Test SIT NDID Proxy","active":true}]
+      // *** Mockup data for develop
+
+     this.ASList=[{"node_id":"as1","node_name":"as1","min_ial":2.1,"min_aal":2.1,"supported_namespace_list":["citizen_id"]}]
   }
+
+
 
   getNididToken() {
 
@@ -80,6 +98,7 @@ verifyStatus_Display ="";
 
     this.ndidService.getToken() .subscribe(token=> {
       this.ndidModel.token = token.data;
+
     }, error => {
       this.toastr.error("Get NID token error." + error , "Token error", {
         timeOut: 3000,
@@ -96,7 +115,7 @@ verifyStatus_Display ="";
 
   getIdps() {
 
-    this.spinnerLoading = true;
+    // this.spinnerLoading = true;
 
     const _namespace ='citizen_id';
 
@@ -114,9 +133,8 @@ verifyStatus_Display ="";
 
       }else{
         this.idpList=obj.id_providers
+
       }
-
-
 
 
     }, error => {
@@ -135,7 +153,7 @@ verifyStatus_Display ="";
 
   getServices() {
 
-    this.spinnerLoading = true;
+    // this.spinnerLoading = true;
 
     this.ndidService.getService(this.ndidModel.token).subscribe(result=> {
 
@@ -158,7 +176,7 @@ verifyStatus_Display ="";
 
   getAS() {
 
-    this.spinnerLoading = true;
+    // this.spinnerLoading = true;
 
     this.ndidService.getAS(this.ndidModel.token,this.ndidModel.service.service_id).subscribe(result=> {
 
@@ -181,7 +199,7 @@ verifyStatus_Display ="";
 
   veriReqData() {
 
-    this.spinnerLoading = true;
+    // this.spinnerLoading = true;
 
     this.ndidModel.identifier = this.currentAccount.identifier;
 

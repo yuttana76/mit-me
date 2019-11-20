@@ -12,7 +12,7 @@
             <ng-template matStepLabel>Entry ID</ng-template>
 
             <mat-form-field >
-              <input matInput placeholder="ID card" formControlName="identifier" [(ngModel)]="openAccount.identifier"  >
+              <input matInput placeholder="ID card" formControlName="identifier" [(ngModel)]="fcIndCustomer.cardNumber"  >
             </mat-form-field>
 
             <div>
@@ -21,75 +21,42 @@
 
           </form>
         </mat-step>
-        <!-- VERIFY -->
+
+        <!-- NDID VERIFY -->
         <mat-step >
             <ng-template matStepLabel>Verify indentify(NDID)</ng-template>
 
-            <app-ndid-proxy [currentAccount]="openAccount" (ndidDone)="ndidDone($event)" ></app-ndid-proxy>
+            <app-ndid-proxy [fcIndCustomer]="fcIndCustomer" (ndidDone)="ndidDone($event)" ></app-ndid-proxy>
 
-            <div>
+            <div class="step_actin_bar">
                 <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
-                <button  *ngIf="openAccount.firstName" type="button" class="btn btn-success" matStepperNext >Next</button>
+                <button type="button" class="btn btn-success" matStepperNext >Next</button>
             </div>
         </mat-step>
 
         <!-- FILL FORM -->
-        <mat-step [stepControl]="fillFormGroup">
+        <mat-step [stepControl]="indCustFormGroup">
 
-          <form [formGroup]="fillFormGroup">
             <ng-template matStepLabel>Complete form</ng-template>
-
-                <mat-form-field class="col-md-6">
-                    <input matInput placeholder="ID card" formControlName="identifier" [(ngModel)]="openAccount.identifier"  >
-                </mat-form-field>
-
-                <mat-form-field class="col-md-6">
-                    <input matInput placeholder="Title" formControlName="title" [(ngModel)]="openAccount.title"  >
-                </mat-form-field>
-
-                <mat-form-field class="col-md-6">
-                    <input matInput placeholder="Full name" formControlName="firstName" [(ngModel)]="openAccount.firstName"  >
-                </mat-form-field>
-
-                <mat-form-field class="col-md-6">
-                  <input matInput placeholder="Last name" formControlName="lastName" [(ngModel)]="openAccount.lastName"  >
-                </mat-form-field>
-
-            <mat-form-field class="col-md-6">
-                <input matInput placeholder="Sex" formControlName="sex" [(ngModel)]="openAccount.sex"  >
-            </mat-form-field>
-
-            <mat-form-field class="col-md-6">
-                <input matInput placeholder="Date of birth" formControlName="dob" [(ngModel)]="openAccount.dob"  >
-            </mat-form-field>
-
-            <mat-form-field class="col-md-6">
-                <input matInput placeholder="Issue date" formControlName="cardIssueDate" [(ngModel)]="openAccount.cardIssueDate"  >
-            </mat-form-field>
-
-            <mat-form-field class="col-md-6">
-                <input matInput placeholder="Expire date" formControlName="cardExpDate" [(ngModel)]="openAccount.cardExpDate"  >
-            </mat-form-field>
-
-            <mat-form-field class="col-md-6">
-                <input matInput placeholder="Nationality" formControlName="nationality" [(ngModel)]="openAccount.nationality"  >
-            </mat-form-field>
+            <app-fc-ind-customer [fcIndCustomer]="fcIndCustomer" [indCustFormGroup]="indCustFormGroup" [re_addrFormGroup]="re_addrFormGroup" [cu_addrFormGroup]="cu_addrFormGroup" [wk_addrFormGroup]="wk_addrFormGroup" ></app-fc-ind-customer>
 
             <div>
                 <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
-                <button type="button" class="btn btn-success" matStepperNext (click)="onFillFormClick()" >Next</button>
+                <button type="button" class="btn btn-success" matStepperNext (click)="onSubmit()">Submit</button>
+                <!-- <button type="button" class="btn btn-success" matStepperNext (click)="onFillFormClick()" >Next</button> -->
             </div>
-          </form>
 
         </mat-step>
 
-        <!-- SUBMIT -->
+        <!-- Thank you -->
         <mat-step>
-          <ng-template matStepLabel>Submit</ng-template>
+          <ng-template matStepLabel>Done</ng-template>
           You are now done.
           <div>
-              <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
-              <button type="button" class="btn btn-success" matStepperNext (click)="onSubmit()">Submit</button>
+              <!-- <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
+              <button type="button" class="btn btn-success" matStepperNext (click)="onSubmit()">Submit</button> -->
+              <button type="button" class="btn btn-success" (click)="onClose()">Close</button>
+
           </div>
         </mat-step>
       </mat-horizontal-stepper>

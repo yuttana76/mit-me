@@ -13,10 +13,11 @@
 }
 
 .example-section {
+  margin-left: 10px;
   display: flex;
   align-content: center;
-  // align-items: center;
-  height: 60px;
+  align-items: center;
+  // height: 60px;
 }
 
 .example-margin {
@@ -25,9 +26,5 @@
 
 mat-card{
   margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.row{
   margin-bottom: 20px;
 }

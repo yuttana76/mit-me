@@ -47,6 +47,8 @@ const ledRoutes = require('./routes/led');
 const ledApiRoutes = require('./routes/led_api');
 const swanRoutes = require('./routes/swan');
 const ndidProxyRoutes = require('./routes/ndidProxy');
+const onlineProcessRoutes = require('./routes/onlineProcess');
+
 const exportFileRoutes = require('./routes/exportFile');
 const fundConnextAPIRoutes = require('./routes/fundConnextAPI');
 const streamingRoutes = require('./routes/streaming');
@@ -159,6 +161,10 @@ app.use("/api/fundConnext",fundConnextAPIRoutes);
 app.use("/api/stream",streamingRoutes);
 //SMS API
 app.use("/api/sms",smsRoutes);
+
+app.use("/api/online",onlineProcessRoutes);
+
+
 
 
 app.use((req, res, next) => {

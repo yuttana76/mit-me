@@ -9,6 +9,7 @@ import { MatRadioChange } from '@angular/material';
 import { ndidService } from '../model/ndidService.model';
 import { ndidAS } from '../model/ndidAS.model';
 import { ndidVeriReqDataRS } from '../model/ndidVeriReqData.model';
+import { fcIndCustomer } from '../model/fcIndCustomer.model';
 
 @Component({
   selector: 'app-ndid-proxy',
@@ -44,7 +45,8 @@ verifyStatus_Display ="";
 // SEL_verifyReq= new ndidVeriReqDataRS();
 
 
-  @Input() currentAccount = new OpenAccount();
+  // @Input() currentAccount = new OpenAccount();
+  @Input() fcIndCustomer = new fcIndCustomer();
   @Output() ndidDone: EventEmitter<OpenAccount> = new EventEmitter<OpenAccount>();
 
  constructor(
@@ -119,7 +121,7 @@ verifyStatus_Display ="";
 
     const _namespace ='citizen_id';
 
-    this.ndidService.getIdp(this.ndidModel.token,this.min_ial,this.min_aal,_namespace,this.currentAccount.identifier).subscribe(result=> {
+    this.ndidService.getIdp(this.ndidModel.token,this.min_ial,this.min_aal,_namespace,this.fcIndCustomer.cardNumber).subscribe(result=> {
 
       console.log('getIdp()'+result);
       const obj = JSON.parse(`${result}`);
@@ -201,7 +203,7 @@ verifyStatus_Display ="";
 
     // this.spinnerLoading = true;
 
-    this.ndidModel.identifier = this.currentAccount.identifier;
+    this.ndidModel.identifier = this.fcIndCustomer.cardNumber
 
     // PREPARE PARAMs
     this.ndidModel.namespace ='citizen_id';
@@ -328,10 +330,11 @@ verifyStatus_Display ="";
 
 
   ndidSubmit() {
-    this.currentAccount.firstName="XXX";
-    this.currentAccount.lastName="YYY";
 
-    this.ndidDone.emit(this.currentAccount);
+    this.fcIndCustomer.thFirstName='Mr. XXX';
+    this.fcIndCustomer.thLastName ='001';
+
+    this.ndidDone.emit(this.fcIndCustomer);
   }
 
   onIdpChange(obj: ndidIdp) {

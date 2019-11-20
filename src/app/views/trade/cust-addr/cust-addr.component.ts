@@ -85,7 +85,6 @@ export class CustAddrComponent implements OnInit {
     });
   }
 
-
   ngAfterViewInit(){
 
     if (this.addrFormGroup.invalid) {
@@ -103,7 +102,6 @@ export class CustAddrComponent implements OnInit {
     //   this.addrFormGroup.disable();
     //   this.modifyFlag  = false;
     // }
-
   }
 
   countryChange(event: MatSelectChange) {

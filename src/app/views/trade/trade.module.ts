@@ -70,6 +70,7 @@ import { NdidProxyComponent } from './ndid-proxy/ndid-proxy.component';
 import { FCAppComponent } from './fcapp/fcapp.component';
 import { SetRegis2Component } from './set-regis2/set-regis2.component';
 import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
+import { FcIndCustomerComponent } from './fc-ind-customer/fc-ind-customer.component';
 
 @NgModule({
   imports: [
@@ -150,6 +151,7 @@ import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
     FCAppComponent,
     SetRegis2Component,
     SetWelcomeComponent,
+    FcIndCustomerComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

@@ -55,6 +55,9 @@ import { TradeModule } from './views/trade/trade.module';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 
 import { RecaptchaModule } from 'angular-google-recaptcha';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material';
+
 
 @NgModule({
   imports: [
@@ -83,7 +86,8 @@ import { RecaptchaModule } from 'angular-google-recaptcha';
     HttpClientModule,
     AngularMaterialModule,
     TradeModule,
-    AccordionModule.forRoot()
+    AccordionModule.forRoot(),
+    CollapseModule.forRoot()
   ],
   declarations: [
     AppComponent,
@@ -97,6 +101,7 @@ import { RecaptchaModule } from 'angular-google-recaptcha';
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
+    {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher},
   ],
   bootstrap: [ AppComponent ],
   entryComponents: [CustomErrorComponent]

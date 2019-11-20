@@ -3,16 +3,18 @@
 </button> -->
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 
-<h3>ID {{currentAccount.identifier}}</h3>
+<h3>ID {{fcIndCustomer.cardNumber}}</h3>
 
     <input matInput placeholder="token"  required [(ngModel)]="ndidModel.token" >
 
-    <mat-card>
-        <mat-card-content>
+    <!-- <mat-card>
+        <mat-card-content> -->
             <form [formGroup]="firstFormGroup">
             <div class='row'>
                 <h4 class="example-h2">1. Choose IDPs</h4>
-                <section class="example-section">
+            </div>
+
+                <section class="example-section row">
                   <mat-radio-group class="example-radio-group" formControlName="firstCtrl1"
                   [(ngModel)]="ndidModel.idp">
                   <mat-radio-button class="example-radio-button" *ngFor="let idp of idpList" [value]="idp"  (change)="onIdpChange(idp)" >
@@ -21,46 +23,45 @@
                   </mat-radio-group>
                 </section>
 
-                </div>
-
                 <div class='row'>
                 <h4 class="example-h2">2. Choose Services</h4>
-                <section class="example-section">
+                </div>
+
+                <section class="example-section row">
                     <mat-radio-group class="example-radio-group" formControlName="firstCtrl2"
                     [(ngModel)]="ndidModel.service" >
                     <mat-radio-button  class="example-radio-button" *ngFor="let svr of serviceList" [value]="svr"  (change)="onServiceChange(svr)" >
                       {{svr.service_name}}
                     </mat-radio-button>
                   </mat-radio-group>
-
                 </section>
-                </div>
 
                 <div class='row'>
                 <h4 class="example-h2">3. Choose AS</h4>
-                <section class="example-section">
+                </div>
+
+                <section class="example-section row">
                     <mat-radio-group class="example-radio-group" formControlName="firstCtrl3" >
                         <mat-radio-button  class="example-radio-button" *ngFor="let obj of ASList" [value]="obj"  (change)="onASChange(obj)" >
                           {{obj.node_name}}
                         </mat-radio-button>
                       </mat-radio-group>
                 </section>
-                </div>
 
                 <div class='row'>
                     <h4 class="example-h2">4. Verify {{SELIdp_display_name}}</h4>
-
-                    <section class="example-section">
-                        <mat-slide-toggle
-                            class="example-margin"
-                            [color]='accent'
-                            [checked]="false"
-                            >
-                          Slide to verify
-                        </mat-slide-toggle>
-                      </section>
-
                 </div>
+
+                <section class="example-section row">
+                    <mat-slide-toggle
+                        class="example-margin"
+                        [color]='accent'
+                        [checked]="false"
+                        >
+                      Slide to verify
+                    </mat-slide-toggle>
+                  </section>
+
           </form>
-        </mat-card-content>
-      </mat-card>
+        <!-- </mat-card-content>
+      </mat-card> -->

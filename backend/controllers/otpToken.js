@@ -4,12 +4,15 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const config = require('../config/mail-conf');
 const dbConfig = require('../config/db-config');
+
 const smsConfig = require('../config/sms-conf');
 
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
 var request = require("request");
 var mitLog = require('./mitLog');
+
+var dbParameters = dbConfig.dbParameters;
 
 /*
 https://www.npmjs.com/package/otpauth
@@ -142,19 +145,6 @@ exports.verityOTPtoken = (req, res, next) => {
     const _token = req.body.token
     const _pid = req.body.pid
     logger.info(`Welcome /verityOTPtoken API. ${_token}  - pid: ${_pid}`);
-    /*
-    0: ok
-    -1: token expired (1 period)
-    null: not found
-    */
-  //  let totp = new OTPAuth.TOTP({
-  //   issuer: 'ACME',
-  //   label: 'AzureDiamond',
-  //   algorithm: 'SHA1',
-  //   digits: 6,
-  //   period: TOKEN_PERIOD, //sec
-  //   secret: OTPAuth.Secret.fromB32('NB2W45DFOIZA')
-  //   });
 
     let delta = totp.validate({
         token: _token,
@@ -164,13 +154,25 @@ exports.verityOTPtoken = (req, res, next) => {
     if (delta===0){
       let rsp_code = "000";
       let logMsg = `Result /verityOTPtoken -${prop.getRespMsg(rsp_code)} - ${_token}  - pid: ${_pid}`
+
       logger.info(logMsg);
       mitLog.saveMITlog(_pid,'VERIFY_OTP',logMsg,req.ip,req.originalUrl,function(){});
 
-        return res.status(200).json({
-          code: rsp_code,
-          msg: prop.getRespMsg(rsp_code),
-        });
+        // Save OTP tracking
+        var otpDate ={'otp_device':'Mobile','otp_device_ref':'0897765331','input_otp_code':'123456'};
+  saveOTPtracking(otpDate).then(otp_id=>{
+
+    return res.status(200).json({
+      code: rsp_code,
+      msg: {'otp_id':otp_id}
+    });
+
+  },err=>{
+    logger.error({'saveOTPtracking error':err});
+  });
+
+
+
 
     }else if(delta < 0 ){
       let rsp_code = "207";  //OTP  Expired
@@ -189,7 +191,6 @@ exports.verityOTPtoken = (req, res, next) => {
         });
     }
 }
-
 
 // function verifyOTP_OnStreamRegis(_idCard,_otp,_ip,_originalUrl){
   module.exports.verifyOTP_OnStreamRegis = (_idCard,_otp,_ip,_originalUrl) => {
@@ -276,5 +277,95 @@ exports.verityByDOB = (req, res, next) => {
               msg: prop.getRespMsg(rsp_code),
             });
   }
+
 }
 
+exports.testOTPTracking = (req, res, next) => {
+
+  var otpDate ={'otp_device':'Mobile','otp_device_ref':'0897765331','input_otp_code':'123456'};
+  saveOTPtracking(otpDate).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+
+}
+
+
+function saveOTPtracking(otpDate){
+
+  otp_id = 'OTP'.concat(NOW());
+
+  return new Promise(function(resolve, reject) {
+    // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
+    var queryStr = `
+    BEGIN
+
+      --DECLARE @OTP_ID varchar(50);
+      --DECLARE @OTP_DEVICE varchar(10);
+      --DECLARE @OTP_DEVICE_REF varchar(200);
+      --DECLARE @INPUT_OTP_CODE varchar(10);
+
+      INSERT INTO MIT_OTP_TRACKING
+      (OTP_ID,OTP_DEVICE,OTP_DEVICE_REF,INPUT_OTP_CODE,INPUT_OTP_DATE)
+      VALUES
+      (@OTP_ID,@OTP_DEVICE,@OTP_DEVICE_REF,@INPUT_OTP_CODE,getdate())
+
+    END
+    `;
+
+    const sql = require('mssql')
+    const pool1 = new sql.ConnectionPool(dbParameters, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input('OTP_ID', sql.VarChar, otp_id)
+      .input('OTP_DEVICE', sql.VarChar, otpDate.otp_device)
+      .input('OTP_DEVICE_REF', sql.VarChar, otpDate.otp_device_ref)
+      .input('INPUT_OTP_CODE', sql.VarChar, otpDate.input_otp_code)
+      .query(queryStr, (err, result) => {
+          // ... error checks
+          if(err){
+            reject(err);
+          }else {
+             resolve(otp_id);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      logger.error(`${err}` );
+      reject(err);
+    })
+  });
+}
+
+
+function NOW() {
+  var INC_TIME_SEC = 5;
+  var date = new Date();
+  var aaaa = date.getFullYear();
+  var gg = date.getDate();
+  var mm = (date.getMonth() + 1);
+
+  if (gg < 10)
+      gg = "0" + gg;
+
+  if (mm < 10)
+      mm = "0" + mm;
+
+  var cur_day = aaaa + "" + mm + "" + gg;
+
+  var hours = date.getHours()
+  var minutes = date.getMinutes()
+  var seconds = date.getSeconds()+INC_TIME_SEC;
+
+  if (hours < 10)
+      hours = "0" + hours;
+
+  if (minutes < 10)
+      minutes = "0" + minutes;
+
+  if (seconds < 10)
+      seconds = "0" + seconds;
+
+  return cur_day + "" + hours + "" + minutes + "" + seconds;
+  // return cur_day + "T" + hours + ":" + minutes + ":" + seconds;
+}

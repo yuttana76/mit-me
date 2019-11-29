@@ -733,5 +733,4 @@ function NOW() {
       seconds = "0" + seconds;
 
   return cur_day + "T" + hours + ":" + minutes + ":" + seconds;
-
 }

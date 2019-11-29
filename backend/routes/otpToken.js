@@ -12,4 +12,7 @@ router.post("/getOTPtokenSMS",otpTokenController.OTPtokenToSMS);
 router.post("/verityOTPtoken",checkAuth,otpTokenController.verityOTPtoken);
 router.post("/verityByDOB",checkAuth,otpTokenController.verityByDOB);
 
+router.post("/testOTPTracking",otpTokenController.testOTPTracking);
+
+
 module.exports = router;

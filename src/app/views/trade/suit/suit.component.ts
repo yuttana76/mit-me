@@ -1619,7 +1619,6 @@ export class SuitComponent implements OnInit {
       observables.push(this.childService.saveChild(this.survey.pid,this.survey.pid,this.cddData.children[i]));
     }
 
-
     // Check Work Address selected
     let sameAs = this.work_addrData.SameAs;
       if(sameAs ===  this.SEQ_REG_ADDR.toString() ){

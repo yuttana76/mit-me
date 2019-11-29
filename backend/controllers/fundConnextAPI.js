@@ -97,7 +97,7 @@ exports.downloadFileNavAPI = (req, res, next) =>{
         unZipFile(data.path).then(fileName=>{
 
           // res.status(200).json(fileName);
-          fcNAV_ToDB(fileName).then(data=>{
+          fcNAV_ToDB(fileName,businessDate).then(data=>{
             res.status(200).json({data: data});
 
           },err=>{
@@ -229,7 +229,7 @@ function downloadNavAPIproc(businessDate){
           unZipFile(data.path).then(fileName=>{
 
             //STEP 3: Insert to DB.(MIT_FC_NAV)
-            fcNAV_ToDB(fileName).then(navToDB_RS=>{
+            fcNAV_ToDB(fileName,businessDate).then(navToDB_RS=>{
               // res.status(200).json({data: data});
 
               //STEP 4: Syncy to MFTS (MFTS_NavTable)
@@ -393,7 +393,7 @@ exports.uploadMITNAV_db = (req, res, next) =>{
 
     switch(fileType) {
       case 'Nav':
-        fcNAV_ToDB(fileName).then(data=>{
+        fcNAV_ToDB(fileName,'N/A').then(data=>{
           res.status(200).json({data: data});
         },err=>{
           res.status(422).json({error: err});
@@ -1024,7 +1024,7 @@ var bankAccount =item[18]?item[18].trim():''
   });
 }
 
-function fcNAV_ToDB(fileName){
+function fcNAV_ToDB(fileName,businessDate){
   logger.info('Function fcNAV_ToDB() //'+fileName);
 
   const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
@@ -1061,6 +1061,7 @@ function fcNAV_ToDB(fileName){
         table.columns.add('SACode', sql.VarChar(15), { nullable: true });
         table.columns.add('TotalUnit', sql.Numeric(18,4), { nullable: true });
         table.columns.add('TotalAUM', sql.Numeric(18,2), { nullable: true });
+        table.columns.add('businessDate', sql.VarChar(50), { nullable: true });
         table.columns.add('createBy', sql.VarChar(50), { nullable: true });
         table.columns.add('createDate', sql.SmallDateTime, { nullable: true });
 
@@ -1099,6 +1100,7 @@ function fcNAV_ToDB(fileName){
                   ,SACode_str
                   ,TotalUnit_int
                   ,TotalAUM_int
+                  ,businessDate
                   ,userCode
                   ,new Date);
               }

@@ -50,6 +50,23 @@ export const routes: Routes = [
       title: 'Register Page'
     }
   },
+  // Survey KYC,FATCA,Suitability
+  {
+    path: 'suit',
+    component: SuitComponent,
+    data: {
+      title: 'Custom survey'
+    }
+  },
+  // Survey only Suitability
+  // {
+  //   path: 'suit',
+  //   component: SuitSurvey,
+  //   data: {
+  //     title: 'Suitability survey'
+  //   }
+  // },
+
   {
     path: 'suit',
     component: SuitComponent,

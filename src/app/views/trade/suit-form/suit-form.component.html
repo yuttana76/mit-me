@@ -1,0 +1,83 @@
+<form [formGroup]="suitFormGroup" >
+
+  <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
+  <div class='row '>
+      <code class='code_large'>
+          <p>แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน</p>
+      </code>
+  </div>
+  </form>
+
+   <!-- Show Suit question  -->
+  <div *ngIf="canDoSuit" >
+  <form  class="form_section">
+  <ul>
+      <div *ngFor="let ques of suitQuestions" class="questions">
+
+          <span  *ngIf="ques.id == 11" class="blue-txt">
+              <p>คำถามข้อ 11-12 ใช้เป็นข้อมูลเพิ่มเติมเพื่อประกอบการให้คำแนะนำ</p>
+            </span>
+
+            <span *ngIf="ques.id == 11" class="blue-txt">
+              <p>ใช้เฉพาะที่จะมีการลงทุนในอนุพันธ์และหุ้นกู้อนุพันธ์โดยตรงเท่านั้น</p>
+            </span>
+
+            <span *ngIf="ques.id == 12" class="blue-txt">
+              <p>ใช้เฉพาะที่จะมีการลงทุนในต่างประเทศ</p>
+            </span>
+
+            <span id='ques'>{{ ques.id }}. {{ ques.name }} </span>
+
+            <div *ngIf="!ques.image == ''" class="q_image">
+              <img src="{{ ques.image }}" />
+            </div>
+
+        <div>
+          <ul>
+            <div *ngFor="let choice of ques.choices">
+
+              <div *ngIf="ques.multilchoice">
+                <input  type="checkbox"
+                value=" {{ choice.score }}"
+                id="{{ choice.id }}"
+                [(ngModel)]="choice.answer"
+                [ngModelOptions]="{standalone: true}"
+                />
+                {{ choice.name }}
+              </div>
+
+              <div *ngIf="!ques.multilchoice">
+                <input
+                  name="{{ ques.id }}"
+                  id="{{ ques.id }}"
+                  type="radio"
+                  value="{{ choice.score }}"
+                  [(ngModel)]="ques.answer"
+                />
+                {{ choice.name }}
+              </div>
+
+            </div>
+          </ul>
+        </div>
+      </div>
+    </ul>
+    <div class ="row" *ngIf="onSuitCalculate">
+        <mat-spinner></mat-spinner>
+    </div>
+  </form>
+  </div>
+
+  <app-suit-result-table *ngIf="!canDoSuit && canSaveSuit" [riskLevel]="riskLevel"  ></app-suit-result-table>
+
+  <mat-card-actions  class="stepper_action center-screen ">
+
+    <a *ngIf="canDoSuit" mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> {{formService.LABEL_CALCULATE}}</a>
+    <a *ngIf="!canDoSuit && canSaveSuit" (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a>
+
+  <mat-divider></mat-divider>
+    <button mat-flat-button *ngIf="!canDoSuit && canSaveSuit"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+    <button mat-flat-button *ngIf= "!canDoSuit && canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+  </mat-card-actions>
+
+  <!-- </div> -->

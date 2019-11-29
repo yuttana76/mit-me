@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { AddrCustModel } from '../model/addrCust.model';
 import { fcIndCustomer } from '../model/fcIndCustomer.model';
+import { OnlineProcessService } from '../services/onlineProcess.service';
 
 @Component({
     selector: 'app-open-account',
@@ -28,6 +29,7 @@ export class OpenAccountComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder,
     private toastr: ToastrService,
     private confirmationDialogService: ConfirmationDialogService,
+    private onlineProcessService: OnlineProcessService,
     ) {}
 
   ngOnInit() {
@@ -116,22 +118,27 @@ export class OpenAccountComponent implements OnInit {
     console.log('**SUBMITED >>');
     console.log('**indCustFormGroup.invalid >>' + this.indCustFormGroup.invalid);
 
-    this.confirmationDialogService.confirm('Confirmation', ` Please confirm your data before submit. `)
-    .then((confirmed) => {
-      console.log('Confirm >>' + confirmed);
-
-      if ( confirmed ) {
-
-        console.log(' fcIndCustomer >>' + JSON.stringify(this.fcIndCustomer));
-
-        this.toastr.success("Open account was successful." , "Successful", {
-          timeOut: 3000,
-          closeButton: true,
-          positionClass: "toast-top-center"
-        });
-
-      }
+    this.onlineProcessService.saveAccount(this.fcIndCustomer).subscribe(
+      (rs: any) => {
+      console.log('Result saveAccount() >>' + JSON.stringify(rs));
     });
+
+    // this.confirmationDialogService.confirm('Confirmation', ` Please confirm your data before submit. `)
+    // .then((confirmed) => {
+    //   console.log('Confirm >>' + confirmed);
+
+    //   if ( confirmed ) {
+
+    //     console.log(' fcIndCustomer >>' + JSON.stringify(this.fcIndCustomer));
+
+    //     this.toastr.success("Open account was successful." , "Successful", {
+    //       timeOut: 3000,
+    //       closeButton: true,
+    //       positionClass: "toast-top-center"
+    //     });
+
+    //   }
+    // });
   }
 
   onClose(){

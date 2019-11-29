@@ -59,7 +59,6 @@ exports.sendMail = (req, res, next) =>{
 Send mail  by encypt use bcrypt
 */
 // const FILE_SEND_MAIL = __dirname+'..\downloadFiles\mail\mail.txt';
-
 exports.surveyBulkFile = (req, res, next) =>{
 
   // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
@@ -686,6 +685,7 @@ function mailStreaming(req,res,_name,_Email){
 
 function getCustomerInfo(Cust_Code) {
 
+  logger
   var fncName = "getCustomerData";
   var queryStr = ` BEGIN
 
@@ -722,18 +722,24 @@ END
         .input("Cust_Code", sql.VarChar(50), Cust_Code)
         .query(queryStr, (err, result) => {
           if (err) {
+
             // console.log(fncName + " Quey db. Was err !!!" + err);
             reject(err);
 
           } else {
-            resolve(result.recordset[0]);
+
+            console.log(" Quey RS>>" + JSON.stringify(result));
+            resolve(result.recordsets);
+            // resolve(result.recordset[0]);
 
           }
         });
     });
     pool1.on("error", err => {
-      console.log("EROR>>" + err);
+
+      console.log("ERROR>>" + err);
       reject(err);
+
     });
   });
 }
@@ -744,15 +750,9 @@ Send mail  by token
 */
 exports.surveyByMailToken = (req, res, next) =>{
 
-  // let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
-  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
 
   const _PID = req.body.custCode ||'41121225'
-  // const _compInfo = mailConfig.mailCompInfo_TH;
-  // let _from = mailConfig.mail_form;
-  // let _to ;//= 'yuttana76@gmail.com';
-  // let _subject = 'การสำรวจ และตรวจสอบข้อมูล บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
-  // let _msgTH = '';
+
   var logMsg ;
 
   let _target = req.body.target || 'test';
@@ -764,7 +764,12 @@ exports.surveyByMailToken = (req, res, next) =>{
     _url = 'http://localhost:4200/suit?has='
   }
 
-  getCustomerInfo(_PID).then( (data) =>{
+  getCustomerInfo(_PID).then( _data =>{
+
+    logger.info('_data>>' + JSON.stringify(_data));
+
+    logger.info('_data[1] >>'+ JSON.stringify(_data[1][0]) );
+    data = _data[1][0];
 
     try {
       logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
@@ -772,9 +777,10 @@ exports.surveyByMailToken = (req, res, next) =>{
 
       senMailFromFile(req,res,_PID,data.Email,_url);
 
-
     } catch (error) {
-      res.status(400).json({ message: 'surveyByMailToken' });
+
+      console.log(error);
+      res.status(400).json({ msg: error });
 
     }
 

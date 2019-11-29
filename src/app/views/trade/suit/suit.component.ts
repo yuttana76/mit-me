@@ -68,7 +68,9 @@ export class SuitComponent implements OnInit {
 
   canSaveSuit = false;
   canDoFATCA = false;
-  showOtpEntry = false;
+
+  showOtpEntry = true;
+
   addrModifyFlag = false;
 
   reg_addrModifyFlag = false;
@@ -107,7 +109,7 @@ export class SuitComponent implements OnInit {
   cust_RiskLevelTxt='';
   cust_RiskTypeInvestor='';
   cust_RiskDate;
-  verifyBy;
+  public verifyBy ='OTP';
   verifyDOB_val;
   otpToken_Date;
   otpToken_Period;
@@ -132,6 +134,7 @@ export class SuitComponent implements OnInit {
     private childService: ChildService,
 
   ) {
+
 
     if (
       this.authService.getUserId() != null &&
@@ -822,14 +825,10 @@ export class SuitComponent implements OnInit {
           if (this.re_addrData.Country_Id === null)
             this.re_addrData.Country_Id=0;
 
-
           if(_addrData.Country_Id === 9 ){
             this.register_formGroup.controls["Country_oth"].setValidators(Validators.required);
             this.register_formGroup.controls["Country_oth"].updateValueAndValidity();
-
-            // console.log(' ** SET Validators RE Address');
           }
-
 
         } else if (seqNo === 2 ) {
           this.cur_addrData = Object.assign({}, _addrData);
@@ -858,7 +857,6 @@ export class SuitComponent implements OnInit {
             this.mail_formGroup.controls["Country_oth"].setValidators(Validators.required);
             this.mail_formGroup.controls["Country_oth"].updateValueAndValidity();
 
-            // console.log(' ** SET Validators MAIL Address');
           }
 
         }
@@ -880,12 +878,9 @@ export class SuitComponent implements OnInit {
       })
       .subscribe(
         (data: any) => {
-          // console.log("HTTP return : verifyRequestOTP()" + JSON.stringify(data));
-
           this.showOtpEntry =true;
           this.otpToken_Date = data.TOKEN_DATE;
           this.otpToken_Period = data.TOKEN_PEROID;
-
         },
         error => () => {
           console.log("Verify Was error", error);
@@ -900,7 +895,6 @@ export class SuitComponent implements OnInit {
     this.spinnerLoading = true;
     this.suiteService.verifyConfirmOTP(this.survey.pid,this.verifyOTP_val)
       .finally(() => {
-        // console.log("Handle logging logic...");
         this.spinnerLoading = false;
       })
       .subscribe(

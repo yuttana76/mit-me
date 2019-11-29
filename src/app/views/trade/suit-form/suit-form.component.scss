@@ -1,0 +1,40 @@
+.form_section {
+  font-size: 110%;
+}
+.questions{
+  margin-top: 5px;
+}
+.questions #ques{
+  font-size: x-large;
+}
+.blue-txt{
+  color: #1194F6;
+  // font-size: 120%;
+  font-size: x-large;
+}
+.q_image{
+  img {
+    width: 30%;
+  }
+}
+.stepper_action {
+  margin-bottom: 15px;
+  text-align: right;
+}
+.stepper_action button{
+  margin-left: 10px;
+}
+.stepper_action  a{
+  margin-left: 10px;
+}
+.center-screen {
+  width: 100%;
+  margin-top: 10px;
+    align-items: center;
+    text-align: center;
+    display: inline-block;
+  }
+
+.act_button {
+  margin-left: 10px;
+}

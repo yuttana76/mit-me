@@ -71,6 +71,8 @@ import { FCAppComponent } from './fcapp/fcapp.component';
 import { SetRegis2Component } from './set-regis2/set-regis2.component';
 import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 import { FcIndCustomerComponent } from './fc-ind-customer/fc-ind-customer.component';
+import { SuitSurveyComponent } from './suit-survey/suit-survey.component';
+import { SuitFormComponent } from './suit-form/suit-form.component';
 
 @NgModule({
   imports: [
@@ -152,6 +154,8 @@ import { FcIndCustomerComponent } from './fc-ind-customer/fc-ind-customer.compon
     SetRegis2Component,
     SetWelcomeComponent,
     FcIndCustomerComponent,
+    SuitSurveyComponent,
+    SuitFormComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

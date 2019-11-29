@@ -255,7 +255,12 @@ exports.userPwdToCust = (req,res,next)=>{
   const _idCard = req.body.custCode;
   const actionBy = req.body.actionBy;
 
-logger.info("Welcome  userPwdToCust :" + _idCard + " ;actionBy:" + actionBy);
+  logger.info("Welcome  userPwdToCust :" + _idCard + " ;actionBy:" + actionBy);
+
+  var _ip = req.headers['x-forwarded-for'] ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      (req.connection.socket ? req.connection.socket.remoteAddress : null);
 
    //1. Get customer information
    getCustomerInfo(_idCard).then(data=>{
@@ -274,9 +279,9 @@ logger.info("Welcome  userPwdToCust :" + _idCard + " ;actionBy:" + actionBy);
 
         console.log("4. Send E-mail sussful> " + _idCard + " ;Email:" + data.Email);
           //4. Send E-mail
-          // mailController.mailStreamingUserSecret(data.Email,_idCard,data.First_Name,data.Last_Name,data.Birth_Day_1,result.filePDF).then(data=>{
-          //   // console.log("4. Send E-mail sussful " + data);
-          // });
+          mailController.mailStreamingUserSecret(data.Email,_idCard,data.First_Name,data.Last_Name,data.Birth_Day_1,result.filePDF).then(data=>{
+            // console.log("4. Send E-mail sussful " + data);
+          });
 
           var regisStatus = 0;//Successful
           fnUpdateRegisStatus(_idCard,data.First_Name,data.Last_Name,data.Email,data.Mobile,_ip,regisStatus).then(result=>{

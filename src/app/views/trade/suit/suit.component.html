@@ -24,15 +24,7 @@
                     formControlName="pid" [(ngModel)]="survey.pid"  >
                     <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
                   </div>
-
-
               </span>
-
-                <!-- For mobile
-                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0 div-only-mobile"  (click)="getCustomerData()">
-                    <span class="div-only-mobile">{{ formService.LABEL_NEXT }}</span>
-                       <i class="fas fa-search"></i> </a> -->
-
                 <!-- For desk -->
                 <div *ngIf="!INTERNAL_USER &&  !needVerify" class="form-group">
                     <a  mat-flat-button   class="btn btn-outline-success "  (click)="getCustomerData()">
@@ -40,15 +32,6 @@
                            <i class="fas fa-search"></i> </a>
                 </div>
 
-
-
-            <!-- <ul class="nav navbar-nav ml-auto" *ngIf="verifyFLag">
-                <li >
-                    <strong>{{ formService.label_Welcome }}</strong>
-                    <p> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
-                </li>
-                <a (click) = "onLogout()" class="btn btn-outline-success my-2 my-sm-0" ><span class=" cui-account-logout" aria-hidden="true"></span> {{ formService.LABEL_EXIT }}</a>
-            </ul> -->
           </form>
         </nav>
 
@@ -56,53 +39,8 @@
   <!-- VERIFY -->
   <div *ngIf="needVerify" class="container center-screen bg-light verify_div mobileHint">
 
-          <!-- <h5>Request verify method.</h5> -->
           <p>{{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
           <p>{{_mobile_hint}}</p>
-
-              <mat-radio-group  [(ngModel)]="verifyBy" class="mobileHint" >
-                  <!-- <mat-radio-button value="DOB" (change)="verifyByChange($event)" [disabled]="!customer.Birth_Day"  >{{ formService.label_verify_dob }}
-                      <span class="desk">-{{ formService.label_verify_dob_ENG }}</span>
-                  </mat-radio-button>
-                   -->
-                  <mat-radio-button value="OTP" (change)="verifyByChange($event)" [disabled]="this.customer.Mobile[0] + this.customer.Mobile[1] == PREFIX_MOBILE_ALLOW_SEND_SMS "  >
-                      {{ formService.label_verify_otp }}
-                      <span class="desk">-{{ formService.label_verify_otp_ENG }}</span>
-
-                    </mat-radio-button>
-                </mat-radio-group>
-
-          <!-- <div  *ngIf="!INTERNAL_USER && verifyBy=='OTP'" class=" bg-light ver-div">
-              <a  mat-flat-button  class="btn btn-outline-success my-2 my-sm-0" (click)="requestOTP()" >{{ formService.label_Request_otp }}
-                  <i class="fas fa-sms"></i>
-              </a>
-          </div> -->
-
-      <div id='div_DOB' *ngIf="verifyBy=='DOB'" class=" bg-light ver-div">
-        <form class="form-inline ">
-          <span>
-            <input class="form-control mr-sm-2" type="search"  [(ngModel)]="verifyDOB_val" placeholder={{formService.label_input_verify_dob}} name="verifyDOB_val" >
-            <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0" (click)="verifyDOB()" > {{formService.LABEL_Verify}}
-               <i class="fas fa-check"></i>
-            </a>
-            <p id='dob_format' class="desk">{{formService.label_verify_dob_Format}}</p>
-          </span>
-        </form>
-      </div>
-
-      <!-- Verify Entry OTP section -->
-      <!-- <div  id="Entry_OTP" *ngIf="verifyBy=='OTP' && showOtpEntry " class=" bg-light ver-div">
-      <form class="form-inline " style="width: 100%">
-          <span  class="center-screen">
-              <input id class="form-control mr-sm-2" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
-              <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success my-2 my-sm-0" (click)="verifyConfirmOTP()" > {{formService.LABEL_Verify}}
-                <i class="fas fa-check"></i>
-              </a>
-              <br>
-              <a (click)="requestOTP()">Resend OTP</a>
-            </span>
-          </form>
-        </div> -->
 
           <!-- <form class="form-inline " style="width: 100%"> -->
           <div *ngIf="verifyBy=='OTP' && showOtpEntry ">
@@ -116,7 +54,9 @@
                  </a>
             </div>
           </div>
-          <a class="center-screen margin_top_40" (click)="requestOTP()">Resend OTP</a>
+
+          <a class="center-screen margin_top_40" (click)="requestOTP()">Request OTP</a>
+
         </div>
           <!-- </form> -->
     </div>
@@ -124,9 +64,8 @@
   <!-- ************* STEPPER  -->
   <div class='container' *ngIf="!saveAllComplete">
   <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag " class="col" >
-  <!-- <mat-horizontal-stepper labelPosition="bottom"  #stepper *ngIf="verifyFLag" class="col" > -->
-    <!-- ***************** #1  Persional Information Step-->
 
+   <!-- ***************** #1  Persional Information Step-->
     <mat-step [stepControl]="cddFormGroup">
 
       <!--Person information-->
@@ -256,7 +195,6 @@
 
             <mat-card-actions class="stepper_action center-screen ">
 
-                <!-- <button *ngIf="!cddFormGroup.disabled" mat-flat-button   (click)="fatcaOnChange()"  class ="act_button" >Cancel Edit <i class="fas fa-pencil-alt"></i></button> -->
                 <a  mat-flat-button color="accent" (click)="fatcaOnChange()" class ="act_button"> Edit  <i class="fas fa-pencil-alt"></i></a>
 
                 <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
@@ -267,198 +205,22 @@
     </mat-step>
   <!-- ***************** #4  Suitability Step-->
     <mat-step [stepControl]="suitFormGroup"   >
-          <!--Person information-->
 
-          <form [formGroup]="suitFormGroup" >
-
-            <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
-            <div class='row '>
-                <code class='code_large'>
-                    <p>แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน</p>
-                </code>
-            </div>
-
-            <!-- <div class="stepper_action">
-                <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button [disabled]= "canDoSuit || canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
-            </div> -->
-
-
-                <!-- <div *ngIf="!canDoSuit && !canSaveSuit"  class="container center-screen "  >
-
-                    <div class='suit_result'>
-                        <span id='suit_label'>{{formService.label_RiskLevel}}</span>
-                        <span id='suit_level'><input  matInput [(ngModel)]="cust_RiskLevel"  size=1 formControlName="cust_RiskLevel" readonly="true"> </span>
-                        <span id='suit_txt'>{{ cust_RiskLevelTxt }} </span>
-                        <span id='suit_date'>{{formService.label_EvaluatedDate}}: {{ cust_RiskDate | date:'dd/MM/yyyy' }}</span>
-                    </div>
-
-                    <app-suit-result-table [riskLevel]="cust_RiskLevel"  ></app-suit-result-table>
-
-                </div> -->
-
-            </form>
-
-             <!-- Show Suit question  -->
-            <div *ngIf="canDoSuit" >
-            <form  class="form_section">
-            <ul>
-                <div *ngFor="let ques of suitQuestions" class="questions">
-
-                    <span  *ngIf="ques.id == 11" class="blue-txt">
-                        <p>คำถามข้อ 11-12 ใช้เป็นข้อมูลเพิ่มเติมเพื่อประกอบการให้คำแนะนำ</p>
-                      </span>
-
-                      <span *ngIf="ques.id == 11" class="blue-txt">
-                        <p>ใช้เฉพาะที่จะมีการลงทุนในอนุพันธ์และหุ้นกู้อนุพันธ์โดยตรงเท่านั้น</p>
-                      </span>
-
-                      <span *ngIf="ques.id == 12" class="blue-txt">
-                        <p>ใช้เฉพาะที่จะมีการลงทุนในต่างประเทศ</p>
-                      </span>
-
-                      <span id='ques'>{{ ques.id }}. {{ ques.name }} </span>
-
-                      <div *ngIf="!ques.image == ''" class="q_image">
-                        <img src="{{ ques.image }}" />
-                      </div>
-
-                  <!-- <span>{{ ques.id }}. {{ ques.name }} </span> -->
-                  <div>
-                    <ul>
-                      <div *ngFor="let choice of ques.choices">
-
-                        <div *ngIf="ques.multilchoice">
-                          <input  type="checkbox"
-                          value=" {{ choice.score }}"
-                          id="{{ choice.id }}"
-                          [(ngModel)]="choice.answer"
-                          [ngModelOptions]="{standalone: true}"
-                          />
-                          {{ choice.name }}
-                        </div>
-
-                        <div *ngIf="!ques.multilchoice">
-                          <input
-                            name="{{ ques.id }}"
-                            id="{{ ques.id }}"
-                            type="radio"
-                            value="{{ choice.score }}"
-                            [(ngModel)]="ques.answer"
-                          />
-                          {{ choice.name }}
-                        </div>
-
-                      </div>
-                    </ul>
-                  </div>
-                </div>
-              </ul>
-
-              <!-- <mat-card-actions>
-                  <button   mat-flat-button class="act_button"  color="warn"  (click)="suiteFormRESET()"  type="reset" >Reset </button>
-                  <a mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> {{formService.LABEL_CALCULATE}}</a>
-                  <a mat-flat-button color="accent" (click)="canDoSuit =false;" class ="act_button"> {{formService.LABEL_CANCEL}}</a>
-              </mat-card-actions> -->
-
-              <div class ="row" *ngIf="onSuitCalculate">
-                  <mat-spinner></mat-spinner>
-              </div>
-
-            </form>
-            </div>
-            <!-- Show Suit question  -->
-
-            <div *ngIf="!canDoSuit && canSaveSuit"  class="container center-screen suitResult form_section"  >
-                <!-- <div class="suitResult" *ngIf="canSaveSuit"> -->
-                    <!-- <div>
-                        <span id='label'>{{formService.label_RiskLevel}}</span>
-                        <span id='level'>{{ riskLevel }}</span>
-                        <span id='desc'>{{ riskLevelTxt }}</span>
-                    </div> -->
-
-                    <!-- <div class='suit_result'>
-                        <span id='suit_label'>{{formService.label_RiskLevel}}</span>
-                        <span id='suit_level'>{{ riskLevel }}</span>
-                        <span id='suit_txt'>{{ riskLevelTxt }} </span>
-                    </div> -->
-
-                    <!-- <p>{{ riskLevelDesc }}</p> -->
-
-                    <app-suit-result-table [riskLevel]="riskLevel"  ></app-suit-result-table>
-                    <!-- <app-suit-chart [riskLevel]="riskLevel" ></app-suit-chart> -->
-
-                    <!-- <a mat-flat-button color="accent" (click)="canDoSuit =false;canSaveSuit=false;suitModifyFlag=false" class ="act_button"> {{formService.LABEL_CANCEL}}</a> -->
-                    <!-- <a mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" > {{formService.LABEL_EVA_AGAIN}}</a>
-                    <button mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">OK</button> -->
-
-              </div>
-            <!-- </mat-card-content> -->
-            <mat-card-actions class="stepper_action center-screen ">
-
-                <a *ngIf="canDoSuit" mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> {{formService.LABEL_CALCULATE}}</a>
-                <!-- <a *ngIf="!canDoSuit && !canSaveSuit" (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}} -2</a> -->
-                <a *ngIf="!canDoSuit && canSaveSuit" (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a>
-
-                <!-- <a *ngIf="canSaveSuit" mat-flat-button color="accent" (click)="canDoSuit =true;canSaveSuit = false;suitModifyFlag=false" class ="act_button" >{{formService.LABEL_EVA_AGAIN}} -3</a>
-                <a *ngIf="canSaveSuit" mat-flat-button   color="primary" (click)="evaluateSuitOK()" class ="act_button">{{formService.LABEL_EVA_CONF}}-4</a> -->
-
-            <!-- <div class="stepper_action"> -->
-                &nbsp;&nbsp;&nbsp;
-
-                <button mat-flat-button *ngIf="!canDoSuit && canSaveSuit"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button *ngIf= "!canDoSuit && canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
-
-                <!-- <button mat-flat-button *ngIf="canSaveSuit"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button *ngIf= "canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button> -->
-
-            <!-- </div>  -->
-
-            </mat-card-actions>
+      <app-suit-form [survey]="survey" [suitFormGroup]="suitFormGroup" [suitQuestions]="suitQuestions"></app-suit-form>
 
     </mat-step>
 
 <!-- ***************** #4 Final  step -->
-    <!-- <mat-step [stepControl]="firstFormGroup"  > -->
     <mat-step >
             <ng-template matStepLabel>{{formService.STEPER_4}}</ng-template>
-<!--
-            <div *ngIf="resultMsg?.length <= 0" class="center-screen form_section">
 
-                <span id='finalText'>
-                    <h5>{{formService.STEPPER_FINAL_CONFIRM}}</h5>
-                    <p>{{formService.FINAL_MSG}}</p>
-                </span>
-
-                <span *ngIf='cddData.ReqModifyFlag '>
-                    <li>Personal information OR FATCA was change.</li>
-                </span>
-                <span *ngIf='addrModifyFlag'>
-                    <li>Address was chnage.</li>
-                </span>
-                <span *ngIf='suitModifyFlag'>
-                    <li>Suitability was change.</li>
-                    <p>Risk Level: {{ cust_RiskLevel }} - {{ cust_RiskLevelTxt }} </p>
-                </span>
-
-                <div>
-                    <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px"><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                    <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button>
-                </div>
-            </div> -->
             <div class = 'row center-screen2'>
                 <code>
                   <br>
-
                       <p><span class='txt_warning'>หลังจากที่ท่านกด ยืนยันข้อมูล  ท่านจะได้รับอีเมล์ ตอบรับจาก wealthservice@merchantasset.co.th เพื่อยืนยันว่าระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว </span></p>
                       <p><span class='txt_warning'>หากท่านมิได้รับอีเมล์ ดังกล่าว กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ โทร 02- 660-6696 หรือ ทางอีเมล์ wealthservice@merchantasset.co.th</span></p>
-
-                      <!-- <p><span class='txt_warning'>การกดยืนยันข้อมูลเป็นเพียงการนำส่งข้อมูลเข้าระบบ ดังนั้นเพื่อเป็นการยืนยันว่าระบบได้รับข้อมูลจากท่านเรียบร้อยแล้ว ท่านจะได้รับอีเมล์จาก  wealthservice@merchantasset.co.th  </span></p>
-                      <p><span class='txt_warning'>หากท่านมิได้รับอีเมล์ดังกล่าว กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ โทร 02- 660-6696 หรือ ทางอีเมล์ wealthservice@merchantasset.co.th </span></p> -->
-
                 </code>
             </div>
-
 
             <div  class="row center-screen ">
                 <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px"><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
@@ -466,21 +228,11 @@
                 <!-- <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button> -->
             </div>
 
-            <!-- <div *ngIf="resultMsg?.length > 0" class="center-screen form_section">
-
-                <span id='finalText'>
-                    <h5>{{formService.STEPPER_FINAL_THANK}}</h5>
-                </span>
-
-            </div> -->
     </mat-step>
 </mat-horizontal-stepper>
 </div>
 
 <div *ngIf="saveAllComplete" class="row center-screen2 ">
-  <!-- <span >
-      <h5>{{formService.STEPPER_FINAL_THANK}}</h5>
-  </span> -->
       <code >
           <br>
           <p class ='code_large'>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </p>

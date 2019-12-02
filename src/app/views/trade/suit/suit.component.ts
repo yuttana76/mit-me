@@ -58,26 +58,19 @@ export class SuitComponent implements OnInit {
   register_expanded = true;
   work_expanded = false;
   current_expanded = false;
-
   spinnerLoading = false;
-
   needVerify = false;
   verifyFLag = false;
-
   canDoSuit = true;  // Default =true
-
   canSaveSuit = false;
   canDoFATCA = false;
-
   showOtpEntry = true;
-
   addrModifyFlag = false;
-
   reg_addrModifyFlag = false;
   work_addrModifyFlag = false;
   cur_addrModifyFlag = false;
 
-  suitModifyFlag = false;
+  suitModifyFlag = true;
   // showWorkAddr = false;
   // showCurrentAddr = false;
   // showMailAddr = false;
@@ -665,8 +658,6 @@ export class SuitComponent implements OnInit {
           // console.log("Verify  complete");
         }
       );
-
-
   }
 
 
@@ -893,13 +884,13 @@ export class SuitComponent implements OnInit {
 
   public verifyConfirmOTP() {
     this.spinnerLoading = true;
-    this.suiteService.verifyConfirmOTP(this.survey.pid,this.verifyOTP_val)
+    this.suiteService.verifyConfirmOTP(this.survey.pid,this.verifyOTP_val,this.customer.Mobile)
       .finally(() => {
         this.spinnerLoading = false;
       })
-      .subscribe(
-        (data: any) => {
-          // console.log("HTTP return verifyConfirmOTP():" + JSON.stringify(data));
+      .subscribe((otpReturn: any) => {
+          //OTP ID
+          this.customer.OTP_ID=otpReturn.otp_id
 
           // Load CDD
           this.getCDD(this.survey.pid);
@@ -1615,6 +1606,7 @@ export class SuitComponent implements OnInit {
     observables.push(this.childService.delAllChildren(this.survey.pid));
 
     // Children
+    // console.log('SAVE Chile>>'+JSON.stringify(this.cddData.children));
     for (var i in this.cddData.children) {
       observables.push(this.childService.saveChild(this.survey.pid,this.survey.pid,this.cddData.children[i]));
     }
@@ -1660,6 +1652,8 @@ export class SuitComponent implements OnInit {
     if(this.cddData.MailSameAs !== 'email'){
       observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.mail_addrData));
     }
+
+    console.log('suitModifyFlag >>'+this.suitModifyFlag);
 
     if(this.suitModifyFlag){
       observables.push(this.suiteService.saveSuitabilityByPID(

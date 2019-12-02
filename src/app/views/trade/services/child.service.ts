@@ -50,7 +50,6 @@ export class ChildService {
     let _DOB;
 
 
-
     if(child.dob){
       newDate = new Date(child.dob)
       day = newDate.getDate();

@@ -14,6 +14,7 @@ import { OpenAccountComponent } from './views/trade/open-account/open-account.co
 import { SetRegistrationComponent } from './views/trade/set-registration/set-registration.component';
 import { SetRegis2Component } from './views/trade/set-regis2/set-regis2.component';
 import { SetWelcomeComponent } from './views/trade/set-welcome/set-welcome.component';
+import { SuitSurveyComponent } from './views/trade/suit-survey/suit-survey.component';
 
 export const routes: Routes = [
   {
@@ -68,10 +69,10 @@ export const routes: Routes = [
   // },
 
   {
-    path: 'suit',
-    component: SuitComponent,
+    path: 'suitSurvey',
+    component: SuitSurveyComponent,
     data: {
-      title: 'Suitability'
+      title: 'Suitability survey'
     }
   },
   {

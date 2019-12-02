@@ -142,8 +142,11 @@ exports.getOTPtokenToMail = (req, res, next) => {
 
 exports.verityOTPtoken = (req, res, next) => {
 
-    const _token = req.body.token
-    const _pid = req.body.pid
+    const _token = req.body.token;
+    const _pid = req.body.pid;
+    const otp_device_ref = req.body.mobile;
+    const otp_device = 'Mobile';
+
     logger.info(`Welcome /verityOTPtoken API. ${_token}  - pid: ${_pid}`);
 
     let delta = totp.validate({
@@ -159,20 +162,17 @@ exports.verityOTPtoken = (req, res, next) => {
       mitLog.saveMITlog(_pid,'VERIFY_OTP',logMsg,req.ip,req.originalUrl,function(){});
 
         // Save OTP tracking
-        var otpDate ={'otp_device':'Mobile','otp_device_ref':'0897765331','input_otp_code':'123456'};
-  saveOTPtracking(otpDate).then(otp_id=>{
+        var otpDate ={'otp_device': otp_device,'otp_device_ref':otp_device_ref,'input_otp_code':_token};
+        saveOTPtracking(otpDate).then(otp_id=>{
 
-    return res.status(200).json({
-      code: rsp_code,
-      msg: {'otp_id':otp_id}
-    });
+          return res.status(200).json({
+            code: rsp_code,
+            otp_id: otp_id
+          });
 
-  },err=>{
-    logger.error({'saveOTPtracking error':err});
-  });
-
-
-
+        },err=>{
+          logger.error({'saveOTPtracking error':err});
+        });
 
     }else if(delta < 0 ){
       let rsp_code = "207";  //OTP  Expired

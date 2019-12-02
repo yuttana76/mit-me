@@ -68,6 +68,7 @@ exports.delChildren = (req, res, next) => {
     .input('Cust_Code', sql.VarChar(50), custid)
     .query(queryStr, (err, result) => {
         if(err){
+          logger.error(err);
           let rsp_code = "902"; // Was error
           res.status(422).json({
             code: rsp_code,

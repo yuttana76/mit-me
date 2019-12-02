@@ -24,5 +24,6 @@ export class Customer {
   Modify_By: string;
   Modify_Date: string;
   IT_SentRepByEmail: string;
+  OTP_ID:string;
   // Issue_Date: string; // Not in db.
 }

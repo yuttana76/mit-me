@@ -390,6 +390,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
               Modify_By: custData[0].Modify_By,
               Modify_Date: custData[0].Modify_Date,
               IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
+              OTP_ID:'',
             };
             this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Group_Code);
           });
@@ -457,6 +458,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
                 Modify_By: custData[0].Modify_By,
                 Modify_Date: custData[0].Modify_Date,
                 IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
+                OTP_ID:''
               };
               this.PIDTypeList = this.getPIDTypeListByClientType(this.PIDTypeMasList, this.customer.Group_Code);
             });

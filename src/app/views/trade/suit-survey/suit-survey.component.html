@@ -1,3 +1,82 @@
-<p>
-  suit-survey works!
-</p>
+<!-- HEADER & VERIFY -->
+<mat-card *ngIf="!spinnerLoading && !(verifyFLag && correctCust)" class="divCenter">
+
+    <div class="block">
+        <div class='branner col-md-6'>
+          <img  src="assets/img/brand/MPAM-logo.png" />
+        </div>
+        <!-- <div *ngIf="customer.First_Name_T" class='branner col-md-6' >
+              <strong>{{ formService.label_Welcome }}</strong>
+              <p> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
+        </div> -->
+    </div>
+
+  <div *ngIf="!correctCust" class="divIDCust">
+  <form [formGroup]="form" #custForm="ngForm" >
+
+        <div class="contrainer">
+            <input  class="form-control mr-sm-2 margin_top_30" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
+            formControlName="pid" [(ngModel)]="survey.pid"  >
+            <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
+
+              <a   mat-flat-button   class="btn btn-outline-success col-md-12 margin_top_30"  (click)="getCustomerData()">
+                  <span>{{ formService.LABEL_NEXT }} </span>
+                      <i class="fas fa-search"></i>
+              </a>
+        </div>
+  </form>
+  </div>
+
+  <div  *ngIf="!verifyFLag && correctCust" class="divOTP">
+
+      <h3 class="margin_top_40">{{_mobile_hint}}</h3>
+
+      <!-- <form class="form-inline " style="width: 100%"> -->
+          <input class="form-control margin_top_40" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
+
+          <a  class="btn btn-outline-success margin_top_40 col-md-12" mat-flat-button   (click)="verifyConfirmOTP()" > {{formService.LABEL_Verify}}
+                <i class="fas fa-check"></i>
+          </a>
+
+          <a  class="btn btn-secondary margin_top_10 col-md-12" (click)="requestOTP()" > Request OTP
+        </a>
+          <!-- <button class="col-md-3" mat-button (click)="requestOTP()">Request OTP</button> -->
+
+      <!-- </form> -->
+</div>
+</mat-card>
+
+<!-- START HERE -->
+<mat-card *ngIf="!spinnerLoading && (verifyFLag && correctCust)" class="container" >
+      <div class='branner col-md-6'>
+        <img  src="assets/img/brand/MPAM-logo.png" />
+      </div>
+
+        <div *ngIf="customer.First_Name_T">
+            <h3>{{ formService.label_Welcome }}</h3>
+            <h4> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</h4>
+      </div>
+
+
+      <mat-horizontal-stepper [linear]="isLinear" #stepper>
+          <mat-step [stepControl]="suitFormGroup">
+              <ng-template matStepLabel>Suitability</ng-template>
+
+              <app-suit-form [survey]="survey" [suitFormGroup]="suitFormGroup" [suitQuestions]="suitQuestions"></app-suit-form>
+
+
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>Finish</ng-template>
+            <h4>Thank you.</h4>
+            <div>
+
+
+              <button mat-flat-button color="primary">Close</button>
+
+
+            </div>
+          </mat-step>
+        </mat-horizontal-stepper>
+
+</mat-card>

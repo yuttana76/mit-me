@@ -1,0 +1,55 @@
+
+/* detect Desktop & tablet */
+@media screen and (min-width: 768px) {
+  .divCenter {
+    position:fixed;
+    top: 50%;
+    left: 50%;
+    width:40em;
+    height:28em;
+    margin-top: -19em; /*set to a negative number 1/2 of your height*/
+    margin-left: -25em; /*set to a negative number 1/2 of your width*/
+    border: 1px solid #ccc;
+    background-color: #f3f3f3;
+  }
+}
+
+/* detect iPhone portrait */
+@media screen and (max-width: 320px) {
+  /* mobile styles go here */
+}
+
+
+// @media screen and (min-width: 321px) and (max-width: 768px) {
+//   /* tablet styles go here */
+
+
+// }
+
+
+.divIDCust{
+  margin-top: 10px;;
+}
+
+.divOTP{
+  margin-top: 10px;;
+}
+
+.margin_top_40{
+  margin-top: 40px;
+}
+.margin_top_30{
+  margin-top: 30px;
+}
+
+.margin_top_10{
+  margin-top: 10px;
+}
+
+.center-screen {
+  width: 100%;
+  margin-top: 10px;
+    align-items: center;
+    text-align: center;
+    display: inline-block;
+  }

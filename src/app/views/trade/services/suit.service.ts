@@ -17,7 +17,7 @@ export class SuiteService {
 
   verifyExtLink(_pid: string, _has: string): Observable<any> {
 
-    // console.log(` verifyExtLink() URL= ${environment.apiURL}`);
+    console.log(` verifyExtLink() URL= ${environment.apiURL}`);
 
     const data = {
       'pid': _pid.trim()
@@ -36,10 +36,11 @@ export class SuiteService {
     return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/getOTPtokenSMS', data);
   }
 
-  verifyConfirmOTP(_pid: string, token: string): Observable<any> {
+  verifyConfirmOTP(_pid: string, token: string,mobile:string): Observable<any> {
     const data = {
       'pid': _pid.trim(),
-      'token': token.trim()
+      'token': token.trim(),
+      'mobile': mobile
     };
     return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/verityOTPtoken', data);
   }

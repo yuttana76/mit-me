@@ -389,7 +389,12 @@ END
 
           } else {
             console.log(" Quey RS>>" + JSON.stringify(result));
-            resolve(result.recordset);
+            if(result.recordset.length>0){
+              resolve(result.recordset);
+            }else{
+              resolve(result.recordsets[1]);
+            }
+
             // resolve(result.recordsets);
             // resolve(result.recordset[0]);
 

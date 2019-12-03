@@ -20,12 +20,14 @@ export class SuitSurveyComponent implements OnInit {
   public survey: SurveyModel = new SurveyModel();
   public suitQuestions: Array<Question>;
 
+  public EXIST_Risk_Level="";
 
   form: FormGroup;
   public spinnerLoading = false;
   private token: string;
   public _mobile_hint;
   public verifyOTP_val = "";
+  public OTP_ERR_MSG="";
 
   correctCust = false;
   verifyFLag = false;
@@ -126,6 +128,10 @@ export class SuitSurveyComponent implements OnInit {
           this.customer.Birth_Day = data.USERDATA.DOB;
           this.customer.Mobile = data.USERDATA.Mobile;
 
+          // console.log("RISK >> "+data.USERDATA.Risk_Level);
+          this.EXIST_Risk_Level = data.USERDATA.Risk_Level;
+
+
           if(data.USERDATA.Mobile.length==10){
             this._mobile_hint="";
             for(let i=0;i<6;i++){
@@ -164,6 +170,7 @@ export class SuitSurveyComponent implements OnInit {
           //OTP ID
           this.customer.OTP_ID=otpReturn.otp_id
           this.verifyFLag = true;
+          this.OTP_ERR_MSG="";
 
           this.toastr.success(` ${this.customer.First_Name_T} ${this.customer.Last_Name_T }`,
             "Welcome",
@@ -183,8 +190,6 @@ export class SuitSurveyComponent implements OnInit {
         }
       );
   }
-
-
 
   public requestOTP() {
     this.spinnerLoading = true;
@@ -212,5 +217,83 @@ export class SuitSurveyComponent implements OnInit {
         }
       );
   }
+
+  public saveSuit() {
+
+    // this.cust_RiskLevel = this.riskLevel;
+    // this.cust_RiskLevelTxt = this.riskLevelTxt;
+    // this.cust_RiskTypeInvestor = this.riskLevelDesc;
+
+    // this.cust_RiskDate =  new Date();
+
+      this.suiteService
+        .saveSuitabilityByPID(
+          this.survey.pid,
+          this.survey.pid,
+          this.formService.suitSerieId,
+          this.survey.suitScore,
+          this.survey.riskLevel,
+          this.survey.riskLevelTxt,
+          this.survey.riskLevelDesc,
+          this.suitQuestions
+        )
+        .finally(() => {
+          // Execute after graceful or exceptionally termination
+          // this.canDoSuit =false;
+          this.spinnerLoading = false;
+        })
+        .subscribe(
+          (data: any) => {
+            // console.log("HTTP return  saveSuit :" + JSON.stringify(data));
+
+            if (data.code === "000") {
+
+              this.toastr.success(data.msg, this.formService.SUIT_SAVE_COMPLETE, {
+                timeOut: 5000,
+                closeButton: true,
+                positionClass: "toast-top-center"
+              });
+
+              // Mail to customer
+
+              this.suiteService.surveySuitThankCust(this.survey.pid)
+              .finally(() => {
+                // Execute after graceful or exceptionally termination
+              })
+              .subscribe((data: any) => {
+                  console.log("Send maill finalSaveAll:" + JSON.stringify(data));
+
+                },
+                error => () => {
+                  console.log("Send maill finalSaveAll was error", error);
+                },
+                () => {
+                  // console.log("saveFATCA  complete");
+                }
+              );
+
+            } else {
+              this.toastr.warning(
+                data.msg,
+                this.formService.SUIT_SAVE_INCOMPLETE,
+                {
+                  timeOut: 5000,
+                  closeButton: true,
+                  positionClass: "toast-top-center"
+                }
+              );
+            }
+
+          },
+          error => () => {
+            console.log("saveSuit Was error", error);
+          },
+          () => {
+            console.log("saveSuit  complete");
+          }
+        );
+    }
+
+
 
 }

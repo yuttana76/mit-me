@@ -70,14 +70,15 @@
   </form>
   </div>
 
-  <app-suit-result-table *ngIf="!canDoSuit && canSaveSuit" [riskLevel]="riskLevel"  ></app-suit-result-table>
+  <app-suit-result-table *ngIf="!canDoSuit && canSaveSuit" [riskLevel]="survey.riskLevel"  ></app-suit-result-table>
 
   <mat-card-actions  class="stepper_action center-screen ">
 
     <a *ngIf="canDoSuit" mat-flat-button color="primary" (click)="calSuit()" class ="act_button"> {{formService.LABEL_CALCULATE}}</a>
     <a *ngIf="!canDoSuit && canSaveSuit" (click)="canDoSuit =true;" class="btn btn-outline-success my-2 my-sm-0" ><i class="fas fa-pencil-alt"></i> {{formService.label_NewSurvey}}</a>
 
-  <mat-divider></mat-divider>
+  <!-- <mat-divider></mat-divider> -->
+
     <button mat-flat-button *ngIf="!canDoSuit && canSaveSuit"  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
     <button mat-flat-button *ngIf= "!canDoSuit && canSaveSuit"  matStepperNext color="primary" (click)=checkSuit_FormInvalid(suitFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
   </mat-card-actions>

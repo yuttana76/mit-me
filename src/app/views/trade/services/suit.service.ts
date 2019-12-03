@@ -8,7 +8,7 @@ import { Question } from '../model/question.model';
 const BACKEND_URL = environment.apiURL + '/suit';
 const BACKEND_URL_FATCA = environment.apiURL + '/fatca';
 const BACKEND_URL_OTP = environment.apiURL + '/otp';
-const BACKEND_URL_MAIL = environment.apiURL + '/mail';
+const BACKEND_URL_SURVEY = environment.apiURL + '/survey';
 
 @Injectable({ providedIn: 'root' })
 export class SuiteService {
@@ -91,7 +91,14 @@ export class SuiteService {
     const data = {
       'custCode': _pid.trim()
     };
-    return this.http.post<{ message: string, result: string }>(BACKEND_URL_MAIL + '/surveyThankCust', data);
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_SURVEY + '/surveyThankCust', data);
+  }
+
+  surveySuitThankCust(_pid: string): Observable<any> {
+    const data = {
+      'custCode': _pid.trim()
+    };
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_SURVEY + '/surveySuitThankCust', data);
   }
 
   // ************************

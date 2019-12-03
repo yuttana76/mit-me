@@ -1,4 +1,6 @@
 
+A {text-decoration: none;}
+
 /* detect Desktop & tablet */
 @media screen and (min-width: 768px) {
   .divCenter {
@@ -6,17 +8,31 @@
     top: 50%;
     left: 50%;
     width:40em;
-    height:28em;
+    // height:28em;
     margin-top: -19em; /*set to a negative number 1/2 of your height*/
     margin-left: -25em; /*set to a negative number 1/2 of your width*/
     border: 1px solid #ccc;
     background-color: #f3f3f3;
   }
+
+
+
+  .custInfo{
+    position:absolute;
+    top:1em;
+    right:10em;
+   }
+
+
 }
 
 /* detect iPhone portrait */
 @media screen and (max-width: 320px) {
   /* mobile styles go here */
+
+  .custInfo{
+   text-align:center;
+   }
 }
 
 
@@ -26,13 +42,16 @@
 
 // }
 
-
 .divIDCust{
   margin-top: 10px;;
 }
 
 .divOTP{
   margin-top: 10px;;
+}
+
+.divOTP h3{
+  text-align: center;
 }
 
 .margin_top_40{
@@ -53,3 +72,45 @@
     text-align: center;
     display: inline-block;
   }
+
+
+.tncbox, .quizwrap {
+    background-color: white;
+}
+
+.p-4 {
+    padding: 1.5rem 1.5rem !important;
+}
+
+.surveyInfo {
+  position:absolute;
+  right: 50;
+}
+
+.confDiv{
+  margin-top: 80px;
+  margin-bottom: 80px;
+
+  text-align: center;
+
+}
+
+.confDiv h3{
+  margin-bottom: 50px;
+}
+
+.finishDiv{
+  margin-top: 80px;
+  margin-bottom: 80px;
+
+  text-align: center;
+}
+
+.compDiv{
+  margin-top: 50px;
+}
+
+.borderIDentry{
+  background-color: floralwhite;
+  border-radius: 10px 10px 10px 10px;
+}

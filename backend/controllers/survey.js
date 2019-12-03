@@ -48,6 +48,206 @@ exports.surveyByMailToken = (req, res, next) =>{
 
     logger.info('_data>>' + JSON.stringify(_data));
 
+    data = _data[0];
+
+    try {
+      logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
+      logger.info(`API /surveyByMailToken - ${logMsg}`);
+
+      senMailFromFile(req,res,_PID,data.Email,_url);
+
+    } catch (error) {
+
+      console.log(error);
+      res.status(400).json({ msg: error });
+
+    }
+
+  },(err)=>{
+    if(err) {
+      console.log(' Error on send mail >>>' + err)
+      logger.error( ''+err );
+      rsp_code = 902;
+      return res.status(422).json({
+        code: rsp_code,
+        msg: prop.getRespMsg(rsp_code),
+      });
+    }
+
+  });
+
+}
+
+exports.surveySuitByMailToken = (req, res, next) =>{
+
+  const _PID = req.body.custCode ||'41121225'
+
+  var logMsg ;
+
+  let _target = req.body.target || 'test';
+  let _url='';
+
+  if (_target =='prod'){
+    _url = 'http://mit.wealth-merchant.com:3000/suitSurvey?has='
+  }else{
+    _url = 'http://localhost:4200/suitSurvey?has='
+  }
+
+  getCustomerInfo(_PID).then( _data =>{
+
+    logger.info('_data>>' + JSON.stringify(_data));
+
+    data = _data[0];
+
+    try {
+      logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
+      logger.info(`API /surveySuit - ${logMsg}`);
+
+      // senMailFromFile(req,res,_PID,data.Email,_url);
+      sendSuitMail(req,res,_PID,data.Email,_url);
+
+    } catch (error) {
+
+      console.log(error);
+      res.status(400).json({ msg: error });
+
+    }
+
+  },(err)=>{
+    if(err) {
+      console.log(' Error on send mail >>>' + err)
+      logger.error( ''+err );
+      rsp_code = 902;
+      return res.status(422).json({
+        code: rsp_code,
+        msg: prop.getRespMsg(rsp_code),
+      });
+    }
+
+  });
+
+}
+
+
+
+// **********************************
+/*
+Send mail  by encypt use bcrypt
+*/
+// const FILE_SEND_MAIL = __dirname+'..\downloadFiles\mail\mail.txt';
+
+exports.surveyBulkFile = (req, res, next) =>{
+
+  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
+
+  let _target = req.body.target || 'test';
+  let _url='';
+
+
+  // create instance of readline
+// each instance is associated with single input stream
+// console.log('DIR>' + __dirname);
+
+var today = new Date();
+var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+var time = today.getHours() + "-" + today.getMinutes()
+// var time = today.getHours() + "-" + today.getMinutes() + ":" + today.getSeconds();
+var dateTime = date+'-'+time;
+
+const readPath = __dirname + '/readFiles/SURVEY/';
+const readFile = 'sendMail.txt';
+
+const bakPath = __dirname + '/readFiles/SURVEYBackup/';
+const bakFile =  dateTime+'-sendMail.txt';
+
+  if (_target =='prod'){
+    _url = 'http://mit.wealth-merchant.com:3000/suit?has='
+  }else{
+    _url = 'http://localhost:4200/suit?has='
+  }
+
+let checkFile = readline.createInterface({
+  input: fs.createReadStream(readPath+readFile)
+});
+
+
+
+// Check data is correct
+let line_no = 0;
+let numData = 0;
+
+checkFile.on('line', function(line) {
+  line_no++;
+
+  //Get number of data in line #1
+  if (line_no == 1){
+    numData = line;
+  }
+});
+
+// end
+checkFile.on('close', function(line) {
+
+    if(((line_no-1) == numData) && (numData != 0) ){
+
+      line_no = 0;
+      let rFile = readline.createInterface({
+        input: fs.createReadStream(readPath+readFile)
+      });
+
+      rFile.on('line', function(line) {
+          line_no++;
+          console.log('line_no >>:' + line_no);
+          if(line_no >1){
+            var array = line.split("|");
+            console.log('ARRAY >> ID:' + array[0] + ' ;Email:' + array[2] + ' ;URL='+ _url);
+
+            senMailFromFile(req,res,array[0],array[2],_url);
+          }
+      });
+
+      // end
+      rFile.on('close', function(line) {
+        console.log('Total lines : ' + line_no);
+
+        //Move file to Backup
+        fs.rename(readPath+readFile, bakPath+bakFile,  (err) => {
+          if (err) throw err;
+          console.log('Rename/Move complete!');
+        });
+
+      });
+
+
+    }else{
+      console.log('Data incorrect ; data lines =' + (line_no-1) + ' ;Header =' + numData );
+      res.status(501).json({ message: 'Data incorrect' });
+    }
+
+ });
+
+}
+
+
+exports.surveyByMailToken = (req, res, next) =>{
+
+  const _PID = req.body.custCode ||'41121225'
+
+  var logMsg ;
+
+  let _target = req.body.target || 'test';
+  let _url='';
+
+  if (_target =='prod'){
+    _url = 'http://mit.wealth-merchant.com:3000/suit?has='
+  }else{
+    _url = 'http://localhost:4200/suit?has='
+  }
+
+  getCustomerInfo(_PID).then( _data =>{
+
+    logger.info('_data>>' + JSON.stringify(_data));
+
     logger.info('_data[1] >>'+ JSON.stringify(_data[0]) );
     data = _data[0];
 
@@ -78,6 +278,263 @@ exports.surveyByMailToken = (req, res, next) =>{
   });
 
 }
+
+
+exports.sendMailThankCustSuit = (req, res, next) =>{
+
+  const _PID = req.body.custCode;
+
+  let _from = mailConfig.mail_form;
+  let _to ;
+  let _toRM = mailConfig.mailRM;
+
+  let _subject = 'ยืนยันแบบประเมิน Suitability Test ของลูกค้า บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
+  let _subjectRM = 'แจ้งผลการสำรวจ แบบประเมิน Suitability Test ของลูกค้า บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด '
+  let _msg = '';
+  let _msgRM = '';
+  const _compInfo = mailConfig.mailCompInfo_TH;
+  var logMsg ;
+
+  getCustomerInfo(_PID).then( (_data) =>{
+
+    data = _data[0];
+
+    try {
+      logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
+      logger.info(`API /sendMailToRelated - ${logMsg}`);
+
+      // Incase has Email
+        if(data.Email){
+
+          _to = data.Email;
+
+          _msgTH = `
+          <html>
+          <head>
+          <style>
+
+
+          .blog-content-outer {
+            background: whitesmoke;
+            border: 1px solid #e1e1e1;
+            border-radius: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 0 15px;
+            font-size: 16px;
+          }
+
+          .logo-area{
+            margin-top:20px;
+            margin-left:60px;
+            margin-bottom:20px;
+          }
+
+          div.a {
+            text-indent: 50px;
+        }
+
+          </style>
+          </head>
+          <body>
+          <br>
+
+          <div class='blog-content-outer'>
+
+          <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+          <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+          </div>
+          <p>เรียน   ท่านลูกค้า</p>
+          <div class="a">
+          ระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว บริษัทขอขอบพระคุณที่ท่านสละเวลาในการ ทำแบบประเมิน Suitability Test หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
+          </div>
+            <p>
+            ขอแสดงความนับถือ
+          </p>
+          <p>
+            บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
+          <p>
+          </div>
+
+          <p>
+          <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+          <p>
+          </body>
+          </html>
+          `;
+
+          _msgTH +=_compInfo
+
+
+          // message to customer
+          let mailOptions = {
+            from: _from,
+            to: _to,
+            subject: _subject,
+            html: _msgTH
+          };
+
+          // message to RM.
+          _subjectRM += ` (${data.fullName})`;
+          _msgRM = `
+          ${data.fullName}  was finsih survey on ${utility.getDateTime()}
+          <br>
+          <br>Code: ${_PID}
+          <br>Name: ${data.fullName}
+          <br>
+          `;
+
+          let mailOptions_RM = {
+            from: _from,
+            to: _toRM,
+            subject: _subjectRM,
+            html: _msgRM
+          };
+
+        /**
+         * SEND mail to suctomer
+         */
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              return logger.error(`API /sendMailToRelated - ${error} `);
+                // return console.log(error);
+            }
+              /*
+              Save MIT_LOG
+              */
+             mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+            logger.info(`API /sendMailToRelated -  Send mail successful!`);
+            res.status(200).json({ message: 'Send mail successful!' });
+          });
+
+           /**
+         * SEND mail RM.
+         */
+        transporter.sendMail(mailOptions_RM, (error, info) => {
+          if (error) {
+            return logger.error(`API /sendMailToRelated - ${error} `);
+              // return console.log(error);
+          }
+            /*
+            Save MIT_LOG
+            */
+          //  mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+          logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
+          res.status(200).json({ message: 'Send mail successful!' });
+        });
+          // Incase No Email
+        }else{
+          logger.error(`API /sendMailToRelated -   NO E-mail`);
+        }
+    } catch (error) {
+      res.status(400).json({ message: 'sendMailToRelated' });
+    }
+  },(err)=>{
+    if(err) {
+      console.log(' Error on send mail >>>' + err)
+      logger.error( ''+err );
+      rsp_code = 902;
+      return res.status(422).json({
+        code: rsp_code,
+        msg: prop.getRespMsg(rsp_code),
+      });
+    }
+  });
+}
+
+
+exports.surveySuitBulkFile = (req, res, next) =>{
+
+  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
+
+  let _target = req.body.target || 'test';
+  let _url='';
+
+
+  // create instance of readline
+// each instance is associated with single input stream
+// console.log('DIR>' + __dirname);
+
+var today = new Date();
+var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+var time = today.getHours() + "-" + today.getMinutes()
+// var time = today.getHours() + "-" + today.getMinutes() + ":" + today.getSeconds();
+var dateTime = date+'-'+time;
+
+const readPath = __dirname + '/readFiles/SURVEY/';
+const readFile = 'suitSurvey.txt';
+
+const bakPath = __dirname + '/readFiles/SURVEYBackup/';
+const bakFile =  dateTime+'-suitSurvey.txt';
+
+  if (_target =='prod'){
+    _url = 'http://mit.wealth-merchant.com:3000/suitSurvey?has='
+  }else{
+    _url = 'http://localhost:4200/suitSurvey?has='
+  }
+
+let checkFile = readline.createInterface({
+  input: fs.createReadStream(readPath+readFile)
+});
+
+
+
+// Check data is correct
+let line_no = 0;
+let numData = 0;
+
+checkFile.on('line', function(line) {
+  line_no++;
+
+  //Get number of data in line #1
+  if (line_no == 1){
+    numData = line;
+  }
+});
+
+// end
+checkFile.on('close', function(line) {
+
+    if(((line_no-1) == numData) && (numData != 0) ){
+
+      line_no = 0;
+      let rFile = readline.createInterface({
+        input: fs.createReadStream(readPath+readFile)
+      });
+
+      rFile.on('line', function(line) {
+          line_no++;
+          // console.log('line_no >>:' + line_no);
+          if(line_no >1){
+            var array = line.split("|");
+            // console.log('ARRAY >> ID:' + array[0] + ' ;Email:' + array[2] + ' ;URL='+ _url);
+            sendSuitMail(req,res,array[0],array[2],_url);
+
+          }
+      });
+
+      // end
+      rFile.on('close', function(line) {
+        console.log('Total lines : ' + line_no);
+
+        //Move file to Backup
+        fs.rename(readPath+readFile, bakPath+bakFile,  (err) => {
+          if (err) throw err;
+          console.log('Rename/Move complete!');
+        });
+
+      });
+
+
+    }else{
+      console.log('Data incorrect ; data lines =' + (line_no-1) + ' ;Header =' + numData );
+      res.status(501).json({ message: 'Data incorrect' });
+    }
+
+ });
+
+}
+
 
 // **********************************
 /*
@@ -185,10 +642,8 @@ Send mail  to Whom related with this customer
 */
 exports.sendMailThankCust = (req, res, next) =>{
 
-  // let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
-  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
-
   const _PID = req.body.custCode;
+
   let _from = mailConfig.mail_form;
   let _to ;
   let _toRM = mailConfig.mailRM;
@@ -200,7 +655,9 @@ exports.sendMailThankCust = (req, res, next) =>{
   const _compInfo = mailConfig.mailCompInfo_TH;
   var logMsg ;
 
-  getCustomerInfo(_PID).then( (data) =>{
+  getCustomerInfo(_PID).then( (_data) =>{
+
+    data = _data[0];
 
     try {
       logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
@@ -343,6 +800,8 @@ exports.sendMailThankCust = (req, res, next) =>{
   });
 }
 
+
+
 // **********************************
 function getCustomerInfo(Cust_Code) {
 
@@ -409,7 +868,6 @@ END
     });
   });
 }
-
 
 
 function senMailFromFile(req,res,_PID,_Email,_url){
@@ -539,21 +997,158 @@ function senMailFromFile(req,res,_PID,_Email,_url){
             } catch (error) {
               console.log(error);
             }
-
           logger.info(`API /surveyByMailToken -  Send mail successful!`);
           res.status(200).json({ message: 'Send mail successful!' });
-
         });
-
         // Incase No Email
       }else{
         logger.error(`API /surveyByMailToken - NO E-mail`);
-
       }
   } catch (error) {
     res.status(400).json({ message: 'surveyByMailToken' });
-
   }
+}
 
+function sendSuitMail(req,res,_PID,_Email,_url){
+
+  const _compInfo = mailConfig.mailCompInfo_TH;
+  let _from = mailConfig.mail_form;
+  let _to ;
+  let _subject = 'แบบประเมิน Suitability Test ของลูกค้า บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
+  let _msgTH = '';
+  var logMsg ;
+
+
+  try {
+    logger.info(`sendSuitMail() _PID=${_PID}- _Email=${_Email}`);
+
+    // Incase has Email
+      if(_Email){
+        //Generate token
+        const token = jwt.sign(
+          {USERID: _PID},
+          JWT_SECRET_STRING,
+          { expiresIn: JWT_EXTERNAL_EXPIRES},
+        );
+
+        _to = _Email;
+
+        // Thai message
+        _msgTH = `
+        <html>
+        <head>
+        <style>
+
+
+        .blog-content-outer {
+          background: whitesmoke;
+          border: 1px solid #e1e1e1;
+          border-radius: 5px;
+          margin-top: 40px;
+          margin-bottom: 20px;
+          padding: 0 15px;
+          font-size: 16px;
+        }
+
+        .logo-area{
+          margin-top:20px;
+          margin-left:60px;
+          margin-bottom:20px;
+        }
+
+		.tab { margin-left: 40px; }
+        .tab2 { margin-left: 80px; }
+
+        div.a {
+  			text-indent: 50px;
+    }
+
+    @media screen and (min-width: 768px) {
+      .blog-content-outer{
+        width:1024px;
+        }
+    }
+
+
+        </style>
+        </head>
+        <body>
+        <br>
+
+        <div class='blog-content-outer'>
+
+        <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+        <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+        </div>
+
+
+      <div class="a">
+        <p >เรียน ท่านลูกค้า </p>
+        <p >เรื่อง ประเมิน Suitability Test</p>
+        <p >
+        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด  ใคร่ขอความกรุณาจากท่านในการจัดทำแบบประเมิน Suitability เพื่อประเมินระดับความเสี่ยงของผู้ลงทุน (Risk profile) ตาม
+        หลักเกณฑ์ที่ ก.ล.ต. กำหนดไว้ ผ่านลิงก์ด้านล่างนี้
+        </p>
+        <p>
+        ${_url}${token}
+        </p>
+        <p>
+        บริษัทขอขอบพระคุณที่ท่านสละเวลาในการทำแบบประเมิน Suitability Test หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
+        </p>
+        <p>
+          ขอแสดงความนับถือ
+        </p>
+        <p>
+          บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
+        <p>
+    </div>
+
+        </body>
+        </html>
+        <br>
+        <p>
+        <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+        <p>
+
+        `;
+
+        _msgTH +=_compInfo
+
+        // setup email data with unicode symbols
+        let mailOptions = {
+          from: _from,
+          to: _to,
+          subject: _subject,
+          html: _msgTH,
+        };
+
+      /**
+       * SEND mail to suctomer
+       */
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              return console.log(error);
+          }
+
+            /*
+            Save MIT_LOG
+            */
+            try {
+              mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SUIT_SURVEY',logMsg,req.ip,req.originalUrl,function(){
+                    // console.log("Save MIT log");
+              })
+            } catch (error) {
+              console.log(error);
+            }
+          logger.info(`API /sendSuitMail -  Send mail successful!`);
+          res.status(200).json({ message: 'Send mail successful!' });
+        });
+        // Incase No Email
+      }else{
+        logger.error(`API /sendSuitMail - NO E-mail`);
+      }
+  } catch (error) {
+    res.status(400).json({ message: 'sendSuitMail' });
+  }
 }
 

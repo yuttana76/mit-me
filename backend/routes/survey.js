@@ -10,7 +10,12 @@ const router = express.Router();
 
 router.post("/surveyByMailToken",selfAuth,surveyController.surveyByMailToken);
 router.post("/surveyBulkFile",selfAuth,surveyController.surveyBulkFile);
-router.post("/surveyThankCust",selfAuth,surveyController.sendMailThankCust);
+router.post("/surveyThankCust",surveyController.sendMailThankCust);
 
+
+// Survey Suitability only
+router.post("/surveySuit",selfAuth,surveyController.surveySuitByMailToken);
+router.post("/surveySuitFile",selfAuth,surveyController.surveySuitBulkFile);
+router.post("/surveySuitThankCust",surveyController.sendMailThankCustSuit);
 
 module.exports = router;

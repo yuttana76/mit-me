@@ -46,7 +46,7 @@ https://www.npmjs.com/package/ngx-toastr
         //   positionClass: 'toast-top-center'
         // });
 
-        // this.dialog.open(CustomErrorComponent, {data: {message: errorMessage}});
+        this.dialog.open(CustomErrorComponent, {data: {message: errorMessage}});
         console.log(JSON.stringify(errorMessage));
 
         return throwError(error);

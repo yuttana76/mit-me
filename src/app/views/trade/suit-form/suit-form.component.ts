@@ -21,10 +21,10 @@ export class SuitFormComponent implements OnInit {
   canSaveSuit = false;
   onSuitCalculate = false;
 
-  suitScore = 0;
-  riskLevel = 0;
-  riskLevelTxt = "";
-  riskLevelDesc = "";
+  // suitScore = 0;
+  // riskLevel = 0;
+  // riskLevelTxt = "";
+  // riskLevelDesc = "";
 
   cust_RiskScore=0;
   cust_RiskLevel=0;
@@ -45,7 +45,7 @@ export class SuitFormComponent implements OnInit {
   calSuit() {
 
     // console.log('ON calSuit !');
-    this.suitScore = 0;
+    this.survey.suitScore = 0;
 
     // if (this.form.invalid) {
     //   return false;
@@ -82,7 +82,7 @@ export class SuitFormComponent implements OnInit {
 
           return null;
         }
-        this.suitScore += _score;
+        this.survey.suitScore += _score;
       } else if (this.suitQuestions[i].calculate) {
         // For single choose
         // console.log(`* ${this.suitQuestions[i].id} : ${this.suitQuestions[i].answer}`);
@@ -96,14 +96,14 @@ export class SuitFormComponent implements OnInit {
 
           return null;
         } else {
-          this.suitScore += Number(this.suitQuestions[i].answer);
+          this.survey.suitScore += Number(this.suitQuestions[i].answer);
         }
       }
     }
 
-     console.log(`*** Suit score : ${this.suitScore}`);
+     console.log(`*** Suit score : ${this.survey.suitScore}`);
 
-    if (this.suitScore > 0) {
+    if (this.survey.suitScore > 0) {
       this.riskEvaluate();
 
     }
@@ -121,7 +121,7 @@ export class SuitFormComponent implements OnInit {
       .suitEvaluate(
         this.survey.pid,
         this.formService.suitSerieId,
-        this.suitScore
+        this.survey.suitScore
       )
       .finally(() => {
         // Execute after graceful or exceptionally termination
@@ -135,9 +135,9 @@ export class SuitFormComponent implements OnInit {
           );
 
           if (data) {
-            this.riskLevel = data.DATA.RiskLevel;
-            this.riskLevelTxt = data.DATA.RiskLevelTxt;
-            this.riskLevelDesc = data.DATA.Type_Investor;
+            this.survey.riskLevel = data.DATA.RiskLevel;
+            this.survey.riskLevelTxt = data.DATA.RiskLevelTxt;
+            this.survey.riskLevelDesc = data.DATA.Type_Investor;
 
             this.canSaveSuit = true;
             this.canDoSuit = false;
@@ -164,9 +164,9 @@ export class SuitFormComponent implements OnInit {
     } else {
 
       // Add dition on 02/05
-      this.cust_RiskLevel = this.riskLevel;
-      this.cust_RiskLevelTxt = this.riskLevelTxt;
-      this.cust_RiskTypeInvestor = this.riskLevelDesc;
+      this.cust_RiskLevel = this.survey.riskLevel;
+      this.cust_RiskLevelTxt = this.survey.riskLevelTxt;
+      this.cust_RiskTypeInvestor = this.survey.riskLevelDesc;
       this.cust_RiskDate =  new Date();
 
       this.canDoSuit = false;

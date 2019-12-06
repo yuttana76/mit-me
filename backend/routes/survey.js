@@ -16,6 +16,10 @@ router.post("/surveyThankCust",surveyController.sendMailThankCust);
 // Survey Suitability only
 router.post("/surveySuit",selfAuth,surveyController.surveySuitByMailToken);
 router.post("/surveySuitFile",selfAuth,surveyController.surveySuitBulkFile);
+
 router.post("/surveySuitThankCust",surveyController.sendMailThankCustSuit);
+
+//Development
+router.post("/requestPDF",surveyController.requestPDF);
 
 module.exports = router;

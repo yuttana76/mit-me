@@ -15,6 +15,8 @@ var logger = require("../config/winston");
 var mitLog = require('./mitLog');
 const smsConfig = require('../config/sms-conf');
 
+const suitPDFController = require('../controllers/exmPDF/suitPDF');
+
 const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
 const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
 const JWT_EXPIRES = dbConfig.JWT_EXPIRES;
@@ -103,7 +105,6 @@ exports.surveySuitByMailToken = (req, res, next) =>{
       logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
       logger.info(`API /surveySuit - ${logMsg}`);
 
-      // senMailFromFile(req,res,_PID,data.Email,_url);
       sendSuitMail(req,res,_PID,data.Email,_url);
 
     } catch (error) {
@@ -276,7 +277,6 @@ exports.surveyByMailToken = (req, res, next) =>{
     }
 
   });
-
 }
 
 
@@ -295,13 +295,14 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
   const _compInfo = mailConfig.mailCompInfo_TH;
   var logMsg ;
 
+
   getCustomerInfo(_PID).then( (_data) =>{
 
     data = _data[0];
 
     try {
       logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
-      logger.info(`API /sendMailToRelated - ${logMsg}`);
+      logger.info(`API /surveySuitThankCust - ${logMsg}`);
 
       // Incase has Email
         if(data.Email){
@@ -311,8 +312,8 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
           _msgTH = `
           <html>
           <head>
-          <style>
 
+          <style>
 
           .blog-content-outer {
             background: whitesmoke;
@@ -330,11 +331,25 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
             margin-bottom:20px;
           }
 
-          div.a {
-            text-indent: 50px;
-        }
+          .tab { margin-left: 40px; }
+          .tab2 { margin-left: 80px; }
 
+          div.a {
+          left:50px;
+          }
+
+          .txt-Indent{
+            text-indent: 50px;
+          }
+
+          @media screen and (min-width: 768px) {
+            .blog-content-outer{
+              width:1024px;
+              }
+          }
           </style>
+
+
           </head>
           <body>
           <br>
@@ -344,21 +359,25 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
           <div class="logo-area col-xs-12 col-sm-12 col-md-3">
           <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
           </div>
-          <p>เรียน   ท่านลูกค้า</p>
-          <div class="a">
+
+          <p class="txt-Indent">เรียน   ท่านลูกค้า</p>
+          <p class="txt-Indent">
           ระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว บริษัทขอขอบพระคุณที่ท่านสละเวลาในการ ทำแบบประเมิน Suitability Test หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
-          </div>
-            <p>
+          </p>
+          <br>
+          <p class="txt-Indent">
             ขอแสดงความนับถือ
           </p>
-          <p>
+          <p class="txt-Indent">
             บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
           <p>
+          <br>
           </div>
 
           <p>
           <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
           <p>
+
           </body>
           </html>
           `;
@@ -366,13 +385,31 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
           _msgTH +=_compInfo
 
 
+  // Get Suit data
+  getCustSuitData(data.Cust_Code).then( (_data) =>{
+
+    //Create Suit PDF
+    suitPDFController.suitCreatePDF(_data[0]).then(result=>{
+
+      const attachSuitFilepath = __dirname + '/readFiles/suit/'+result.filePDF;
+      const attachFileName = 'แบบประเมินSuittability.pdf';
+
+
           // message to customer
           let mailOptions = {
             from: _from,
             to: _to,
             subject: _subject,
-            html: _msgTH
+            html: _msgTH,
+            attachments: [
+              {
+                filename: attachFileName,
+                path: attachSuitFilepath,
+                contentType: 'application/pdf'
+              },
+            ]
           };
+
 
           // message to RM.
           _subjectRM += ` (${data.fullName})`;
@@ -422,6 +459,16 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
           logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
           res.status(200).json({ message: 'Send mail successful!' });
         });
+
+
+
+    },err=>{
+      res.status(401).json(err);
+    });
+
+  });
+
+
           // Incase No Email
         }else{
           logger.error(`API /sendMailToRelated -   NO E-mail`);
@@ -800,7 +847,30 @@ exports.sendMailThankCust = (req, res, next) =>{
   });
 }
 
+exports.requestPDF = (req, res, next) =>{
 
+  logger.info("Welcome API /requestPDF");
+  const custCode = req.body.custCode;
+
+  getCustSuitData(custCode).then( (_data) =>{
+
+    suitPDFController.suitCreatePDF(_data[0]).then(result=>{
+
+      res.status(200).json({
+        msg:'successful',
+        path:result.pdfPath,
+        filePDF:result.filePDF
+      });
+
+    },err=>{
+      res.status(401).json(err);
+    });
+
+  });
+
+
+
+}
 
 // **********************************
 function getCustomerInfo(Cust_Code) {
@@ -847,7 +917,7 @@ END
             reject(err);
 
           } else {
-            console.log(" Quey RS>>" + JSON.stringify(result));
+            // console.log(" Quey RS>>" + JSON.stringify(result));
             if(result.recordset.length>0){
               resolve(result.recordset);
             }else{
@@ -869,6 +939,61 @@ END
   });
 }
 
+
+function getCustSuitData(Cust_Code) {
+
+  logger.info("Welcome getCustSuitData() " + Cust_Code);
+
+  var queryStr = `
+  BEGIN
+
+  SELECT TOP 1 a.CustCode, B.First_Name_T + ' ' +B.Last_Name_T AS FullName,a.RiskLevel,a.TotalScore, convert(varchar, a.CreateDate, 103) as SuitDate
+  ,a.ANS_JSON as Ans
+  from MIT_CUSTOMER_SUIT a,Account_Info B
+  where a.CustCode = b.Cust_Code
+  and a.CustCode= @Cust_Code
+  AND a.Status ='A'
+  ORDER BY a.CreateDate DESC
+
+  END
+    `;
+
+  const sql = require("mssql");
+
+  return new Promise(function(resolve, reject) {
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("Cust_Code", sql.VarChar(50), Cust_Code)
+        .query(queryStr, (err, result) => {
+          if (err) {
+
+            // console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" Quey RS>>" + JSON.stringify(result));
+            if(result.recordset.length>0){
+              resolve(result.recordset);
+            }else{
+              resolve(result.recordsets[1]);
+            }
+
+            // resolve(result.recordsets);
+            // resolve(result.recordset[0]);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+
+      console.log("ERROR>>" + err);
+      reject(err);
+
+    });
+  });
+}
 
 function senMailFromFile(req,res,_PID,_Email,_url){
 
@@ -1037,8 +1162,8 @@ function sendSuitMail(req,res,_PID,_Email,_url){
         _msgTH = `
         <html>
         <head>
-        <style>
 
+        <style>
 
         .blog-content-outer {
           background: whitesmoke;
@@ -1056,21 +1181,24 @@ function sendSuitMail(req,res,_PID,_Email,_url){
           margin-bottom:20px;
         }
 
-		.tab { margin-left: 40px; }
+		    .tab { margin-left: 40px; }
         .tab2 { margin-left: 80px; }
 
         div.a {
-  			text-indent: 50px;
-    }
-
-    @media screen and (min-width: 768px) {
-      .blog-content-outer{
-        width:1024px;
+  			left:50px;
         }
-    }
 
+        .txt-Indent{
+          text-indent: 50px;
+        }
 
+        @media screen and (min-width: 768px) {
+          .blog-content-outer{
+            width:1024px;
+            }
+        }
         </style>
+
         </head>
         <body>
         <br>
@@ -1083,22 +1211,28 @@ function sendSuitMail(req,res,_PID,_Email,_url){
 
 
       <div class="a">
-        <p >เรียน ท่านลูกค้า </p>
-        <p >เรื่อง ประเมิน Suitability Test</p>
-        <p >
+        <p class="txt-Indent">เรียน ท่านลูกค้า </p>
+        <p class="txt-Indent">เรื่อง ประเมิน Suitability Test</p>
+
+        <p class="txt-Indent">
         บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด  ใคร่ขอความกรุณาจากท่านในการจัดทำแบบประเมิน Suitability เพื่อประเมินระดับความเสี่ยงของผู้ลงทุน (Risk profile) ตาม
         หลักเกณฑ์ที่ ก.ล.ต. กำหนดไว้ ผ่านลิงก์ด้านล่างนี้
         </p>
-        <p>
+
+        <br>
+        <p class="txt-Indent">
         ${_url}${token}
         </p>
-        <p>
+        <br>
+
+        <p class="txt-Indent">
         บริษัทขอขอบพระคุณที่ท่านสละเวลาในการทำแบบประเมิน Suitability Test หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
         </p>
-        <p>
+        <br>
+        <p class="txt-Indent">
           ขอแสดงความนับถือ
         </p>
-        <p>
+        <p class="txt-Indent">
           บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
         <p>
     </div>

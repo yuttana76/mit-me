@@ -52,7 +52,6 @@
           <button [disabled]="verifyOTP_val==''" mat-flat-button color="primary" (click)="verifyConfirmOTP()" class="col-md-12 margin_top_30" >
               {{formService.LABEL_Verify}}</button>
 
-          <!-- <button mat-button class="margin_top_10 col-md-12" (click)="requestOTP()" > Request OTP </button> -->
           <button mat-flat-button color="accent" class="margin_top_10 col-md-12" (click)="requestOTP()" > Request OTP </button>
   </div>
 </mat-card>
@@ -72,15 +71,13 @@
 
       <mat-horizontal-stepper [linear]="isLinear" #stepper>
           <mat-step [stepControl]="suitFormGroup">
-              <ng-template matStepLabel>Suitability</ng-template>
-
+              <ng-template matStepLabel>กรอกแบบ Suitability</ng-template>
               <app-suit-form [survey]="survey" [suitFormGroup]="suitFormGroup" [suitQuestions]="suitQuestions"></app-suit-form>
-
           </mat-step>
 
 
           <mat-step >
-              <ng-template matStepLabel>Confirmation</ng-template>
+              <ng-template matStepLabel>ยืนยัน</ng-template>
               <div class="confDiv">
                   <h3>หลังจากที่ท่านกด ยืนยันข้อมูล  ท่านจะได้รับอีเมล์ ตอบรับจาก wealthservice@merchantasset.co.th เพื่อยืนยันว่าระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว</h3>
                   <h5>หากท่านมิได้รับอีเมล์ ดังกล่าว กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ โทร 02- 660-6696 หรือ ทางอีเมล์ wealthservice@merchantasset.co.th</h5>
@@ -95,7 +92,7 @@
           </mat-step>
 
           <mat-step>
-            <ng-template matStepLabel>Finish</ng-template>
+            <ng-template matStepLabel>เสร็จสิ้น</ng-template>
             <div class="finishDiv">
                 <h3>บริษัทขอขอบพระคุณท่านที่สละเวลาในการทำแบบประเมิน Suitability Test  </h3>
                 <h4>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ </h4>

@@ -223,6 +223,7 @@ exports.suitSave = (req, res, next) => {
   var riskLevelTxt = req.body.riskLevelTxt;
   var type_Investor = req.body.type_Investor;
   var ans = req.body.ans ;
+  var otp_id = req.body.otp_id;
 
   var logMsg = `API /suitSave - ${req.originalUrl} - ${req.ip} - pid=${pid}  ;userId=${userId};  `
 
@@ -247,9 +248,9 @@ exports.suitSave = (req, res, next) => {
 
   -- 1. Insert MIT_CUSTOMER_SUIT
       INSERT INTO MIT_CUSTOMER_SUIT
-    ([AccSuitId],CustCode,SuitSerieId,Status,TotalScore,RiskLevel,RiskLevelTxt,Type_Investor,ANS_JSON,CreateBy,CreateDate)
+    ([AccSuitId],CustCode,SuitSerieId,Status,TotalScore,RiskLevel,RiskLevelTxt,Type_Investor,ANS_JSON,CreateBy,CreateDate,OTP_ID)
       VALUES
-      (@AccSuitId,@CustCode,@SuitSerieId,'A',@TotalScore,@RiskLevel,@RiskLevelTxt,@Type_Investor,@ANS_JSON,@CreateBy,GETDATE())
+      (@AccSuitId,@CustCode,@SuitSerieId,'A',@TotalScore,@RiskLevel,@RiskLevelTxt,@Type_Investor,@ANS_JSON,@CreateBy,GETDATE(),@OTP_ID)
 
   COMMIT TRANSACTION @TranName;
 
@@ -267,6 +268,7 @@ exports.suitSave = (req, res, next) => {
     .input("Type_Investor", sql.NVarChar(1000), type_Investor)
     .input("ANS_JSON", sql.NText, JSON.stringify(ans))
     .input("CreateBy",sql.VarChar(100), userId)
+    .input("OTP_ID",sql.VarChar(50), otp_id)
 
     .query(queryStr, (err, result) => {
         // ... error checks

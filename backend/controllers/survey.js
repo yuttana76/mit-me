@@ -1197,6 +1197,30 @@ function sendSuitMail(req,res,_PID,_Email,_url){
             width:1024px;
             }
         }
+
+        .button {
+          background-color: gold;
+          border: none;
+          color: white;
+          padding: 20px 34px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 20px;
+          margin: 4px 2px;
+          cursor: pointer;
+          }
+
+
+          a:link a:visited a:hover, a:active, a:focus {
+            color: white;
+          }
+
+          .center_div{
+            text-align: center;
+          }
+
+
         </style>
 
         </head>
@@ -1220,9 +1244,11 @@ function sendSuitMail(req,res,_PID,_Email,_url){
         </p>
 
         <br>
-        <p class="txt-Indent">
-        ${_url}${token}
-        </p>
+        <br>
+        <div class='center_div'>
+          <a href="${_url}${token}" class="button">กรอกแบบประเมิน Suitability Test Click</a>
+        </div>
+        <br>
         <br>
 
         <p class="txt-Indent">

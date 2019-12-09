@@ -167,6 +167,9 @@ export class SuitSurveyComponent implements OnInit {
         this.spinnerLoading = false;
       })
       .subscribe((otpReturn: any) => {
+
+        console.log("otpReturn >>" +  JSON.stringify(otpReturn))
+
           //OTP ID
           this.customer.OTP_ID=otpReturn.otp_id
           this.verifyFLag = true;
@@ -235,7 +238,8 @@ export class SuitSurveyComponent implements OnInit {
           this.survey.riskLevel,
           this.survey.riskLevelTxt,
           this.survey.riskLevelDesc,
-          this.suitQuestions
+          this.suitQuestions,
+          this.customer.OTP_ID
         )
         .finally(() => {
           // Execute after graceful or exceptionally termination

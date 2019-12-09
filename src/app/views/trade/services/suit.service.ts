@@ -57,7 +57,7 @@ export class SuiteService {
   }
 
   saveSuitabilityByPID(_userId: string,_pid: string,_suitSerieId: string,
-    _suitScore: number, _riskLevel: number, _riskLevelTxt: string, _riskLevelDesc: string, _ans: Array<Question>): Observable<any> {
+    _suitScore: number, _riskLevel: number, _riskLevelTxt: string, _riskLevelDesc: string, _ans: Array<Question>,_OTP_ID:string): Observable<any> {
     // console.log(`Service saveSuitability()  ${_pid} `);
     const data = {
       'userId': _userId,
@@ -67,7 +67,8 @@ export class SuiteService {
       'riskLevel': _riskLevel,
       'riskLevelTxt': _riskLevelTxt,
       'type_Investor': _riskLevelDesc,
-      'ans': _ans
+      'ans': _ans,
+      'otp_id':_OTP_ID
     };
     return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/suitSave', data);
   }

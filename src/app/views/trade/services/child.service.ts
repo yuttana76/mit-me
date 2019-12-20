@@ -41,7 +41,9 @@ export class ChildService {
     );
   }
 
-  saveChild(ActionBy:string,custCode: string, child: PersonModel) {
+  saveChild(ActionBy:string,custCode: string, child: PersonModel,opt_id: string) {
+
+    console.log('Welcome saveChild() service.');
 
     let newDate;
     let day;
@@ -81,6 +83,7 @@ export class ChildService {
       ,Last_Name_T: child.lastName
       ,Birth_Day:_DOB
       ,CreateBy:ActionBy
+      ,opt_id: opt_id,
     };
 
     // console.log( "saveChild()" + JSON.stringify(data));

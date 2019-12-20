@@ -190,6 +190,7 @@ exports.saveCDDInfo = (req, res, next) => {
   var SpouseIDNotExp = req.body.SpouseIDNotExp;
   var cardNotExp = req.body.cardNotExp;
   var NumChildren = req.body.NumChildren;
+  var otp_id = req.body.otp_id;
 
 
   var logMsg = `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${Cust_Code}`;
@@ -245,6 +246,7 @@ exports.saveCDDInfo = (req, res, next) => {
    ,cardNotExp = @cardNotExp
    ,SpouseIDNotExp = @SpouseIDNotExp
    ,NumChildren = @NumChildren
+   ,OTP_ID = @otp_id
    WHERE Cust_Code = @Cust_Code;
 
 
@@ -258,7 +260,7 @@ exports.saveCDDInfo = (req, res, next) => {
       ,[SpouseIDExpDate]
       ,[MoneyLaundaring]
       ,[PoliticalRelate] ,[RejectFinancial],[cardNotExp],[SpouseIDNotExp] ,[TaxDeduction]
-      ,NumChildren)
+      ,NumChildren,OTP_ID)
     VALUES(@Cust_Code,@ID_CARD ,@First_Name_T ,@Last_Name_T ,@Birth_Day,@nationality ,@Mobile ,@Email
         ,@Occupation_Code,@Occupation_Oth ,@Position_Code,@Position_Oth ,@BusinessType_Code,@BusinessType_Oth ,@Income_Code ,@Income_Source_Code,@Income_Source_Oth ,@WorkPlace,@ReqModifyFlag,@ActionBy ,GETDATE()
         ,@identificationCardType,@passportCountry,@title,@titleOther,@First_Name_E,@Last_Name_E,@cardExpiryDate,@MailSameAs
@@ -266,7 +268,7 @@ exports.saveCDDInfo = (req, res, next) => {
         ,@SpouseIDExpDate
         ,@MoneyLaundaring
         ,@PoliticalRelate ,@RejectFinancial,@cardNotExp,@SpouseIDNotExp ,@TaxDeduction
-        ,@NumChildren)
+        ,@NumChildren,@otp_id)
 
     END
 
@@ -324,7 +326,7 @@ exports.saveCDDInfo = (req, res, next) => {
     .input('SpouseIDNotExp', sql.VarChar(1), SpouseIDNotExp)
     .input('TaxDeduction', sql.VarChar(1), TaxDeduction)
     .input('NumChildren', sql.Int, NumChildren)
-
+    .input('otp_id', sql.VarChar(50), otp_id)
 
     .query(queryStr, (err, result) => {
 
@@ -501,9 +503,9 @@ exports.saveCDDAddr = (req, res, next) => {
   var Zip_Code = req.body.Zip_Code
   var Tel = req.body.Tel
   var Fax = req.body.Fax
-
   var SameAs = req.body.SameAs
   var ReqModifyFlag = req.body.ReqModifyFlag
+  var opt_id = req.body.opt_id
 
   var logMsg = `POST API /saveCDDAddr - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${Addr_Seq}`;
   logger.info( logMsg);
@@ -516,7 +518,7 @@ BEGIN
   UPDATE MIT_CUSTOMER_ADDR SET
   [Addr_No] =@Addr_No ,[Moo] =@Moo ,[Place]=@Place ,[Floor]=@Floor,[Soi]=@Soi ,[Road]=@Road ,[Tambon_Id]=@Tambon_Id ,[Amphur_Id]=@Amphur_Id ,[Province_Id]=@Province_Id ,
   [Country_Id]=@Country_Id ,Country_oth=@Country_oth ,[Zip_Code]=@Zip_Code ,[Tel]=@Tel ,[Fax] =@Fax ,[UpdateBy]=@ActionBy ,[UpdateDate]=GETDATE()
-  ,SameAs=@SameAs,ReqModifyFlag=@ReqModifyFlag
+  ,SameAs=@SameAs,ReqModifyFlag=@ReqModifyFlag,OTP_ID = @otp_id
   WHERE
   Cust_Code = @Cust_Code
   AND Addr_Seq =@Addr_Seq
@@ -526,10 +528,10 @@ BEGIN
 
       INSERT INTO MIT_CUSTOMER_ADDR
       ([Cust_Code] ,[Addr_Seq] ,[Addr_No] ,[Moo] ,[Place] ,[Floor],[Soi] ,[Road] ,[Tambon_Id] ,[Amphur_Id] ,[Province_Id] ,[Country_Id] ,Country_oth,[Zip_Code] ,[Tel] ,[Fax] ,[CreateBy] ,[CreateDate]
-        ,SameAs,ReqModifyFlag)
+        ,SameAs,ReqModifyFlag,OTP_ID)
       VALUES
       (@Cust_Code,@Addr_Seq,@Addr_No ,@Moo,@Place ,@Floor ,@Soi ,@Road ,@Tambon_Id ,@Amphur_Id ,@Province_Id ,@Country_Id ,@Country_oth,@Zip_Code ,@Tel ,@Fax ,@ActionBy ,GETDATE()
-      ,@SameAs,@ReqModifyFlag)
+      ,@SameAs,@ReqModifyFlag,@otp_id)
 
     END
 
@@ -582,6 +584,7 @@ END
     .input('SameAs', sql.VarChar(2), SameAs)
     .input('ReqModifyFlag', sql.VarChar(2), ReqModifyFlag)
     .input('ActionBy', sql.VarChar(10), actionBy)
+    .input('otp_id', sql.VarChar(50), otp_id)
     .query(queryStr, (err, result) => {
         if(err){
           logger.error( '' + err );

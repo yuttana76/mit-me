@@ -14,9 +14,20 @@
 }
 .q_image{
   img {
-    width: 30%;
+    width: 80%;
+    height: auto;
   }
 }
+
+@media screen and (min-width: 768px) {
+  .q_image{
+    img {
+      width: 30%;
+      height: auto;
+    }
+  }
+}
+
 .stepper_action {
   margin-bottom: 15px;
   text-align: right;

@@ -149,6 +149,7 @@ exports.CreateChildren = (req, res, next) => {
   var Last_Name_E = req.body.Last_Name_E;
   var Birth_Day = req.body.Birth_Day || '';
   var CreateBy = req.body.CreateBy;
+  var opt_id = req.body.opt_id
 
   logger.info( `API /CreateChildren - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${cardExpiryDate} - ${Birth_Day}`);
 
@@ -158,7 +159,7 @@ exports.CreateChildren = (req, res, next) => {
       UPDATE MIT_CUSTOMER_CHILDREN
       SET  ChildIDType=@ChildIDType, ChildPassportCountry=@ChildPassportCountry, ChildCardNumber=@ChildCardNumber, cardExpiryDate=@cardExpiryDate, cardNotExt=@cardNotExt
       , title=@title, titleOther=@titleOther, First_Name_T=@First_Name_T, Last_Name_T=@Last_Name_T, First_Name_E=@First_Name_E, Last_Name_E=@Last_Name_E, Birth_Day=@Birth_Day
-      , UpdateBy=@CreateBy, UpdateDate=GETDATE()
+      , UpdateBy=@CreateBy, UpdateDate=GETDATE(),OTP_ID = @otp_id
       WHERE ChildCardNumber = @ChildCardNumber;
 
     if @@rowcount = 0
@@ -167,11 +168,11 @@ exports.CreateChildren = (req, res, next) => {
       INSERT INTO MIT_CUSTOMER_CHILDREN
       (Cust_Code, ChildIDType, ChildPassportCountry, ChildCardNumber, cardExpiryDate
       ,cardNotExt, title, titleOther, First_Name_T, Last_Name_T,First_Name_E, Last_Name_E
-      ,Birth_Day, CreateBy, CreateDate)
+      ,Birth_Day, CreateBy, CreateDate,OTP_ID)
       VALUES
       (@Cust_Code, @ChildIDType, @ChildPassportCountry, @ChildCardNumber, @cardExpiryDate
       ,@cardNotExt, @title, @titleOther, @First_Name_T, @Last_Name_T,@First_Name_E, @Last_Name_E
-      ,@Birth_Day, @CreateBy, GETDATE())
+      ,@Birth_Day, @CreateBy, GETDATE(),@otp_id)
 
     END
 
@@ -195,6 +196,7 @@ exports.CreateChildren = (req, res, next) => {
     .input('Last_Name_E', sql.VarChar(200), Last_Name_E)
     .input('Birth_Day', sql.VarChar(20), Birth_Day)
     .input('CreateBy', sql.VarChar(50), CreateBy)
+    .input('otp_id', sql.VarChar(50), otp_id)
     .query(queryStr, (err, result) => {
 
       console.log("ERROR CreateChildren()"+err);
@@ -222,7 +224,6 @@ exports.CreateChildren = (req, res, next) => {
 
 
 exports.UpdateChildren = (req, res, next) => {
-
   // var fncName = 'UpdateChildren';
   var ChildCardNumber = req.params.id;
 

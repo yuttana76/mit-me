@@ -238,7 +238,9 @@
               </div>
               <tabset >
                 <tab heading= "บุตร Child {{i+1}}" id="tab{{i}}" *ngFor="let obj of cddData.children;let i = index">
-                    <i  id="btn_remove_child" class="fas fa-2x fa-trash-alt" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i>
+                    <!-- <i  id="btn_remove_child" class="fas fa-2x fa-trash-alt" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i> -->
+                    <i  id="btn_remove_child" class="far fa-2x fa-times-circle" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i>
+
                     <app-personal-info #Child [personModel]="obj" [adult]="false"  ></app-personal-info>
                 </tab>
               </tabset>

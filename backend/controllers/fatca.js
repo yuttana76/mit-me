@@ -74,14 +74,12 @@ exports.getCustAM = (req, res, next) => {
 
 exports.saveFATCA = (req, res, next) => {
 
-
-
-
   var fncName = 'saveFATCA';
   let rsp_code;
   var userId = req.body.userId;
   var pid = req.body.pid;
   var ans = req.body.ans ;
+  var opt_id = req.body.opt_id ;
 
   var logMsg = `POST API /saveFATCA - ${req.originalUrl} - ${req.ip} - ${pid}`;
   logger.info( logMsg);
@@ -94,13 +92,13 @@ exports.saveFATCA = (req, res, next) => {
   --SELECT @TranName = 'MyTransaction';
   --BEGIN TRANSACTION @TranName;
 
-  update MIT_CUSTOMER_FATCA set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE()
+  update MIT_CUSTOMER_FATCA set FATCA_FLAG='A',FATCA_DATA=@FATCA_DATA,FATCA_BY=@FATCA_BY,FATCA_DATE=GETDATE(),OTP_ID = @otp_id
   where CustCode = @CustCode
 
   if @@rowcount = 0
   begin
-     insert into MIT_CUSTOMER_FATCA(CustCode,FATCA_FLAG,FATCA_DATA,FATCA_BY,FATCA_DATE)
-     values (@CustCode,'A',@FATCA_DATA,@FATCA_BY,GETDATE()) ;
+     insert into MIT_CUSTOMER_FATCA(CustCode,FATCA_FLAG,FATCA_DATA,FATCA_BY,FATCA_DATE,OTP_ID)
+     values (@CustCode,'A',@FATCA_DATA,@FATCA_BY,GETDATE(),@otp_id) ;
   end
 
   --COMMIT TRANSACTION @TranName;
@@ -114,6 +112,7 @@ exports.saveFATCA = (req, res, next) => {
     .input("CustCode", sql.VarChar(50), pid)
     .input("FATCA_DATA", sql.NText, JSON.stringify(ans))
     .input("FATCA_BY",sql.VarChar(100), userId)
+    .input('otp_id', sql.VarChar(50), otp_id)
 
     .query(queryStr, (err, result) => {
         // ... error checks

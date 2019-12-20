@@ -100,6 +100,8 @@ export class SuitFormService {
 
     LABEL_EXIT = 'ออกจากระบบ Logout';
     LABEL_Verify = 'ยืนยัน OTP';
+    LABEL_REQ_OTP = 'ส่ง OTP';
+
     LABEL_BACK = 'กลับ Back';
     LABEL_NEXT = 'ต่อไป Next';
     LABEL_SAVE = 'บันทึก Save';

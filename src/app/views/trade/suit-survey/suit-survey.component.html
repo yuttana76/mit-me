@@ -5,18 +5,15 @@
         <div class='branner col-md-6'>
           <img  src="assets/img/brand/MPAM-logo.png" />
         </div>
-        <!-- <div *ngIf="customer.First_Name_T" class='branner col-md-6' >
-              <strong>{{ formService.label_Welcome }}</strong>
-              <p> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
-        </div> -->
     </div>
 
 <!-- Input ID -->
   <div *ngIf="!correctCust" class="divIDCust">
   <form [formGroup]="form" #custForm="ngForm" >
 
-        <div class="contrainer">
-                <div class="tncbox p-4 borderIDentry" id="term">
+        <div class="contrainer ">
+          <h3>เข้าสู่ระบบ แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน Suitability Assessment</h3>
+                <!-- <div class="tncbox p-4 borderIDentry" id="term">
                     <h2 class="heading color_orange mb-2">เงื่อนไขการใช้โปรแกรมนี้</h2>
                     <ol>
                         <li class="mb-2">
@@ -26,8 +23,7 @@
                             xxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         </li>
                     </ol>
-
-                </div>
+                </div> -->
 
             <input  class="form-control mr-sm-2 margin_top_30" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
             formControlName="pid" [(ngModel)]="survey.pid"  >

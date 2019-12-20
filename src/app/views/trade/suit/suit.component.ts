@@ -1288,7 +1288,8 @@ export class SuitComponent implements OnInit {
           this.riskLevel,
           this.riskLevelTxt,
           this.riskLevelDesc,
-          this.suitQuestions
+          this.suitQuestions,
+          this.customer.OTP_ID
         )
         .finally(() => {
           // Execute after graceful or exceptionally termination
@@ -1509,7 +1510,7 @@ export class SuitComponent implements OnInit {
       this.work_addrData.ReqModifyFlag = this.addrModifyFlag;
       this.cur_addrData.ReqModifyFlag = this.addrModifyFlag;
 
-      this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData)
+      this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData,this.customer.OTP_ID)
       .subscribe((data: any ) => {
        console.log('Successful', JSON.stringify(data));
 
@@ -1518,7 +1519,7 @@ export class SuitComponent implements OnInit {
      }, () => {
         console.log('Finish Addr register #1');
     // **************************
-        this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData)
+        this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData,this.customer.OTP_ID)
         .subscribe((data: any ) => {
          console.log('Successful', JSON.stringify(data));
 
@@ -1527,7 +1528,7 @@ export class SuitComponent implements OnInit {
        }, () => {
           console.log('Finish Addr register #2');
           // **************************
-                this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData)
+                this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData,this.customer.OTP_ID)
                 .subscribe((data: any ) => {
                 console.log('Successful', JSON.stringify(data));
                 if (data.code === "000") {
@@ -1601,14 +1602,14 @@ export class SuitComponent implements OnInit {
   // this.cddData.incomeSource = incomeSourvceVal;
 
     // CDD
-    observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData));
-    observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions));
+    observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData,this.customer.OTP_ID));
+    observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions,this.customer.OTP_ID));
     observables.push(this.childService.delAllChildren(this.survey.pid));
 
     // Children
-    // console.log('SAVE Chile>>'+JSON.stringify(this.cddData.children));
+    console.log('SAVE Chile>>'+JSON.stringify(this.cddData.children));
     for (var i in this.cddData.children) {
-      observables.push(this.childService.saveChild(this.survey.pid,this.survey.pid,this.cddData.children[i]));
+      observables.push(this.childService.saveChild(this.survey.pid,this.survey.pid,this.cddData.children[i],this.customer.OTP_ID));
     }
 
     // Check Work Address selected
@@ -1645,12 +1646,12 @@ export class SuitComponent implements OnInit {
       this.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
 
     // Address
-    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData));
-    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData));
-    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData));
+    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData,this.customer.OTP_ID));
+    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData,this.customer.OTP_ID));
+    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData,this.customer.OTP_ID));
 
     if(this.cddData.MailSameAs !== 'email'){
-      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.mail_addrData));
+      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.mail_addrData,this.customer.OTP_ID));
     }
 
     console.log('suitModifyFlag >>'+this.suitModifyFlag);
@@ -1663,7 +1664,8 @@ export class SuitComponent implements OnInit {
         this.riskLevel,
         this.riskLevelTxt,
         this.riskLevelDesc,
-        this.suitQuestions
+        this.suitQuestions,
+        this.customer.OTP_ID
         )
       );
     }

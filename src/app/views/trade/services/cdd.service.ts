@@ -75,7 +75,7 @@ export class CddService {
     }
 
 
-    saveCustCDDInfo(ActionBy:string,custCode: string, cdd: CDDModel) {
+    saveCustCDDInfo(ActionBy:string,custCode: string, cdd: CDDModel,otp_id:string) {
 
     let newDate = new Date(cdd.dob)
     let day = newDate.getDate();
@@ -158,6 +158,7 @@ export class CddService {
       TaxDeduction: cdd.taxDeduction,
       cardNotExp: cdd.cardNotExp,
       NumChildren: cdd.numChildren,
+      otp_id:otp_id,
       };
 
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddInfo', data);
@@ -212,7 +213,7 @@ export class CddService {
   }
 
 
-  saveCustCDDAddr(ActionBy: string, custCode: string, _addr: AddrCustModel) {
+  saveCustCDDAddr(ActionBy: string, custCode: string, _addr: AddrCustModel,opt_id: string) {
 
     let _reqModifyFlag ;
     if (_addr.ReqModifyFlag){
@@ -241,6 +242,7 @@ export class CddService {
       Fax: _addr.Fax,
       SameAs: _addr.SameAs,
       ReqModifyFlag: _reqModifyFlag,
+      opt_id: opt_id,
       };
     return this.http.post<{ message: string, data: any }>(BACKEND_URL + '/cddAddr', data);
   }

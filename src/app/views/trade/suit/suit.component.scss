@@ -117,7 +117,8 @@ mat-form-field {
 }
 
 .mat-flat-button{
-  margin: auto;
+  // margin: auto;
+  margin-top: 10px;
 }
 
 .suitResult {
@@ -197,18 +198,6 @@ margin-top: 10px;
     // display: inline-block;
   }
 
-// .center-screen {
-//   width: 100%;
-//   margin-top: 10px;
-//     align-items: center;
-//     text-align: center;
-//     display: inline-block;
-//   }
-
-// .center-screen #finalText {
-//   height: 200px;
-//   margin-top: 10%;
-// }
 
 #mat-horizontal-stepper {
   margin-top: 15px;
@@ -301,6 +290,31 @@ margin-top: 10px;
       visibility:visible;
       }
     }
+
+    @media screen and (min-width: 768px) {
+      .divCenter {
+        position:fixed;
+        top: 50%;
+        left: 50%;
+        width:40em;
+        // height:28em;
+        margin-top: -19em; /*set to a negative number 1/2 of your height*/
+        margin-left: -25em; /*set to a negative number 1/2 of your width*/
+        border: 1px solid #ccc;
+        background-color: #f3f3f3;
+      }
+
+
+    .contrainer{
+      text-align: center;
+    }
+      .custInfo{
+        position:absolute;
+        top:1em;
+        right:10em;
+       }
+    }
+
 // *************TEST *******************
 std-bb {
   margin-bottom: 20px;
@@ -398,9 +412,30 @@ code p {
   width: 300px;
   display: inline-block;
 }
+
+.divIDCust{
+  margin-top: 10px;;
+}
+
+.divOTP{
+  margin-top: 10px;;
+}
+
+.divOTP h3{
+  text-align: center;
+}
 .margin_top_40 {
   margin-top: 40px;
 }
+
+.margin_top_30{
+  margin-top: 30px;
+}
+
+.margin_top_10{
+  margin-top: 10px;
+}
+
 .choose_verify{
   margin-top: 40px;
 }
@@ -409,4 +444,6 @@ code p {
   padding: 50px;
 }
 
-
+code {
+  color: darkslateblue;
+}

@@ -2,7 +2,7 @@
 
 <mat-card *ngIf="!spinnerLoading" class="divCenter" >
 
-  <div class="container" *ngIf="!verifyFLag " >
+  <div class="container" >
       <!-- <h5>Merchnat partner survey</h5> -->
       <div class="block">
           <div class='branner col-md-6'>
@@ -18,39 +18,64 @@
           <form [formGroup]="form" #custForm="ngForm" >
             <div class="contrainer ">
 
-              <span *ngIf="!needVerify" >
-                <code>
-                  <h3>เข้าสู่ระบบ ยืนยันข้อมูล และทดสอบ แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน (Suitability Assessment)</h3>
-                </code>
+            <span *ngIf="!needVerify" >
+              <h3>เข้าสู่ระบบ ยืนยันข้อมูล และทดสอบ แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน (Suitability Assessment)</h3>
+              <input  class="form-control mr-sm-2 margin_top_30" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
+              formControlName="pid" [(ngModel)]="survey.pid"  >
+              <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
 
-                <input  class="form-control mr-sm-2 margin_top_30" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
-                formControlName="pid" [(ngModel)]="survey.pid"  >
-                <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
+                <button [disabled]="form.get('pid').invalid" mat-flat-button color="primary" (click)="getCustomerData()" class="col-md-12 margin_top_30" >
+                  {{ formService.LABEL_NEXT }} <i class="fas fa-search"></i> </button>
 
-                  <button [disabled]="form.get('pid').invalid" mat-flat-button color="primary" (click)="getCustomerData()" class="col-md-12 margin_top_30" >
-                    {{ formService.LABEL_NEXT }} <i class="fas fa-search"></i> </button>
+                  </span>
+                <!-- <div class="form-group">
+                    <input class="form-control mr-sm-2" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
+                    formControlName="pid" [(ngModel)]="survey.pid"  >
+                    <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
+                  </div>
               </span>
-            </div>
+                For desk
+                <div *ngIf="!INTERNAL_USER &&  !needVerify" class="form-group">
+                    <a  mat-flat-button   class="btn btn-outline-success "  (click)="getCustomerData()">
+                        <span>{{ formService.LABEL_NEXT }} </span>
+                           <i class="fas fa-search"></i> </a>
+                </div> -->
+              </div>
           </form>
         </nav>
 
 
-        <!-- VERIFY -->
-          <div  *ngIf="needVerify" class="divOTP">
-                <h3 class="margin_top_40">{{_mobile_hint}}</h3>
-                <input class="form-control margin_top_40" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
+  <!-- VERIFY -->
+  <!-- <div *ngIf="needVerify" class="container center-screen bg-light verify_div mobileHint"> -->
+    <div  *ngIf="needVerify" class="divOTP">
+    <!-- <div  *ngIf="needVerify" class="divCenter"> -->
+          <!-- <p>{{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
+           -->
+          <h3 class="margin_top_40">{{_mobile_hint}}</h3>
 
-                <button [disabled]="verifyOTP_val==''" mat-flat-button color="primary" (click)="verifyConfirmOTP()" class="col-md-12 margin_top_30" >
-                    {{formService.LABEL_Verify}}</button>
+          <input class="form-control margin_top_40" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
 
-                <button mat-flat-button color="accent" class="margin_top_10 col-md-12" (click)="requestOTP()" > {{formService.LABEL_REQ_OTP}} </button>
+          <button [disabled]="verifyOTP_val==''" mat-flat-button color="primary" (click)="verifyConfirmOTP()" class="col-md-12 margin_top_30" >
+              {{formService.LABEL_Verify}}</button>
 
+          <button mat-flat-button color="accent" class="margin_top_10 col-md-12" (click)="requestOTP()" > {{formService.LABEL_REQ_OTP}} </button>
+
+          <!-- <div *ngIf="verifyBy=='OTP' && showOtpEntry ">
+          <div  class="Entry_OTP">
+            <div  >
+              <input id class="form-control" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
+            </div>
+            <div>
+                <a *ngIf="!INTERNAL_USER" mat-flat-button   class="btn btn-outline-success" (click)="verifyConfirmOTP()" > {{formService.LABEL_Verify}}
+                    <i class="fas fa-check"></i>
+                 </a>
+            </div>
           </div>
+          <a class="center-screen margin_top_40" (click)="requestOTP()">Request OTP</a>
+        </div> -->
 
     </div>
-  </mat-card>
 
-  <mat-card *ngIf="verifyFLag " >
   <!-- ************* STEPPER  -->
   <div class='container' *ngIf="!saveAllComplete">
   <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag " class="col" >
@@ -65,8 +90,8 @@
           <app-cust-cdd [custCode]="survey.pid" [cddFormGroup]="cddFormGroup" [cddData]="cddData"></app-cust-cdd>
 
           <mat-card-actions class="stepper_action center-screen ">
-              <!-- <a  mat-flat-button color="accent" (click)="cDDmodifOnChange()" class ="act_button col-md-12"> Edit <i class="fas fa-pencil-alt"></i></a> -->
-              <button mat-flat-button  matStepperNext color="primary"  (click)=checkCDD_FormInvalid(cddFormGroup) class="col-sm-12 col-lg-3" >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+              <a  mat-flat-button color="accent" (click)="cDDmodifOnChange()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a>
+              <button mat-flat-button  matStepperNext color="primary"  (click)=checkCDD_FormInvalid(cddFormGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
           </mat-card-actions>
         </form>
 
@@ -160,12 +185,10 @@
             <app-cust-addr  *ngIf="this.cddData.MailSameAs == '9' "  [addrData]="mail_addrData" [custCode]="survey.pid"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
           </div>
 
-
-
             <!-- ******** ACTION BAR ************* -->
                 <mat-card-actions class="stepper_action center-screen ">
-                    <button mat-flat-button  matStepperPrevious color="accent" class="col-sm-12 col-lg-3"><i class="fas fa-chevron-left "></i> {{formService.LABEL_BACK}}</button>
-                    <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) class="col-sm-12 col-lg-3" >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+                    <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                    <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
                 </mat-card-actions>
     </mat-step>
 
@@ -187,72 +210,59 @@
 
             <mat-card-actions class="stepper_action center-screen ">
 
-                <!-- <a  mat-flat-button color="accent" (click)="fatcaOnChange()" class ="act_button col-sm-4"> Edit  <i class="fas fa-pencil-alt"></i></a> -->
+                <a  mat-flat-button color="accent" (click)="fatcaOnChange()" class ="act_button"> Edit  <i class="fas fa-pencil-alt"></i></a>
 
-                <button mat-flat-button  matStepperPrevious color="accent" class="col-sm-12 col-lg-3" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-                <button mat-flat-button  matStepperNext color="primary" (click)=fatch_FormInvalid(FATCAGroup) class="col-sm-12 col-lg-3" > {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+                <button mat-flat-button  matStepperPrevious color="accent" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button  matStepperNext color="primary" (click)=fatch_FormInvalid(FATCAGroup) > {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
             </mat-card-actions>
 
           </form>
     </mat-step>
   <!-- ***************** #4  Suitability Step-->
     <mat-step [stepControl]="suitFormGroup"   >
-      <ng-template matStepLabel>{{formService.STEPER_3}}</ng-template>
+
       <app-suit-form [survey]="survey" [suitFormGroup]="suitFormGroup" [suitQuestions]="suitQuestions"></app-suit-form>
+
     </mat-step>
 
-<!-- ***************** #5 Final  step -->
+<!-- ***************** #4 Final  step -->
     <mat-step >
-      <ng-template matStepLabel>{{formService.STEPER_4}}</ng-template>
+            <ng-template matStepLabel>{{formService.STEPER_4}}</ng-template>
 
-      <div class = 'row center-screen2'>
-          <code>
-            <br>
-                <!-- <p><span class='txt_warning'>หลังจากที่ท่านกด ยืนยันข้อมูล  ท่านจะได้รับอีเมล์ ตอบรับจาก wealthservice@merchantasset.co.th เพื่อยืนยันว่าระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว </span></p>
-                <p><span class='txt_warning'>หากท่านมิได้รับอีเมล์ ดังกล่าว กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ โทร 02- 660-6696 หรือ ทางอีเมล์ wealthservice@merchantasset.co.th</span></p> -->
-                <h3>หลังจากที่ท่านกด ยืนยันข้อมูล  ท่านจะได้รับอีเมล์ ตอบรับจาก wealthservice@merchantasset.co.th เพื่อยืนยันว่าระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว </h3>
-                <br>
-                <h3>หากท่านมิได้รับอีเมล์ ดังกล่าว กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ โทร 02- 660-6689 หรือ ทางอีเมล์ wealthservice@merchantasset.co.th</h3>
-          </code>
-      </div>
+            <div class = 'row center-screen2'>
+                <code>
+                  <br>
+                      <p><span class='txt_warning'>หลังจากที่ท่านกด ยืนยันข้อมูล  ท่านจะได้รับอีเมล์ ตอบรับจาก wealthservice@merchantasset.co.th เพื่อยืนยันว่าระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว </span></p>
+                      <p><span class='txt_warning'>หากท่านมิได้รับอีเมล์ ดังกล่าว กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ โทร 02- 660-6696 หรือ ทางอีเมล์ wealthservice@merchantasset.co.th</span></p>
+                </code>
+            </div>
 
-      <div  class="row center-screen ">
-          <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px" class="col-sm-12 col-lg-3" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-          <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" class="col-sm-12 col-lg-3" >{{formService.LABEL_CONFIRM_DATA}}  </button>
-          <!-- <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button> -->
-      </div>
+            <div  class="row center-screen ">
+                <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px"><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+                <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_CONFIRM_DATA}}  </button>
+                <!-- <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button> -->
+            </div>
+
     </mat-step>
 </mat-horizontal-stepper>
 </div>
 
 <div *ngIf="saveAllComplete" class="row center-screen2 ">
-
-      <!-- <h3>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล</h3>
-      <h4>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ </h4>
-
-      <br>
-      <h3>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</h3>
-      <h4>942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4</h4>
-      <h4>แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500</h4>
-      <h4><a href="tel:026606677">โทร. 02 660 6677</a></h4>
-      <h4>แฟกซ์. 02 660 6678</h4>
-      <h4>เว็บไซต์ : www.merchantasset.co.th</h4>
-      <h4>อีเมล : <a href="mailto:wealthservice@merchantasset.co.th">wealthservice@merchantasset.co.th</a></h4> -->
-
       <code >
           <br>
-          <h3>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </h3>
-          <h3>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ </h3>
+          <p class ='code_large'>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </p>
+          <p class ='code_large'>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ </p>
           <br>
-          <h4>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</h4>
-          <h4>942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4</h4>
-          <h4>แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500</h4>
-          <h4>โทร. 02 660 6689</h4>
-          <h4>แฟกซ์. 02 660 6678</h4>
-          <h4>เว็บไซต์ : www.merchantasset.co.th</h4>
-          <h4>อีเมล : wealthservice@merchantasset.co.th </h4>
+          <p>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
+          <p>942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4</p>
+          <p>แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500</p>
+          <p>โทร. 02 660 6677</p>
+          <p>แฟกซ์. 02 660 6678</p>
+          <p>เว็บไซต์ : www.merchantasset.co.th</p>
+          <p>อีเมล : wealthservice@merchantasset.co.th </p>
       </code>
+
 </div>
 
-<!-- </div> -->
+</div>
 <!-- </mat-card> -->

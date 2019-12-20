@@ -31,7 +31,7 @@ let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //
 /*
 Send mail  by token
 */
-exports.surveyByMailToken = (req, res, next) =>{
+exports.surveyKYCByID = (req, res, next) =>{
 
   const _PID = req.body.custCode ||'41121225'
 
@@ -56,7 +56,7 @@ exports.surveyByMailToken = (req, res, next) =>{
       logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
       logger.info(`API /surveyByMailToken - ${logMsg}`);
 
-      senMailFromFile(req,res,_PID,data.Email,_url);
+      senMailKYC(req,res,_PID,data.Email,_url);
 
     } catch (error) {
 
@@ -137,13 +137,13 @@ Send mail  by encypt use bcrypt
 */
 // const FILE_SEND_MAIL = __dirname+'..\downloadFiles\mail\mail.txt';
 
-exports.surveyBulkFile = (req, res, next) =>{
+exports.surveyKYCBulkFile = (req, res, next) =>{
+  console.log('STEP 1');
 
   // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
 
   let _target = req.body.target || 'test';
   let _url='';
-
 
   // create instance of readline
 // each instance is associated with single input stream
@@ -152,14 +152,14 @@ exports.surveyBulkFile = (req, res, next) =>{
 var today = new Date();
 var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 var time = today.getHours() + "-" + today.getMinutes()
-// var time = today.getHours() + "-" + today.getMinutes() + ":" + today.getSeconds();
 var dateTime = date+'-'+time;
 
 const readPath = __dirname + '/readFiles/SURVEY/';
-const readFile = 'sendMail.txt';
+const readFile = 'kycSurvey.txt';
 
 const bakPath = __dirname + '/readFiles/SURVEYBackup/';
-const bakFile =  dateTime+'-sendMail.txt';
+// const bakFile =  dateTime+'-sendMail.txt';
+const bakFile =  dateTime+readFile;
 
   if (_target =='prod'){
     _url = 'http://mit.wealth-merchant.com:3000/suit?has='
@@ -170,8 +170,6 @@ const bakFile =  dateTime+'-sendMail.txt';
 let checkFile = readline.createInterface({
   input: fs.createReadStream(readPath+readFile)
 });
-
-
 
 // Check data is correct
 let line_no = 0;
@@ -202,8 +200,7 @@ checkFile.on('close', function(line) {
           if(line_no >1){
             var array = line.split("|");
             console.log('ARRAY >> ID:' + array[0] + ' ;Email:' + array[2] + ' ;URL='+ _url);
-
-            senMailFromFile(req,res,array[0],array[2],_url);
+            senMailKYC(req,res,array[0],array[2],_url);
           }
       });
 
@@ -256,7 +253,7 @@ exports.surveyByMailToken = (req, res, next) =>{
       logMsg = `;url=${req.originalUrl} ;ip=${req.ip} - ;Cust_Code=${data.Cust_Code} ;Email=${data.Email}`;
       logger.info(`API /surveyByMailToken - ${logMsg}`);
 
-      senMailFromFile(req,res,_PID,data.Email,_url);
+      senMailKYC(req,res,_PID,data.Email,_url);
 
     } catch (error) {
 
@@ -719,14 +716,12 @@ exports.sendMailThankCust = (req, res, next) =>{
           <html>
           <head>
           <style>
-
-
           .blog-content-outer {
             background: whitesmoke;
             border: 1px solid #e1e1e1;
             border-radius: 5px;
-            margin-top: 40px;
-            margin-bottom: 20px;
+            margin-top: 20px;
+            margin-bottom: 40px;
             padding: 0 15px;
             font-size: 16px;
           }
@@ -737,11 +732,47 @@ exports.sendMailThankCust = (req, res, next) =>{
             margin-bottom:20px;
           }
 
-          div.a {
-            text-indent: 50px;
-        }
+          .tab { margin-left: 40px; }
+          .tab2 { margin-left: 80px; }
 
+          div.a {
+          left:50px;
+          }
+
+          .txt-Indent{
+            text-indent: 50px;
+          }
+
+          @media screen and (min-width: 768px) {
+            .blog-content-outer{
+              width:1024px;
+              }
+          }
+
+          .button {
+            background-color: gold;
+            border: none;
+            color: white;
+            padding: 20px 34px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            margin: 4px 2px;
+            cursor: pointer;
+            }
+            a:link a:visited a:hover, a:active, a:focus {
+              color: white;
+            }
+            .center_div{
+              text-align: center;
+            }
+
+            .sameline{
+              display: inline-block;
+            }
           </style>
+
           </head>
           <body>
           <br>
@@ -751,14 +782,12 @@ exports.sendMailThankCust = (req, res, next) =>{
           <div class="logo-area col-xs-12 col-sm-12 col-md-3">
           <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
           </div>
-          <pre>
-          เรียน    ท่านลูกค้า
 
-          <div class="a">
-          ระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว บริษัทขอขอบพระคุณที่ท่านสละเวลาในการตรวจสอบ/แก้ไขข้อมูลดังกล่าว หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
-          </div>
-
-          </pre>
+          <p >เรียน ท่านลูกค้า </p>
+          <p class="txt-Indent">
+          ระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว บริษัทขอขอบพระคุณที่ท่านสละเวลาในการตรวจสอบ/แก้ไขข้อมูลดังกล่าว หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ ได้ทางอีเมล์ <span class='sameline'>wealthservice@merchantasset.co.th</span> หรือ <span class='sameline'>โทร 02-660-6689</span>
+          </p>
+          <br>
           </div>
 
           <p>
@@ -995,7 +1024,7 @@ function getCustSuitData(Cust_Code) {
   });
 }
 
-function senMailFromFile(req,res,_PID,_Email,_url){
+function senMailKYC(req,res,_PID,_Email,_url){
 
   const _compInfo = mailConfig.mailCompInfo_TH;
   let _from = mailConfig.mail_form;
@@ -1024,8 +1053,6 @@ function senMailFromFile(req,res,_PID,_Email,_url){
         <html>
         <head>
         <style>
-
-
         .blog-content-outer {
           background: whitesmoke;
           border: 1px solid #e1e1e1;
@@ -1042,13 +1069,46 @@ function senMailFromFile(req,res,_PID,_Email,_url){
           margin-bottom:20px;
         }
 
-		.tab { margin-left: 40px; }
+		    .tab { margin-left: 40px; }
         .tab2 { margin-left: 80px; }
 
         div.a {
-  			text-indent: 50px;
-		}
+  			left:50px;
+        }
+
+        .txt-Indent{
+          text-indent: 50px;
+        }
+
+        @media screen and (min-width: 768px) {
+          .blog-content-outer{
+            width:1024px;
+            }
+        }
+
+        .button {
+          background-color: gold;
+          border: none;
+          color: white;
+          padding: 20px 34px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 20px;
+          margin: 4px 2px;
+          cursor: pointer;
+          }
+          a:link a:visited a:hover, a:active, a:focus {
+            color: white;
+          }
+          .center_div{
+            text-align: center;
+          }
+          .sameline{
+            display: inline-block;
+          }
         </style>
+
         </head>
         <body>
         <br>
@@ -1062,20 +1122,24 @@ function senMailFromFile(req,res,_PID,_Email,_url){
       <div class="a">
         <p >เรียน ท่านลูกค้า </p>
         <p >เรื่อง ขอความอนุเคราะห์ตรวจสอบข้อมูลส่วนบุคคล</p>
-        <p >
+        <p class='txt-Indent'>
     เพื่อเป็นการปฏิบัติให้เป็นไปตามประกาศกำหนดของสำนักงานป้องกันและปราบปรามการฟอกเงิน และสำนักงานคณะกรรมการกำกับหลักทรัพย์และตลาดหลักทรัพย์ เรื่อง การทบทวนข้อมูลลูกค้าและการทำแบบประเมินความเสี่ยงของผู้ลงทุน
         </p>
-        <p >
-        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) จึงขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และแก้ไขข้อมูลให้เป็นปัจจุบัน พร้อมทั้งทำแบบประเมินความเสี่ยง เพื่อท่านจะสามารถรับการบริการได้อย่างต่อเนื่อง ผ่านลิงก์ด้านล่างนี้
+        <p class='txt-Indent'>
+        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด (“ บริษัท ”) จึงขอความอนุเคราะห์ท่านตรวจสอบข้อมูลที่เคยให้ไว้กับบริษัท และแก้ไขข้อมูลให้เป็นปัจจุบัน พร้อมทั้งทำแบบประเมินความเสี่ยง เพื่อท่านจะสามารถรับการบริการได้อย่างต่อเนื่อง
+        สามารถใช้ระบบโดยคลิ๊กปุ่มด้านล่างนี้
         </p>
-      	<p>
-        ลิงก์สำหรับการตรวจสอบข้อมูลเดิมและแก้ไขข้อมูล
-        </p>
-        <p>
-        ${_url}${token}
-        </p>
-        <p>
-        บริษัทขอขอบพระคุณที่ท่านสละเวลาในการตรวจสอบ/แก้ไขข้อมูลดังกล่าว หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
+        <br>
+
+        <br>
+        <div class='center_div'>
+          <a href="${_url}${token}" class="button">เข้าระบบ คลิ๊กที่นี่</a>
+        </div>
+        <br>
+
+        <br>
+        <p class='txt-Indent'>
+        บริษัทขอขอบพระคุณที่ท่านสละเวลาในการตรวจสอบ/แก้ไขข้อมูลดังกล่าว หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทร 02-660-6689
         </p>
         <p>
           ขอแสดงความนับถือ
@@ -1164,7 +1228,6 @@ function sendSuitMail(req,res,_PID,_Email,_url){
         <head>
 
         <style>
-
         .blog-content-outer {
           background: whitesmoke;
           border: 1px solid #e1e1e1;
@@ -1210,17 +1273,12 @@ function sendSuitMail(req,res,_PID,_Email,_url){
           margin: 4px 2px;
           cursor: pointer;
           }
-
-
           a:link a:visited a:hover, a:active, a:focus {
             color: white;
           }
-
           .center_div{
             text-align: center;
           }
-
-
         </style>
 
         </head>
@@ -1240,7 +1298,7 @@ function sendSuitMail(req,res,_PID,_Email,_url){
 
         <p class="txt-Indent">
         บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด  ใคร่ขอความกรุณาจากท่านในการจัดทำแบบประเมิน Suitability เพื่อประเมินระดับความเสี่ยงของผู้ลงทุน (Risk profile) ตาม
-        หลักเกณฑ์ที่ ก.ล.ต. กำหนดไว้ ผ่านลิงก์ด้านล่างนี้
+        หลักเกณฑ์ที่ ก.ล.ต. กำหนดไว้ โดยคลิ๊กที่ปุ่มด้านล่าง
         </p>
 
         <br>
@@ -1252,7 +1310,7 @@ function sendSuitMail(req,res,_PID,_Email,_url){
         <br>
 
         <p class="txt-Indent">
-        บริษัทขอขอบพระคุณที่ท่านสละเวลาในการทำแบบประเมิน Suitability Test หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6696
+        บริษัทขอขอบพระคุณที่ท่านสละเวลาในการทำแบบประเมิน Suitability Test หากท่านต้องการสอบถามข้อมูลเพิ่มเติม หรือมีข้อเสนอแนะประการใดขอความกรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  ได้ทางอีเมล์ wealthservice@merchantasset.co.th หรือ โทรศัพท์ 02 660 6689
         </p>
         <br>
         <p class="txt-Indent">

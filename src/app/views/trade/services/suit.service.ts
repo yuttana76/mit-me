@@ -73,11 +73,12 @@ export class SuiteService {
     return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/suitSave', data);
   }
 
-  saveFATCA(_id: string,_pid: string, _ans: Array<Question>): Observable<any> {
+  saveFATCA(_id: string,_pid: string, _ans: Array<Question>,opt_id: string): Observable<any> {
     const data = {
       'userId': _id,
       'pid': _pid,
-      'ans': _ans
+      'ans': _ans,
+      'opt_id': opt_id,
     };
     return this.http.post<{ message: string, result: string }>(BACKEND_URL_FATCA + '/saveFATCA', data);
   }

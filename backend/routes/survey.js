@@ -7,16 +7,14 @@ const selfAuth = require('../middleware/self-auth');
 
 const router = express.Router();
 
-
-router.post("/surveyByMailToken",selfAuth,surveyController.surveyByMailToken);
-router.post("/surveyBulkFile",selfAuth,surveyController.surveyBulkFile);
+// Survey KYC & Suitability
+router.post("/surveyKYCByID",selfAuth,surveyController.surveyKYCByID);
+router.post("/surveyKYCBulkFile",selfAuth,surveyController.surveyKYCBulkFile);
 router.post("/surveyThankCust",surveyController.sendMailThankCust);
 
-
 // Survey Suitability only
-router.post("/surveySuit",selfAuth,surveyController.surveySuitByMailToken);
-router.post("/surveySuitFile",selfAuth,surveyController.surveySuitBulkFile);
-
+router.post("/surveySuitByID",selfAuth,surveyController.surveySuitByMailToken);
+router.post("/surveySuitByFile",selfAuth,surveyController.surveySuitBulkFile);
 router.post("/surveySuitThankCust",surveyController.sendMailThankCustSuit);
 
 //Development

@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { SuitFormService } from "./suit.service";
 
 import { ToastrService } from "ngx-toastr";
-import { MatDialog, MatRadioChange } from "@angular/material";
+import { MatDialog, MatRadioChange, MatDialogRef } from "@angular/material";
 import { ActivatedRoute } from "@angular/router";
 import { SuiteService } from "../services/suit.service";
 import { FormGroup, FormControl, Validators, FormBuilder } from "@angular/forms";
@@ -19,6 +19,7 @@ import { forkJoin } from "rxjs";
 import { PersonModel } from "../model/person.model";
 import { ChildService } from "../services/child.service";
 import { ShareDataService } from "../services/shareData.service";
+import { NewMobileDialogComponent } from "../dialog/new-mobile-dialog/new-mobile-dialog.component";
 // import { CDDModel } from "../model/cdd.model";
 
 
@@ -53,6 +54,8 @@ export class SuitComponent implements OnInit {
   work_formGroup: FormGroup;
   current_formGroup: FormGroup;
   mail_formGroup: FormGroup;
+
+  newMobileDialogComponent: MatDialogRef<NewMobileDialogComponent>;
 
   mobile = false;
   register_expanded = true;
@@ -1754,5 +1757,22 @@ export class SuitComponent implements OnInit {
     }
   }
 
+  onNewMobileDialog(_mobile: string) {
+
+    this.newMobileDialogComponent = this.dialog.open(NewMobileDialogComponent, {
+      width: '400px',
+      // data: '123456',
+      data: this.survey.pid
+    });
+
+    this.newMobileDialogComponent.afterClosed().subscribe(result => {
+        console.log('onNewMobileDialog afterClosed()=> ', result);
+
+        if(result ==='newMobileSuccess'){
+          this.verifyFLag=true;
+          this.saveAllComplete=true;
+        }
+    });
+  }
 
 }

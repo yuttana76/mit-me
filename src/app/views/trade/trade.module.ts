@@ -73,6 +73,7 @@ import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 import { FcIndCustomerComponent } from './fc-ind-customer/fc-ind-customer.component';
 import { SuitSurveyComponent } from './suit-survey/suit-survey.component';
 import { SuitFormComponent } from './suit-form/suit-form.component';
+import { NewMobileDialogComponent } from './dialog/new-mobile-dialog/new-mobile-dialog.component';
 
 @NgModule({
   imports: [
@@ -156,6 +157,7 @@ import { SuitFormComponent } from './suit-form/suit-form.component';
     FcIndCustomerComponent,
     SuitSurveyComponent,
     SuitFormComponent,
+    NewMobileDialogComponent,
   ],
   providers: [DatePipe],
   entryComponents: [
@@ -171,6 +173,7 @@ import { SuitFormComponent } from './suit-form/suit-form.component';
     ChildrenDialogComponent,
     LedInspCustDetailComponent,
     LedMasDetailComponent,
+    NewMobileDialogComponent,
   ],
 })
 export class TradeModule {

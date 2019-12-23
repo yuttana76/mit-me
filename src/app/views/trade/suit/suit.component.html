@@ -37,7 +37,12 @@
 
         <!-- VERIFY -->
           <div  *ngIf="needVerify" class="divOTP">
-                <h3 class="margin_top_40">{{_mobile_hint}}</h3>
+            <code>
+              <h3>{{_mobile_hint}}</h3>
+              <h5 >เปลี่ยนเบอร์มือถือ <a  (click)="onNewMobileDialog()">คลิ๊กที่นี่</a></h5>
+              <h5 >หรือติดต่อเจ้าหน้าที่ Wealth services ในวันเวลาทำการ</h5>
+            </code>
+
                 <input class="form-control margin_top_40" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
 
                 <button [disabled]="verifyOTP_val==''" mat-flat-button color="primary" (click)="verifyConfirmOTP()" class="col-md-12 margin_top_30" >

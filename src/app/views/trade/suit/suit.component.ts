@@ -643,7 +643,7 @@ export class SuitComponent implements OnInit {
             }
             this._mobile_hint +="-xxxx"
 
-            this._mobile_hint = `Send OTP to  ${this._mobile_hint} `;
+            this._mobile_hint = `ส่งรหัส OTP ที่เบอร์  ${this._mobile_hint} `;
           }
 
 
@@ -1761,7 +1761,6 @@ export class SuitComponent implements OnInit {
 
     this.newMobileDialogComponent = this.dialog.open(NewMobileDialogComponent, {
       width: '400px',
-      // data: '123456',
       data: this.survey.pid
     });
 
@@ -1769,6 +1768,16 @@ export class SuitComponent implements OnInit {
         console.log('onNewMobileDialog afterClosed()=> ', result);
 
         if(result ==='newMobileSuccess'){
+
+          this.toastr.success(` `,
+          "ดำเนินการสำเร็จ",
+          {
+            timeOut: 3000,
+            closeButton: true,
+            positionClass: "toast-top-center"
+          }
+        );
+
           this.verifyFLag=true;
           this.saveAllComplete=true;
         }

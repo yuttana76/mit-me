@@ -2,7 +2,8 @@
 
     <h3>เปลี่ยนเบอร์มือถือ</h3>
     <code>
-      <h5>ระบบจะทำการส่งข้อมูลแจ้งเปลี่ยนเบอร์มือถือ ให้เจ้าหน้าที่ติดต่อกลับในวันเวลาทำการ</h5>
+      <!-- <h5>ระบบจะทำการส่งข้อมูลแจ้งเปลี่ยนเบอร์มือถือ ให้เจ้าหน้าที่ติดต่อกลับในวันเวลาทำการ</h5> -->
+      <h5>ระบบจะทำการส่งข้อมูล ให้เจ้าหน้าที่ติดต่อกลับในวันเวลาทำการ</h5>
     </code>
 
     <form [formGroup]="form"  >
@@ -10,14 +11,17 @@
           <!-- <input  matInput formControlName="mobNumber" placeholder=" twsid"
           [(ngModel)]="newMobile"> -->
 
-          <input type="number"  formControlName="newMobile"  class="form-control mr-sm-2 margin_top_30"  placeholder="New Mobile number" aria-label="Search"
+          <input type="number"  formControlName="newMobileFC"  class="form-control mr-sm-2 margin_top_30"  placeholder="New Mobile number" aria-label="Search"
                  [(ngModel)]="newMobile"  >
 
-          <mat-error *ngIf="form.get('newMobile').invalid"> *โปรดระบุ เบอร์โทรศัพท์. </mat-error>
+          <mat-error *ngIf="form.get('newMobileFC').invalid"> *โปรดระบุ เบอร์โทรศัพท์. </mat-error>
 
     </form>
 
-    <a id ="saveBtn"  mat-flat-button color="primary" (click)="onSaveNewMob()"  class="col-md-12 margin_top_10"> บันทึก/Save </a>
-    <a id ="closeBtn"  mat-flat-button color="accent"  (click)="onClose()" class="col-md-12 margin_top_10"> ยกเลิก/Cancel </a>
+    <button mat-flat-button [disabled]="form.get('newMobileFC').invalid" color="primary" class="col-md-12 margin_top_10" (click)="onSaveNewMob()" >บันทึก/Save</button>
+    <button mat-flat-button  color="accent" class="col-md-12 margin_top_10" (click)="onClose()" >ยกเลิก/Cancel</button>
+
+    <!-- <a [disabled]="form.get('newMobileFC').invalid"  mat-flat-button color="primary" (click)="onSaveNewMob()"  class="col-md-12 margin_top_10"> บันทึก/Save </a> -->
+    <!-- <a id ="closeBtn"  mat-flat-button color="accent"  (click)="onClose()" class="col-md-12 margin_top_10"> ยกเลิก/Cancel </a> -->
 
  </div>

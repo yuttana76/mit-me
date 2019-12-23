@@ -1,7 +1,6 @@
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 
-<mat-card *ngIf="!spinnerLoading" class="divCenter" >
-
+<mat-card *ngIf="!verifyFLag" class="divCenter" >
   <div class="container" *ngIf="!verifyFLag " >
       <!-- <h5>Merchnat partner survey</h5> -->
       <div class="block">
@@ -39,17 +38,19 @@
           <div  *ngIf="needVerify" class="divOTP">
             <code>
               <h3>{{_mobile_hint}}</h3>
-              <h5 >เปลี่ยนเบอร์มือถือ <a  (click)="onNewMobileDialog()">คลิ๊กที่นี่</a></h5>
-              <h5 >หรือติดต่อเจ้าหน้าที่ Wealth services ในวันเวลาทำการ</h5>
-            </code>
+              <br>
+             </code>
 
                 <input class="form-control margin_top_40" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
-
                 <button [disabled]="verifyOTP_val==''" mat-flat-button color="primary" (click)="verifyConfirmOTP()" class="col-md-12 margin_top_30" >
                     {{formService.LABEL_Verify}}</button>
-
                 <button mat-flat-button color="accent" class="margin_top_10 col-md-12" (click)="requestOTP()" > {{formService.LABEL_REQ_OTP}} </button>
 
+                <code>
+                  <h5 >เปลี่ยนเบอร์มือถือ <a  (click)="onNewMobileDialog()">คลิ๊กที่นี่</a></h5>
+                  <p>หรือติดต่อเจ้าหน้าที่ Wealth services <a href="tel:02-660-6689">โทร 02-660-6689</a> ในวันเวลาทำการ</p>
+
+                </code>
           </div>
 
     </div>
@@ -58,6 +59,18 @@
   <mat-card *ngIf="verifyFLag " >
   <!-- ************* STEPPER  -->
   <div class='container' *ngIf="!saveAllComplete">
+    <mat-card-title>
+      <div class="branner col-md-6">
+        <img   src="assets/img/brand/MPAM-logo.png" />
+      </div>
+      <strong class="col-md-6">{{ formService.label_Welcome }}</strong>
+      <p class="col-md-6" > {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
+      <!-- <div *ngIf="verifyFLag" class='branner col-md-6' >
+            <strong>{{ formService.label_Welcome }}</strong>
+            <p> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
+      </div> -->
+    </mat-card-title>
+
   <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag " class="col" >
 
    <!-- ***************** #1  Persional Information Step-->

@@ -103,5 +103,14 @@ export class SuiteService {
     return this.http.post<{ message: string, result: string }>(BACKEND_URL_SURVEY + '/surveySuitThankCust', data);
   }
 
+  reqNewMobile(custCode: string,newMobile:string): Observable<any> {
+
+  console.log('Client service reqNewMobile() newMobile=' + newMobile);
+    const data = {
+      "custCode":custCode,
+      "log_msg":newMobile
+    }
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_SURVEY + '/reqNewMobile', data);
+  }
   // ************************
 }

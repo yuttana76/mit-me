@@ -894,14 +894,102 @@ exports.requestPDF = (req, res, next) =>{
     },err=>{
       res.status(401).json(err);
     });
-
   });
+}
+
+/**
+ * Sendmail to wealth service
+ * Save to MIT_LOG
+ */
+exports.reqNewMobile = (req, res, next) =>{
+
+  logger.info("Welcome API /reqNewMobile");
+
+  const LoginName = req.body.custCode || '';
+  const module = req.body.module || 'MIT-survey reqNewMobile';
+  const log_msg = req.body.log_msg || '';
 
 
+  senMailInternal_NewMob(req,LoginName,module,log_msg).then( (_data) =>{
+      res.status(200).json({
+        msg:'successful',
+      });
+  });
 
 }
 
-// **********************************
+
+function senMailInternal_NewMob(req,LoginName,module,log_msg){
+
+    let _from = mailConfig.mail_form;
+
+    // let _to = mailConfig.mail_wealthservice;  // Change on PROD
+    let _to = mailConfig.mail_developer;
+
+    let _subjectRM = 'KYC & Suit survey ลูกค้าแจ้งเปลี่ยนข้อมูล (MIT-survey) '
+    let _msgRM = '';
+    var logMsg ;
+
+    return new Promise(function(resolve, reject) {
+
+
+      try {
+        logMsg = `;Module=${module} - ;Cust_Code=${LoginName}  ;url=${req.originalUrl} ;ip=${req.ip} `;
+        logger.info(`API /senMailInternal_NewMob - ${logMsg}`);
+
+            // message to RM.
+            _subjectRM += ` (${LoginName})`;
+            _msgRM = `
+            <html>
+            <body>
+
+            <h3>KYC & Suit survey ลูกค้าแจ้งเปลี่ยนข้อมูล On ${utility.getDateTime()} </h3>
+
+              <div class='container'>
+                  <p>Customer Code: ${LoginName}</p>
+                  <p>Message: ${log_msg}</p>
+                <hr>
+                <br>
+              </div>
+            </body>
+            </html>
+            `;
+
+            let mailOptions_RM = {
+              from: _from,
+              to: _to,
+              subject: _subjectRM,
+              html: _msgRM
+            };
+
+          /**
+           * SEND mail RM.
+           */
+          transporter.sendMail(mailOptions_RM, (error, info) => {
+            if (error) {
+              // return logger.error(`API /sendMailToRelated - ${error} `);
+                // return console.log(error);
+                reject(error);
+            }
+
+             mitLog.saveMITlog(LoginName,module,log_msg,req.ip,req.originalUrl,function(){});
+
+            // logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
+            // res.status(200).json({ message: 'Send mail successful!' });
+            resolve('successful');
+          });
+            // Incase No Email
+
+      } catch (error) {
+        // res.status(400).json({ message: 'sendMailToRelated' });
+        reject(error);
+      }
+
+    });
+
+  }
+
+
 function getCustomerInfo(Cust_Code) {
 
   logger

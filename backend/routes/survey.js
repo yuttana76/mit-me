@@ -20,4 +20,7 @@ router.post("/surveySuitThankCust",surveyController.sendMailThankCustSuit);
 //Development
 router.post("/requestPDF",surveyController.requestPDF);
 
+//Development
+router.post("/reqNewMobile",surveyController.reqNewMobile);
+
 module.exports = router;

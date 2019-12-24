@@ -11,11 +11,13 @@
 
 <form [formGroup]="cddFormGroup" class="cddForm">
 
-  <div class='row label_header'>
+  <span class="label_title"><h3>{{formService.LABEL_PERSON_INFO}}</h3></span>
+  <!-- <div class='row label_header'>
     <code>
         {{formService.LABEL_PERSON_INFO}}
     </code>
-  </div>
+  </div> -->
+
 <!--
   <div class='row'>
           <mat-radio-group  [(ngModel)]="cddData.identificationCardType"  formControlName="identificationCardType" required>
@@ -135,9 +137,10 @@
 
       <section>
           <!-- <h5>สถานภาพ Marital Status * </h5> -->
-          <div class='row label_header'>
+          <!-- <div class='row label_header'>
               <code>สถานภาพ (Marital Status)</code>
-          </div>
+          </div> -->
+          <span class="label_title"><h3>สถานภาพ (Marital Status)</h3></span>
 
           <div class='row'>
               <section class="example-section" >
@@ -230,9 +233,11 @@
         </section>
 
         <section>
-            <div class='row label_header'>
+            <!-- <div class='row label_header'>
                 <code>จำนวนบุตร หรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และยังไม่ได้สมรส)</code>
-              </div>
+            </div> -->
+              <span class="label_title"><h3>จำนวนบุตร หรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และยังไม่ได้สมรส)</h3></span>
+
               <div class="row">
                   <a id="btn_add_child"  mat-flat-button color="accent" (click)="addChildren()" class ="act_button"> เพิ่มบุตร  Add children ...  </a>
               </div>
@@ -247,9 +252,10 @@
           </section>
 
 
-      <div class='row label_header'>
+      <!-- <div class='row label_header'>
         <code>{{formService.LABEL_BACKGROUND}}</code>
-      </div>
+      </div> -->
+      <span class="label_title"><h3>{{formService.LABEL_BACKGROUND}}</h3></span>
 
       <div class='row'>
               <mat-form-field class="col-md-4">

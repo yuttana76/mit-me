@@ -95,23 +95,23 @@
         <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
 
         <!-- 2.1 Register Address  (SEQ = 1)-->
-          <div class='row' >
+          <!-- <div class='row' >
             <code class='code_large'>
                 <p>{{ formService.register_addr_title }} ({{ formService.register_addr_title_ENG }})</p>
-                    <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
             </code>
-          </div>
+          </div> -->
+          <span class="label_title"><h3>{{ formService.register_addr_title }} ({{ formService.register_addr_title_ENG }})</h3></span>
           <div>
             <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
           </div>
 
         <!-- 2.2 Work Address (SEQ = 3)-->
-            <div class='row'>
+            <!-- <div class='row'>
               <code class='code_large'>
                   <p>{{ formService.work_addr_title }} ({{formService.work_addr_title_ENG}})</p>
-                  <!-- <a  mat-flat-button color="accent" (click)="modifWorkAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
               </code>
-            </div>
+            </div> -->
+            <span class="label_title"><h3>{{ formService.work_addr_title }} ({{formService.work_addr_title_ENG}})</h3></span>
               <div>
                   <form [formGroup]="register_formGroup">
                   <section class="example-section">
@@ -129,13 +129,14 @@
               </div>
 
           <!-- 2.3 Current Address (SEQ = 2)-->
-          <div class='row'>
+          <!-- <div class='row'>
             <code class='code_large'>
                 <p>{{ formService.contact_addr_title }}  ({{formService.contact_addr_title_ENG}})
-                    <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
                     </p>
             </code>
             </div>
+             -->
+             <span class="label_title"><h3>{{ formService.contact_addr_title }}  ({{formService.contact_addr_title_ENG}})</h3></span>
             <div class='row'>
                 <form [formGroup]="register_formGroup">
                 <section class="example-section" >
@@ -152,14 +153,12 @@
               <app-cust-addr  *ngIf="this.cur_addrData.SameAs == '9' " [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
             </div>
               <!-- 2.4 Mail Address (SEQ = 4)-->
-          <div class='row' >
+          <!-- <div class='row' >
             <code class='code_large'>
                 <p>{{ formService.mail_addr_title }} ({{ formService.mail_addr_title_ENG }})</p>
-                    <!-- <a  mat-flat-button color="accent" (click)="modifRegAddr()" class ="act_button"> Edit <i class="fas fa-pencil-alt"></i></a> -->
             </code>
-
-          </div>
-
+          </div> -->
+          <span class="label_title"><h3>{{ formService.mail_addr_title }} ({{ formService.mail_addr_title_ENG }})</h3></span>
           <div class='row'>
               <form [formGroup]="register_formGroup">
               <section class="example-section" >
@@ -178,8 +177,6 @@
             <app-cust-addr  *ngIf="this.cddData.MailSameAs == '9' "  [addrData]="mail_addrData" [custCode]="survey.pid"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
           </div>
 
-
-
             <!-- ******** ACTION BAR ************* -->
                 <mat-card-actions class="stepper_action center-screen ">
                     <button mat-flat-button  matStepperPrevious color="accent" class="col-sm-12 col-lg-3"><i class="fas fa-chevron-left "></i> {{formService.LABEL_BACK}}</button>
@@ -192,9 +189,10 @@
         <ng-template matStepLabel>{{formService.STEPER_FATCA}}</ng-template>
         <form [formGroup]="FATCAGroup" >
           <div class='row '>
+
+                <span class="label_title"><h3>{{ formService.mail_addr_title }} ({{ formService.mail_addr_title_ENG }})</h3></span>
                 <code class='code_large'>
-                    <span class="label_header">{{ formService.from_fatca_title }}</span>
-                    <p>{{ formService.fatca_desc }}</p>
+                  <p>{{ formService.fatca_desc }}</p>
                 </code>
 
                 <form class="form_section">
@@ -204,9 +202,7 @@
             </div>
 
             <mat-card-actions class="stepper_action center-screen ">
-
                 <!-- <a  mat-flat-button color="accent" (click)="fatcaOnChange()" class ="act_button col-sm-4"> Edit  <i class="fas fa-pencil-alt"></i></a> -->
-
                 <button mat-flat-button  matStepperPrevious color="accent" class="col-sm-12 col-lg-3" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
                 <button mat-flat-button  matStepperNext color="primary" (click)=fatch_FormInvalid(FATCAGroup) class="col-sm-12 col-lg-3" > {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
             </mat-card-actions>
@@ -244,19 +240,6 @@
 </div>
 
 <div *ngIf="saveAllComplete" class="row center-screen2 ">
-
-      <!-- <h3>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล</h3>
-      <h4>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ </h4>
-
-      <br>
-      <h3>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</h3>
-      <h4>942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4</h4>
-      <h4>แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500</h4>
-      <h4><a href="tel:026606677">โทร. 02 660 6677</a></h4>
-      <h4>แฟกซ์. 02 660 6678</h4>
-      <h4>เว็บไซต์ : www.merchantasset.co.th</h4>
-      <h4>อีเมล : <a href="mailto:wealthservice@merchantasset.co.th">wealthservice@merchantasset.co.th</a></h4> -->
-
       <code >
           <br>
           <h3>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </h3>

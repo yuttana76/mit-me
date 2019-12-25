@@ -505,7 +505,7 @@ exports.saveCDDAddr = (req, res, next) => {
   var Fax = req.body.Fax
   var SameAs = req.body.SameAs
   var ReqModifyFlag = req.body.ReqModifyFlag
-  var opt_id = req.body.opt_id
+  var otpId = req.body.opt_id
 
   var logMsg = `POST API /saveCDDAddr - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${Addr_Seq}`;
   logger.info( logMsg);
@@ -518,7 +518,7 @@ BEGIN
   UPDATE MIT_CUSTOMER_ADDR SET
   [Addr_No] =@Addr_No ,[Moo] =@Moo ,[Place]=@Place ,[Floor]=@Floor,[Soi]=@Soi ,[Road]=@Road ,[Tambon_Id]=@Tambon_Id ,[Amphur_Id]=@Amphur_Id ,[Province_Id]=@Province_Id ,
   [Country_Id]=@Country_Id ,Country_oth=@Country_oth ,[Zip_Code]=@Zip_Code ,[Tel]=@Tel ,[Fax] =@Fax ,[UpdateBy]=@ActionBy ,[UpdateDate]=GETDATE()
-  ,SameAs=@SameAs,ReqModifyFlag=@ReqModifyFlag,OTP_ID = @otp_id
+  ,SameAs=@SameAs,ReqModifyFlag=@ReqModifyFlag,OTP_ID = @OTP_ID
   WHERE
   Cust_Code = @Cust_Code
   AND Addr_Seq =@Addr_Seq
@@ -531,7 +531,7 @@ BEGIN
         ,SameAs,ReqModifyFlag,OTP_ID)
       VALUES
       (@Cust_Code,@Addr_Seq,@Addr_No ,@Moo,@Place ,@Floor ,@Soi ,@Road ,@Tambon_Id ,@Amphur_Id ,@Province_Id ,@Country_Id ,@Country_oth,@Zip_Code ,@Tel ,@Fax ,@ActionBy ,GETDATE()
-      ,@SameAs,@ReqModifyFlag,@otp_id)
+      ,@SameAs,@ReqModifyFlag,@OTP_ID)
 
     END
 
@@ -584,7 +584,7 @@ END
     .input('SameAs', sql.VarChar(2), SameAs)
     .input('ReqModifyFlag', sql.VarChar(2), ReqModifyFlag)
     .input('ActionBy', sql.VarChar(10), actionBy)
-    .input('otp_id', sql.VarChar(50), otp_id)
+    .input('OTP_ID', sql.VarChar(50), otpId)
     .query(queryStr, (err, result) => {
         if(err){
           logger.error( '' + err );

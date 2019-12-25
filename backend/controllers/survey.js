@@ -46,6 +46,8 @@ exports.surveyKYCByID = (req, res, next) =>{
     _url = 'http://localhost:4200/suit?has='
   }
 
+  logger.info('_PID=' + _PID + ' ;_target=' +_target);
+
   getCustomerInfo(_PID).then( _data =>{
 
     logger.info('_data>>' + JSON.stringify(_data));
@@ -991,6 +993,8 @@ function senMailInternal_NewMob(req,LoginName,module,log_msg){
 
 
 function getCustomerInfo(Cust_Code) {
+
+  logger.info('getCustomerInfo()' + Cust_Code);
 
   logger
   var fncName = "getCustomerData";

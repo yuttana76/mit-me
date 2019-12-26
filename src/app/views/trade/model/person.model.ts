@@ -11,6 +11,7 @@ export class PersonModel {
   public cardNumber: string;
   public cardExpDate: string;
   public cardNotExp: string;
+  public cardNotExpBol: boolean;
 
   constructor(){}
 }

@@ -60,6 +60,7 @@ export class CDDModel {
       public rejectFinancial: string;
       public taxDeduction: string;
       public cardNotExp: string;
+      public cardNotExpBol: boolean;
       public numChildren: string;
 
       public SPpersonModel:PersonModel = new PersonModel();

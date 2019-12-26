@@ -667,7 +667,7 @@ export class SuitComponent implements OnInit {
  getCDD(_id){
   this.cddService.getCustCDDInfo(_id).subscribe(data => {
 
-    // console.log("getCDD()" + JSON.stringify(data));
+    console.log("getCDD()" + JSON.stringify(data));
 
     if(data ){
 
@@ -721,9 +721,11 @@ export class SuitComponent implements OnInit {
 
       if(this.cddData.cardNotExp ==='Y'){
         this.cddData.PIDExpDate = '';
+        this.cddData.cardNotExpBol=true;
 
         this.cddFormGroup.controls["PIDExpDate"].clearValidators();
         this.cddFormGroup.controls["PIDExpDate"].updateValueAndValidity();
+
 
       }
 

@@ -96,22 +96,12 @@
         <ng-template matStepLabel>{{formService.STEPER_2}}</ng-template>
 
         <!-- 2.1 Register Address  (SEQ = 1)-->
-          <!-- <div class='row' >
-            <code class='code_large'>
-                <p>{{ formService.register_addr_title }} ({{ formService.register_addr_title_ENG }})</p>
-            </code>
-          </div> -->
           <span class="label_title"><h3>{{ formService.register_addr_title }} ({{ formService.register_addr_title_ENG }})</h3></span>
           <div>
             <app-cust-addr [addrData]="re_addrData" [custCode]="survey.pid" [addrFormGroup]="register_formGroup" ></app-cust-addr>
           </div>
 
         <!-- 2.2 Work Address (SEQ = 3)-->
-            <!-- <div class='row'>
-              <code class='code_large'>
-                  <p>{{ formService.work_addr_title }} ({{formService.work_addr_title_ENG}})</p>
-              </code>
-            </div> -->
             <span class="label_title"><h3>{{ formService.work_addr_title }} ({{formService.work_addr_title_ENG}})</h3></span>
               <div>
                   <form [formGroup]="register_formGroup">
@@ -130,13 +120,6 @@
               </div>
 
           <!-- 2.3 Current Address (SEQ = 2)-->
-          <!-- <div class='row'>
-            <code class='code_large'>
-                <p>{{ formService.contact_addr_title }}  ({{formService.contact_addr_title_ENG}})
-                    </p>
-            </code>
-            </div>
-             -->
              <span class="label_title"><h3>{{ formService.contact_addr_title }}  ({{formService.contact_addr_title_ENG}})</h3></span>
             <div class='row'>
                 <form [formGroup]="register_formGroup">
@@ -153,12 +136,7 @@
             <div>
               <app-cust-addr  *ngIf="this.cur_addrData.SameAs == '9' " [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
             </div>
-              <!-- 2.4 Mail Address (SEQ = 4)-->
-          <!-- <div class='row' >
-            <code class='code_large'>
-                <p>{{ formService.mail_addr_title }} ({{ formService.mail_addr_title_ENG }})</p>
-            </code>
-          </div> -->
+          <!-- 2.4 Mail Address (SEQ = 4)-->
           <span class="label_title"><h3>{{ formService.mail_addr_title }} ({{ formService.mail_addr_title_ENG }})</h3></span>
           <div class='row'>
               <form [formGroup]="register_formGroup">

@@ -69,7 +69,7 @@ export class CustCDDComponent implements OnInit {
   ];
 
 
-  cardNotExpChecked = true;
+  // cardNotExpChecked = true;
   SPcardNotExpChecked = true;
 
   childrenDialogComponent: MatDialogRef<ChildrenDialogComponent>;
@@ -89,9 +89,13 @@ export class CustCDDComponent implements OnInit {
 
 
   ngOnInit() {
+    this.initialData();
+  }
 
-    this.cardNotExpChecked =    this.cddData.cardNotExp == 'Y'? true :false;
-    this.SPcardNotExpChecked =    this.cddData.SPpersonModel.cardNotExp == 'Y'? true :false;
+  initialData() {
+
+    // this.cardNotExpChecked =    this.cddData.cardNotExp === 'Y' ? true : false;
+    this.SPcardNotExpChecked =    this.cddData.SPpersonModel.cardNotExp === 'Y' ? true : false;
 
     this.masterDataService.getFCnation().subscribe((data: any[]) => {
       this.nationalityList = data;
@@ -300,19 +304,19 @@ export class CustCDDComponent implements OnInit {
 
  OnCardNotExpChange($event){
 
+  console.log(`***event.checked>>${$event.checked}`);
   if($event.checked){
-    this.cddData.cardNotExp  = "Y";
-    this.cddData.PIDExpDate = '';
-
     this.cddFormGroup.controls["PIDExpDate"].clearValidators();
     this.cddFormGroup.controls["PIDExpDate"].updateValueAndValidity();
+    this.cddData.cardNotExp  = "Y";
+    this.cddData.PIDExpDate = '';
 
    }else{
     this.cddFormGroup.controls["PIDExpDate"].setValidators(Validators.required);
     this.cddFormGroup.controls["PIDExpDate"].updateValueAndValidity();
-
     this.cddData.cardNotExp  = "N";
    }
+
 }
 
 

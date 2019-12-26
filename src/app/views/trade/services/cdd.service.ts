@@ -20,9 +20,9 @@ export class CddService {
         map(fundtData => {
           return fundtData.result.map(data => {
 
-            console.log("Title BF>>" + data.title);
+            // console.log("Title BF>>" + data.title);
             var _title = data.title.split(".");
-            console.log("Title AF>>" + _title);
+            // console.log("Title AF>>" + _title);
 
             return {
               pid: data.ID_CARD,

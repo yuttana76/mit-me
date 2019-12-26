@@ -1123,7 +1123,7 @@ function senMailKYC(req,res,_PID,_Email,_url){
   let _to ;
   let _subject = 'การสำรวจ และตรวจสอบข้อมูล บลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด'
   let _msgTH = '';
-  var logMsg ;
+  var logMsg =`Cust_code=${_PID}`;
 
 
   try {
@@ -1131,14 +1131,18 @@ function senMailKYC(req,res,_PID,_Email,_url){
 
     // Incase has Email
       if(_Email){
+
+
+
         //Generate token
         const token = jwt.sign(
           {USERID: _PID},
           JWT_SECRET_STRING,
           { expiresIn: JWT_EXTERNAL_EXPIRES},
         );
-
         _to = _Email;
+
+        logMsg +=`;Email=${_Email} ;url=${_url}${token}`;
 
         // Thai message
         _msgTH = `

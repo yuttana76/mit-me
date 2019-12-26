@@ -70,6 +70,9 @@ export class SuiteService {
       'ans': _ans,
       'otp_id':_OTP_ID
     };
+
+    console.log('Suit DATA>>' + JSON.stringify(data));
+
     return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/suitSave', data);
   }
 

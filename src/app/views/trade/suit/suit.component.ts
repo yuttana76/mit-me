@@ -1276,10 +1276,9 @@ export class SuitComponent implements OnInit {
 
   saveSuit() {
 
-    this.cust_RiskLevel = this.riskLevel;
-    this.cust_RiskLevelTxt = this.riskLevelTxt;
-    this.cust_RiskTypeInvestor = this.riskLevelDesc;
-
+    this.cust_RiskLevel = this.survey.riskLevel;
+    this.cust_RiskLevelTxt = this.survey.riskLevelTxt;
+    this.cust_RiskTypeInvestor = this.survey.riskLevelDesc;
     this.cust_RiskDate =  new Date();
 
       this.suiteService
@@ -1287,10 +1286,10 @@ export class SuitComponent implements OnInit {
           this.survey.pid,
           this.survey.pid,
           this.formService.suitSerieId,
-          this.suitScore,
-          this.riskLevel,
-          this.riskLevelTxt,
-          this.riskLevelDesc,
+          this.survey.suitScore,
+          this.survey.riskLevel,
+          this.survey.riskLevelTxt,
+          this.survey.riskLevelDesc,
           this.suitQuestions,
           this.customer.OTP_ID
         )

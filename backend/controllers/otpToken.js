@@ -40,12 +40,13 @@ Send mail  by OTP
 exports.OTPtokenToSMS = (req, res, next) => {
 
   const _mobile = req.body.m
-
   let token = totp.generate();
   // let token_date = new Date();
-
   let _msg = `OTP = ${token}`;
   var _url = smsConfig.SMSCompleteURL2(_mobile,_msg);
+
+  // SAVE MIT_LOG
+  mitLog.saveMITlog('SYSTEM','MIT-Survey','Require OTP Mobile=' + _mobile+ ' ;'+_msg,req.ip,req.originalUrl,function(){});
 
   logger.info( `API /getOTPtokenSMS - ${req.originalUrl} - ${req.ip} - ${_mobile}`);
   logger.info(`SMS URL: ${_url}`);
@@ -78,7 +79,6 @@ exports.OTPtokenToSMS = (req, res, next) => {
         }
     })
 }
-
 
 exports.getOTPtokenToMail = (req, res, next) => {
 
@@ -146,6 +146,7 @@ exports.verityOTPtoken = (req, res, next) => {
     const _pid = req.body.pid;
     const otp_device_ref = req.body.mobile;
     const otp_device = 'Mobile';
+    let logMsg;
 
     logger.info(`Welcome /verityOTPtoken API. ${_token}  - pid: ${_pid}`);
 
@@ -156,10 +157,11 @@ exports.verityOTPtoken = (req, res, next) => {
 
     if (delta===0){
       let rsp_code = "000";
-      let logMsg = `Result /verityOTPtoken -${prop.getRespMsg(rsp_code)} - ${_token}  - pid: ${_pid}`
+      logMsg = `VERIFY_OTP Successful   - pid: ${_pid} ;OTP: ${_token} `
 
       logger.info(logMsg);
-      mitLog.saveMITlog(_pid,'VERIFY_OTP',logMsg,req.ip,req.originalUrl,function(){});
+      // SAVE MIT_LOG
+      mitLog.saveMITlog(_pid,'MIT-Survey',logMsg,req.ip,req.originalUrl,function(){});
 
         // Save OTP tracking
         var otpDate ={'otp_device': otp_device,'otp_device_ref':otp_device_ref,'input_otp_code':_token};
@@ -176,15 +178,27 @@ exports.verityOTPtoken = (req, res, next) => {
 
     }else if(delta < 0 ){
       let rsp_code = "207";  //OTP  Expired
-      logger.info(`Result /verityOTPtoken  -${prop.getRespMsg(rsp_code)} - ${_token}  - pid: ${_pid}`);
-        return res.status(422).json({
-          code: rsp_code,
-          msg: prop.getRespMsg(rsp_code),
-        });
+
+      logMsg = `VERIFY_OTP Expire   - pid: ${_pid} ;OTP: ${_token} ;msg:${prop.getRespMsg(rsp_code)}`
+      logger.info(`Result /verityOTPtoken  ${logMsg}`);
+      // SAVE MIT_LOG
+      mitLog.saveMITlog(_pid,'MIT-Survey',logMsg,req.ip,req.originalUrl,function(){});
+
+      return res.status(422).json({
+        code: rsp_code,
+        msg: prop.getRespMsg(rsp_code),
+      });
 
     }else {
       let rsp_code = "206"; //"ไม่พบข้อมูล",
-      logger.info(`Result /verityOTPtoken  -${prop.getRespMsg(rsp_code)} - ${_token}  - pid: ${_pid}`);
+
+      logMsg = `VERIFY_OTP Notfound   - pid: ${_pid} ;OTP: ${_token} ;msg:${prop.getRespMsg(rsp_code)}`
+      logger.info(`Result /verityOTPtoken  ${logMsg}`);
+      // SAVE MIT_LOG
+      mitLog.saveMITlog(_pid,'MIT-Survey',logMsg,req.ip,req.originalUrl,function(){});
+
+      // logger.info(`Result /verityOTPtoken  -${prop.getRespMsg(rsp_code)} - ${_token}  - pid: ${_pid}`);
+
         return res.status(422).json({
           code: rsp_code,
           msg: prop.getRespMsg(rsp_code),

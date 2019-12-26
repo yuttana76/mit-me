@@ -61,15 +61,21 @@ exports.verifyExtLink_TEST = (req, res, next) => {
 exports.verifyExtLink = (req, res, next) => {
   logger.info(`API /verifyExtLink - ${req.originalUrl} - ${req.ip} `);
   let rsp_code;
-
+  let logMsg ;
   try {
     const token = req.headers.authorization.split(" ")[1];
     const pid = req.body.pid;
 
     // 1. Verify token till life
+    logMsg =` pid - ${pid} `
+    logger.debug(logMsg);
     jwt.verify(token, JWT_SECRET_STRING, function(err, decoded) {
       if (err) {
+
         //  logger.error(`${pid} was error: `+err);
+        // SAVE MIT_LOG
+        mitLog.saveMITlog('SYSTEM','MIT-Survey','1. Verify mail token fail. '+logMsg,req.ip,req.originalUrl,function(){});
+
         rsp_code = "205";
         return res.status(401).json({
           code: rsp_code,
@@ -77,27 +83,44 @@ exports.verifyExtLink = (req, res, next) => {
         });
       }
 
-      logger.debug(` verify correct PID  ${decoded.USERID} - ${pid} `);
+      // SAVE MIT_LOG
+      mitLog.saveMITlog('SYSTEM','MIT-Survey',' 1. Verify mail token successful. '+logMsg,req.ip,req.originalUrl,function(){});
+
+      logMsg =` Correct PID  ${decoded.USERID} - ${pid} `
+      logger.debug(logMsg);
       //2. Verify correct PID
       if (decoded.USERID === pid) {
 
+        // SAVE MIT_LOG
+        mitLog.saveMITlog('SYSTEM','MIT-Survey','2. Correct PID successful. '+logMsg,req.ip,req.originalUrl,function(){});
+
         rsp_code = "000";
-        logger.info(`*** PID  - ${prop.getRespMsg(rsp_code)} `);
+        // logger.info(`*** PID  - ${prop.getRespMsg(rsp_code)} `);
 
         // Get customer info
+        logMsg =` PID - ${pid} `
         getCustomerData(pid).then(
           function(data) {
-            console.log("*** data  promise >>" + JSON.stringify(data));
 
             if (!data){
               rsp_code = "206"; //"ไม่พบข้อมูล",
+
+              logMsg += ' ;code:'+rsp_code + ' ;msg:' + prop.getRespMsg(rsp_code)
+              // SAVE MIT_LOG
+              mitLog.saveMITlog('SYSTEM','MIT-Survey','3. getCustomerData() Not found data. '+logMsg,req.ip,req.originalUrl,function(){});
+
               return res.status(422).json({
                 code: rsp_code,
                 msg: prop.getRespMsg(rsp_code),
               });
 
             }else{
+
               rsp_code = "000";
+
+              // SAVE MIT_LOG
+              mitLog.saveMITlog('SYSTEM','MIT-Survey','3. getCustomerData() Successful. '+logMsg,req.ip,req.originalUrl,function(){});
+
               return res.status(200).json({
                 code: rsp_code,
                 msg: prop.getRespMsg(rsp_code),
@@ -119,6 +142,8 @@ exports.verifyExtLink = (req, res, next) => {
           }
         );
       } else {
+        // SAVE MIT_LOG
+        mitLog.saveMITlog('SYSTEM','MIT-Survey','2. Correct PID fail. '+logMsg,req.ip,req.originalUrl,function(){});
 
         rsp_code = "204";
         logger.error( `${rsp_code} - ${prop.getRespMsg(rsp_code)}` );

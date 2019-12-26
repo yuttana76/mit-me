@@ -1662,16 +1662,15 @@ export class SuitComponent implements OnInit {
       observables.push(this.suiteService.saveSuitabilityByPID(
         this.survey.pid, this.survey.pid,
         this.formService.suitSerieId,
-        this.suitScore,
-        this.riskLevel,
-        this.riskLevelTxt,
-        this.riskLevelDesc,
-        this.suitQuestions,
+        this.survey.suitScore,
+        this.survey.riskLevel,
+        this.survey.riskLevelTxt,
+        this.survey.riskLevelDesc,
+      this.suitQuestions,
         this.customer.OTP_ID
         )
       );
     }
-
 
     if(observables.length > 0){
 

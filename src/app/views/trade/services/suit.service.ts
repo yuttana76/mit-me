@@ -71,7 +71,8 @@ export class SuiteService {
       'otp_id':_OTP_ID
     };
 
-    console.log('Suit DATA>>' + JSON.stringify(data));
+    console.log('saveSuitabilityByPID() _suitScore>>' + _suitScore);
+    console.log('saveSuitabilityByPID() _riskLevel>>' + _riskLevel);
 
     return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/suitSave', data);
   }

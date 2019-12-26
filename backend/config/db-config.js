@@ -62,7 +62,7 @@ exports.JWT_SECRET_STRING = 'secret_this_should_be_longer'//process.env.JWT_KEY;
 exports.JWT_EXPIRES = '1h';
 
 // On production  '14 days';
-exports.JWT_EXTERNAL_EXPIRES = '30 days';
+exports.JWT_EXTERNAL_EXPIRES = '90 days';
 
 exports.mailParameters = {
   host: 'smtp.inetmail.cloud',//process.env.MAIL_SMTP,

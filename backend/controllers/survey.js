@@ -140,7 +140,6 @@ Send mail  by encypt use bcrypt
 // const FILE_SEND_MAIL = __dirname+'..\downloadFiles\mail\mail.txt';
 
 exports.surveyKYCBulkFile = (req, res, next) =>{
-  console.log('STEP 1');
 
   // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
 
@@ -198,7 +197,7 @@ checkFile.on('close', function(line) {
 
       rFile.on('line', function(line) {
           line_no++;
-          console.log('line_no >>:' + line_no);
+          // console.log('line_no >>:' + line_no);
           if(line_no >1){
             var array = line.split("|");
             console.log('ARRAY >> ID:' + array[0] + ' ;Email:' + array[2] + ' ;URL='+ _url);
@@ -1131,8 +1130,6 @@ function senMailKYC(req,res,_PID,_Email,_url){
 
     // Incase has Email
       if(_Email){
-
-
 
         //Generate token
         const token = jwt.sign(

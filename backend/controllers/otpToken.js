@@ -20,8 +20,8 @@ https://hectorm.github.io/otpauth/index.html
 */
 const OTPAuth = require('otpauth');
 
-// const TOKEN_PERIOD = 300;// 30 milisec
-const TOKEN_PERIOD = 60000;
+const TOKEN_PERIOD = 300;// 30 milisec
+// const TOKEN_PERIOD = 60000; // 6 hours
 
 let totp = new OTPAuth.TOTP({
   issuer: 'ACME',

@@ -877,6 +877,15 @@ export class SuitComponent implements OnInit {
           this.showOtpEntry =true;
           this.otpToken_Date = data.TOKEN_DATE;
           this.otpToken_Period = data.TOKEN_PEROID;
+
+          this.toastr.success(``,
+          `Already send to ${this._mobile_hint}`,
+          {
+            timeOut: 5000,
+            closeButton: true,
+            positionClass: "toast-top-center"
+          }
+        );
         },
         error => () => {
           console.log("Verify Was error", error);
@@ -1557,8 +1566,6 @@ export class SuitComponent implements OnInit {
                   console.log('Was error', error);
                 }, () => {
                   console.log('Finish Addr register #3');
-                // **************************
-
                 // **************************
                 });
           // **************************

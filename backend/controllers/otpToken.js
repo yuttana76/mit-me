@@ -20,9 +20,10 @@ https://hectorm.github.io/otpauth/index.html
 */
 const OTPAuth = require('otpauth');
 
-// const TOKEN_PERIOD = 300;// 30 milisec
-const TOKEN_PERIOD = 60000; // 6 hours
+const TOKEN_PERIOD = 300;// 30 milisec
+// const TOKEN_PERIOD = 60000; // 6 hours
 
+// Cancel to use totp_pid (Change secret by PID)
 let totp = new OTPAuth.TOTP({
   issuer: 'ACME',
   label: 'AzureDiamond',

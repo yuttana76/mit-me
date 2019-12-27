@@ -1,12 +1,12 @@
 <form [formGroup]="suitFormGroup" >
 
-  <span class="label_title"><h3>แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน</h3></span>
+  <span class="label_title"><h5>แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน</h5></span>
   </form>
 
    <!-- Show Suit question  -->
   <!-- <div *ngIf="canDoSuit" > -->
-  <form  *ngIf="canDoSuit" class="form_section">
-  <ul>
+  <form  *ngIf="canDoSuit" >
+
       <div *ngFor="let ques of suitQuestions" class="questions">
 
           <span  *ngIf="ques.id == 11" class="blue-txt">
@@ -27,45 +27,40 @@
               <img src="{{ ques.image }}" />
             </div>
 
-        <div>
-          <ul>
+            <!-- <ul> -->
+              <div *ngFor="let choice of ques.choices" class="answer">
+                <div *ngIf="ques.multilchoice">
+                  <input  type="checkbox"
+                  value=" {{ choice.score }}"
+                  id="{{ choice.id }}"
+                  [(ngModel)]="choice.answer"
+                  [ngModelOptions]="{standalone: true}"
+                  />
+                  {{ choice.name }}
+                </div>
 
-
-            <div *ngFor="let choice of ques.choices">
-
-              <div *ngIf="ques.multilchoice">
-                <input  type="checkbox"
-                value=" {{ choice.score }}"
-                id="{{ choice.id }}"
-                [(ngModel)]="choice.answer"
-                [ngModelOptions]="{standalone: true}"
-                />
-                {{ choice.name }}
-              </div>
-
-              <div *ngIf="!ques.multilchoice">
-                <input
-                  name="{{ ques.id }}"
-                  id="{{ ques.id }}"
-                  type="radio"
-                  value="{{ choice.score }}"
-                  [(ngModel)]="ques.answer"
-                />
-                {{ choice.name }}
-              </div>
+                <div *ngIf="!ques.multilchoice" >
+                  <input name="{{ ques.id }}"
+                    id="{{ ques.id }}"
+                    type="radio"
+                    value="{{ choice.score }}"
+                    [(ngModel)]="ques.answer"
+                  />
+                  {{ choice.name }}
+                </div>
 
             </div>
-          </ul>
-        </div>
+          <!-- </ul> -->
+
       </div>
-    </ul>
+
     <div class ="row" *ngIf="onSuitCalculate">
         <mat-spinner></mat-spinner>
     </div>
   </form>
   <!-- </div> -->
 
-  <app-suit-result-table *ngIf="!canDoSuit && canSaveSuit" [riskLevel]="survey.riskLevel"  ></app-suit-result-table>
+  <app-suit-result-table *ngIf="!canDoSuit && canSaveSuit" [riskScore]="survey.suitScore"  [riskLevel]="survey.riskLevel"  [riskLevelTxt]="survey.riskLevelTxt"    ></app-suit-result-table>
 
   <mat-card-actions  class="stepper_action center-screen ">
 

@@ -56,7 +56,7 @@
     </div>
   </mat-card>
 
-  <mat-card *ngIf="verifyFLag " >
+  <!-- <mat-card *ngIf="verifyFLag " > -->
   <!-- ************* STEPPER  -->
   <div class='container' *ngIf="!saveAllComplete">
     <mat-card-title>
@@ -65,11 +65,6 @@
       </div>
       <strong class="col-md-6">{{ formService.label_Welcome }}</strong>
       <p class="col-md-6" > {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
-
-      <!-- <div *ngIf="verifyFLag" class='branner col-md-6' >
-            <strong>{{ formService.label_Welcome }}</strong>
-            <p> {{ customer.Title_Name_T }} {{ customer.First_Name_T }} {{ customer.Last_Name_T }}</p>
-      </div> -->
     </mat-card-title>
 
   <mat-horizontal-stepper labelPosition="bottom" linear  #stepper *ngIf="verifyFLag " class="col" >
@@ -137,7 +132,9 @@
               <app-cust-addr  *ngIf="this.cur_addrData.SameAs == '9' " [addrData]="cur_addrData" [custCode]="survey.pid"  [addrFormGroup]="current_formGroup"></app-cust-addr>
             </div>
           <!-- 2.4 Mail Address (SEQ = 4)-->
+
           <span class="label_title"><h5>{{ formService.mail_addr_title }} ({{ formService.mail_addr_title_ENG }})</h5></span>
+
           <div class='row'>
               <form [formGroup]="register_formGroup">
               <section class="example-section" >
@@ -173,6 +170,7 @@
 
                 <form class="form_section">
                       <app-suit-tree-view [questions]="fatcaQuestions" [questionDisabled]="cddFormGroup.disabled" ></app-suit-tree-view>
+                      <!-- <app-suit-tree-view [questions]="fatcaQuestions"  ></app-suit-tree-view> -->
                 </form>
             </div>
 

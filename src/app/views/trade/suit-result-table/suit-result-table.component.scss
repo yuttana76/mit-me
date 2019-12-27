@@ -1,7 +1,21 @@
+
+  @media screen and (max-width : 1920px){
+    .div-only-mobile{
+    visibility:hidden;
+    }
+  }
+  @media screen and (max-width : 906px){
+    .div_destop{
+    visibility:hidden;
+    }
+    .div-only-mobile{
+    visibility:visible;
+    }
+  }
+
 .suit_condition {
   margin-top: 20px;
  }
-
 
 .fa-arrow-color {
   color: orangered;

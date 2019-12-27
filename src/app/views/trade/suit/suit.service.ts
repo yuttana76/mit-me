@@ -109,7 +109,7 @@ export class SuitFormService {
     LABEL_CALCULATE = 'ประเมินผล Calculate';
     LABEL_CANCEL = 'ยกเลิก Cancel';
     LABEL_OK = 'ตกลง OK';
-    label_NewSurvey = 'ทำประเมิน ความเสี่ยง New Survey';
+    label_NewSurvey = 'ทำประเมินใหม่ New Survey';
     LABEL_EVA_AGAIN = 'ประเมินใหม่ Do again';
     LABEL_EVA_CONF = 'ยืนยันการประเมิน';
 

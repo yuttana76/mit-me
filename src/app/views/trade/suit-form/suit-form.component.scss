@@ -2,16 +2,23 @@
   font-size: 110%;
 }
 .questions{
-  margin-top: 5px;
+  margin-top: 15px;
+
+}
+
+.answer{
+  text-indent: 20px;
 }
 .questions #ques{
-  font-size: x-large;
+  // font-size: x-large;
+  font-weight: bold;
 }
+
 .blue-txt{
   color: #1194F6;
-
+  margin-top: 10px;
   // font-size: 120%;
-  font-size: x-large;
+  // font-size: x-large;
 }
 .q_image{
   img {
@@ -51,7 +58,7 @@
   margin-left: 10px;
 }
 
-.label_title h3{
+.label_title h5{
   color: darkslateblue;
   // color: #1194F6;
   margin-top: 15px;

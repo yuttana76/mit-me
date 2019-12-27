@@ -7,7 +7,9 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class SuitResultTableComponent implements OnInit {
 
+  @Input() riskScore: string;
   @Input() riskLevel: string;
+  @Input() riskLevelTxt: string;
 
   constructor() { }
 

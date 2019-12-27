@@ -12,7 +12,7 @@ const resp_msg = {
 
   "204": "Incorrect user",
   "205": "Link was expire. Please contace to MPAM 02-xxx-yyyy",
-  "206": "ไม่พบข้อมูล",
+  "206": "OTP ไม่ถูกต้อง/ OTP incorrect",
   "207": "OTP  Expired",
   "208": "Incorrect data",
 

@@ -20,8 +20,8 @@ https://hectorm.github.io/otpauth/index.html
 */
 const OTPAuth = require('otpauth');
 
-const TOKEN_PERIOD = 300;// 30 milisec
-// const TOKEN_PERIOD = 60000; // 6 hours
+// const TOKEN_PERIOD = 300;// 30 milisec
+const TOKEN_PERIOD = 60000; // 6 hours
 
 let totp = new OTPAuth.TOTP({
   issuer: 'ACME',
@@ -39,14 +39,27 @@ Send mail  by OTP
 */
 exports.OTPtokenToSMS = (req, res, next) => {
 
-  const _mobile = req.body.m
-  let token = totp.generate();
-  // let token_date = new Date();
+  const _mobile = req.body.m;
+  const _pid = req.body.pid;
+
+  let totp_pid = new OTPAuth.TOTP({
+    issuer: 'ACME',
+    label: 'AzureDiamond',
+    algorithm: 'SHA1',
+    digits: 6,
+    period: TOKEN_PERIOD, //sec
+    secret: OTPAuth.Secret.fromRaw(_pid)
+  });
+
+
+  // let token = totp.generate();
+  let token = totp_pid.generate();
+
   let _msg = `OTP = ${token}`;
   var _url = smsConfig.SMSCompleteURL2(_mobile,_msg);
 
   // SAVE MIT_LOG
-  mitLog.saveMITlog('SYSTEM','MIT-Survey','Require OTP Mobile=' + _mobile+ ' ;'+_msg,req.ip,req.originalUrl,function(){});
+  mitLog.saveMITlog(_pid,'MIT-Survey','Require OTP '+_pid +' Mobile=' + _mobile+ ' ;'+_msg,req.ip,req.originalUrl,function(){});
 
   logger.info( `API /getOTPtokenSMS - ${req.originalUrl} - ${req.ip} - ${_mobile}`);
   logger.info(`SMS URL: ${_url}`);
@@ -144,13 +157,27 @@ exports.verityOTPtoken = (req, res, next) => {
 
     const _token = req.body.token;
     const _pid = req.body.pid;
+    // const _pid = 'xxx';
     const otp_device_ref = req.body.mobile;
     const otp_device = 'Mobile';
     let logMsg;
 
     logger.info(`Welcome /verityOTPtoken API. ${_token}  - pid: ${_pid}`);
 
-    let delta = totp.validate({
+    let totp_pid = new OTPAuth.TOTP({
+      issuer: 'ACME',
+      label: 'AzureDiamond',
+      algorithm: 'SHA1',
+      digits: 6,
+      period: TOKEN_PERIOD, //sec
+      secret: OTPAuth.Secret.fromRaw(_pid)
+    });
+
+    // let delta = totp.validate({
+    //     token: _token,
+    //     window: 10
+    // });
+    let delta = totp_pid.validate({
         token: _token,
         window: 10
     });

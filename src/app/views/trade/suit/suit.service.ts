@@ -79,7 +79,7 @@ export class SuitFormService {
 
   // Label
   REQ_MODIFY = 'ต้องการแก้ไขข้อมูล';
-  label_idCard = 'ID card number here';
+  label_idCard = 'โปรดระบุ หมายเลขบัตร ';
   label_Welcome = 'Welcome';
   label_verify_dob = 'ยืนยันโดย วันเดือนปีเกิด ';
   label_verify_dob_ENG = '- Verify by date of birth';
@@ -90,7 +90,7 @@ export class SuitFormService {
   label_Request_otp = 'ส่ง OTP';
   label_input_verify_dob =  'วันเดือนปีเกิด - Your date of birth';
   label_verify_dob_Format = 'รูปแบบ ddmmyyyy (ค.ศ.)  (ตัวอย่าง = 01012019)';
-  label_input_verify_OTP =  'Enter OTP passcode';
+  label_input_verify_OTP =  'Enter OTP';
   label_RiskLevel = 'ผลประเมินความเสี่ยงระดับ';
   label_EvaluatedDate = 'วันที่ประเมิน';
 

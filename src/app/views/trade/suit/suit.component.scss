@@ -315,6 +315,23 @@ margin-top: 10px;
        }
     }
 
+
+.pid_div input {
+  background-color: floralwhite;
+  border-color: bisque;
+  text-align: center;
+  font-size: x-large;
+  color: deeppink;
+}
+
+.divOTP input {
+  background-color: floralwhite;
+  border-color: bisque;
+  text-align: center;
+  font-size: x-large;
+  color: deeppink;
+}
+
 // *************TEST *******************
 std-bb {
   margin-bottom: 20px;
@@ -421,11 +438,11 @@ code p {
 }
 
 .divIDCust{
-  margin-top: 10px;;
+  margin-top: 10px;
 }
 
 .divOTP{
-  margin-top: 10px;;
+  margin-top: 10px;
 }
 
 .divOTP code{

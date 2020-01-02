@@ -22,9 +22,15 @@
                   <h5>เข้าสู่ระบบ ยืนยันข้อมูล และทดสอบ แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน (Suitability Assessment)</h5>
                 </code>
 
-                <input  class="form-control mr-sm-2 margin_top_30" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
-                formControlName="pid" [(ngModel)]="survey.pid"  >
-                <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
+                <div class="pid_div">
+                  <!-- <input id="pid_input" class="form-control mr-sm-2 margin_top_30" type="search" placeholder="{{ formService.label_idCard }}" aria-label="Search"
+                  formControlName="pid" [(ngModel)]="survey.pid"  autocomplete="off" > -->
+                  <input id="pid_input" class="form-control mr-sm-2 margin_top_30" type="search"  aria-label="Search"
+                  formControlName="pid" [(ngModel)]="survey.pid"  autocomplete="off" >
+
+                  <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
+                </div>
+
 
                   <button [disabled]="form.get('pid').invalid" mat-flat-button color="primary" (click)="getCustomerData()" class="col-md-12 margin_top_30" >
                     {{ formService.LABEL_NEXT }} <i class="fas fa-search"></i> </button>
@@ -41,7 +47,10 @@
               <br>
              </code>
 
-                <input class="form-control margin_top_40" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" >
+
+                <input class="form-control margin_top_40" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" autocomplete="off">
+
+
                 <button [disabled]="verifyOTP_val==''" mat-flat-button color="primary" (click)="verifyConfirmOTP()" class="col-md-12 margin_top_30" >
                     {{formService.LABEL_Verify}}</button>
                 <button mat-flat-button color="accent" class="margin_top_10 col-md-12" (click)="requestOTP()" > {{formService.LABEL_REQ_OTP}} </button>

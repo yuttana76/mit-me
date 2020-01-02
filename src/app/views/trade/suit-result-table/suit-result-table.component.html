@@ -5,13 +5,140 @@
 
 
 
-    <div class="row div-only-mobile">
-      <h5> ผลการประเมินความเหมาะสมในการลงทุน</h5>
-        <label>คะแนน {{riskScore}}</label>
-        <label>ระดับ {{riskLevel}}</label>
-        <label>ประเภทนักลงทุน {{riskLevelTxt}}</label>
+    <div class="row div-only-mobile risk_eva_result_mb">
+      <!-- <h5> ผลการประเมินความเหมาะสมในการลงทุน</h5> -->
+      <h5> ผลการประเมิน</h5>
+
+      <table class="col-md-12">
+        <tr>
+          <th>คะแนน</th>
+          <td>{{riskScore}}</td>
+        </tr>
+        <tr>
+          <th>ระดับ</th>
+          <td>{{riskLevel}}</td>
+        </tr>
+        <tr>
+          <th>ประเภทนักลงทุน</th>
+          <td>{{riskLevelTxt}}</td>
+        </tr>
+      </table>
+
 
       <h5> ตัวอย่างคำแนะนำเรื่องการจัดสรรการลงทุน (ฺBasic Asset Allocation)</h5>
+
+      <!-- Level 1 -->
+      <table class="col-md-12" *ngIf="riskLevel == '1'">
+        <tr>
+          <th>เงินฝากและตราสารหนี้ระยะสั้น</th>
+          <td rowspan="2">&gt;60%</td>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาครัฐที่มีอายุมากกว่า 1 ปี</th>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาคเอกชน</th>
+          <td>&lt;20%</td>
+        </tr>
+        <tr>
+          <th>ตราสารทุน</th>
+          <td>&lt;10%</td>
+        </tr>
+        <tr>
+          <th>การลงทุนทางเลือก*</th>
+          <td>&lt;5%</td>
+        </tr>
+      </table>
+
+      <!-- Level 2 -->
+      <table class="col-md-12" *ngIf="riskLevel == '2'">
+        <tr>
+          <th>เงินฝากและตราสารหนี้ระยะสั้น</th>
+          <td >&lt;20%</td>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาครัฐที่มีอายุมากกว่า 1 ปี</th>
+          <td rowspan="2">&gt;70%</td>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาคเอกชน</th>
+        </tr>
+        <tr>
+          <th>ตราสารทุน</th>
+          <td>&lt;20%</td>
+        </tr>
+        <tr>
+          <th>การลงทุนทางเลือก*</th>
+          <td>&lt;10%</td>
+        </tr>
+      </table>
+      <!-- Level 3 -->
+      <table class="col-md-12" *ngIf="riskLevel == '3'">
+        <tr>
+          <th>เงินฝากและตราสารหนี้ระยะสั้น</th>
+          <td >&lt;10%</td>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาครัฐที่มีอายุมากกว่า 1 ปี</th>
+          <td rowspan="2">&gt;60%</td>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาคเอกชน</th>
+        </tr>
+        <tr>
+          <th>ตราสารทุน</th>
+          <td>&lt;30%</td>
+        </tr>
+        <tr>
+          <th>การลงทุนทางเลือก*</th>
+          <td>&lt;10%</td>
+        </tr>
+      </table>
+      <!-- Level 4 -->
+      <table class="col-md-12" *ngIf="riskLevel == '4'">
+        <tr>
+          <th>เงินฝากและตราสารหนี้ระยะสั้น</th>
+          <td >&lt;10%</td>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาครัฐที่มีอายุมากกว่า 1 ปี</th>
+          <td rowspan="2">&gt;40%</td>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาคเอกชน</th>
+        </tr>
+        <tr>
+          <th>ตราสารทุน</th>
+          <td>&lt;40%</td>
+        </tr>
+        <tr>
+          <th>การลงทุนทางเลือก*</th>
+          <td>&lt;20%</td>
+        </tr>
+      </table>
+      <!-- Level 5 -->
+      <table class="col-md-12" *ngIf="riskLevel == '5'">
+        <tr>
+          <th>เงินฝากและตราสารหนี้ระยะสั้น</th>
+          <td >&lt;5%</td>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาครัฐที่มีอายุมากกว่า 1 ปี</th>
+          <td rowspan="2">&gt;30%</td>
+        </tr>
+        <tr>
+          <th>ตราสารหนี้ภาคเอกชน</th>
+        </tr>
+        <tr>
+          <th>ตราสารทุน</th>
+          <td>&gt;60%</td>
+        </tr>
+        <tr>
+          <th>การลงทุนทางเลือก*</th>
+          <td>&lt;30%</td>
+        </tr>
+      </table>
+
 
     </div>
 

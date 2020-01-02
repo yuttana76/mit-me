@@ -355,7 +355,7 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
           <div class='blog-content-outer'>
 
           <div class="logo-area col-xs-12 col-sm-12 col-md-3">
-          <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+          <a href="http://www.merchantasset.co.th/home.html"><img src="https://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
           </div>
 
           <p class="txt-Indent">เรียน   ท่านลูกค้า</p>
@@ -781,7 +781,7 @@ exports.sendMailThankCust = (req, res, next) =>{
           <div class='blog-content-outer'>
 
           <div class="logo-area col-xs-12 col-sm-12 col-md-3">
-          <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+          <a href="http://www.merchantasset.co.th/home.html"><img src="https://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
           </div>
 
           <p >เรียน ท่านลูกค้า </p>
@@ -1209,7 +1209,7 @@ function senMailKYC(req,res,_PID,_Email,_url){
         <div class='blog-content-outer'>
 
         <div class="logo-area col-xs-12 col-sm-12 col-md-3">
-        <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+        <a href="http://www.merchantasset.co.th/home.html"><img src="https://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
         </div>
 
       <div class="a">
@@ -1381,7 +1381,7 @@ function sendSuitMail(req,res,_PID,_Email,_url){
         <div class='blog-content-outer'>
 
         <div class="logo-area col-xs-12 col-sm-12 col-md-3">
-        <a href="http://www.merchantasset.co.th/home.html"><img src="http://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+        <a href="http://www.merchantasset.co.th/home.html"><img src="https://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
         </div>
 
 

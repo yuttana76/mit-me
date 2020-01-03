@@ -48,7 +48,7 @@
         <mat-form-field class="col-md-4">
             <input matInput [(ngModel)]="cddData.PIDExpDate"  [matDatepicker]="expDatePicker" formControlName="PIDExpDate"  placeholder={{formService.label_PIDExpDate}} readonly=true>
             <mat-datepicker-toggle matSuffix [for]="expDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #expDatePicker ></mat-datepicker>
+            <mat-datepicker #expDatePicker touchUi="true"></mat-datepicker>
             <mat-error *ngIf="cddFormGroup.get('PIDExpDate').invalid ">Please correct ID expire date</mat-error>
         </mat-form-field>
 
@@ -96,7 +96,7 @@
         <mat-form-field class="col-md-4">
             <input matInput [(ngModel)]="cddData.dob"  [matDatepicker]="dobDatePicker" formControlName="dob"  placeholder={{formService.label_DOB}} readonly=true>
             <mat-datepicker-toggle matSuffix [for]="dobDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #dobDatePicker ></mat-datepicker>
+            <mat-datepicker #dobDatePicker touchUi="true"></mat-datepicker>
             <mat-error *ngIf="cddFormGroup.get('dob').invalid ">Please correct date of birth</mat-error>
           </mat-form-field>
       </div>
@@ -119,7 +119,7 @@
           <mat-form-field class="col-md-4">
               <input matInput [(ngModel)]="cddData.PIDExpDate"  [matDatepicker]="expDatePicker" formControlName="PIDExpDate"  placeholder={{formService.label_PIDExpDate}} readonly=true>
               <mat-datepicker-toggle matSuffix [for]="expDatePicker"></mat-datepicker-toggle>
-              <mat-datepicker #expDatePicker ></mat-datepicker>
+              <mat-datepicker #expDatePicker touchUi="true"></mat-datepicker>
               <mat-error *ngIf="cddFormGroup.get('PIDExpDate').invalid ">Please correct ID expire date</mat-error>
             </mat-form-field>
         </div> -->
@@ -191,7 +191,7 @@
                         <mat-form-field class="col-md-4" >
                             <input matInput [(ngModel)]="cddData.SPpersonModel.cardExpDate"  [matDatepicker]="spCardExpDate" formControlName="spCardExpDate"  placeholder="วันหมดอายุ (ค.ศ.) Expire Date" readonly=true>
                             <mat-datepicker-toggle matSuffix [for]="spCardExpDate"></mat-datepicker-toggle>
-                            <mat-datepicker #spCardExpDate ></mat-datepicker>
+                            <mat-datepicker #spCardExpDate touchUi="true"></mat-datepicker>
                             <mat-error *ngIf="cddFormGroup.get('spCardExpDate').invalid ">Please correct ID expire date</mat-error>
                         </mat-form-field>
 

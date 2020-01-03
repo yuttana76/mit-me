@@ -478,3 +478,29 @@ code p {
 code {
   color: darkslateblue;
 }
+
+input[type=search]::-webkit-search-cancel-button {
+  -webkit-appearance: searchfield-cancel-button;
+}
+
+#thk_card {
+  top: 50px;
+}
+
+.thk_card_content{
+  margin-top: 20px;
+  text-align: center;
+  color: darkslateblue;
+  margin-top: 20px;
+  font-size: x-large;
+}
+
+.mat-card-footer{
+  margin-top: 20px;
+  text-align: center;
+}
+
+.mat-card-footer div{
+  padding: 10px;
+
+}

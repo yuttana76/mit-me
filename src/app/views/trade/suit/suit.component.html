@@ -2,7 +2,6 @@
 
 <mat-card *ngIf="!verifyFLag" class="divCenter" >
   <div class="container" *ngIf="!verifyFLag " >
-      <!-- <h5>Merchnat partner survey</h5> -->
       <div class="block">
           <div class='branner col-md-6'>
             <img  src="assets/img/brand/MPAM-logo.png" />
@@ -30,7 +29,6 @@
 
                   <mat-error *ngIf="form.get('pid').invalid"> *โปรดระบุ หมายเลขบัตร Please entry ID card number. </mat-error>
                 </div>
-
 
                   <button [disabled]="form.get('pid').invalid" mat-flat-button color="primary" (click)="getCustomerData()" class="col-md-12 margin_top_30" >
                     {{ formService.LABEL_NEXT }} <i class="fas fa-search"></i> </button>
@@ -201,7 +199,7 @@
 
 <!-- ***************** #5 Final  step -->
     <mat-step >
-      <ng-template matStepLabel>{{formService.STEPER_4}}</ng-template>
+      <ng-template  matStepLabel>{{formService.STEPER_4}}</ng-template>
 
       <div class = 'row center-screen2'>
           <code>
@@ -216,28 +214,81 @@
 
       <div  class="row center-screen ">
           <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px" class="col-sm-12 col-lg-3" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
-          <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" class="col-sm-12 col-lg-3" >{{formService.LABEL_CONFIRM_DATA}}  </button>
+          <button *ngIf="survey.riskLevel" mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" class="col-sm-12 col-lg-3" >{{formService.LABEL_CONFIRM_DATA}}  </button>
           <!-- <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button> -->
       </div>
     </mat-step>
 </mat-horizontal-stepper>
 </div>
 
+<!--
 <div *ngIf="saveAllComplete" class="row center-screen2 ">
-      <code >
+    <div class='branner col-md-6'>
+      <img  src="assets/img/brand/MPAM-logo.png" />
+    </div>
+
           <br>
-          <h5>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </h5>
-          <h5>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อ </h5>
+          <h4>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </h4>
+          <h4>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  โทร 02-660-6689 หรือ wealthservice@merchantasset.co.th</h4>
           <br>
-          <h5>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</h5>
-          <h5>942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4</h5>
-          <h5>แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500</h5>
-          <h5>โทร. 02 660 6689</h5>
-          <h5>แฟกซ์. 02 660 6678</h5>
-          <h5>เว็บไซต์ : www.merchantasset.co.th</h5>
-          <h5>อีเมล : wealthservice@merchantasset.co.th </h5>
-      </code>
-</div>
+          <p>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
+          <p>942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4</p>
+          <p>แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500</p>
+          <p>โทร. 02 660 6689</p>
+          <p>แฟกซ์. 02 660 6678</p>
+          <p>เว็บไซต์ : www.merchantasset.co.th</p>
+          <p>อีเมล : wealthservice@merchantasset.co.th </p>
+</div> -->
+
+
+<mat-card id="thk_card" *ngIf="saveAllComplete" class="divCenter" >
+  <mat-card-header>
+    <div class='branner col-md-6'>
+      <img  src="assets/img/brand/MPAM-logo.png" />
+    </div>
+  </mat-card-header>
+
+    <div class ="thk_card_content">
+      บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล
+      หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ ตามที่อยู่ด้านล่าง
+    </div>
+
+  <mat-card-footer>
+    <div>
+      บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
+      942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4
+      แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500
+      โทร. <a href="tel:026606689">02-660-6689</a>
+      แฟกซ์. 02 660 6678
+      เว็บไซต์ : www.merchantasset.co.th
+      อีเมล : <a href="mailto:wealthservice@merchantasset.co.th" >wealthservice@merchantasset.co.th</a>
+    </div>
+  </mat-card-footer>
+</mat-card>
+<!--
+<div *ngIf="saveAllComplete" class="row center-screen2 ">
+  <div class='branner col-md-6'>
+      <img  src="assets/img/brand/MPAM-logo.png" />
+    </div>
+  <code >
+      <div>
+        <h3>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </h3>
+        <h3>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  โทร 02-660-6689 หรือ wealthservice@merchantasset.co.th </h3>
+      </div>
+
+      <div>
+        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
+        942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4
+        แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500
+        โทร. 02 660 6689
+        แฟกซ์. 02 660 6678
+        เว็บไซต์ : www.merchantasset.co.th
+        อีเมล : wealthservice@merchantasset.co.th
+      </div>
+
+  </code>
+</div> -->
+
 
 <!-- </div> -->
 <!-- </mat-card> -->

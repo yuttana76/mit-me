@@ -40,7 +40,9 @@ export class SuiteService {
     const data = {
       'pid': _pid.trim(),
       'token': token.trim(),
-      'mobile': mobile
+      'mobile': mobile,
+      'device': 'Mobile',
+      'module': 'MIT-Survey',
     };
     return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/verityOTPtoken', data);
   }

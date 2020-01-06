@@ -158,9 +158,9 @@ exports.verityOTPtoken = (req, res, next) => {
 
     const _token = req.body.token;
     const _pid = req.body.pid;
-    // const _pid = 'xxx';
     const otp_device_ref = req.body.mobile;
-    const otp_device = 'Mobile';
+    const otp_device = req.body.device;
+    const otp_module = req.body.module;
     let logMsg;
 
     logger.info(`Welcome /verityOTPtoken API. ${_token}  - pid: ${_pid}`);
@@ -192,7 +192,8 @@ exports.verityOTPtoken = (req, res, next) => {
       mitLog.saveMITlog(_pid,'MIT-Survey',logMsg,req.ip,req.originalUrl,function(){});
 
         // Save OTP tracking
-        var otpDate ={'otp_device': otp_device,'otp_device_ref':otp_device_ref,'input_otp_code':_token};
+        var otpDate ={'otp_module': otp_module,'otp_device': otp_device,'otp_device_ref':otp_device_ref,'input_otp_code':_token};
+
         saveOTPtracking(otpDate).then(otp_id=>{
 
           return res.status(200).json({
@@ -324,7 +325,18 @@ exports.verityByDOB = (req, res, next) => {
 
 exports.testOTPTracking = (req, res, next) => {
 
-  var otpDate ={'otp_device':'Mobile','otp_device_ref':'0897765331','input_otp_code':'123456'};
+  console.log('Welcome testOTPTracking() API.');
+
+  const _token = req.body.token;
+  const _pid = req.body.pid;
+  const otp_device_ref = req.body.mobile;
+  const otp_device = req.body.device;
+  const otp_module = req.body.module ;
+
+  var otpDate ={'otp_module':otp_module,'otp_device':otp_device,'otp_device_ref':otp_device_ref,'input_otp_code':_token};
+
+  console.log('DATE>' + JSON.stringify(otpDate));
+
   saveOTPtracking(otpDate).then(result=>{
     res.status(200).json(result);
   },err=>{
@@ -349,9 +361,9 @@ function saveOTPtracking(otpDate){
       --DECLARE @INPUT_OTP_CODE varchar(10);
 
       INSERT INTO MIT_OTP_TRACKING
-      (OTP_ID,OTP_DEVICE,OTP_DEVICE_REF,INPUT_OTP_CODE,INPUT_OTP_DATE)
+      (OTP_ID,OTP_DEVICE,MODULE,OTP_DEVICE_REF,INPUT_OTP_CODE,INPUT_OTP_DATE)
       VALUES
-      (@OTP_ID,@OTP_DEVICE,@OTP_DEVICE_REF,@INPUT_OTP_CODE,getdate())
+      (@OTP_ID,@OTP_DEVICE,@MODULE,@OTP_DEVICE_REF,@INPUT_OTP_CODE,getdate())
 
     END
     `;
@@ -361,6 +373,7 @@ function saveOTPtracking(otpDate){
       pool1.request() // or: new sql.Request(pool1)
       .input('OTP_ID', sql.VarChar, otp_id)
       .input('OTP_DEVICE', sql.VarChar, otpDate.otp_device)
+      .input('MODULE', sql.VarChar, otpDate.otp_module)
       .input('OTP_DEVICE_REF', sql.VarChar, otpDate.otp_device_ref)
       .input('INPUT_OTP_CODE', sql.VarChar, otpDate.input_otp_code)
       .query(queryStr, (err, result) => {

@@ -79,7 +79,7 @@ exports.saveFATCA = (req, res, next) => {
   var userId = req.body.userId;
   var pid = req.body.pid;
   var ans = req.body.ans ;
-  var opt_id = req.body.opt_id ;
+  var otp_id = req.body.opt_id ;
 
   var logMsg = `POST API /saveFATCA - ${req.originalUrl} - ${req.ip} - ${pid}`;
   logger.info( logMsg);

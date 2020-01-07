@@ -190,16 +190,12 @@ exports.verityOTPtoken = (req, res, next) => {
 
       logger.info(logMsg);
       // SAVE MIT_LOG
-      logger.info('***STEP 1');
       mitLog.saveMITlog(_pid,'MIT-Survey',logMsg,req.ip,req.originalUrl,function(){});
-      logger.info('***STEP 2');
         // Save OTP tracking
         var otpDate ={'otp_module': otp_module,'otp_device': otp_device,'otp_device_ref':otp_device_ref,'input_otp_code':_token};
 
-        logger.info('***Save OTP Tacking');
         saveOTPtracking(otpDate).then(otp_id=>{
 
-          logger.info('***STEP 3');
           return res.status(200).json({
             code: rsp_code,
             otp_id: otp_id

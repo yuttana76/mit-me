@@ -199,6 +199,7 @@ exports.verityOTPtoken = (req, res, next) => {
         logger.info('***Save OTP Tacking');
         saveOTPtracking(otpDate).then(otp_id=>{
 
+          logger.info('***STEP 3');
           return res.status(200).json({
             code: rsp_code,
             otp_id: otp_id
@@ -351,6 +352,7 @@ exports.testOTPTracking = (req, res, next) => {
 
 function saveOTPtracking(otpDate){
 
+  logger.info('Welcome saveOTPtracking()')
   otp_id = 'OTP'.concat(NOW());
 
   return new Promise(function(resolve, reject) {
@@ -382,6 +384,7 @@ function saveOTPtracking(otpDate){
       .query(queryStr, (err, result) => {
           // ... error checks
           if(err){
+            logger.error(`Query:${JSON.stringify(err)}` );
             reject(err);
           }else {
              resolve(otp_id);
@@ -389,7 +392,7 @@ function saveOTPtracking(otpDate){
       })
     })
     pool1.on('error', err => {
-      logger.error(`${err}` );
+      logger.error(`POOL:${JSON.stringify(err)}` );
       reject(err);
     })
   });

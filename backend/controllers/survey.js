@@ -919,6 +919,96 @@ exports.reqNewMobile = (req, res, next) =>{
 
 }
 
+/**
+ * Survey dashboard
+ * Show overview
+ * Crytera : Cust code,Survey date
+ * KYC
+ * Suitability
+ */
+exports.surveyDashboard = (req, res, next) =>{
+
+  var custCode = req.query.custCode;
+  var SurveyStartDate = req.query.SurveyStartDate;
+  var SurveyToDate = req.query.SurveyToDate;
+
+  logger.info(`Welcome API /surveyDashboard?Cust_Code=${custCode}&SurveyStartDate=${SurveyStartDate}&SurveyToDate=${SurveyToDate}`);
+
+  surveyDashboardFc(custCode,SurveyStartDate,SurveyToDate).then( (_data) =>{
+      res.status(200).json({
+        msg:'successful',
+        data:_data
+      });
+  });
+}
+
+
+function surveyDashboardFc(custCode,SurveyStartDate,SurveyToDate) {
+  logger.info('surveyDashboardFc()');
+
+  let condition =''
+
+  if(custCode){
+    condition='AND (B.Cust_Code= @Cust_Code) ';
+  }
+
+  if(SurveyStartDate){
+    condition+=`AND( A.CreateDate BETWEEN @SurveyStartDate AND @SurveyToDate
+      OR A.UpdateDate BETWEEN @SurveyStartDate AND @SurveyToDate)`
+  }
+
+  var fncName = "surveyDashboardFc";
+  var queryStr = `
+  BEGIN
+        SELECT B.Cust_Code
+        ,B.Title_Name_T +' '+ B.First_Name_T +' '+B.Last_Name_T As FullName
+        ,convert(varchar, A.CreateDate, 103)  AS KYC_C_DATE,convert(varchar, A.UpdateDate, 103)   AS KYC_U_DATE
+        ,convert(varchar, C.CreateDate, 103)  AS SUIT_DATE,C.RiskLevel AS SUIT_LEVEL
+        from MIT_CUSTOMER_INFO A, Account_Info B
+            left join MIT_CUSTOMER_SUIT C ON B.Cust_Code=C.CustCode AND C.Status='A'
+        where A.Cust_Code=B.Cust_Code
+        ${condition}
+  END
+    `;
+    // AND (B.Cust_Code= @Cust_Code OR A.UpdateDate BETWEEN '2021/01/01' AND '2021/01/30')
+
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("Cust_Code", sql.VarChar(200), custCode)
+        .input("SurveyStartDate", sql.VarChar(50), SurveyStartDate)
+        .input("SurveyToDate", sql.VarChar(50), SurveyToDate)
+        .query(queryStr, (err, result) => {
+          if (err) {
+
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" Quey RS>>" + queryStr);
+            // if(result.recordset.length>0){
+            //   resolve(result.recordset);
+            // }else{
+            //   resolve(result.recordsets[1]);
+            // }
+
+            resolve(result.recordsets);
+            // resolve(result.recordset[0]);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+
+      console.log("ERROR>>" + err);
+      reject(err);
+
+    });
+  });
+}
+
 
 function senMailInternal_NewMob(req,LoginName,module,log_msg){
 
@@ -944,11 +1034,11 @@ function senMailInternal_NewMob(req,LoginName,module,log_msg){
             <html>
             <body>
 
-            <h3>KYC & Suit survey ลูกค้าแจ้งเปลี่ยนข้อมูล On ${utility.getDateTime()} </h3>
+            <h3>KYC & Suit survey ลูกค้าแจ้งเปลี่ยน เบอร์มือถือ On ${utility.getDateTime()} </h3>
 
               <div class='container'>
                   <p>Customer Code: ${LoginName}</p>
-                  <p>Message: ${log_msg}</p>
+                  <p>เบอร์มือถือ: ${log_msg}</p>
                 <hr>
                 <br>
               </div>

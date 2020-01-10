@@ -45,9 +45,7 @@
               <br>
              </code>
 
-
                 <input class="form-control margin_top_40" type="search"  [(ngModel)]="verifyOTP_val" placeholder={{formService.label_input_verify_OTP}} name="verifyOTP_val" autocomplete="off">
-
 
                 <button [disabled]="verifyOTP_val==''" mat-flat-button color="primary" (click)="verifyConfirmOTP()" class="col-md-12 margin_top_30" >
                     {{formService.LABEL_Verify}}</button>

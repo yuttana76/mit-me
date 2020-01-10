@@ -93,7 +93,8 @@
               <div class="KYC_Result">
                 <p><span>Create</span> {{element.KYC_C_DATE}}  </p>
                 <p><span>Update</span> {{element.KYC_U_DATE}}</p>
-                <i class="far fa-edit"  [routerLink]="['/trade/customerEdit',element.Cust_Code,'SEARCH_CUST_SCR']"></i>
+                <i class="far fa-edit"  (click)="onKYCdetail(element.Cust_Code)"></i>
+                <!-- <i class="far fa-edit"  [routerLink]="['/trade/kycDetail',element.Cust_Code,'SEARCH_CUST_SCR']"></i> -->
               </div>
 
             </td>

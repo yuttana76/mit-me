@@ -5,11 +5,12 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { KycSurveyList } from '../model/kycSurveyList';
-import { PageEvent, MatTableDataSource } from '@angular/material';
+import { PageEvent, MatTableDataSource, MatDialog, MatDialogRef } from '@angular/material';
 import { DatePipe } from '@angular/common';
 
 import {dateDBFormatPipe} from '../pipe/dateFormatPipe';
 import { SelectionModel } from '@angular/cdk/collections';
+import { KycDetailDialogComponent } from '../dialog/kyc-detail-dialog/kyc-detail-dialog.component';
 
 @Component({
   selector: 'app-survey-search',
@@ -39,10 +40,13 @@ export class SurveySearchComponent implements OnInit {
   surveyStartDate_Cond :string;
   surveyToDate_Cond : string;
 
+  kycDetailDialogComponent: MatDialogRef<KycDetailDialogComponent>;
+
   constructor(
     private suiteService: SuiteService,
     private authService: AuthService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    public dialog: MatDialog,
   ) {
 
   }
@@ -138,5 +142,30 @@ export class SurveySearchComponent implements OnInit {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
+
+
+  onKYCdetail(Cust_Code: string) {
+
+    this.kycDetailDialogComponent = this.dialog.open(KycDetailDialogComponent, {
+      width: '400px',
+      data: Cust_Code
+    });
+
+    this.kycDetailDialogComponent.afterClosed().subscribe(result => {
+        console.log('onNewMobileDialog afterClosed()=> ', result);
+
+        // if(result ==='newMobileSuccess'){
+        //   this.toastr.success(` `,
+        //   "ดำเนินการสำเร็จ",
+        //   {
+        //     timeOut: 3000,
+        //     closeButton: true,
+        //     positionClass: "toast-top-center"
+        //   }
+        //   );
+        // }
+
+    });
   }
 }

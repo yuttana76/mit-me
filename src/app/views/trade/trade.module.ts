@@ -76,6 +76,7 @@ import { SuitFormComponent } from './suit-form/suit-form.component';
 import { NewMobileDialogComponent } from './dialog/new-mobile-dialog/new-mobile-dialog.component';
 import { SurveySearchComponent } from './survey-search/survey-search.component';
 import { dateDBFormatPipe } from './pipe/dateFormatPipe';
+import { KycDetailDialogComponent } from './dialog/kyc-detail-dialog/kyc-detail-dialog.component';
 
 @NgModule({
   imports: [
@@ -162,6 +163,7 @@ import { dateDBFormatPipe } from './pipe/dateFormatPipe';
     NewMobileDialogComponent,
     SurveySearchComponent,
     dateDBFormatPipe,
+    KycDetailDialogComponent,
   ],
   providers: [DatePipe],
   entryComponents: [
@@ -178,6 +180,7 @@ import { dateDBFormatPipe } from './pipe/dateFormatPipe';
     LedInspCustDetailComponent,
     LedMasDetailComponent,
     NewMobileDialogComponent,
+    KycDetailDialogComponent,
   ],
 })
 export class TradeModule {

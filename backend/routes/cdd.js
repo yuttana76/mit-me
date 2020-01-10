@@ -5,10 +5,11 @@ const checkAuth = require('../middleware/check-auth');
 
 const cddController = require('../controllers/cdd')
 
-router.get("/cddInfo/:cusCode",checkAuth,cddController.getCDDinfo_MIT);
-router.post("/cddInfo",checkAuth,cddController.saveCDDInfo);
+// router.get("/cddInfo/:cusCode",checkAuth,cddController.getCDDinfo_MIT);
+router.get("/cddInfo/:cusCode",cddController.getCDDinfo_MIT);
+router.post("/cddInfo",cddController.saveCDDInfo);
 
-router.get("/cddAddr/:cusCode",checkAuth,cddController.getCDDAddr);
-router.post("/cddAddr",checkAuth,cddController.saveCDDAddr);
+router.get("/cddAddr/:cusCode",cddController.getCDDAddr);
+router.post("/cddAddr",cddController.saveCDDAddr);
 
 module.exports = router;

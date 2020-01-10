@@ -104,6 +104,7 @@ export const routes: Routes = [
       title: 'Welcome Streaming For Fund 1'
     }
   },
+  // For devement; Delete on PROD
   {
     path: 'surveySearch',
     component: SurveySearchComponent,
@@ -112,6 +113,7 @@ export const routes: Routes = [
     }
   },
 
+// For devement; Delete on PROD
   {
     path: '',
     component: DefaultLayoutComponent,

@@ -1,0 +1,20 @@
+<div class="contrainer">
+<p>
+  kyc-detail-dialog works! {{custCode}}
+</p>
+
+
+<mat-tab-group>
+  <mat-tab label="First"> ข้อมูลส่วนบุคคล
+    <form [formGroup]="cddFormGroup" class="form_section">
+
+      <app-cust-cdd [custCode]="custCode" [cddFormGroup]="cddFormGroup" [cddData]="cddData"></app-cust-cdd>
+
+    </form>
+  </mat-tab>
+  <mat-tab label="Second"> ที่อยู่ </mat-tab>
+  <mat-tab label="Third"> FATCA </mat-tab>
+</mat-tab-group>
+
+<button mat-flat-button  color="accent" class="col-md-12 margin_top_10" (click)="onClose()" >ยกเลิก/Cancel</button>
+</div>

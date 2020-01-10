@@ -1,0 +1,138 @@
+
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<mat-card class="example-card" *ngIf="!spinnerLoading" >
+    <mat-card-title>Survey search</mat-card-title>
+
+    <form [formGroup]="form" (submit)="onSurveySerach()" #custForm="ngForm" *ngIf="!spinnerLoading">
+    <mat-card-content class="col-12">
+      <div class="form-group row">
+        <label for="cust_Code" class="col-sm-3 col-form-label">ID Card</label>
+        <div class="col-sm-3">
+          <input id="cust_Code" class="form-control" formControlName="cust_Code" [(ngModel)]="cust_Code_Cond" autocomplete="off" >
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="SurveyStartDate" class="col-sm-3 col-form-label">Survey date</label>
+        <mat-form-field class="col-sm-3" >
+          <input matInput id="SurveyStartDate" formControlName="SurveyStartDate"  [(ngModel)]="surveyStartDate_Cond" [matDatepicker]="SurveyStartDate"
+           placeholder="" readonly=true>
+          <mat-datepicker-toggle matSuffix [for]="SurveyStartDate"></mat-datepicker-toggle>
+          <mat-datepicker #SurveyStartDate touchUi="true"></mat-datepicker>
+      </mat-form-field>
+
+      <label for="SurveyToDate" class="col-sm-1 col-form-label">To</label>
+        <mat-form-field class="col-sm-3" >
+          <input matInput id="SurveyToDate" formControlName="SurveyToDate" [(ngModel)]="surveyToDate_Cond" [matDatepicker]="SurveyToDate"
+           placeholder="" readonly=true>
+          <mat-datepicker-toggle matSuffix [for]="SurveyToDate"></mat-datepicker-toggle>
+          <mat-datepicker #SurveyToDate touchUi="true"></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+    </mat-card-content>
+    <mat-card-actions>
+      <label for="SurveyStartDate" class="col-sm-3 col-form-label"></label>
+      <button mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
+      <button mat-stroked-button color="warn" type='reset'>Reset</button>
+    </mat-card-actions>
+  </form>
+
+</mat-card>
+
+<!-- *** TABLE RESULT -->
+<div class="mat-elevation-z8" *ngIf="!spinnerLoading">
+<mat-card class="resultDiv">
+  <mat-card-title>Result</mat-card-title>
+  <mat-card-content>
+
+      <table mat-table [dataSource]="dataSource">
+          <!--  1 -->
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef> No</th>
+            <td mat-cell *matCellDef="let element;let i = index"> {{i}} </td>
+          </ng-container>
+
+           <!-- Checkbox Column
+           Source here https://material.angular.io/components/table/examples
+           -->
+          <!-- <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()"
+                            [aria-label]="checkboxLabel()">
+              </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selection.toggle(row) : null"
+                            [checked]="selection.isSelected(row)"
+                            [aria-label]="checkboxLabel(row)">
+              </mat-checkbox>
+            </td>
+          </ng-container> -->
+
+          <!-- 2  -->
+          <ng-container matColumnDef="Cust_Code">
+            <th mat-header-cell *matHeaderCellDef> CODE </th>
+            <td mat-cell *matCellDef="let element"> {{element.Cust_Code}} </td>
+          </ng-container>
+
+          <!-- 3 -->
+          <ng-container matColumnDef="FullName">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let element">{{element.FullName}} </td>
+          </ng-container>
+
+          <!-- 4 -->
+          <ng-container matColumnDef="KYC_C_DATE">
+            <th mat-header-cell *matHeaderCellDef> KYC </th>
+            <td mat-cell *matCellDef="let element" >
+              <div class="KYC_Result">
+                <p><span>Create</span> {{element.KYC_C_DATE}}  </p>
+                <p><span>Update</span> {{element.KYC_U_DATE}}</p>
+                <i class="far fa-edit"  [routerLink]="['/trade/customerEdit',element.Cust_Code,'SEARCH_CUST_SCR']"></i>
+              </div>
+
+            </td>
+          </ng-container>
+
+          <!-- 5 -->
+          <ng-container matColumnDef="SUIT_DATE">
+            <th mat-header-cell *matHeaderCellDef> Suitability </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="KYC_Result">
+              <p><span>Date</span> {{element.SUIT_DATE | date:"dd/MM/yyyy"}} </p>
+              <p><span>Level</span> {{element.SUIT_LEVEL}}</p>
+              <!-- <i class="far fa-edit"  [routerLink]="['/trade/customerEdit',element.Cust_Code,'SEARCH_CUST_SCR']"></i> -->
+              <i class="far fa-file-alt"></i>
+              </div>
+              </td>
+          </ng-container>
+
+          <ng-container matColumnDef="Action">
+            <th mat-header-cell *matHeaderCellDef> Action </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="Action_Result">
+                <i class="far fa-edit"  [routerLink]="['/trade/customerEdit',element.Cust_Code,'SEARCH_CUST_SCR']"></i>
+              </div>
+
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        </table>
+
+        <mat-paginator [length]="totalRecords"
+            [pageSize]="rowsPerPage"
+            [pageSizeOptions]="pageSizeOptions" (page)="onChangedPage($event)">
+        </mat-paginator>
+
+  </mat-card-content>
+
+</mat-card>
+</div>

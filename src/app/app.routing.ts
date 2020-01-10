@@ -15,6 +15,7 @@ import { SetRegistrationComponent } from './views/trade/set-registration/set-reg
 import { SetRegis2Component } from './views/trade/set-regis2/set-regis2.component';
 import { SetWelcomeComponent } from './views/trade/set-welcome/set-welcome.component';
 import { SuitSurveyComponent } from './views/trade/suit-survey/suit-survey.component';
+import { SurveySearchComponent } from './views/trade/survey-search/survey-search.component';
 
 export const routes: Routes = [
   {
@@ -103,6 +104,14 @@ export const routes: Routes = [
       title: 'Welcome Streaming For Fund 1'
     }
   },
+  {
+    path: 'surveySearch',
+    component: SurveySearchComponent,
+    data: {
+      title: 'Welcome Servey Search'
+    }
+  },
+
   {
     path: '',
     component: DefaultLayoutComponent,

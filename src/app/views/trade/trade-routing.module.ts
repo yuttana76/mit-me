@@ -28,6 +28,7 @@ import { SetRegistrationComponent } from './set-registration/set-registration.co
 import { FCAppComponent } from './fcapp/fcapp.component';
 import { SetRegis2Component } from './set-regis2/set-regis2.component';
 import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
+import { SurveySearchComponent } from './survey-search/survey-search.component';
 
 const routes: Routes = [
 
@@ -271,6 +272,13 @@ const routes: Routes = [
         component: SetWelcomeComponent,
         data: {
           title: 'Welcome Streaming For Fund'
+        }
+      },
+      {
+        path: 'surveySearch',
+        component: SurveySearchComponent,
+        data: {
+          title: 'Welcome Servey Search'
         }
       },
     ]

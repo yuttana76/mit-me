@@ -1,0 +1,55 @@
+:host {
+  display: block;
+
+}
+
+button {
+  margin-left: 10px;
+}
+// Desktop only
+@media screen and (min-width: 768px) {
+  label {
+    text-align: right;
+  }
+
+}
+
+// .condition-div {
+//   max-width: 400px;
+// }
+
+mat-form-field,
+input {
+    width: 100%;
+}
+
+mat-spinner {
+    margin: auto;
+    margin-top: 100px;;
+
+}
+
+.resultDiv {
+  margin-top: 1rem;
+}
+.resultDiv table {
+  width: 100%;
+}
+
+
+.KYC_Result p{
+ margin:0
+}
+
+.KYC_Result span{
+  color: darkred;
+  font-weight: bold;
+ }
+
+.KYC_Result p{
+  margin:0
+}
+.KYC_Result span{
+  color: darkblue;
+  font-weight: bold;
+}

@@ -74,6 +74,8 @@ import { FcIndCustomerComponent } from './fc-ind-customer/fc-ind-customer.compon
 import { SuitSurveyComponent } from './suit-survey/suit-survey.component';
 import { SuitFormComponent } from './suit-form/suit-form.component';
 import { NewMobileDialogComponent } from './dialog/new-mobile-dialog/new-mobile-dialog.component';
+import { SurveySearchComponent } from './survey-search/survey-search.component';
+import { dateDBFormatPipe } from './pipe/dateFormatPipe';
 
 @NgModule({
   imports: [
@@ -158,6 +160,8 @@ import { NewMobileDialogComponent } from './dialog/new-mobile-dialog/new-mobile-
     SuitSurveyComponent,
     SuitFormComponent,
     NewMobileDialogComponent,
+    SurveySearchComponent,
+    dateDBFormatPipe,
   ],
   providers: [DatePipe],
   entryComponents: [

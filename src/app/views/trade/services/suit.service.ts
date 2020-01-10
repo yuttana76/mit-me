@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { Subject, Observable } from 'rxjs';
 import { Question } from '../model/question.model';
+import { KycSurveyList } from '../model/kycSurveyList';
 
 const BACKEND_URL = environment.apiURL + '/suit';
 const BACKEND_URL_FATCA = environment.apiURL + '/fatca';
@@ -12,6 +13,10 @@ const BACKEND_URL_SURVEY = environment.apiURL + '/survey';
 
 @Injectable({ providedIn: 'root' })
 export class SuiteService {
+
+  private kycSurveyList: KycSurveyList[] = [];
+  private kycSurveyListUpdated = new Subject<KycSurveyList[]>();
+
 
   constructor(private http: HttpClient) { }
 
@@ -110,13 +115,54 @@ export class SuiteService {
   }
 
   reqNewMobile(custCode: string,newMobile:string): Observable<any> {
-
-  console.log('Client service reqNewMobile() newMobile=' + newMobile);
     const data = {
       "custCode":custCode,
       "log_msg":newMobile
     }
     return this.http.post<{ message: string, result: string }>(BACKEND_URL_SURVEY + '/reqNewMobile', data);
   }
-  // ************************
+
+  getKycSurveyListener() {
+    return this.kycSurveyListUpdated.asObservable();
+  }
+
+
+  getKycSurveyList(rowPerPage: number, currentPage: number, Cust_Code: string,SurveyStartDate:string,SurveyToDate:string) {
+
+    let queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
+
+    if(Cust_Code){
+      queryParams += `&custCode=${Cust_Code}`;
+    }
+    if(SurveyStartDate){
+      queryParams += `&SurveyStartDate=${SurveyStartDate}`;
+    }
+    if(SurveyToDate){
+      queryParams += `&SurveyToDate=${SurveyToDate}`;
+    }
+
+    console.log('queryParams>' + queryParams);
+
+    this.http.get<{ msg: string, data: any }>(BACKEND_URL_SURVEY+'/dashboard' + queryParams)
+    .pipe(map((resultData) => {
+
+        return resultData.data.map(data => {
+            return {
+              Cust_Code :data.Cust_Code,
+              FullName : data.FullName,
+              KYC_C_DATE : data.KYC_C_DATE,
+              KYC_U_DATE : data.KYC_U_DATE,
+              SUIT_DATE :data.SUIT_DATE,
+              SUIT_LEVEL :data.SUIT_LEVEL
+            };
+        });
+    }))
+    .subscribe((transformed) => {
+        this.kycSurveyList = transformed;
+        this.kycSurveyListUpdated.next([...this.kycSurveyList]);
+    }
+    );
+
+
+  }
 }

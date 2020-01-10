@@ -934,18 +934,29 @@ exports.surveyDashboard = (req, res, next) =>{
 
   logger.info(`Welcome API /surveyDashboard?Cust_Code=${custCode}&SurveyStartDate=${SurveyStartDate}&SurveyToDate=${SurveyToDate}`);
 
+
+
   surveyDashboardFc(custCode,SurveyStartDate,SurveyToDate).then( (_data) =>{
-      res.status(200).json({
-        msg:'successful',
-        data:_data
-      });
+
+    // setTimeout(wating(res,_data),3000);
+
+    res.status(200).json({
+      msg:'successful',
+      data:_data
+    });
   });
 }
 
+function wating(res,data){
+  console.log('Blah blah blah blah extra-blah');
+  res.status(200).json({
+    msg:'successful',
+    data:_data
+  });
+}
 
 function surveyDashboardFc(custCode,SurveyStartDate,SurveyToDate) {
   logger.info('surveyDashboardFc()');
-
   let condition =''
 
   if(custCode){
@@ -957,6 +968,11 @@ function surveyDashboardFc(custCode,SurveyStartDate,SurveyToDate) {
       OR A.UpdateDate BETWEEN @SurveyStartDate AND @SurveyToDate)`
   }
 
+  if(condition===''){
+    condition ='AND 1=0 '
+  }
+
+
   var fncName = "surveyDashboardFc";
   var queryStr = `
   BEGIN
@@ -964,13 +980,16 @@ function surveyDashboardFc(custCode,SurveyStartDate,SurveyToDate) {
         ,B.Title_Name_T +' '+ B.First_Name_T +' '+B.Last_Name_T As FullName
         ,convert(varchar, A.CreateDate, 103)  AS KYC_C_DATE,convert(varchar, A.UpdateDate, 103)   AS KYC_U_DATE
         ,convert(varchar, C.CreateDate, 103)  AS SUIT_DATE,C.RiskLevel AS SUIT_LEVEL
-        from MIT_CUSTOMER_INFO A, Account_Info B
+        FROM  Account_Info B
+        LEFT JOIN  MIT_CUSTOMER_INFO A ON A.cust_code = B.cust_code
             left join MIT_CUSTOMER_SUIT C ON B.Cust_Code=C.CustCode AND C.Status='A'
-        where A.Cust_Code=B.Cust_Code
+        where 1=1
         ${condition}
   END
     `;
     // AND (B.Cust_Code= @Cust_Code OR A.UpdateDate BETWEEN '2021/01/01' AND '2021/01/30')
+
+    // console.log(" Quey RS>>" + JSON.stringify(result.recordset));
 
   const sql = require("mssql");
   return new Promise(function(resolve, reject) {
@@ -987,14 +1006,13 @@ function surveyDashboardFc(custCode,SurveyStartDate,SurveyToDate) {
             reject(err);
 
           } else {
-            // console.log(" Quey RS>>" + queryStr);
+            console.log(" Quey RS>>" + JSON.stringify(result.recordset));
             // if(result.recordset.length>0){
             //   resolve(result.recordset);
             // }else{
             //   resolve(result.recordsets[1]);
             // }
-
-            resolve(result.recordsets);
+            resolve(result.recordset);
             // resolve(result.recordset[0]);
 
           }

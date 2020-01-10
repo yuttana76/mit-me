@@ -94,7 +94,6 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('Custeomer Seach  Destroy!!!');
     this.postsSub.unsubscribe();
   }
 

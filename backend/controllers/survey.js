@@ -1167,6 +1167,22 @@ END
   });
 }
 
+exports.getSuit = (req, res, next) =>{
+
+  logger.info(`API /getSuit - ${req.originalUrl} - ${req.ip} `);
+  const custCode = req.params.cusCode;
+
+  getCustSuitData(custCode).then( (data) =>{
+
+      res.status(200).json({
+        result: data
+      });
+
+  },err=>{
+      res.status(401).json(err);
+    });
+}
+
 
 function getCustSuitData(Cust_Code) {
 
@@ -1175,7 +1191,9 @@ function getCustSuitData(Cust_Code) {
   var queryStr = `
   BEGIN
 
-  SELECT TOP 1 a.CustCode, B.First_Name_T + ' ' +B.Last_Name_T AS FullName,a.RiskLevel,a.TotalScore, convert(varchar, a.CreateDate, 103) as SuitDate
+  SELECT TOP 1 a.CustCode, B.First_Name_T + ' ' +B.Last_Name_T AS FullName
+  ,a.RiskLevel,a.TotalScore, convert(varchar, a.CreateDate, 103) as SuitDate
+  ,A.RiskLevelTxt,A.Type_Investor
   ,a.ANS_JSON as Ans
   from MIT_CUSTOMER_SUIT a,Account_Info B
   where a.CustCode = b.Cust_Code

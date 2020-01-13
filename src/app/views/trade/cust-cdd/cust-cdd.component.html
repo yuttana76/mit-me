@@ -232,19 +232,18 @@
           </div>
         </section>
 
-        <section>
+        <section >
             <!-- <div class='row label_header'>
                 <code>จำนวนบุตร หรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และยังไม่ได้สมรส)</code>
             </div> -->
               <span class="label_title"><h5>จำนวนบุตร หรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และยังไม่ได้สมรส)</h5></span>
 
               <div class="row">
-                  <a id="btn_add_child"  mat-flat-button color="accent" (click)="addChildren()" class ="act_button"> เพิ่มบุตร  Add children ...  </a>
+                  <a *ngIf="!cddFormGroup.disabled" id="btn_add_child"  mat-flat-button color="accent" (click)="addChildren()" class ="act_button"> เพิ่มบุตร  Add children ...  </a>
               </div>
               <tabset >
                 <tab heading= "บุตร Child {{i+1}}" id="tab{{i}}" *ngFor="let obj of cddData.children;let i = index">
-                    <!-- <i  id="btn_remove_child" class="fas fa-2x fa-trash-alt" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i> -->
-                    <i  id="btn_remove_child" class="far fa-2x fa-times-circle" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i>
+                    <i  *ngIf="!cddFormGroup.disabled" id="btn_remove_child" class="far fa-2x fa-times-circle" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i>
 
                     <app-personal-info #Child [personModel]="obj" [adult]="false"  ></app-personal-info>
                 </tab>

@@ -153,8 +153,6 @@ exports.saveFATCA = (req, res, next) => {
 }
 
 
-
-
 exports.getFATCA = (req, res, next) => {
 
   var _custCode = req.params.cusCode;

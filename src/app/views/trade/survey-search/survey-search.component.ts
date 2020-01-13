@@ -148,7 +148,8 @@ export class SurveySearchComponent implements OnInit {
   onKYCdetail(Cust_Code: string) {
 
     this.kycDetailDialogComponent = this.dialog.open(KycDetailDialogComponent, {
-      width: '400px',
+      width: '800px',
+      height: '1000px',
       data: Cust_Code
     });
 

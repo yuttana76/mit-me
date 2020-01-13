@@ -8,4 +8,6 @@ router.post("/verifyExtLink",checkAuth,suitController.verifyExtLink);
 router.post("/evaluate",checkAuth,suitController.suitEvaluate);
 router.post("/suitSave",checkAuth,suitController.suitSave);
 
+// router.get("/getSuit/:cusCode",suitController.getSuit);
+
 module.exports = router;

@@ -331,6 +331,66 @@ exports.suitSave = (req, res, next) => {
 }
 
 
+
+
+// exports.getSuit = (req, res, next) =>{
+
+//   logger.info(`API /getSuit - ${req.originalUrl} - ${req.ip} `);
+//   const custCode = req.params.cusCode;
+
+//   getSuit(custCode).then( (data) =>{
+
+//       res.status(200).json({
+//         result: data
+//       });
+
+//   },err=>{
+//       res.status(401).json(err);
+//     });
+// }
+
+
+// function getSuit(custCode) {
+
+//   console.log("getSuit >>" + custCode);
+//   var fncName = "getSuit";
+//   var queryStr = `
+//   BEGIN
+//     SELECT CustCode, A.TotalScore,A.RiskLevel,A.RiskLevelTxt,A.Type_Investor,A.ANS_JSON
+//     FROM MIT_CUSTOMER_SUIT A
+//     WHERE Status='A'
+//     AND CustCode =@CustCode
+//   END
+//     `;
+
+//   const sql = require("mssql");
+
+//   return new Promise(function(resolve, reject) {
+
+//     const pool1 = new sql.ConnectionPool(config, err => {
+//       pool1
+//         .request() // or: new sql.Request(pool1)
+//         .input("CustCode", sql.VarChar(50), custCode)
+//         .query(queryStr, (err, result) => {
+//           if (err) {
+//             console.log(fncName + " Quey db. Was err !!!" + err);
+//             reject(err);
+
+//           } else {
+//             // resolve(result.recordset[0]);
+//             resolve(result.recordset);
+
+//           }
+//         });
+//     });
+//     pool1.on("error", err => {
+//       console.log("EROR>>" + err);
+//       reject(err);
+//     });
+//   });
+// }
+
+
 function calculateRiskLevel(_suitSerieId,_score){
 
   console.log("calculateRiskLevel _score>>" + _score);

@@ -24,5 +24,5 @@ router.post("/requestPDF",surveyController.requestPDF);
 router.post("/reqNewMobile",surveyController.reqNewMobile);
 
 router.get("/dashboard",surveyController.surveyDashboard);
-
+router.get("/getSuit/:cusCode",surveyController.getSuit);
 module.exports = router;

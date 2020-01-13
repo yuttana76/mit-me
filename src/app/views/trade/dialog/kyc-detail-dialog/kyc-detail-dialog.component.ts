@@ -7,6 +7,7 @@ import { AddrCustModel } from '../../model/addrCust.model';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { SuiteService } from '../../services/suit.service';
 import { Question } from '../../model/question.model';
+import { KycFormService } from './kyc.service';
 
 @Component({
   selector: 'app-kyc-detail-dialog',
@@ -25,6 +26,8 @@ export class KycDetailDialogComponent implements OnInit {
   current_formGroup: FormGroup;
   mail_formGroup: FormGroup;
 
+  formReadOnly =true;
+
   public cddData = new CDDModel() ;
   public re_addrData: AddrCustModel = new AddrCustModel();
   public cur_addrData: AddrCustModel = new AddrCustModel();
@@ -34,6 +37,7 @@ export class KycDetailDialogComponent implements OnInit {
   fatcaQuestions: Array<Question>;
 
   constructor(
+    public formService: KycFormService,
     public dialogRef: MatDialogRef<KycDetailDialogComponent> ,
     @Optional() @Inject(MAT_DIALOG_DATA) public custCode: any,
     private cddService: CddService,
@@ -68,6 +72,12 @@ export class KycDetailDialogComponent implements OnInit {
 
     this._buildForm();
 
+    if(this.formReadOnly){
+      this.register_formGroup.disable();
+      this.work_formGroup.disable();
+      this.current_formGroup.disable();
+      this.mail_formGroup.disable();
+    }
   }
 
   ngAfterViewInit(){

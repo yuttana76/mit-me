@@ -36,13 +36,8 @@ export class CustCDDComponent implements OnInit {
 
   @Input() cddData: CDDModel;
   @Input() SPpersonModel: PersonModel;
+  @Input() readOnly:boolean=false;
 
-  // SPformGroup: FormGroup;
-
-  // @ViewChild('SP') SPComponent: PersonalInfoComponent;
-  // @ViewChild('Child') ChildComponent: PersonalInfoComponent;
-
-  // SPComponent: PersonalInfoComponent;
 
   nationalityList: FCnation[];
   countryList: FCcountry[];
@@ -163,7 +158,7 @@ export class CustCDDComponent implements OnInit {
 
   ngAfterViewInit(){
 
-    if (this.cddFormGroup.invalid) {
+    if (this.cddFormGroup.invalid ) {
       this.cddFormGroup.enable();
       // this.modifyFlag  = true;
       this.cddData.ReqModifyFlag = true;
@@ -178,6 +173,12 @@ export class CustCDDComponent implements OnInit {
     } else {
       this.cddFormGroup.disable();
       // this.modifyFlag  = false;
+      this.cddData.ReqModifyFlag = false;
+    }
+
+    // Check Readonly Input parameter
+    if(this.readOnly){
+      this.cddFormGroup.disable();
       this.cddData.ReqModifyFlag = false;
     }
 

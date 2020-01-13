@@ -1,20 +1,107 @@
 <div class="contrainer">
-<p>
-  kyc-detail-dialog works! {{custCode}}
-</p>
-
+  <!-- <button mat-flat-button  color="accent" class="col-md-12 margin_top_10" (click)="onClose()" >ปิด / Close</button> -->
+<!-- Reference form suit.component.html -->
 
 <mat-tab-group>
-  <mat-tab label="First"> ข้อมูลส่วนบุคคล
+  <mat-tab label="{{formService.STEPER_INFO}}">
     <form [formGroup]="cddFormGroup" class="form_section">
 
-      <app-cust-cdd [custCode]="custCode" [cddFormGroup]="cddFormGroup" [cddData]="cddData"></app-cust-cdd>
+      <app-cust-cdd [custCode]="custCode" [cddFormGroup]="cddFormGroup" [cddData]="cddData" [readOnly]="formReadOnly"></app-cust-cdd>
 
     </form>
   </mat-tab>
-  <mat-tab label="Second"> ที่อยู่ </mat-tab>
-  <mat-tab label="Third"> FATCA </mat-tab>
+  <mat-tab label="{{formService.STEPER_ADDR}}">
+
+      <!-- 2.1 Register Address  (SEQ = 1)-->
+        <span class="label_title"><h5>{{ formService.register_addr_title }} ({{ formService.register_addr_title_ENG }})</h5></span>
+        <div>
+          <app-cust-addr [addrData]="re_addrData" [custCode]="custCode" [addrFormGroup]="register_formGroup" ></app-cust-addr>
+        </div>
+
+      <!-- 2.2 Work Address (SEQ = 3)-->
+        <span class="label_title"><h5>{{ formService.work_addr_title }} ({{formService.work_addr_title_ENG}})</h5></span>
+        <div>
+            <form [formGroup]="register_formGroup">
+            <section class="example-section">
+                <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  formControlName="work_addrData"  >
+                  <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
+                  <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
+                </mat-radio-group>
+                <mat-error *ngIf="register_formGroup.get('work_addrData').invalid">โปรดเลือก Please choose </mat-error>
+              </section>
+
+            </form>
+        </div>
+        <div>
+          <app-cust-addr *ngIf="this.work_addrData.SameAs == '9' " [addrData]="work_addrData" [custCode]="custCode"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+        </div>
+
+        <!-- 2.3 Current Address (SEQ = 2)-->
+          <span class="label_title"><h5>{{ formService.contact_addr_title }}  ({{formService.contact_addr_title_ENG}})</h5></span>
+          <div class='row'>
+              <form [formGroup]="register_formGroup">
+              <section class="example-section" >
+                  <!-- <mat-radio-group [(ngModel)]="cur_addrData.SameAs"  (change)="currAddrOnChange(cur_addrData.SameAs)" formControlName="cur_addrData"> -->
+                  <mat-radio-group [(ngModel)]="cur_addrData.SameAs"   formControlName="cur_addrData">
+                      <mat-radio-button class="example-margin" value="1">{{formService.label_addrAs_reg}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="3">{{formService.label_addrAs_work}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
+                    </mat-radio-group>
+                    <mat-error *ngIf="register_formGroup.get('cur_addrData').invalid">โปรดเลือก Please choose </mat-error>
+              </section>
+              </form>
+          </div>
+          <div>
+            <app-cust-addr  *ngIf="this.cur_addrData.SameAs == '9' " [addrData]="cur_addrData" [custCode]="custCode"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+          </div>
+
+        <!-- 2.4 Mail Address (SEQ = 4)-->
+          <span class="label_title"><h5>{{ formService.mail_addr_title }} ({{ formService.mail_addr_title_ENG }})</h5></span>
+          <div class='row'>
+              <form [formGroup]="register_formGroup">
+              <section class="example-section" >
+                  <!-- <mat-radio-group [(ngModel)]="cddData.MailSameAs"  (change)="mailAddrOnChange(cddData.MailSameAs)" formControlName="MailSameAs"> -->
+                  <mat-radio-group [(ngModel)]="cddData.MailSameAs"   formControlName="MailSameAs">
+                      <mat-radio-button class="example-margin" value="email">{{formService.label_Email}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="reg">{{formService.label_addrAs_reg}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="work">{{formService.label_addrAs_work}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="curr">{{formService.label_addrAs_curr}}</mat-radio-button>
+                      <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
+                    </mat-radio-group>
+                    <mat-error *ngIf="register_formGroup.get('MailSameAs').invalid">โปรดเลือก Please choose </mat-error>
+                </section>
+              </form>
+          </div>
+          <div>
+            <app-cust-addr  *ngIf="this.cddData.MailSameAs == '9' "  [addrData]="mail_addrData" [custCode]="custCode"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
+          </div>
+
+          <!-- ******** ACTION BAR ************* -->
+              <!-- <mat-card-actions class="stepper_action center-screen ">
+                  <button mat-flat-button  matStepperPrevious color="accent" class="col-sm-12 col-lg-3"><i class="fas fa-chevron-left "></i> {{formService.LABEL_BACK}}</button>
+                  <button mat-flat-button  matStepperNext color="primary" (click)=checkCDD_FormInvalid(register_formGroup) class="col-sm-12 col-lg-3" >{{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+              </mat-card-actions> -->
+  </mat-tab>
+  <mat-tab label="{{formService.STEPER_FATCA}}">
+
+    <form [formGroup]="FATCAGroup" >
+      <div class='row '>
+
+            <span class="label_title"><h5>{{ formService.fatca_desc }}</h5></span>
+
+            <form class="form_section">
+                  <app-suit-tree-view [questions]="fatcaQuestions" [questionDisabled]="cddFormGroup.disabled" ></app-suit-tree-view>
+            </form>
+        </div>
+
+        <!-- <mat-card-actions class="stepper_action center-screen ">
+            <button mat-flat-button  matStepperPrevious color="accent" class="col-sm-12 col-lg-3" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
+            <button mat-flat-button  matStepperNext color="primary" (click)=fatch_FormInvalid(FATCAGroup) class="col-sm-12 col-lg-3" > {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
+        </mat-card-actions> -->
+
+      </form>
+  </mat-tab>
 </mat-tab-group>
 
-<button mat-flat-button  color="accent" class="col-md-12 margin_top_10" (click)="onClose()" >ยกเลิก/Cancel</button>
+
 </div>

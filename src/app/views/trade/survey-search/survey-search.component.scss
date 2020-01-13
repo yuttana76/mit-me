@@ -41,14 +41,21 @@ mat-spinner {
  margin:0
 }
 
-.KYC_Result span{
-  color: darkred;
-  font-weight: bold;
+.KYC_Result i{
+  text-align: center;
+  align-self: center;
  }
 
+// .KYC_Result span{
+//   color: darkred;
+//   font-weight: bold;
+//  }
+
 .KYC_Result p{
-  margin:0
+  margin:0;
+  text-align-last: left;
 }
+
 .KYC_Result span{
   color: darkblue;
   font-weight: bold;

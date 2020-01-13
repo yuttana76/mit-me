@@ -18,9 +18,80 @@ const FC_API_AUTH=FC_API_Config.FC_API_AUTH
 const FC_AUTH_PATH = FC_API_Config.FC_API_PATH.AUTH_PATH
 const FC_DOWNLOAD_PATH = FC_API_Config.FC_API_PATH.DOWNLOAD_PATH
 const DOWNLOAD_PATH  = FC_API_Config.LOCAL.DOWNLOAD_PATH
+const INVEST_PROFILE_PATH = FC_API_Config.FC_API_PATH.INVEST_PROFILE_PATH
 
 var config_BULK = dbConfig.dbParameters_BULK;
 var config = dbConfig.dbParameters;
+
+
+
+exports.getIndCust = (req, res, next) =>{
+  console.log("Validate  API /downloadFileAPI/");
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  var cardNumber = req.params.cardNumber;
+  console.log("Welcome to API /getIndCust/"+ cardNumber);
+
+  // res.status(200).json({
+  //   code:'000',
+  //   msg:'Get '+cardNumber+' successful.'
+  // });
+
+  fnGetIndCust(cardNumber).then(result=>{
+    res.status(200).json(result);
+  },err=>{
+    res.status(401).json(err);
+  });
+}
+
+// GET
+function fnGetIndCust(cardNumber){
+  console.log("Welcome fnGetIndCust()"+ cardNumber);
+
+  return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+      /**
+     * HTTPS REQUEST (START)
+     */
+      const request = require('request');
+      const HTTPS_ENDPOIN =`https://${FC_API_URI}${INVEST_PROFILE_PATH}?cardNumber=${cardNumber}`;
+      const propertiesObject = {
+        "x-auth-token":resultObj.access_token,
+        "Content-Type": "application/json"
+      };
+
+      console.log("HTTPS_ENDPOIN >"+ HTTPS_ENDPOIN);
+      console.log("propertiesObject >"+ propertiesObject);
+
+      request({url:HTTPS_ENDPOIN, qs:propertiesObject}, function(err, response, body) {
+
+        logger.info(response.body.url);
+
+      if(err) {
+        logger.error(err);
+        reject(err);
+      }else{
+        // logger.info(body);
+        logger.info(JSON.stringify(body));
+        resolve(body)
+      }
+    });
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  });
+
+}
+// ************************************
+
+
+
 
 exports.downloadFileAPI = (req, res, next) =>{
   console.log("Validate  API /downloadFileAPI/");

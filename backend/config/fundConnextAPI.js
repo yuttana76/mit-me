@@ -32,7 +32,9 @@ exports.FC_API_AUTH= process.env.FC_API_AUTH || fundConnextApi_STAGE.FC_API_AUTH
 
 exports.FC_API_PATH = {
   AUTH_PATH :"/api/auth",
-  DOWNLOAD_PATH :"/api/files/"
+  DOWNLOAD_PATH :"/api/files/",
+  INVEST_PROFILE_PATH :"/api/customer/individual/investor/profile"
+
 }
 
 exports.LOCAL = {

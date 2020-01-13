@@ -6,6 +6,10 @@ const selfAuth = require('../middleware/self-auth');
 const fundConnextAPIController = require('../controllers/fundConnextAPI')
 const { check } = require('express-validator');
 
+
+router.get("/GetIndCust/:cardNumber", fundConnextAPIController.getIndCust);
+
+
 router.get("/downloadFileAPI/",[
   check('fileType')
     .exists().withMessage('must have param fileType')
@@ -78,7 +82,7 @@ router.post("/downloadAllottedAPI",[selfAuth
     .isLength({ min: 1 }).withMessage('must have businessDate value')
   ],fundConnextAPIController.downloadAllottedAPI);
 
-  router.post("/test_allotedFile"
+router.post("/test_allotedFile"
     ,fundConnextAPIController.allotedFile);
 
 

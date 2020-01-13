@@ -1,11 +1,11 @@
-<form [formGroup]="suitFormGroup" >
+<!-- <form [formGroup]="suitFormGroup" >
+  <span class="label_title"><h5>แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน</h5></span>
+  </form> -->
 
   <span class="label_title"><h5>แบบมาตรฐานในการประเมินความเหมาะสมในการลงทุน</h5></span>
-  </form>
-
    <!-- Show Suit question  -->
   <!-- <div *ngIf="canDoSuit" > -->
-  <form  *ngIf="canDoSuit" >
+  <form [formGroup]="suitFormGroup" *ngIf="canDoSuit" >
 
       <div *ngFor="let ques of suitQuestions" class="questions">
 
@@ -35,6 +35,7 @@
                   id="{{ choice.id }}"
                   [(ngModel)]="choice.answer"
                   [ngModelOptions]="{standalone: true}"
+                  [disabled]="suitFormGroup.disabled"
                   />
                   {{ choice.name }}
                 </div>
@@ -45,6 +46,8 @@
                     type="radio"
                     value="{{ choice.score }}"
                     [(ngModel)]="ques.answer"
+                    [ngModelOptions]="{standalone: true}"
+                    [disabled]="suitFormGroup.disabled"
                   />
                   {{ choice.name }}
                 </div>

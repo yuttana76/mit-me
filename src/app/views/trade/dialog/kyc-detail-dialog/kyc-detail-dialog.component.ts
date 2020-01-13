@@ -8,6 +8,7 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { SuiteService } from '../../services/suit.service';
 import { Question } from '../../model/question.model';
 import { KycFormService } from './kyc.service';
+import { SurveyModel } from '../../model/survey.model';
 
 @Component({
   selector: 'app-kyc-detail-dialog',
@@ -25,6 +26,7 @@ export class KycDetailDialogComponent implements OnInit {
   work_formGroup: FormGroup;
   current_formGroup: FormGroup;
   mail_formGroup: FormGroup;
+  suitFormGroup: FormGroup;
 
   formReadOnly =true;
 
@@ -33,8 +35,10 @@ export class KycDetailDialogComponent implements OnInit {
   public cur_addrData: AddrCustModel = new AddrCustModel();
   public work_addrData: AddrCustModel = new AddrCustModel();
   public mail_addrData: AddrCustModel = new AddrCustModel();
+  public survey: SurveyModel = new SurveyModel();
 
   fatcaQuestions: Array<Question>;
+  suitQuestions: Array<Question>;
 
   constructor(
     public formService: KycFormService,
@@ -77,7 +81,9 @@ export class KycDetailDialogComponent implements OnInit {
       this.work_formGroup.disable();
       this.current_formGroup.disable();
       this.mail_formGroup.disable();
+      this.suitFormGroup.disable();
     }
+
   }
 
   ngAfterViewInit(){
@@ -92,6 +98,8 @@ export class KycDetailDialogComponent implements OnInit {
     // FATCA
     this.loadFATCA(this.custCode);
 
+    // Suitability
+    this.loadSuitByCust(this.custCode);
   }
 
 
@@ -253,6 +261,13 @@ export class KycDetailDialogComponent implements OnInit {
     // cust_RiskLevel: new FormControl(null, {
     //   validators: [Validators.required, Validators.minLength(1)]
     // }),
+  });
+
+  this.suitFormGroup = new FormGroup({
+    cust_RiskLevel: new FormControl(null, {
+      // validators: [Validators.required, Validators.minLength(1)]
+    }),
+
   });
 
 
@@ -456,6 +471,7 @@ export class KycDetailDialogComponent implements OnInit {
       // validators: [Validators.required]
     })
   });
+
 
   }
 
@@ -674,6 +690,35 @@ export class KycDetailDialogComponent implements OnInit {
         },
         () => {
           console.log("loadFATCA  complete");
+        }
+      );
+  }
+
+
+
+  public loadSuitByCust(_id: string) {
+
+    console.log("START loadSuitByCust()");
+
+    this.spinnerLoading = true;
+    this.suiteService.getSuitByCust(_id)
+      .finally(() => {
+        this.spinnerLoading = false;
+      })
+      .subscribe((data: any) => {
+
+        // console.log("SUIT>>" + JSON.stringify(result));
+        // console.log("ANS>>" + JSON.stringify(data.result[0]));
+
+          if ( data.result.length > 0 ) {
+            this.suitQuestions = JSON.parse(data.result[0].Ans);
+          }
+        },
+        error => () => {
+          console.log("loadSuitByCust Was error", error);
+        },
+        () => {
+          console.log("loadSuitByCust  complete");
         }
       );
   }

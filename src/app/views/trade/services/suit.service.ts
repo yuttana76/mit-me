@@ -99,6 +99,10 @@ export class SuiteService {
     return this.http.get<{ message: string, result: string }>(BACKEND_URL_FATCA + '/getfatca/'+_id);
   }
 
+  getSuitByCust(_id: string): Observable<any> {
+
+    return this.http.get<{result: any }>(BACKEND_URL_SURVEY + '/getSuit/'+_id);
+  }
 
   mailThankCust(_pid: string): Observable<any> {
     const data = {

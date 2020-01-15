@@ -10,6 +10,9 @@ const BACKEND_URL = environment.apiURL + '/suit';
 const BACKEND_URL_FATCA = environment.apiURL + '/fatca';
 const BACKEND_URL_OTP = environment.apiURL + '/otp';
 const BACKEND_URL_SURVEY = environment.apiURL + '/survey';
+const BACKEND_URL_FC = environment.apiURL + '/fundConnext';
+
+
 
 @Injectable({ providedIn: 'root' })
 export class SuiteService {
@@ -166,7 +169,22 @@ export class SuiteService {
         this.kycSurveyListUpdated.next([...this.kycSurveyList]);
     }
     );
-
-
   }
+
+  // https://localhost:3009/api/fundConnext/customer/individual/
+  uploadCustInd(identificationCardType,cardNumber,referralPerson,suitabilityRiskLevel,suitabilityEvaluationDate): Observable<any> {
+
+
+    const data = {
+      "identificationCardType": identificationCardType,
+      "cardNumber": cardNumber,
+      "referralPerson": referralPerson,
+      "approved": false,
+      "suitabilityRiskLevel":suitabilityRiskLevel,
+      "suitabilityEvaluationDate":suitabilityEvaluationDate
+     };
+
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_FC + '/customer/individual/', data);
+  }
+
 }

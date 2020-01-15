@@ -54,12 +54,10 @@ router.post("/userPwdToCust",selfAuth
 // New customer register
 router.post("/regisNewCustToMail",streamingController.regisNewCustToMail);
 
-
 // Send mail streaming to customer bulk file
 router.post("/mailStreamingCustFile",mailController.mailStreamingCustFile);
 //Send sms streaming bulk file
 router.post("/smsStreamingCustFile",mailController.smsStreamingCustFile);
-
 
 // TEST
 router.post("/demoSendDataMail",streamingController.demoSendDataMail);

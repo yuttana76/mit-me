@@ -10,7 +10,7 @@ const download = require('download');
 const { check, validationResult } = require('express-validator');
 var AdmZip = require('adm-zip');
 var CronJob = require('cron').CronJob;
-
+var mitLog = require('./mitLog');
 
 const FC_API_URI= FC_API_Config.FC_API_URI
 const FC_API_AUTH=FC_API_Config.FC_API_AUTH
@@ -19,14 +19,16 @@ const FC_AUTH_PATH = FC_API_Config.FC_API_PATH.AUTH_PATH
 const FC_DOWNLOAD_PATH = FC_API_Config.FC_API_PATH.DOWNLOAD_PATH
 const DOWNLOAD_PATH  = FC_API_Config.LOCAL.DOWNLOAD_PATH
 const INVEST_PROFILE_PATH = FC_API_Config.FC_API_PATH.INVEST_PROFILE_PATH
-
+const INVEST_INDIVIDUAL = FC_API_Config.FC_API_PATH.INVEST_INDIVIDUAL
+const FC_API_MODULE ='FC API';
 var config_BULK = dbConfig.dbParameters_BULK;
 var config = dbConfig.dbParameters;
 
 
 
 exports.getIndCust = (req, res, next) =>{
-  console.log("Validate  API /downloadFileAPI/");
+
+  logger.info("Validate API /GetIndCust/");
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -34,19 +36,41 @@ exports.getIndCust = (req, res, next) =>{
   }
 
   var cardNumber = req.params.cardNumber;
-  console.log("Welcome to API /getIndCust/"+ cardNumber);
+  logger.info("Welcome API /GetIndCust/"+ cardNumber);
 
-  // res.status(200).json({
-  //   code:'000',
-  //   msg:'Get '+cardNumber+' successful.'
-  // });
-
-  fnGetIndCust(cardNumber).then(result=>{
-    res.status(200).json(result);
-  },err=>{
-    res.status(401).json(err);
-  });
+    fnGetIndCust(cardNumber).then(result=>{
+      res.status(200).json(result);
+    },err=>{
+      res.status(401).json(err);
+    });
 }
+
+
+
+exports.updateCustomerIndPartial = (req, res, next) =>{
+
+  logger.info("Validate API /updateCustomerInd/");
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  var identificationCardType = req.body.identificationCardType;
+  var cardNumber = req.body.cardNumber;
+  var referralPerson = req.body.referralPerson;
+  var approved = req.body.approved;
+  var suitabilityRiskLevel = req.body.suitabilityRiskLevel;
+  var suitabilityEvaluationDate = req.body.suitabilityEvaluationDate;
+
+  logger.info("Welcome API /updateCustomerInd/"+ cardNumber);
+  updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate).then(result=>{
+      res.status(200).json(result);
+    },err=>{
+      res.status(401).json(err);
+    });
+}
+
 
 // GET
 function fnGetIndCust(cardNumber){
@@ -54,40 +78,120 @@ function fnGetIndCust(cardNumber){
 
   return new Promise(function(resolve, reject) {
 
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
       /**
      * HTTPS REQUEST (START)
      */
-      const request = require('request');
-      const HTTPS_ENDPOIN =`https://${FC_API_URI}${INVEST_PROFILE_PATH}?cardNumber=${cardNumber}`;
-      const propertiesObject = {
-        "x-auth-token":resultObj.access_token,
-        "Content-Type": "application/json"
-      };
+    fnFCAuth().then(result =>{
+      resultObj =JSON.parse(result);
 
-      console.log("HTTPS_ENDPOIN >"+ HTTPS_ENDPOIN);
-      console.log("propertiesObject >"+ propertiesObject);
+        // console.log("AUTH result >>" + JSON.stringify(resultObj));
+          const request = require('request');
+          const HTTPS_ENDPOIN =`https://${FC_API_URI}${INVEST_PROFILE_PATH}?cardNumber=${cardNumber}`;
+          const option = {
+            'X-Auth-Token':resultObj.access_token,
+          };
 
-      request({url:HTTPS_ENDPOIN, qs:propertiesObject}, function(err, response, body) {
+          console.log("OPTION>>" +JSON.stringify(option));
 
-        logger.info(response.body.url);
+          request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
+            // logger.info(response.body.url);
+            if(err) {
+              logger.error(err);
+              reject(err);
+            }else{
+              // logger.info(JSON.stringify(body));
+              // logger.info(JSON.stringify(response));
+              resolve(body)
+            }
+          });
 
-      if(err) {
-        logger.error(err);
-        reject(err);
-      }else{
-        // logger.info(body);
-        logger.info(JSON.stringify(body));
-        resolve(body)
-      }
-    });
-    /**
-     * HTTPS REQUEST (END)
-     */
+        /**
+         * HTTPS REQUEST (END)
+         */
+
+  },err =>{
+    console.log('ERR AUTH>>'+err);
+    reject(err);
+  });
 
   });
 
 }
+
+// PATCH
+function updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate){
+
+  logger.info("Welcome updateCustomerInd()");
+
+  return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      /**
+       * HTTPS REQUEST
+       */
+      fnFCAuth().then(result =>{
+        resultObj =JSON.parse(result);
+
+       var data=JSON.stringify({
+        "identificationCardType": identificationCardType,
+        "cardNumber" : cardNumber,
+        "referralPerson": referralPerson,
+        "approved": false,
+        "suitabilityRiskLevel":suitabilityRiskLevel,
+        "suitabilityEvaluationDate":suitabilityEvaluationDate
+       })
+
+      var options = {
+        host: FC_API_URI,
+        path:INVEST_INDIVIDUAL,
+        // path:"/api/customer/individual",
+        method: "PATCH",
+        timeout: 10000,
+        headers: {
+          'X-Auth-Token':resultObj.access_token,
+          "content-type": "application/json"
+        },
+      };
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      const request = https.request(options,(res) => {
+
+        var _chunk="";
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          _chunk=_chunk.concat(chunk);
+        });
+        res.on('end', () => {
+          logger.info(JSON.stringify(_chunk));
+
+          mitLog.saveMITlog(referralPerson,FC_API_MODULE+INVEST_INDIVIDUAL,data,req.ip,req.originalUrl,function(){});
+
+          resolve(_chunk);
+        });
+      });
+      request.on('error', (e) => {
+        reject(e);
+      });
+      // Write data to request body
+      // logger.info(`DATA>>${data}`);
+      request.write(data);
+      request.end();
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  },err =>{
+    logger.error('ERR AUTH>>'+err);
+    reject(err);
+  });
+
+  });
+
+}
+
 // ************************************
 
 
@@ -1378,11 +1482,16 @@ function fnFCAuth(){
       method: "POST",
       headers: {
          "Content-Type": "application/json",
-        //  'Content-Length': postData.length
+        // 'Content-Length': postData.length
       },
     };
 
+  // console.log('***FC_API_URI > ' + JSON.stringify(FC_API_URI));
+  // console.log('***FC_AUTH_PATH > ' + JSON.stringify(FC_AUTH_PATH));
+  // console.log('***FC_API_AUTH > ' + JSON.stringify(FC_API_AUTH));
+
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
   const request = https.request(options,(res) => {
     var _chunk="";
     res.setEncoding('utf8');
@@ -1390,7 +1499,6 @@ function fnFCAuth(){
       _chunk=_chunk.concat(chunk);
     });
     res.on('end', () => {
-      console.log('No more data in response.');
       resolve(_chunk);
     });
 

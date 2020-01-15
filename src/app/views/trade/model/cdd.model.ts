@@ -62,6 +62,8 @@ export class CDDModel {
       public cardNotExp: string;
       public cardNotExpBol: boolean;
       public numChildren: string;
+      public cddScore: string;
+      public cddDate: string;
 
       public SPpersonModel:PersonModel = new PersonModel();
       public children: PersonModel[] =[];

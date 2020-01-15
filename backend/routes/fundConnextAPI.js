@@ -7,7 +7,8 @@ const fundConnextAPIController = require('../controllers/fundConnextAPI')
 const { check } = require('express-validator');
 
 
-router.get("/GetIndCust/:cardNumber", fundConnextAPIController.getIndCust);
+router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);
+router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);
 
 
 router.get("/downloadFileAPI/",[

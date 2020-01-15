@@ -253,7 +253,6 @@ exports.smsStreamingCustFile = (req, res, next) =>{
   // let msg =`เปิดบริการซื้อขายกองทุนรวมกับบลจ. เมอร์ชั่น พาร์ทเนอร์ ผ่าน Mobile App สนใจติดต่อ Wealthservice Tel. 02-6606689 หรือ www.merchantasset.co.th`
   let msg =`!!! ดูพอร์ต ซื้อขาย สับเปลี่ยนกองทุนรวมผ่าน Mobile App ได้แล้ววันนี้ คลิก http://mit.wealth-merchant.com:3000/set-welcome `
 
-
   var today = new Date();
   var date = today.getFullYear()+""+(today.getMonth()+1)+""+today.getDate();
   var time = today.getHours() +""+  today.getMinutes()
@@ -519,6 +518,7 @@ function mailStreaming(req,res,_name,_Email){
   const _compInfo = mailConfig.mailCompInfo_TH;
   let _from = mailConfig.mail_form;
   let _subject = 'เปิดซื้อขายกองทุนรวม กับบลจ. เมอร์ชั่น พาร์ทเนอร์ จำกัด ผ่าน Mobile App ได้แล้ว'
+  // let _subject = 'ดูพอร์ต ซื้อขาย สับเปลี่ยนกองทุนรวมผ่าน Mobile App ได้แล้ววันนี้'
 
   let _msgTH = '';
 

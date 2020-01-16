@@ -172,7 +172,9 @@ export class SuiteService {
   }
 
   // https://localhost:3009/api/fundConnext/customer/individual/
-  uploadCustInd(identificationCardType,cardNumber,referralPerson,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate): Observable<any> {
+  // tslint:disable-next-line:max-line-length
+  uploadCustInd(identificationCardType, cardNumber, referralPerson, suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate):
+  Observable<any> {
 
     const data = {
       "identificationCardType": identificationCardType,

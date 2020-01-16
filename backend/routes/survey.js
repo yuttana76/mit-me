@@ -25,4 +25,6 @@ router.post("/reqNewMobile",surveyController.reqNewMobile);
 
 router.get("/dashboard",surveyController.surveyDashboard);
 router.get("/getSuit/:cusCode",surveyController.getSuit);
+router.get("/custIndPartial/:cusCode",surveyController.custIndPartial);
+
 module.exports = router;

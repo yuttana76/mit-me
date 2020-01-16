@@ -1184,6 +1184,94 @@ exports.getSuit = (req, res, next) =>{
 }
 
 
+
+exports.custIndPartial = (req, res, next) =>{
+
+
+  const custCode = req.params.cusCode;
+
+  logger.info(`API /custIndPartial -${custCode} -${req.originalUrl} - ${req.ip} `);
+
+  custIndPartial(custCode).then( (data) =>{
+
+      res.status(200).json({
+        result: data
+      });
+
+  },err=>{
+      res.status(401).json(err);
+    });
+}
+
+
+function custIndPartial(Cust_Code) {
+
+  // logger.info("Welcome custIndPartial() " + Cust_Code);
+
+  var queryStr = `
+  BEGIN
+      SELECT
+      CAST(
+          CASE
+              WHEN A.Card_Type = 'I'
+                  THEN 'CITIZEN_CARD'
+              ELSE 'PASSPORT'
+          END AS varchar) AS identificationCardType
+      ,CAST(
+          CASE
+              WHEN A.Card_Type = 'I'
+                  THEN ''
+              ELSE A.Nation_Code
+          END AS varchar) AS passportCountry
+      ,A.Cust_Code AS cardNumber
+      ,C.RiskLevel AS suitabilityRiskLevel,convert(varchar, C.CreateDate, 112) AS suitabilityEvaluationDate
+      ,D.IS_USA AS fatca,convert(varchar, D.FATCA_DATE, 112) AS fatcaDeclarationDate
+      ,B.CDD_Score AS cddScore,convert(varchar, B.CDD_Date, 112) AS cddDate
+      FROM Account_Info A
+      LEFT JOIN MIT_CUSTOMER_INFO B ON A.Cust_Code=B.Cust_Code
+      LEFT JOIN MIT_CUSTOMER_SUIT C ON A.Cust_Code=C.CustCode AND C.[Status]='A'
+      LEFT JOIN MIT_CUSTOMER_FATCA D ON A.Cust_Code=D.CustCode
+      WHERE  A.Cust_Code=@Cust_Code
+  END
+    `;
+
+  const sql = require("mssql");
+
+  return new Promise(function(resolve, reject) {
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("Cust_Code", sql.VarChar(50), Cust_Code)
+        .query(queryStr, (err, result) => {
+          if (err) {
+
+            // console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" Quey RS>>" + JSON.stringify(result));
+            if(result.recordset.length>0){
+              resolve(result.recordset);
+            }else{
+              resolve(result.recordsets[1]);
+            }
+
+            // resolve(result.recordsets);
+            // resolve(result.recordset[0]);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+
+      console.log("ERROR>>" + err);
+      reject(err);
+
+    });
+  });
+}
+
 function getCustSuitData(Cust_Code) {
 
   logger.info("Welcome getCustSuitData() " + Cust_Code);

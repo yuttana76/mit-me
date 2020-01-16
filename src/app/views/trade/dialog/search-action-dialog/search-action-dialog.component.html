@@ -1,0 +1,49 @@
+
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<div class="contrainer" *ngIf="!spinnerLoading" >
+
+  <h3>Upload Customer Individual {{custCode}}</h3>
+
+    <form [formGroup]="uploadAPIForm" class="example-form">
+
+
+      <div class="form-group row">
+        <label for="id" class="col-sm-2 col-form-label">Cust Code</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control col-sm-3" id="id"  [(ngModel)]="custCode" formControlName="id">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="suitLevel" class="col-sm-2 col-form-label">Suit level</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control col-sm-3" id="suitLevel"  [(ngModel)]="suitabilityRiskLevel" formControlName="suitLevel">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="cddScore" class="col-sm-2 col-form-label">CDD score</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control col-sm-3" id="cddScore"  [(ngModel)]="cddScore" formControlName="cddScore">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="fatca" class="col-sm-2 col-form-label">FATCA</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control col-sm-3" id="fatca"  [(ngModel)]="fatca" formControlName="fatca">
+        </div>
+      </div>
+
+      <div class="row margin_top_30">
+          <button mat-stroked-button color="warn" (click)=onClose()>
+            Close</button>
+
+          <button mat-stroked-button color="primary" (click)=onUploadAPI()>
+            FC API Upload <i class="fas fa-cloud-upload-alt"></i> </button>
+      </div>
+
+    </form>
+
+</div>

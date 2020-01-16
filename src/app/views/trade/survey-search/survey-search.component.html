@@ -33,7 +33,7 @@
 
     </mat-card-content>
     <mat-card-actions>
-      <label for="SurveyStartDate" class="col-sm-3 col-form-label"></label>
+      <!-- <label for="SurveyStartDate" class="col-sm-3 col-form-label"></label> -->
       <button mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
       <button mat-stroked-button color="warn" type='reset'>Reset</button>
     </mat-card-actions>
@@ -54,26 +54,6 @@
             <td mat-cell *matCellDef="let element;let i = index"> {{i}} </td>
           </ng-container>
 
-           <!-- Checkbox Column
-           Source here https://material.angular.io/components/table/examples
-           -->
-          <!-- <ng-container matColumnDef="select">
-            <th mat-header-cell *matHeaderCellDef>
-              <mat-checkbox (change)="$event ? masterToggle() : null"
-                            [checked]="selection.hasValue() && isAllSelected()"
-                            [indeterminate]="selection.hasValue() && !isAllSelected()"
-                            [aria-label]="checkboxLabel()">
-              </mat-checkbox>
-            </th>
-            <td mat-cell *matCellDef="let row">
-              <mat-checkbox (click)="$event.stopPropagation()"
-                            (change)="$event ? selection.toggle(row) : null"
-                            [checked]="selection.isSelected(row)"
-                            [aria-label]="checkboxLabel(row)">
-              </mat-checkbox>
-            </td>
-          </ng-container> -->
-
           <!-- 2  -->
           <ng-container matColumnDef="Cust_Code">
             <th mat-header-cell *matHeaderCellDef> CODE </th>
@@ -92,8 +72,10 @@
             <td mat-cell *matCellDef="let element" >
               <div class="row KYC_Result">
 
+
                 <div class="col-sm-3">
-                  <i class="far fa-2x fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View"></i>
+                  <i class="far fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View"></i>
+                  <!-- <i class="far fa-2x fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View"></i> -->
                 </div>
                 <div class="col-sm-6">
                   <p><span>Create</span> {{element.KYC_C_DATE}}</p>
@@ -126,7 +108,7 @@
             <th mat-header-cell *matHeaderCellDef> Action </th>
             <td mat-cell *matCellDef="let element">
               <div class="Action_Result">
-                <i class="far fa-2x fa-edit" matTooltip="FundConnext Action" ></i>
+                <i class="far fa-edit" matTooltip="FundConnext Action" (click)="onActionDialog(element.Cust_Code)" ></i>
                 <!-- <i class="far fa-2x fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View"></i> -->
               </div>
 

@@ -63,11 +63,20 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
   var suitabilityRiskLevel = req.body.suitabilityRiskLevel;
   var suitabilityEvaluationDate = req.body.suitabilityEvaluationDate;
 
+  var fatca = req.body.fatca;
+  var fatcaDeclarationDate = req.body.fatcaDeclarationDate;
+
+  var cddScore = req.body.cddScore;
+  var cddDate = req.body.cddDate;
+
   logger.info("Welcome API /updateCustomerInd/"+ cardNumber);
-  updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate).then(result=>{
-      res.status(200).json(result);
+  updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate).then(result=>{
+
+      res.status(200).json({code:"000"});
     },err=>{
-      res.status(401).json(err);
+      res.status(200).json(err);
+      // res.status(500).json(err);
+
     });
 }
 
@@ -121,9 +130,9 @@ function fnGetIndCust(cardNumber){
 }
 
 // PATCH
-function updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate){
+function updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate){
 
-  logger.info("Welcome updateCustomerInd()");
+  // logger.info("Welcome updateCustomerInd()");
 
   return new Promise(function(resolve, reject) {
 
@@ -135,14 +144,52 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
       fnFCAuth().then(result =>{
         resultObj =JSON.parse(result);
 
-       var data=JSON.stringify({
+       var data={
         "identificationCardType": identificationCardType,
         "cardNumber" : cardNumber,
         "referralPerson": referralPerson,
-        "approved": false,
-        "suitabilityRiskLevel":suitabilityRiskLevel,
-        "suitabilityEvaluationDate":suitabilityEvaluationDate
-       })
+        "approved": approved,
+        "suitabilityRiskLevel":"",
+        "suitabilityEvaluationDate":"",
+        "fatca":"",
+        "fatcaDeclarationDate":"",
+        "cddScore":"",
+        "cddDate":"",
+       };
+      //  var data=JSON.stringify({
+      //   "identificationCardType": identificationCardType,
+      //   "cardNumber" : cardNumber,
+      //   "referralPerson": referralPerson,
+      //   "approved": approved,
+      //   "suitabilityRiskLevel":suitabilityRiskLevel,
+      //   "suitabilityEvaluationDate":suitabilityEvaluationDate,
+      //   "fatca":fatca,
+      //   "fatcaDeclarationDate":fatcaDeclarationDate,
+      //   "cddScore":cddScore,
+      //   "cddDate":cddDate,
+      //  })
+
+       console.log('suitabilityRiskLevel>' + suitabilityRiskLevel);
+       if(suitabilityRiskLevel){
+        console.log('suitabilityRiskLevel STEP 1>' +suitabilityRiskLevel);
+        data["suitabilityRiskLevel"]=suitabilityRiskLevel;
+        data["suitabilityEvaluationDate"]=suitabilityEvaluationDate;
+       }
+
+       console.log('fatca>' + fatca);
+       if(fatca !='undefined' && fatca !=''){
+        console.log('fatca STEP 1>' +fatca);
+        data.fatca=fatca.toLowerCase();
+        data.fatcaDeclarationDate=fatcaDeclarationDate;
+       }
+
+       console.log('cddScore >'+  cddScore);
+       if(cddScore){
+        console.log('cddScore STEP 1>'+  cddScore);
+        data.cddScore=cddScore;
+        data.cddDate=cddDate;
+       }
+
 
       var options = {
         host: FC_API_URI,
@@ -165,19 +212,27 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
           _chunk=_chunk.concat(chunk);
         });
         res.on('end', () => {
-          logger.info(JSON.stringify(_chunk));
+          // logger.info(JSON.stringify(_chunk));
 
-          mitLog.saveMITlog(referralPerson,FC_API_MODULE+INVEST_INDIVIDUAL,data,req.ip,req.originalUrl,function(){});
+          if(_chunk !='OK'){
 
-          resolve(_chunk);
+            apiRS =JSON.parse(_chunk);
+            logger.error(JSON.stringify(apiRS.errMsg));
+            reject(apiRS.errMsg);
+
+          }else{
+            mitLog.saveMITlog(referralPerson,FC_API_MODULE+INVEST_INDIVIDUAL,data,req.ip,req.originalUrl,function(){});
+            resolve(_chunk);
+          }
+
         });
       });
       request.on('error', (e) => {
         reject(e);
       });
       // Write data to request body
-      // logger.info(`DATA>>${data}`);
-      request.write(data);
+      logger.info(`DATA>>${JSON.stringify(data)}`);
+      request.write(JSON.stringify(data));
       request.end();
     /**
      * HTTPS REQUEST (END)

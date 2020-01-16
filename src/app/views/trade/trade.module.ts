@@ -77,6 +77,7 @@ import { NewMobileDialogComponent } from './dialog/new-mobile-dialog/new-mobile-
 import { SurveySearchComponent } from './survey-search/survey-search.component';
 import { dateDBFormatPipe } from './pipe/dateFormatPipe';
 import { KycDetailDialogComponent } from './dialog/kyc-detail-dialog/kyc-detail-dialog.component';
+import { SearchActionDialogComponent } from './dialog/search-action-dialog/search-action-dialog.component';
 
 @NgModule({
   imports: [
@@ -164,6 +165,7 @@ import { KycDetailDialogComponent } from './dialog/kyc-detail-dialog/kyc-detail-
     SurveySearchComponent,
     dateDBFormatPipe,
     KycDetailDialogComponent,
+    SearchActionDialogComponent,
   ],
   providers: [DatePipe],
   entryComponents: [
@@ -181,6 +183,7 @@ import { KycDetailDialogComponent } from './dialog/kyc-detail-dialog/kyc-detail-
     LedMasDetailComponent,
     NewMobileDialogComponent,
     KycDetailDialogComponent,
+    SearchActionDialogComponent,
   ],
 })
 export class TradeModule {

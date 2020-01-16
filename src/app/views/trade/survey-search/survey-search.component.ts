@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
 import {dateDBFormatPipe} from '../pipe/dateFormatPipe';
 import { SelectionModel } from '@angular/cdk/collections';
 import { KycDetailDialogComponent } from '../dialog/kyc-detail-dialog/kyc-detail-dialog.component';
+import { SearchActionDialogComponent } from '../dialog/search-action-dialog/search-action-dialog.component';
 
 @Component({
   selector: 'app-survey-search',
@@ -41,6 +42,7 @@ export class SurveySearchComponent implements OnInit {
   surveyToDate_Cond : string;
 
   kycDetailDialogComponent: MatDialogRef<KycDetailDialogComponent>;
+  searchActionDialogComponent: MatDialogRef<SearchActionDialogComponent>;
 
   constructor(
     private suiteService: SuiteService,
@@ -144,9 +146,7 @@ export class SurveySearchComponent implements OnInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 
-
   onKYCdetail(Cust_Code: string) {
-
     this.kycDetailDialogComponent = this.dialog.open(KycDetailDialogComponent, {
       width: '800px',
       height: '1000px',
@@ -169,4 +169,29 @@ export class SurveySearchComponent implements OnInit {
 
     });
   }
+
+  onActionDialog(Cust_Code: string) {
+
+    this.searchActionDialogComponent = this.dialog.open(SearchActionDialogComponent, {
+      width: '800px',
+      data: Cust_Code
+    });
+
+    this.searchActionDialogComponent.afterClosed().subscribe(result => {
+        console.log('onNewMobileDialog afterClosed()=> ', result);
+
+        // if(result ==='newMobileSuccess'){
+        //   this.toastr.success(` `,
+        //   "ดำเนินการสำเร็จ",
+        //   {
+        //     timeOut: 3000,
+        //     closeButton: true,
+        //     positionClass: "toast-top-center"
+        //   }
+        //   );
+        // }
+
+    });
+  }
+
 }

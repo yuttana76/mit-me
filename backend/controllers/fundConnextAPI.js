@@ -176,16 +176,21 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
         data["suitabilityEvaluationDate"]=suitabilityEvaluationDate;
        }
 
-       console.log('fatca>' + fatca);
+      //  console.log('fatca>' + fatca);
        if(fatca !='undefined' && fatca !=''){
-        console.log('fatca STEP 1>' +fatca);
-        data.fatca=fatca.toLowerCase();
+        // console.log('fatca STEP 1>' +fatca);
+          try {
+            data.fatca=fatca.toLowerCase();
+          }
+          catch (e) {
+            data.fatca=fatca;
+          }
         data.fatcaDeclarationDate=fatcaDeclarationDate;
        }
 
-       console.log('cddScore >'+  cddScore);
+      //  console.log('cddScore >'+  cddScore);
        if(cddScore){
-        console.log('cddScore STEP 1>'+  cddScore);
+        // console.log('cddScore STEP 1>'+  cddScore);
         data.cddScore=cddScore;
         data.cddDate=cddDate;
        }

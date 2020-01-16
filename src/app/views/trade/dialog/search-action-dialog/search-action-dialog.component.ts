@@ -41,7 +41,7 @@ public referralPerson;
 
     this.uploadAPIForm = new FormGroup({
         id: new FormControl(null, {
-          validators: [Validators.required]
+          // validators: [Validators.required]
         }),
       suitLevel: new FormControl(null, {
         validators: [Validators.required]
@@ -54,28 +54,57 @@ public referralPerson;
       }),
     });
 
+
+    this.getCustIndPartial();
   }
 
   onClose(){
     this.dialogRef.close('Close');
   }
 
+  getCustIndPartial(){
+
+    this.spinnerLoading = true;
+
+    this.suiteService.getCustIndPartial(this.custCode)
+    .finally(() => {
+      console.log("Handle logging logic...");
+      this.spinnerLoading = false;
+    })
+    .subscribe((data: any) => {
+
+      console.log("**getCustIndPartial()>"+JSON.stringify(data));
+
+      if(data.result){
+
+        this.identificationCardType=data.result[0].identificationCardType;
+        this.passportCountry=data.result[0].passportCountry;
+        this.suitabilityRiskLevel =data.result[0].suitabilityRiskLevel;
+        this.suitabilityEvaluationDate=data.result[0].suitabilityEvaluationDate;
+        this.fatca=data.result[0].fatca;
+        this.fatcaDeclarationDate=data.result[0].fatcaDeclarationDate;
+        this.cddScore =data.result[0].cddScore;
+        this.cddDate=data.result[0].cddDate;
+      }
+
+      });
+  }
+
   onUploadAPI(){
+    this.spinnerLoading = true;
 
-    // this.referralPerson =this.authService.getFullName();
+    this.referralPerson='Yuttana';
+    if(this.authService.getFullName()){
+      this.referralPerson =this.authService.getFullName();
+    }
 
- this.referralPerson='Yuttana';
-
-    this.suiteService
-        .uploadCustInd(this.identificationCardType,this.custCode,this.referralPerson,this.suitabilityRiskLevel,this.suitabilityEvaluationDate,this.fatca,this.fatcaDeclarationDate,this.cddScore,this.cddDate)
-
+    this.suiteService.uploadCustInd(this.identificationCardType,this.custCode,this.referralPerson,this.suitabilityRiskLevel,this.suitabilityEvaluationDate,this.fatca,this.fatcaDeclarationDate,this.cddScore,this.cddDate)
          .finally(() => {
-          // Execute after graceful or exceptionally termination
-          // this.spinnerLoading = false;
+          this.spinnerLoading = false;
         })
-        .subscribe(
-          (data: any) => {
+        .subscribe((data: any) => {
             console.log("onUploadAPI RS:" + JSON.stringify(data));
+            this.spinnerLoading = false;
 
             if (data.code === "000") {
               this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
@@ -97,10 +126,12 @@ public referralPerson;
 
           },
           error => () => {
+            this.spinnerLoading = false;
             console.log("saveSuit Was error", error);
           },
           () => {
             console.log("saveSuit  complete");
+            this.spinnerLoading = false;
           }
         );
     }

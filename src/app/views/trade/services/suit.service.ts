@@ -40,7 +40,6 @@ export class SuiteService {
       'pid': _pid.trim(),
       'm': _mobile.trim()
     };
-    // return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/getOTPtokenMail', data);
     return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/getOTPtokenSMS', data);
   }
 
@@ -191,6 +190,11 @@ export class SuiteService {
 
     //  console.log( "FC API>" +JSON.stringify(data));
     return this.http.patch<{ message: string, result: string }>(BACKEND_URL_FC + '/customer/individual/', data);
+  }
+
+
+  getCustIndPartial(_id: string): Observable<any> {
+    return this.http.get<{  result: any }>(BACKEND_URL_SURVEY + '/custIndPartial/'+_id);
   }
 
 }

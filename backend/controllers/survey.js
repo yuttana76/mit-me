@@ -1225,13 +1225,7 @@ function custIndPartial(Cust_Code) {
           END AS varchar) AS passportCountry
       ,A.Cust_Code AS cardNumber
       ,C.RiskLevel AS suitabilityRiskLevel,convert(varchar, C.CreateDate, 112) AS suitabilityEvaluationDate
-      ,CAST(
-          CASE
-              WHEN D.IS_USA = 'Y'
-                  THEN 'true'
-              ELSE 'false'
-          END AS varchar) AS fatca
-      ,convert(varchar, D.FATCA_DATE, 112) AS fatcaDeclarationDate
+      ,D.IS_FATCA AS fatca,convert(varchar, D.FATCA_DATE, 112) AS fatcaDeclarationDate
       ,B.CDD_Score AS cddScore,convert(varchar, B.CDD_Date, 112) AS cddDate
       FROM Account_Info A
       LEFT JOIN MIT_CUSTOMER_INFO B ON A.Cust_Code=B.Cust_Code
@@ -1500,7 +1494,7 @@ function senMailKYC(req,res,_PID,_Email,_url){
               console.log(error);
             }
           logger.info(`API /surveyByMailToken -  Send mail successful!`);
-          res.status(200).json({ message: 'Send mail successful!' });
+          res.status(200).json({ code:"000",message: 'Send mail successful!' });
         });
         // Incase No Email
       }else{

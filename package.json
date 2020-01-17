@@ -76,6 +76,7 @@
     "mysql": "^2.17.1",
     "ng2-charts": "^1.6.0",
     "ngx-bootstrap": "^3.3.0",
+    "ngx-float-button": "^1.0.0",
     "ngx-perfect-scrollbar": "^6.3.0",
     "ngx-toastr": "^9.2.0",
     "node-cron": "^2.0.3",

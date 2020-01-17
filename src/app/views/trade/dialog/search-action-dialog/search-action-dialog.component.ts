@@ -21,7 +21,7 @@ public identificationCardType="CITIZEN_CARD";
 public passportCountry;
 public suitabilityRiskLevel ="5";
 public suitabilityEvaluationDate='20200101';
-public fatca=false;
+public fatca;
 public fatcaDeclarationDate='20200201';
 public cddScore ="2";
 public cddDate='20200110';
@@ -85,6 +85,11 @@ public referralPerson;
         this.fatcaDeclarationDate=data.result[0].fatcaDeclarationDate;
         this.cddScore =data.result[0].cddScore;
         this.cddDate=data.result[0].cddDate;
+
+        if(this.fatca){
+          this.fatca=this.fatca.trim();
+        }
+
       }
 
       });
@@ -136,6 +141,53 @@ public referralPerson;
         );
     }
 
+
+
+    onSendKYCSurvey(){
+    this.spinnerLoading = true;
+
+    this.referralPerson='Yuttana';
+    if(this.authService.getFullName()){
+      this.referralPerson =this.authService.getFullName();
+    }
+
+    this.suiteService.sendKYCToCustomer(this.custCode)
+         .finally(() => {
+          this.spinnerLoading = false;
+        })
+        .subscribe((data: any) => {
+            console.log("onUploadAPI RS:" + JSON.stringify(data));
+            this.spinnerLoading = false;
+
+            if (data.code === "000") {
+              this.toastr.success(data.msg, this.formService._COMPLETE, {
+                timeOut: 5000,
+                closeButton: true,
+                positionClass: "toast-top-center"
+              });
+            } else {
+              this.toastr.warning(
+                data.message,
+                this.formService._INCOMPLETE,
+                {
+                  timeOut: 5000,
+                  closeButton: true,
+                  positionClass: "toast-top-center"
+                }
+              );
+            }
+
+          },
+          error => () => {
+            this.spinnerLoading = false;
+            console.log("saveSuit Was error", error);
+          },
+          () => {
+            console.log("saveSuit  complete");
+            this.spinnerLoading = false;
+          }
+        );
+    }
 
 }
 

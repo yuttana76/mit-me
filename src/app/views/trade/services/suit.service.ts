@@ -194,7 +194,23 @@ export class SuiteService {
 
 
   getCustIndPartial(_id: string): Observable<any> {
-    return this.http.get<{  result: any }>(BACKEND_URL_SURVEY + '/custIndPartial/'+_id);
+    return this.http.get<{ result: any }>(BACKEND_URL_SURVEY + '/custIndPartial/'+_id);
   }
 
+
+  // https://localhost:3009/api/survey/surveyKYCByID
+
+  sendKYCToCustomer(_id: string){
+
+    var _target="prod"
+    if(environment.apiURL && environment.apiURL.includes('localhost')){
+      _target ="test";
+    }
+
+    const data = {
+      "custCode":_id,
+        "target":_target
+    }
+    return this.http.post<{ result: any}>(BACKEND_URL_SURVEY + '/surveyKYCByID', data);
+  }
 }

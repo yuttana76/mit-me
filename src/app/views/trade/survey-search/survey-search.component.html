@@ -31,12 +31,17 @@
         </mat-form-field>
       </div>
 
+      <div class="row">
+        <div class="col-sm-3 "></div>
+        <div class="col-sm-3 ">
+          <button mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
+          <button mat-stroked-button color="warn" type='reset'>Reset</button>
+        </div>
+
+      </div>
+
     </mat-card-content>
-    <mat-card-actions>
-      <!-- <label for="SurveyStartDate" class="col-sm-3 col-form-label"></label> -->
-      <button mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
-      <button mat-stroked-button color="warn" type='reset'>Reset</button>
-    </mat-card-actions>
+
   </form>
 
 </mat-card>
@@ -74,7 +79,7 @@
 
 
                 <div class="col-sm-3">
-                  <i class="far fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View"></i>
+                  <i class="far fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View KYC"></i>
                   <!-- <i class="far fa-2x fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View"></i> -->
                 </div>
                 <div class="col-sm-6">

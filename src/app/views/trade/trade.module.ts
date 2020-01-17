@@ -79,6 +79,8 @@ import { dateDBFormatPipe } from './pipe/dateFormatPipe';
 import { KycDetailDialogComponent } from './dialog/kyc-detail-dialog/kyc-detail-dialog.component';
 import { SearchActionDialogComponent } from './dialog/search-action-dialog/search-action-dialog.component';
 
+import { NgxFloatButtonModule } from 'ngx-float-button';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -99,6 +101,7 @@ import { SearchActionDialogComponent } from './dialog/search-action-dialog/searc
         siteKey: '6LeupK8UAAAAAECl56nM-7H1Q1L_q1kF6rEN-yxy',
     }),
     BsDropdownModule.forRoot(),
+    NgxFloatButtonModule,
   ],
   declarations: [
     SummaryRepComponent,

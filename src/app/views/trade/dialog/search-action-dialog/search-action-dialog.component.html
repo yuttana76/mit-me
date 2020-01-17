@@ -3,21 +3,24 @@
 
 <div class="contrainer" *ngIf="!spinnerLoading" >
 
-  <h3>Upload Customer Individual(Partial)</h3>
+  <div class="card">
+    <div class="card-header">
+      Upload Customer Individual(Partial)
+    </div>
+    <div class="card-body">
 
     <form [formGroup]="uploadAPIForm" class="example-form">
-
-      <!-- <div class="form-group row">
+      <div class="form-group row">
         <label for="id" class="col-sm-2 col-form-label">Cust Code</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control col-sm-3" id="id"  [(ngModel)]="custCode" formControlName="id">
+          <input id="id"type="text" class="form-control col-sm-3"   [(ngModel)]="custCode" formControlName="id">
+          <small id="idHelp" class="form-text text-muted">For development only.</small>
         </div>
-      </div> -->
+      </div>
 
       <div class="form-group row">
         <label for="suitLevel" class="col-sm-2 col-form-label">Suit level</label>
         <div class="col-sm-10">
-          <!-- <input type="text" class="form-control col-sm-3" id="suitLevel"  [(ngModel)]="suitabilityRiskLevel" formControlName="suitLevel"> -->
           <select class="form-control col-sm-3" required id="suitLevel"  [(ngModel)]="suitabilityRiskLevel" formControlName="suitLevel">
             <option value=""></option>
             <option value="1">1</option>
@@ -33,7 +36,6 @@
       <div class="form-group row">
         <label for="cddScore" class="col-sm-2 col-form-label">CDD score</label>
         <div class="col-sm-10">
-          <!-- <input type="text" class="form-control col-sm-3" id="cddScore"  [(ngModel)]="cddScore" formControlName="cddScore"> -->
           <select class="form-control col-sm-3" required id="cddScore"  [(ngModel)]="cddScore" formControlName="cddScore">
             <option value=""></option>
             <option value="1">1</option>
@@ -47,23 +49,39 @@
       <div class="form-group row">
         <label for="fatca" class="col-sm-2 col-form-label">FATCA</label>
         <div class="col-sm-10">
-          <!-- <input type="text" class="form-control col-sm-3" id="fatca"  [(ngModel)]="fatca" formControlName="fatca"> -->
           <mat-radio-group id="fatca"  [(ngModel)]="fatca" formControlName="fatca" aria-label="Select an option">
-            <mat-radio-button value="true">true - ใช่</mat-radio-button>
-            <mat-radio-button value="false">false – ไม่ใช่</mat-radio-button>
+            <mat-radio-button value="true">true</mat-radio-button>
+            <mat-radio-button value="false">false</mat-radio-button>
           </mat-radio-group>
         </div>
       </div>
 
       <div class="row margin_top_30">
-        <p>Form: {{uploadAPIForm.valid}} </p>
-          <button mat-stroked-button color="warn" (click)=onClose()>
-            Close</button>
-
-          <button mat-stroked-button color="primary" (click)=onUploadAPI() [disabled]="uploadAPIForm.invalid">
+          <button class="col-sm-3" mat-flat-button color="primary" (click)=onUploadAPI() [disabled]="uploadAPIForm.invalid" >
             FC API Upload <i class="fas fa-cloud-upload-alt"></i> </button>
       </div>
-
     </form>
 
+    </div>
+  </div>
+
+    <div class="contrainer margin_top_30 survey_div">
+
+      <div class="card">
+        <div class="card-header">
+          Send KYC & Suitability to customer
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Send KYC & Suitability to customer</h5>
+          <!-- <a href="#" class="btn btn-primary" (click)=onSendKYCSurvey()>SEND <i class="far fa-envelope"></i></a> -->
+          <button class="col-sm-3" mat-flat-button color="primary" (click)=onSendKYCSurvey()>
+            SEND <i class="far fa-envelope"></i></button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row margin_top_30 survey_action">
+      <button class="col-sm-3" mat-flat-button color="warn" (click)=onClose()>    Close</button>
+    </div>
 </div>

@@ -8,7 +8,7 @@ const selfAuth = require('../middleware/self-auth');
 const router = express.Router();
 
 // Survey KYC & Suitability
-router.post("/surveyKYCByID",selfAuth,surveyController.surveyKYCByID);
+router.post("/surveyKYCByID",surveyController.surveyKYCByID);
 router.post("/surveyKYCBulkFile",selfAuth,surveyController.surveyKYCBulkFile);
 router.post("/surveyThankCust",surveyController.sendMailThankCust);
 

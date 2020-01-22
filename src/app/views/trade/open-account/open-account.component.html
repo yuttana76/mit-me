@@ -23,7 +23,7 @@
         </mat-step>
 
         <!-- NDID VERIFY -->
-        <mat-step >
+        <mat-step *ngIf="reqNDID">
             <ng-template matStepLabel>Verify indentify(NDID)</ng-template>
 
             <app-ndid-proxy [fcIndCustomer]="fcIndCustomer" (ndidDone)="ndidDone($event)" ></app-ndid-proxy>
@@ -38,7 +38,7 @@
         <mat-step [stepControl]="indCustFormGroup">
 
             <ng-template matStepLabel>Complete form</ng-template>
-            <app-fc-ind-customer [fcIndCustomer]="fcIndCustomer" [indCustFormGroup]="indCustFormGroup" [re_addrFormGroup]="re_addrFormGroup" [cu_addrFormGroup]="cu_addrFormGroup" [wk_addrFormGroup]="wk_addrFormGroup" ></app-fc-ind-customer>
+            <app-fc-ind-customer [fcIndCustomer]="fcIndCustomer" [accountType]="accountType" [indCustFormGroup]="indCustFormGroup" [re_addrFormGroup]="re_addrFormGroup" [cu_addrFormGroup]="cu_addrFormGroup" [wk_addrFormGroup]="wk_addrFormGroup" ></app-fc-ind-customer>
 
             <div>
                 <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>

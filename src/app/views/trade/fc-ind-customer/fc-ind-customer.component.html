@@ -3,7 +3,7 @@
     <div id="accordion">
         <div class="card">
           <div class="card-header" id="headingOne">
-            <h4>1. Personal Information
+            <h4>1. Personal Information {{accountType}}
               <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                 Show/Hide
               </button></h4>
@@ -43,7 +43,7 @@
                       <mat-form-field class="col-md-6">
                           <input matInput [matDatepicker]="picker" [(ngModel)]="fcIndCustomer.cardExpiryDate" formControlName="cardExpiryDate"  placeholder="Choose cardExpiryDate" required>
                           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                          <mat-datepicker #picker></mat-datepicker>
+                          <mat-datepicker #picker touchUi="true"></mat-datepicker>
                           <mat-error *ngIf="indCustFormGroup.get('cardExpiryDate').invalid">Require this field</mat-error>
                       </mat-form-field>
 
@@ -58,15 +58,23 @@
                           <mat-error *ngIf="indCustFormGroup.get('gender').invalid">Require this field</mat-error>
                         </mat-form-field>
 
-                        <mat-form-field class="col-md-6">
+                        <!-- <mat-form-field class="col-md-6">
                             <mat-select formControlName="title" placeholder="title" [(ngModel)]="fcIndCustomer.title"
-                            required>
+                            required >
                               <mat-option *ngFor="let obj of TitleList" [value]="obj.value">
                                   {{obj.text}}
                               </mat-option>
                             </mat-select>
-                            <mat-error *ngIf="indCustFormGroup.get('title').invalid">Require this field</mat-error>
-                          </mat-form-field>
+                            <mat-error *ngIf="indCustFormGroup.get('title').invalid"  >Require this field</mat-error>
+                          </mat-form-field> -->
+
+                          <mat-form-field class="col-md-4 col-sm-4">
+                            <mat-select [(ngModel)]="fcIndCustomer.title" formControlName="title"  required >
+                              <mat-option *ngFor="let obj of TitleList" [value]="obj.value">
+                                {{obj.text}}
+                              </mat-option>
+                            </mat-select>
+                        </mat-form-field>
 
                           <mat-form-field class="col-md-6" >
                               <input matInput [(ngModel)]="fcIndCustomer.titleOther" placeholder="titleOther"  >
@@ -129,7 +137,7 @@
                         <mat-form-field class="col-md-6">
                             <input matInput [matDatepicker]="birthDatepicker" [(ngModel)]="fcIndCustomer.birthDate" formControlName="birthDate"  placeholder="Choose birthDate" required>
                             <mat-datepicker-toggle matSuffix [for]="birthDatepicker"></mat-datepicker-toggle>
-                            <mat-datepicker #birthDatepicker></mat-datepicker>
+                            <mat-datepicker #birthDatepicker touchUi="true"></mat-datepicker>
                             <mat-error *ngIf="indCustFormGroup.get('birthDate').invalid">Require this field</mat-error>
                         </mat-form-field>
 

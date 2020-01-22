@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FcDownload } from '../model/FcDownload.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { formatDate } from '@angular/common';
@@ -6,12 +6,21 @@ import { MatDatepickerInputEvent, MatDialog } from '@angular/material';
 import { ToastrService } from 'ngx-toastr';
 import { FundConnextService } from '../services/fundConnext.service';
 
+import * as jsPDF from 'jspdf';
+
+// D:\Merchants\apps\mit\src\assets\fonts\THSarabunNew\THSarabunNew-normal.js
+import THSarabunNew from '../../../../assets/fonts/THSarabunNew/THSarabunNew-normal.js';
+import THSarabunNewBold from '../../../../assets/fonts/THSarabunNew/THSarabunNew-Bold-bold.js';
+
+declare let pdfMake: any ;
 @Component({
   selector: 'app-fcapp',
   templateUrl: './fcapp.component.html',
   styleUrls: ['./fcapp.component.scss']
 })
 export class FCAppComponent implements OnInit {
+  constructor(private toastr: ToastrService,public dialog: MatDialog,private fundConnextService:FundConnextService) { }
+
 
 
   spinnerLoading = false;
@@ -38,7 +47,8 @@ export class FCAppComponent implements OnInit {
 
   // *********
   api_records=0;
-  constructor(private toastr: ToastrService,public dialog: MatDialog,private fundConnextService:FundConnextService) { }
+
+  @ViewChild('content') content:  ElementRef;
 
   ngOnInit() {
 
@@ -229,5 +239,69 @@ export class FCAppComponent implements OnInit {
       }
     );
   }
+
+
+  onDownloadNAV_Sync(){
+
+    console.log('onDownloadNAV_Sync() >' + JSON.stringify(this.fcdownloadAPI));
+
+    this.spinnerLoading = true;
+
+    this.fundConnextService.downloadNAV_Sync(this.fcdownloadAPI).subscribe(data =>{
+      const rtnData = JSON.parse(JSON.stringify(data))
+
+        console.log("***rtnData>"+JSON.stringify(rtnData));
+      }
+    , error => {
+        console.log("WAS ERR>>" + JSON.stringify(error) );
+        this.spinnerLoading = false;
+
+        this.toastr.error(``,  error,
+        {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        }
+      );
+
+      }
+      ,() => {
+        // 'onCompleted' callback.
+        this.spinnerLoading = false;
+      }
+    );
+
+
+  }
+
+  generatePdf(){
+
+
+
+
+
+var doc = new jsPDF();
+
+/**
+ * Not finish yet has error
+ */
+// doc.addFileToVFS('THSarabunNew-normal.ttf', THSarabunNew)
+// doc.addFileToVFS('Roboto-Bold.ttf', THSarabunNewBold)
+// doc.addFont('THSarabunNew-normal.ttf', 'THSarabunNew', 'normal')
+// doc.addFont('Roboto-Bold.ttf', 'THSarabunNew', 'bold')
+// doc.setFont('THSarabunNew')
+
+
+doc.text(20, 20, 'Hello world! Yuttana บอม !');
+doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF. ');
+doc.addPage();
+doc.text(20, 20, 'Do you like that?');
+
+// Save the PDF
+doc.save('Test.pdf');
+
+   }
+
+
 
 }

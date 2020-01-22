@@ -16,6 +16,7 @@ import { SetRegis2Component } from './views/trade/set-regis2/set-regis2.componen
 import { SetWelcomeComponent } from './views/trade/set-welcome/set-welcome.component';
 import { SuitSurveyComponent } from './views/trade/suit-survey/suit-survey.component';
 import { SurveySearchComponent } from './views/trade/survey-search/survey-search.component';
+import { FCAppComponent } from './views/trade/fcapp/fcapp.component';
 
 export const routes: Routes = [
   {
@@ -68,7 +69,6 @@ export const routes: Routes = [
   //     title: 'Suitability survey'
   //   }
   // },
-
   {
     path: 'suitSurvey',
     component: SuitSurveyComponent,
@@ -76,6 +76,15 @@ export const routes: Routes = [
       title: 'Suitability survey'
     }
   },
+
+  {
+    path: 'FCApp',
+    component: FCAppComponent,
+    data: {
+      title: 'FundConnext Applications'
+    }
+  },
+
   {
     path: 'openAcc',
     component: OpenAccountComponent,

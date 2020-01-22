@@ -91,4 +91,19 @@ const BACKEND_URL = environment.apiURL + '/fundConnext/';
         return this.http.post(BACKEND_URL + '/exportExcel/', postData,{ responseType: 'blob' });
       }
 
+      downloadNAV_Sync(data:FcDownload) {
+
+        console.log('SERVICE onDownloadNAV_Sync() >' + JSON.stringify(data.businessDate));
+
+        var _businessDate = formatDate(data.businessDate, 'yyyyMMdd', 'en');
+
+        const postData ={
+          "businessDate":_businessDate,
+          "fileType":'Nav.zip',
+        };
+
+        return this.http.post<{ result: any}>(BACKEND_URL + '/downloadNavAPI/v2/', postData);
+      }
+
+
     }

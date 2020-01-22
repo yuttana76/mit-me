@@ -364,7 +364,10 @@ exports.downloadNavAPI_V2 = (req, res, next) =>{
   var businessDate = req.body.businessDate
 
   downloadNavAPIproc(businessDate).then(dwRs=>{
-    res.status(200).json({message: dwRs});
+
+    // res.status(200).json({code:'000',message: dwRs});
+    res.status(200).json({code:'000',message: 'Effect '+dwRs + ' records.',record:dwRs});
+
   },err=>{
     res.status(422).json(err);
   });
@@ -663,7 +666,7 @@ exports.navSync = (req, res, next) =>{
   }
 
   navSyncFunc(createDate).then(syncData=>{
-    res.status(200).json({message: syncData});
+    res.status(200).json({message: 'Effect '+syncData + ' records.',record:syncData});
   },syncErr=>{
     res.status(422).json({error: syncErr});
   })
@@ -813,7 +816,7 @@ END
           reject(err);
         }else {
           // logger.info(JSON.stringify(result))
-          resolve(`Effect ${result.rowsAffected.length} records`)
+          resolve(result.rowsAffected.length)
         }
     })
   })

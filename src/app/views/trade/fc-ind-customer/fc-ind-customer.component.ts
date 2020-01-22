@@ -25,8 +25,10 @@ export class FcIndCustomerComponent implements OnInit  {
   @Input() re_addrFormGroup: FormGroup;
   @Input() cu_addrFormGroup: FormGroup;
   @Input() wk_addrFormGroup: FormGroup;
+  @Input() accountType ='IND';
 
-  matcher = new MyErrorStateMatcher();
+
+  // matcher = new MyErrorStateMatcher();
 
   // indCustFormGroup:FormGroup;
   addr_formGroup: FormGroup;
@@ -38,7 +40,6 @@ export class FcIndCustomerComponent implements OnInit  {
   public nationList= [{"Nation_Code":"TH","Nation_Desc":"Thai"}
     ,{"Nation_Code":"JP","Nation_Desc":"Japanese"},
   ]
-
 
   public CardTypeList=[{"value":"PASSPORT","text":"PASSPORT"},{"value":"CITIZEN_CARD","text":"บัตรประชาชน"}]
   public GenderList=[{"value":"Male","text":"Male"},{"value":"Female","text":"Female"}]

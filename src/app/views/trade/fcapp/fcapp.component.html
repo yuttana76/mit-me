@@ -1,5 +1,5 @@
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
-
+<!--
 <mat-card class="example-card">
     <mat-card-header>
         <mat-card-title><h1>FundConnext Download API</h1></mat-card-title>
@@ -7,15 +7,12 @@
 
     <form [formGroup]="downloadForm" (submit)="downloaInfo()" #custForm="ngForm" *ngIf="!spinnerLoading">
 
-
           <mat-form-field class='col-sm-6'>
               <mat-select formControlName="fileType"  [(ngModel)]="fcdownloadAPI.fileType" placeholder="File type">
                 <mat-option *ngFor="let item of fileTypeList" [value]="item.value">{{item.display}}</mat-option>
               </mat-select>
               <mat-hint align="end"></mat-hint>
           </mat-form-field>
-
-
 
           <mat-form-field class='col-sm-6' >
             <input matInput formControlName="businessDate"  [matDatepicker]="picker" placeholder="business Date"
@@ -25,7 +22,6 @@
             </mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
-
 
         <div class="search_action_div row col-sm-6">
             <button mat-raised-button color="primary" [disabled]="!downloadForm.valid" type='submit'  >Execute</button>
@@ -39,9 +35,70 @@
         <hr>
         <div>
           <button mat-raised-button color="basic" [disabled]="api_records==0"  (click)="exportExcel()" >Excel  <i class="far fa-file-excel fa-lg"></i></button>
-          <!-- <button mat-raised-button color="basic" [disabled]="api_records==0" (click)="downloadZip()"  >ZIP  <i class="far fa-file-archive fa-lg"></i></button> -->
+          <button mat-raised-button color="basic" [disabled]="api_records==0" (click)="downloadZip()"  >ZIP  <i class="far fa-file-archive fa-lg"></i></button>
           <button mat-raised-button color="basic" [disabled]="api_records==0" (click)="uploadDB()"  >DB.  <i class="fas fa-angle-double-down fa-lg"></i></button>
+
+          <button mat-raised-button color="basic"   (click)="pdfApplicationFrom()" >FC Application Form PDF   <i class="far fa-file-pdf fa-lg"></i></button>
         </div>
       </div>
-</mat-card>
+</mat-card> -->
 
+
+<mat-card class="example-card" *ngIf="!spinnerLoading" >
+  <mat-card-title>FundConnext API</mat-card-title>
+  <mat-card-content class="col-12">
+
+    <div class="card">
+      <div class="card-header">
+        NAV API
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">NAV Download & Update internal db</h5>
+        <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+
+        <form [formGroup]="downloadForm"  #custForm="ngForm">
+
+          <div class="form-group row">
+            <label for="businessDate" class="col-sm-3 col-form-label">Business Date</label>
+            <mat-form-field class="col-sm-3" >
+              <input matInput id="businessDate" formControlName="businessDate"  [(ngModel)]="fcdownloadAPI.businessDate" [matDatepicker]="businessDate"
+               placeholder="" readonly=true>
+              <mat-datepicker-toggle matSuffix [for]="businessDate"></mat-datepicker-toggle>
+              <mat-datepicker #businessDate touchUi="true"></mat-datepicker>
+          </mat-form-field>
+
+          </div>
+          </form>
+          <button class="col-sm-3" mat-flat-button color="primary" (click)=onDownloadNAV_Sync()>Execute</button>
+      </div>
+    </div>
+
+
+    <div class="card" *ngIf="false">
+      <div class="card-header">
+        Customer PDF
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Download & generate PDF file.</h5>
+
+        <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+
+        <!-- <form [formGroup]="downloadForm"  #custForm="ngForm">
+
+          <div class="form-group row">
+            <label for="businessDate" class="col-sm-3 col-form-label">Business Date</label>
+            <mat-form-field class="col-sm-3" >
+              <input matInput id="businessDate" formControlName="businessDate"  [(ngModel)]="fcdownloadAPI.businessDate" [matDatepicker]="businessDate"
+               placeholder="" readonly=true>
+              <mat-datepicker-toggle matSuffix [for]="businessDate"></mat-datepicker-toggle>
+              <mat-datepicker #businessDate touchUi="true"></mat-datepicker>
+          </mat-form-field>
+
+          </div>
+          </form> -->
+          <button class="col-sm-3" mat-flat-button color="primary" (click)=generatePdf()>Execute</button>
+      </div>
+    </div>
+
+  </mat-card-content>
+  </mat-card>

@@ -64,9 +64,8 @@ router.post("/navSync/",[selfAuth
 
 
 // ********* Download NAV V2
-
-router.post("/downloadNavAPI/v2/",[selfAuth
-  ,  check('businessDate')
+//Download NAV & Sync DB.
+router.post("/downloadNavAPI/v2/",[check('businessDate')
     .isLength({ min: 1 }).withMessage('must have businessDate value')
   ],fundConnextAPIController.downloadNavAPI_V2);
 

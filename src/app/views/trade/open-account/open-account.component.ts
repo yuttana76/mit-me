@@ -15,7 +15,14 @@ import { OnlineProcessService } from '../services/onlineProcess.service';
 })
 export class OpenAccountComponent implements OnInit {
 
+
   isLinear = true;
+  reqNDID = false;
+
+  // IND
+  // FOR_BY
+  accountType='IND' ;
+
   // openAccount = new OpenAccount();
   public fcIndCustomer: fcIndCustomer = new fcIndCustomer();
 

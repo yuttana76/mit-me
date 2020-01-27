@@ -56,6 +56,8 @@ export class OpenAccountComponent implements OnInit {
   incomeSourceList: FCincomeSource[];
   businessTypeList: FCbusinessType[];
   incomeList: FCincomeLevel[];
+  investObjectList: CodeLookup[];
+
 
   constructor(private _formBuilder: FormBuilder,
     public dialog: MatDialog,
@@ -82,6 +84,11 @@ export class OpenAccountComponent implements OnInit {
     });
     this.masterDataService.getFCincomeLevel().subscribe((data: any[]) => {
       this.incomeList = data;
+    });
+
+     // Initial data
+     this.masterDataService.getCodeLookup("INVObject").subscribe((data: any[]) => {
+      this.investObjectList = data;
     });
 
     // Form control initial
@@ -583,6 +590,20 @@ export class OpenAccountComponent implements OnInit {
       this.indCustFormGroup.controls["incomeSourceOth"].clearValidators();
       this.indCustFormGroup.controls["incomeSourceOth"].updateValueAndValidity();
       this.fcIndCustomer.incomeSourceOther = "";
+      return false;
+    }
+   }
+
+   isinvestmentObjective(){
+
+    if(this.fcIndCustomer.investmentObjective.includes(this.shareDataService.investmentObjective_FC_OTHER)){
+      // this.indCustFormGroup.controls["incomeSourceOth"].setValidators(Validators.required);
+      // this.indCustFormGroup.controls["incomeSourceOth"].updateValueAndValidity();
+      return true;
+    }else{
+      // this.indCustFormGroup.controls["incomeSourceOth"].clearValidators();
+      // this.indCustFormGroup.controls["incomeSourceOth"].updateValueAndValidity();
+      this.fcIndCustomer.investmentObjectiveOther = "";
       return false;
     }
    }

@@ -90,25 +90,7 @@
                   </div>
 
 
-                    <!-- 2.4 Mail Address (SEQ = 4)-->
-                    <!-- <span class="label_title"><h5>{{ formService.mail_addr_title }}</h5></span>
-                    <div class='row'>
-                        <form [formGroup]="register_formGroup">
-                        <section class="example-section" >
-                            <mat-radio-group [(ngModel)]="fcIndCustomer.MailSameAs"  (change)="mailAddrOnChange(fcIndCustomer.MailSameAs)" formControlName="MailSameAs">
-                                <mat-radio-button class="example-margin" value="email">{{formService.label_Email}}</mat-radio-button>
-                                <mat-radio-button class="example-margin" value="reg">{{formService.label_addrAs_reg}}</mat-radio-button>
-                                <mat-radio-button class="example-margin" value="work">{{formService.label_addrAs_work}}</mat-radio-button>
-                                <mat-radio-button class="example-margin" value="curr">{{formService.label_addrAs_curr}}</mat-radio-button>
-                                <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
-                              </mat-radio-group>
-                              <mat-error *ngIf="register_formGroup.get('MailSameAs').invalid">โปรดเลือก Please choose </mat-error>
-                          </section>
-                        </form>
-                    </div>
-                    <div>
-                      <app-cust-addr  *ngIf="this.fcIndCustomer.MailSameAs == '9' "  [addrData]="mail_addrData" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
-                    </div> -->
+
 
                   </div>
                 </div>
@@ -236,6 +218,40 @@
                 </div>
                 <div id="collapse4" class="collapse show" aria-labelledby="heading4" data-parent="#accordion4">
                   <div class="card-body ">
+
+
+                  <!--Mail Address (SEQ = 4)-->
+                    <span class="label_title"><h5>{{ formService.mail_addr_title }}</h5></span>
+                    <div class='row'>
+                        <form [formGroup]="register_formGroup">
+                        <section class="example-section" >
+                            <mat-radio-group [(ngModel)]="fcIndCustomer.MailSameAs"  (change)="mailAddrOnChange(fcIndCustomer.MailSameAs)" formControlName="MailSameAs">
+                                <mat-radio-button class="example-margin" value="email">{{formService.label_Email}}</mat-radio-button>
+                                <mat-radio-button class="example-margin" value="reg">{{formService.label_addrAs_reg}}</mat-radio-button>
+                                <mat-radio-button class="example-margin" value="work">{{formService.label_addrAs_work}}</mat-radio-button>
+                                <mat-radio-button class="example-margin" value="curr">{{formService.label_addrAs_curr}}</mat-radio-button>
+                                <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
+                              </mat-radio-group>
+                              <mat-error *ngIf="register_formGroup.get('MailSameAs').invalid">โปรดเลือก Please choose </mat-error>
+                          </section>
+                        </form>
+                    </div>
+                    <div>
+                      <app-cust-addr  *ngIf="this.fcIndCustomer.MailSameAs == '9' "  [addrData]="mail_addrData" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
+                    </div>
+
+
+                      <span class="label_title"><h5>วัตถุประสงค์การลงทุน</h5></span>
+                      <mat-form-field class="col-md-4">
+                          <mat-select [(ngModel)]="fcIndCustomer.investmentObjective" multiple name="type_list" placeholder="วัตถุประสงค์การลงทุน" required >
+                             <mat-option *ngFor="let obj of investObjectList" [value]="obj.keycode">{{obj.keyText}} </mat-option>
+                          </mat-select>
+                          <!-- <mat-error *ngIf="indCustFormGroup.get('incomeSource').invalid">Please choose one.</mat-error> -->
+                      </mat-form-field>
+                    <mat-form-field class="col-md-4" *ngIf="isinvestmentObjective()">
+                        <input matInput [(ngModel)]="fcIndCustomer.investmentObjectiveOther" placeholder="อื่นๆ โปรดระบุ" required>
+                    </mat-form-field>
+
 
                       <div class="container">
                         <h5>Subscription Account</h5>

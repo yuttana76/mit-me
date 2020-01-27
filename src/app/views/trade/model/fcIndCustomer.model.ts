@@ -82,7 +82,7 @@ export class fcIndCustomer{
   public wk_addrData: AddrCustModel = new AddrCustModel();
   public mail_addrData: AddrCustModel = new AddrCustModel();
 
-  investmentObjective: string;
+  investmentObjective: string[] =[""];
   investmentObjectiveOther: string;
   public redemptionBankAccounts: BankAccountModel[]=[];
   public subscriptionBankAccountsSameAs: string;

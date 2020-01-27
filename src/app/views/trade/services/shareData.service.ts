@@ -29,6 +29,7 @@ export class ShareDataService {
    public OCCUPATION_FC_OTHER ='170';
    public BUSINESSTYPE_FC_OTHER ='180';
    public INCOMESOURCE_FC_OTHER ='OTHER';
+   public investmentObjective_FC_OTHER ='PleaseSpecify';
 
    public POSITION_OTHER ='999';
 

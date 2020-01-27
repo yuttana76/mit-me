@@ -1,9 +1,8 @@
-<div class="container ">
 
     <div id="accordion">
         <div class="card">
           <div class="card-header" id="headingOne">
-            <h4>1. Personal Information {{accountType}}
+            <h4>1. Personal Information {{fcIndCustomer.accountType}}
               <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                 Show/Hide
               </button></h4>
@@ -12,223 +11,267 @@
             <div class="card-body">
                 <form [formGroup]="indCustFormGroup" class="form_section">
 
-                      <!-- <div class="col-md-12" >
-                          <label id="example-radio-group-label">Card Type {{fcIndCustomer.identificationCardType}}</label>
-                          <mat-radio-group aria-label="Select an option" class="example-radio-group"
-                           [(ngModel)]="fcIndCustomer.identificationCardType" formControlName="identificationCardType" >
-                              <mat-radio-button *ngFor="let obj of fcIndCustomer.CardTypeList" [value]="obj.value">
-                                  {{obj.text}}
-                              </mat-radio-button>
-                            </mat-radio-group>
-                      </div> -->
+                  <!-- <New line>-->
+                  <div class="newLine">
+                  <mat-form-field class="col-md-4">
+                    <mat-select formControlName="identificationCardType" placeholder="identificationCardType" [(ngModel)]="fcIndCustomer.identificationCardType"
+                    required>
+                      <mat-option *ngFor="let obj of CardTypeList" [value]="obj.value">
+                          {{obj.text}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="indCustFormGroup.get('identificationCardType').invalid">Require this field</mat-error>
+                  </mat-form-field>
 
-                      <mat-form-field class="col-md-6 newLine">
-                          <mat-select formControlName="identificationCardType" placeholder="identificationCardType" [(ngModel)]="fcIndCustomer.identificationCardType"
-                          required>
+                  <mat-form-field class="col-md-4"  *ngIf="isPassport()" >
+                    <mat-select formControlName="passportCountry" placeholder="Country" [(ngModel)]="fcIndCustomer.passportCountry"
+                    required>
+                    <mat-option [value]="">Please choose</mat-option>
+                      <mat-option *ngFor="let obj of CountryList" [value]="obj.value">
+                          {{obj.text}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="indCustFormGroup.get('passportCountry').invalid">Require this field</mat-error>
+                  </mat-form-field>
+                </div>
+
+                  <!-- <New line>-->
+                    <div class="newLine">
+                      <mat-form-field class="col-md-4" >
+                        <input matInput [(ngModel)]="fcIndCustomer.cardNumber" formControlName="cardNumber"  placeholder="cardNumber"   required   maxlength="13" >
+                        <button mat-button *ngIf="fcIndCustomer.cardNumber" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.cardNumber=''">
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        <mat-error *ngIf="indCustFormGroup.get('cardNumber').invalid">Require this field</mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="newLine">
+                    <mat-checkbox  class="col-md-6 "(change)="OnCardNotExpChange($event)" >บัตรตลอดชีพ Not Expired </mat-checkbox>
+
+                    <mat-form-field class="col-md-4">
+                        <input matInput [matDatepicker]="picker" [(ngModel)]="fcIndCustomer.cardExpiryDate" formControlName="cardExpiryDate"  placeholder="Choose cardExpiryDate" required>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker touchUi="true"></mat-datepicker>
+                        <mat-error *ngIf="indCustFormGroup.get('cardExpiryDate').invalid">Require this field</mat-error>
+                    </mat-form-field>
+                  </div>
+
+
+
+                <!-- <New line>-->
+                <mat-form-field class="col-md-4">
+                  <mat-select formControlName="gender" placeholder="gender" [(ngModel)]="fcIndCustomer.gender"
+                  required>
+                    <mat-option *ngFor="let obj of GenderList" [value]="obj.value">
+                        {{obj.text}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="indCustFormGroup.get('gender').invalid">Require this field</mat-error>
+                </mat-form-field>
+
+                <!-- <New line>-->
+              <div class="newLine">
+                <mat-form-field class="col-md-4">
+                  <mat-select formControlName="title" placeholder="title" [(ngModel)]="fcIndCustomer.title"
+                  required >
+                    <mat-option *ngFor="let obj of TitleList" [value]="obj.value">
+                        {{obj.text}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="indCustFormGroup.get('title').invalid"  >Require this field</mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="col-md-4" *ngIf="isTitleOther()" >
+                  <input matInput formControlName="titleOther"  [(ngModel)]="fcIndCustomer.titleOther" placeholder="titleOther"  >
+                  <button mat-button *ngIf="fcIndCustomer.titleOther" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.titleOther=''">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  <mat-error *ngIf="indCustFormGroup.get('titleOther').invalid">Require this field</mat-error>
+                </mat-form-field>
+              </div>
+              <!-- <New line>-->
+              <mat-form-field class="col-md-4" >
+                <input matInput [(ngModel)]="fcIndCustomer.thFirstName" placeholder="{{formService.thFirstName}}"  formControlName="thFirstName" required>
+                <button mat-button *ngIf="fcIndCustomer.thFirstName" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.thFirstName=''">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                <mat-error *ngIf="indCustFormGroup.get('thFirstName').invalid">Require this field</mat-error>
+            </mat-form-field>
+            <mat-form-field class="col-md-4">
+                <input matInput [(ngModel)]="fcIndCustomer.thLastName"  placeholder="{{formService.thLastName}}" formControlName="thLastName"  required>
+                <button mat-button *ngIf="fcIndCustomer.thLastName" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.thLastName=''">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                <mat-error *ngIf="indCustFormGroup.get('thLastName').invalid">Require this field</mat-error>
+            </mat-form-field>
+
+            <!-- <New line>-->
+              <div class="newLine">
+                <mat-form-field class="col-md-4 " >
+                  <input matInput [(ngModel)]="fcIndCustomer.enFirstName" placeholder="enFirstName"  formControlName="enFirstName" required>
+                  <button mat-button *ngIf="fcIndCustomer.enFirstName" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.enFirstName=''">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  <mat-error *ngIf="indCustFormGroup.get('enFirstName').invalid">Require this field</mat-error>
+              </mat-form-field>
+              <mat-form-field class="col-md-4">
+                  <input matInput [(ngModel)]="fcIndCustomer.enLastName"  placeholder="enLastName" formControlName="enLastName"  required>
+                  <button mat-button *ngIf="fcIndCustomer.enLastName" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.enLastName=''">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  <mat-error *ngIf="indCustFormGroup.get('enLastName').invalid">Require this field</mat-error>
+              </mat-form-field>
+              </div>
+
+            <!-- <New line>-->
+              <div class="newLine">
+                <mat-form-field class="col-md-4" >
+                  <input type="number"  matInput [(ngModel)]="fcIndCustomer.mobileNumber" placeholder="mobileNumber"  formControlName="mobileNumber" required>
+                  <button mat-button *ngIf="fcIndCustomer.mobileNumber" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.mobileNumber=''">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  <mat-error *ngIf="indCustFormGroup.get('mobileNumber').invalid">Require this field</mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="col-md-4">
+                  <input matInput [(ngModel)]="fcIndCustomer.email"  placeholder="email" formControlName="email"  [errorStateMatcher]="matcher" required>
+                  <button mat-button *ngIf="fcIndCustomer.email" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.email=''">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-hint>Example  xxxx@yyyy.com</mat-hint>
+                     <mat-error >
+                        Email is <strong>required</strong>
+                      </mat-error>
+              </mat-form-field>
+              </div>
+
+
+            <!-- <New line>-->
+              <div class="newLine">
+                <mat-form-field class="col-md-4">
+                  <input matInput [matDatepicker]="birthDatepicker" [(ngModel)]="fcIndCustomer.birthDate" formControlName="birthDate"  placeholder="Choose birthDate" required>
+                  <mat-datepicker-toggle matSuffix [for]="birthDatepicker"></mat-datepicker-toggle>
+                  <mat-datepicker #birthDatepicker touchUi="true"></mat-datepicker>
+                  <mat-error *ngIf="indCustFormGroup.get('birthDate').invalid">Require this field</mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="col-md-4">
+                  <mat-select formControlName="nationality" placeholder="Nationality" [(ngModel)]="fcIndCustomer.nationality" >
+                    <mat-option *ngFor="let obj of nationList" [value]="obj.Nation_Code">
+                      {{obj.Nation_Desc}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="indCustFormGroup.get('nationality').invalid">Require this field</mat-error>
+                </mat-form-field>
+              </div>
+
+
+              <!-- <New line>-->
+                <div class="newLine">
+                  <mat-form-field class="col-md-4 ">
+                    <mat-select formControlName="maritalStatus" placeholder="maritalStatus" [(ngModel)]="fcIndCustomer.maritalStatus"
+                    required>
+                      <mat-option *ngFor="let obj of MaritalStatusList" [value]="obj.value">
+                          {{obj.text}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="indCustFormGroup.get('maritalStatus').invalid">Require this field</mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="div_block" *ngIf="fcIndCustomer.maritalStatus == 'Married'">
+                  <tabset *ngIf="fcIndCustomer.maritalStatus == 'Married'" >
+                    <tab heading= "ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (If any)" >
+
+                      <!-- Spouce section -->
+                    <!-- <New line>-->
+                      <div class="row">
+                        <mat-form-field class="col-md-4">
+                          <mat-select formControlName="spCardType" placeholder="identificationCardType" [(ngModel)]="fcIndCustomer.spouse.cardType">
                             <mat-option *ngFor="let obj of CardTypeList" [value]="obj.value">
                                 {{obj.text}}
                             </mat-option>
                           </mat-select>
-                          <mat-error *ngIf="indCustFormGroup.get('identificationCardType').invalid">Require this field</mat-error>
+                          <mat-error *ngIf="indCustFormGroup.get('spCardType').invalid">Require this field</mat-error>
                         </mat-form-field>
 
-                      <mat-form-field class="col-md-6" >
-                          <input matInput [(ngModel)]="fcIndCustomer.cardNumber"formControlName="cardNumber"  placeholder="cardNumber"   required   maxlength="13" >
-                          <button mat-button *ngIf="fcIndCustomer.cardNumber" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.cardNumber=''">
-                              <mat-icon>close</mat-icon>
-                            </button>
-                          <mat-error *ngIf="indCustFormGroup.get('cardNumber').invalid">Require this field</mat-error>
-                      </mat-form-field>
-
-                      <mat-form-field class="col-md-6">
-                          <input matInput [matDatepicker]="picker" [(ngModel)]="fcIndCustomer.cardExpiryDate" formControlName="cardExpiryDate"  placeholder="Choose cardExpiryDate" required>
-                          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                          <mat-datepicker #picker touchUi="true"></mat-datepicker>
-                          <mat-error *ngIf="indCustFormGroup.get('cardExpiryDate').invalid">Require this field</mat-error>
-                      </mat-form-field>
-
-
-                      <mat-form-field class="col-md-6 newLine">
-                          <mat-select formControlName="gender" placeholder="gender" [(ngModel)]="fcIndCustomer.gender"
+                        <mat-form-field class="col-md-4"  *ngIf="isSpoucePassport()" >
+                          <mat-select formControlName="spPassportCountry" placeholder="Country" [(ngModel)]="fcIndCustomer.spouse.passportCountry"
                           required>
-                            <mat-option *ngFor="let obj of GenderList" [value]="obj.value">
+                          <mat-option [value]="">Please choose</mat-option>
+                            <mat-option *ngFor="let obj of CountryList" [value]="obj.value">
                                 {{obj.text}}
                             </mat-option>
                           </mat-select>
-                          <mat-error *ngIf="indCustFormGroup.get('gender').invalid">Require this field</mat-error>
+                          <mat-error *ngIf="indCustFormGroup.get('spPassportCountry').invalid">Require this field</mat-error>
                         </mat-form-field>
+                      </div>
 
-                        <!-- <mat-form-field class="col-md-6">
-                            <mat-select formControlName="title" placeholder="title" [(ngModel)]="fcIndCustomer.title"
-                            required >
-                              <mat-option *ngFor="let obj of TitleList" [value]="obj.value">
-                                  {{obj.text}}
-                              </mat-option>
-                            </mat-select>
-                            <mat-error *ngIf="indCustFormGroup.get('title').invalid"  >Require this field</mat-error>
-                          </mat-form-field> -->
+                      <div class="newLine">
+                        <mat-checkbox  class="col-md-4 "(change)="OnSPCardNotExpChange($event)" >บัตรตลอดชีพ Not Expired  {{fcIndCustomer.spouse.cardNotExp}}</mat-checkbox>
 
-                          <mat-form-field class="col-md-4 col-sm-4">
-                            <mat-select [(ngModel)]="fcIndCustomer.title" formControlName="title"  required >
+                        <mat-form-field class="col-md-4">
+                            <input matInput formControlName="spCardExpDate" [matDatepicker]="spCardExpDate" [(ngModel)]="fcIndCustomer.spouse.cardExpDate"   placeholder="Choose cardExpiryDate" readonly=true>
+                            <mat-datepicker-toggle matSuffix [for]="spCardExpDate"></mat-datepicker-toggle>
+                            <mat-datepicker #spCardExpDate touchUi="true"></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+
+                      <div class='row'>
+                        <mat-form-field class="col-md-4 col-sm-4">
+                            <mat-select  formControlName="spTitle" [(ngModel)]="fcIndCustomer.spouse.title"  placeholder="คำนำหน้า Title" required >
                               <mat-option *ngFor="let obj of TitleList" [value]="obj.value">
                                 {{obj.text}}
-                              </mat-option>
+                            </mat-option>
                             </mat-select>
+
                         </mat-form-field>
 
-                          <mat-form-field class="col-md-6" >
-                              <input matInput [(ngModel)]="fcIndCustomer.titleOther" placeholder="titleOther"  >
-                              <button mat-button *ngIf="fcIndCustomer.titleOther" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.titleOther=''">
-                                  <mat-icon>close</mat-icon>
-                                </button>
-                              <!-- <mat-error *ngIf="indCustFormGroup.get('titleOther').invalid">Require this field</mat-error> -->
-                          </mat-form-field>
-
-
-                        <mat-form-field class="col-md-6" >
-                            <input matInput [(ngModel)]="fcIndCustomer.thFirstName" placeholder="{{formService.thFirstName}}"  formControlName="thFirstName" required>
-                            <button mat-button *ngIf="fcIndCustomer.thFirstName" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.thFirstName=''">
-                                <mat-icon>close</mat-icon>
-                              </button>
-                            <mat-error *ngIf="indCustFormGroup.get('thFirstName').invalid">Require this field</mat-error>
+                        <mat-form-field  *ngIf="isSpouceTitleOther()">
+                            <input matInput formControlName="spTitleOther"  [(ngModel)]="fcIndCustomer.spouse.titleOther"  placeholder= "อื่นๆ Other">
                         </mat-form-field>
-                        <mat-form-field class="col-md-6">
-                            <input matInput [(ngModel)]="fcIndCustomer.thLastName"  placeholder="{{formService.thLastName}}" formControlName="thLastName"  required>
-                            <button mat-button *ngIf="fcIndCustomer.thLastName" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.thLastName=''">
-                                <mat-icon>close</mat-icon>
-                              </button>
-                            <mat-error *ngIf="indCustFormGroup.get('thLastName').invalid">Require this field</mat-error>
+                      </div>
+
+                      <div class='row'>
+                        <mat-form-field class="col-md-4" >
+                            <input matInput formControlName="spFirstName" [(ngModel)]="fcIndCustomer.spouse.firstName" placeholder="ชื่อ Name"   required>
+                        </mat-form-field>
+                        <mat-form-field class="col-md-4">
+                            <input matInput formControlName="spLastName" [(ngModel)]="fcIndCustomer.spouse.lastName"  placeholder="นามสกุล Surname"    required>
+                        </mat-form-field>
+                      </div>
+                      <div class='row'>
+                        <mat-form-field class="col-md-4" >
+                            <input matInput formControlName="spTelephone"  [(ngModel)]="fcIndCustomer.spouse.phoneNumber" placeholder="Telephone"  >
                         </mat-form-field>
 
-                        <mat-form-field class="col-md-6" >
-                            <input matInput [(ngModel)]="fcIndCustomer.enFirstName" placeholder="enFirstName"  formControlName="enFirstName" required>
-                            <button mat-button *ngIf="fcIndCustomer.enFirstName" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.enFirstName=''">
-                                <mat-icon>close</mat-icon>
-                              </button>
-                            <mat-error *ngIf="indCustFormGroup.get('enFirstName').invalid">Require this field</mat-error>
-                        </mat-form-field>
-                        <mat-form-field class="col-md-6">
-                            <input matInput [(ngModel)]="fcIndCustomer.enLastName"  placeholder="enLastName" formControlName="enLastName"  required>
-                            <button mat-button *ngIf="fcIndCustomer.enLastName" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.enLastName=''">
-                                <mat-icon>close</mat-icon>
-                              </button>
-                            <mat-error *ngIf="indCustFormGroup.get('enLastName').invalid">Require this field</mat-error>
-                        </mat-form-field>
+                      </div>
+                      <!-- Spouce section -->
+                    </tab>
+                  </tabset>
+                </div>
 
-                        <mat-form-field class="col-md-6" >
-                            <input type="number"  matInput [(ngModel)]="fcIndCustomer.mobileNumber" placeholder="mobileNumber"  formControlName="mobileNumber" required>
-                            <button mat-button *ngIf="fcIndCustomer.mobileNumber" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.mobileNumber=''">
-                                <mat-icon>close</mat-icon>
-                              </button>
-                            <mat-error *ngIf="indCustFormGroup.get('mobileNumber').invalid">Require this field</mat-error>
-                        </mat-form-field>
+                <section >
+                    <span class="label_title"><h5>จำนวนบุตร หรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และยังไม่ได้สมรส)</h5></span>
 
-                        <mat-form-field class="col-md-6">
-                            <input matInput [(ngModel)]="fcIndCustomer.email"  placeholder="email" formControlName="email"  [errorStateMatcher]="matcher" required>
-                            <button mat-button *ngIf="fcIndCustomer.email" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.email=''">
-                                <mat-icon>close</mat-icon>
-                              </button>
-                              <mat-hint>Example  xxxx@yyyy.com</mat-hint>
-                               <mat-error >
-                                  Email is <strong>required</strong>
-                                </mat-error>
-                        </mat-form-field>
+                    <div class="row">
+                        <a  id="btn_add_child"  mat-flat-button color="accent" (click)="addChildren()" class ="act_button"> เพิ่มบุตร  Add children ...  </a>
+                    </div>
+                    <tabset >
+                      <tab heading= "บุตร Child {{i+1}}" id="tab{{i}}" *ngFor="let obj of fcIndCustomer.children;let i = index">
+                          <i  id="btn_remove_child" class="far fa-2x fa-times-circle" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i>
 
-                        <mat-form-field class="col-md-6">
-                            <input matInput [matDatepicker]="birthDatepicker" [(ngModel)]="fcIndCustomer.birthDate" formControlName="birthDate"  placeholder="Choose birthDate" required>
-                            <mat-datepicker-toggle matSuffix [for]="birthDatepicker"></mat-datepicker-toggle>
-                            <mat-datepicker #birthDatepicker touchUi="true"></mat-datepicker>
-                            <mat-error *ngIf="indCustFormGroup.get('birthDate').invalid">Require this field</mat-error>
-                        </mat-form-field>
+                          <app-personal-info #Child [personModel]="obj" [adult]="false"  ></app-personal-info>
+                      </tab>
+                    </tabset>
+                </section>
 
-                        <mat-form-field class="col-md-6">
-                            <mat-select formControlName="nationality" placeholder="Nationality" [(ngModel)]="fcIndCustomer.nationality" >
-                              <mat-option *ngFor="let obj of nationList" [value]="obj.Nation_Code">
-                                {{obj.Nation_Desc}}
-                              </mat-option>
-                            </mat-select>
-                            <mat-error *ngIf="indCustFormGroup.get('nationality').invalid">Require this field</mat-error>
-                          </mat-form-field>
-
-                          <mat-form-field class="col-md-6 newLine">
-                              <mat-select formControlName="maritalStatus" placeholder="maritalStatus" [(ngModel)]="fcIndCustomer.maritalStatus"
-                              required>
-                                <mat-option *ngFor="let obj of MaritalStatusList" [value]="obj.value">
-                                    {{obj.text}}
-                                </mat-option>
-                              </mat-select>
-                              <mat-error *ngIf="indCustFormGroup.get('maritalStatus').invalid">Require this field</mat-error>
-                            </mat-form-field>
-
-                    <!-- </div> -->
                 </form>
             </div>
           </div>
         </div>
     </div>
 
-    <div id="accordion2">
-        <div class="card">
-          <div class="card-header" id="heading2">
-            <h4>2. Address
-              <button class="btn btn-link" data-toggle="collapse" data-target="#collapse2" aria-expanded="true" aria-controls="collapse2">
-                Show/Hide
-              </button></h4>
-          </div>
-          <div id="collapse2" class="collapse show" aria-labelledby="heading2" data-parent="#accordion2">
-            <div class="card-body ">
-              <h5>Residence Registration Address</h5>
-                <!-- <app-cust-addr  [addrData]="fcIndCustomer.re_addrData" [custCode]="" [addrFormGroup]="addr_formGroup" ></app-cust-addr> -->
 
-              <h5>Workplace Address</h5>
-                <!-- <app-cust-addr [addrData]="fcIndCustomer.re_addrData" [custCode]="" [addrFormGroup]="addr_formGroup" ></app-cust-addr> -->
-
-              <h5>Current Address </h5>
-                <!-- <app-cust-addr [addrData]="fcIndCustomer.re_addrData" [custCode]="" [addrFormGroup]="addr_formGroup" ></app-cust-addr> -->
-            </div>
-          </div>
-        </div>
-    </div>
-
-    <div id="accordion3">
-        <div class="card">
-          <div class="card-header" id="heading3">
-            <h4>3. Background
-              <button class="btn btn-link" data-toggle="collapse" data-target="#collapse3" aria-expanded="true" aria-controls="collapse3">
-                Show/Hide
-              </button></h4>
-          </div>
-          <div id="collapse3" class="collapse show" aria-labelledby="heading3" data-parent="#accordion3">
-            <div class="card-body ">
-              <h5>Background</h5>
-
-              <!-- <form [formGroup]="background_formGroup" class="form_section">
-
-
-            </form> -->
-
-            </div>
-          </div>
-        </div>
-    </div>
-
-
-    <div id="accordion4">
-        <div class="card">
-          <div class="card-header" id="heading4">
-            <h4>4. Account Information
-              <button class="btn btn-link" data-toggle="collapse" data-target="#collapse4" aria-expanded="true" aria-controls="collapse4">
-                Show/Hide
-              </button></h4>
-          </div>
-          <div id="collapse4" class="collapse show" aria-labelledby="heading4" data-parent="#accordion4">
-            <div class="card-body ">
-              <h5>Account Information</h5>
-
-            </div>
-          </div>
-        </div>
-    </div>
-
-    </div>
 

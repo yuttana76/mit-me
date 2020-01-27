@@ -19,9 +19,9 @@ declare let pdfMake: any ;
   styleUrls: ['./fcapp.component.scss']
 })
 export class FCAppComponent implements OnInit {
+
+  NavFundRecord;
   constructor(private toastr: ToastrService,public dialog: MatDialog,private fundConnextService:FundConnextService) { }
-
-
 
   spinnerLoading = false;
   fileTypeList =[
@@ -251,6 +251,13 @@ export class FCAppComponent implements OnInit {
       const rtnData = JSON.parse(JSON.stringify(data))
 
         console.log("***rtnData>"+JSON.stringify(rtnData));
+        this.NavFundRecord =rtnData.record;
+
+            this.toastr.success(`NAV update found  ${rtnData.record} record` , "Successful", {
+          timeOut: 3000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
       }
     , error => {
         console.log("WAS ERR>>" + JSON.stringify(error) );

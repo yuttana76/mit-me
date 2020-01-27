@@ -3,7 +3,10 @@ import { fcIndCustomer } from '../model/fcIndCustomer.model';
 import { FormGroup, FormBuilder, FormControl, Validators, FormGroupDirective, NgForm } from '@angular/forms';
 import { FcIndCustomer } from './fc-ind-customer.service';
 import { Nation } from '../model/ref_nation.model';
-import { ErrorStateMatcher } from '@angular/material';
+import { ErrorStateMatcher, MatDialogRef, MatDialog } from '@angular/material';
+import { ChildrenDialogComponent } from '../dialog/children-dialog/children-dialog.component';
+import { PersonModel } from '../model/person.model';
+import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -22,13 +25,10 @@ export class FcIndCustomerComponent implements OnInit  {
 
   @Input() fcIndCustomer: fcIndCustomer;
   @Input() indCustFormGroup: FormGroup;
-  @Input() re_addrFormGroup: FormGroup;
-  @Input() cu_addrFormGroup: FormGroup;
-  @Input() wk_addrFormGroup: FormGroup;
-  @Input() accountType ='IND';
 
+  matcher = new MyErrorStateMatcher();
 
-  // matcher = new MyErrorStateMatcher();
+  childrenDialogComponent: MatDialogRef<ChildrenDialogComponent>;
 
   // indCustFormGroup:FormGroup;
   addr_formGroup: FormGroup;
@@ -41,7 +41,16 @@ export class FcIndCustomerComponent implements OnInit  {
     ,{"Nation_Code":"JP","Nation_Desc":"Japanese"},
   ]
 
-  public CardTypeList=[{"value":"PASSPORT","text":"PASSPORT"},{"value":"CITIZEN_CARD","text":"บัตรประชาชน"}]
+
+  public CountryList=[{"value":"TH","text":"Thailand "},{"value":"US","text":"United States of America (the)"},{"value":"JP","text":"Japan)"}]
+
+  public CardTypeList=[
+          {"value":"PASSPORT","text":"PASSPORT"},{"value":"CITIZEN_CARD","text":"บัตรประชาชน"}
+                    ]
+  // public CardTypeList=[{"value":"CITIZEN_CARD","text":"บัตรประชาชน"}
+  //                     ,{"value":"PASSPORT","text":"PASSPORT"}
+  //                   ]
+
   public GenderList=[{"value":"Male","text":"Male"},{"value":"Female","text":"Female"}]
 
   public TitleList=[{"value":"MR","text":"MR"}
@@ -59,114 +68,138 @@ public MaritalStatusList=[{"value":"Single","text":"Single"}
 
   constructor(
     public formService: FcIndCustomer,
-    // private _formBuilder: FormBuilder
+    public dialog: MatDialog,
+    private confirmationDialogService: ConfirmationDialogService,
   ) { }
 
   ngOnInit() {
+    this.fcIndCustomer.spouse.cardType = "CITIZEN_CARD";
 
-    // this.indCustFormGroup =new FormGroup({
-    //   identificationCardType: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   cardNumber: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   cardExpiryDate: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   gender: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   title: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   thFirstName: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   thLastName: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   enFirstName: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   enLastName: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   mobileNumber: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   email: new FormControl(null, {
-    //     validators: [Validators.required,
-    //       Validators.email,]
-    //   }),
-    //   birthDate: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   nationality: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   maritalStatus: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    // });
-
-    // this.addr_formGroup = new FormGroup({
-    //   Addr_No: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Moo: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Place: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Floor: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Soi: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Road: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Tambon_Id: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Amphur_Id: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Province_Id: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Country_Id: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Country_oth: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-
-    //   Zip_Code: new FormControl(null, {
-    //     validators: [Validators.required]
-    //   }),
-    //   Tel: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    //   Fax: new FormControl(null, {
-    //     // validators: [Validators.required]
-    //   }),
-    // });
-
-    // this.background_formGroup = new FormGroup({
-    //   email: new FormControl(null, {
-    //     validators: [Validators.required,
-    //       Validators.email,]
-    //   }),
-    // });
-
-    // this.FCAccountInd.re_addrData.Addr_Seq = 1;
     this.fcIndCustomer.re_addrData.Addr_Seq=1;
     this.fcIndCustomer.re_addrData.Addr_Seq=2;
     this.fcIndCustomer.re_addrData.Addr_Seq=3;
+
+  }
+
+  ngAfterViewInit(){
+  }
+
+  isPassport(){
+    if(this.fcIndCustomer.identificationCardType === 'PASSPORT'){
+      this.indCustFormGroup.controls["passportCountry"].setValidators(Validators.required);
+      this.indCustFormGroup.controls["passportCountry"].updateValueAndValidity();
+      return true;
+    }else{
+      this.indCustFormGroup.controls["passportCountry"].clearValidators();
+      this.indCustFormGroup.controls["passportCountry"].updateValueAndValidity();
+      this.fcIndCustomer.passportCountry = "";
+        return false;
+    }
+   }
+
+  isTitleOther(){
+    if(this.fcIndCustomer.title === 'OTHER'){
+      this.indCustFormGroup.controls["titleOther"].setValidators(Validators.required);
+      this.indCustFormGroup.controls["titleOther"].updateValueAndValidity();
+      return true;
+    }else{
+      this.indCustFormGroup.controls["titleOther"].clearValidators();
+      this.indCustFormGroup.controls["titleOther"].updateValueAndValidity();
+      this.fcIndCustomer.titleOther = "";
+        return false;
+    }
+   }
+
+   isSpoucePassport(){
+    if(this.fcIndCustomer.spouse.cardType === 'PASSPORT'){
+      this.indCustFormGroup.controls["spPassportCountry"].setValidators(Validators.required);
+      this.indCustFormGroup.controls["spPassportCountry"].updateValueAndValidity();
+      return true;
+    }else{
+      this.indCustFormGroup.controls["spPassportCountry"].clearValidators();
+      this.indCustFormGroup.controls["spPassportCountry"].updateValueAndValidity();
+      this.fcIndCustomer.spouse.cardType = "";
+        return false;
+    }
+   }
+
+   isSpouceTitleOther(){
+    if(this.fcIndCustomer.spouse.title === 'OTHER'){
+      this.indCustFormGroup.controls["spTitleOther"].setValidators(Validators.required);
+      this.indCustFormGroup.controls["spTitleOther"].updateValueAndValidity();
+      return true;
+    }else{
+      this.indCustFormGroup.controls["spTitleOther"].clearValidators();
+      this.indCustFormGroup.controls["spTitleOther"].updateValueAndValidity();
+      this.fcIndCustomer.spouse.titleOther = "";
+        return false;
+    }
+   }
+
+ OnCardNotExpChange($event){
+  console.log(`***event.checked>>${$event.checked}`);
+  if($event.checked){
+    this.indCustFormGroup.controls["cardExpiryDate"].clearValidators();
+    this.indCustFormGroup.controls["cardExpiryDate"].updateValueAndValidity();
+    this.indCustFormGroup.controls["cardExpiryDate"].disabled;
+    this.fcIndCustomer.cardExpiryDate = 'N/A';
+
+   }else{
+    this.indCustFormGroup.controls["cardExpiryDate"].enabled;
+    this.indCustFormGroup.controls["cardExpiryDate"].setValidators(Validators.required);
+    this.indCustFormGroup.controls["cardExpiryDate"].updateValueAndValidity();
+    this.fcIndCustomer.cardExpiryDate  = "";
+   }
+  }
+
+
+  OnSPCardNotExpChange($event){
+
+    if($event.checked){
+      this.fcIndCustomer.spouse.cardNotExp  = "Y";
+      this.fcIndCustomer.spouse.cardExpDate = '';
+
+      this.indCustFormGroup.controls["spCardExpDate"].clearValidators();
+      this.indCustFormGroup.controls["spCardExpDate"].updateValueAndValidity();
+
+     }else{
+      this.indCustFormGroup.controls["spCardExpDate"].setValidators(Validators.required);
+      this.indCustFormGroup.controls["spCardExpDate"].updateValueAndValidity();
+
+      this.fcIndCustomer.spouse.cardNotExp = "N";
+     }
+  }
+
+  addChildren() {
+
+    this.childrenDialogComponent = this.dialog.open(ChildrenDialogComponent, {
+      width: '600px',
+      data: new PersonModel()
+    });
+
+    this.childrenDialogComponent.afterClosed().subscribe(result => {
+
+      if(result){
+
+        this.fcIndCustomer.children.push(result);
+
+        // this.cddFormGroup.controls["numberChildren"].clearValidators();
+        // this.cddFormGroup.controls["numberChildren"].updateValueAndValidity();
+        // this.cddData.numChildren = String(this.fcIndCustomer.children.length) ;
+      }
+
+    });
+  }
+
+  removeChild(i){
+
+    this.confirmationDialogService.confirm('ยืนยัน Confirmation', `โปรดยืนยันการลบ ข้อมูลบุตร  Please confirm delete data ?`)
+    .then((confirmed) => {
+      if ( confirmed ) {
+        this.fcIndCustomer.children.splice(i,1);
+
+      }
+    }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
   }
 
 }

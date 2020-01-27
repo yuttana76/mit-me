@@ -80,6 +80,7 @@ import { KycDetailDialogComponent } from './dialog/kyc-detail-dialog/kyc-detail-
 import { SearchActionDialogComponent } from './dialog/search-action-dialog/search-action-dialog.component';
 
 import { NgxFloatButtonModule } from 'ngx-float-button';
+import { BankAccountDialogComponent } from './dialog/bank-account-dialog/bank-account-dialog.component';
 
 @NgModule({
   imports: [
@@ -169,6 +170,7 @@ import { NgxFloatButtonModule } from 'ngx-float-button';
     dateDBFormatPipe,
     KycDetailDialogComponent,
     SearchActionDialogComponent,
+    BankAccountDialogComponent,
   ],
   providers: [DatePipe],
   entryComponents: [
@@ -187,6 +189,7 @@ import { NgxFloatButtonModule } from 'ngx-float-button';
     NewMobileDialogComponent,
     KycDetailDialogComponent,
     SearchActionDialogComponent,
+    BankAccountDialogComponent,
   ],
 })
 export class TradeModule {

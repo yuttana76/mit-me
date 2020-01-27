@@ -229,7 +229,7 @@ export class CustCDDComponent implements OnInit {
   }else{
     this.cddFormGroup.controls["spTitleOther"].clearValidators();
     this.cddFormGroup.controls["spTitleOther"].updateValueAndValidity();
-    this.cddData.titleOther = "";
+    this.cddData.SPpersonModel.titleOther = "";
       return false;
   }
  }

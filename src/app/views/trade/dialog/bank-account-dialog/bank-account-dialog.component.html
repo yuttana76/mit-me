@@ -1,0 +1,49 @@
+
+<form [formGroup]="formGroup" >
+
+  <div class="row" >
+    <mat-form-field class="col-md-4 col-sm-4"  >
+        <mat-select  [(ngModel)]="bankAccountModel.bankCode"
+        formControlName="bankCode" placeholder="bankCode"  (selectionChange) ="onBankChange($event)"  required >
+        <mat-option *ngFor="let obj of bankList" [value]="obj.Code">
+          {{obj.Description}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class='row'>
+    <mat-form-field class="col-md-4 col-sm-4"  >
+      <mat-select  [(ngModel)]="bankAccountModel.bankBranchCode"
+      formControlName="bankBranchCode" placeholder="bankBranchCode" required >
+      <mat-option *ngFor="let obj of sel_branchList" [value]="obj.Code">
+        {{obj.Description}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  </div>
+
+  <div class='row'>
+    <mat-form-field class="col-md-4 col-sm-4"  >
+        <input matInput [(ngModel)]="bankAccountModel.bankAccountNo"  placeholder= "bankAccountNo" formControlName="bankAccountNo"  required>
+    </mat-form-field>
+  </div>
+
+  <div class='row'>
+    <mat-form-field class="col-md-4" >
+        <input matInput [(ngModel)]="bankAccountModel.finnetCustomerNo" placeholder="finnetCustomerNo"  formControlName="finnetCustomerNo" >
+    </mat-form-field>
+  </div>
+
+  <div class='row'>
+    <mat-checkbox [(ngModel)]="bankAccountModel.default" formControlName="default" >Main Account</mat-checkbox>
+  </div>
+
+</form>
+
+<mat-card-actions>
+  <a  mat-flat-button *ngIf="bankAccountModel.bankCode" class="button_card_action" color="primary" (click)="onUpdate()"  >Update</a>
+  <a  mat-flat-button *ngIf="!bankAccountModel.bankCode" class="button_card_action" color="primary" (click)="onSave()"  >Save</a>
+  <a class="button_card_action" mat-flat-button color="accent"  (click)="onClose()"> Cancel</a>
+</mat-card-actions>
+

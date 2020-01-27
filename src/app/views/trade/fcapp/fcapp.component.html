@@ -54,6 +54,7 @@
       </div>
       <div class="card-body">
         <h5 class="card-title">NAV Download & Update internal db</h5>
+
         <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
 
         <form [formGroup]="downloadForm"  #custForm="ngForm">
@@ -65,7 +66,9 @@
                placeholder="" readonly=true>
               <mat-datepicker-toggle matSuffix [for]="businessDate"></mat-datepicker-toggle>
               <mat-datepicker #businessDate touchUi="true"></mat-datepicker>
+              <mat-hint *ngIf="NavFundRecord" >Fund updated  {{NavFundRecord}} record.</mat-hint>
           </mat-form-field>
+
 
           </div>
           </form>

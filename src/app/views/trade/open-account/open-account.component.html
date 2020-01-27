@@ -38,8 +38,294 @@
         <mat-step [stepControl]="indCustFormGroup">
 
             <ng-template matStepLabel>Complete form</ng-template>
-            <app-fc-ind-customer [fcIndCustomer]="fcIndCustomer" [accountType]="accountType" [indCustFormGroup]="indCustFormGroup" [re_addrFormGroup]="re_addrFormGroup" [cu_addrFormGroup]="cu_addrFormGroup" [wk_addrFormGroup]="wk_addrFormGroup" ></app-fc-ind-customer>
+            <app-fc-ind-customer [fcIndCustomer]="fcIndCustomer" [indCustFormGroup]="indCustFormGroup" ></app-fc-ind-customer>
 
+            <!-- ADDRESS -->
+            <div id="accordion2">
+              <div class="card">
+                <div class="card-header" id="heading2">
+                  <h4>2. Address
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse2" aria-expanded="true" aria-controls="collapse2">
+                      Show/Hide
+                    </button></h4>
+                </div>
+                <div id="collapse2" class="collapse show" aria-labelledby="heading2" data-parent="#accordion2">
+                  <div class="card-body ">
+
+                    <span class="label_title"><h5>{{ formService.register_addr_title }}</h5></span>
+                    <app-cust-addr [addrData]="register_addrData" [custCode]="fcIndCustomer.cardNumber" [addrFormGroup]="register_formGroup" ></app-cust-addr>
+
+                    <span class="label_title"><h5>{{ formService.work_addr_title }}</h5></span>
+                    <div class='row'>
+                      <form [formGroup]="register_formGroup">
+                      <section class="example-section">
+                          <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)"  formControlName="work_addrData"  >
+                            <mat-radio-button class="example-margin" value="1">ตามทะเบียนบ้าน</mat-radio-button>
+                            <mat-radio-button class="example-margin" value="9">อื่นๆ (โปรดระบุ)</mat-radio-button>
+                          </mat-radio-group>
+                          <mat-error *ngIf="register_formGroup.get('work_addrData').invalid">โปรดเลือก Please choose </mat-error>
+                        </section>
+
+                      </form>
+                  </div>
+                  <div>
+                    <app-cust-addr *ngIf="this.work_addrData.SameAs == '9' " [addrData]="work_addrData" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+                  </div>
+
+                  <span class="label_title"><h5>{{ formService.contact_addr_title }}</h5></span>
+                    <div class='row'>
+                      <form [formGroup]="register_formGroup">
+                      <section class="example-section" >
+                          <mat-radio-group [(ngModel)]="current_addrData.SameAs"  (change)="currAddrOnChange(current_addrData.SameAs)" formControlName="cur_addrData">
+                              <mat-radio-button class="example-margin" value="1">ตามทะเบียนบ้าน</mat-radio-button>
+                              <mat-radio-button class="example-margin" value="3">ตามที่่ทำงาน</mat-radio-button>
+                              <mat-radio-button class="example-margin" value="9">อื่นๆ (โปรดระบุ)</mat-radio-button>
+                            </mat-radio-group>
+                            <mat-error *ngIf="register_formGroup.get('cur_addrData').invalid">โปรดเลือก Please choose </mat-error>
+                      </section>
+                      </form>
+                  </div>
+                  <div>
+                    <app-cust-addr  *ngIf="this.current_addrData.SameAs == '9' " [addrData]="current_addrData" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+                  </div>
+
+
+                    <!-- 2.4 Mail Address (SEQ = 4)-->
+                    <!-- <span class="label_title"><h5>{{ formService.mail_addr_title }}</h5></span>
+                    <div class='row'>
+                        <form [formGroup]="register_formGroup">
+                        <section class="example-section" >
+                            <mat-radio-group [(ngModel)]="fcIndCustomer.MailSameAs"  (change)="mailAddrOnChange(fcIndCustomer.MailSameAs)" formControlName="MailSameAs">
+                                <mat-radio-button class="example-margin" value="email">{{formService.label_Email}}</mat-radio-button>
+                                <mat-radio-button class="example-margin" value="reg">{{formService.label_addrAs_reg}}</mat-radio-button>
+                                <mat-radio-button class="example-margin" value="work">{{formService.label_addrAs_work}}</mat-radio-button>
+                                <mat-radio-button class="example-margin" value="curr">{{formService.label_addrAs_curr}}</mat-radio-button>
+                                <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
+                              </mat-radio-group>
+                              <mat-error *ngIf="register_formGroup.get('MailSameAs').invalid">โปรดเลือก Please choose </mat-error>
+                          </section>
+                        </form>
+                    </div>
+                    <div>
+                      <app-cust-addr  *ngIf="this.fcIndCustomer.MailSameAs == '9' "  [addrData]="mail_addrData" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
+                    </div> -->
+
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <div id="accordion3">
+              <div class="card">
+                <div class="card-header" id="heading3">
+                  <h4>3. Background
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse3" aria-expanded="true" aria-controls="collapse3">
+                      Show/Hide
+                    </button></h4>
+                </div>
+                <div id="collapse3" class="collapse show" aria-labelledby="heading3" data-parent="#accordion3">
+                  <div class="card-body ">
+
+                    <form [formGroup]="indCustFormGroup">
+                      <div class='row'>
+                        <mat-form-field class="col-md-4 col-sm-4">
+                            <mat-select [(ngModel)]="fcIndCustomer.occupationId" formControlName="occupation" placeholder={{formService.label_occupation}} required >
+                              <mat-option *ngFor="let obj of occupationList" [value]="obj.Code">
+                                {{obj.Thai_Name}}
+                              </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="indCustFormGroup.get('occupation').invalid">Please choose one.</mat-error>
+                          </mat-form-field>
+
+                        <mat-form-field class="col-md-4 col-sm-4" *ngIf="isOccupationOther()" >
+                            <input matInput [(ngModel)]="fcIndCustomer.occupationOther" placeholder={{formService.label_other}}  formControlName="occupationOth" required>
+                        </mat-form-field>
+                     </div>
+
+                     <div class='row'>
+                      <mat-form-field class="col-md-4">
+                          <mat-select [(ngModel)]="fcIndCustomer.businessTypeId" formControlName="typeBusiness" placeholder={{formService.label_typeBusiness}} required >
+                            <mat-option *ngFor="let obj of businessTypeList" [value]="obj.Code">
+                              {{obj.Thai_Name}}
+                            </mat-option>
+                          </mat-select>
+                          <mat-error *ngIf="indCustFormGroup.get('typeBusiness').invalid">Please choose one.</mat-error>
+                        </mat-form-field>
+
+                      <mat-form-field class="col-md-4" *ngIf="isBusinessTypeOther()">
+                          <input matInput [(ngModel)]="fcIndCustomer.businessTypeOther" placeholder= {{formService.label_other}}  formControlName="typeBusinessOth" required>
+                      </mat-form-field>
+                    </div>
+
+                     <div class='row'>
+                      <mat-form-field class="col-md-4">
+                          <mat-select [(ngModel)]="fcIndCustomer.incomeSource" multiple name="type_list" formControlName="incomeSource" placeholder={{formService.label_incomeSource}} required >
+                             <mat-option *ngFor="let obj of incomeSourceList" [value]="obj.Code">
+                              {{obj.Thai_Name}}
+                          </mat-option>
+                          </mat-select>
+                          <mat-error *ngIf="indCustFormGroup.get('incomeSource').invalid">Please choose one.</mat-error>
+                      </mat-form-field>
+
+                    <mat-form-field class="col-md-4" *ngIf="isIncomeSource()">
+                        <input matInput [(ngModel)]="fcIndCustomer.incomeSourceOther" placeholder={{formService.label_other}}  formControlName="incomeSourceOth" required>
+                    </mat-form-field>
+
+                    </div>
+
+                    <div class='row'>
+                      <mat-form-field class="col-md-4">
+                          <mat-select [(ngModel)]="fcIndCustomer.monthlyIncomeLevel" formControlName="monthlyIncomeLevel" placeholder= {{formService.label_incomeLevel}} required >
+                            <mat-option *ngFor="let obj of incomeList" [value]="obj.Code">
+                            {{obj.Thai_Name}}
+                            </mat-option>
+                          </mat-select>
+                          <mat-error *ngIf="indCustFormGroup.get('monthlyIncomeLevel').invalid">Please choose one.</mat-error>
+                        </mat-form-field>
+                    </div>
+
+
+                    <span class="label_title"><h5>ท่านเคยมีประวัติการกระทำผิดกฎหมายฟอกเงินหรือไม่ *</h5></span>
+                    <div class='row'>
+                      <section class="example-section" >
+                        <mat-radio-group  id="moneyLaundaring" [(ngModel)]="fcIndCustomer.moneyLaundaring"   formControlName="moneyLaundaring">
+                          <mat-radio-button  value="Y">ใช่ Yes</mat-radio-button>
+                          <mat-radio-button  value="N">ไม่ใช่ No</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-error *ngIf="indCustFormGroup.get('moneyLaundaring').invalid"> *โปรดเลือก Please choose </mat-error>
+                      </section>
+                  </div>
+
+                  <span class="label_title"><h5>ท่านเป็นนักการเมืองหรือเกี่ยวข้องกับนักการเมือง หรือบุคคลที่มีสถานภาพทางการเมืองหรือไม่ *</h5></span>
+                    <div class='row'>
+                      <section class="example-section" >
+                        <mat-radio-group [(ngModel)]="fcIndCustomer.politicalRelate"   formControlName="politicalRelate">
+                            <mat-radio-button value="Y">ใช่ Yes</mat-radio-button>
+                            <mat-radio-button  value="N">ไม่ใช่ No</mat-radio-button>
+                          </mat-radio-group>
+                          <mat-error *ngIf="indCustFormGroup.get('politicalRelate').invalid"> *โปรดเลือก Please choose </mat-error>
+                      </section>
+                  </div>
+
+                  <span class="label_title"><h5>ท่านเคยถูกปฏิเสธการรับทำธุรกรรมทางการเงินจากสถาบันทางการเงินอื่นหรือไม่ *</h5></span>
+                    <div class='row'>
+                      <section class="example-section" >
+                        <mat-radio-group [(ngModel)]="fcIndCustomer.rejectFinancial"   formControlName="rejectFinancial">
+                            <mat-radio-button  value="Y">ใช่ Yes</mat-radio-button>
+                            <mat-radio-button  value="N">ไม่ใช่ No</mat-radio-button>
+                          </mat-radio-group>
+                          <mat-error *ngIf="indCustFormGroup.get('rejectFinancial').invalid"> *โปรดเลือก Please choose </mat-error>
+                      </section>
+                  </div>
+
+                  </form>
+
+                  </div>
+                </div>
+              </div>
+          </div>
+
+
+          <div id="accordion4">
+              <div class="card">
+                <div class="card-header" id="heading4">
+                  <h4>4. Account Information
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse4" aria-expanded="true" aria-controls="collapse4">
+                      Show/Hide
+                    </button></h4>
+                </div>
+                <div id="collapse4" class="collapse show" aria-labelledby="heading4" data-parent="#accordion4">
+                  <div class="card-body ">
+
+                      <div class="container">
+                        <h5>Subscription Account</h5>
+
+                        <a  id="btn_add_child"  mat-flat-button color="accent" (click)="addSubscriptionAccounts()" class ="act_button"> Add account ...  </a>
+                        <table class="table table-striped">
+                          <thead>
+                            <tr>
+                              <!-- <th>No</th> -->
+                              <th></th>
+                              <th>Bank</th>
+                              <th>Branch</th>
+                              <th>Account No.</th>
+                              <th>Account Name</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody *ngFor="let obj of fcIndCustomer.subscriptionBankAccounts;let i = index">
+                            <tr>
+                              <!-- <td class="td_center">{{i}}</td> -->
+                              <td class="td_center">
+                                <i *ngIf="obj.default" class="far fa-check-circle fa-2x fa-color" alt="Main Account"></i>
+                              </td>
+                              <td>{{obj.bankTxt}}</td>
+                              <td>{{obj.branchTxt}}</td>
+                              <td>
+                                {{obj.bankAccountNo}}
+
+                              </td>
+                              <td>{{obj.finnetCustomerNo}}</td>
+                              <td class="td_center">
+                                <i matTooltip="Edit" class="far fa-edit fa-2x" (click)="editSubscriptionAccounts(i)"></i>
+                                <i matTooltip="Delete" class="far fa-trash-alt fa-2x" (click)="subAccount(i)" ></i>
+                                <!-- <i  id="btn_remove_child" class="far fa-2x fa-times-circle" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i> -->
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div class="container">
+                        <h5>Redemtion Account</h5>
+
+                        <div class='row'>
+                          <section class="example-section">
+                              <mat-radio-group   [(ngModel)]="fcIndCustomer.subscriptionBankAccountsSameAs"  (change)="redempAccountAs($event)"  formControlName="work_addrData"  >
+                                <mat-radio-button value="SUB">AS Subscription Account</mat-radio-button>
+                                <mat-radio-button value="OTH">อื่นๆ (โปรดระบุ)</mat-radio-button>
+                              </mat-radio-group>
+                            </section>
+                      </div>
+
+                        <a  id="btn_add_child"  mat-flat-button color="accent" (click)="addRedemptionAccount()" class ="act_button"> Add account ...  </a>
+                        <table class="table table-striped">
+                          <thead>
+                            <tr>
+                              <th></th>
+                              <th>Bank</th>
+                              <th>Branch</th>
+                              <th>Account No.</th>
+                              <th>Account Name</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody *ngFor="let obj of fcIndCustomer.redemptionBankAccounts;let i = index">
+                            <tr>
+                              <!-- <td class="td_center" >{{i}}</td> -->
+                              <td class="td_center">
+                                <i *ngIf="obj.default" class="far fa-check-circle fa-2x fa-color" alt="Main Account"></i>
+                              </td>
+                              <td>{{obj.bankTxt}}</td>
+                              <td>{{obj.branchTxt}}</td>
+                              <td>{{obj.bankAccountNo}}</td>
+                              <td>{{obj.finnetCustomerNo}}</td>
+                              <td class="td_center">
+                                <i matTooltip="Edit" class="far fa-edit fa-2x"></i>
+                                <i matTooltip="Delete" class="far fa-trash-alt fa-2x"></i>
+                                <!-- <i  id="btn_remove_child" class="far fa-2x fa-times-circle" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i> -->
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                  </div>
+                </div>
+              </div>
+          </div>
+
+<!-- ******************************* -->
             <div>
                 <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
                 <button type="button" class="btn btn-success" matStepperNext (click)="onSubmit()">Submit</button>

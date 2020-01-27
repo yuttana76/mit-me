@@ -245,6 +245,7 @@ exports.suitSave = (req, res, next) => {
   var score = req.body.score || "0";
   var riskLevel = req.body.riskLevel;
   var riskLevelTxt = req.body.riskLevelTxt;
+
   var type_Investor = req.body.type_Investor;
   var ans = req.body.ans ;
   var otp_id = req.body.otp_id;
@@ -310,6 +311,14 @@ exports.suitSave = (req, res, next) => {
             msg: prop.getRespMsg(rsp_code),
           });
         }else {
+
+          // UPDATE MFTS_SUIT table
+          updateMFTS_Suit(userId,pid,score,riskLevel,riskLevelTxt).then((result)=>{
+            logger.info('SAVE MFTS_Suit successful cust_code:' + pid);
+          },err=>{
+            logger.error('SAVE MFTS_Suit cust_code:' + pid + ' error :' + err);
+          });
+
           rsp_code = "000";
           logMsg += ` ;Result=${prop.getRespMsg(rsp_code)}` ;
           logger.info(logMsg);
@@ -332,63 +341,61 @@ exports.suitSave = (req, res, next) => {
 
 
 
+function updateMFTS_Suit(actionBy,pid,score,riskLevel,riskLevelTxt){
 
-// exports.getSuit = (req, res, next) =>{
+  console.log(" Welcome updateMFTS_Suit() !!!" );
 
-//   logger.info(`API /getSuit - ${req.originalUrl} - ${req.ip} `);
-//   const custCode = req.params.cusCode;
+  var fncName = "updateMFTS_Suit";
+  var queryStr = ` BEGIN
 
-//   getSuit(custCode).then( (data) =>{
+      DECLARE @Series_Id int =99;
 
-//       res.status(200).json({
-//         result: data
-//       });
+      UPDATE  MFTS_Suit
+      SET Active_Flag='I'
+      WHERE Account_No =@Account_No
 
-//   },err=>{
-//       res.status(401).json(err);
-//     });
-// }
+      UPDATE  MFTS_Suit
+      SET Score = @Score,Risk_Level=@Risk_Level,Risk_Level_Desc=@Risk_Level_Desc,Modify_By=@Modify_By,Modify_Date=getdate(),Active_Flag='A'
+      WHERE Account_No =@Account_No AND Series_Id=@Series_Id
 
+      IF @@ROWCOUNT = 0
+      BEGIN
+        INSERT INTO MFTS_Suit (Series_Id,Account_No,Score,Risk_Level,Risk_Level_Desc,Create_By,Create_Date,Active_Flag)
+        VALUES(@Series_Id,@Account_No,@Score,@Risk_Level,@Risk_Level_Desc,@Create_By,getdate(),'A')
+      END
 
-// function getSuit(custCode) {
+  END
+    `;
 
-//   console.log("getSuit >>" + custCode);
-//   var fncName = "getSuit";
-//   var queryStr = `
-//   BEGIN
-//     SELECT CustCode, A.TotalScore,A.RiskLevel,A.RiskLevelTxt,A.Type_Investor,A.ANS_JSON
-//     FROM MIT_CUSTOMER_SUIT A
-//     WHERE Status='A'
-//     AND CustCode =@CustCode
-//   END
-//     `;
+  const sql = require("mssql");
 
-//   const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
 
-//   return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+        .input("Account_No", sql.VarChar(50), pid)
+        .input("Score", sql.Int, score)
+        .input("Risk_Level", sql.Int, riskLevel)
+        .input("Risk_Level_Desc", sql.NVarChar(1000), riskLevelTxt)
+        .input("Create_By", sql.VarChar(50), actionBy)
+        .input("Modify_By", sql.VarChar(50), actionBy)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
 
-//     const pool1 = new sql.ConnectionPool(config, err => {
-//       pool1
-//         .request() // or: new sql.Request(pool1)
-//         .input("CustCode", sql.VarChar(50), custCode)
-//         .query(queryStr, (err, result) => {
-//           if (err) {
-//             console.log(fncName + " Quey db. Was err !!!" + err);
-//             reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("EROR>>" + err);
+      reject(err);
+    });
+  });
+}
 
-//           } else {
-//             // resolve(result.recordset[0]);
-//             resolve(result.recordset);
-
-//           }
-//         });
-//     });
-//     pool1.on("error", err => {
-//       console.log("EROR>>" + err);
-//       reject(err);
-//     });
-//   });
-// }
 
 
 function calculateRiskLevel(_suitSerieId,_score){

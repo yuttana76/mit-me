@@ -18,4 +18,7 @@ router.get("/FCnation", masterdataController.getFCnation);
 router.get("/FCcountry", masterdataController.getFCcountry);
 router.get("/codeLookup", masterdataController.getCodeLookup);
 
+router.get("/bank", masterdataController.getBank);
+router.get("/branch", masterdataController.getBranch);
+
 module.exports = router;

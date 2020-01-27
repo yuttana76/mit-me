@@ -98,12 +98,13 @@ public referralPerson;
   onUploadAPI(){
     this.spinnerLoading = true;
 
-    this.referralPerson='Yuttana';
+    this.referralPerson='Tester';
     if(this.authService.getFullName()){
       this.referralPerson =this.authService.getFullName();
     }
 
-    this.suiteService.uploadCustInd(this.identificationCardType,this.custCode,this.referralPerson,this.suitabilityRiskLevel,this.suitabilityEvaluationDate,this.fatca,this.fatcaDeclarationDate,this.cddScore,this.cddDate)
+
+    this.suiteService.uploadCustInd(this.identificationCardType,this.custCode,this.referralPerson,this.suitabilityRiskLevel,this.suitabilityEvaluationDate,this.fatca,this.fatcaDeclarationDate,this.cddScore,this.cddDate,this.authService.getUserId())
          .finally(() => {
           this.spinnerLoading = false;
         })

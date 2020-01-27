@@ -458,3 +458,71 @@ exports.getCodeLookup = (req, res, next) => {
     console.log("EROR>>"+err);
   })
 }
+
+exports.getBank = (req, res, next) => {
+  logger.info(`API /bank - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var queryStr = `
+  SELECT [Bank_ID] ,[Bank_Name_T]
+  FROM [dbo].[REF_Banks]
+  ORDER BY [Bank_Name_T]
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          rsp_code = "205";
+          return res.status(401).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }else {
+          rsp_code = "000";
+          return res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}
+
+exports.getBranch = (req, res, next) => {
+  logger.info(`API /bank - ${req.originalUrl} - ${req.ip} `);
+  let rsp_code;
+  var queryStr = `
+  SELECT [Bank_ID],[Branch_ID],[Branch_Name_T]
+  FROM [dbo].[REF_Bank_Branchs]
+  order by Branch_Name_T
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        // ... error checks
+        if(err){
+          rsp_code = "205";
+          return res.status(401).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code)
+          });
+        }else {
+          rsp_code = "000";
+          return res.status(200).json({
+            code: rsp_code,
+            msg: prop.getRespMsg(rsp_code),
+            result: result.recordset
+          });
+        }
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+  })
+}

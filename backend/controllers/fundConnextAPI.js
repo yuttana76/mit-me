@@ -46,7 +46,6 @@ exports.getIndCust = (req, res, next) =>{
 }
 
 
-
 exports.updateCustomerIndPartial = (req, res, next) =>{
 
   logger.info("Validate API /updateCustomerInd/");
@@ -68,9 +67,10 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
 
   var cddScore = req.body.cddScore;
   var cddDate = req.body.cddDate;
+  var actionBy = req.body.actionBy;
 
   logger.info("Welcome API /updateCustomerInd/"+ cardNumber);
-  updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate).then(result=>{
+  updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate,actionBy).then(result=>{
 
       res.status(200).json({code:"000"});
     },err=>{
@@ -130,7 +130,7 @@ function fnGetIndCust(cardNumber){
 }
 
 // PATCH
-function updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate){
+function updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate,actionBy){
 
   // logger.info("Welcome updateCustomerInd()");
 
@@ -156,24 +156,14 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
         "cddScore":"",
         "cddDate":"",
        };
-      //  var data=JSON.stringify({
-      //   "identificationCardType": identificationCardType,
-      //   "cardNumber" : cardNumber,
-      //   "referralPerson": referralPerson,
-      //   "approved": approved,
-      //   "suitabilityRiskLevel":suitabilityRiskLevel,
-      //   "suitabilityEvaluationDate":suitabilityEvaluationDate,
-      //   "fatca":fatca,
-      //   "fatcaDeclarationDate":fatcaDeclarationDate,
-      //   "cddScore":cddScore,
-      //   "cddDate":cddDate,
-      //  })
 
-       console.log('suitabilityRiskLevel>' + suitabilityRiskLevel);
+
+      //  console.log('suitabilityRiskLevel>' + suitabilityRiskLevel);
        if(suitabilityRiskLevel){
-        console.log('suitabilityRiskLevel STEP 1>' +suitabilityRiskLevel);
+
         data["suitabilityRiskLevel"]=suitabilityRiskLevel;
         data["suitabilityEvaluationDate"]=suitabilityEvaluationDate;
+
        }
 
       //  console.log('fatca>' + fatca);
@@ -226,6 +216,18 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
             reject(apiRS.errMsg);
 
           }else{
+
+            //Update MIT_CUSTOMER_SUIT MFTS db.
+            updateSuit(cardNumber,suitabilityRiskLevel,actionBy).then(data=>{
+
+            },err=>{
+              console.log(JSON.stringify(err));
+              reject({
+                message: 'Update MIT_CUSTOMER_SUIT suitability error'
+              });
+
+            });
+
             mitLog.saveMITlog(referralPerson,FC_API_MODULE+INVEST_INDIVIDUAL,data,req.ip,req.originalUrl,function(){});
             resolve(_chunk);
           }
@@ -255,6 +257,58 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
 // ************************************
 
 
+
+exports.updateSuitAPI = (req, res, next) =>{
+  console.log("Validate  API /updateSuitAPI/");
+
+  updateSuit('0105534033834',9,'TESTER').then(data=>{
+    res.status(200).json(data);
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
+
+}
+
+
+function updateSuit(custCode,riskLevel,UpdateBy) {
+  logger.info('surveyDashboardFc()');
+
+  var fncName = "surveyDashboardFc";
+  var queryStr = `
+  BEGIN
+    UPDATE MIT_CUSTOMER_SUIT
+    SET RiskLevel=${riskLevel}
+    ,UpdateDate=getdate(),UpdateBy='${UpdateBy}'
+    WHERE CustCode ='${custCode}'
+    AND [Status]='A'
+  END
+    `;
+
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request().query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
 
 
 exports.downloadFileAPI = (req, res, next) =>{
@@ -365,8 +419,8 @@ exports.downloadNavAPI_V2 = (req, res, next) =>{
 
   downloadNavAPIproc(businessDate).then(dwRs=>{
 
-    // res.status(200).json({code:'000',message: dwRs});
-    res.status(200).json({code:'000',message: 'Effect '+dwRs + ' records.',record:dwRs});
+    // console.log(JSON.stringify('EXIT>' + JSON.stringify(dwRs)));
+    res.status(200).json({code:'000',message: 'Fund Effect '+dwRs["FundRecord"] + ' records.',DownloadRecord:dwRs["DownloadRecord"],record:dwRs["FundRecord"]});
 
   },err=>{
     res.status(422).json(err);
@@ -468,12 +522,14 @@ function downloadNavAPIproc(businessDate){
 
             //STEP 3: Insert to DB.(MIT_FC_NAV)
             fcNAV_ToDB(fileName,businessDate).then(navToDB_RS=>{
-              // res.status(200).json({data: data});
 
               //STEP 4: Syncy to MFTS (MFTS_NavTable)
               navSyncFunc(navToDB_RS.businessDate).then(syncData=>{
 
-                resolve(syncData)
+                _rtn_msg={DownloadRecord:navToDB_RS["records"],FundRecord:syncData[0][0]["FUND_RECORD"]}
+
+
+                resolve(_rtn_msg)
                 // res.status(200).json({message: syncData});
 
               },syncErr=>{
@@ -804,6 +860,11 @@ OPEN MIT_FC_NAV_cursor
         END;
     CLOSE MIT_FC_NAV_cursor
     DEALLOCATE MIT_FC_NAV_cursor
+
+select  count(Fund_Id) AS FUND_RECORD
+from MFTS_NavTable
+where CONVERT(VARCHAR(10), Modify_Date, 112) = CONVERT(VARCHAR(10), getdate(), 112)
+
 END
 `;
   const sql = require('mssql')
@@ -816,7 +877,8 @@ END
           reject(err);
         }else {
           // logger.info(JSON.stringify(result))
-          resolve(result.rowsAffected.length)
+          // resolve(result.rowsAffected.length)
+          resolve(result.recordsets)
         }
     })
   })
@@ -1349,7 +1411,7 @@ function fcNAV_ToDB(fileName,businessDate){
           const request = new sql.Request(pool1)
           request.bulk(table, (err, result) => {
               // ... error checks
-              console.log('ERROR BULK>>' + err);
+              // console.log('ERROR BULK>>' + err);
             if(err){
               // console.log(err);
               logger.error(err);

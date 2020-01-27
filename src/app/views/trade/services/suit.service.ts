@@ -172,8 +172,10 @@ export class SuiteService {
 
   // https://localhost:3009/api/fundConnext/customer/individual/
   // tslint:disable-next-line:max-line-length
-  uploadCustInd(identificationCardType, cardNumber, referralPerson, suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate):
+  uploadCustInd(identificationCardType, cardNumber, referralPerson, suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate,actionBy):
   Observable<any> {
+
+console.log('uploadCustInd() actionBy>> ' + actionBy);
 
     const data = {
       "identificationCardType": identificationCardType,
@@ -186,10 +188,13 @@ export class SuiteService {
       "fatcaDeclarationDate":fatcaDeclarationDate,
       "cddScore":cddScore,
       "cddDate":cddDate,
+      "actionBy":actionBy,
      };
 
-    //  console.log( "FC API>" +JSON.stringify(data));
+     console.log( "FC API>" +JSON.stringify(data));
+
     return this.http.patch<{ message: string, result: string }>(BACKEND_URL_FC + '/customer/individual/', data);
+
   }
 
 

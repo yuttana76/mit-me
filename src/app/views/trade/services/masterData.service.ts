@@ -397,5 +397,38 @@ export class MasterDataService {
         })
       );
   }
+
+
+  getBank() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/bank')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(data => {
+          return {
+            Code: data.Bank_ID,
+            Description: data.Bank_Name_T
+          };
+        });
+      })
+    );
+  }
+
+  getBranch() {
+    return this.http
+    .get<{ message: string; result: any }>(BACKEND_URL_MASTER + '/branch')
+    .pipe(
+      map(fundtData => {
+        return fundtData.result.map(data => {
+          return {
+            RefCode: data.Bank_ID,
+            Code: data.Branch_ID,
+            Description: data.Branch_Name_T
+          };
+        });
+      })
+    );
+  }
+
   // *********************************
 }

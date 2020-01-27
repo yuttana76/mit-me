@@ -1,20 +1,21 @@
 import { AddrCustModel } from "./addrCust.model";
 import { Country } from "./ref_country";
-import { Spouse } from "./Spouse.model";
-import { Child } from "./Child.model";
 import { Suitability } from "./suitability.model";
+import { PersonModel } from "./person.model";
+import { BankAccountModel } from "./bankAccount.model";
 
 
 export class fcIndCustomer{
-
-
 
   constructor() {}
 
   identificationCardType: string;
   passportCountry: string;
   cardNumber: string;
-  cardExpiryDate: Date;
+  // cardExpiryDate: Date;
+  // "19831231
+  // N/A"
+  cardExpiryDate: string;
   accompanyingDocument: string;
   gender: string;
   title: string;
@@ -28,13 +29,14 @@ export class fcIndCustomer{
   mobileNumber: string;
   email: string;
   maritalStatus: string;
-  spouse:Spouse;
+  // spouse:Spouse;
   occupationId: string;
   occupationOther: string;
   businessTypeId: string;
   businessTypeOther: string;
   monthlyIncomeLevel: string;
-  incomeSource: string;
+  // incomeSource: string;
+  public incomeSource: string[] =[""];
   incomeSourceOther: string;
   residence :AddrCustModel;
   currentAddressSameAsFlag:String;
@@ -58,7 +60,7 @@ export class fcIndCustomer{
   applicationDate:Date;
   incomeSourceCountry:Country;
   acceptBy:String;
-  children:Child;
+  // children:Child;
   openFundConnextFormFlag:boolean;
   approved:boolean;
   vulnerableFlag :boolean;
@@ -66,9 +68,25 @@ export class fcIndCustomer{
   ndidFlag:boolean;
   ndidRequestId:string;
   suitability:Suitability;
+  accountType: string;
+  public MailSameAs: string;
+  public moneyLaundaring: string;
+  public politicalRelate: string;
+  public rejectFinancial: string;
 
+  public spouse:PersonModel = new PersonModel();
+  public children: PersonModel[] =[];
 
   public re_addrData: AddrCustModel = new AddrCustModel();
   public cu_addrData: AddrCustModel = new AddrCustModel();
   public wk_addrData: AddrCustModel = new AddrCustModel();
+  public mail_addrData: AddrCustModel = new AddrCustModel();
+
+  investmentObjective: string;
+  investmentObjectiveOther: string;
+  public redemptionBankAccounts: BankAccountModel[]=[];
+  public subscriptionBankAccountsSameAs: string;
+  public subscriptionBankAccounts: BankAccountModel[]=[];
+
+
 }

@@ -101,4 +101,7 @@ router.post("/exportExcel/",[
 ], fundConnextAPIController.exportExcel);
 
 
+router.post("/testUpdateSuit/",fundConnextAPIController.updateSuitAPI);
+
+
 module.exports = router;

@@ -44,6 +44,7 @@ export class OpenAccountComponent implements OnInit {
   work_formGroup: FormGroup;
   current_formGroup: FormGroup;
   mail_formGroup: FormGroup;
+  redemption_formGroup: FormGroup;
 
   bankAccountDialogComponent: MatDialogRef<BankAccountDialogComponent>;
 
@@ -271,9 +272,6 @@ export class OpenAccountComponent implements OnInit {
     cur_addrData: new FormControl(null, {
       validators: [Validators.required]
     }),
-    MailSameAs: new FormControl(null, {
-      validators: [Validators.required]
-    }),
   });
 
   this.work_formGroup = new FormGroup({
@@ -368,8 +366,10 @@ export class OpenAccountComponent implements OnInit {
     }),
   });
 
-
   this.mail_formGroup = new FormGroup({
+    MailSameAs: new FormControl(null, {
+      validators: [Validators.required]
+    }),
     Addr_No: new FormControl(null, {
       validators: [Validators.required]
     }),
@@ -414,6 +414,14 @@ export class OpenAccountComponent implements OnInit {
       // validators: [Validators.required]
     })
   });
+
+
+    this.redemption_formGroup = new FormGroup({
+    redemptionkAccountsSameAs: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+  });
+
 
   }
 

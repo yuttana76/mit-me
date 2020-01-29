@@ -84,9 +84,11 @@ export class fcIndCustomer{
 
   investmentObjective: string[] =[""];
   investmentObjectiveOther: string;
-  public redemptionBankAccounts: BankAccountModel[]=[];
-  public subscriptionBankAccountsSameAs: string;
+
   public subscriptionBankAccounts: BankAccountModel[]=[];
+  public redemptionBankAccounts: BankAccountModel[]=[];
+  public redemptionkAccountsSameAs: string;
+
 
 
 }

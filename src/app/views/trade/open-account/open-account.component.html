@@ -223,7 +223,7 @@
                   <!--Mail Address (SEQ = 4)-->
                     <span class="label_title"><h5>{{ formService.mail_addr_title }}</h5></span>
                     <div class='row'>
-                        <form [formGroup]="register_formGroup">
+                        <form [formGroup]="mail_formGroup">
                         <section class="example-section" >
                             <mat-radio-group [(ngModel)]="fcIndCustomer.MailSameAs"  (change)="mailAddrOnChange(fcIndCustomer.MailSameAs)" formControlName="MailSameAs">
                                 <mat-radio-button class="example-margin" value="email">{{formService.label_Email}}</mat-radio-button>
@@ -232,7 +232,7 @@
                                 <mat-radio-button class="example-margin" value="curr">{{formService.label_addrAs_curr}}</mat-radio-button>
                                 <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
                               </mat-radio-group>
-                              <mat-error *ngIf="register_formGroup.get('MailSameAs').invalid">โปรดเลือก Please choose </mat-error>
+                              <mat-error *ngIf="mail_formGroup.get('MailSameAs').invalid">โปรดเลือก Please choose </mat-error>
                           </section>
                         </form>
                     </div>
@@ -255,7 +255,6 @@
 
                       <div class="container">
                         <h5>Subscription Account</h5>
-
                         <a  id="btn_add_child"  mat-flat-button color="accent" (click)="addSubscriptionAccounts()" class ="act_button"> Add account ...  </a>
                         <table class="table table-striped">
                           <thead>
@@ -279,7 +278,6 @@
                               <td>{{obj.branchTxt}}</td>
                               <td>
                                 {{obj.bankAccountNo}}
-
                               </td>
                               <td>{{obj.finnetCustomerNo}}</td>
                               <td class="td_center">
@@ -292,18 +290,16 @@
                         </table>
                       </div>
 
-                      <div class="container">
+                      <div class="container" [formGroup]="redemption_formGroup">
                         <h5>Redemtion Account</h5>
-
                         <div class='row'>
-                          <section class="example-section">
-                              <mat-radio-group   [(ngModel)]="fcIndCustomer.subscriptionBankAccountsSameAs"  (change)="redempAccountAs($event)"  formControlName="work_addrData"  >
+                          <section class="example-section" >
+                              <mat-radio-group   [(ngModel)]="fcIndCustomer.redemptionkAccountsSameAs"  (change)="redempAccountAs($event)"  formControlName="redemptionkAccountsSameAs"  >
                                 <mat-radio-button value="SUB">AS Subscription Account</mat-radio-button>
                                 <mat-radio-button value="OTH">อื่นๆ (โปรดระบุ)</mat-radio-button>
                               </mat-radio-group>
                             </section>
-                      </div>
-
+                        </div>
                         <a  id="btn_add_child"  mat-flat-button color="accent" (click)="addRedemptionAccount()" class ="act_button"> Add account ...  </a>
                         <table class="table table-striped">
                           <thead>

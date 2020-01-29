@@ -11,6 +11,7 @@ const { check, validationResult } = require('express-validator');
 var AdmZip = require('adm-zip');
 var CronJob = require('cron').CronJob;
 var mitLog = require('./mitLog');
+var  FCCustInfo = require('../models/fcCustInfo.model');
 
 const FC_API_URI= FC_API_Config.FC_API_URI
 const FC_API_AUTH=FC_API_Config.FC_API_AUTH
@@ -29,6 +30,7 @@ var config = dbConfig.dbParameters;
 exports.getIndCust = (req, res, next) =>{
 
   logger.info("Validate API /GetIndCust/");
+  var actionBy = req.params.actionBy || 'SYSTEM';
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -38,11 +40,41 @@ exports.getIndCust = (req, res, next) =>{
   var cardNumber = req.params.cardNumber;
   logger.info("Welcome API /GetIndCust/"+ cardNumber);
 
-    fnGetIndCust(cardNumber).then(result=>{
+    fnGetIndCust(cardNumber).then(obj=>{
+
+      // res.status(200).json(result);
+
+      getIndCustDEVProc(obj,actionBy).then(result=>{
+        res.status(200).json(result);
+      },err=>{
+        res.status(401).json(err);
+      });
+
+    },err=>{
+      res.status(401).json(err);
+    });
+
+
+}
+
+
+
+
+exports.getIndCustDEV = (req, res, next) =>{
+
+  logger.info(" API /individual-DEV");
+
+  const custInfoObj = new FCCustInfo();
+
+  var actionBy = req.params.actionBy || 'SYSTEM';
+
+  getIndCustDEVProc(custInfoObj.getCustInfo(),actionBy).then(result=>{
       res.status(200).json(result);
     },err=>{
       res.status(401).json(err);
     });
+
+
 }
 
 
@@ -80,6 +112,819 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
     });
 }
 
+// GET
+function getIndCustDEVProc(custInfoObj,actionBy){
+  console.log("Welcome getIndCustDEVProc()"+ custInfoObj);
+
+  return new Promise(function(resolve, reject) {
+    // 1 MIT_FC_CUST_INFO
+    saveMIT_FC_CUST_INFO(custInfoObj,actionBy).then((result)=>{
+
+      logger.info("saveMIT_FC_CUST_INFO() successful")
+
+    },err=>{
+      logger.err("saveMIT_FC_CUST_INFO() error:" + err)
+      reject(err);
+    })
+
+    // 2 MIT_FC_CUST_ADDR
+    saveMIT_FC_CUST_ADDR(custInfoObj,actionBy).then(result=>{
+      logger.info("saveMIT_FC_CUST_ADDR() successful")
+
+    },err=>{
+      logger.err("saveMIT_FC_CUST_ADDR() error:" + err)
+      reject(err);
+    })
+
+    // 3	MIT_FC_CUST_CHILDREN
+    saveMIT_FC_CUST_CHILDREN(custInfoObj,actionBy).then(result=>{
+      logger.info("saveMIT_FC_CUST_CHILDREN() successful")
+
+    },err=>{
+      logger.err("saveMIT_FC_CUST_CHILDREN() error:" + err)
+      reject(err);
+    })
+
+    // 4	MIT_FC_CUST_ACCOUNT
+  saveMIT_FC_CUST_ACCOUNT(custInfoObj,actionBy).then(result=>{
+    logger.info("saveMIT_FC_CUST_ACCOUNT() successful")
+
+    },err=>{
+      logger.err("saveMIT_FC_CUST_ACCOUNT() error:" + err)
+      reject(err);
+    })
+
+    // 5	MIT_FC_CUST_BANK
+    // 6	MIT_FC_CUST_SUIT
+
+    if(custInfoObj.suitability){
+      saveMIT_FC_CUST_SUIT_Detail(custInfoObj.cardNumber,custInfoObj,actionBy).then((result)=>{
+        logger.info("saveMIT_FC_CUST_SUIT_Detail() successful")
+
+        },err=>{
+          logger.err("saveMIT_FC_CUST_SUIT_Detail() error:" + err)
+          reject(err);
+        })
+    }
+
+
+      resolve({code:0})
+
+  });
+}
+
+
+function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
+  logger.info('saveMIT_FC_CUST_INFO()'+custInfoObj.cardNumber);
+
+  // return new Promise(function(resolve, reject) {
+  // resolve(custInfoObj.cardNumber);
+
+  var fncName = "saveMIT_FC_CUST_INFO()";
+  var queryStr = `
+  BEGIN
+
+    UPDATE MIT_FC_CUST_INFO
+    SET
+    thFirstName=@thFirstName
+    ,thLastName=@thLastName
+    ,birthDate=@birthDate
+    ,mobileNumber=@mobileNumber
+    ,email=@email
+    ,occupationId=@occupationId
+    ,occupationOther=@occupationOther
+    ,businessTypeId=@businessTypeId
+    ,businessTypeOther=@businessTypeOther
+    ,monthlyIncomeLevel=@monthlyIncomeLevel
+    ,incomeSource=@incomeSource
+    ,incomeSourceOther=@incomeSourceOther
+    ,companyName=@companyName
+    ,identificationCardType=@identificationCardType
+    ,passportCountry=@passportCountry
+    ,title=@title
+    ,titleOther=@titleOther
+    ,enFirstName=@enFirstName
+    ,enLastName=@enLastName
+    ,cardExpiryDate=@cardExpiryDate
+    ,maritalStatus=@maritalStatus
+    ,SPidentificationCardType=@SPidentificationCardType
+    ,SPpassportCountry=@SPpassportCountry
+    ,SPcardNumber=@SPcardNumber
+    ,SPtitle=@SPtitle
+    ,SPtitleOther=@SPtitleOther
+    ,SPthFirstName=@SPthFirstName
+    ,SPthLastName=@SPthLastName
+    ,SPidCardExpiryDate=@SPidCardExpiryDate
+    ,SPphoneNumber=@SPphoneNumber
+    ,committedMoneyLaundering=@committedMoneyLaundering
+    ,politicalRelatedPerson=@politicalRelatedPerson
+    ,rejectFinancialTransaction=@rejectFinancialTransaction
+    ,confirmTaxDeduction=@confirmTaxDeduction
+    ,nationality=@nationality
+    ,cddScore=@cddScore
+    ,cddDate=@cddDate
+    ,canAcceptDerivativeInvestment=@canAcceptDerivativeInvestment
+    ,canAcceptFxRisk=@canAcceptFxRisk
+    ,accompanyingDocument=@accompanyingDocument
+    ,gender=@gender
+    ,referalPerson=@referalPerson
+    ,applicationDate=@applicationDate
+    ,incomeSourceCountry=@incomeSourceCountry
+    ,acceptBy=@acceptBy
+    ,openFundConnextFormFlag=@openFundConnextFormFlag
+    ,approved=@approved
+    ,vulnerableFlag=@vulnerableFlag
+    ,vulnerableDetail=@vulnerableDetail
+    ,ndidFlag=@ndidFlag
+    ,ndidRequestId=@ndidRequestId
+    ,suitabilityRiskLevel=@suitabilityRiskLevel
+    ,suitabilityEvaluationDate=@suitabilityEvaluationDate
+    ,fatca=@fatca
+    ,fatcaDeclarationDate=@fatcaDeclarationDate
+
+    ,workAddressSameAsFlag=@workAddressSameAsFlag
+    ,currentAddressSameAsFlag=@currentAddressSameAsFlag
+
+    ,CreateBy=@CreateBy
+    ,CreateDate=getdate()
+    WHERE cardNumber=@cardNumber
+
+
+    IF @@ROWCOUNT =0
+    BEGIN
+        INSERT INTO MIT_FC_CUST_INFO (
+          cardNumber
+          ,thFirstName
+          ,thLastName
+          ,birthDate
+          ,mobileNumber
+          ,email
+          ,occupationId
+          ,occupationOther
+          ,businessTypeId
+          ,businessTypeOther
+          ,monthlyIncomeLevel
+          ,incomeSource
+          ,incomeSourceOther
+          ,companyName
+          ,identificationCardType
+          ,passportCountry
+          ,title
+          ,titleOther
+          ,enFirstName
+          ,enLastName
+          ,cardExpiryDate
+          ,maritalStatus
+          ,SPidentificationCardType
+          ,SPpassportCountry
+          ,SPcardNumber
+          ,SPtitle
+          ,SPtitleOther
+          ,SPthFirstName
+          ,SPthLastName
+          ,SPidCardExpiryDate
+          ,SPphoneNumber
+          ,committedMoneyLaundering
+          ,politicalRelatedPerson
+          ,rejectFinancialTransaction
+          ,confirmTaxDeduction
+          ,nationality
+          ,cddScore
+          ,cddDate
+          ,canAcceptDerivativeInvestment
+          ,canAcceptFxRisk
+          ,accompanyingDocument
+          ,gender
+          ,referalPerson
+          ,applicationDate
+          ,incomeSourceCountry
+          ,acceptBy
+          ,openFundConnextFormFlag
+          ,approved
+          ,vulnerableFlag
+          ,vulnerableDetail
+          ,ndidFlag
+          ,ndidRequestId
+          ,suitabilityRiskLevel
+          ,suitabilityEvaluationDate
+          ,fatca
+          ,fatcaDeclarationDate
+          ,workAddressSameAsFlag
+          ,currentAddressSameAsFlag
+          ,CreateBy
+          ,CreateDate)
+        VALUES(
+           @cardNumber
+          ,@thFirstName
+          ,@thLastName
+          ,@birthDate
+          ,@mobileNumber
+          ,@email
+          ,@occupationId
+          ,@occupationOther
+          ,@businessTypeId
+          ,@businessTypeOther
+          ,@monthlyIncomeLevel
+          ,@incomeSource
+          ,@incomeSourceOther
+          ,@companyName
+          ,@identificationCardType
+          ,@passportCountry
+          ,@title
+          ,@titleOther
+          ,@enFirstName
+          ,@enLastName
+          ,@cardExpiryDate
+          ,@maritalStatus
+          ,@SPidentificationCardType
+          ,@SPpassportCountry
+          ,@SPcardNumber
+          ,@SPtitle
+          ,@SPtitleOther
+          ,@SPthFirstName
+          ,@SPthLastName
+          ,@SPidCardExpiryDate
+          ,@SPphoneNumber
+          ,@committedMoneyLaundering
+          ,@politicalRelatedPerson
+          ,@rejectFinancialTransaction
+          ,@confirmTaxDeduction
+          ,@nationality
+          ,@cddScore
+          ,@cddDate
+          ,@canAcceptDerivativeInvestment
+          ,@canAcceptFxRisk
+          ,@accompanyingDocument
+          ,@gender
+          ,@referalPerson
+          ,@applicationDate
+          ,@incomeSourceCountry
+          ,@acceptBy
+          ,@openFundConnextFormFlag
+          ,@approved
+          ,@vulnerableFlag
+          ,@vulnerableDetail
+          ,@ndidFlag
+          ,@ndidRequestId
+          ,@suitabilityRiskLevel
+          ,@suitabilityEvaluationDate
+          ,@fatca
+          ,@fatcaDeclarationDate
+          ,@workAddressSameAsFlag
+          ,@currentAddressSameAsFlag
+          ,@CreateBy
+          ,getdate())
+    END
+
+  END
+    `;
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), custInfoObj.cardNumber)
+        .input("thFirstName", sql.NVarChar(100), custInfoObj.thFirstName)
+        .input("thLastName", sql.NVarChar(100), custInfoObj.thLastName)
+        .input("birthDate", sql.VarChar(10), custInfoObj.birthDate)
+        .input("mobileNumber", sql.VarChar(50), custInfoObj.mobileNumber)
+        .input("email", sql.NVarChar(100), custInfoObj.email)
+        .input("occupationId", sql.VarChar(3), custInfoObj.occupationId)
+        .input("occupationOther", sql.NVarChar(100), custInfoObj.occupationOther)
+        .input("businessTypeId", sql.VarChar(3), custInfoObj.businessTypeId)
+        .input("businessTypeOther", sql.NVarChar(50), custInfoObj.businessTypeOther)
+        .input("monthlyIncomeLevel", sql.VarChar(10), custInfoObj.monthlyIncomeLevel)
+        .input("incomeSource", sql.VarChar(100), custInfoObj.incomeSource)
+        .input("incomeSourceOther", sql.NVarChar(100), custInfoObj.incomeSourceOther)
+        .input("companyName", sql.NVarChar(200), custInfoObj.companyName)
+        .input("identificationCardType", sql.VarChar(15), custInfoObj.identificationCardType)
+        .input("passportCountry", sql.VarChar(2), custInfoObj.passportCountry)
+        .input("title", sql.VarChar(5), custInfoObj.title)
+        .input("titleOther", sql.NVarChar(100), custInfoObj.titleOther)
+        .input("enFirstName", sql.NVarChar(100), custInfoObj.enFirstName)
+        .input("enLastName", sql.NVarChar(100), custInfoObj.enLastName)
+        .input("cardExpiryDate", sql.VarChar(10), custInfoObj.cardExpiryDate)
+        .input("maritalStatus", sql.VarChar(10), custInfoObj.maritalStatus)
+        .input("SPidentificationCardType", sql.VarChar(15), custInfoObj.spouse.identificationCardType)
+        .input("SPpassportCountry", sql.VarChar(2), custInfoObj.spouse.passportCountry)
+        .input("SPcardNumber", sql.VarChar(13), custInfoObj.spouse.cardNumber)
+        .input("SPtitle", sql.VarChar(5), custInfoObj.spouse.title)
+        .input("SPtitleOther", sql.NVarChar(100), custInfoObj.spouse.titleOther)
+        .input("SPthFirstName", sql.NVarChar(50), custInfoObj.spouse.thFirstName)
+        .input("SPthLastName", sql.NVarChar(50), custInfoObj.spouse.thLastName)
+        .input("SPidCardExpiryDate", sql.VarChar(10), custInfoObj.spouse.idCardExpiryDate)
+        .input("SPphoneNumber", sql.VarChar(20), custInfoObj.spouse.phoneNumber)
+        .input("committedMoneyLaundering", sql.VarChar(10), custInfoObj.committedMoneyLaundering)
+        .input("politicalRelatedPerson", sql.VarChar(10), custInfoObj.politicalRelatedPerson)
+        .input("rejectFinancialTransaction", sql.VarChar(10), custInfoObj.rejectFinancialTransaction)
+        .input("confirmTaxDeduction", sql.VarChar(10), custInfoObj.confirmTaxDeduction)
+        .input("nationality", sql.VarChar(2), custInfoObj.nationality)
+        .input("cddScore", sql.VarChar(1), custInfoObj.cddScore)
+        .input("cddDate", sql.VarChar(10), custInfoObj.cddDate)
+        .input("canAcceptDerivativeInvestment", sql.VarChar(10), custInfoObj.canAcceptDerivativeInvestment)
+        .input("canAcceptFxRisk", sql.VarChar(10), custInfoObj.canAcceptFxRisk)
+        .input("accompanyingDocument", sql.VarChar(20), custInfoObj.accompanyingDocument)
+        .input("gender", sql.VarChar(10), custInfoObj.gender)
+        .input("referalPerson", sql.NVarChar(100), custInfoObj.referalPerson)
+        .input("applicationDate", sql.VarChar(10), custInfoObj.applicationDate)
+        .input("incomeSourceCountry", sql.VarChar(2), custInfoObj.incomeSourceCountry)
+        .input("acceptBy", sql.NVarChar(100), custInfoObj.acceptBy)
+        .input("openFundConnextFormFlag", sql.VarChar(10), custInfoObj.openFundConnextFormFlag)
+        .input("approved", sql.VarChar(10), custInfoObj.approved)
+        .input("vulnerableFlag", sql.VarChar(10), custInfoObj.vulnerableFlag)
+        .input("vulnerableDetail", sql.NVarChar(100), custInfoObj.vulnerableDetail)
+        .input("ndidFlag", sql.VarChar(10), custInfoObj.ndidFlag)
+        .input("ndidRequestId", sql.VarChar(100), custInfoObj.ndidRequestId)
+        .input("suitabilityRiskLevel", sql.VarChar(1), custInfoObj.suitabilityRiskLevel)
+        .input("suitabilityEvaluationDate", sql.VarChar(10), custInfoObj.suitabilityEvaluationDate)
+        .input("fatca", sql.VarChar(10), custInfoObj.fatca)
+        .input("fatcaDeclarationDate", sql.VarChar(10), custInfoObj.fatcaDeclarationDate)
+
+        .input("workAddressSameAsFlag", sql.VarChar(50), custInfoObj.workAddressSameAsFlag)
+        .input("currentAddressSameAsFlag", sql.VarChar(50), custInfoObj.currentAddressSameAsFlag)
+
+        .input("CreateBy", sql.VarChar(50), actionBy)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" Quey RS>>" + JSON.stringify(result));
+            resolve(result);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+
+    });
+  });
+
+}
+
+
+function saveMIT_FC_CUST_ACCOUNT(obj,actionBy) {
+  logger.info('saveMIT_FC_CUST_ACCOUNT()'+obj.cardNumber);
+
+  return new Promise(function(resolve, reject) {
+
+    if(obj.accounts){
+      for(var i = 0; i < obj.accounts.length;i++){
+
+        // logger.info(`Save accounts ${i}  ${obj.accounts[i].accountId}`);
+
+        saveMIT_FC_CUST_ACCOUNT_Detail(obj.cardNumber,obj.accounts[i],actionBy).then((result=>{
+          logger.info(`Save accounts ${i} complete`);
+        }));
+
+      }
+      resolve({code:0});
+
+    }else{
+      resolve({code:1,message:"Not found children"});
+    }
+
+  });
+}
+
+
+function saveMIT_FC_CUST_ACCOUNT_Detail(cardNumber,obj,actionBy) {
+
+  logger.info('saveMIT_FC_CUST_ACCOUNT_Detail()'+obj.cardNumber);
+
+  var fncName = "saveMIT_FC_CUST_ACCOUNT_Detail()";
+  var queryStr = `
+  BEGIN
+    UPDATE MIT_FC_CUST_ACCOUNT
+    SET
+    icLicense=@icLicense
+    ,accountOpenDate=@accountOpenDate
+    ,investmentObjective=@investmentObjective
+    ,investmentObjectiveOther=@investmentObjectiveOther
+    ,approvedDate=@approvedDate
+    ,mailingAddressSameAsFlag=@mailingAddressSameAsFlag
+    ,openOmnibusFormFlag=@openOmnibusFormFlag
+    ,CreateBy=@CreateBy
+    ,CreateDate=getdate()
+    WHERE cardNumber=@cardNumber AND accountId=@accountId
+
+   IF @@ROWCOUNT =0
+    BEGIN
+        INSERT INTO MIT_FC_CUST_ACCOUNT (
+        cardNumber
+        ,accountId
+        ,icLicense
+        ,accountOpenDate
+        ,investmentObjective
+        ,investmentObjectiveOther
+        ,approvedDate
+        ,mailingAddressSameAsFlag
+        ,openOmnibusFormFlag
+        ,CreateBy
+        ,CreateDate)
+      VALUES(
+        @cardNumber
+        ,@accountId
+        ,@icLicense
+        ,@accountOpenDate
+        ,@investmentObjective
+        ,@investmentObjectiveOther
+        ,@approvedDate
+        ,@mailingAddressSameAsFlag
+        ,@openOmnibusFormFlag
+          ,@CreateBy
+          ,getdate())
+    END
+  END
+
+    `;
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(13), cardNumber)
+        .input("accountId", sql.VarChar(20), obj.accountId)
+        .input("icLicense", sql.VarChar(20), obj.icLicense)
+        .input("accountOpenDate", sql.VarChar(20), obj.accountOpenDate)
+        .input("investmentObjective", sql.NVarChar(100), obj.investmentObjective)
+        .input("investmentObjectiveOther", sql.NVarChar(100), obj.investmentObjectiveOther)
+        .input("approvedDate", sql.VarChar(20), obj.approvedDate)
+        .input("mailingAddressSameAsFlag", sql.VarChar(20), obj.mailingAddressSameAsFlag)
+        .input("openOmnibusFormFlag", sql.VarChar(10), obj.openOmnibusFormFlag)
+        .input("CreateBy", sql.VarChar(50), actionBy)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" Quey RS>>" + JSON.stringify(result));
+            resolve(result);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+function saveMIT_FC_CUST_CHILDREN(obj,actionBy) {
+  logger.info('saveMIT_FC_CUST_CHILDREN()'+obj.cardNumber);
+
+  return new Promise(function(resolve, reject) {
+
+    if(obj.children){
+      console.log("Has children");
+      for(var i = 0; i < obj.children.length;i++){
+
+        saveMIT_FC_CUST_CHILDREN_Detail(obj.cardNumber,obj.children[i],actionBy).then((result=>{
+          logger.info(`Save children ${i} complete`);
+        }));
+
+      }
+      resolve({code:0});
+
+    }else{
+      resolve({code:1,message:"Not found children"});
+    }
+
+  });
+}
+
+function saveMIT_FC_CUST_CHILDREN_Detail(cardNumber,obj,actionBy) {
+
+  logger.info('saveMIT_FC_CUST_CHILDREN_Detail()'+obj.cardNumber);
+
+  var fncName = "saveMIT_FC_CUST_CHILDREN_Detail()";
+  var queryStr = `
+  BEGIN
+    UPDATE MIT_FC_CUST_CHILDREN
+    SET
+    identificationCardType=@identificationCardType
+    ,passportCountry=@passportCountry
+    ,idCardExpiryDate=@idCardExpiryDate
+    ,title=@title
+    ,thFirstName=@thFirstName
+    ,thLastName=@thLastName
+    ,birthDate=@birthDate
+    ,CreateBy=@CreateBy
+    ,CreateDate=getdate()
+    WHERE cardNumber=@cardNumber AND childCardNumber=@childCardNumber
+
+    IF @@ROWCOUNT =0
+    BEGIN
+        INSERT INTO MIT_FC_CUST_CHILDREN (
+        cardNumber
+        ,childCardNumber
+        ,identificationCardType
+        ,passportCountry
+        ,idCardExpiryDate
+        ,title
+        ,thFirstName
+        ,thLastName
+        ,birthDate
+          ,CreateBy
+          ,CreateDate)
+        VALUES(
+          @cardNumber
+        ,@childCardNumber
+        ,@identificationCardType
+        ,@passportCountry
+        ,@idCardExpiryDate
+        ,@title
+        ,@thFirstName
+        ,@thLastName
+        ,@birthDate
+          ,@CreateBy
+          ,getdate())
+    END
+
+  END
+    `;
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(13), cardNumber)
+        // .input("childCardNumber", sql.VarChar(20),obj.cardNumber)
+        .input("childCardNumber", sql.VarChar(13),obj.cardNumber)
+        .input("identificationCardType", sql.VarChar(20),obj.identificationCardType)
+        .input("passportCountry", sql.NVarChar(20),obj.passportCountry)
+        .input("idCardExpiryDate", sql.VarChar(20),obj.idCardExpiryDate)
+        .input("title", sql.VarChar(20),obj.title)
+        .input("thFirstName", sql.NVarChar(20),obj.thFirstName)
+        .input("thLastName", sql.NVarChar(20),obj.thLastName)
+        .input("birthDate", sql.VarChar(20),obj.birthDate)
+        .input("CreateBy", sql.VarChar(50), actionBy)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" Quey RS>>" + JSON.stringify(result));
+            resolve(result);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+
+    });
+  });
+
+}
+
+
+function saveMIT_FC_CUST_ADDR(obj,actionBy) {
+  logger.info('saveMIT_FC_CUST_ADDR()'+obj.cardNumber);
+
+  return new Promise(function(resolve, reject) {
+  // 1:Resident
+  // let addrObj = obj.residence;
+  if(obj.residence){
+    saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.residence,1,actionBy).then((result=>{
+      logger.info(" Save Resident complete");
+    }));
+  }
+
+  // 2:Current
+  // let curObj = obj.contact;
+  if(obj.contact){
+    saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.contact,2,actionBy).then((result=>{
+      logger.info(" Save Current address complete");
+    }));
+  }
+
+  // 3:Work
+  // let workObj = obj.work;
+  if(obj.work){
+    saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.work,3,actionBy).then((result=>{
+      logger.info(" Save Work address complete");
+    }));
+  }
+
+  resolve({code:0});
+
+  });
+
+}
+
+function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
+
+  logger.info('saveMIT_FC_CUST_ADDR_Detail()'+seq);
+  logger.info('ADDR-OBJ >>'+JSON.stringify(obj));
+
+  var fncName = "saveMIT_FC_CUST_ADDR_Detail()";
+  var queryStr = `
+  BEGIN
+
+    UPDATE MIT_FC_CUST_ADDR
+    SET
+    no=@no
+    ,building=@building
+    ,floor=@floor
+    ,soi=@soi
+    ,road=@road
+    ,subDistrict=@subDistrict
+    ,district=@district
+    ,province=@province
+    ,country=@country
+    ,postalCode=@postalCode
+    ,phoneNumber=@phoneNumber
+    ,CreateBy=@CreateBy
+    ,CreateDate=getdate()
+    WHERE cardNumber=@cardNumber AND Addr_Seq= @Addr_Seq
+
+    IF @@ROWCOUNT =0
+    BEGIN
+        INSERT INTO MIT_FC_CUST_ADDR (
+          cardNumber
+          ,Addr_Seq
+          ,no
+          ,building
+          ,floor
+          ,soi
+          ,road
+          ,subDistrict
+          ,district
+          ,province
+          ,country
+          ,postalCode
+          ,phoneNumber
+          ,CreateBy
+          ,CreateDate)
+        VALUES(
+           @cardNumber
+           ,@Addr_Seq
+           ,@no
+           ,@building
+           ,@floor
+           ,@soi
+           ,@road
+           ,@subDistrict
+           ,@district
+           ,@province
+           ,@country
+           ,@postalCode
+           ,@phoneNumber
+          ,@CreateBy
+          ,getdate())
+    END
+
+  END
+    `;
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .input("Addr_Seq", sql.VarChar(2), seq)
+        .input("no", sql.NVarChar(100), obj.no)
+        .input("building", sql.NVarChar(100), obj.building)
+        .input("floor", sql.NVarChar(100), obj.floor)
+        .input("soi", sql.NVarChar(100), obj.soi)
+        .input("road", sql.NVarChar(100), obj.road)
+        .input("subDistrict", sql.NVarChar(100), obj.subDistrict)
+        .input("district", sql.NVarChar(100), obj.district)
+        .input("province", sql.NVarChar(100), obj.province)
+        .input("country", sql.NVarChar(100), obj.country)
+        .input("postalCode", sql.NVarChar(100), obj.postalCode)
+        .input("phoneNumber", sql.NVarChar(100), obj.phoneNumber)
+        .input("CreateBy", sql.VarChar(50), actionBy)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" Quey RS>>" + JSON.stringify(result));
+            resolve(result);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+
+    });
+  });
+
+}
+
+
+
+function saveMIT_FC_CUST_SUIT_Detail(cardNumber,obj,actionBy) {
+
+  logger.info('saveMIT_FC_CUST_SUIT_Detail()'+obj.cardNumber);
+
+  var fncName = "saveMIT_FC_CUST_SUIT_Detail()";
+  var queryStr = `
+  BEGIN
+
+    UPDATE MIT_FC_CUST_SUIT
+    SET
+      suitNo1=@suitNo1
+       ,suitNo2=@suitNo2
+        ,suitNo3=@suitNo3
+        ,suitNo4=@suitNo4
+        ,suitNo5=@suitNo5
+        ,suitNo6=@suitNo6
+        ,suitNo7=@suitNo7
+        ,suitNo8=@suitNo8
+        ,suitNo9=@suitNo9
+        ,suitNo10=@suitNo10
+        ,suitNo11=@suitNo11
+        ,suitNo12=@suitNo12
+    ,CreateBy=@CreateBy
+    ,CreateDate=getdate()
+    WHERE cardNumber=@cardNumber
+
+    IF @@ROWCOUNT =0
+    BEGIN
+        INSERT INTO MIT_FC_CUST_SUIT (
+          cardNumber
+          ,suitNo1
+        ,suitNo2
+        ,suitNo3
+        ,suitNo4
+        ,suitNo5
+        ,suitNo6
+        ,suitNo7
+        ,suitNo8
+        ,suitNo9
+        ,suitNo10
+        ,suitNo11
+        ,suitNo12
+          ,CreateBy
+          ,CreateDate)
+        VALUES(
+           @cardNumber
+           ,@suitNo1
+           ,@suitNo2
+          ,@suitNo3
+          ,@suitNo4
+          ,@suitNo5
+          ,@suitNo6
+          ,@suitNo7
+          ,@suitNo8
+          ,@suitNo9
+          ,@suitNo10
+          ,@suitNo11
+          ,@suitNo12
+          ,@CreateBy
+          ,getdate())
+    END
+
+  END
+    `;
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .input("suitNo1", sql.VarChar(1), obj.suitability.suitNo1)
+        .input("suitNo2", sql.VarChar(1), obj.suitability.suitNo2)
+        .input("suitNo3", sql.VarChar(1), obj.suitability.suitNo3)
+        .input("suitNo4", sql.VarChar(10), obj.suitability.suitNo4)
+        .input("suitNo5", sql.VarChar(1), obj.suitability.suitNo5)
+        .input("suitNo6", sql.VarChar(1), obj.suitability.suitNo6)
+        .input("suitNo7", sql.VarChar(1), obj.suitability.suitNo7)
+        .input("suitNo8", sql.VarChar(1), obj.suitability.suitNo8)
+        .input("suitNo9", sql.VarChar(1), obj.suitability.suitNo9)
+        .input("suitNo10", sql.VarChar(1), obj.suitability.suitNo10)
+        .input("suitNo11", sql.VarChar(1), obj.suitability.suitNo11)
+        .input("suitNo12", sql.VarChar(1), obj.suitability.suitNo12)
+        .input("CreateBy", sql.VarChar(50), actionBy)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+
+}
 
 // GET
 function fnGetIndCust(cardNumber){
@@ -112,18 +957,21 @@ function fnGetIndCust(cardNumber){
             }else{
               // logger.info(JSON.stringify(body));
               // logger.info(JSON.stringify(response));
-              resolve(body)
+              // let _fcCustInfo  = Object.assign(new fcCustInfo, { cardNumber: '123-xxx',thFirstName:'Yuttana',thLastName:'K.' })
+
+              // let _fcCustInfo  = Object.assign(new FCCustInfo,JSON.parse(body)) //OK
+
+              resolve(JSON.parse(body))
+              // resolve(_fcCustInfo)
             }
           });
-
         /**
          * HTTPS REQUEST (END)
          */
-
-  },err =>{
-    console.log('ERR AUTH>>'+err);
-    reject(err);
-  });
+      },err =>{
+        console.log('ERR AUTH>>'+err);
+        reject(err);
+      });
 
   });
 
@@ -1652,6 +2500,8 @@ function fnGetDownloadAPI(businessDate,fileType){
 
     fnFCAuth().then(result =>{
       resultObj =JSON.parse(result);
+
+      logger.info("***TOKEN>>"+resultObj.access_token);
 
       const HTTPS_ENDPOIN =`https://${FC_API_URI}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
       const propertiesObject = {

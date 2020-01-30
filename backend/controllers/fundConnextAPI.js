@@ -65,7 +65,6 @@ exports.getIndCustDEV = (req, res, next) =>{
   logger.info(" API /individual-DEV");
 
   const custInfoObj = new FCCustInfo();
-
   var actionBy = req.params.actionBy || 'SYSTEM';
 
   getIndCustDEVProc(custInfoObj.getCustInfo(),actionBy).then(result=>{
@@ -73,8 +72,6 @@ exports.getIndCustDEV = (req, res, next) =>{
     },err=>{
       res.status(401).json(err);
     });
-
-
 }
 
 
@@ -117,20 +114,18 @@ function getIndCustDEVProc(custInfoObj,actionBy){
   console.log("Welcome getIndCustDEVProc()"+ custInfoObj);
 
   return new Promise(function(resolve, reject) {
+
     // 1 MIT_FC_CUST_INFO
     saveMIT_FC_CUST_INFO(custInfoObj,actionBy).then((result)=>{
-
-      logger.info("saveMIT_FC_CUST_INFO() successful")
-
+      logger.info("MIT_FC_CUST_INFO() successful")
     },err=>{
-      logger.err("saveMIT_FC_CUST_INFO() error:" + err)
+      logger.err("ERROR MIT_FC_CUST_INFO() :" + err)
       reject(err);
     })
 
     // 2 MIT_FC_CUST_ADDR
     saveMIT_FC_CUST_ADDR(custInfoObj,actionBy).then(result=>{
       logger.info("saveMIT_FC_CUST_ADDR() successful")
-
     },err=>{
       logger.err("saveMIT_FC_CUST_ADDR() error:" + err)
       reject(err);
@@ -139,18 +134,16 @@ function getIndCustDEVProc(custInfoObj,actionBy){
     // 3	MIT_FC_CUST_CHILDREN
     saveMIT_FC_CUST_CHILDREN(custInfoObj,actionBy).then(result=>{
       logger.info("saveMIT_FC_CUST_CHILDREN() successful")
-
     },err=>{
       logger.err("saveMIT_FC_CUST_CHILDREN() error:" + err)
       reject(err);
     })
 
     // 4	MIT_FC_CUST_ACCOUNT
-  saveMIT_FC_CUST_ACCOUNT(custInfoObj,actionBy).then(result=>{
-    logger.info("saveMIT_FC_CUST_ACCOUNT() successful")
-
+    saveMIT_FC_CUST_ACCOUNT(custInfoObj,actionBy).then(result=>{
+      logger.info("saveMIT_FC_CUST_ACCOUNT() successful")
     },err=>{
-      logger.err("saveMIT_FC_CUST_ACCOUNT() error:" + err)
+      logger.error("saveMIT_FC_CUST_ACCOUNT() error:" + err)
       reject(err);
     })
 
@@ -474,7 +467,24 @@ function saveMIT_FC_CUST_ACCOUNT(obj,actionBy) {
     if(obj.accounts){
       for(var i = 0; i < obj.accounts.length;i++){
 
-        // logger.info(`Save accounts ${i}  ${obj.accounts[i].accountId}`);
+        logger.info(`Save accounts ${i}  ${obj.accounts[i].accountId}`);
+        logger.info(`subscriptionBankAccounts >> ${i}  ${obj.accounts[i].subscriptionBankAccounts.length}`);
+        logger.info(`redemptionBankAccounts >> ${i}  ${obj.accounts[i].redemptionBankAccounts.length}`);
+
+        // subscriptionBankAccounts
+        if(obj.accounts[i].subscriptionBankAccounts && obj.accounts[i].subscriptionBankAccounts.length >0){
+          for(var j = 0; j < obj.accounts[i].subscriptionBankAccounts.length;j++){
+            saveMIT_FC_CUST_BANK_Detail(obj.cardNumber,obj.accounts[i].accountId,'sub',obj.accounts[i].subscriptionBankAccounts[j],actionBy)
+          }
+
+        }
+        // redemptionBankAccounts
+        if(obj.accounts[i].redemptionBankAccounts && obj.accounts[i].redemptionBankAccounts.length >0){
+          for(var j = 0; j < obj.accounts[i].redemptionBankAccounts.length;j++){
+            saveMIT_FC_CUST_BANK_Detail(obj.cardNumber,obj.accounts[i].accountId,'red',obj.accounts[i].redemptionBankAccounts[j],actionBy)
+          }
+
+        }
 
         saveMIT_FC_CUST_ACCOUNT_Detail(obj.cardNumber,obj.accounts[i],actionBy).then((result=>{
           logger.info(`Save accounts ${i} complete`);
@@ -489,6 +499,32 @@ function saveMIT_FC_CUST_ACCOUNT(obj,actionBy) {
 
   });
 }
+
+
+// function saveMIT_FC_CUST_BANK(cardNumber,obj,actionBy) {
+//   logger.info('saveMIT_FC_CUST_BANK()'+cardNumber);
+
+//   return new Promise(function(resolve, reject) {
+
+//     if(obj.accounts){
+//       for(var i = 0; i < obj.accounts.length;i++){
+
+//         logger.info(`Save accounts ${i}  ${obj.accounts[i].accountId}`);
+
+//         saveMIT_FC_CUST_ACCOUNT_Detail(obj.cardNumber,obj.accounts[i],actionBy).then((result=>{
+//           logger.info(`Save accounts ${i} complete`);
+//         }));
+
+//       }
+//       resolve({code:0});
+
+//     }else{
+//       resolve({code:1,message:"Not found children"});
+//     }
+
+//   });
+// }
+
 
 
 function saveMIT_FC_CUST_ACCOUNT_Detail(cardNumber,obj,actionBy) {
@@ -682,9 +718,92 @@ function saveMIT_FC_CUST_CHILDREN_Detail(cardNumber,obj,actionBy) {
 
     });
   });
-
 }
 
+function saveMIT_FC_CUST_BANK_Detail(cardNumber,accountId,accType,obj,actionBy) {
+
+  logger.info('saveMIT_FC_CUST_BANK_Detail()'+cardNumber);
+  logger.info('saveMIT_FC_CUST_BANK_Detail()'+JSON.stringify(obj));
+
+  var fncName = "saveMIT_FC_CUST_BANK_Detail()";
+  var queryStr = `
+    BEGIN
+      UPDATE MIT_FC_CUST_BANK
+      SET
+      cardNumber=@cardNumber
+      ,accountId=@accountId
+      ,accType=@accType
+      ,bankCode=@bankCode
+      ,bankBranchCode=@bankBranchCode
+      ,bankAccountNo=@bankAccountNo
+      ,[default]=@default
+      ,finnetCustomerNo=@finnetCustomerNo
+      ,CreateBy=@CreateBy
+      ,CreateDate=getdate()
+      WHERE cardNumber=@cardNumber AND bankAccountNo=@bankAccountNo AND accType=@accType AND accountId=@accountId
+
+      IF @@ROWCOUNT =0
+      BEGIN
+          INSERT INTO MIT_FC_CUST_BANK (
+          cardNumber
+          ,accountId
+          ,accType
+          ,bankCode
+          ,bankBranchCode
+          ,bankAccountNo
+          ,[default]
+          ,finnetCustomerNo
+            ,CreateBy
+            ,CreateDate)
+          VALUES(
+            @cardNumber
+            ,@accountId
+            ,@accType
+          ,@bankCode
+          ,@bankBranchCode
+          ,@bankAccountNo
+          ,@default
+          ,@finnetCustomerNo
+            ,@CreateBy
+            ,getdate())
+      END
+
+  END
+    `;
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(13), cardNumber)
+        .input("accountId", sql.VarChar(10), accountId)
+        .input("accType", sql.VarChar(10), accType)
+        .input("bankCode", sql.VarChar(4),obj.bankCode)
+        .input("bankBranchCode", sql.VarChar(5),obj.bankBranchCode)
+        .input("bankAccountNo", sql.NVarChar(20),obj.bankAccountNo)
+        .input("default", sql.VarChar(10),obj.default)
+        .input("finnetCustomerNo", sql.VarChar(30),obj.finnetCustomerNo)
+        .input("CreateBy", sql.VarChar(50), actionBy)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            logger.error(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" Quey RS>>" + JSON.stringify(result));
+            resolve(result);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+
+    });
+  });
+
+}
 
 function saveMIT_FC_CUST_ADDR(obj,actionBy) {
   logger.info('saveMIT_FC_CUST_ADDR()'+obj.cardNumber);
@@ -723,7 +842,6 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
 function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
 
   logger.info('saveMIT_FC_CUST_ADDR_Detail()'+seq);
-  logger.info('ADDR-OBJ >>'+JSON.stringify(obj));
 
   var fncName = "saveMIT_FC_CUST_ADDR_Detail()";
   var queryStr = `
@@ -955,14 +1073,7 @@ function fnGetIndCust(cardNumber){
               logger.error(err);
               reject(err);
             }else{
-              // logger.info(JSON.stringify(body));
-              // logger.info(JSON.stringify(response));
-              // let _fcCustInfo  = Object.assign(new fcCustInfo, { cardNumber: '123-xxx',thFirstName:'Yuttana',thLastName:'K.' })
-
-              // let _fcCustInfo  = Object.assign(new FCCustInfo,JSON.parse(body)) //OK
-
               resolve(JSON.parse(body))
-              // resolve(_fcCustInfo)
             }
           });
         /**

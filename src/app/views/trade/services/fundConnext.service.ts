@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { FcDownload } from '../model/FcDownload.model';
 import { jsonpCallbackContext } from '@angular/common/http/src/module';
 import { formatDate } from '@angular/common';
+import { Inverter } from '../fcutility/fcutility.component';
 
 
 const BACKEND_URL = environment.apiURL + '/fundConnext/';
@@ -105,5 +106,12 @@ const BACKEND_URL = environment.apiURL + '/fundConnext/';
         return this.http.post<{ result: any}>(BACKEND_URL + '/downloadNavAPI/v2/', postData);
       }
 
+
+      downloadInvestor(data:Inverter) {
+
+        console.log('SERVICE downloadInvestor() >' + JSON.stringify(data));
+
+        return this.http.get(BACKEND_URL+"customer/individual/"+  data.cardNumber);
+      }
 
     }

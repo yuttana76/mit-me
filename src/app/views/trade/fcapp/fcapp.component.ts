@@ -277,8 +277,6 @@ export class FCAppComponent implements OnInit {
         this.spinnerLoading = false;
       }
     );
-
-
   }
 
   generatePdf(){

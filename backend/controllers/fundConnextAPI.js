@@ -42,7 +42,12 @@ exports.getIndCust = (req, res, next) =>{
 
     fnGetIndCust(cardNumber).then(obj=>{
 
-      // res.status(200).json(result);
+      console.log('FC result->' + JSON.stringify(obj))
+      if(obj.errMsg){
+        // {"errMsg":{"code":"E114","message":"Customer not found"}}
+        // res.status(200).json({"code":obj.errMsg.code,"message":obj.errMsg.message});
+        res.status(200).json(obj.errMsg);
+      }
 
       getIndCustDEVProc(obj,actionBy).then(result=>{
         res.status(200).json(result);
@@ -68,9 +73,12 @@ exports.getIndCustDEV = (req, res, next) =>{
   var actionBy = req.params.actionBy || 'SYSTEM';
 
   getIndCustDEVProc(custInfoObj.getCustInfo(),actionBy).then(result=>{
-      res.status(200).json(result);
+
+    res.status(200).json(result);
+
     },err=>{
-      res.status(401).json(err);
+
+      res.status(401).json({code:1,msg:err});
     });
 }
 
@@ -111,7 +119,7 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
 
 // GET
 function getIndCustDEVProc(custInfoObj,actionBy){
-  console.log("Welcome getIndCustDEVProc()"+ custInfoObj);
+  console.log("Welcome getIndCustDEVProc()"+ JSON.stringify(custInfoObj));
 
   return new Promise(function(resolve, reject) {
 
@@ -854,6 +862,7 @@ function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
     ,floor=@floor
     ,soi=@soi
     ,road=@road
+    ,moo=@moo
     ,subDistrict=@subDistrict
     ,district=@district
     ,province=@province
@@ -874,6 +883,7 @@ function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
           ,floor
           ,soi
           ,road
+          ,moo
           ,subDistrict
           ,district
           ,province
@@ -890,6 +900,7 @@ function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
            ,@floor
            ,@soi
            ,@road
+           ,@moo
            ,@subDistrict
            ,@district
            ,@province
@@ -914,7 +925,8 @@ function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
         .input("floor", sql.NVarChar(100), obj.floor)
         .input("soi", sql.NVarChar(100), obj.soi)
         .input("road", sql.NVarChar(100), obj.road)
-        .input("subDistrict", sql.NVarChar(100), obj.subDistrict)
+        .input("moo", sql.NVarChar(100), obj.moo)
+        .input("subDistrict", sql.NVarChar(100), obj.subdistrict)
         .input("district", sql.NVarChar(100), obj.district)
         .input("province", sql.NVarChar(100), obj.province)
         .input("country", sql.NVarChar(100), obj.country)

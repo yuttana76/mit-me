@@ -3,6 +3,14 @@
     /* put your css styles in here */
   }
 
+  mat-spinner {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -100px;
+  }
+
   .example-radio-group {
     display: block;
     flex-direction: column;

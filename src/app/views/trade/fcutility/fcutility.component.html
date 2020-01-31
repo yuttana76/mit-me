@@ -1,0 +1,63 @@
+<!-- <div class="spinner" > -->
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+<!-- <div> -->
+
+
+<mat-card class="example-card" *ngIf="!spinnerLoading" >
+  <mat-card-title>FundConnext Utilities</mat-card-title>
+  <mat-card-content class="col-12">
+
+  <div class="card">
+    <div class="card-header">
+      Download investor profile
+    </div>
+    <div class="card-body">
+    <h5 class="card-title">Download investor profile</h5>
+
+    <form [formGroup]="downloadInvestorForm" >
+
+      <mat-form-field class="col-sm-3">
+        <input matInput placeholder="ID card" formControlName="cardNumber" [(ngModel)]="inverter.cardNumber"  required type="search" autocomplete="off">
+        <mat-error *ngIf="downloadInvestorForm.get('cardNumber').invalid">Require this field</mat-error>
+      </mat-form-field>
+      <span>{{downloadResponse}}</span>
+
+      </form>
+      <button [disabled]="downloadInvestorForm.invalid" class="col-sm-3" mat-flat-button color="primary" (click)=onDownloadInvestor()>FC Download</button>
+
+    </div>
+  </div>
+
+
+  <div class="card">
+    <div class="card-header">
+      NAV API
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">NAV Download & Update internal db</h5>
+
+      <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+
+      <form [formGroup]="downloadForm"  #custForm="ngForm">
+
+        <div class="form-group row">
+          <label for="businessDate" class="col-sm-3 col-form-label">Business Date</label>
+          <mat-form-field class="col-sm-3" >
+            <input matInput id="businessDate" formControlName="businessDate"  [(ngModel)]="fcdownloadAPI.businessDate" [matDatepicker]="businessDate"
+             placeholder="" readonly=true>
+            <mat-datepicker-toggle matSuffix [for]="businessDate"></mat-datepicker-toggle>
+            <mat-datepicker #businessDate touchUi="true"></mat-datepicker>
+            <mat-hint *ngIf="NavFundRecord" >Fund updated  {{NavFundRecord}} record.</mat-hint>
+        </mat-form-field>
+
+
+        </div>
+        </form>
+        <button class="col-sm-3" mat-flat-button color="primary" (click)=onDownloadNAV_Sync()>Execute</button>
+    </div>
+  </div>
+
+  </mat-card-content>
+</mat-card>
+
+

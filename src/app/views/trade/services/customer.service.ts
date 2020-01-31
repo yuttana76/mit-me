@@ -1,7 +1,8 @@
 
 import { Injectable } from '../../../../../node_modules/@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
+import { Subject, Observable} from 'rxjs';
+import {forkJoin} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import {Customer} from '../model/customer.model';
@@ -116,6 +117,16 @@ export class CustomerService {
 
   updateCustomer(customer: Customer, ceAddress: CustAddress, maAddress: CustAddress){
     console.log('updateCustomer !');
+  }
+
+
+  getInvestorComparision(id: string): Observable<any> {
+
+    let observableBatch = [];
+
+    observableBatch.push(this.http.get<{result: any }>(BACKEND_URL+'orgCusInfo/' + id ));
+
+      return forkJoin(observableBatch);
   }
 
 }

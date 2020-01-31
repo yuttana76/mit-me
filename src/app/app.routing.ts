@@ -17,6 +17,7 @@ import { SetWelcomeComponent } from './views/trade/set-welcome/set-welcome.compo
 import { SuitSurveyComponent } from './views/trade/suit-survey/suit-survey.component';
 import { SurveySearchComponent } from './views/trade/survey-search/survey-search.component';
 import { FCAppComponent } from './views/trade/fcapp/fcapp.component';
+import { FCUtilityComponent } from './views/trade/fcutility/fcutility.component';
 
 export const routes: Routes = [
   {
@@ -76,7 +77,6 @@ export const routes: Routes = [
       title: 'Suitability survey'
     }
   },
-
   {
     path: 'FCApp',
     component: FCAppComponent,
@@ -113,12 +113,21 @@ export const routes: Routes = [
       title: 'Welcome Streaming For Fund 1'
     }
   },
+
   // For devement; Delete on PROD
   {
     path: 'surveySearch',
     component: SurveySearchComponent,
     data: {
       title: 'Welcome Servey Search'
+    }
+  },
+  // For devement; Delete on PROD
+  {
+    path: 'FCUtility',
+    component: FCUtilityComponent,
+    data: {
+      title: 'Welcome FundConnext Utilities'
     }
   },
 

@@ -4,14 +4,17 @@ import { CustomerService } from '../services/customer.service';
 import { AuthService } from '../../services/auth.service';
 import { Customer } from '../model/customer.model';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { PageEvent, MatTableDataSource } from '@angular/material';
+import { PageEvent, MatTableDataSource, MatDialogRef, MatDialog } from '@angular/material';
 import { CustomerCond } from '../model/customerCond.model';
 
 import { Pipe, PipeTransform } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import { FcInvesCompDialogComponent } from '../dialog/fc-inves-comp-dialog/fc-inves-comp-dialog.component';
 
 @Pipe({name: 'customerFullname'})
 export class CustomerFullnamePipe implements PipeTransform {
+
+
   transform(value: string, groupCode: string, title: string, lastName: string): string {
 
     let newStr: string = '';
@@ -56,6 +59,7 @@ export class GroupCodeStrPipe implements PipeTransform {
 })
 export class CustomerListComponent implements OnInit, OnDestroy {
 
+  invesCompDialogComponent: MatDialogRef<FcInvesCompDialogComponent>;
   customers: Customer[] = [];
   private postsSub: Subscription;
   spinnerLoading = false;
@@ -66,7 +70,12 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   rowsPerPage = 20;
   totalRecords = 10;
   pageSizeOptions = [10, 20, 50, 100];
-  constructor(public customerService: CustomerService, private authService: AuthService, private toastr: ToastrService) { }
+  constructor(
+    public dialog: MatDialog,
+    public customerService: CustomerService,
+    private authService: AuthService,
+    private toastr: ToastrService
+    ) { }
 
   displayedColumns: string[] = ['Cust_Code', 'First_Name_T', 'Group_Code', 'Birth_Day', 'Action'];
 
@@ -137,5 +146,30 @@ export class CustomerListComponent implements OnInit, OnDestroy {
       });
   }
 
+
+  onComparare(Cust_Code: string) {
+    this.invesCompDialogComponent = this.dialog.open(FcInvesCompDialogComponent, {
+      width: '800px',
+      height: '800px',
+      // height : 'auto',
+      data: Cust_Code
+    });
+
+    this.invesCompDialogComponent.afterClosed().subscribe(result => {
+        console.log('onNewMobileDialog afterClosed()=> ', result);
+
+        // if(result ==='newMobileSuccess'){
+        //   this.toastr.success(` `,
+        //   "ดำเนินการสำเร็จ",
+        //   {
+        //     timeOut: 3000,
+        //     closeButton: true,
+        //     positionClass: "toast-top-center"
+        //   }
+        //   );
+        // }
+
+    });
+  }
 
 }

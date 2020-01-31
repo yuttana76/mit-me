@@ -81,6 +81,8 @@ import { SearchActionDialogComponent } from './dialog/search-action-dialog/searc
 
 import { NgxFloatButtonModule } from 'ngx-float-button';
 import { BankAccountDialogComponent } from './dialog/bank-account-dialog/bank-account-dialog.component';
+import { FCUtilityComponent } from './fcutility/fcutility.component';
+import { FcInvesCompDialogComponent } from './dialog/fc-inves-comp-dialog/fc-inves-comp-dialog.component';
 
 @NgModule({
   imports: [
@@ -171,6 +173,8 @@ import { BankAccountDialogComponent } from './dialog/bank-account-dialog/bank-ac
     KycDetailDialogComponent,
     SearchActionDialogComponent,
     BankAccountDialogComponent,
+    FCUtilityComponent,
+    FcInvesCompDialogComponent,
   ],
   providers: [DatePipe],
   entryComponents: [
@@ -190,6 +194,7 @@ import { BankAccountDialogComponent } from './dialog/bank-account-dialog/bank-ac
     KycDetailDialogComponent,
     SearchActionDialogComponent,
     BankAccountDialogComponent,
+    FcInvesCompDialogComponent
   ],
 })
 export class TradeModule {

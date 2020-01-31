@@ -29,6 +29,7 @@ import { FCAppComponent } from './fcapp/fcapp.component';
 import { SetRegis2Component } from './set-regis2/set-regis2.component';
 import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 import { SurveySearchComponent } from './survey-search/survey-search.component';
+import { FCUtilityComponent } from './fcutility/fcutility.component';
 
 const routes: Routes = [
 
@@ -252,7 +253,13 @@ const routes: Routes = [
           title: 'Streaming For Fund registration'
         }
       },
-
+      {
+        path: 'FCUtility',
+        component: FCUtilityComponent,
+        data: {
+          title: 'FundConnext Utilities'
+        }
+      },
       {
         path: 'FCApp',
         component: FCAppComponent,
@@ -260,6 +267,7 @@ const routes: Routes = [
           title: 'FundConnext Applications'
         }
       },
+
       {
         path: 'set-regis2',
         component: SetRegis2Component,
@@ -281,6 +289,7 @@ const routes: Routes = [
           title: 'Welcome Servey Search'
         }
       },
+
     ]
   },
   // {path: '**', redirectTo: '/404'}

@@ -21,7 +21,7 @@ export class FCUtilityComponent implements OnInit {
   downloadResponse="";
 
   NavFundRecord;
-  downloadForm: FormGroup;
+  downloadNAVForm: FormGroup;
   fcdownloadAPI:FcDownload = new FcDownload();
 
   approveInvestorForm: FormGroup;
@@ -53,9 +53,9 @@ export class FCUtilityComponent implements OnInit {
       }),
     });
 
-    this.downloadForm = new FormGroup({
+    this.downloadNAVForm = new FormGroup({
       fileType: new FormControl(null, {
-        validators: [Validators.required]
+        // validators: [Validators.required]
       }),
 
       businessDate: new FormControl(null, {

@@ -6,7 +6,6 @@ import { CustomerListComponent } from './customer-list/customer-list.component';
 import { CustomerDetailComponent } from './customerDetail/customerDetail.component';
 import { WorkFlowComponent } from './work-flow/work-flow.component';
 import { TradeDashComponent } from './trade-dash/trade-dash.component';
-import { P404Component } from '../error/404.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { MitApplicationComponent } from './mit-application/mit-application.component';
@@ -25,7 +24,6 @@ import { LedInspResultComponent } from './led-insp-result/led-insp-result.compon
 import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-insp-cust-detail.component';
 import { OpenAccountComponent } from './open-account/open-account.component';
 import { SetRegistrationComponent } from './set-registration/set-registration.component';
-import { FCAppComponent } from './fcapp/fcapp.component';
 import { SetRegis2Component } from './set-regis2/set-regis2.component';
 import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 import { SurveySearchComponent } from './survey-search/survey-search.component';
@@ -260,13 +258,6 @@ const routes: Routes = [
           title: 'FundConnext Utilities'
         }
       },
-      {
-        path: 'FCApp',
-        component: FCAppComponent,
-        data: {
-          title: 'FundConnext Applications'
-        }
-      },
 
       {
         path: 'set-regis2',
@@ -292,7 +283,6 @@ const routes: Routes = [
 
     ]
   },
-  // {path: '**', redirectTo: '/404'}
 ];
 
 @NgModule({

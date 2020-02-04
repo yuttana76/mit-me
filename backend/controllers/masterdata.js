@@ -381,6 +381,31 @@ exports.getFCnation = (req, res, next) => {
 
 
 
+exports.getMFTSnationBYSET_CODE = (code) => {
+  logger.info(`API /getMFTSnationBYSET_CODE`);
+  let rsp_code;
+  var queryStr = `
+  select *
+  from REF_Nations
+  WHERE SET_Code=@SET_Code
+  `;
+  const sql = require('mssql')
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request()
+    .input("SET_Code", sql.VarChar(20), code)
+    .query(queryStr, (err, result) => {
+      console.log('RESULT>' + JSON.stringify(result.recordset));
+        return result.recordset
+    })
+  })
+  pool1.on('error', err => {
+    console.log("EROR>>"+err);
+    return null
+  })
+}
+
+
+
 exports.getFCcountry = (req, res, next) => {
   logger.info(`API /getFCcountry - ${req.originalUrl} - ${req.ip} `);
   let rsp_code;

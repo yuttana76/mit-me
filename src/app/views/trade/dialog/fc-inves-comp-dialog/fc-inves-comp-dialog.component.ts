@@ -2,26 +2,8 @@ import { Component, OnInit, Optional, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { CustomerService } from '../../services/customer.service';
 import { Customer } from '../../model/customer.model';
-
-  export class OrgCustomer {
-  Cust_Code : string;
-  Card_Type : string;
-  Group_Code : string;
-  Title_Name_T : string;
-  First_Name_T : string;
-  Last_Name_T : string;
-  Title_Name_E : string;
-  First_Name_E : string;
-  Last_Name_E : string;
-  Birth_Day : string;
-  Nation_Code : string;
-  Sex : string;
-  Tax_No : string;
-  Mobile : string;
-  Email : string;
-  MktId : string;
-}
-
+import { fcIndCustomer } from '../../model/fcIndCustomer.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-fc-inves-comp-dialog',
@@ -30,29 +12,57 @@ import { Customer } from '../../model/customer.model';
 })
 export class FcInvesCompDialogComponent implements OnInit {
 
-  mftsCustomer:OrgCustomer;
+  CAN_APPROVE_CUST_INFO:true;
+
+  mftsCustomer:any;
+  fcCustomer:any;
+
   fundConnextCustomer:any;
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public custCode: any,
     public customerService: CustomerService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
-    this.mftsCustomer= new OrgCustomer();
+
+    this.mftsCustomer= new Customer();
+    this.fcCustomer= new fcIndCustomer();
 
     this.customerService.getInvestorComparision(this.custCode).subscribe(res => {
-      // this.mftsCustomer = customer;
-
-      console.log(JSON.stringify(res));
 
       this.mftsCustomer= JSON.parse(JSON.stringify(res[0].result[0]));
+      this.fcCustomer= JSON.parse(JSON.stringify(res[1].result[0]));
+
       console.log(this.mftsCustomer.Cust_Code);
   });
+
   }
 
 
   onApprove(){
+
+    var actionBy = 'SYSTEM';
+
+    this.customerService.approveUpdateCust(this.mftsCustomer,this.fcCustomer,actionBy).subscribe(res => {
+      console.log('Result>'+JSON.stringify(res));
+      if(res && res["code"]==='0'){
+        this.toastr.success("Download invertor profile complete.", "Complete", {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+
+      }else{
+        this.toastr.warning(res.message, "Incomplete", {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+      }
+    });
+
 
   }
 }

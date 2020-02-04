@@ -1,4 +1,14 @@
+
  <div class="contrainer">
+
+  <div class="card-body text-center">
+    <div>
+      <h2>Approval customer information</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+    </div>
+  </div>
+
   <table>
     <tr class='header'>
       <td >
@@ -13,23 +23,27 @@
         ID Type: {{mftsCustomer.Card_Type}}
       </td>
       <td>
-        ID Type:
+        ID Type: {{fcCustomer.identificationCardType}}
       </td>
     </tr>
-    <tr>
+
+    <!-- <tr *ngIf="mftsCustomer.Cust_Code === fcCustomer.cardNumber" >
+    <tr *ngIf="mftsCustomer.Cust_Code !== fcCustomer.cardNumber" class="gotDiff"> -->
+      <tr>
       <td >
         ID No.: {{mftsCustomer.Cust_Code}}
       </td>
       <td>
-        ID No.:
+        ID No.: {{fcCustomer.cardNumber}}
       </td>
     </tr>
+
     <tr>
       <td >
-        Expiry Date (A.D.):
+        Expiry Date (A.D.):{{mftsCustomer.Card_ExpDate}}
       </td>
       <td>
-        Expiry Date (A.D.):
+        Expiry Date (A.D.):{{fcCustomer.cardExpiryDate}}
       </td>
     </tr>
     <tr>
@@ -37,7 +51,7 @@
         Apply FundConnext Form:
       </td>
       <td>
-        Apply FundConnext Form:
+        Apply FundConnext Form:{{fcCustomer.openFundConnextFormFlag}}
       </td>
     </tr>
     <tr>
@@ -45,7 +59,7 @@
         NDID Flag:
       </td>
       <td>
-        NDID Flag:
+        NDID Flag:{{fcCustomer.ndidFlag}}
       </td>
     </tr>
     <tr class='header'>
@@ -61,7 +75,7 @@
         Accompanying Document:
       </td>
       <td>
-        Accompanying Document:
+        Accompanying Document:{{fcCustomer.accompanyingDocument}}
       </td>
     </tr>
     <tr >
@@ -69,7 +83,7 @@
         Application Date:
       </td>
       <td>
-        Application Date:
+        Application Date:{{fcCustomer.applicationDate}}
       </td>
     </tr>
     <tr >
@@ -77,65 +91,81 @@
         Gender: {{mftsCustomer.Sex}}
       </td>
       <td>
-        Gender:
+        Gender: {{fcCustomer.gender}}
       </td>
     </tr>
+
     <tr >
       <td >
         Title: {{mftsCustomer.Title_Name_T}}
       </td>
       <td>
-        Title:
+        Title: {{fcCustomer.title}}
       </td>
     </tr>
-    <tr >
+
+    <!-- <tr *ngIf="mftsCustomer.First_Name_T === fcCustomer.thFirstName && mftsCustomer.Last_Name_T === fcCustomer.thLastName " >
+    <tr *ngIf="mftsCustomer.First_Name_T !== fcCustomer.thFirstName || mftsCustomer.Last_Name_T !== fcCustomer.thLastName" class="gotDiff"> -->
+      <tr>
       <td >
         Name-Surname (Thai): {{mftsCustomer.First_Name_T}} {{mftsCustomer.Last_Name_T}}
       </td>
       <td>
-        Name-Surname (Thai):
+        <span *ngIf="mftsCustomer.First_Name_T === fcCustomer.thFirstName && mftsCustomer.Last_Name_T === fcCustomer.thLastName "> Name-Surname (Thai): {{fcCustomer.thFirstName}} {{fcCustomer.thLastName}}</span>
+        <span *ngIf="mftsCustomer.First_Name_T !== fcCustomer.thFirstName || mftsCustomer.Last_Name_T !== fcCustomer.thLastName" class="gotDiff"> Name-Surname (Thai): {{fcCustomer.thFirstName}} {{fcCustomer.thLastName}}</span>
       </td>
     </tr>
-    <tr >
+
+      <tr>
       <td >
         Name-Surname (Eng): {{mftsCustomer.First_Name_E}} {{mftsCustomer.Last_Name_E}}
       </td>
       <td>
-        Name-Surname (Eng):
+        <span *ngIf="mftsCustomer.First_Name_E === fcCustomer.enFirstName && mftsCustomer.Last_Name_E === fcCustomer.enLastName">Name-Surname (Eng): {{fcCustomer.enFirstName}} {{fcCustomer.enLastName}}</span>
+        <span *ngIf="mftsCustomer.First_Name_E !== fcCustomer.enFirstName || mftsCustomer.Last_Name_E !== fcCustomer.enLastName" class="gotDiff">Name-Surname (Eng): {{fcCustomer.enFirstName}} {{fcCustomer.enLastName}}</span>
       </td>
     </tr>
+
     <tr >
       <td >
-        Nationality:
+        Nationality:{{mftsCustomer.Nation_Code}}
       </td>
       <td>
-        Nationality:
+        Nationality:{{fcCustomer.nationality}}
       </td>
     </tr>
+
     <tr >
+    <!--<tr *ngIf="mftsCustomer.Mobile!==fcCustomer.mobileNumber" class="gotDiff"> -->
       <td >
         Mobile: {{mftsCustomer.Mobile}}
       </td>
       <td>
-        Mobile:
+        <span *ngIf="mftsCustomer.Mobile !== fcCustomer.mobileNumber" class="gotDiff" > Mobile: {{fcCustomer.mobileNumber}}</span>
+        <span *ngIf="mftsCustomer.Mobile === fcCustomer.mobileNumber" > Mobile: {{fcCustomer.mobileNumber}}</span>
       </td>
     </tr>
-    <tr >
+
+    <tr>
       <td >
         E-mail: {{mftsCustomer.Email}}
       </td>
       <td>
-        E-mail:
+        <span *ngIf="mftsCustomer.Email !== fcCustomer.email" class="gotDiff" > E-mail: {{fcCustomer.email}} </span>
+        <span *ngIf="mftsCustomer.Email === fcCustomer.email" > E-mail: {{fcCustomer.email}} </span>
       </td>
     </tr>
-    <tr >
+<!--
+
+    <tr *ngIf="mftsCustomer.Email === fcCustomer.maritalStatus" >
+    <tr *ngIf="mftsCustomer.Email !== fcCustomer.maritalStatus" class="gotDiff">
       <td >
         Marital Status:
       </td>
       <td>
         Marital Status:
       </td>
-    </tr>
+    </tr> -->
 
 <!-- Residence Address -->
 <!-- Workplace Address -->
@@ -154,7 +184,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.occupationId}}  {{fcCustomer.occupationOther}}
       </td>
     </tr>
     <tr class='header'>
@@ -170,7 +200,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.businessTypeId}}  {{fcCustomer.businessTypeOther}}
       </td>
     </tr>
     <tr class='header'>
@@ -186,12 +216,12 @@
 
       </td>
       <td>
-
+        {{fcCustomer.incomeSourceCountry}}
       </td>
     </tr>
     <tr class='header'>
       <td >
-        Source of Income
+        Source of Income:
       </td>
       <td>
         Source of Income
@@ -202,7 +232,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.incomeSource}}  {{fcCustomer.incomeSourceOther}}
       </td>
     </tr>
     <tr class='header'>
@@ -218,7 +248,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.monthlyIncomeLevel}}
       </td>
     </tr>
 
@@ -235,7 +265,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.committedMoneyLaundering}}
       </td>
     </tr>
 
@@ -252,7 +282,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.politicalRelatedPerson}}
       </td>
     </tr>
 
@@ -269,7 +299,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.rejectFinancialTransaction}}
       </td>
     </tr>
 
@@ -286,7 +316,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.canAcceptFxRisk}}
       </td>
     </tr>
 
@@ -303,7 +333,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.canAcceptDerivativeInvestment}}
       </td>
     </tr>
 
@@ -320,7 +350,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.suitabilityRiskLevel}} - {{fcCustomer.suitabilityEvaluationDate}}
       </td>
     </tr>
 
@@ -337,7 +367,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.vulnerableFlag}}
       </td>
     </tr>
 
@@ -354,7 +384,7 @@
 
       </td>
       <td>
-
+        {{fcCustomer.fatca}}
       </td>
     </tr>
 
@@ -371,12 +401,12 @@
 
       </td>
       <td>
-
+        {{fcCustomer.cddScore}} - {{fcCustomer.cddDate}}
       </td>
     </tr>
 
   </table>
 
-  <button class="col-sm-3" mat-flat-button color="primary" (click)=onApprove()>Approve</button>
+  <button [disabled]="false"  type="button" class="btn btn-primary px-4" (click)=onApprove() >Approve</button>
 
  </div>

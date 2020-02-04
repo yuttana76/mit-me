@@ -67,7 +67,6 @@ import { OpenAccountComponent } from './open-account/open-account.component';
 import { SetRegistrationComponent } from './set-registration/set-registration.component';
 import { RecaptchaModule } from 'angular-google-recaptcha';
 import { NdidProxyComponent } from './ndid-proxy/ndid-proxy.component';
-import { FCAppComponent } from './fcapp/fcapp.component';
 import { SetRegis2Component } from './set-regis2/set-regis2.component';
 import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 import { FcIndCustomerComponent } from './fc-ind-customer/fc-ind-customer.component';
@@ -120,8 +119,6 @@ import { FcInvesCompDialogComponent } from './dialog/fc-inves-comp-dialog/fc-inv
     WorkFlowActDialogComponent,
     WfStatusPipe,
     TradeDashComponent,
-    // EmployeeListComponent,
-    // EmployeeDetailComponent,
     UserListComponent,
     UserDetailComponent,
     AuthorityComponent,
@@ -161,7 +158,6 @@ import { FcInvesCompDialogComponent } from './dialog/fc-inves-comp-dialog/fc-inv
     OpenAccountComponent,
     SetRegistrationComponent,
     NdidProxyComponent,
-    FCAppComponent,
     SetRegis2Component,
     SetWelcomeComponent,
     FcIndCustomerComponent,

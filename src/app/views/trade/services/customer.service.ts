@@ -125,8 +125,20 @@ export class CustomerService {
     let observableBatch = [];
 
     observableBatch.push(this.http.get<{result: any }>(BACKEND_URL+'orgCusInfo/' + id ));
+    observableBatch.push(this.http.get<{result: any }>(BACKEND_URL+'fcCusInfo/' + id ));
 
       return forkJoin(observableBatch);
+  }
+
+
+  approveUpdateCust(mftsCustInfo, fcCustInfo,actionBy) {
+    console.log('Service   approveUpdateCust() !');
+    const data = {
+      // 'mftsCustInfo': JSON.stringify(mftsCustInfo),
+      'fcCustInfo': JSON.stringify(fcCustInfo),
+      'actionBy': actionBy,
+      };
+    return this.http.post<{ message: string, data: any }>(BACKEND_URL+'approveCustInfo/', data);
   }
 
 }

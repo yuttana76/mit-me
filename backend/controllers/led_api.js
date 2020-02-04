@@ -31,9 +31,9 @@ const LED_FILE_PATH = __dirname + '/readFiles/LED/';
 const LED_FILE_NAME= "led_list.txt";
 const LED_LIST_FILE_NAME = 'led_list.txt';
 
-const HTTP_SOAP = 'https://192.168.10.48:444/CrytoService.svc';
+// const HTTP_SOAP = 'https://192.168.10.48:444/CrytoService.svc';
+const HTTP_SOAP = 'https://192.168.10.58:444/CrytoService.svc';
 
-// const HTTP_SOAP = 'http://192.168.10.48:8080/CrytoService.svc';
 
 /*
 Production Endpoint
@@ -1372,7 +1372,7 @@ function fnCallLEDapis(path,input){
     },
   };
 
-  // console.log('options_1>>' + JSON.stringify(options_1));
+  console.log('LED request >>' + JSON.stringify(options_1));
 
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
   const request = https.request(options_1,(res) => {

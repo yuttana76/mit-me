@@ -4,6 +4,8 @@ import { CustomerService } from '../../services/customer.service';
 import { Customer } from '../../model/customer.model';
 import { fcIndCustomer } from '../../model/fcIndCustomer.model';
 import { ToastrService } from 'ngx-toastr';
+import { AddrCustModel } from '../../model/addrCust.model';
+import { PersonModel } from '../../model/person.model';
 
 @Component({
   selector: 'app-fc-inves-comp-dialog',
@@ -29,13 +31,19 @@ export class FcInvesCompDialogComponent implements OnInit {
 
     this.mftsCustomer= new Customer();
     this.fcCustomer= new fcIndCustomer();
+    this.fcCustomer.residence = new AddrCustModel();
+    this.fcCustomer.current = new AddrCustModel();
+    this.fcCustomer.work = new AddrCustModel();
+    // this.fcCustomer.children = new PersonModel();
+    this.fcCustomer.children = [];
 
     this.customerService.getInvestorComparision(this.custCode).subscribe(res => {
 
       this.mftsCustomer= JSON.parse(JSON.stringify(res[0].result[0]));
-      this.fcCustomer= JSON.parse(JSON.stringify(res[1].result[0]));
+      // this.fcCustomer= JSON.parse(JSON.stringify(res[1].result[0]));
+      this.fcCustomer= JSON.parse(JSON.stringify(res[1].result));
 
-      console.log(this.mftsCustomer.Cust_Code);
+      console.log("children>>" + JSON.stringify(this.fcCustomer.children));
   });
 
   }

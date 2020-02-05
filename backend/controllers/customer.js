@@ -123,19 +123,124 @@ exports.getCustomerFullInfo = (req, res, next) => {
   })
 }
 
+// exports.getFC_CustomerInfo = (req, res, next) => {
+//   var custCode = req.params.cusCode;
+//   getFC_CustomerInfo(custCode).then( (data) =>{
+//     console.log('TASK 1');
+//     res.status(200).json({
+//       result: data
+//     });
+
+//   },err=>{
+//     res.status(401).json(err);
+//   });
+// }
+
 exports.getFC_CustomerInfo = (req, res, next) => {
-
   var custCode = req.params.cusCode;
+  let mainData;
 
-  getFC_CustomerInfo(custCode).then( (data) =>{
-    res.status(200).json({
-      result: data
+  fnArray=[];
+  fnArray.push(getFC_CustomerInfo(custCode));
+  fnArray.push(getFC_Address(custCode,1));
+  fnArray.push(getFC_Address(custCode,2));
+  fnArray.push(getFC_Address(custCode,3));
+  fnArray.push(getFC_Children(custCode));
+
+  Promise.all(fnArray).then(values => {
+
+      custInfo=values[0][0]
+      custInfo.residence=values[1][0]
+      custInfo.current=values[2][0]
+      custInfo.work=values[3][0]
+      custInfo.children=values[4]
+
+      res.status(200).json({
+      result: custInfo
     });
-  },err=>{
-    res.status(401).json(err);
+
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
   });
 
 }
+
+
+const getFC_Children = (cardNumber,seq) => {
+  return new Promise((resolve, reject) => {
+      var fncName = 'getFC_Address() ';
+
+      const sql = require('mssql')
+      // var queryStr = `
+      // SELECT
+      //   [childCardNumber] AS cardNumber,
+      //   [identificationCardType] AS cardType,
+      //   [passportCountry] AS passportCountry,
+      //   [idCardExpiryDate] AS cardExpDate,
+      //   [title] AS title,
+      //   [thFirstName] AS firstName,
+      //   [thLastName] AS lastName,
+      //   [birthDate] AS dob
+      // FROM [MIT_FC_CUST_CHILDREN]
+      // WHERE cardNumber=@cardNumber  `;
+
+      var queryStr = `
+      SELECT
+        *
+      FROM [MIT_FC_CUST_CHILDREN]
+      WHERE cardNumber=@cardNumber  `;
+
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .input("Addr_Seq", sql.VarChar(20), seq)
+        .query(queryStr, (err, result) => {
+            if(err){
+              logger.error(err);
+              reject(fncName + err);
+            }else {
+              resolve(result.recordset);
+            }
+        })
+      })
+      pool1.on('error', err => {
+        logger.error(err);
+        resolve(err);
+      })
+  });
+};
+
+const getFC_Address = (cardNumber,seq) => {
+  return new Promise((resolve, reject) => {
+      var fncName = 'getFC_Address() ';
+
+      const sql = require('mssql')
+      var queryStr = `SELECT *
+      FROM [MIT_FC_CUST_ADDR]
+      WHERE cardNumber=@cardNumber AND Addr_Seq=@Addr_Seq `;
+
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .input("Addr_Seq", sql.VarChar(20), seq)
+        .query(queryStr, (err, result) => {
+            if(err){
+              logger.error(err);
+              reject(fncName + err);
+            }else {
+              resolve(result.recordset);
+            }
+        })
+      })
+      pool1.on('error', err => {
+        logger.error(err);
+        resolve(err);
+      })
+  });
+};
+
 
 /**
  Parameter
@@ -153,7 +258,6 @@ exports.approveCustInfo = (req, res, next) => {
   // var mftsCustInfoObj = JSON.parse(req.body.mftsCustInfo)
   var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
   var actionBy = req.body.actionBy;
-
 
 // VALIDATE data
 
@@ -182,19 +286,87 @@ exports.approveCustInfo = (req, res, next) => {
       fcCustInfoObj.Sex = '';
   }
 
-  console.log("approveCustInfo()" + actionBy + " ;OBJ>" + JSON.stringify(fcCustInfoObj));
-  update_CustomerInfo(fcCustInfoObj,actionBy).then( (data) =>{
-    res.status(200).json(data);
-  },err=>{
-    res.status(401).json(err);
-  });
+  fnArray=[];
+  fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
 
+  if(fcCustInfoObj.residence)
+    fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
+
+  if(fcCustInfoObj.current)
+    fnArray.push(update_Address(fcCustInfoObj.current,2,actionBy));
+
+  if(fcCustInfoObj.work)
+    fnArray.push(update_Address(fcCustInfoObj.work,3,actionBy));
+
+  //Update Children
+    for (var i in fcCustInfoObj.children) {
+        if(fcCustInfoObj.children[i])
+          fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
+    }
+
+  // if(fcCustInfoObj.children[0])
+  //   fnArray.push(update_Children(fcCustInfoObj.children[0],actionBy));
+
+  Promise.all(fnArray)
+  .then(data => {
+
+    console.log("approveCustInfo()" + JSON.stringify(data));
+      res.status(200).json(data[0]);
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
 }
+
+// exports.approveCustInfo = (req, res, next) => {
+
+//   console.log("approveCustInfo()");
+
+//   // var mftsCustInfoObj = JSON.parse(req.body.mftsCustInfo)
+//   var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
+//   var actionBy = req.body.actionBy;
+
+// // VALIDATE data
+
+// // CONVERT data.
+// // Card_Type
+//   switch (fcCustInfoObj.identificationCardType) {
+//     case 'CITIZEN_CARD':
+//       fcCustInfoObj.Card_Type = 'C';
+//       break;
+//     case 'PASSPORT':
+//       fcCustInfoObj.Card_Type = 'P';
+//       break;
+//     default:
+//       fcCustInfoObj.Card_Type = '';
+//   }
+
+// // GENDER
+//   switch (fcCustInfoObj.gender) {
+//     case 'Male':
+//       fcCustInfoObj.Sex = 'M';
+//       break;
+//     case 'Female':
+//       fcCustInfoObj.Sex = 'F';
+//       break;
+//     default:
+//       fcCustInfoObj.Sex = '';
+//   }
+
+//   // console.log("approveCustInfo()" + actionBy + " ;OBJ>" + JSON.stringify(fcCustInfoObj));
+//   update_CustomerInfo(fcCustInfoObj,actionBy).then( (data) =>{
+//     res.status(200).json(data);
+//   },err=>{
+//     res.status(401).json(err);
+//   });
+
+// }
 
 
 function update_CustomerInfo(custObj,actionBy){
 
-  console.log("update_CustomerInfo()" );
+  console.log("update_CustomerInfo()" +JSON.stringify(custObj));
 
   var queryStr = `
   BEGIN TRANSACTION TranName;
@@ -468,6 +640,249 @@ function update_CustomerInfo(custObj,actionBy){
   });
 }
 
+
+function update_Address(addrObj,seq,actionBy){
+
+  console.log("update_Address()");
+
+  if(!addrObj.soi)
+    addrObj.soi= '-';
+
+  var queryStr = `
+  BEGIN TRANSACTION TranName;
+
+  DECLARE  @Country_ID VARCHAR(10);
+  DECLARE  @Province_ID VARCHAR(10);
+  DECLARE  @Amphur_ID VARCHAR(10);
+  DECLARE  @Tambon_ID VARCHAR(10);
+
+  select @Country_ID=Country_ID
+  from REF_Countrys
+  WHERE Country_Code=@country
+
+  select @Province_ID=Province_ID
+  from REF_Provinces
+  where Name_Thai like '%'+LEFT(@province,6)+'%'
+
+  select @Amphur_ID=Amphur_ID
+  from REF_Amphurs
+  where Name_Thai like '%'+LEFT(@district,6)+'%'
+  AND Province_ID =@Province_ID
+
+  select @Tambon_ID=Tambon_ID
+  from REF_Tambons
+  where Name_Thai like '%'+LEFT(@subDistrict,6)+'%'
+  AND Amphur_ID=@Amphur_ID
+
+
+    UPDATE MFTS_Holder_Address SET
+    Addr_NO=@no
+    ,[Place]=@floor +' '+ @building+' ' +@soi
+    ,[Road]=@road
+    ,[Zip_Code]=@postalCode
+    ,[Tambon_ID]=@Tambon_ID
+	  ,[Amphur_ID]=@Amphur_ID
+	  ,[Province_ID]=@Province_ID
+    ,[Country_ID]=@Country_ID
+    ,Print_Address=@province
+    WHERE  Addr_Seq=@Addr_Seq
+    AND Ref_No IN(select Ref_No from MFTS_Account where PID_NO=@cardNumber)
+
+
+    -- Extension
+    UPDATE MIT_CUST_ADDR SET
+     [no]=@no
+    ,[floor]=@floor
+    ,[building]=@building
+    ,[soi]=@soi
+    ,[road]=@road
+    ,[moo]=@moo
+    ,[subDistrict]=@Tambon_ID
+    ,[district]=@Amphur_ID
+    ,[province]=@Province_ID
+    ,[postalCode]=@postalCode
+    ,[country]=@country
+    ,[phoneNumber]=@phoneNumber
+    ,UpdateBy=@actionBy
+    ,UpdateDate=getDate()
+    WHERE cardNumber=@cardNumber AND Addr_Seq=@Addr_Seq
+
+    IF @@ROWCOUNT=0
+    BEGIN
+      INSERT INTO  MIT_CUST_ADDR (
+        cardNumber
+        ,Addr_Seq
+        ,[no]
+        ,[floor]
+        ,[building]
+        ,[soi]
+        ,[road]
+        ,[moo]
+        ,[subDistrict]
+        ,[district]
+        ,[province]
+        ,[postalCode]
+        ,[country]
+        ,[phoneNumber]
+        ,CreateBy
+        ,CreateDate
+        )
+      VALUES(@cardNumber
+        ,@Addr_Seq
+        ,@no
+        ,@floor
+        ,@building
+        ,@soi
+        ,@road
+        ,@moo
+        ,@Tambon_ID
+        ,@Amphur_ID
+        ,@Province_ID
+        ,@postalCode
+        ,@country
+        ,@phoneNumber
+        ,@actionBy
+        ,getDate()
+        )
+
+        END
+
+      COMMIT TRANSACTION TranName;
+  `;
+
+  const sql = require('mssql')
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), addrObj.cardNumber)
+      .input("Addr_Seq", sql.VarChar(1), seq)
+      .input("no", sql.NVarChar(100), addrObj.no)
+      .input("floor", sql.NVarChar(100), addrObj.floor)
+      .input("building", sql.NVarChar(100), addrObj.building)
+      .input("soi", sql.NVarChar(100), addrObj.soi)
+      .input("road", sql.NVarChar(100), addrObj.road)
+      .input("moo", sql.NVarChar(100), addrObj.moo)
+      .input("subDistrict", sql.NVarChar(100), addrObj.subDistrict)
+      .input("district", sql.NVarChar(100), addrObj.district)
+      .input("province", sql.NVarChar(100), addrObj.province)
+      .input("postalCode", sql.NVarChar(100), addrObj.postalCode)
+      .input("country", sql.NVarChar(100), addrObj.country)
+      .input("phoneNumber", sql.NVarChar(100), addrObj.phoneNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+
+      // .input("ProvinceName", sql.NVarChar(100), addrObj.province)
+
+
+      .query(queryStr, (err, result) => {
+
+        console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
+
+function update_Children(childrenObj,actionBy){
+
+  console.log("update_Children()" + JSON.stringify(childrenObj));
+
+  var queryStr = `
+  BEGIN TRANSACTION TranName;
+
+    UPDATE MIT_CUST_CHILDREN SET
+    [identificationCardType]=@identificationCardType
+    ,[passportCountry]=@passportCountry
+    ,[idCardExpiryDate]=@idCardExpiryDate
+    ,[title]=@title
+    ,[thFirstName]=@thFirstName
+    ,[thLastName]=@thLastName
+    ,[birthDate]=@birthDate
+    ,UpdateBy=@actionBy
+    ,UpdateDate=getDate()
+    WHERE cardNumber=@cardNumber AND childCardNumber=@childCardNumber
+
+    IF @@ROWCOUNT=0
+    BEGIN
+      INSERT INTO  MIT_CUST_CHILDREN (
+        cardNumber
+        ,[childCardNumber]
+        ,[identificationCardType]
+        ,[passportCountry]
+        ,[idCardExpiryDate]
+        ,[title]
+        ,[thFirstName]
+        ,[thLastName]
+        ,[birthDate]
+        ,CreateBy
+        ,CreateDate
+        )
+      VALUES(@cardNumber
+        ,@childCardNumber
+        ,@identificationCardType
+        ,@passportCountry
+        ,@idCardExpiryDate
+        ,@title
+        ,@thFirstName
+        ,@thLastName
+        ,@birthDate
+        ,@actionBy
+        ,getDate()
+        )
+        END
+      COMMIT TRANSACTION TranName;
+  `;
+
+  const sql = require('mssql')
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), childrenObj.cardNumber)
+      .input("childCardNumber", sql.VarChar(20), childrenObj.childCardNumber)
+      .input("identificationCardType", sql.VarChar(20), childrenObj.identificationCardType)
+      .input("passportCountry", sql.VarChar(20), childrenObj.passportCountry)
+      .input("idCardExpiryDate", sql.VarChar(50), childrenObj.idCardExpiryDate)
+      .input("title", sql.VarChar(20), childrenObj.title)
+      .input("thFirstName", sql.NVarChar(100), childrenObj.thFirstName)
+      .input("thLastName", sql.NVarChar(100), childrenObj.thLastName)
+      .input("birthDate", sql.VarChar(50), childrenObj.birthDate)
+      .input("actionBy", sql.VarChar(50), actionBy)
+
+      .query(queryStr, (err, result) => {
+
+        console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
+
+
 function getFC_CustomerInfo(cardNumber){
 
   var fncName = 'getFcCustomerInfo() ';
@@ -500,10 +915,7 @@ function getFC_CustomerInfo(cardNumber){
 
 
   });
-
 }
-
-
 
 exports.CreateCustomer = (req, res, next) => {
   console.log("CreateCustomer>>" );

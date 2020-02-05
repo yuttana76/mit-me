@@ -4,7 +4,7 @@
   <div class="card-body text-center">
     <div>
       <h2>Approval customer information</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p> -->
 
     </div>
   </div>
@@ -155,21 +155,167 @@
         <span *ngIf="mftsCustomer.Email === fcCustomer.email" > E-mail: {{fcCustomer.email}} </span>
       </td>
     </tr>
-<!--
 
     <tr *ngIf="mftsCustomer.Email === fcCustomer.maritalStatus" >
     <tr *ngIf="mftsCustomer.Email !== fcCustomer.maritalStatus" class="gotDiff">
       <td >
-        Marital Status:
+        Marital Status:{{mftsCustomer.maritalStatus}}
       </td>
       <td>
-        Marital Status:
+        <span *ngIf="mftsCustomer.maritalStatus !== fcCustomer.maritalStatus" class="gotDiff" > Marital Status: {{fcCustomer.maritalStatus}} </span>
+        <span *ngIf="mftsCustomer.maritalStatus === fcCustomer.maritalStatus" > Marital Status: {{fcCustomer.maritalStatus}} </span>
       </td>
-    </tr> -->
+    </tr>
 
-<!-- Residence Address -->
-<!-- Workplace Address -->
-<!-- Current Address -->
+    <tr class='header'>
+      <td >
+        Information of Underage Children (Age below 20 years old and not married):
+      </td>
+      <td>
+        Information of Underage Children (Age below 20 years old and not married):
+      </td>
+    </tr>
+    <tr >
+      <td >
+      </td>
+      <td class="show_block">
+        <span *ngFor="let obj of fcCustomer.children">
+          <div class="card">
+            <p>ID Type: {{obj.identificationCardType}}</p>
+            <p>ID No.: {{obj.childCardNumber}}</p>
+            <p>Expiry Date (A.D.): {{obj.idCardExpiryDate}}</p>
+            <p>Title: {{obj.title}}</p>
+            <p>Name-Surname: {{obj.thFirstName}} {{obj.thLastName}}</p>
+            <p>Date of Birth (A.D.): {{obj.birthDate}}</p>
+          </div>
+          </span>
+      </td>
+    </tr>
+
+    <!-- Residence Address -->
+    <tr class='header'>
+      <td >
+        Residence Address
+      </td>
+      <td>
+        Residence Address
+      </td>
+    </tr>
+
+    <tr>
+      <td >
+        <p>
+          Address:
+          Subdistrict/Tambol:
+          District/Amphur:
+          Province:
+          Post Code:
+          Country:
+          </p>
+      </td>
+      <td class="show_block">
+        <p>
+          Address: {{fcCustomer.residence.no}} {{fcCustomer.residence.building}} {{fcCustomer.residence.floor}} {{fcCustomer.residence.soi}} {{fcCustomer.residence.road}} {{fcCustomer.residence.moo}}
+        </p>
+        <p>
+          Subdistrict/Tambol:{{fcCustomer.residence.subDistrict}}
+        </p>
+        <p>
+          District/Amphur:{{fcCustomer.residence.district}}
+        </p>
+        <p>
+          Province:{{fcCustomer.residence.province}}
+        </p>
+        <p>
+          Post Code:{{fcCustomer.residence.postalCode}}
+        </p>
+        <p>
+          Country:{{fcCustomer.residence.country}}
+        </p>
+      </td>
+    </tr>
+
+    <!-- Workplace Address -->
+    <tr class='header'>
+      <td >
+        Workplace Address
+      </td>
+      <td>
+        Workplace Address
+      </td>
+    </tr>
+
+    <tr>
+      <td >
+        <!--  <p>
+        Company Name: บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
+        Address: 942/81, Building/Mooban ชาญอิสสระทาวเวอร์ 1, Floor 2, Road พระราม 4
+        Subdistrict/Tambol: สุริยวงศ์
+        District/Amphur: บางรัก
+        Province: กรุงเทพมหานคร
+        Post Code: 10500
+        Country: Thailand
+        </p> -->
+      </td>
+      <td class="show_block">
+        <p class="p_companyName">
+          Company Name: {{fcCustomer.companyName}}
+        </p>
+        <p>
+          Address: {{fcCustomer.work.no}} {{fcCustomer.work.building}} {{fcCustomer.work.floor}} {{fcCustomer.work.soi}} {{fcCustomer.work.road}} {{fcCustomer.work.moo}}
+        </p>
+        <p>
+          Subdistrict/Tambol:{{fcCustomer.work.subDistrict}}
+        </p>
+        <p>
+          District/Amphur:{{fcCustomer.work.district}}
+        </p>
+        <p>
+          Province:{{fcCustomer.work.province}}
+        </p>
+        <p>
+          Post Code:{{fcCustomer.work.postalCode}}
+        </p>
+        <p>
+          Country:{{fcCustomer.work.country}}
+        </p>
+      </td>
+    </tr>
+    <!-- Current Address -->
+    <tr class='header'>
+      <td >
+        Current Address
+      </td>
+      <td>
+        Current Address
+      </td>
+    </tr>
+
+    <tr>
+      <td >
+
+      </td>
+      <td class="show_block">
+        <p>
+          Address: {{fcCustomer.current.no}} {{fcCustomer.current.building}} {{fcCustomer.current.floor}} {{fcCustomer.current.soi}} {{fcCustomer.current.road}} {{fcCustomer.current.moo}}
+        </p>
+        <p>
+          Subdistrict/Tambol:{{fcCustomer.current.subDistrict}}
+        </p>
+        <p>
+          District/Amphur:{{fcCustomer.current.district}}
+        </p>
+        <p>
+          Province:{{fcCustomer.current.province}}
+        </p>
+        <p>
+          Post Code:{{fcCustomer.current.postalCode}}
+        </p>
+        <p>
+          Country:{{fcCustomer.current.country}}
+        </p>
+      </td>
+    </tr>
 
     <tr class='header'>
       <td >
@@ -179,6 +325,7 @@
         Occupation
       </td>
     </tr>
+
     <tr>
       <td >
 

@@ -2,6 +2,7 @@ export class AddrCustModel {
 
   public Addr_Seq: number; // 1:register addr; 2:current addr ; 3:work addr
   public Addr_No: string;
+  public no: string;
   public Moo: string;
   public Place: string;
   public Floor: string;

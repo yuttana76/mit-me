@@ -116,12 +116,12 @@ exports.getCustomerFullInfo = (req, res, next) => {
         }
     })
   })
-
   pool1.on('error', err => {
     // ... error handler
     console.log("EROR>>"+err);
   })
 }
+
 
 // exports.getFC_CustomerInfo = (req, res, next) => {
 //   var custCode = req.params.cusCode;
@@ -136,9 +136,61 @@ exports.getCustomerFullInfo = (req, res, next) => {
 //   });
 // }
 
+
+exports.getORG_CustomerInfo = (req, res, next) => {
+  var custCode = req.params.cusCode;
+
+  fnArray=[];
+  fnArray.push(getMFTS_CustomerInfo(custCode));
+  fnArray.push(getMFTS_CustomerInfoExt(custCode));
+  fnArray.push(getORG_Address(custCode,1));
+  fnArray.push(getORG_Address(custCode,2));
+  fnArray.push(getORG_Address(custCode,3));
+  fnArray.push(getORG_Children(custCode));
+
+  Promise.all(fnArray).then(values => {
+
+      custInfo=values[0][0]
+
+      custInfo["ext"] ={};
+
+      if (values[1].length>0){
+        custInfo.ext=values[1][0]
+      }
+
+      custInfo.ext.residence=[];
+      if(values[2].length>0){
+          custInfo.ext.residence=values[2][0]
+      }
+
+      custInfo.ext.current=[];
+      if(values[3].length>0){
+        custInfo.ext.current=values[3][0]
+      }
+
+      custInfo.ext.work=[];
+      if(values[4].length>0){
+        custInfo.ext.work=values[4][0]
+      }
+
+      if(values[5].length>0){
+        custInfo.children=values[5]
+      }
+
+      res.status(200).json({
+      result: custInfo
+    });
+
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(500).json(error.message);
+  });
+
+}
+
 exports.getFC_CustomerInfo = (req, res, next) => {
   var custCode = req.params.cusCode;
-  let mainData;
 
   fnArray=[];
   fnArray.push(getFC_CustomerInfo(custCode));
@@ -149,26 +201,67 @@ exports.getFC_CustomerInfo = (req, res, next) => {
 
   Promise.all(fnArray).then(values => {
 
+    console.log('FC data>'+JSON.stringify(values))
+
       custInfo=values[0][0]
-      custInfo.residence=values[1][0]
-      custInfo.current=values[2][0]
-      custInfo.work=values[3][0]
-      custInfo.children=values[4]
+
+      custInfo.residence=[]
+      if(values[1].length>0)
+        custInfo.residence=values[1][0]
+
+      custInfo.current=[]
+      if(values[2].length>0)
+        custInfo.current=values[2][0]
+
+      custInfo.work=[]
+      if(values[3].length>0)
+        custInfo.work=values[3][0]
+
+      if(values[4].length >0)
+        custInfo.children=values[4]
 
       res.status(200).json({
       result: custInfo
     });
-
   })
   .catch(error => {
     logger.error(error.message)
     res.status(401).json(error.message);
   });
-
 }
 
 
-const getFC_Children = (cardNumber,seq) => {
+const getORG_Children = (cardNumber) => {
+  return new Promise((resolve, reject) => {
+      var fncName = 'getFC_Address() ';
+
+      const sql = require('mssql')
+      var queryStr = `
+      SELECT
+        *
+      FROM [MIT_CUST_CHILDREN]
+      WHERE cardNumber=@cardNumber  `;
+
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .query(queryStr, (err, result) => {
+            if(err){
+              logger.error(err);
+              reject(fncName + err);
+            }else {
+              resolve(result.recordset);
+            }
+        })
+      })
+      pool1.on('error', err => {
+        logger.error(err);
+        resolve(err);
+      })
+  });
+};
+
+const getFC_Children = (cardNumber) => {
   return new Promise((resolve, reject) => {
       var fncName = 'getFC_Address() ';
 
@@ -195,6 +288,35 @@ const getFC_Children = (cardNumber,seq) => {
       const pool1 = new sql.ConnectionPool(config, err => {
         pool1.request() // or: new sql.Request(pool1)
         .input("cardNumber", sql.VarChar(20), cardNumber)
+        .query(queryStr, (err, result) => {
+            if(err){
+              logger.error(err);
+              reject(fncName + err);
+            }else {
+              resolve(result.recordset);
+            }
+        })
+      })
+      pool1.on('error', err => {
+        logger.error(err);
+        resolve(err);
+      })
+  });
+};
+
+
+const getORG_Address = (cardNumber,seq) => {
+  return new Promise((resolve, reject) => {
+      var fncName = 'getFC_Address() ';
+
+      const sql = require('mssql')
+      var queryStr = `SELECT *
+      FROM [MIT_CUST_ADDR]
+      WHERE cardNumber=@cardNumber AND Addr_Seq=@Addr_Seq `;
+
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), cardNumber)
         .input("Addr_Seq", sql.VarChar(20), seq)
         .query(queryStr, (err, result) => {
             if(err){
@@ -211,6 +333,7 @@ const getFC_Children = (cardNumber,seq) => {
       })
   });
 };
+
 
 const getFC_Address = (cardNumber,seq) => {
   return new Promise((resolve, reject) => {
@@ -304,8 +427,6 @@ exports.approveCustInfo = (req, res, next) => {
           fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
     }
 
-  // if(fcCustInfoObj.children[0])
-  //   fnArray.push(update_Children(fcCustInfoObj.children[0],actionBy));
 
   Promise.all(fnArray)
   .then(data => {
@@ -882,6 +1003,68 @@ function update_Children(childrenObj,actionBy){
   });
 }
 
+
+function getMFTS_CustomerInfo(custCode){
+
+  var fncName = 'getMFTS_CustomerInfo() ';
+
+  var queryStr = `select *
+  FROM [Account_Info]
+  WHERE Cust_Code= @Cust_Code`;
+  const sql = require('mssql')
+
+  return new Promise(function(resolve, reject) {
+
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input("Cust_Code", sql.VarChar(20), custCode)
+    .query(queryStr, (err, result) => {
+        if(err){
+          logger.error(err);
+          reject(fncName + err);
+        }else {
+
+          resolve(result.recordset);
+        }
+    })
+  })
+  pool1.on('error', err => {
+    logger.error(err);
+  })
+  });
+}
+
+function getMFTS_CustomerInfoExt(cardNumber){
+
+  var fncName = 'getMFTS_CustomerInfoExt() ';
+
+  var queryStr = `
+    SELECT *
+    FROM MIT_ACCOUNT_INFO_EXT
+    WHERE cardNumber= @cardNumber
+  `;
+
+  const sql = require('mssql')
+  return new Promise(function(resolve, reject) {
+
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input("cardNumber", sql.VarChar(20), cardNumber)
+    .query(queryStr, (err, result) => {
+        if(err){
+          logger.error(err);
+          reject(fncName + err);
+        }else {
+
+          resolve(result.recordset);
+        }
+    })
+  })
+  pool1.on('error', err => {
+    logger.error(err);
+  })
+  });
+}
 
 function getFC_CustomerInfo(cardNumber){
 

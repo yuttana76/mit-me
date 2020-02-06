@@ -6,6 +6,7 @@ import { fcIndCustomer } from '../../model/fcIndCustomer.model';
 import { ToastrService } from 'ngx-toastr';
 import { AddrCustModel } from '../../model/addrCust.model';
 import { PersonModel } from '../../model/person.model';
+import { CustomerExt } from '../../model/customerExt.model';
 
 @Component({
   selector: 'app-fc-inves-comp-dialog',
@@ -17,6 +18,7 @@ export class FcInvesCompDialogComponent implements OnInit {
   CAN_APPROVE_CUST_INFO:true;
 
   mftsCustomer:any;
+  mftsCustomerExt:any;
   fcCustomer:any;
 
   fundConnextCustomer:any;
@@ -30,6 +32,8 @@ export class FcInvesCompDialogComponent implements OnInit {
   ngOnInit() {
 
     this.mftsCustomer= new Customer();
+    this.mftsCustomerExt= new CustomerExt();
+
     this.fcCustomer= new fcIndCustomer();
     this.fcCustomer.residence = new AddrCustModel();
     this.fcCustomer.current = new AddrCustModel();
@@ -37,14 +41,32 @@ export class FcInvesCompDialogComponent implements OnInit {
     // this.fcCustomer.children = new PersonModel();
     this.fcCustomer.children = [];
 
+    this.loadCustData();
+
+  }
+
+  loadCustData(){
     this.customerService.getInvestorComparision(this.custCode).subscribe(res => {
 
-      this.mftsCustomer= JSON.parse(JSON.stringify(res[0].result[0]));
-      // this.fcCustomer= JSON.parse(JSON.stringify(res[1].result[0]));
+      console.log("RESULT DATA>" + JSON.stringify(res));
+
+      //Original data
+      this.mftsCustomer = JSON.parse(JSON.stringify(res[0].result));
+      this.mftsCustomerExt = JSON.parse(JSON.stringify(res[0].result));
+
+      if (res[0].result.ext) {
+      this.mftsCustomerExt = JSON.parse(JSON.stringify(res[0].result.ext));
+      }
+
+      if(res[0].result.children){
+        this.mftsCustomerExt.children =JSON.parse(JSON.stringify(res[0].result.children));
+      }
+
+      // FundConnext data
       this.fcCustomer= JSON.parse(JSON.stringify(res[1].result));
 
-      console.log("children>>" + JSON.stringify(this.fcCustomer.children));
-  });
+      console.log("***mftsCustomerExt.residence>" + JSON.stringify(this.mftsCustomerExt.residence));
+    });
 
   }
 
@@ -56,6 +78,9 @@ export class FcInvesCompDialogComponent implements OnInit {
     this.customerService.approveUpdateCust(this.mftsCustomer,this.fcCustomer,actionBy).subscribe(res => {
       console.log('Result>'+JSON.stringify(res));
       if(res && res["code"]==='0'){
+
+        this.loadCustData();
+
         this.toastr.success("Download invertor profile complete.", "Complete", {
           timeOut: 5000,
           closeButton: true,

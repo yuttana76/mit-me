@@ -1,20 +1,15 @@
+import { Customer } from "./customer.model";
 import { AddrCustModel } from "./addrCust.model";
 import { Country } from "./ref_country";
 import { Suitability } from "./suitability.model";
 import { PersonModel } from "./person.model";
 import { BankAccountModel } from "./bankAccount.model";
 
-
-export class fcIndCustomer{
-
-  constructor() {}
+export class CustomerExt extends  Customer{
 
   identificationCardType: string;
   passportCountry: string;
   cardNumber: string;
-  // cardExpiryDate: Date;
-  // "19831231
-  // N/A"
   cardExpiryDate: string;
   accompanyingDocument: string;
   gender: string;
@@ -28,6 +23,7 @@ export class fcIndCustomer{
   nationality: string;
   mobileNumber: string;
   email: string;
+
   maritalStatus: string;
   // spouse:Spouse;
   occupationId: string;
@@ -88,7 +84,5 @@ export class fcIndCustomer{
   public subscriptionBankAccounts: BankAccountModel[]=[];
   public redemptionBankAccounts: BankAccountModel[]=[];
   public redemptionkAccountsSameAs: string;
-
-
 
 }

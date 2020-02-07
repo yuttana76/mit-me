@@ -66,6 +66,7 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   form: FormGroup;
   conditions: CustomerCond;
 
+
   currentPage = 1;
   rowsPerPage = 20;
   totalRecords = 10;
@@ -125,10 +126,10 @@ export class CustomerListComponent implements OnInit, OnDestroy {
 
     // console.log('onSerachCust ! ');
     if (this.form.invalid) {
-      console.log('form.invalid() ' + this.form.invalid);
+      // console.log('form.invalid() ' + this.form.invalid);
       return true;
     }
-    this.spinnerLoading = false;
+    this.spinnerLoading = true;
 
     // Assign conditions
     // console.log('searchInput>>', this.form.value.custId);
@@ -170,6 +171,13 @@ export class CustomerListComponent implements OnInit, OnDestroy {
         // }
 
     });
+  }
+
+  onReset(){
+    // this.customers = [];
+
+    // subject.onNext([]);
+    this.dataSource.next([]);
   }
 
 }

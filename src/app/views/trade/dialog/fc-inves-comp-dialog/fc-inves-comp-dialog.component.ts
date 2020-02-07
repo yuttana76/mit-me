@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AddrCustModel } from '../../model/addrCust.model';
 import { PersonModel } from '../../model/person.model';
 import { CustomerExt } from '../../model/customerExt.model';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-fc-inves-comp-dialog',
@@ -15,6 +16,7 @@ import { CustomerExt } from '../../model/customerExt.model';
 })
 export class FcInvesCompDialogComponent implements OnInit {
 
+  spinnerLoading = false;
   CAN_APPROVE_CUST_INFO:true;
 
   mftsCustomer:any;
@@ -27,6 +29,7 @@ export class FcInvesCompDialogComponent implements OnInit {
     @Optional() @Inject(MAT_DIALOG_DATA) public custCode: any,
     public customerService: CustomerService,
     private toastr: ToastrService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit() {
@@ -43,12 +46,16 @@ export class FcInvesCompDialogComponent implements OnInit {
 
     this.loadCustData();
 
+
   }
 
   loadCustData(){
+
+    this.spinnerLoading = true;
+
     this.customerService.getInvestorComparision(this.custCode).subscribe(res => {
 
-      console.log("RESULT DATA>" + JSON.stringify(res));
+      // console.log("RESULT DATA>" + JSON.stringify(res));
 
       //Original data
       this.mftsCustomer = JSON.parse(JSON.stringify(res[0].result));
@@ -65,7 +72,8 @@ export class FcInvesCompDialogComponent implements OnInit {
       // FundConnext data
       this.fcCustomer= JSON.parse(JSON.stringify(res[1].result));
 
-      console.log("***mftsCustomerExt.residence>" + JSON.stringify(this.mftsCustomerExt.residence));
+      this.spinnerLoading = false;
+
     });
 
   }
@@ -73,10 +81,11 @@ export class FcInvesCompDialogComponent implements OnInit {
 
   onApprove(){
 
-    var actionBy = 'SYSTEM';
+    this.spinnerLoading = true;
 
-    this.customerService.approveUpdateCust(this.mftsCustomer,this.fcCustomer,actionBy).subscribe(res => {
-      console.log('Result>'+JSON.stringify(res));
+    this.customerService.approveUpdateCust(this.mftsCustomer,this.fcCustomer,this.authService.getUserId()).subscribe(res => {
+      // console.log('Result>'+JSON.stringify(res));
+      this.spinnerLoading = false;
       if(res && res["code"]==='0'){
 
         this.loadCustData();

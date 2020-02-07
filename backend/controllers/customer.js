@@ -201,7 +201,7 @@ exports.getFC_CustomerInfo = (req, res, next) => {
 
   Promise.all(fnArray).then(values => {
 
-    console.log('FC data>'+JSON.stringify(values))
+    // console.log('FC data>'+JSON.stringify(values))
 
       custInfo=values[0][0]
 
@@ -376,11 +376,14 @@ const getFC_Address = (cardNumber,seq) => {
  */
 exports.approveCustInfo = (req, res, next) => {
 
-  console.log("approveCustInfo()");
+  console.log("approveCustInfo()" );
+
 
   // var mftsCustInfoObj = JSON.parse(req.body.mftsCustInfo)
   var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
   var actionBy = req.body.actionBy;
+
+  console.log("fcCustInfoObj>>" + JSON.stringify(fcCustInfoObj));
 
 // VALIDATE data
 
@@ -426,6 +429,15 @@ exports.approveCustInfo = (req, res, next) => {
         if(fcCustInfoObj.children[i])
           fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
     }
+
+  //ACCOUNT
+  fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
+
+  //BANK ACCOUNT
+  fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
+
+  fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+
 
 
   Promise.all(fnArray)
@@ -487,7 +499,7 @@ exports.approveCustInfo = (req, res, next) => {
 
 function update_CustomerInfo(custObj,actionBy){
 
-  console.log("update_CustomerInfo()" +JSON.stringify(custObj));
+  // console.log("update_CustomerInfo()" +JSON.stringify(custObj));
 
   var queryStr = `
   BEGIN TRANSACTION TranName;
@@ -893,15 +905,11 @@ function update_Address(addrObj,seq,actionBy){
       .input("actionBy", sql.VarChar(50), actionBy)
 
       // .input("ProvinceName", sql.NVarChar(100), addrObj.province)
-
-
       .query(queryStr, (err, result) => {
-
         console.log(JSON.stringify(result));
           if(err){
             const err_msg=err;
             logger.error('Messge:'+err_msg);
-
             resolve({code:'9',message:''+err_msg});
           }else {
             resolve({code:'0'});
@@ -909,7 +917,6 @@ function update_Address(addrObj,seq,actionBy){
       })
     })
     pool1.on('error', err => {
-      console.log('err 2 ->' +err);
       logger.error(err);
       reject(err);
     })
@@ -1003,6 +1010,384 @@ function update_Children(childrenObj,actionBy){
   });
 }
 
+
+function update_SuitInDB(cardNumber,actionBy){
+
+  console.log("update_AccountInDB()" + cardNumber);
+  const sql = require('mssql')
+
+  var queryStr = `
+
+    BEGIN TRANSACTION TranName;
+
+    MERGE MIT_CUST_SUIT AS target
+        USING (SELECT * FROM MIT_FC_CUST_SUIT WHERE cardNumber= @cardNumber )AS source
+        ON (target.cardNumber = source.cardNumber )
+        WHEN MATCHED THEN
+            UPDATE SET target.suitNo1 = source.suitNo1
+            ,target.suitNo2 = source.suitNo2
+            ,target.suitNo3 = source.suitNo3
+            ,target.suitNo4 = source.suitNo4
+            ,target.suitNo5 = source.suitNo5
+            ,target.suitNo6 = source.suitNo6
+            ,target.suitNo7 = source.suitNo7
+            ,target.suitNo8 = source.suitNo8
+            ,target.suitNo9 = source.suitNo9
+            ,target.suitNo10 = source.suitNo10
+            ,target.suitNo11 = source.suitNo11
+            ,target.suitNo12 = source.suitNo12
+            ,target.CreateBy = @actionBy
+            ,target.CreateDate = getDate()
+        WHEN NOT MATCHED THEN
+            INSERT (cardNumber,suitNo1,suitNo2,suitNo3,suitNo4,suitNo5,suitNo6,suitNo7,suitNo8,suitNo9,suitNo10,suitNo11,suitNo12, CreateBy,CreateDate)
+            VALUES (source.cardNumber,source.suitNo1,source.suitNo2,source.suitNo3,source.suitNo4,source.suitNo5,source.suitNo6,source.suitNo7,source.suitNo8,source.suitNo9,source.suitNo10
+            ,source.suitNo11,source.suitNo12,@actionBy,getDate())   ;
+
+    COMMIT TRANSACTION TranName;
+
+  `;
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+        console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
+
+
+function update_CustAccountInDB(cardNumber,actionBy){
+
+  console.log("update_AccountInDB()" + cardNumber);
+  const sql = require('mssql')
+
+  var queryStr = `
+
+    BEGIN TRANSACTION TranName;
+
+    DECLARE @AccountCursor as CURSOR;
+
+    DECLARE @accountId as VARCHAR(20);
+    DECLARE @icLicense as VARCHAR(20);
+    DECLARE @accountOpenDate as VARCHAR(50);
+    DECLARE @investmentObjective as NVARCHAR(50);
+    DECLARE @investmentObjectiveOther as NVARCHAR(50);
+    DECLARE @approvedDate as VARCHAR(50);
+    DECLARE @mailingAddressSameAsFlag as NVARCHAR(50);
+    DECLARE @openOmnibusFormFlag as VARCHAR(10);
+
+    SET @AccountCursor = CURSOR FOR
+    select accountId
+      ,[icLicense]
+      ,[accountOpenDate]
+      ,[investmentObjective]
+      ,[investmentObjectiveOther]
+      ,[approvedDate]
+      ,[mailingAddressSameAsFlag]
+      ,[openOmnibusFormFlag]
+    FROM MIT_FC_CUST_ACCOUNT where cardNumber= @cardNumber;
+
+    OPEN @AccountCursor;
+
+    FETCH NEXT FROM @AccountCursor INTO @accountId,@icLicense,@accountOpenDate,@investmentObjective,@investmentObjectiveOther,@approvedDate,@mailingAddressSameAsFlag,@openOmnibusFormFlag;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+
+    UPDATE MIT_CUST_ACCOUNT SET
+            [icLicense]=@icLicense
+            ,[accountOpenDate]=@accountOpenDate
+            ,[investmentObjective]=@investmentObjective
+            ,[investmentObjectiveOther]=@investmentObjectiveOther
+            ,[approvedDate]=@approvedDate
+            ,[mailingAddressSameAsFlag]=@mailingAddressSameAsFlag
+            ,[openOmnibusFormFlag]=@openOmnibusFormFlag
+        ,UpdateBy=@actionBy
+        ,UpdateDate=getDate()
+        WHERE cardNumber=@cardNumber AND accountId=@accountId
+
+        IF @@ROWCOUNT=0
+        BEGIN
+          INSERT INTO  MIT_CUST_ACCOUNT (
+            cardNumber
+            ,[accountId]
+            ,[icLicense]
+            ,[accountOpenDate]
+            ,[investmentObjective]
+            ,[investmentObjectiveOther]
+            ,[approvedDate]
+            ,[mailingAddressSameAsFlag]
+            ,[openOmnibusFormFlag]
+            ,[CreateBy]
+            ,[CreateDate]
+            )
+          VALUES(
+            @cardNumber
+            ,@accountId
+            ,@icLicense
+            ,@accountOpenDate
+            ,@investmentObjective
+            ,@investmentObjectiveOther
+            ,@approvedDate
+            ,@mailingAddressSameAsFlag
+            ,@openOmnibusFormFlag
+            ,@actionBy
+            ,getDate()
+            )
+        END;
+
+      FETCH NEXT FROM @AccountCursor INTO @accountId,@icLicense,@accountOpenDate,@investmentObjective,@investmentObjectiveOther,@approvedDate,@mailingAddressSameAsFlag,@openOmnibusFormFlag;
+    END
+    CLOSE @AccountCursor;
+    DEALLOCATE @AccountCursor;
+
+    COMMIT TRANSACTION TranName;
+
+  `;
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+        console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
+
+
+
+function update_CustBankInDB(cardNumber,actionBy){
+
+  console.log("update_AccountInDB()" + cardNumber);
+  const sql = require('mssql')
+
+  var queryStr = `
+
+  BEGIN TRANSACTION TranName;
+
+  DECLARE @BankCursor as CURSOR;
+
+  DECLARE @accType as VARCHAR(10);
+  DECLARE @accountId as VARCHAR(20);
+  DECLARE @bankCode as VARCHAR(10);
+  DECLARE @bankBranchCode as VARCHAR(10);
+  DECLARE @bankAccountNo as VARCHAR(20);
+  DECLARE @default as VARCHAR(10);
+  DECLARE @finnetCustomerNo as VARCHAR(50);
+
+  SET @BankCursor = CURSOR FOR
+  SELECT
+    [accType]
+    ,[accountId]
+    ,[bankCode]
+    ,[bankBranchCode]
+    ,[bankAccountNo]
+    ,[default]
+    ,[finnetCustomerNo]
+  FROM MIT_FC_CUST_BANK where cardNumber= @cardNumber;
+
+  OPEN @BankCursor;
+
+  FETCH NEXT FROM @BankCursor INTO @accType,@accountId,@bankCode,@bankBranchCode,@bankAccountNo,@default,@finnetCustomerNo;
+
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+
+   UPDATE MIT_CUST_BANK SET
+    [accType]=@accType
+    ,[bankCode]=@bankCode
+    ,[bankBranchCode]=@bankBranchCode
+    ,[bankAccountNo]=@bankAccountNo
+    ,[default]=@default
+    ,[finnetCustomerNo]=@finnetCustomerNo
+      ,UpdateBy=@actionBy
+      ,UpdateDate=getDate()
+      WHERE cardNumber=@cardNumber
+    AND bankAccountNo=@bankAccountNo
+    AND accType=@accType
+
+      IF @@ROWCOUNT=0
+      BEGIN
+        INSERT INTO  MIT_CUST_BANK (
+       cardNumber
+      ,[accType]
+      ,[accountId]
+      ,[bankCode]
+      ,[bankBranchCode]
+      ,[bankAccountNo]
+      ,[default]
+      ,[finnetCustomerNo]
+          ,[CreateBy]
+          ,[CreateDate]
+          )
+        VALUES(
+       @cardNumber
+          ,@accType
+      ,@accountId
+      ,@bankCode
+      ,@bankBranchCode
+      ,@bankAccountNo
+      ,@default
+      ,@finnetCustomerNo
+          ,@actionBy
+          ,getDate()
+          )
+      END;
+
+    FETCH NEXT FROM @BankCursor INTO @accType,@accountId,@bankCode,@bankBranchCode,@bankAccountNo,@default,@finnetCustomerNo;
+   END
+
+  CLOSE @BankCursor;
+  DEALLOCATE @BankCursor;
+
+  COMMIT TRANSACTION TranName;
+
+  `;
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+        console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
+
+
+function update_Account(accObj,actionBy){
+
+  console.log("update_Account()" + JSON.stringify(childrenObj));
+  const sql = require('mssql')
+
+  var queryStr = `
+  BEGIN TRANSACTION TranName;
+
+    UPDATE MIT_CUST_ACCOUNT SET
+    [identificationCardType]=@identificationCardType
+    ,[passportCountry]=@passportCountry
+    ,[idCardExpiryDate]=@idCardExpiryDate
+    ,[title]=@title
+    ,[thFirstName]=@thFirstName
+    ,[thLastName]=@thLastName
+    ,[birthDate]=@birthDate
+    ,UpdateBy=@actionBy
+    ,UpdateDate=getDate()
+    WHERE cardNumber=@cardNumber AND childCardNumber=@childCardNumber
+
+    IF @@ROWCOUNT=0
+    BEGIN
+      INSERT INTO  MIT_CUST_ACCOUNT (
+        cardNumber
+        ,[accountId]
+        ,[icLicense]
+        ,[accountOpenDate]
+        ,[investmentObjective]
+        ,[investmentObjectiveOther]
+        ,[approvedDate]
+        ,[mailingAddressSameAsFlag]
+        ,[openOmnibusFormFlag]
+        ,[CreateBy]
+        [CreateDate]
+        )
+      VALUES(
+        @cardNumber
+        ,@accountId
+        ,@icLicense
+        ,@accountOpenDate
+        ,@investmentObjective
+        ,@investmentObjectiveOther
+        ,@approvedDate
+        ,@mailingAddressSameAsFlag
+        ,@openOmnibusFormFlag
+        ,@actionBy
+        ,getDate()
+        )
+        END
+
+      COMMIT TRANSACTION TranName;
+  `;
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), accObj.cardNumber)
+      .input("accountId", sql.VarChar(20), accObj.accountId)
+      .input("icLicense", sql.VarChar(20), accObj.icLicense)
+      .input("accountOpenDate", sql.VarChar(50), accObj.accountOpenDate)
+      .input("investmentObjective", sql,NVarChar(50), accObj.investmentObjective)
+      .input("investmentObjectiveOther", sql.NVarChar(50), accObj.investmentObjectiveOther)
+      .input("approvedDate", sql.VarChar(50), accObj.approvedDate)
+      .input("mailingAddressSameAsFlag", sql.VarChar(50), accObj.mailingAddressSameAsFlag)
+      .input("openOmnibusFormFlag", sql.VarChar(10), accObj.openOmnibusFormFlag)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+        console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
 
 function getMFTS_CustomerInfo(custCode){
 

@@ -1,5 +1,6 @@
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 
- <div class="contrainer">
+ <div class="contrainer" *ngIf="!spinnerLoading" >
 
   <div class="card-body text-center">
     <div>

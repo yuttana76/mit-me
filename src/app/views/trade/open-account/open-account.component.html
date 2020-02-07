@@ -254,12 +254,33 @@
 
 
                       <div class="container">
-                        <h5>Subscription Account</h5>
-                        <a  id="btn_add_child"  mat-flat-button color="accent" (click)="addSubscriptionAccounts()" class ="act_button"> Add account ...  </a>
-                        <table class="table table-striped">
+
+                        <div class="sameline">
+                          <h5>Subscription Account</h5>
+                          <a (click)="addSubscriptionAccounts()" matTooltip="Add bank account">
+                            <i class="fas fa-plus-circle fa-2x"></i>
+                          </a>
+                        </div>
+
+                        <table  class="table">
+                          <tr *ngFor="let obj of fcIndCustomer.subscriptionBankAccounts;let i = index">
+                            <td class="td_center">
+                              <i *ngIf="obj.default" class="far fa-check-circle fa-2x fa-color" alt="Main Account"></i>
+                            </td>
+                            <td>{{obj.bankTxt}}</td>
+                            <td>{{obj.branchTxt}}</td>
+                            <td>{{obj.bankAccountNo}}</td>
+                            <td>{{obj.finnetCustomerNo}}</td>
+                            <td class="td_center">
+                              <i matTooltip="Edit" class="far fa-edit"></i>
+                              <i matTooltip="Delete" class="far fa-trash-alt"></i>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <!-- <table class="table table-striped">
                           <thead>
                             <tr>
-                              <!-- <th>No</th> -->
                               <th></th>
                               <th>Bank</th>
                               <th>Branch</th>
@@ -270,7 +291,6 @@
                           </thead>
                           <tbody *ngFor="let obj of fcIndCustomer.subscriptionBankAccounts;let i = index">
                             <tr>
-                              <!-- <td class="td_center">{{i}}</td> -->
                               <td class="td_center">
                                 <i *ngIf="obj.default" class="far fa-check-circle fa-2x fa-color" alt="Main Account"></i>
                               </td>
@@ -283,15 +303,20 @@
                               <td class="td_center">
                                 <i matTooltip="Edit" class="far fa-edit fa-2x" (click)="editSubscriptionAccounts(i)"></i>
                                 <i matTooltip="Delete" class="far fa-trash-alt fa-2x" (click)="subAccount(i)" ></i>
-                                <!-- <i  id="btn_remove_child" class="far fa-2x fa-times-circle" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i> -->
                               </td>
                             </tr>
                           </tbody>
-                        </table>
+                        </table> -->
                       </div>
 
                       <div class="container" [formGroup]="redemption_formGroup">
-                        <h5>Redemtion Account</h5>
+                        <div class="sameline">
+                          <h5>Redemtion Account</h5>
+                          <a (click)="addRedemptionAccount()" matTooltip="Add bank account">
+                            <i class="fas fa-plus-circle fa-2x"></i>
+                          </a>
+                        </div>
+
                         <div class='row'>
                           <section class="example-section" >
                               <mat-radio-group   [(ngModel)]="fcIndCustomer.redemptionkAccountsSameAs"  (change)="redempAccountAs($event)"  formControlName="redemptionkAccountsSameAs"  >
@@ -300,8 +325,24 @@
                               </mat-radio-group>
                             </section>
                         </div>
-                        <a  id="btn_add_child"  mat-flat-button color="accent" (click)="addRedemptionAccount()" class ="act_button"> Add account ...  </a>
-                        <table class="table table-striped">
+
+                        <table  class="table">
+                          <tr *ngFor="let obj of fcIndCustomer.redemptionBankAccounts;let i = index">
+                            <td class="td_center">
+                              <i *ngIf="obj.default" class="far fa-check-circle fa-2x fa-color" alt="Main Account"></i>
+                            </td>
+                            <td>{{obj.bankTxt}}</td>
+                            <td>{{obj.branchTxt}}</td>
+                            <td>{{obj.bankAccountNo}}</td>
+                            <td>{{obj.finnetCustomerNo}}</td>
+                            <td class="td_center">
+                              <i matTooltip="Edit" class="far fa-edit"></i>
+                              <i matTooltip="Delete" class="far fa-trash-alt"></i>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <!-- <table class="table table-striped">
                           <thead>
                             <tr>
                               <th></th>
@@ -314,7 +355,6 @@
                           </thead>
                           <tbody *ngFor="let obj of fcIndCustomer.redemptionBankAccounts;let i = index">
                             <tr>
-                              <!-- <td class="td_center" >{{i}}</td> -->
                               <td class="td_center">
                                 <i *ngIf="obj.default" class="far fa-check-circle fa-2x fa-color" alt="Main Account"></i>
                               </td>
@@ -323,13 +363,12 @@
                               <td>{{obj.bankAccountNo}}</td>
                               <td>{{obj.finnetCustomerNo}}</td>
                               <td class="td_center">
-                                <i matTooltip="Edit" class="far fa-edit fa-2x"></i>
+                                <i matTooltip="Edit" class="far fa-edit"></i>
                                 <i matTooltip="Delete" class="far fa-trash-alt fa-2x"></i>
-                                <!-- <i  id="btn_remove_child" class="far fa-2x fa-times-circle" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i> -->
                               </td>
                             </tr>
                           </tbody>
-                        </table>
+                        </table> -->
                       </div>
 
                   </div>

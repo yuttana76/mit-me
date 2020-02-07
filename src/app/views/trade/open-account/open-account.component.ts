@@ -18,6 +18,9 @@ import { MatDialogRef, MatDialog } from '@angular/material';
 import { BankAccountDialogComponent } from '../dialog/bank-account-dialog/bank-account-dialog.component';
 import { BankAccountModel } from '../model/bankAccount.model';
 import { MatRadioChange } from '@angular/material';
+import { OpenAccService } from '../services/openAcc.service';
+import { JsonPipe } from '@angular/common';
+import { rS } from '@angular/core/src/render3';
 
 @Component({
     selector: 'app-open-account',
@@ -33,6 +36,8 @@ export class OpenAccountComponent implements OnInit {
   SEQ_CURR_ADDR = 2;
   SEQ_WORK_ADDR = 3;
   SEQ_MAIL_ADDR = 4;
+
+  MAS_INV ="INVObject";
 
   // openAccount = new OpenAccount();
   public fcIndCustomer: fcIndCustomer = new fcIndCustomer();
@@ -68,29 +73,42 @@ export class OpenAccountComponent implements OnInit {
     private onlineProcessService: OnlineProcessService,
     private masterDataService:MasterDataService,
     public shareDataService: ShareDataService,
+    public openAccService : OpenAccService,
 
     ) {}
 
+
+
   ngOnInit() {
 
-    //Master data initial
-    this.masterDataService.getFCoccupation().subscribe((data: any[]) => {
-      this.occupationList = data;
-    });
-    this.masterDataService.getFCincomeSource().subscribe((data: any[]) => {
-      this.incomeSourceList = data;
-    });
-    this.masterDataService.getFCbusinessType().subscribe((data: any[]) => {
-      this.businessTypeList = data;
-    });
-    this.masterDataService.getFCincomeLevel().subscribe((data: any[]) => {
-      this.incomeList = data;
+    this.openAccService.getMasterData(this.MAS_INV).subscribe(res => {
+      this.occupationList = res[0].result;
+      this.incomeSourceList = res[1].result;
+      this.businessTypeList = res[2].result;
+      this.incomeList = res[3].result;
+      this.investObjectList= res[4].result;
     });
 
-     // Initial data
-     this.masterDataService.getCodeLookup("INVObject").subscribe((data: any[]) => {
-      this.investObjectList = data;
-    });
+    //Master data initial
+    // this.masterDataService.getFCoccupation().subscribe((data: any[]) => {
+    //   // this.occupationList = data;
+    // });
+    // this.masterDataService.getFCincomeSource().subscribe((data: any[]) => {
+    //   this.incomeSourceList = data;
+    // });
+    // this.masterDataService.getFCbusinessType().subscribe((data: any[]) => {
+    //   this.businessTypeList = data;
+    // });
+    // this.masterDataService.getFCincomeLevel().subscribe((data: any[]) => {
+    //   this.incomeList = data;
+    // });
+
+    //  // Initial data
+    //  this.masterDataService.getCodeLookup("INVObject").subscribe((data: any[]) => {
+    //   this.investObjectList = data;
+    // });
+
+
 
     // Form control initial
     this.firstFormGroup = this._formBuilder.group({

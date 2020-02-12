@@ -453,7 +453,6 @@ export class OpenAccountComponent implements OnInit {
       console.log(" Controls >>" + name);
         if (controls[name].invalid) {
             console.log(" *** Invalid >>" + name);
-
         }
     }
   }

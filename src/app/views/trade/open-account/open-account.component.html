@@ -8,34 +8,32 @@
         <!-- 1 st -->
         <mat-step [stepControl]="firstFormGroup">
 
-          <form [formGroup]="firstFormGroup" class="col-md-6">
+          <form [formGroup]="firstFormGroup" class=" firstFormGroup">
+            <div class="contrainer">
             <ng-template matStepLabel>Entry ID</ng-template>
-
-            <div class="newLine">
-              <mat-form-field >
-                <mat-select formControlName="identificationCardType" placeholder="CardType" [(ngModel)]="fcIndCustomer.identificationCardType"
-                required>
-                  <mat-option *ngFor="let obj of shareDataService.CardTypeList" [value]="obj.value">
-                      {{obj.text}}
-                  </mat-option>
-                </mat-select>
-                <mat-error *ngIf="firstFormGroup.get('identificationCardType').invalid">Require this field</mat-error>
-              </mat-form-field>
-
-              <mat-form-field >
-                <input matInput placeholder="ID card" formControlName="identifier" [(ngModel)]="fcIndCustomer.cardNumber"  >
-                <button mat-button *ngIf="fcIndCustomer.cardNumber" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.cardNumber=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-                <mat-error *ngIf="firstFormGroup.get('identifier').invalid">Require this field</mat-error>
-
-              </mat-form-field>
+            <div class="row div_error">
+              <mat-error *ngIf="firstFormGroup.get('identificationCardType').invalid"><li>Require dard type</li></mat-error>
+              <mat-error *ngIf="firstFormGroup.get('identifier').invalid"><li>Require card number</li></mat-error>
             </div>
 
+            <div class="row">
+              <mat-radio-group class="col-md-12" formControlName="identificationCardType"  [(ngModel)]="fcIndCustomer.identificationCardType" >
+                <mat-radio-button  *ngFor="let obj of shareDataService.CardTypeList" [value]="obj.value">
+                  {{obj.text}}
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <div class="pid_div">
+              <input type="text" class="form-control col-md-4"  placeholder="ID card"
+              formControlName="identifier" [(ngModel)]="fcIndCustomer.cardNumber" maxlength="13" size="13"   autocomplete="off" >
+            </div>
 
             <div>
                 <button type="button" class="btn btn-success" matStepperNext >Next</button>
             </div>
+
+          </div>
 
           </form>
         </mat-step>
@@ -393,8 +391,10 @@
 <!-- ******************************* -->
             <div>
                 <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
-                <button type="button" class="btn btn-success" matStepperNext (click)="openAccountSubmit()">Submit</button>
                 <!-- <button type="button" class="btn btn-success" matStepperNext (click)="onFillFormClick()" >Next</button> -->
+                <button type="button" class="btn btn-success" matStepperNext >Next</button>
+                <button type="button" class="btn btn-success"  (click)="openAccountSubmit()">Submit</button>
+
             </div>
 
         </mat-step>
@@ -404,8 +404,8 @@
           <ng-template matStepLabel>Done</ng-template>
           You are now done.
           <div>
-              <!-- <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
-              <button type="button" class="btn btn-success" matStepperNext (click)="onSubmit()">Submit</button> -->
+              <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
+              <button type="button" class="btn btn-success"  (click)="openAccountSubmit()">Submit</button>
               <button type="button" class="btn btn-success" (click)="onClose()">Close</button>
 
           </div>

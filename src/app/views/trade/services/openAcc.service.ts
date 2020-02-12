@@ -31,13 +31,10 @@ import { Injectable } from '../../../../../node_modules/@angular/core';
 
 
   openAccount(fcIndCustomer, actionBy) {
-    // console.log('Service   openAccount() !');
     const data = {
       'fcIndCustomer': JSON.stringify(fcIndCustomer),
       'actionBy': actionBy,
       };
-
-    // console.log('DATA Submit>>' + JSON.stringify(data));
 
     return this.http.post<{ message: string, data: any }>(BACKEND_ACCOUNT_URL+'/openAccount', data);
   }

@@ -16,6 +16,7 @@ export class fcIndCustomer{
   // "19831231
   // N/A"
   cardExpiryDate: string;
+  cardNotExp: string;
   accompanyingDocument: string;
   gender: string;
   title: string;
@@ -69,7 +70,7 @@ export class fcIndCustomer{
   ndidRequestId:string;
   suitability:Suitability;
   accountType: string;
-  public MailSameAs: string;
+  public mailSameAs: string;
   public moneyLaundaring: string;
   public politicalRelate: string;
   public rejectFinancial: string;

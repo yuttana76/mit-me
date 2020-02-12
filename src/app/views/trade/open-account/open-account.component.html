@@ -11,9 +11,27 @@
           <form [formGroup]="firstFormGroup" class="col-md-6">
             <ng-template matStepLabel>Entry ID</ng-template>
 
-            <mat-form-field >
-              <input matInput placeholder="ID card" formControlName="identifier" [(ngModel)]="fcIndCustomer.cardNumber"  >
-            </mat-form-field>
+            <div class="newLine">
+              <mat-form-field >
+                <mat-select formControlName="identificationCardType" placeholder="CardType" [(ngModel)]="fcIndCustomer.identificationCardType"
+                required>
+                  <mat-option *ngFor="let obj of shareDataService.CardTypeList" [value]="obj.value">
+                      {{obj.text}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="firstFormGroup.get('identificationCardType').invalid">Require this field</mat-error>
+              </mat-form-field>
+
+              <mat-form-field >
+                <input matInput placeholder="ID card" formControlName="identifier" [(ngModel)]="fcIndCustomer.cardNumber"  >
+                <button mat-button *ngIf="fcIndCustomer.cardNumber" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.cardNumber=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-error *ngIf="firstFormGroup.get('identifier').invalid">Require this field</mat-error>
+
+              </mat-form-field>
+            </div>
+
 
             <div>
                 <button type="button" class="btn btn-success" matStepperNext >Next</button>
@@ -53,13 +71,13 @@
                   <div class="card-body ">
 
                     <span class="label_title"><h5>{{ formService.register_addr_title }}</h5></span>
-                    <app-cust-addr [addrData]="register_addrData" [custCode]="fcIndCustomer.cardNumber" [addrFormGroup]="register_formGroup" ></app-cust-addr>
+                    <app-cust-addr [addrData]="fcIndCustomer.residence" [custCode]="fcIndCustomer.cardNumber" [addrFormGroup]="register_formGroup" ></app-cust-addr>
 
                     <span class="label_title"><h5>{{ formService.work_addr_title }}</h5></span>
                     <div class='row'>
                       <form [formGroup]="register_formGroup">
                       <section class="example-section">
-                          <mat-radio-group   [(ngModel)]="work_addrData.SameAs"  (change)="workAddrOnChange(work_addrData.SameAs)"  formControlName="work_addrData"  >
+                          <mat-radio-group   [(ngModel)]="fcIndCustomer.work.SameAs"  (change)="workAddrOnChange(fcIndCustomer.work.SameAs)"  formControlName="work_addrData"  >
                             <mat-radio-button class="example-margin" value="1">ตามทะเบียนบ้าน</mat-radio-button>
                             <mat-radio-button class="example-margin" value="9">อื่นๆ (โปรดระบุ)</mat-radio-button>
                           </mat-radio-group>
@@ -69,14 +87,14 @@
                       </form>
                   </div>
                   <div>
-                    <app-cust-addr *ngIf="this.work_addrData.SameAs == '9' " [addrData]="work_addrData" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
+                    <app-cust-addr *ngIf="fcIndCustomer.work.SameAs == '9' " [addrData]="fcIndCustomer.work" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="work_formGroup" ></app-cust-addr>
                   </div>
 
                   <span class="label_title"><h5>{{ formService.contact_addr_title }}</h5></span>
                     <div class='row'>
                       <form [formGroup]="register_formGroup">
                       <section class="example-section" >
-                          <mat-radio-group [(ngModel)]="current_addrData.SameAs"  (change)="currAddrOnChange(current_addrData.SameAs)" formControlName="cur_addrData">
+                          <mat-radio-group [(ngModel)]="fcIndCustomer.current.SameAs"  (change)="currAddrOnChange(fcIndCustomer.current.SameAs)" formControlName="cur_addrData">
                               <mat-radio-button class="example-margin" value="1">ตามทะเบียนบ้าน</mat-radio-button>
                               <mat-radio-button class="example-margin" value="3">ตามที่่ทำงาน</mat-radio-button>
                               <mat-radio-button class="example-margin" value="9">อื่นๆ (โปรดระบุ)</mat-radio-button>
@@ -86,12 +104,8 @@
                       </form>
                   </div>
                   <div>
-                    <app-cust-addr  *ngIf="this.current_addrData.SameAs == '9' " [addrData]="current_addrData" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="current_formGroup"></app-cust-addr>
+                    <app-cust-addr  *ngIf="fcIndCustomer.current.SameAs == '9' " [addrData]="fcIndCustomer.current" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="current_formGroup"></app-cust-addr>
                   </div>
-
-
-
-
                   </div>
                 </div>
               </div>
@@ -171,8 +185,8 @@
                     <div class='row'>
                       <section class="example-section" >
                         <mat-radio-group  id="moneyLaundaring" [(ngModel)]="fcIndCustomer.moneyLaundaring"   formControlName="moneyLaundaring">
-                          <mat-radio-button  value="Y">ใช่ Yes</mat-radio-button>
-                          <mat-radio-button  value="N">ไม่ใช่ No</mat-radio-button>
+                          <mat-radio-button  value="true">ใช่ Yes</mat-radio-button>
+                          <mat-radio-button  value="false">ไม่ใช่ No</mat-radio-button>
                         </mat-radio-group>
                         <mat-error *ngIf="indCustFormGroup.get('moneyLaundaring').invalid"> *โปรดเลือก Please choose </mat-error>
                       </section>
@@ -182,8 +196,8 @@
                     <div class='row'>
                       <section class="example-section" >
                         <mat-radio-group [(ngModel)]="fcIndCustomer.politicalRelate"   formControlName="politicalRelate">
-                            <mat-radio-button value="Y">ใช่ Yes</mat-radio-button>
-                            <mat-radio-button  value="N">ไม่ใช่ No</mat-radio-button>
+                            <mat-radio-button value="true">ใช่ Yes</mat-radio-button>
+                            <mat-radio-button  value="false">ไม่ใช่ No</mat-radio-button>
                           </mat-radio-group>
                           <mat-error *ngIf="indCustFormGroup.get('politicalRelate').invalid"> *โปรดเลือก Please choose </mat-error>
                       </section>
@@ -193,8 +207,8 @@
                     <div class='row'>
                       <section class="example-section" >
                         <mat-radio-group [(ngModel)]="fcIndCustomer.rejectFinancial"   formControlName="rejectFinancial">
-                            <mat-radio-button  value="Y">ใช่ Yes</mat-radio-button>
-                            <mat-radio-button  value="N">ไม่ใช่ No</mat-radio-button>
+                            <mat-radio-button  value="true">ใช่ Yes</mat-radio-button>
+                            <mat-radio-button  value="false">ไม่ใช่ No</mat-radio-button>
                           </mat-radio-group>
                           <mat-error *ngIf="indCustFormGroup.get('rejectFinancial').invalid"> *โปรดเลือก Please choose </mat-error>
                       </section>
@@ -225,19 +239,19 @@
                     <div class='row'>
                         <form [formGroup]="mail_formGroup">
                         <section class="example-section" >
-                            <mat-radio-group [(ngModel)]="fcIndCustomer.MailSameAs"  (change)="mailAddrOnChange(fcIndCustomer.MailSameAs)" formControlName="MailSameAs">
+                            <mat-radio-group [(ngModel)]="fcIndCustomer.mailSameAs"  (change)="mailAddrOnChange(fcIndCustomer.mailSameAs)" formControlName="mailSameAs">
                                 <mat-radio-button class="example-margin" value="email">{{formService.label_Email}}</mat-radio-button>
                                 <mat-radio-button class="example-margin" value="reg">{{formService.label_addrAs_reg}}</mat-radio-button>
                                 <mat-radio-button class="example-margin" value="work">{{formService.label_addrAs_work}}</mat-radio-button>
                                 <mat-radio-button class="example-margin" value="curr">{{formService.label_addrAs_curr}}</mat-radio-button>
                                 <mat-radio-button class="example-margin" value="9">{{formService.label_addr_oth}}</mat-radio-button>
                               </mat-radio-group>
-                              <mat-error *ngIf="mail_formGroup.get('MailSameAs').invalid">โปรดเลือก Please choose </mat-error>
+                              <mat-error *ngIf="mail_formGroup.get('mailSameAs').invalid">โปรดเลือก Please choose </mat-error>
                           </section>
                         </form>
                     </div>
                     <div>
-                      <app-cust-addr  *ngIf="this.fcIndCustomer.MailSameAs == '9' "  [addrData]="mail_addrData" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
+                      <app-cust-addr  *ngIf="this.fcIndCustomer.mailSameAs == '9' "  [addrData]="fcIndCustomer.mail_addrData" [custCode]="fcIndCustomer.cardNumber"  [addrFormGroup]="mail_formGroup"></app-cust-addr>
                     </div>
 
 
@@ -379,7 +393,7 @@
 <!-- ******************************* -->
             <div>
                 <button type="button" class="btn btn-secondary" matStepperPrevious >Back</button>
-                <button type="button" class="btn btn-success" matStepperNext (click)="onSubmit()">Submit</button>
+                <button type="button" class="btn btn-success" matStepperNext (click)="openAccountSubmit()">Submit</button>
                 <!-- <button type="button" class="btn btn-success" matStepperNext (click)="onFillFormClick()" >Next</button> -->
             </div>
 

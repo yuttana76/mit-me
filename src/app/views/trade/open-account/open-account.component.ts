@@ -21,6 +21,7 @@ import { MatRadioChange } from '@angular/material';
 import { OpenAccService } from '../services/openAcc.service';
 import { JsonPipe } from '@angular/common';
 import { rS } from '@angular/core/src/render3';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-open-account',
@@ -32,15 +33,16 @@ export class OpenAccountComponent implements OnInit {
 
   isLinear = true;
   reqNDID = false;
+
   SEQ_REG_ADDR = 1;
   SEQ_CURR_ADDR = 2;
   SEQ_WORK_ADDR = 3;
   SEQ_MAIL_ADDR = 4;
 
-  MAS_INV ="INVObject";
+  AS_RESIDENCE='Residence';
+  AS_WORK='Work';
 
-  // openAccount = new OpenAccount();
-  public fcIndCustomer: fcIndCustomer = new fcIndCustomer();
+  MAS_INV ="INVObject";
 
   firstFormGroup: FormGroup;
   // fillFormGroup: FormGroup;
@@ -53,10 +55,12 @@ export class OpenAccountComponent implements OnInit {
 
   bankAccountDialogComponent: MatDialogRef<BankAccountDialogComponent>;
 
-  public register_addrData: AddrCustModel = new AddrCustModel();
-  public work_addrData: AddrCustModel = new AddrCustModel();
-  public current_addrData: AddrCustModel = new AddrCustModel();
-  public mail_addrData: AddrCustModel = new AddrCustModel();
+  public fcIndCustomer: fcIndCustomer = new fcIndCustomer();
+
+  // public register_addrData: AddrCustModel = new AddrCustModel();
+  // public work_addrData: AddrCustModel = new AddrCustModel();
+  // public current_addrData: AddrCustModel = new AddrCustModel();
+  // public mail_addrData: AddrCustModel = new AddrCustModel();
 
   occupationList: FCoccupation[];
   incomeSourceList: FCincomeSource[];
@@ -69,15 +73,14 @@ export class OpenAccountComponent implements OnInit {
     public dialog: MatDialog,
     public formService: OpenAccountFormService,
     private toastr: ToastrService,
+    private authService: AuthService,
     private confirmationDialogService: ConfirmationDialogService,
-    private onlineProcessService: OnlineProcessService,
+    private openAccount: OpenAccService,
     private masterDataService:MasterDataService,
     public shareDataService: ShareDataService,
     public openAccService : OpenAccService,
 
     ) {}
-
-
 
   ngOnInit() {
 
@@ -112,7 +115,8 @@ export class OpenAccountComponent implements OnInit {
 
     // Form control initial
     this.firstFormGroup = this._formBuilder.group({
-      identifier: ['', Validators.required]
+      identificationCardType: ['', Validators.required],
+      identifier: ['', Validators.required],
     });
 
     this.indCustFormGroup =new FormGroup({
@@ -385,7 +389,7 @@ export class OpenAccountComponent implements OnInit {
   });
 
   this.mail_formGroup = new FormGroup({
-    MailSameAs: new FormControl(null, {
+    mailSameAs: new FormControl(null, {
       validators: [Validators.required]
     }),
     Addr_No: new FormControl(null, {
@@ -454,14 +458,42 @@ export class OpenAccountComponent implements OnInit {
     }
   }
 
-  onSubmit(){
+  openAccountSubmit(){
 
-    console.log('**SUBMITED >>');
-    console.log('**indCustFormGroup.invalid >>' + this.indCustFormGroup.invalid);
+    var create_By = this.authService.getUserData() || 'NONE';
 
-    this.onlineProcessService.saveAccount(this.fcIndCustomer).subscribe(
-      (rs: any) => {
-      console.log('Result saveAccount() >>' + JSON.stringify(rs));
+
+    // Check work address
+    if(this.fcIndCustomer.workAddressSameAsFlag === this.AS_RESIDENCE){
+      this.fcIndCustomer.work = Object.assign({}, this.fcIndCustomer.residence);
+    }
+
+    // Check current address
+    if(this.fcIndCustomer.currentAddressSameAsFlag === this.AS_RESIDENCE ){
+      this.fcIndCustomer.current = Object.assign({}, this.fcIndCustomer.residence);
+    }else if(this.fcIndCustomer.currentAddressSameAsFlag === this.AS_WORK ){
+      this.fcIndCustomer.current = Object.assign({}, this.fcIndCustomer.work);
+    }
+
+    this.openAccount.openAccount(this.fcIndCustomer,create_By).subscribe(
+      (res: any) => {
+      // console.log('Result saveAccount() >>' + JSON.stringify(res));
+
+      if(res && res["code"]==='0'){
+        this.toastr.success("Save account information", "Complete", {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+
+      }else{
+        this.toastr.warning(res.message, "Incomplete", {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+      }
+
     });
 
     // this.confirmationDialogService.confirm('Confirmation', ` Please confirm your data before submit. `)
@@ -493,18 +525,24 @@ export class OpenAccountComponent implements OnInit {
 
 
   workAddrOnChange(val){
+
+    this.fcIndCustomer.workAddressSameAsFlag = '';
+
     if(val ==='1'){
-      this.work_addrData = Object.assign({}, this.register_addrData);
+      this.fcIndCustomer.work = Object.assign({}, this.fcIndCustomer.residence);
       this.register_formGroup.removeControl('work_formGroup');
 
+      this.fcIndCustomer.workAddressSameAsFlag = this.AS_RESIDENCE;
+
     }else { // Other
-      this.work_addrData = new AddrCustModel();
+      this.fcIndCustomer.work = new AddrCustModel();
       this.register_formGroup.addControl('work_formGroup', this.work_formGroup);
       this.work_formGroup.setParent(this.register_formGroup);
     }
-    this.work_addrData.Addr_Seq = this.SEQ_WORK_ADDR;
-    this.work_addrData.SameAs = val;
-    this.work_addrData.Country_Id=0;
+
+    this.fcIndCustomer.work.Addr_Seq = this.SEQ_WORK_ADDR;
+    this.fcIndCustomer.work.SameAs = val;
+    this.fcIndCustomer.work.Country_Id=0;
 
     // Check which components are in validation
     if (this.work_formGroup.invalid) {
@@ -520,23 +558,27 @@ export class OpenAccountComponent implements OnInit {
 
 
   currAddrOnChange(val){
+    this.fcIndCustomer.currentAddressSameAsFlag = "";
     if(val ==='1'){
-      this.current_addrData = Object.assign({}, this.register_addrData);
-      this.register_formGroup.removeControl('current_formGroup');
-    } else if ( val === '3'){
-      this.current_addrData = Object.assign({}, this.work_addrData);
+      this.fcIndCustomer.current = Object.assign({}, this.fcIndCustomer.residence);
       this.register_formGroup.removeControl('current_formGroup');
 
+      this.fcIndCustomer.currentAddressSameAsFlag = this.AS_RESIDENCE;
+    } else if ( val === '3'){
+      this.fcIndCustomer.current = Object.assign({}, this.fcIndCustomer.work);
+      this.register_formGroup.removeControl('current_formGroup');
+
+      this.fcIndCustomer.currentAddressSameAsFlag = this.AS_WORK;
     } else { // Other
-      this.current_addrData = new AddrCustModel();
+      this.fcIndCustomer.current = new AddrCustModel();
       this.register_formGroup.addControl('current_formGroup', this.current_formGroup);
       this.current_formGroup.setParent(this.register_formGroup);
 
     }
 
-    this.current_addrData.SameAs = val;
-    this.current_addrData.Addr_Seq = this.SEQ_CURR_ADDR;
-    this.current_addrData.Country_Id=0;
+    this.fcIndCustomer.current.SameAs = val;
+    this.fcIndCustomer.current.Addr_Seq = this.SEQ_CURR_ADDR;
+    this.fcIndCustomer.current.Country_Id=0;
 
     // Check which components are in validation
     if (this.current_formGroup.invalid) {
@@ -556,30 +598,30 @@ export class OpenAccountComponent implements OnInit {
     if(val === 'email'){
 
     } else if(val === 'reg'){
-      this.mail_addrData = Object.assign({}, this.register_addrData);
+      this.fcIndCustomer.mail_addrData = Object.assign({}, this.fcIndCustomer.residence);
       this.register_formGroup.removeControl('mail_formGroup');
     } else if ( val === 'work'){
-      this.mail_addrData = Object.assign({}, this.work_addrData);
+      this.fcIndCustomer.mail_addrData = Object.assign({}, this.fcIndCustomer.work);
       this.register_formGroup.removeControl('mail_formGroup');
     } else if ( val === 'curr'){
-      this.mail_addrData = Object.assign({}, this.current_addrData);
+      this.fcIndCustomer.mail_addrData = Object.assign({}, this.fcIndCustomer.current);
       this.register_formGroup.removeControl('mail_formGroup');
     } else { // 9:Other
-      this.mail_addrData = new AddrCustModel();
+      this.fcIndCustomer.mail_addrData = new AddrCustModel();
 
       this.register_formGroup.addControl('mail_formGroup', this.mail_formGroup);
       this.mail_formGroup.setParent(this.register_formGroup);
 
       // Default value
-      this.mail_addrData.Country_Id=0;
+      this.fcIndCustomer.mail_addrData.Country_Id=0;
 
     }
 
-    this.fcIndCustomer.MailSameAs = val;
-    this.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
+    this.fcIndCustomer.mailSameAs = val;
+    this.fcIndCustomer.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
 
     if(val === 'email'){
-      this.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
+      this.fcIndCustomer.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
       // Check which components are in validation
       if (this.mail_formGroup.invalid) {
         this.mail_formGroup.enable();

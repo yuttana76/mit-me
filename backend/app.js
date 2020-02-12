@@ -48,6 +48,7 @@ const ledApiRoutes = require('./routes/led_api');
 const swanRoutes = require('./routes/swan');
 const ndidProxyRoutes = require('./routes/ndidProxy');
 const onlineProcessRoutes = require('./routes/onlineProcess');
+const openAccountRoutes = require('./routes/openAccount');
 
 const exportFileRoutes = require('./routes/exportFile');
 const fundConnextAPIRoutes = require('./routes/fundConnextAPI');
@@ -164,6 +165,8 @@ app.use("/api/stream",streamingRoutes);
 app.use("/api/sms",smsRoutes);
 
 app.use("/api/online",onlineProcessRoutes);
+
+app.use("/api/account",openAccountRoutes);
 
 app.use("/api/survey",surveyRoutes);
 

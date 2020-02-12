@@ -66,6 +66,17 @@
     </mat-form-field>
   </div>
 
+
+<div class='row'>
+  <mat-form-field class="col-md-4">
+    <input matInput [matDatepicker]="birthDatepicker" [(ngModel)]="personModel.dob" formControlName="dob"  placeholder="birthDate" required>
+    <mat-datepicker-toggle matSuffix [for]="birthDatepicker"></mat-datepicker-toggle>
+    <mat-datepicker #birthDatepicker touchUi="true"></mat-datepicker>
+    <mat-error *ngIf="formGroup.get('dob').invalid">Require this field</mat-error>
+  </mat-form-field>
+  </div>
+
+
   </form>
 
 <mat-card-actions>

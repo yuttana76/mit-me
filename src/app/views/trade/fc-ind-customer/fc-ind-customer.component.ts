@@ -7,6 +7,7 @@ import { ErrorStateMatcher, MatDialogRef, MatDialog } from '@angular/material';
 import { ChildrenDialogComponent } from '../dialog/children-dialog/children-dialog.component';
 import { PersonModel } from '../model/person.model';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
+import { ShareDataService } from '../services/shareData.service';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -30,46 +31,16 @@ export class FcIndCustomerComponent implements OnInit  {
 
   childrenDialogComponent: MatDialogRef<ChildrenDialogComponent>;
 
-  // indCustFormGroup:FormGroup;
   addr_formGroup: FormGroup;
   background_formGroup: FormGroup;
 
-
   isCollapsed = false;
-
-  public nationList= [{"Nation_Code":"TH","Nation_Desc":"Thai"}
-    ,{"Nation_Code":"JP","Nation_Desc":"Japanese"},
-  ]
-
-
-  public CountryList=[{"value":"TH","text":"Thailand "},{"value":"US","text":"United States of America (the)"},{"value":"JP","text":"Japan)"}]
-
-  public CardTypeList=[
-          {"value":"PASSPORT","text":"PASSPORT"},{"value":"CITIZEN_CARD","text":"บัตรประชาชน"}
-                    ]
-  // public CardTypeList=[{"value":"CITIZEN_CARD","text":"บัตรประชาชน"}
-  //                     ,{"value":"PASSPORT","text":"PASSPORT"}
-  //                   ]
-
-  public GenderList=[{"value":"Male","text":"Male"},{"value":"Female","text":"Female"}]
-
-  public TitleList=[{"value":"MR","text":"MR"}
-  ,{"value":"MRS","text":"MRS"}
-  ,{"value":"MRS","text":"MRS"}
-  ,{"value":"MISS","text":"MISS"}
-  ,{"value":"OTHER","text":"OTHER"}
-];
-
-public MaritalStatusList=[{"value":"Single","text":"Single"}
-,{"value":"Married","text":"Married"}
-,{"value":"Divorced","text":"Divorced"}
-,{"value":"Widowhood","text":"Widowhood"}
-]
 
   constructor(
     public formService: FcIndCustomer,
     public dialog: MatDialog,
     private confirmationDialogService: ConfirmationDialogService,
+    public shareDataService:ShareDataService,
   ) { }
 
   ngOnInit() {
@@ -118,7 +89,7 @@ public MaritalStatusList=[{"value":"Single","text":"Single"}
     }else{
       this.indCustFormGroup.controls["spPassportCountry"].clearValidators();
       this.indCustFormGroup.controls["spPassportCountry"].updateValueAndValidity();
-      this.fcIndCustomer.spouse.cardType = "";
+      // this.fcIndCustomer.spouse.cardType = "";
         return false;
     }
    }
@@ -142,13 +113,16 @@ public MaritalStatusList=[{"value":"Single","text":"Single"}
     this.indCustFormGroup.controls["cardExpiryDate"].clearValidators();
     this.indCustFormGroup.controls["cardExpiryDate"].updateValueAndValidity();
     this.indCustFormGroup.controls["cardExpiryDate"].disabled;
-    this.fcIndCustomer.cardExpiryDate = 'N/A';
+
+    this.fcIndCustomer.cardExpiryDate = '';
+    this.fcIndCustomer.cardNotExp = 'Y';
 
    }else{
     this.indCustFormGroup.controls["cardExpiryDate"].enabled;
     this.indCustFormGroup.controls["cardExpiryDate"].setValidators(Validators.required);
     this.indCustFormGroup.controls["cardExpiryDate"].updateValueAndValidity();
     this.fcIndCustomer.cardExpiryDate  = "";
+    this.fcIndCustomer.cardNotExp = 'N';
    }
   }
 

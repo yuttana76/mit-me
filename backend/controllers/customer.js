@@ -383,7 +383,7 @@ exports.approveCustInfo = (req, res, next) => {
   var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
   var actionBy = req.body.actionBy;
 
-  console.log("fcCustInfoObj>>" + JSON.stringify(fcCustInfoObj));
+  // console.log("fcCustInfoObj>>" + JSON.stringify(fcCustInfoObj));
 
 // VALIDATE data
 
@@ -443,13 +443,14 @@ exports.approveCustInfo = (req, res, next) => {
   Promise.all(fnArray)
   .then(data => {
 
-    console.log("approveCustInfo()" + JSON.stringify(data));
+    // console.log("approveCustInfo()" + JSON.stringify(data));
       res.status(200).json(data[0]);
   })
   .catch(error => {
     logger.error(error.message)
     res.status(401).json(error.message);
   });
+
 }
 
 // exports.approveCustInfo = (req, res, next) => {
@@ -572,9 +573,10 @@ function update_CustomerInfo(custObj,actionBy){
     ,fatcaDeclarationDate=@fatcaDeclarationDate
     ,workAddressSameAsFlag=@workAddressSameAsFlag
     ,currentAddressSameAsFlag=@currentAddressSameAsFlag
-
     ,UpdateBy=@actionBy
     ,UpdateDate=getDate()
+    ,MpamApproveBy =@actionBy
+    ,MpamApproveDate=getDate()
     WHERE cardNumber=@cardNumber
 
     IF @@ROWCOUNT=0
@@ -627,7 +629,10 @@ function update_CustomerInfo(custObj,actionBy){
         ,workAddressSameAsFlag
         ,currentAddressSameAsFlag
         ,CreateBy
-        ,CreateDate)
+        ,CreateDate
+        ,MpamApproveBy
+        ,MpamApproveDate
+        )
       VALUES(@cardNumber
         ,@occupationId
         ,@occupationOther
@@ -677,8 +682,11 @@ function update_CustomerInfo(custObj,actionBy){
         ,@currentAddressSameAsFlag
 
         ,@actionBy
-        ,getDate())
+        ,getDate()
 
+        ,@actionBy  --MpamApproveBy
+        ,getDate()  --MpamApproveDate
+        )
         END
 
       COMMIT TRANSACTION TranName;
@@ -754,7 +762,7 @@ function update_CustomerInfo(custObj,actionBy){
       .input("actionBy", sql.VarChar(50), actionBy)
       .query(queryStr, (err, result) => {
 
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result));
           if(err){
             const err_msg=err;
             logger.error('Messge:'+err_msg);
@@ -776,8 +784,7 @@ function update_CustomerInfo(custObj,actionBy){
 
 function update_Address(addrObj,seq,actionBy){
 
-  console.log("update_Address()");
-
+  // console.log("update_Address()");
   if(!addrObj.soi)
     addrObj.soi= '-';
 
@@ -906,7 +913,7 @@ function update_Address(addrObj,seq,actionBy){
 
       // .input("ProvinceName", sql.NVarChar(100), addrObj.province)
       .query(queryStr, (err, result) => {
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result));
           if(err){
             const err_msg=err;
             logger.error('Messge:'+err_msg);
@@ -925,7 +932,7 @@ function update_Address(addrObj,seq,actionBy){
 
 function update_Children(childrenObj,actionBy){
 
-  console.log("update_Children()" + JSON.stringify(childrenObj));
+  // console.log("update_Children()" + JSON.stringify(childrenObj));
 
   var queryStr = `
   BEGIN TRANSACTION TranName;
@@ -991,7 +998,7 @@ function update_Children(childrenObj,actionBy){
 
       .query(queryStr, (err, result) => {
 
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result));
           if(err){
             const err_msg=err;
             logger.error('Messge:'+err_msg);
@@ -1013,7 +1020,7 @@ function update_Children(childrenObj,actionBy){
 
 function update_SuitInDB(cardNumber,actionBy){
 
-  console.log("update_AccountInDB()" + cardNumber);
+  // console.log("update_AccountInDB()" + cardNumber);
   const sql = require('mssql')
 
   var queryStr = `
@@ -1054,7 +1061,7 @@ function update_SuitInDB(cardNumber,actionBy){
       .input("actionBy", sql.VarChar(50), actionBy)
       .query(queryStr, (err, result) => {
 
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result));
           if(err){
             const err_msg=err;
             logger.error('Messge:'+err_msg);
@@ -1075,7 +1082,7 @@ function update_SuitInDB(cardNumber,actionBy){
 
 function update_CustAccountInDB(cardNumber,actionBy){
 
-  console.log("update_AccountInDB()" + cardNumber);
+  // console.log("update_AccountInDB()" + cardNumber);
   const sql = require('mssql')
 
   var queryStr = `
@@ -1169,7 +1176,7 @@ function update_CustAccountInDB(cardNumber,actionBy){
       .input("actionBy", sql.VarChar(50), actionBy)
       .query(queryStr, (err, result) => {
 
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result));
           if(err){
             const err_msg=err;
             logger.error('Messge:'+err_msg);
@@ -1191,7 +1198,7 @@ function update_CustAccountInDB(cardNumber,actionBy){
 
 function update_CustBankInDB(cardNumber,actionBy){
 
-  console.log("update_AccountInDB()" + cardNumber);
+  // console.log("update_AccountInDB()" + cardNumber);
   const sql = require('mssql')
 
   var queryStr = `
@@ -1284,7 +1291,7 @@ function update_CustBankInDB(cardNumber,actionBy){
       .input("actionBy", sql.VarChar(50), actionBy)
       .query(queryStr, (err, result) => {
 
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result));
           if(err){
             const err_msg=err;
             logger.error('Messge:'+err_msg);

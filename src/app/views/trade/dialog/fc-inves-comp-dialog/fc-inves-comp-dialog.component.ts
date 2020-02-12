@@ -90,7 +90,7 @@ export class FcInvesCompDialogComponent implements OnInit {
 
         this.loadCustData();
 
-        this.toastr.success("Download invertor profile complete.", "Complete", {
+        this.toastr.success("Approve invertor profile complete.", "Complete", {
           timeOut: 5000,
           closeButton: true,
           positionClass: "toast-top-center"

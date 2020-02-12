@@ -148,7 +148,7 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   }
 
 
-  onComparare(Cust_Code: string) {
+  onApprove(Cust_Code: string) {
     this.invesCompDialogComponent = this.dialog.open(FcInvesCompDialogComponent, {
       width: '800px',
       height: '800px',

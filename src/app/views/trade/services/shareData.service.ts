@@ -33,6 +33,33 @@ export class ShareDataService {
 
    public POSITION_OTHER ='999';
 
+   public CardTypeList=[
+    {"value":"PASSPORT","text":"PASSPORT"},{"value":"CITIZEN_CARD","text":"บัตรประชาชน"}
+              ]
+
+
+  public nationList= [{"Nation_Code":"TH","Nation_Desc":"Thai"}
+  ,{"Nation_Code":"JP","Nation_Desc":"Japanese"},
+]
+
+public CountryList=[{"value":"TH","text":"Thailand "},{"value":"US","text":"United States of America (the)"},{"value":"JP","text":"Japan)"}]
+
+public GenderList=[{"value":"Male","text":"Male"},{"value":"Female","text":"Female"}]
+
+public TitleList=[{"value":"MR","text":"MR"}
+,{"value":"MRS","text":"MRS"}
+,{"value":"MRS","text":"MRS"}
+,{"value":"MISS","text":"MISS"}
+,{"value":"OTHER","text":"OTHER"}
+];
+
+public MaritalStatusList=[{"value":"Single","text":"Single"}
+,{"value":"Married","text":"Married"}
+,{"value":"Divorced","text":"Divorced"}
+,{"value":"Widowhood","text":"Widowhood"}
+]
+
+
   statusList = [
     {
     code: 'A',

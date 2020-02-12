@@ -15,8 +15,8 @@
                   <div class="newLine">
                   <mat-form-field class="col-md-4">
                     <mat-select formControlName="identificationCardType" placeholder="identificationCardType" [(ngModel)]="fcIndCustomer.identificationCardType"
-                    required>
-                      <mat-option *ngFor="let obj of CardTypeList" [value]="obj.value">
+                    required  [disabled]="true">
+                      <mat-option *ngFor="let obj of shareDataService.CardTypeList" [value]="obj.value">
                           {{obj.text}}
                       </mat-option>
                     </mat-select>
@@ -27,7 +27,7 @@
                     <mat-select formControlName="passportCountry" placeholder="Country" [(ngModel)]="fcIndCustomer.passportCountry"
                     required>
                     <mat-option [value]="">Please choose</mat-option>
-                      <mat-option *ngFor="let obj of CountryList" [value]="obj.value">
+                      <mat-option *ngFor="let obj of shareDataService.CountryList" [value]="obj.value">
                           {{obj.text}}
                       </mat-option>
                     </mat-select>
@@ -35,35 +35,31 @@
                   </mat-form-field>
                 </div>
 
-                  <!-- <New line>-->
                     <div class="newLine">
                       <mat-form-field class="col-md-4" >
-                        <input matInput [(ngModel)]="fcIndCustomer.cardNumber" formControlName="cardNumber"  placeholder="cardNumber"   required   maxlength="13" >
-                        <button mat-button *ngIf="fcIndCustomer.cardNumber" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.cardNumber=''">
-                            <mat-icon>close</mat-icon>
-                          </button>
+                        <input matInput [(ngModel)]="fcIndCustomer.cardNumber" formControlName="cardNumber"  placeholder="cardNumber"   required   maxlength="13" [readonly]="true" >
                         <mat-error *ngIf="indCustFormGroup.get('cardNumber').invalid">Require this field</mat-error>
+                        <!-- <button mat-button *ngIf="fcIndCustomer.cardNumber" matSuffix mat-icon-button aria-label="Clear" (click)="fcIndCustomer.cardNumber=''">
+                            <mat-icon>close</mat-icon>
+                        </button> -->
                     </mat-form-field>
                   </div>
 
                   <div class="newLine">
-                    <mat-checkbox  class="col-md-6 "(change)="OnCardNotExpChange($event)" >บัตรตลอดชีพ Not Expired </mat-checkbox>
+                    <mat-checkbox  class="col-md-6 "(change)="OnCardNotExpChange($event)" >บัตรตลอดชีพ Not Expired {{fcIndCustomer.cardNotExp}}</mat-checkbox>
 
                     <mat-form-field class="col-md-4">
-                        <input matInput [matDatepicker]="picker" [(ngModel)]="fcIndCustomer.cardExpiryDate" formControlName="cardExpiryDate"  placeholder="Choose cardExpiryDate" required>
+                        <input matInput [matDatepicker]="picker" [disabled]="fcIndCustomer.cardNotExp === 'Y'" [(ngModel)]="fcIndCustomer.cardExpiryDate" formControlName="cardExpiryDate"  placeholder="Choose cardExpiryDate" required>
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker touchUi="true"></mat-datepicker>
                         <mat-error *ngIf="indCustFormGroup.get('cardExpiryDate').invalid">Require this field</mat-error>
                     </mat-form-field>
                   </div>
 
-
-
-                <!-- <New line>-->
                 <mat-form-field class="col-md-4">
                   <mat-select formControlName="gender" placeholder="gender" [(ngModel)]="fcIndCustomer.gender"
                   required>
-                    <mat-option *ngFor="let obj of GenderList" [value]="obj.value">
+                    <mat-option *ngFor="let obj of shareDataService.GenderList" [value]="obj.value">
                         {{obj.text}}
                     </mat-option>
                   </mat-select>
@@ -75,7 +71,7 @@
                 <mat-form-field class="col-md-4">
                   <mat-select formControlName="title" placeholder="title" [(ngModel)]="fcIndCustomer.title"
                   required >
-                    <mat-option *ngFor="let obj of TitleList" [value]="obj.value">
+                    <mat-option *ngFor="let obj of shareDataService.TitleList" [value]="obj.value">
                         {{obj.text}}
                     </mat-option>
                   </mat-select>
@@ -158,7 +154,7 @@
 
               <mat-form-field class="col-md-4">
                   <mat-select formControlName="nationality" placeholder="Nationality" [(ngModel)]="fcIndCustomer.nationality" >
-                    <mat-option *ngFor="let obj of nationList" [value]="obj.Nation_Code">
+                    <mat-option *ngFor="let obj of shareDataService.nationList" [value]="obj.Nation_Code">
                       {{obj.Nation_Desc}}
                     </mat-option>
                   </mat-select>
@@ -172,7 +168,7 @@
                   <mat-form-field class="col-md-4 ">
                     <mat-select formControlName="maritalStatus" placeholder="maritalStatus" [(ngModel)]="fcIndCustomer.maritalStatus"
                     required>
-                      <mat-option *ngFor="let obj of MaritalStatusList" [value]="obj.value">
+                      <mat-option *ngFor="let obj of shareDataService.MaritalStatusList" [value]="obj.value">
                           {{obj.text}}
                       </mat-option>
                     </mat-select>
@@ -189,18 +185,19 @@
                       <div class="row">
                         <mat-form-field class="col-md-4">
                           <mat-select formControlName="spCardType" placeholder="identificationCardType" [(ngModel)]="fcIndCustomer.spouse.cardType">
-                            <mat-option *ngFor="let obj of CardTypeList" [value]="obj.value">
+                            <mat-option *ngFor="let obj of shareDataService.CardTypeList" [value]="obj.value">
                                 {{obj.text}}
                             </mat-option>
                           </mat-select>
                           <mat-error *ngIf="indCustFormGroup.get('spCardType').invalid">Require this field</mat-error>
                         </mat-form-field>
 
+
                         <mat-form-field class="col-md-4"  *ngIf="isSpoucePassport()" >
                           <mat-select formControlName="spPassportCountry" placeholder="Country" [(ngModel)]="fcIndCustomer.spouse.passportCountry"
                           required>
                           <mat-option [value]="">Please choose</mat-option>
-                            <mat-option *ngFor="let obj of CountryList" [value]="obj.value">
+                            <mat-option *ngFor="let obj of shareDataService.CountryList" [value]="obj.value">
                                 {{obj.text}}
                             </mat-option>
                           </mat-select>
@@ -208,11 +205,18 @@
                         </mat-form-field>
                       </div>
 
+                      <div class='row'>
+                        <mat-form-field class="col-md-4" >
+                            <input matInput formControlName="spCardNumber" [(ngModel)]="fcIndCustomer.spouse.cardNumber" placeholder="cardNumber"   required>
+                        </mat-form-field>
+
+                      </div>
+
                       <div class="newLine">
-                        <mat-checkbox  class="col-md-4 "(change)="OnSPCardNotExpChange($event)" >บัตรตลอดชีพ Not Expired  {{fcIndCustomer.spouse.cardNotExp}}</mat-checkbox>
+                        <mat-checkbox  class="col-md-4 "(change)="OnSPCardNotExpChange($event)" >บัตรตลอดชีพ Not Expired </mat-checkbox>
 
                         <mat-form-field class="col-md-4">
-                            <input matInput formControlName="spCardExpDate" [matDatepicker]="spCardExpDate" [(ngModel)]="fcIndCustomer.spouse.cardExpDate"   placeholder="Choose cardExpiryDate" readonly=true>
+                            <input matInput formControlName="spCardExpDate" [disabled]="fcIndCustomer.spouse.cardNotExp === 'Y'" [matDatepicker]="spCardExpDate" [(ngModel)]="fcIndCustomer.spouse.cardExpDate"   placeholder="Choose cardExpiryDate" readonly=true>
                             <mat-datepicker-toggle matSuffix [for]="spCardExpDate"></mat-datepicker-toggle>
                             <mat-datepicker #spCardExpDate touchUi="true"></mat-datepicker>
                         </mat-form-field>
@@ -221,7 +225,7 @@
                       <div class='row'>
                         <mat-form-field class="col-md-4 col-sm-4">
                             <mat-select  formControlName="spTitle" [(ngModel)]="fcIndCustomer.spouse.title"  placeholder="คำนำหน้า Title" required >
-                              <mat-option *ngFor="let obj of TitleList" [value]="obj.value">
+                              <mat-option *ngFor="let obj of shareDataService.TitleList" [value]="obj.value">
                                 {{obj.text}}
                             </mat-option>
                             </mat-select>

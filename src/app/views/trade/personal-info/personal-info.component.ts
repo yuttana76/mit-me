@@ -95,6 +95,9 @@ export class PersonalInfoComponent implements OnInit {
       lastName: new FormControl(null, {
         validators: [Validators.required]
       }),
+      dob: new FormControl(null, {
+        validators: [Validators.required]
+      }),
 
     });
 

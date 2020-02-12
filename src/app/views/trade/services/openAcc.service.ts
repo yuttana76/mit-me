@@ -6,6 +6,7 @@ import { Injectable } from '../../../../../node_modules/@angular/core';
     import { environment } from '../../../../environments/environment';
 
     const BACKEND_ONLINE_URL = environment.apiURL + '/online/';
+    const BACKEND_ACCOUNT_URL = environment.apiURL + '/account';
     const BACKEND_MASTER_URL = environment.apiURL + '/master';
 
     @Injectable({ providedIn: 'root' })
@@ -26,17 +27,19 @@ import { Injectable } from '../../../../../node_modules/@angular/core';
 
       return forkJoin(observableBatch);
 
-      // forkJoin(
-      //   getSingleValueObservable(),
-      //   getDelayedValueObservable()
-      //   // getMultiValueObservable(), forkJoin on works for observables that complete
-      // ).pipe(
-      //   map(([first, second]) => {
-      //     // forkJoin returns an array of values, here we map those values to an object
-      //     return { first, second };
-      //   })
-      // );
+    }
 
+
+  openAccount(fcIndCustomer, actionBy) {
+    // console.log('Service   openAccount() !');
+    const data = {
+      'fcIndCustomer': JSON.stringify(fcIndCustomer),
+      'actionBy': actionBy,
+      };
+
+    // console.log('DATA Submit>>' + JSON.stringify(data));
+
+    return this.http.post<{ message: string, data: any }>(BACKEND_ACCOUNT_URL+'/openAccount', data);
   }
 
 

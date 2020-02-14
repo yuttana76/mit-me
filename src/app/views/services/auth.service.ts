@@ -31,6 +31,20 @@ export class AuthService {
     return this.userData;
   }
 
+  isExternalUser() {
+
+    var result= true;
+
+    if(this.userData !== undefined || this.userData === null ){
+      result = false;
+    }else{
+      result = true;
+    }
+
+    return result;
+  }
+
+
   getUserId() {
     return this.userId;
   }
@@ -54,6 +68,8 @@ export class AuthService {
   getAuthStatusListener() {
     return this.authStatusListener.asObservable();
   }
+
+
 
   createUser(email: string, password: string) {
     const authData: AuthData = { email: email, password: password };

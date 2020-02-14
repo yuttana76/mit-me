@@ -8,6 +8,7 @@ import { Injectable } from '../../../../../node_modules/@angular/core';
     const BACKEND_ONLINE_URL = environment.apiURL + '/online/';
     const BACKEND_ACCOUNT_URL = environment.apiURL + '/account';
     const BACKEND_MASTER_URL = environment.apiURL + '/master';
+    const BACKEND_URL_OTP = environment.apiURL + '/otp';
 
     @Injectable({ providedIn: 'root' })
     export class OpenAccService {
@@ -30,13 +31,34 @@ import { Injectable } from '../../../../../node_modules/@angular/core';
     }
 
 
-  openAccount(fcIndCustomer, actionBy) {
-    const data = {
-      'fcIndCustomer': JSON.stringify(fcIndCustomer),
-      'actionBy': actionBy,
-      };
+    openAccount(fcIndCustomer, actionBy) {
+      const data = {
+        'fcIndCustomer': JSON.stringify(fcIndCustomer),
+        'actionBy': actionBy,
+        };
 
-    return this.http.post<{ message: string, data: any }>(BACKEND_ACCOUNT_URL+'/openAccount', data);
+      return this.http.post<{ message: string, data: any }>(BACKEND_ACCOUNT_URL+'/openAccount', data);
+    }
+
+    verifyRequestOTP(_pid: string,_mobile: string): Observable<any> {
+
+      const data = {
+        'pid': _pid.trim(),
+        'm': _mobile.trim()
+      };
+      return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/getOTPtokenSMS', data);
+    }
+
+
+  verifyConfirmOTP(_pid: string, token: string,mobile:string): Observable<any> {
+    const data = {
+      'pid': _pid.trim(),
+      'token': token.trim(),
+      'mobile': mobile,
+      'device': 'Mobile',
+      'module': 'MIT-OpenAccount',
+    };
+    return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/verityOTPtoken', data);
   }
 
 

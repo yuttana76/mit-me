@@ -175,14 +175,11 @@ exports.verityOTPtoken = (req, res, next) => {
       secret: OTPAuth.Secret.fromRaw(_pid)
     });
 
-    // let delta = totp.validate({
-    //     token: _token,
-    //     window: 10
-    // });
     let delta = totp_pid.validate({
         token: _token,
         window: 10
     });
+
 
     if (delta===0){
       let rsp_code = "000";
@@ -190,7 +187,7 @@ exports.verityOTPtoken = (req, res, next) => {
 
       logger.info(logMsg);
       // SAVE MIT_LOG
-      mitLog.saveMITlog(_pid,'MIT-Survey',logMsg,req.ip,req.originalUrl,function(){});
+      mitLog.saveMITlog(_pid,otp_module,logMsg,req.ip,req.originalUrl,function(){});
         // Save OTP tracking
         var otpDate ={'otp_module': otp_module,'otp_device': otp_device,'otp_device_ref':otp_device_ref,'input_otp_code':_token};
 
@@ -355,11 +352,6 @@ function saveOTPtracking(otpDate){
     // var queryStr = `SELECT * FROM MIT_LED_MASTER`;
     var queryStr = `
     BEGIN
-
-      --DECLARE @OTP_ID varchar(50);
-      --DECLARE @OTP_DEVICE varchar(10);
-      --DECLARE @OTP_DEVICE_REF varchar(200);
-      --DECLARE @INPUT_OTP_CODE varchar(10);
 
       INSERT INTO MIT_OTP_TRACKING
       (OTP_ID,OTP_DEVICE,MODULE,OTP_DEVICE_REF,INPUT_OTP_CODE,INPUT_OTP_DATE)

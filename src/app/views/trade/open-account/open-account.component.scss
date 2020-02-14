@@ -2,6 +2,15 @@ mat-radio-button{
   margin-left: 15px;
 }
 
+mat-spinner {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -100px;
+}
+
+
 .container {
   margin: auto;
   margin-top: 10px;
@@ -72,9 +81,55 @@ i{
 }
 
 .pid_div input {
-  background-color: floralwhite;
-  border-color: bisque;
+  // background-color: floralwhite;
+  // border-color: bisque;
   text-align: center;
-  font-size: x-large;
-  color: deeppink;
+  // font-size: x-large;
+  // color: deeppink;
+}
+
+.first_step{
+  // text-align: -webkit-center;
+  width: 100%;
+  text-align: -webkit-center;
+}
+
+.first_step .row{
+margin-top: 10px;
+}
+
+.otp_verify{
+  margin-top: 50px;
+  display: block;
+}
+
+// .otp_verify input{
+//   text-align: center;
+//   margin-top: 10px;
+//   margin: 0 auto;
+// }
+
+
+.firstFormGroup input{
+  text-align: center;
+  margin-top: 10px;
+  margin: 0 auto;
+}
+
+// .otp_verify #mobileNumber{
+//   margin: 0 auto;
+//   // width: 25%;
+//   margin-top: 10px;
+// }
+
+#opt_code{
+  margin-top: 10px;
+}
+
+.otp_verify button{
+  margin-top: 10px;
+}
+
+.otp_verify p{
+  text-align: center;
 }

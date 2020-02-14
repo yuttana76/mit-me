@@ -106,21 +106,21 @@ export const routes: Routes = [
   },
 
   // For devement; Delete on PROD
-  {
-    path: 'surveySearch',
-    component: SurveySearchComponent,
-    data: {
-      title: 'Welcome Servey Search'
-    }
-  },
+  // {
+  //   path: 'surveySearch',
+  //   component: SurveySearchComponent,
+  //   data: {
+  //     title: 'Welcome Servey Search'
+  //   }
+  // },
   // For devement; Delete on PROD
-  {
-    path: 'FCUtility',
-    component: FCUtilityComponent,
-    data: {
-      title: 'Welcome FundConnext Utilities'
-    }
-  },
+  // {
+  //   path: 'FCUtility',
+  //   component: FCUtilityComponent,
+  //   data: {
+  //     title: 'Welcome FundConnext Utilities'
+  //   }
+  // },
 
 // For devement; Delete on PROD
   {

@@ -14,7 +14,7 @@ import { ShareDataService } from '../services/shareData.service';
 import { FCincomeSource } from '../model/fcIncomeSource.model';
 import { FCbusinessType } from '../model/fcBusinessType.model';
 import { FCincomeLevel } from '../model/fcIncomeLevel.model';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog, MatStepper } from '@angular/material';
 import { BankAccountDialogComponent } from '../dialog/bank-account-dialog/bank-account-dialog.component';
 import { BankAccountModel } from '../model/bankAccount.model';
 import { MatRadioChange } from '@angular/material';
@@ -30,19 +30,22 @@ import { AuthService } from '../../services/auth.service';
 })
 export class OpenAccountComponent implements OnInit {
 
-
   isLinear = true;
   reqNDID = false;
+  spinnerLoading = false;
 
   SEQ_REG_ADDR = 1;
   SEQ_CURR_ADDR = 2;
   SEQ_WORK_ADDR = 3;
   SEQ_MAIL_ADDR = 4;
 
-  AS_RESIDENCE='Residence';
-  AS_WORK='Work';
+  CAN_ENTRY_OTP = true;
+  opt_code;
 
-  MAS_INV ="INVObject";
+  AS_RESIDENCE = 'Residence';
+  AS_WORK = 'Work';
+
+  MAS_INV = "INVObject";
 
   firstFormGroup: FormGroup;
   // fillFormGroup: FormGroup;
@@ -73,9 +76,9 @@ export class OpenAccountComponent implements OnInit {
     public dialog: MatDialog,
     public formService: OpenAccountFormService,
     private toastr: ToastrService,
-    private authService: AuthService,
+    public authService: AuthService,
     private confirmationDialogService: ConfirmationDialogService,
-    private openAccount: OpenAccService,
+    // private openAccService: OpenAccService,
     private masterDataService:MasterDataService,
     public shareDataService: ShareDataService,
     public openAccService : OpenAccService,
@@ -84,13 +87,7 @@ export class OpenAccountComponent implements OnInit {
 
   ngOnInit() {
 
-    this.openAccService.getMasterData(this.MAS_INV).subscribe(res => {
-      this.occupationList = res[0].result;
-      this.incomeSourceList = res[1].result;
-      this.businessTypeList = res[2].result;
-      this.incomeList = res[3].result;
-      this.investObjectList= res[4].result;
-    });
+
 
     //Master data initial
     // this.masterDataService.getFCoccupation().subscribe((data: any[]) => {
@@ -114,10 +111,29 @@ export class OpenAccountComponent implements OnInit {
 
 
     // Form control initial
-    this.firstFormGroup = this._formBuilder.group({
-      identificationCardType: ['', Validators.required],
-      identifier: ['', Validators.required],
+    // this.firstFormGroup = this._formBuilder.group({
+    //   identificationCardType: ['', Validators.required],
+    //   identifier: ['', Validators.required],
+    //   mobileNumber: [''],
+    //   opt_code: [''],
+    // });
+
+
+    this.firstFormGroup =new FormGroup({
+      identificationCardType: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      identifier: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+      mobileNumber: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      opt_code: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
     });
+
 
     this.indCustFormGroup =new FormGroup({
       identificationCardType: new FormControl(null, {
@@ -437,13 +453,24 @@ export class OpenAccountComponent implements OnInit {
     })
   });
 
-
     this.redemption_formGroup = new FormGroup({
     redemptionkAccountsSameAs: new FormControl(null, {
       validators: [Validators.required]
     }),
   });
 
+   if(this.authService.isExternalUser){
+      this.firstFormGroup.controls["mobileNumber"].setValidators(Validators.required);
+      this.firstFormGroup.controls["mobileNumber"].updateValueAndValidity();
+    }
+
+    this.openAccService.getMasterData(this.MAS_INV).subscribe(res => {
+      this.occupationList = res[0].result;
+      this.incomeSourceList = res[1].result;
+      this.businessTypeList = res[2].result;
+      this.incomeList = res[3].result;
+      this.investObjectList= res[4].result;
+    });
 
   }
 
@@ -474,7 +501,7 @@ export class OpenAccountComponent implements OnInit {
       this.fcIndCustomer.current = Object.assign({}, this.fcIndCustomer.work);
     }
 
-    this.openAccount.openAccount(this.fcIndCustomer,create_By).subscribe(
+    this.openAccService.openAccount(this.fcIndCustomer,create_By).subscribe(
       (res: any) => {
       // console.log('Result saveAccount() >>' + JSON.stringify(res));
 
@@ -763,6 +790,44 @@ redeamAccount(i){
       this.fcIndCustomer.redemptionBankAccounts.splice(i,1);
     }
   }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
+}
+
+requestOTP(){
+
+
+
+  console.log("Welcome requestOTP()");
+  this.spinnerLoading = true;
+  this.CAN_ENTRY_OTP=false;
+
+    this.openAccService.verifyRequestOTP(this.fcIndCustomer.cardNumber,this.fcIndCustomer.mobileNumber)
+      .finally(() => {
+        this.spinnerLoading = false;
+      })
+      .subscribe(
+        (data: any) => {
+          console.log('OTP data>>' + JSON.stringify(data));
+          this.CAN_ENTRY_OTP = true;
+          this.toastr.success(``,
+          `Already send to ${this.fcIndCustomer.mobileNumber}; Please check`,
+          {
+            timeOut: 5000,
+            closeButton: true,
+            positionClass: "toast-top-center"
+          }
+        );
+        },
+        error => () => {
+          console.log("Verify Was error", error);
+        },
+        () => {
+          console.log("Verify  complete");
+        }
+      );
+}
+
+verifyOTP(stepper: MatStepper){
+  stepper.next();
 }
 
 }

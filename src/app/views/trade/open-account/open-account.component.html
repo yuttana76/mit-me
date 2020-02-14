@@ -1,12 +1,16 @@
 
-<div class="container">
+
+<div class="container" >
   <div class="row">
     <div class="col-md-12 mx-auto">
 
-      <mat-horizontal-stepper [linear]="isLinear" #stepper>
+      <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+      <mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="!spinnerLoading">
 
         <!-- 1 st -->
         <mat-step [stepControl]="firstFormGroup">
+          <div class="first_step">
 
           <form [formGroup]="firstFormGroup" class=" firstFormGroup">
             <div class="contrainer">
@@ -24,22 +28,35 @@
               </mat-radio-group>
             </div>
 
-            <div class="pid_div">
-              <input type="text" class="form-control col-md-4"  placeholder="ID card"
+            <div class="row form-group pid_div">
+              <input type="text" id="identifier" name="identifier" class="form-control col-sm-12 col-md-6 col-lg-4"  placeholder="ID card"
               formControlName="identifier" [(ngModel)]="fcIndCustomer.cardNumber" maxlength="13" size="13"   autocomplete="off" >
             </div>
 
-            <div>
-                <button type="button" class="btn btn-success" matStepperNext >Next</button>
+            <div class="otp_verify" *ngIf="authService.isExternalUser()">
+              <label for="phone">Enter your mobile number for virify to next step:</label>
+              <input type="tel" id="mobileNumber" name="mobileNumber"  class="form-control col-sm-12 col-md-6 col-lg-4"  placeholder="mobileNumber"  formControlName="mobileNumber"  [(ngModel)]="fcIndCustomer.mobileNumber"  autocomplete="off"  >
+
+              <button  [disabled]="firstFormGroup.invalid" type="button" class="btn btn-success" (click)="requestOTP()" >Request OTP</button>
+
+              <div  *ngIf="CAN_ENTRY_OTP">
+                <input  id="opt_code" name="opt_code" formControlName="opt_code" class="form-control col-sm-12 col-md-6 col-lg-4"  [(ngModel)]="opt_code"  >
+                <button class="btn btn-success"  [disabled]="!opt_code" (click)="verifyOTP(stepper)">Verify OTP</button>
+              </div>
+
+            </div>
+
+            <div *ngIf="!authService.isExternalUser()">
+                <button  type="button" class="btn btn-success" matStepperNext >Next</button>
             </div>
 
           </div>
-
           </form>
+        </div>
         </mat-step>
 
         <!-- NDID VERIFY -->
-        <mat-step *ngIf="reqNDID">
+        <mat-step *ngIf="authService.isExternalUser()">
             <ng-template matStepLabel>Verify indentify(NDID)</ng-template>
 
             <app-ndid-proxy [fcIndCustomer]="fcIndCustomer" (ndidDone)="ndidDone($event)" ></app-ndid-proxy>

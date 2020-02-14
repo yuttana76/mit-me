@@ -55,6 +55,7 @@ const fundConnextAPIRoutes = require('./routes/fundConnextAPI');
 const streamingRoutes = require('./routes/streaming');
 const smsRoutes = require('./routes/sms');
 const surveyRoutes = require('./routes/survey');
+const graphQLRoutes = require('./routes/graphQL');
 
 const app = express();
 
@@ -170,7 +171,7 @@ app.use("/api/account",openAccountRoutes);
 
 app.use("/api/survey",surveyRoutes);
 
-
+app.use("/api/graphQL",graphQLRoutes);
 
 
 app.use((req, res, next) => {

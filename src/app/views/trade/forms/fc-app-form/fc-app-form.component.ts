@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PdfMakeWrapper } from 'pdfmake-wrapper';
+// import { PdfMakeWrapper } from 'pdfmake-wrapper';
 
 @Component({
   selector: 'app-fc-app-form',
@@ -14,16 +14,13 @@ export class FcAppFormComponent implements OnInit {
   }
 
   pdfApplicationFrom(){
-
-    const pdf = new PdfMakeWrapper();
-
-    pdf.pageSize('A4');
-
-    // custom page size
-    pdf.pageSize({
-      width: 595.28,
-      height: 'auto'
-    });
-
+    // const pdf = new PdfMakeWrapper();
+    // pdf.pageSize('A4');
+    // // custom page size
+    // pdf.pageSize({
+    //   width: 595.28,
+    //   height: 'auto'
+    // });
   }
+
 }

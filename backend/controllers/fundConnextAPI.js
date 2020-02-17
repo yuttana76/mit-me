@@ -12,6 +12,7 @@ var AdmZip = require('adm-zip');
 var CronJob = require('cron').CronJob;
 var mitLog = require('./mitLog');
 var  FCCustInfo = require('../models/fcCustInfo.model');
+var  util = require('./utility');
 
 const FC_API_URI= FC_API_Config.FC_API_URI
 const FC_API_AUTH=FC_API_Config.FC_API_AUTH
@@ -1109,6 +1110,7 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
 
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
+      var currentDate = util.getDate_yyyymmdd();
       /**
        * HTTPS REQUEST
        */
@@ -1131,9 +1133,14 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
 
       //  console.log('suitabilityRiskLevel>' + suitabilityRiskLevel);
        if(suitabilityRiskLevel){
-
         data["suitabilityRiskLevel"]=suitabilityRiskLevel;
-        data["suitabilityEvaluationDate"]=suitabilityEvaluationDate;
+
+        // Incase is suitabilityEvaluationDate input is null use current date
+        if(suitabilityEvaluationDate){
+          data["suitabilityEvaluationDate"]=suitabilityEvaluationDate;
+        }else{
+          data["suitabilityEvaluationDate"]=currentDate;
+        }
 
        }
 
@@ -1146,14 +1153,26 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
           catch (e) {
             data.fatca=fatca;
           }
-        data.fatcaDeclarationDate=fatcaDeclarationDate;
+
+          // Incase is fatcaDeclarationDate input is null use current date
+          if(fatcaDeclarationDate){
+            data.fatcaDeclarationDate=fatcaDeclarationDate;
+          }else{
+            data.fatcaDeclarationDate=currentDate;
+          }
+
        }
 
       //  console.log('cddScore >'+  cddScore);
        if(cddScore){
-        // console.log('cddScore STEP 1>'+  cddScore);
         data.cddScore=cddScore;
-        data.cddDate=cddDate;
+
+        // Incase is cddDate input is null use current date
+        if(cddDate){
+          data.cddDate=cddDate;
+        }else{
+          data.cddDate=currentDate;
+        }
        }
 
 
@@ -1244,17 +1263,130 @@ exports.updateSuitAPI = (req, res, next) =>{
 }
 
 
-function updateSuit(custCode,riskLevel,UpdateBy) {
-  logger.info('surveyDashboardFc()');
+function updateMFTSsuit(account_No,riskLevel,actionBy) {
+  // logger.info('surveyDashboardFc()');
 
   var fncName = "surveyDashboardFc";
   var queryStr = `
   BEGIN
+
+  --Reset all records
+  UPDATE MFTS_Suit
+  SET [Status]='I'
+  ,Modify_Date=getDate()
+  ,Modify_By=@actionBy
+  WHERE Account_No = @Account_No
+
+  --Insert new suit
+  insert into MFTS_Suit (Account_No,[Status],Risk_Level,Create_By,Create_Date)
+  VALUES(@Account_No,'A',@Risk_Level,@actionBy,getDate())
+
+END
+    `;
+
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+      .input("Account_No", sql.VarChar(30), account_No)
+      .input("Risk_Level", sql.VarChar(30), riskLevel)
+      .input("actionBy", sql.VarChar(20), actionBy)
+        .request().query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+
+
+function updateMITsuit(cardNumber ,cddScore, cddDate ,suitabilityRiskLevel,suitabilityEvaluationDate , fatca ,fatcaDeclarationDate ,actionBy) {
+  // logger.info('surveyDashboardFc()');
+
+  var fncName = "surveyDashboardFc";
+  var queryStr = `
+  BEGIN
+
+  UPDATE MIT_ACCOUNT_INFO_EXT
+  SET
+  [cddScore] =@cddScore
+  ,[cddDate] =cddDate
+  ,[suitabilityRiskLevel] =@suitabilityRiskLevel
+,[suitabilityEvaluationDate]=@suitabilityEvaluationDate
+  ,[fatca] =@fatca
+,[fatcaDeclarationDate] =@fatcaDeclarationDate
+  ,UpdateBy=@actionBy
+  ,UpdateDate=getDate()
+  WHERE cardNumber = @cardNumber
+
+  IF @@ROWCOUNT=0
+    BEGIN
+      INSERT INTO MIT_ACCOUNT_INFO_EXT (cardNumber ,[cddScore], [cddDate] ,[suitabilityRiskLevel],[suitabilityEvaluationDate] , [fatca] ,	[fatcaDeclarationDate] ,CreateBy,CreateDate)
+      VALUES (@cardNumber ,@cddScore, @cddDate ,@suitabilityRiskLevel,@suitabilityEvaluationDate , @fatca ,@fatcaDeclarationDate ,@actionBy,getDate())
+    END
+
+  END
+    `;
+
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("cddScore", sql.VarChar(2), cddScore)
+      .input("cddDate", sql.NVarChar(50), cddDate)
+      .input("suitabilityRiskLevel", sql.VarChar(2), suitabilityRiskLevel)
+      .input("suitabilityEvaluationDate", sql.NVarChar(50), suitabilityEvaluationDate)
+      .input("fatca", sql.VarChar(2), fatca)
+      .input("fatcaDeclarationDate", sql.NVarChar(50), fatcaDeclarationDate)
+      .input("actionBy", sql.NVarChar(100), actionBy)
+        .request().query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+
+
+function updateSuit(custCode,riskLevel,UpdateBy) {
+  // logger.info('surveyDashboardFc()');
+
+  var fncName = "surveyDashboardFc";
+  var queryStr = `
+  BEGIN
+
     UPDATE MIT_CUSTOMER_SUIT
     SET RiskLevel=${riskLevel}
     ,UpdateDate=getdate(),UpdateBy='${UpdateBy}'
     WHERE CustCode ='${custCode}'
     AND [Status]='A'
+
+
   END
     `;
 

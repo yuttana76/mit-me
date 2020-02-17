@@ -138,6 +138,9 @@ exports.getCustomerFullInfo = (req, res, next) => {
 
 
 exports.getORG_CustomerInfo = (req, res, next) => {
+
+  console.log('Welcome getORG_CustomerInfo()')
+
   var custCode = req.params.cusCode;
 
   fnArray=[];
@@ -190,6 +193,9 @@ exports.getORG_CustomerInfo = (req, res, next) => {
 }
 
 exports.getFC_CustomerInfo = (req, res, next) => {
+
+  console.log('Welcome getFC_CustomerInfo()')
+
   var custCode = req.params.cusCode;
 
   fnArray=[];
@@ -201,19 +207,20 @@ exports.getFC_CustomerInfo = (req, res, next) => {
 
   Promise.all(fnArray).then(values => {
 
-    // console.log('FC data>'+JSON.stringify(values))
+    console.log('FC data>'+JSON.stringify(values))
 
       custInfo=values[0][0]
 
-      custInfo.residence=[]
+
+      // custInfo.residence=[]
       if(values[1].length>0)
         custInfo.residence=values[1][0]
 
-      custInfo.current=[]
+      // custInfo.current=[]
       if(values[2].length>0)
         custInfo.current=values[2][0]
 
-      custInfo.work=[]
+      // custInfo.work=[]
       if(values[3].length>0)
         custInfo.work=values[3][0]
 

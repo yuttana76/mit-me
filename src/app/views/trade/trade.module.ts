@@ -6,7 +6,6 @@ import { ChartsModule } from 'ng2-charts/ng2-charts';
 
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
-
 import { SummaryRepComponent } from './summary-rep/summary-rep.component';
 import { AngularMaterialModule } from '../../angular-material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -82,6 +81,7 @@ import { NgxFloatButtonModule } from 'ngx-float-button';
 import { BankAccountDialogComponent } from './dialog/bank-account-dialog/bank-account-dialog.component';
 import { FCUtilityComponent } from './fcutility/fcutility.component';
 import { FcInvesCompDialogComponent } from './dialog/fc-inves-comp-dialog/fc-inves-comp-dialog.component';
+import { TestGraphQLComponent } from './test-graph-ql/test-graph-ql.component';
 
 @NgModule({
   imports: [
@@ -171,6 +171,7 @@ import { FcInvesCompDialogComponent } from './dialog/fc-inves-comp-dialog/fc-inv
     BankAccountDialogComponent,
     FCUtilityComponent,
     FcInvesCompDialogComponent,
+    TestGraphQLComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

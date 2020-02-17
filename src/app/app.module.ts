@@ -57,6 +57,7 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { RecaptchaModule } from 'angular-google-recaptcha';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material';
+// import { GraphQLModule } from './graphql.module';
 
 
 @NgModule({
@@ -87,7 +88,8 @@ import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/materi
     AngularMaterialModule,
     TradeModule,
     AccordionModule.forRoot(),
-    CollapseModule.forRoot()
+    CollapseModule.forRoot(),
+    // GraphQLModule
   ],
   declarations: [
     AppComponent,

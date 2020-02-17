@@ -103,7 +103,6 @@ public referralPerson;
       this.referralPerson =this.authService.getFullName();
     }
 
-
     this.suiteService.uploadCustInd(this.identificationCardType,this.custCode,this.referralPerson,this.suitabilityRiskLevel,this.suitabilityEvaluationDate,this.fatca,this.fatcaDeclarationDate,this.cddScore,this.cddDate,this.authService.getUserId())
          .finally(() => {
           this.spinnerLoading = false;

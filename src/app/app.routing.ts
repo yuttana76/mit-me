@@ -17,6 +17,7 @@ import { SetWelcomeComponent } from './views/trade/set-welcome/set-welcome.compo
 import { SuitSurveyComponent } from './views/trade/suit-survey/suit-survey.component';
 import { SurveySearchComponent } from './views/trade/survey-search/survey-search.component';
 import { FCUtilityComponent } from './views/trade/fcutility/fcutility.component';
+import { TestGraphQLComponent } from './views/trade/test-graph-ql/test-graph-ql.component';
 
 export const routes: Routes = [
   {
@@ -102,6 +103,14 @@ export const routes: Routes = [
     component: SetWelcomeComponent,
     data: {
       title: 'Welcome Streaming For Fund 1'
+    }
+  },
+
+  {
+    path: 'testGraphQL',
+    component: TestGraphQLComponent,
+    data: {
+      title: 'Welcome Test Graph QL.'
     }
   },
 

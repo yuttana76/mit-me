@@ -1215,6 +1215,10 @@ function custIndPartial(Cust_Code) {
           CASE
               WHEN A.Card_Type = 'I'
                   THEN 'CITIZEN_CARD'
+
+              WHEN A.Card_Type = 'C'
+                  THEN 'CITIZEN_CARD'
+
               ELSE 'PASSPORT'
           END AS varchar) AS identificationCardType
       ,CAST(

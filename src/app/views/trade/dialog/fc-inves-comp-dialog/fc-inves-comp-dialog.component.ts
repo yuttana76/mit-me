@@ -55,7 +55,7 @@ export class FcInvesCompDialogComponent implements OnInit {
 
     this.customerService.getInvestorComparision(this.custCode).subscribe(res => {
 
-      // console.log("RESULT DATA>" + JSON.stringify(res));
+      console.log("RESULT DATA>" + JSON.stringify(res));
 
       //Original data
       this.mftsCustomer = JSON.parse(JSON.stringify(res[0].result));
@@ -69,7 +69,9 @@ export class FcInvesCompDialogComponent implements OnInit {
         this.mftsCustomerExt.children =JSON.parse(JSON.stringify(res[0].result.children));
       }
 
+      console.log("** STEP 3");
       // FundConnext data
+      if(res[1].result)
       this.fcCustomer= JSON.parse(JSON.stringify(res[1].result));
 
       this.spinnerLoading = false;

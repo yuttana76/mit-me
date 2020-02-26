@@ -69,7 +69,6 @@ export class FcInvesCompDialogComponent implements OnInit {
         this.mftsCustomerExt.children =JSON.parse(JSON.stringify(res[0].result.children));
       }
 
-      console.log("** STEP 3");
       // FundConnext data
       if(res[1].result)
       this.fcCustomer= JSON.parse(JSON.stringify(res[1].result));

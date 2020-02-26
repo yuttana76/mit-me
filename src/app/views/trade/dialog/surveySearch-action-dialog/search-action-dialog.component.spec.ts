@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SearchActionDialogComponent } from './search-action-dialog.component';
+import { SurveySearchActionDialogComponent } from './surveySearch-action-dialog.component';
 
 describe('SearchActionDialogComponent', () => {
-  let component: SearchActionDialogComponent;
-  let fixture: ComponentFixture<SearchActionDialogComponent>;
+  let component: SurveySearchActionDialogComponent;
+  let fixture: ComponentFixture<SurveySearchActionDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SearchActionDialogComponent ]
+      declarations: [ SurveySearchActionDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SearchActionDialogComponent);
+    fixture = TestBed.createComponent(SurveySearchActionDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

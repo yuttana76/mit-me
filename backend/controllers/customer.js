@@ -347,9 +347,11 @@ const getFC_Address = (cardNumber,seq) => {
       var fncName = 'getFC_Address() ';
 
       const sql = require('mssql')
-      var queryStr = `SELECT *
-      FROM [MIT_FC_CUST_ADDR]
-      WHERE cardNumber=@cardNumber AND Addr_Seq=@Addr_Seq `;
+      var queryStr = `SELECT A.*
+      ,ISNULL(A.[no],'') +' '+ISNULL(A.building,'')+' ชั้น' + ISNULL(a.[floor],'') +' '+ ISNULL(a.soi, '') +'ถ.'  +ISNULL(a.road,'') +' '+ISNULL(A.moo,'') + ' ' +ISNULL(A.subDistrict,'') +' '+ ISNULL(A.subDistrict,'') +' '+
+ISNULL(A.province,'') +' '+ ISNULL(A.postalCode,'') AS printTxt
+      FROM [MIT_FC_CUST_ADDR] A
+      WHERE A.cardNumber=@cardNumber AND A.Addr_Seq=@Addr_Seq `;
 
       const pool1 = new sql.ConnectionPool(config, err => {
         pool1.request() // or: new sql.Request(pool1)
@@ -385,12 +387,9 @@ exports.approveCustInfo = (req, res, next) => {
 
   console.log("approveCustInfo()" );
 
-
   // var mftsCustInfoObj = JSON.parse(req.body.mftsCustInfo)
   var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
   var actionBy = req.body.actionBy;
-
-  // console.log("fcCustInfoObj>>" + JSON.stringify(fcCustInfoObj));
 
 // VALIDATE data
 
@@ -821,19 +820,44 @@ function update_Address(addrObj,seq,actionBy){
   where Name_Thai like '%'+LEFT(@subDistrict,6)+'%'
   AND Amphur_ID=@Amphur_ID
 
-
-    UPDATE MFTS_Holder_Address SET
-    Addr_NO=@no
+  UPDATE Account_Address
+  SET[Addr_No]=@no
     ,[Place]=@floor +' '+ @building+' ' +@soi
     ,[Road]=@road
+    ,[Tambon_Id]=@Tambon_ID
+    ,[Amphur_Id]=@Amphur_ID
+    ,[Province_Id]=@Province_ID
+    ,[Country_Id]=@Country_ID
     ,[Zip_Code]=@postalCode
-    ,[Tambon_ID]=@Tambon_ID
-	  ,[Amphur_ID]=@Amphur_ID
-	  ,[Province_ID]=@Province_ID
-    ,[Country_ID]=@Country_ID
-    ,Print_Address=@province
-    WHERE  Addr_Seq=@Addr_Seq
-    AND Ref_No IN(select Ref_No from MFTS_Account where PID_NO=@cardNumber)
+    ,[Print_Address]=@printTxt
+  WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  IF @@ROWCOUNT=0
+  BEGIN
+      INSERT INTO  Account_Address(Cust_Code
+      ,Addr_Seq
+      ,[Addr_No]
+      ,[Place]
+      ,[Road]
+      ,[Tambon_Id]
+      ,[Amphur_Id]
+      ,[Province_Id]
+      ,[Country_Id]
+      ,[Zip_Code]
+      ,[Print_Address]
+      )
+      VALUES(@cardNumber
+      ,@Addr_Seq
+      ,@no
+      ,@floor +' '+ @building+' ' +@soi
+      ,@road
+      ,@Tambon_ID
+      ,@Amphur_ID
+      ,@Province_ID
+      ,@Country_ID
+      ,@postalCode
+      ,@printTxt
+      )
+  END
 
 
     -- Extension
@@ -916,6 +940,7 @@ function update_Address(addrObj,seq,actionBy){
       .input("postalCode", sql.NVarChar(100), addrObj.postalCode)
       .input("country", sql.NVarChar(100), addrObj.country)
       .input("phoneNumber", sql.NVarChar(100), addrObj.phoneNumber)
+      .input("printTxt", sql.NVarChar(200), addrObj.printTxt)
       .input("actionBy", sql.VarChar(50), actionBy)
 
       // .input("ProvinceName", sql.NVarChar(100), addrObj.province)

@@ -75,7 +75,7 @@ import { NewMobileDialogComponent } from './dialog/new-mobile-dialog/new-mobile-
 import { SurveySearchComponent } from './survey-search/survey-search.component';
 import { dateDBFormatPipe } from './pipe/dateFormatPipe';
 import { KycDetailDialogComponent } from './dialog/kyc-detail-dialog/kyc-detail-dialog.component';
-import { SearchActionDialogComponent } from './dialog/search-action-dialog/search-action-dialog.component';
+import { SurveySearchActionDialogComponent } from './dialog/surveySearch-action-dialog/surveySearch-action-dialog.component';
 
 import { NgxFloatButtonModule } from 'ngx-float-button';
 import { BankAccountDialogComponent } from './dialog/bank-account-dialog/bank-account-dialog.component';
@@ -167,7 +167,7 @@ import { TestGraphQLComponent } from './test-graph-ql/test-graph-ql.component';
     SurveySearchComponent,
     dateDBFormatPipe,
     KycDetailDialogComponent,
-    SearchActionDialogComponent,
+    SurveySearchActionDialogComponent,
     BankAccountDialogComponent,
     FCUtilityComponent,
     FcInvesCompDialogComponent,
@@ -189,7 +189,7 @@ import { TestGraphQLComponent } from './test-graph-ql/test-graph-ql.component';
     LedMasDetailComponent,
     NewMobileDialogComponent,
     KycDetailDialogComponent,
-    SearchActionDialogComponent,
+    SurveySearchActionDialogComponent,
     BankAccountDialogComponent,
     FcInvesCompDialogComponent
   ],

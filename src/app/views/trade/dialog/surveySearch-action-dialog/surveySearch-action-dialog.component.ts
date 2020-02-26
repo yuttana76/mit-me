@@ -2,16 +2,16 @@ import { Component, OnInit, Inject, Optional } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SuiteService } from '../../services/suit.service';
 import { ToastrService } from 'ngx-toastr';
-import { SearchActionDialogService } from './SearchActionDialog.service';
+import { SurveySearchActionDialogService } from './surveySearchActionDialog.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-search-action-dialog',
-  templateUrl: './search-action-dialog.component.html',
+  templateUrl: './surveySearch-action-dialog.component.html',
   styleUrls: ['./search-action-dialog.component.scss']
 })
-export class SearchActionDialogComponent implements OnInit {
+export class SurveySearchActionDialogComponent implements OnInit {
 
   spinnerLoading = false;
 
@@ -30,9 +30,9 @@ public referralPerson;
 
   constructor(
     private authService: AuthService,
-    public formService: SearchActionDialogService,
+    public formService: SurveySearchActionDialogService,
     private toastr: ToastrService,
-    public dialogRef: MatDialogRef<SearchActionDialogComponent> ,
+    public dialogRef: MatDialogRef<SurveySearchActionDialogComponent> ,
     @Optional() @Inject(MAT_DIALOG_DATA) public custCode: any,
     private suiteService: SuiteService,
   ) { }
@@ -103,7 +103,7 @@ public referralPerson;
       this.referralPerson =this.authService.getFullName();
     }
 
-    this.suiteService.uploadCustInd(this.identificationCardType,this.custCode,this.referralPerson,this.suitabilityRiskLevel,this.suitabilityEvaluationDate,this.fatca,this.fatcaDeclarationDate,this.cddScore,this.cddDate,this.authService.getUserId())
+    this.suiteService.uploadCustInd(this.identificationCardType,this.passportCountry,this.custCode,this.referralPerson,this.suitabilityRiskLevel,this.suitabilityEvaluationDate,this.fatca,this.fatcaDeclarationDate,this.cddScore,this.cddDate,this.authService.getUserId())
          .finally(() => {
           this.spinnerLoading = false;
         })
@@ -111,7 +111,7 @@ public referralPerson;
             console.log("onUploadAPI RS:" + JSON.stringify(data));
             this.spinnerLoading = false;
 
-            if (data.code === "000") {
+            if (data[0].code === "000") {
               this.toastr.success(data.msg, this.formService.SAVE_COMPLETE, {
                 timeOut: 5000,
                 closeButton: true,

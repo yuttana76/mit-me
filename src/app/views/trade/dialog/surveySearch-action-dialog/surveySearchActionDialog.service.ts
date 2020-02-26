@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class SearchActionDialogService {
+export class SurveySearchActionDialogService {
   _COMPLETE = 'Complete';
   _INCOMPLETE = '  Incomplete';
 

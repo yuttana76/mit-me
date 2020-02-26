@@ -11,7 +11,7 @@ import { DatePipe } from '@angular/common';
 import {dateDBFormatPipe} from '../pipe/dateFormatPipe';
 import { SelectionModel } from '@angular/cdk/collections';
 import { KycDetailDialogComponent } from '../dialog/kyc-detail-dialog/kyc-detail-dialog.component';
-import { SearchActionDialogComponent } from '../dialog/search-action-dialog/search-action-dialog.component';
+import { SurveySearchActionDialogComponent } from '../dialog/surveySearch-action-dialog/surveySearch-action-dialog.component';
 
 @Component({
   selector: 'app-survey-search',
@@ -42,7 +42,7 @@ export class SurveySearchComponent implements OnInit {
   surveyToDate_Cond : string;
 
   kycDetailDialogComponent: MatDialogRef<KycDetailDialogComponent>;
-  searchActionDialogComponent: MatDialogRef<SearchActionDialogComponent>;
+  searchActionDialogComponent: MatDialogRef<SurveySearchActionDialogComponent>;
 
   constructor(
     private suiteService: SuiteService,
@@ -172,7 +172,7 @@ export class SurveySearchComponent implements OnInit {
 
   onActionDialog(Cust_Code: string) {
 
-    this.searchActionDialogComponent = this.dialog.open(SearchActionDialogComponent, {
+    this.searchActionDialogComponent = this.dialog.open(SurveySearchActionDialogComponent, {
       width: '800px',
       data: Cust_Code
     });

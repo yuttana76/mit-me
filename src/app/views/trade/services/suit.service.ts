@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, forkJoin } from 'rxjs';
 import { Question } from '../model/question.model';
 import { KycSurveyList } from '../model/kycSurveyList';
 
@@ -172,13 +172,14 @@ export class SuiteService {
 
   // https://localhost:3009/api/fundConnext/customer/individual/
   // tslint:disable-next-line:max-line-length
-  uploadCustInd(identificationCardType, cardNumber, referralPerson, suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate,actionBy):
+  uploadCustInd(identificationCardType,passportCountry, cardNumber, referralPerson, suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate,actionBy):
   Observable<any> {
 
-console.log('uploadCustInd() actionBy>> ' + actionBy);
+    console.log('uploadCustInd() actionBy>> ' + actionBy);
 
     const data = {
       "identificationCardType": identificationCardType,
+      "passportCountry":passportCountry,
       "cardNumber": cardNumber,
       "referralPerson": referralPerson,
       "approved": false,
@@ -193,7 +194,12 @@ console.log('uploadCustInd() actionBy>> ' + actionBy);
 
      console.log( "FC API>" +JSON.stringify(data));
 
-    return this.http.patch<{ message: string, result: string }>(BACKEND_URL_FC + '/customer/individual/', data);
+    let observableBatch = [];
+    observableBatch.push(this.http.patch<{ message: string, result: string }>(BACKEND_URL_FC + '/customer/individual/', data));
+
+    return forkJoin(observableBatch);
+
+    // return this.http.patch<{ message: string, result: string }>(BACKEND_URL_FC + '/customer/individual/', data);
 
   }
 

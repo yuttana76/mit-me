@@ -4,6 +4,8 @@ const path = require('path');
 const dbConfig = require('../config/db-config');
 const FC_API_Config = require('../config/fundConnextAPI');
 var logger = require("../config/winston");
+// const log = require('logger')('myfilename');
+
 var mail = require('./mail');
 const https = require('https')
 const download = require('download');
@@ -23,10 +25,9 @@ const DOWNLOAD_PATH  = FC_API_Config.LOCAL.DOWNLOAD_PATH
 const INVEST_PROFILE_PATH = FC_API_Config.FC_API_PATH.INVEST_PROFILE_PATH
 const INVEST_INDIVIDUAL = FC_API_Config.FC_API_PATH.INVEST_INDIVIDUAL
 const FC_API_MODULE ='FC API';
+
 var config_BULK = dbConfig.dbParameters_BULK;
 var config = dbConfig.dbParameters;
-
-
 
 exports.getIndCust = (req, res, next) =>{
 
@@ -43,7 +44,7 @@ exports.getIndCust = (req, res, next) =>{
 
     fnGetIndCust(cardNumber).then(obj=>{
 
-      console.log('FC result->' + JSON.stringify(obj))
+      // console.log('FC result->' + JSON.stringify(obj))
       if(obj.errMsg){
         // {"errMsg":{"code":"E114","message":"Customer not found"}}
         // res.status(200).json({"code":obj.errMsg.code,"message":obj.errMsg.message});
@@ -60,10 +61,7 @@ exports.getIndCust = (req, res, next) =>{
       res.status(401).json(err);
     });
 
-
 }
-
-
 
 
 exports.getIndCustDEV = (req, res, next) =>{
@@ -93,10 +91,17 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
     return res.status(422).json({ errors: errors.array() });
   }
 
+  // On develop
+  // var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
+  // var actionBy = req.body.actionBy;
+
   var identificationCardType = req.body.identificationCardType;
+  var passportCountry = req.body.passportCountry;
+
   var cardNumber = req.body.cardNumber;
   var referralPerson = req.body.referralPerson;
   var approved = req.body.approved;
+
   var suitabilityRiskLevel = req.body.suitabilityRiskLevel;
   var suitabilityEvaluationDate = req.body.suitabilityEvaluationDate;
 
@@ -108,14 +113,45 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
   var actionBy = req.body.actionBy;
 
   logger.info("Welcome API /updateCustomerInd/"+ cardNumber);
-  updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate,actionBy).then(result=>{
 
-      res.status(200).json({code:"000"});
-    },err=>{
-      res.status(200).json(err);
-      // res.status(500).json(err);
+  var currentDate = util.getDate_yyyymmdd();
 
-    });
+  if(!suitabilityEvaluationDate){
+    suitabilityEvaluationDate=currentDate;
+  }
+  if(!fatcaDeclarationDate){
+    fatcaDeclarationDate=currentDate;
+  }
+  if(!cddDate){
+    cddDate=currentDate;
+  }
+
+  // EXECUTE
+  fnArray=[];
+    // fnArray.push(updateMFTSsuit(cardNumber,suitabilityRiskLevel,suitabilityEvaluationDate,actionBy));
+  // fnArray.push(updateMIT_ACCOUNT_INFO_EXT(cardNumber ,cddScore, cddDate ,suitabilityRiskLevel,suitabilityEvaluationDate , fatca ,fatcaDeclarationDate ,actionBy));
+
+  fnArray.push(updateCustomerIndPartial(req,identificationCardType,passportCountry,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate,actionBy));
+  fnArray.push(execACCOUNT_INFO(cardNumber,actionBy)); // 1. Account_Info & MIT_ACCOUNT_INFO_EXT
+  fnArray.push(execCUST_ADDR(cardNumber,1,actionBy)); // 2.1 Residence MFTS_Holder_Address  & MIT_CUST_ADDR
+  fnArray.push(execCUST_ADDR(cardNumber,2,actionBy)); // 2.2 Current MFTS_Holder_Address  & MIT_CUST_ADDR
+  fnArray.push(execCUST_ADDR(cardNumber,3,actionBy)); // 2.3 Work MFTS_Holder_Address  & MIT_CUST_ADDR
+
+  // fnArray.push(execCUST_CHILDREN(cardNumber,actionBy)); // 2. MIT_CUST_CHILDREN
+  // fnArray.push(execCUSTOMER_SUIT(cardNumber,actionBy)); // 2. MIT_CUSTOMER_SUIT
+
+  Promise.all(fnArray)
+  .then(result => {
+
+    console.log('RS>>' +JSON.stringify(result));
+    res.status(200).json({code:"000",resust:result[0]});
+  })
+  .catch(error => {
+
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+
 }
 
 // GET
@@ -828,8 +864,13 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
 
   // 2:Current
   // let curObj = obj.contact;
-  if(obj.contact){
-    saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.contact,2,actionBy).then((result=>{
+  // if(obj.contact){
+  //   saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.contact,2,actionBy).then((result=>{
+  //     logger.info(" Save Current address complete");
+  //   }));
+  // }
+  if(obj.current){
+    saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.current,2,actionBy).then((result=>{
       logger.info(" Save Current address complete");
     }));
   }
@@ -851,6 +892,8 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
 function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
 
   logger.info('saveMIT_FC_CUST_ADDR_Detail()'+seq);
+
+  // logger.info('OBJ>>'+JSON.stringify(obj));
 
   var fncName = "saveMIT_FC_CUST_ADDR_Detail()";
   var queryStr = `
@@ -921,7 +964,7 @@ function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
         .request() // or: new sql.Request(pool1)
         .input("cardNumber", sql.VarChar(20), cardNumber)
         .input("Addr_Seq", sql.VarChar(2), seq)
-        .input("no", sql.NVarChar(100), obj.no)
+        .input("no", sql.NVarChar(100), obj.no? obj.no:'')
         .input("building", sql.NVarChar(100), obj.building)
         .input("floor", sql.NVarChar(100), obj.floor)
         .input("soi", sql.NVarChar(100), obj.soi)
@@ -1102,9 +1145,9 @@ function fnGetIndCust(cardNumber){
 }
 
 // PATCH
-function updateCustomerIndPartial(req,identificationCardType,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate,actionBy){
+function updateCustomerIndPartial(req,identificationCardType,passportCountry,cardNumber,referralPerson,approved,suitabilityRiskLevel,suitabilityEvaluationDate,fatca,fatcaDeclarationDate,cddScore,cddDate,actionBy){
 
-  // logger.info("Welcome updateCustomerInd()");
+  logger.info("Welcome updateCustomerIndPartial()");
 
   return new Promise(function(resolve, reject) {
 
@@ -1119,6 +1162,7 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
 
        var data={
         "identificationCardType": identificationCardType,
+        "passportCountry": passportCountry,
         "cardNumber" : cardNumber,
         "referralPerson": referralPerson,
         "approved": approved,
@@ -1160,7 +1204,6 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
           }else{
             data.fatcaDeclarationDate=currentDate;
           }
-
        }
 
       //  console.log('cddScore >'+  cddScore);
@@ -1174,7 +1217,6 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
           data.cddDate=currentDate;
         }
        }
-
 
       var options = {
         host: FC_API_URI,
@@ -1197,27 +1239,12 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
           _chunk=_chunk.concat(chunk);
         });
         res.on('end', () => {
-          // logger.info(JSON.stringify(_chunk));
 
           if(_chunk !='OK'){
-
             apiRS =JSON.parse(_chunk);
             logger.error(JSON.stringify(apiRS.errMsg));
             reject(apiRS.errMsg);
-
           }else{
-
-            //Update MIT_CUSTOMER_SUIT MFTS db.
-            updateSuit(cardNumber,suitabilityRiskLevel,actionBy).then(data=>{
-
-            },err=>{
-              console.log(JSON.stringify(err));
-              reject({
-                message: 'Update MIT_CUSTOMER_SUIT suitability error'
-              });
-
-            });
-
             mitLog.saveMITlog(referralPerson,FC_API_MODULE+INVEST_INDIVIDUAL,data,req.ip,req.originalUrl,function(){});
             resolve(_chunk);
           }
@@ -1239,14 +1266,10 @@ function updateCustomerIndPartial(req,identificationCardType,cardNumber,referral
     logger.error('ERR AUTH>>'+err);
     reject(err);
   });
-
   });
 
 }
-
 // ************************************
-
-
 
 exports.updateSuitAPI = (req, res, next) =>{
   console.log("Validate  API /updateSuitAPI/");
@@ -1262,24 +1285,24 @@ exports.updateSuitAPI = (req, res, next) =>{
 
 }
 
+function updateMFTSsuit(cardNumber,suitabilityRiskLevel,suitabilityEvaluationDate,actionBy){
+// function updateMFTSsuit(account_No,riskLevel,actionBy) {
+  logger.info('updateMFTSsuit()');
 
-function updateMFTSsuit(account_No,riskLevel,actionBy) {
-  // logger.info('surveyDashboardFc()');
-
-  var fncName = "surveyDashboardFc";
+  var fncName = "updateMFTSsuit";
   var queryStr = `
   BEGIN
 
   --Reset all records
   UPDATE MFTS_Suit
-  SET [Status]='I'
+  SET [Active_Flag]='N'
   ,Modify_Date=getDate()
   ,Modify_By=@actionBy
   WHERE Account_No = @Account_No
 
   --Insert new suit
-  insert into MFTS_Suit (Account_No,[Status],Risk_Level,Create_By,Create_Date)
-  VALUES(@Account_No,'A',@Risk_Level,@actionBy,getDate())
+  insert into MFTS_Suit (Account_No,[Active_Flag],Risk_Level,Document_Date,Create_By,Create_Date)
+  VALUES(@Account_No,'A',@Risk_Level,@Document_Date,@actionBy,getDate())
 
 END
     `;
@@ -1288,17 +1311,17 @@ END
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
-      .input("Account_No", sql.VarChar(30), account_No)
-      .input("Risk_Level", sql.VarChar(30), riskLevel)
+      .request() // or: new sql.Request(pool1)
+      .input("Account_No", sql.VarChar(30), cardNumber)
+      .input("Risk_Level", sql.VarChar(30), suitabilityRiskLevel)
+      .input("Document_Date", sql.NVarChar(50), suitabilityEvaluationDate)
       .input("actionBy", sql.VarChar(20), actionBy)
-        .request().query(queryStr, (err, result) => {
+      .query(queryStr, (err, result) => {
           if (err) {
-            console.log(fncName + " Quey db. Was err !!!" + err);
+            logger.error(fncName + " Quey db. Was err !!!" + err);
             reject(err);
 
           } else {
-            // console.log(" queryStr >>" + queryStr);
-            // console.log(" Quey RS >>" + JSON.stringify(result));
             resolve(result);
           }
         });
@@ -1311,11 +1334,597 @@ END
 }
 
 
+function execCUST_ADDR(cardNumber,Addr_Seq,actionBy){
+  var queryStr = `
 
-function updateMITsuit(cardNumber ,cddScore, cddDate ,suitabilityRiskLevel,suitabilityEvaluationDate , fatca ,fatcaDeclarationDate ,actionBy) {
-  // logger.info('surveyDashboardFc()');
+  BEGIN
+    DECLARE @Cust_Code VARCHAR(50)='${cardNumber}'
+	  DECLARE @Addr_Seq INT =${Addr_Seq}
 
-  var fncName = "surveyDashboardFc";
+	DECLARE @Addr_No NVARCHAR(100)
+	DECLARE @Moo NVARCHAR(50)
+	DECLARE @Place NVARCHAR(100)
+	DECLARE @Floor NVARCHAR(50)
+	DECLARE @Soi NVARCHAR(50)
+	DECLARE @Road NVARCHAR(100)
+	DECLARE @Tambon_Id INT
+	DECLARE @Amphur_Id INT
+	DECLARE @Province_Id INT
+	DECLARE @Country_Id INT
+	DECLARE @Zip_Code NVARCHAR(10)
+	DECLARE @Print_Address NVARCHAR(400)
+	DECLARE @Tel NVARCHAR(50)
+	DECLARE @Fax NVARCHAR(50)
+	DECLARE @CreateBy NVARCHAR(50)
+	DECLARE @CreateDate DATETIME
+	DECLARE @UpdateBy NVARCHAR(50)
+	DECLARE @UpdateDate DATETIME
+	DECLARE @SameAs VARCHAR(50)
+	DECLARE @Country_oth NVARCHAR(100)
+
+	DECLARE @Ref_No NVARCHAR(20)
+
+DECLARE survey_cursor CURSOR FOR
+SELECT 	A.Addr_No
+	,A.Moo
+	,A.Place
+	,A.Floor
+	,A.Soi
+	,A.Road
+	,A.Tambon_Id
+	,A.Amphur_Id
+	,A.Province_Id
+	,A.Country_Id
+	,A.Zip_Code
+	,A.Print_Address
+	,A.Tel
+	,A.Fax
+	,A.CreateBy
+	,A.CreateDate
+	,A.UpdateBy
+	,A.UpdateDate
+    ,CASE A.SameAs WHEN 1 THEN 'Residence' WHEN 2 THEN 'Current' WHEN 3 THEN 'Work'  ELSE ''   END AS SameAs
+	,A.Country_oth
+    FROM MIT_CUSTOMER_ADDR A
+    WHERE A.Cust_Code = @Cust_Code AND A.Addr_Seq=@Addr_Seq
+
+OPEN survey_cursor
+
+FETCH NEXT FROM survey_cursor
+INTO @Addr_No,
+@Moo,
+@Place,
+@Floor,
+@Soi,
+@Road,
+@Tambon_Id,
+@Amphur_Id,
+@Province_Id,
+@Country_Id,
+@Zip_Code,
+@Print_Address,
+@Tel,
+@Fax,
+@CreateBy,
+@CreateDate,
+@UpdateBy,
+@UpdateDate,
+@SameAs,
+@Country_oth
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+
+    -- 1. Update MIT_ACCOUNT_INFO_EXT
+    IF @Addr_Seq =2
+    BEGIN
+        UPDATE MIT_ACCOUNT_INFO_EXT SET currentAddressSameAsFlag= @SameAs WHERE cardNumber=@Cust_Code
+    END
+
+    IF @Addr_Seq =3
+    BEGIN
+        UPDATE MIT_ACCOUNT_INFO_EXT SET workAddressSameAsFlag=@SameAs WHERE cardNumber=@Cust_Code
+    END
+
+    -- 2. Account_Address
+    UPDATE Account_Address
+  SET[Addr_No]=@Addr_No
+      ,[Place]=@floor +' '+ @Place+' ' +@soi
+      ,[Road]=@road
+      ,[Tambon_Id]=@Tambon_ID
+      ,[Amphur_Id]=@Amphur_ID
+      ,[Province_Id]=@Province_ID
+      ,[Country_Id]=@Country_ID
+      ,[Zip_Code]=@Zip_Code
+      ,[Print_Address]=@Print_Address
+  WHERE Cust_Code=@Cust_Code AND Addr_Seq=@Addr_Seq
+
+    IF @@ROWCOUNT=0
+    BEGIN
+        INSERT INTO  Account_Address(Cust_Code
+        ,Addr_Seq
+        ,[Addr_No]
+        ,[Place]
+        ,[Road]
+        ,[Tambon_Id]
+        ,[Amphur_Id]
+        ,[Province_Id]
+        ,[Country_Id]
+        ,[Zip_Code]
+        ,[Print_Address]
+        )
+        VALUES(@Cust_Code
+        ,@Addr_Seq
+        ,@Addr_No
+        ,@floor +' '+ @Place+' ' +@soi
+        ,@road
+        ,@Tambon_ID
+        ,@Amphur_ID
+        ,@Province_ID
+        ,@Country_ID
+        ,@Zip_Code
+        ,@Print_Address
+        )
+    END
+
+    -- 3. Update /Insert MIT_ACCOUNT_INFO_EXT
+    UPDATE MIT_CUST_ADDR SET no=@Addr_No
+	,floor=@Floor
+	,building=@Place
+	,soi=@Soi
+	,road=@Road
+	,moo=@Moo
+	,subDistrict=@Tambon_Id
+	,district=@Amphur_Id
+	,province=@Province_Id
+	,postalCode=@Zip_Code
+	,country=@Country_Id
+	,phoneNumber=@Tel
+	,UpdateBy=UpdateBy
+	,UpdateDate=@UpdateDate
+    WHERE cardNumber = @Cust_Code AND Addr_Seq=@Addr_Seq
+
+    IF @@ROWCOUNT=0
+    BEGIN
+        --4.
+        INSERT INTO MIT_CUST_ADDR (cardNumber
+        ,Addr_Seq
+        ,[no]
+        ,floor
+        ,building
+        ,soi
+        ,road
+        ,moo
+        ,subDistrict
+        ,district
+        ,province
+        ,postalCode
+        ,country
+        ,phoneNumber
+        ,CreateBy
+        ,CreateDate
+        )
+    VALUES( @Cust_Code
+        ,@Addr_Seq
+        ,@Addr_No
+        ,@Floor
+        ,@Place
+        ,@Soi
+        ,@Road
+        ,@Moo
+        ,@Tambon_Id
+        ,@Amphur_Id
+        ,@Province_Id
+        ,@Zip_Code
+        ,@Country_Id
+        ,@Tel
+        ,@CreateBy
+        ,@CreateDate
+        )
+
+    END
+
+FETCH NEXT FROM survey_cursor
+INTO @Addr_No,
+@Moo,
+@Place,
+@Floor,
+@Soi,
+@Road,
+@Tambon_Id,
+@Amphur_Id,
+@Province_Id,
+@Country_Id,
+@Zip_Code,
+@Print_Address,
+@Tel,
+@Fax,
+@CreateBy,
+@CreateDate,
+@UpdateBy,
+@UpdateDate,
+@SameAs,
+@Country_oth
+
+END
+CLOSE survey_cursor;
+DEALLOCATE survey_cursor;
+
+END
+  `;
+  return new Promise(function(resolve, reject) {
+    dbConfig.msByQuery(queryStr,config)
+    .then(result=>{
+        resolve(result);
+      },err=>{
+        reject(err);
+    });
+  });
+}
+
+function execACCOUNT_INFO(cardNumber,actionBy){
+  var queryStr = `
+  BEGIN
+    DECLARE @actionBy VARCHAR(50)='${actionBy}'
+    DECLARE @Cust_Code VARCHAR(50)='${cardNumber}'
+
+	DECLARE @title VARCHAR(5)
+	DECLARE @titleOther VARCHAR(50)
+	DECLARE @First_Name_T VARCHAR(100)
+	DECLARE @Last_Name_T VARCHAR(100)
+	DECLARE @Birth_Day NVARCHAR(50)
+	DECLARE @Mobile VARCHAR(50)
+	DECLARE @Email NVARCHAR(100)
+	DECLARE @Occupation_Code VARCHAR(3)
+	DECLARE @Occupation_Desc VARCHAR(100)
+	DECLARE @Position_Code VARCHAR(3)
+	DECLARE @Position_Desc VARCHAR(100)
+	DECLARE @BusinessType_Code VARCHAR(5)
+	DECLARE @BusinessType_Desc VARCHAR(100)
+	DECLARE @Income_Code VARCHAR(50)
+	DECLARE @Income_Desc VARCHAR(100)
+	DECLARE @Income_Source_Code VARCHAR(100)
+	DECLARE @Income_Source_Desc VARCHAR(100)
+
+	DECLARE @WorkPlace VARCHAR(100)
+	DECLARE @identificationCardType VARCHAR(15)
+	DECLARE @passportCountry VARCHAR(2)
+	DECLARE @First_Name_E NVARCHAR(100)
+	DECLARE @Last_Name_E NVARCHAR(100)
+	DECLARE @cardExpiryDate NVARCHAR(50)
+	DECLARE @MailSameAs VARCHAR(10)
+	DECLARE @MaritalStatus VARCHAR(20)
+	DECLARE @SpouseCardType VARCHAR(20)
+	DECLARE @SpousePassportCountry VARCHAR(2)
+	DECLARE @SpouseCardNumber VARCHAR(50)
+	DECLARE @SpouseTitle VARCHAR(10)
+	DECLARE @SpouseTitleOther VARCHAR(50)
+	DECLARE @SpouseFirstName NVARCHAR(100)
+	DECLARE @SpouseLastName NVARCHAR(100)
+  --DECLARE @SpouseIDExpDate DATE
+  DECLARE @SpouseIDExpDate VARCHAR(10)
+	DECLARE @MoneyLaundaring VARCHAR(1)
+	DECLARE @PoliticalRelate VARCHAR(1)
+	DECLARE @RejectFinancial VARCHAR(1)
+	DECLARE @SpouseIDNotExp VARCHAR(1)
+	DECLARE @TaxDeduction VARCHAR(1)
+	DECLARE @cardNotExp VARCHAR(1)
+	DECLARE @NumChildren VARCHAR(100)
+	DECLARE @nationality VARCHAR(2)
+	DECLARE @OTP_ID VARCHAR(50)
+	DECLARE @CDD_Score VARCHAR(2)
+	DECLARE @CDD_Date DATE
+	DECLARE @IS_FATCA VARCHAR(10)
+	DECLARE @FATCA_DATE DATE
+
+    DECLARE @suitabilityRiskLevel VARCHAR(1)
+    DECLARE @suitabilityEvaluationDate DATE
+
+	DECLARE @CreateBy NVARCHAR(100)
+	DECLARE @CreateDate NVARCHAR(50)
+	DECLARE @UpdateBy NVARCHAR(100)
+	DECLARE @UpdateDate NVARCHAR(50)
+
+  DECLARE customer_info_cursor CURSOR FOR
+  SELECT  A.identificationCardType
+    ,A.title
+    ,A.First_Name_T
+    ,A.Last_Name_T
+    ,A.First_Name_E
+    ,A.Last_Name_E
+    ,A.Birth_Day
+    ,A.nationality
+    ,A.Email
+    ,A.Mobile
+    ,A.Occupation_Code
+        ,A.Occupation_Desc
+        ,A.BusinessType_Code
+        ,A.BusinessType_Desc
+        ,A.Income_Code
+        ,A.Income_Source_Code
+        ,A.Income_Source_Desc
+        ,A.WorkPlace
+        ,A.passportCountry
+        ,A.titleOther
+        ,A.cardExpiryDate
+        ,A.maritalStatus
+        ,A.SpouseCardType
+        ,A.SpousePassportCountry
+        ,A.SpouseCardNumber
+        ,A.SpouseTitle
+        ,A.SpouseTitleOther
+        ,A.SpouseFirstName
+        ,A.SpouseLastName
+        ,convert(varchar, A.SpouseIDExpDate, 112) AS SpouseIDExpDate
+        ,CASE A.MoneyLaundaring WHEN 'Y' THEN 1  ELSE 0   END AS MoneyLaundaring
+        ,CASE A.PoliticalRelate WHEN 'Y' THEN 1  ELSE 0   END AS PoliticalRelate
+        ,CASE A.RejectFinancial WHEN 'Y' THEN 1  ELSE 0   END AS RejectFinancial
+        ,CASE A.TaxDeduction WHEN 'Y' THEN 1  ELSE 0   END AS TaxDeduction
+        ,A.CDD_Score
+        ,A.CDD_Date
+        ,C.RiskLevel,C.CreateDate
+        ,CASE B.FATCA_FLAG WHEN 'A' THEN 1  ELSE 0   END AS FATCA_FLAG
+        ,B.FATCA_DATE
+        ,A.CreateBy
+        ,A.CreateDate
+        ,A.UpdateBy
+        ,A.UpdateDate
+    FROM MIT_CUSTOMER_INFO A
+    LEFT JOIN MIT_CUSTOMER_FATCA B ON   B.CustCode =  A.Cust_Code AND B.FATCA_FLAG='A'
+    LEFT JOIN MIT_CUSTOMER_SUIT C ON   C.CustCode =  A.Cust_Code AND C.[Status]='A'
+    WHERE A.Cust_Code = @Cust_Code
+
+
+OPEN customer_info_cursor
+
+FETCH NEXT FROM customer_info_cursor
+INTO @identificationCardType
+    ,@title
+    ,@First_Name_T
+    ,@Last_Name_T
+    ,@First_Name_E
+    ,@Last_Name_E
+    ,@Birth_Day
+    ,@nationality
+    ,@Email
+    ,@Mobile
+    ,@Occupation_Code
+    ,@Occupation_Desc
+    ,@BusinessType_Code
+    ,@BusinessType_Desc
+    ,@Income_Code
+    ,@Income_Source_Code
+    ,@Income_Source_Desc
+    ,@WorkPlace
+    ,@passportCountry
+    ,@titleOther
+    ,@cardExpiryDate
+    ,@maritalStatus
+    ,@SpouseCardType
+    ,@SpousePassportCountry
+    ,@SpouseCardNumber
+    ,@SpouseTitle
+    ,@SpouseTitleOther
+    ,@SpouseFirstName
+    ,@SpouseLastName
+    ,@SpouseIDExpDate
+    ,@MoneyLaundaring
+    ,@PoliticalRelate
+    ,@RejectFinancial
+    ,@TaxDeduction
+    ,@CDD_Score
+    ,@CDD_Date
+    ,@suitabilityRiskLevel
+    ,@suitabilityEvaluationDate
+    ,@IS_FATCA
+    ,@FATCA_DATE
+    ,@CreateBy
+    ,@CreateDate
+    ,@UpdateBy
+    ,@UpdateDate
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+
+    -- Update Account_Info
+    UPDATE Account_Info SET
+    Card_Type=@identificationCardType
+    ,Title_Name_T=@title
+    ,First_Name_T=@First_Name_T
+    ,Last_Name_T=@Last_Name_T
+    ,Title_Name_E=@title
+    ,First_Name_E=@First_Name_E
+    ,Last_Name_E=@Last_Name_E
+    ,Birth_Day=@Birth_Day
+    ,Nation_Code=@nationality
+    ,Email=@Email
+    ,Mobile=@Mobile
+    ,Modify_By=@UpdateBy
+	,Modify_Date=@UpdateDate
+    WHERE Cust_Code=@Cust_Code
+
+    -- Update /Insert MIT_ACCOUNT_INFO_EXT
+    UPDATE MIT_ACCOUNT_INFO_EXT SET
+    occupationId = @Occupation_Code
+    ,occupationOther=@Occupation_Desc
+    ,businessTypeId=@BusinessType_Code
+    ,businessTypeOther=@BusinessType_Desc
+    ,monthlyIncomeLevel=@Income_Code
+    ,incomeSource=@Income_Source_Code
+    ,incomeSourceOther=@Income_Source_Desc
+    ,companyName=@WorkPlace
+    ,passportCountry=@passportCountry
+    ,titleOther=@titleOther
+    ,cardExpiryDate=@cardExpiryDate
+    ,maritalStatus=@maritalStatus
+    ,SPidentificationCardType=@SpouseCardType
+    ,SPpassportCountry=@SpousePassportCountry
+    ,SPcardNumber=@SpouseCardNumber
+    ,SPtitle=@SpouseTitle
+    ,SPtitleOther=@SpouseTitleOther
+    ,SPthFirstName=@SpouseFirstName
+    ,SPthLastName=@SpouseLastName
+    ,SPidCardExpiryDate=@SpouseIDExpDate
+    ,committedMoneyLaundering=@MoneyLaundaring
+    ,politicalRelatedPerson=@PoliticalRelate
+    ,rejectFinancialTransaction=@RejectFinancial
+    ,confirmTaxDeduction=@TaxDeduction
+    ,cddScore=@CDD_Score
+    ,cddDate=@CDD_Date
+    ,suitabilityRiskLevel=@suitabilityRiskLevel
+    ,suitabilityEvaluationDate=@suitabilityEvaluationDate
+    ,fatca=@IS_FATCA
+    ,fatcaDeclarationDate=@FATCA_DATE
+    ,UpdateBy=@UpdateBy
+    ,UpdateDate=@UpdateDate
+    ,MpamApproveBy =@actionBy
+    ,MpamApproveDate=getDate()
+    WHERE cardNumber=@Cust_Code
+
+    IF @@ROWCOUNT=0
+    BEGIN
+      INSERT INTO  MIT_ACCOUNT_INFO_EXT (cardNumber
+        ,occupationId
+        ,occupationOther
+        ,businessTypeId
+        ,businessTypeOther
+        ,monthlyIncomeLevel
+        ,incomeSource
+        ,incomeSourceOther
+        ,companyName
+        ,passportCountry
+        ,titleOther
+        ,cardExpiryDate
+        ,maritalStatus
+        ,SPidentificationCardType
+        ,SPpassportCountry
+        ,SPcardNumber
+        ,SPtitle
+        ,SPtitleOther
+        ,SPthFirstName
+        ,SPthLastName
+        ,SPidCardExpiryDate
+        ,committedMoneyLaundering
+        ,politicalRelatedPerson
+        ,rejectFinancialTransaction
+        ,confirmTaxDeduction
+        ,cddScore
+        ,cddDate
+        ,suitabilityRiskLevel
+        ,suitabilityEvaluationDate
+        ,fatca
+        ,fatcaDeclarationDate
+        ,CreateBy
+        ,CreateDate
+        ,UpdateBy
+        ,UpdateDate
+        ,MpamApproveBy
+        ,MpamApproveDate
+        )
+      VALUES(@Cust_Code
+        ,@Occupation_Code
+        ,@Occupation_Desc
+        ,@BusinessType_Code
+        ,@BusinessType_Desc
+        ,@Income_Code
+        ,@Income_Source_Code
+        ,@Income_Source_Desc
+        ,@WorkPlace
+        ,@passportCountry
+        ,@titleOther
+        ,@cardExpiryDate
+        ,@maritalStatus
+        ,@SpouseCardType
+        ,@SpousePassportCountry
+        ,@SpouseCardNumber
+        ,@SpouseTitle
+        ,@SpouseTitleOther
+        ,@SpouseFirstName
+        ,@SpouseLastName
+        ,@SpouseIDExpDate
+        ,@MoneyLaundaring
+        ,@PoliticalRelate
+        ,@RejectFinancial
+        ,@TaxDeduction
+        ,@CDD_Score
+        ,@CDD_Date
+        ,@suitabilityRiskLevel
+        ,@suitabilityEvaluationDate
+        ,@IS_FATCA
+        ,@FATCA_DATE
+        ,@CreateBy
+        ,@CreateDate
+        ,@UpdateBy
+        ,@UpdateDate
+        ,@actionBy
+        ,getDate()
+        )
+        END
+
+    FETCH NEXT FROM customer_info_cursor
+    INTO @identificationCardType
+    ,@title
+    ,@First_Name_T
+    ,@Last_Name_T
+    ,@First_Name_E
+    ,@Last_Name_E
+    ,@Birth_Day
+    ,@nationality
+    ,@Email
+    ,@Mobile
+    ,@Occupation_Code
+    ,@Occupation_Desc
+    ,@BusinessType_Code
+    ,@BusinessType_Desc
+    ,@Income_Code
+    ,@Income_Source_Code
+    ,@Income_Source_Desc
+    ,@WorkPlace
+    ,@passportCountry
+    ,@titleOther
+    ,@cardExpiryDate
+    ,@maritalStatus
+    ,@SpouseCardType
+    ,@SpousePassportCountry
+    ,@SpouseCardNumber
+    ,@SpouseTitle
+    ,@SpouseTitleOther
+    ,@SpouseFirstName
+    ,@SpouseLastName
+    ,@SpouseIDExpDate
+    ,@MoneyLaundaring
+    ,@PoliticalRelate
+    ,@RejectFinancial
+    ,@TaxDeduction
+    ,@CDD_Score
+    ,@CDD_Date
+    ,@suitabilityRiskLevel
+    ,@suitabilityEvaluationDate
+    ,@IS_FATCA
+    ,@FATCA_DATE
+    ,@CreateBy
+    ,@CreateDate
+    ,@UpdateBy
+    ,@UpdateDate
+END
+CLOSE customer_info_cursor;
+DEALLOCATE customer_info_cursor;
+
+END
+  `;
+  return new Promise(function(resolve, reject) {
+    dbConfig.msByQuery(queryStr,config)
+    .then(result=>{
+        resolve(result);
+      },err=>{
+        reject(err);
+    });
+  });
+}
+
+function updateMIT_ACCOUNT_INFO_EXT(cardNumber ,cddScore, cddDate ,suitabilityRiskLevel,suitabilityEvaluationDate , fatca ,fatcaDeclarationDate ,actionBy) {
+  logger.info('updateMIT_ACCOUNT_INFO_EXT()');
+  var fncName = "updateMITsuit";
   var queryStr = `
   BEGIN
 
@@ -1324,9 +1933,9 @@ function updateMITsuit(cardNumber ,cddScore, cddDate ,suitabilityRiskLevel,suita
   [cddScore] =@cddScore
   ,[cddDate] =cddDate
   ,[suitabilityRiskLevel] =@suitabilityRiskLevel
-,[suitabilityEvaluationDate]=@suitabilityEvaluationDate
+  ,[suitabilityEvaluationDate]=@suitabilityEvaluationDate
   ,[fatca] =@fatca
-,[fatcaDeclarationDate] =@fatcaDeclarationDate
+  ,[fatcaDeclarationDate] =@fatcaDeclarationDate
   ,UpdateBy=@actionBy
   ,UpdateDate=getDate()
   WHERE cardNumber = @cardNumber
@@ -1344,15 +1953,16 @@ function updateMITsuit(cardNumber ,cddScore, cddDate ,suitabilityRiskLevel,suita
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
+      .request() // or: new sql.Request(pool1)
       .input("cardNumber", sql.VarChar(20), cardNumber)
       .input("cddScore", sql.VarChar(2), cddScore)
       .input("cddDate", sql.NVarChar(50), cddDate)
       .input("suitabilityRiskLevel", sql.VarChar(2), suitabilityRiskLevel)
       .input("suitabilityEvaluationDate", sql.NVarChar(50), suitabilityEvaluationDate)
-      .input("fatca", sql.VarChar(2), fatca)
+      .input("fatca", sql.VarChar(10), fatca)
       .input("fatcaDeclarationDate", sql.NVarChar(50), fatcaDeclarationDate)
       .input("actionBy", sql.NVarChar(100), actionBy)
-        .request().query(queryStr, (err, result) => {
+      .query(queryStr, (err, result) => {
           if (err) {
             console.log(fncName + " Quey db. Was err !!!" + err);
             reject(err);
@@ -1374,9 +1984,9 @@ function updateMITsuit(cardNumber ,cddScore, cddDate ,suitabilityRiskLevel,suita
 
 
 function updateSuit(custCode,riskLevel,UpdateBy) {
-  // logger.info('surveyDashboardFc()');
+  logger.info('updateSuit()');
 
-  var fncName = "surveyDashboardFc";
+  var fncName = "updateSuit()";
   var queryStr = `
   BEGIN
 

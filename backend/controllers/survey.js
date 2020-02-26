@@ -12,6 +12,7 @@ var request = require("request");
 
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
+
 var mitLog = require('./mitLog');
 const smsConfig = require('../config/sms-conf');
 
@@ -412,7 +413,7 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
           // message to RM.
           _subjectRM += ` (${data.fullName})`;
           _msgRM = `
-          ${data.fullName}  was finsih survey on ${utility.getDateTime()}
+          ${data.fullName}  was finish survey on ${utility.getDateTime()}
           <br>
           <br>Code: ${_PID}
           <br>Name: ${data.fullName}
@@ -812,7 +813,7 @@ exports.sendMailThankCust = (req, res, next) =>{
           // message to RM.
           _subjectRM += ` (${data.fullName})`;
           _msgRM = `
-          ${data.fullName}  was finsih survey on ${utility.getDateTime()}
+          ${data.fullName}  was finish survey on ${utility.getDateTime()}
           <br>
           <br>Code: ${_PID}
           <br>Name: ${data.fullName}
@@ -1215,11 +1216,11 @@ function custIndPartial(Cust_Code) {
           CASE
               WHEN A.Card_Type = 'I'
                   THEN 'CITIZEN_CARD'
-
               WHEN A.Card_Type = 'C'
                   THEN 'CITIZEN_CARD'
-
-              ELSE 'PASSPORT'
+                  WHEN A.Card_Type = 'P'
+                  THEN 'PASSPORT'
+              ELSE 'CITIZEN_CARD'
           END AS varchar) AS identificationCardType
       ,CAST(
           CASE

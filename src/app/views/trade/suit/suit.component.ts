@@ -1615,7 +1615,7 @@ export class SuitComponent implements OnInit {
     // CDD
     observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData,this.customer.OTP_ID));
     observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions,this.customer.OTP_ID));
-    observables.push(this.childService.delAllChildren(this.survey.pid));
+    // observables.push(this.childService.delAllChildren(this.survey.pid));
 
     // Children
     console.log('SAVE Chile>>'+JSON.stringify(this.cddData.children));
@@ -1728,21 +1728,15 @@ export class SuitComponent implements OnInit {
           }
 
           // Send mail to who relate(Owner & RM)
-
-          // this.suiteService.mailThankCust(this.survey.pid)
           this.suiteService.mailThankCust(this.survey.pid)
           .finally(() => {
             // Execute after graceful or exceptionally termination
           })
           .subscribe((data: any) => {
               console.log("Send maill finalSaveAll:" + JSON.stringify(data));
-
             },
             error => () => {
               console.log("Send maill finalSaveAll was error", error);
-            },
-            () => {
-              // console.log("saveFATCA  complete");
             }
           );
 

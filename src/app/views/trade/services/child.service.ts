@@ -51,7 +51,6 @@ export class ChildService {
     let year;
     let _DOB;
 
-
     if(child.dob){
       newDate = new Date(child.dob)
       day = newDate.getDate();
@@ -59,7 +58,6 @@ export class ChildService {
       year = newDate.getFullYear()    ;
       _DOB = year+"-"+month+"-"+day
     }
-
 
     let _cardEXPDate = '';
     if('Y' != child.cardNotExp){

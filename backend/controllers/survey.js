@@ -858,6 +858,7 @@ exports.sendMailThankCust = (req, res, next) =>{
           logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
           res.status(200).json({ message: 'Send mail successful!' });
         });
+
           // Incase No Email
         }else{
           logger.error(`API /sendMailToRelated -   NO E-mail`);

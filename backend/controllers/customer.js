@@ -122,24 +122,7 @@ exports.getCustomerFullInfo = (req, res, next) => {
   })
 }
 
-
-// exports.getFC_CustomerInfo = (req, res, next) => {
-//   var custCode = req.params.cusCode;
-//   getFC_CustomerInfo(custCode).then( (data) =>{
-//     console.log('TASK 1');
-//     res.status(200).json({
-//       result: data
-//     });
-
-//   },err=>{
-//     res.status(401).json(err);
-//   });
-// }
-
-
 exports.getORG_CustomerInfo = (req, res, next) => {
-
-  console.log('Welcome getORG_CustomerInfo()')
 
   var custCode = req.params.cusCode;
 
@@ -154,7 +137,6 @@ exports.getORG_CustomerInfo = (req, res, next) => {
   Promise.all(fnArray).then(values => {
 
       custInfo=values[0][0]
-
       custInfo["ext"] ={};
 
       if (values[1].length>0){
@@ -194,8 +176,7 @@ exports.getORG_CustomerInfo = (req, res, next) => {
 
 exports.getFC_CustomerInfo = (req, res, next) => {
 
-  console.log('Welcome getFC_CustomerInfo()')
-
+  // console.log('Welcome getFC_CustomerInfo()')
   var custCode = req.params.cusCode;
 
   fnArray=[];
@@ -207,12 +188,9 @@ exports.getFC_CustomerInfo = (req, res, next) => {
 
   Promise.all(fnArray).then(values => {
 
-    console.log('FC data>'+JSON.stringify(values))
-
+    // console.log('FC data>'+JSON.stringify(values))
       custInfo=values[0][0]
 
-
-      // custInfo.residence=[]
       if(values[1].length>0)
         custInfo.residence=values[1][0]
 

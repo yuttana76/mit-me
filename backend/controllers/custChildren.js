@@ -140,25 +140,27 @@ exports.CreateChildren = (req, res, next) => {
   var ChildPassportCountry = req.body.ChildPassportCountry;
   var ChildCardNumber = req.body.ChildCardNumber;
   var cardExpiryDate = req.body.cardExpiryDate || '';
-  var cardNotExt = req.body.cardNotExt;
+  // var cardNotExt = req.body.cardNotExt ||'';
   var title = req.body.title;
   var titleOther = req.body.titleOther;
   var First_Name_T = req.body.First_Name_T;
   var Last_Name_T = req.body.Last_Name_T;
-  var First_Name_E = req.body.First_Name_E;
-  var Last_Name_E = req.body.Last_Name_E;
+  // var First_Name_E = req.body.First_Name_E || '';
+  // var Last_Name_E = req.body.Last_Name_E || '';
   var Birth_Day = req.body.Birth_Day || '';
   var CreateBy = req.body.CreateBy;
-  var opt_id = req.body.opt_id
+  var otp_id = req.body.opt_id
 
   logger.info( `API /CreateChildren - ${req.originalUrl} - ${req.ip} - ${Cust_Code} - ${cardExpiryDate} - ${Birth_Day}`);
+
+  logger.info('BODY>'+JSON.stringify(req.body));
 
   var queryStr = `
   BEGIN
 
       UPDATE MIT_CUSTOMER_CHILDREN
-      SET  ChildIDType=@ChildIDType, ChildPassportCountry=@ChildPassportCountry, ChildCardNumber=@ChildCardNumber, cardExpiryDate=@cardExpiryDate, cardNotExt=@cardNotExt
-      , title=@title, titleOther=@titleOther, First_Name_T=@First_Name_T, Last_Name_T=@Last_Name_T, First_Name_E=@First_Name_E, Last_Name_E=@Last_Name_E, Birth_Day=@Birth_Day
+      SET  ChildIDType=@ChildIDType, ChildPassportCountry=@ChildPassportCountry, ChildCardNumber=@ChildCardNumber, cardExpiryDate=@cardExpiryDate
+      , title=@title, titleOther=@titleOther, First_Name_T=@First_Name_T, Last_Name_T=@Last_Name_T, Birth_Day=@Birth_Day
       , UpdateBy=@CreateBy, UpdateDate=GETDATE(),OTP_ID = @otp_id
       WHERE ChildCardNumber = @ChildCardNumber;
 
@@ -167,11 +169,11 @@ exports.CreateChildren = (req, res, next) => {
 
       INSERT INTO MIT_CUSTOMER_CHILDREN
       (Cust_Code, ChildIDType, ChildPassportCountry, ChildCardNumber, cardExpiryDate
-      ,cardNotExt, title, titleOther, First_Name_T, Last_Name_T,First_Name_E, Last_Name_E
+      ,title, titleOther, First_Name_T, Last_Name_T
       ,Birth_Day, CreateBy, CreateDate,OTP_ID)
       VALUES
       (@Cust_Code, @ChildIDType, @ChildPassportCountry, @ChildCardNumber, @cardExpiryDate
-      ,@cardNotExt, @title, @titleOther, @First_Name_T, @Last_Name_T,@First_Name_E, @Last_Name_E
+       ,@title, @titleOther, @First_Name_T, @Last_Name_T
       ,@Birth_Day, @CreateBy, GETDATE(),@otp_id)
 
     END
@@ -187,21 +189,20 @@ exports.CreateChildren = (req, res, next) => {
     .input('ChildPassportCountry', sql.VarChar(50), ChildPassportCountry)
     .input('ChildCardNumber', sql.VarChar(50), ChildCardNumber)
     .input('cardExpiryDate', sql.VarChar(20), cardExpiryDate)
-    .input('cardNotExt', sql.VarChar(1), cardNotExt)
+    // .input('cardNotExt', sql.VarChar(1), cardNotExt)N
     .input('title', sql.NVarChar(50), title)
     .input('titleOther', sql.NVarChar(50), titleOther)
     .input('First_Name_T', sql.NVarChar(200), First_Name_T)
     .input('Last_Name_T', sql.NVarChar(200), Last_Name_T)
-    .input('First_Name_E', sql.VarChar(200), First_Name_E)
-    .input('Last_Name_E', sql.VarChar(200), Last_Name_E)
+    // .input('First_Name_E', sql.VarChar(200), First_Name_E)
+    // .input('Last_Name_E', sql.VarChar(200), Last_Name_E)
     .input('Birth_Day', sql.VarChar(20), Birth_Day)
     .input('CreateBy', sql.VarChar(50), CreateBy)
     .input('otp_id', sql.VarChar(50), otp_id)
     .query(queryStr, (err, result) => {
 
-      console.log("ERROR CreateChildren()"+err);
-
-        if(err){
+      if(err){
+          console.error("ERROR CreateChildren()"+err);
           let rsp_code = "902"; // Was error
           res.status(422).json({
             code: rsp_code,

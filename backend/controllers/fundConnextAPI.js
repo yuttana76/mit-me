@@ -137,8 +137,9 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
   fnArray.push(execCUST_ADDR(cardNumber,2,actionBy)); // 2.2 Current MFTS_Holder_Address  & MIT_CUST_ADDR
   fnArray.push(execCUST_ADDR(cardNumber,3,actionBy)); // 2.3 Work MFTS_Holder_Address  & MIT_CUST_ADDR
 
-  // fnArray.push(execCUST_CHILDREN(cardNumber,actionBy)); // 2. MIT_CUST_CHILDREN
-  // fnArray.push(execCUSTOMER_SUIT(cardNumber,actionBy)); // 2. MIT_CUSTOMER_SUIT
+  fnArray.push(execCUST_CHILDREN(cardNumber,actionBy)); // 2. MIT_CUST_CHILDREN
+  fnArray.push(execSUIT(cardNumber,actionBy)); // 2. MIT_CUST_CHILDREN
+
 
   Promise.all(fnArray)
   .then(result => {
@@ -1334,6 +1335,265 @@ END
 }
 
 
+function execSUIT(cardNumber,actionBy){
+  var queryStr = `
+
+  BEGIN
+
+	  DECLARE @CustCode [varchar](50)='${cardNumber}'
+	  DECLARE @SuitSerieId [varchar](10)
+	  DECLARE @Document_Date datetime
+	  DECLARE @Status [varchar](1)
+	  DECLARE @TotalScore [int]
+	  DECLARE @RiskLevel [int]
+	  DECLARE @RiskLevelTxt [nvarchar](100)
+	  DECLARE @Type_Investor [nvarchar](max)
+	  DECLARE @CreateBy [varchar](100)
+	  DECLARE @CreateDate [datetime]
+	  DECLARE @UpdateBy [varchar](100)
+	  DECLARE @UpdateDate [datetime]
+
+  DECLARE survey_cursor CURSOR FOR
+  SELECT SuitSerieId
+    ,ISNULL(A.UpdateDate,A.CreateDate) AS Document_Date
+	,Status
+	,TotalScore
+	,RiskLevel
+	,RiskLevelTxt
+	,Type_Investor
+	,CreateBy
+	,CreateDate
+	,UpdateBy
+	,UpdateDate
+  FROM MIT_CUSTOMER_SUIT A
+  WHERE A.CustCode = @CustCode AND status='A'
+
+OPEN survey_cursor
+
+FETCH NEXT FROM survey_cursor
+INTO @SuitSerieId
+    ,@Document_Date
+	,@Status
+	,@TotalScore
+	,@RiskLevel
+	,@RiskLevelTxt
+	,@Type_Investor
+	,@CreateBy
+	,@CreateDate
+	,@UpdateBy
+	,@UpdateDate
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+
+  -- 1. MIT_ACCOUNT_INFO_EXT
+UPDATE MIT_ACCOUNT_INFO_EXT
+SET [suitabilityRiskLevel]=@RiskLevel
+,[suitabilityEvaluationDate]=@Document_Date
+WHERE cardNumber=@CustCode
+
+  -- 2. MIT_CUST_CHILDREN
+UPDATE MFTS_Suit SET Active_Flag='I' WHERE Account_No=@CustCode
+
+INSERT INTO MFTS_Suit([Account_No]
+	,[Document_Date]
+	,[Score]
+	,[Risk_Level]
+	,[Risk_Level_Desc]
+	,[Active_Flag]
+	,[Create_By]
+	,[Create_Date]
+)VALUES(@CustCode
+	,@Document_Date
+	,@TotalScore
+	,@RiskLevelTxt
+	,@Type_Investor
+	,'A'
+	,@CreateBy
+	,getDate()
+)
+
+FETCH NEXT FROM survey_cursor
+INTO @SuitSerieId
+    ,@Document_Date
+	,@Status
+	,@TotalScore
+	,@RiskLevel
+	,@RiskLevelTxt
+	,@Type_Investor
+	,@CreateBy
+	,@CreateDate
+	,@UpdateBy
+	,@UpdateDate
+
+END
+CLOSE survey_cursor;
+DEALLOCATE survey_cursor;
+
+END
+
+  `;
+  return new Promise(function(resolve, reject) {
+    dbConfig.msByQuery(queryStr,config)
+    .then(result=>{
+        resolve(result);
+      },err=>{
+        reject(err);
+    });
+  });
+}
+
+
+function execCUST_CHILDREN(cardNumber,actionBy){
+  var queryStr = `
+  BEGIN
+  DECLARE @Cust_Code VARCHAR(50)='${cardNumber}'
+
+  DECLARE @ChildCardNumber [varchar](50)
+  DECLARE @ChildIDType VARCHAR(15)
+  DECLARE @ChildPassportCountry varchar(2)
+  DECLARE @cardExpiryDate [date]
+  DECLARE @cardNotExt [varchar](1)
+  DECLARE @title [varchar](5)
+  DECLARE @titleOther [nvarchar](50)
+  DECLARE @First_Name_T [nvarchar](200)
+  DECLARE @Last_Name_T [nvarchar](200)
+  DECLARE @First_Name_E [nvarchar](200)
+  DECLARE @Last_Name_E [nvarchar](200)
+  DECLARE @Birth_Day [datetime]
+  DECLARE @CreateBy [varchar](100)
+  DECLARE @CreateDate [datetime]
+  DECLARE @UpdateBy [varchar](100)
+  DECLARE @UpdateDate [datetime]
+  DECLARE @OTP_ID VARCHAR(100)
+
+  DECLARE survey_cursor CURSOR FOR
+  SELECT  ChildCardNumber
+  ,ChildIDType
+  ,ChildPassportCountry
+  ,cardExpiryDate
+  ,cardNotExt
+  ,title
+  ,titleOther
+  ,First_Name_T
+  ,Last_Name_T
+  ,First_Name_E
+  ,Last_Name_E
+  ,Birth_Day
+  ,CreateBy
+  ,CreateDate
+  ,UpdateBy
+  ,UpdateDate
+  ,OTP_ID
+  FROM MIT_CUSTOMER_CHILDREN A
+  WHERE A.Cust_Code = @Cust_Code
+
+OPEN survey_cursor
+
+FETCH NEXT FROM survey_cursor
+INTO @ChildCardNumber
+  ,@ChildIDType
+  ,@ChildPassportCountry
+  ,@cardExpiryDate
+  ,@cardNotExt
+  ,@title
+  ,@titleOther
+  ,@First_Name_T
+  ,@Last_Name_T
+  ,@First_Name_E
+  ,@Last_Name_E
+  ,@Birth_Day
+  ,@CreateBy
+  ,@CreateDate
+  ,@UpdateBy
+  ,@UpdateDate
+  ,@OTP_ID
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+
+  -- 1. MIT_CUST_CHILDREN
+  UPDATE MIT_CUST_CHILDREN
+  SET	identificationCardType=@ChildIDType
+,passportCountry=@ChildPassportCountry
+,idCardExpiryDate=@cardExpiryDate
+,title=@title
+,thFirstName=@First_Name_T
+,thLastName=@Last_Name_T
+,birthDate=@Birth_Day
+,CreateBy=@CreateBy
+,CreateDate=@CreateDate
+,UpdateBy=@UpdateBy
+,UpdateDate=@UpdateDate
+  WHERE cardNumber=@Cust_Code AND childCardNumber=@childCardNumber
+
+  IF @@ROWCOUNT=0
+  BEGIN
+      INSERT INTO  MIT_CUST_CHILDREN(cardNumber
+    ,childCardNumber
+      ,identificationCardType
+      ,passportCountry
+      ,idCardExpiryDate
+      ,title
+      ,thFirstName
+      ,thLastName
+      ,birthDate
+      ,CreateBy
+      ,CreateDate
+      ,UpdateBy
+      ,UpdateDate
+      )
+      VALUES(@Cust_Code
+    ,@childCardNumber
+      ,@ChildIDType
+      ,@ChildPassportCountry
+      ,@cardExpiryDate
+      ,@title
+      ,@First_Name_T
+      ,@Last_Name_T
+      ,@Birth_Day
+      ,@CreateBy
+      ,@CreateDate
+      ,@UpdateBy
+      ,@UpdateDate
+      )
+  END
+
+FETCH NEXT FROM survey_cursor
+INTO @ChildCardNumber
+  ,@ChildIDType
+  ,@ChildPassportCountry
+  ,@cardExpiryDate
+  ,@cardNotExt
+  ,@title
+  ,@titleOther
+  ,@First_Name_T
+  ,@Last_Name_T
+  ,@First_Name_E
+  ,@Last_Name_E
+  ,@Birth_Day
+  ,@CreateBy
+  ,@CreateDate
+  ,@UpdateBy
+  ,@UpdateDate
+  ,@OTP_ID
+
+END
+CLOSE survey_cursor;
+DEALLOCATE survey_cursor;
+
+END
+  `;
+  return new Promise(function(resolve, reject) {
+    dbConfig.msByQuery(queryStr,config)
+    .then(result=>{
+        resolve(result);
+      },err=>{
+        reject(err);
+    });
+  });
+}
+
 function execCUST_ADDR(cardNumber,Addr_Seq,actionBy){
   var queryStr = `
 
@@ -1616,10 +1876,8 @@ function execACCOUNT_INFO(cardNumber,actionBy){
 	DECLARE @CDD_Date DATE
 	DECLARE @IS_FATCA VARCHAR(10)
 	DECLARE @FATCA_DATE DATE
-
-    DECLARE @suitabilityRiskLevel VARCHAR(1)
-    DECLARE @suitabilityEvaluationDate DATE
-
+  DECLARE @suitabilityRiskLevel VARCHAR(1)
+  DECLARE @suitabilityEvaluationDate DATE
 	DECLARE @CreateBy NVARCHAR(100)
 	DECLARE @CreateDate NVARCHAR(50)
 	DECLARE @UpdateBy NVARCHAR(100)

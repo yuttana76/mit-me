@@ -3,7 +3,7 @@ import { SuitFormService } from "./suit.service";
 
 import { ToastrService } from "ngx-toastr";
 import { MatDialog, MatRadioChange, MatDialogRef } from "@angular/material";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, ParamMap } from "@angular/router";
 import { SuiteService } from "../services/suit.service";
 import { FormGroup, FormControl, Validators, FormBuilder } from "@angular/forms";
 import { SurveyModel } from "../model/survey.model";
@@ -44,6 +44,8 @@ export class SuitComponent implements OnInit {
   SEQ_CURR_ADDR = 2;
   SEQ_WORK_ADDR = 3;
   SEQ_MAIL_ADDR = 4;
+
+  FORM_SCREEN;
 
   form: FormGroup;
 
@@ -118,6 +120,7 @@ export class SuitComponent implements OnInit {
   resultMsg =[];
 
   constructor(
+    public route: ActivatedRoute,
     public formService: SuitFormService,
     private toastr: ToastrService,
     private confirmationDialogService: ConfirmationDialogService,
@@ -131,14 +134,29 @@ export class SuitComponent implements OnInit {
 
   ) {
 
-
-    if (
-      this.authService.getUserId() != null &&
+    if ( this.authService.getUserId() != null &&
       this.authService.getDepCode() != null
     ) {
       this.ADD_NEW = true;
       this.INTERNAL_USER = true;
+      this.verifyFLag=true;
+
+      this.route.paramMap.subscribe((paramMap: ParamMap) => {
+        if (paramMap.has('source')) {
+          this.FORM_SCREEN = paramMap.get('source');
+        }
+
+        if (paramMap.has('id')) {
+          this.survey.pid = paramMap.get('id');
+
+          // Initail data
+          // this.loadSurvey();
+        }
+      });
     }
+
+    console.log('Welcome  Suit user>' + this.authService.getUserId() + ' ;Internal>' + this.INTERNAL_USER  + ' ;FORM_SCREEN>' + this.FORM_SCREEN + ' ;ID>' + this.survey.pid);
+
   }
 
   ngOnInit() {

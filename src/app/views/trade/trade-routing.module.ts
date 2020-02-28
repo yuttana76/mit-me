@@ -166,10 +166,10 @@ const routes: Routes = [
         }
       },
       {
-        path: 'suit',
+        path: 'suit/:id/:source',
         component: SuitComponent,
         data: {
-          title: 'Suitability'
+          title: 'Internal Suitability'
         }
       },
 // LED

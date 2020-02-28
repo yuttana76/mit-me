@@ -24,18 +24,13 @@ export class SuiteService {
   constructor(private http: HttpClient) { }
 
   verifyExtLink(_pid: string, _has: string): Observable<any> {
-
-    // console.log(` verifyExtLink() URL= ${environment.apiURL}`);
-
     const data = {
       'pid': _pid.trim()
     };
     return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/verifyExtLink', data);
   }
 
-
   verifyRequestOTP(_pid: string,_mobile: string): Observable<any> {
-
     const data = {
       'pid': _pid.trim(),
       'm': _mobile.trim()
@@ -53,7 +48,6 @@ export class SuiteService {
     };
     return this.http.post<{ message: string, result: string }>(BACKEND_URL_OTP + '/verityOTPtoken', data);
   }
-
 
   suitEvaluate(_pid: string,_suitSerieId: string, _suitScore: number): Observable<any> {
     // console.log(`Service suitEvaluate()  ${_pid} - score: ${_suitScore}`);
@@ -79,9 +73,6 @@ export class SuiteService {
       'ans': _ans,
       'otp_id':_OTP_ID
     };
-
-    console.log('saveSuitabilityByPID() _suitScore>>' + _suitScore);
-    console.log('saveSuitabilityByPID() _riskLevel>>' + _riskLevel);
 
     return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/suitSave', data);
   }

@@ -149,7 +149,7 @@ export class SurveySearchComponent implements OnInit {
   onKYCdetail(Cust_Code: string) {
     this.kycDetailDialogComponent = this.dialog.open(KycDetailDialogComponent, {
       width: '800px',
-      height: '1000px',
+      height: '800px',
       data: Cust_Code
     });
 
@@ -192,6 +192,10 @@ export class SurveySearchComponent implements OnInit {
         // }
 
     });
+  }
+
+  onNewSurvey(){
+    console.log('Go to New Survey');
   }
 
 }

@@ -830,34 +830,35 @@ exports.sendMailThankCust = (req, res, next) =>{
         /**
          * SEND mail to suctomer
          */
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              return logger.error(`API /sendMailToRelated - ${error} `);
-                // return console.log(error);
-            }
-              /*
-              Save MIT_LOG
-              */
-             mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
-            logger.info(`API /sendMailToRelated -  Send mail successful!`);
-            res.status(200).json({ message: 'Send mail successful!' });
-          });
+          // transporter.sendMail(mailOptions, (error, info) => {
+          //   if (error) {
+          //     return logger.error(`API /sendMailToRelated - ${error} `);
+          //       // return console.log(error);
+          //   }
+          //     /*
+          //     Save MIT_LOG
+          //     */
+          //    mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+          //   logger.info(`API /sendMailToRelated -  Send mail successful!`);
+          //   res.status(200).json({ message: 'Send mail successful!' });
+          // });
 
-           /**
+         /**
          * SEND mail RM.
          */
-        transporter.sendMail(mailOptions_RM, (error, info) => {
-          if (error) {
-            return logger.error(`API /sendMailToRelated - ${error} `);
-              // return console.log(error);
-          }
-            /*
-            Save MIT_LOG
-            */
-          //  mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
-          logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
-          res.status(200).json({ message: 'Send mail successful!' });
-        });
+          // transporter.sendMail(mailOptions_RM, (error, info) => {
+          //   if (error) {
+          //     return logger.error(`API /sendMailToRelated - ${error} `);
+          //       // return console.log(error);
+          //   }
+
+          //     /*
+          //     Save MIT_LOG
+          //     */
+          //   //  mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+          //   logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
+          //   res.status(200).json({ message: 'Send mail successful!' });
+          // });
 
           // Incase No Email
         }else{

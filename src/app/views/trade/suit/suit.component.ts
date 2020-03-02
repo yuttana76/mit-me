@@ -134,6 +134,7 @@ export class SuitComponent implements OnInit {
 
   ) {
 
+    // For internal user
     if ( this.authService.getUserId() != null &&
       this.authService.getDepCode() != null
     ) {
@@ -150,13 +151,27 @@ export class SuitComponent implements OnInit {
           this.survey.pid = paramMap.get('id');
 
           // Initail data
-          // this.loadSurvey();
+           this.internalLoading();
         }
       });
     }
 
     console.log('Welcome  Suit user>' + this.authService.getUserId() + ' ;Internal>' + this.INTERNAL_USER  + ' ;FORM_SCREEN>' + this.FORM_SCREEN + ' ;ID>' + this.survey.pid);
 
+  }
+
+  internalLoading(){
+    // Load CDD
+    this.getCDD(this.survey.pid);
+
+    // Load address
+    this.getCDDAddress(this.survey.pid, this.SEQ_REG_ADDR);
+    this.getCDDAddress(this.survey.pid, this.SEQ_CURR_ADDR);
+    this.getCDDAddress(this.survey.pid, this.SEQ_WORK_ADDR);
+    this.getCDDAddress(this.survey.pid, this.SEQ_MAIL_ADDR);
+
+    // FATCA
+    this.loadFATCA(this.survey.pid);
   }
 
   ngOnInit() {
@@ -194,6 +209,7 @@ export class SuitComponent implements OnInit {
       this.token = params["has"];
 
       // Set token in authentication environment
+      if(!this.INTERNAL_USER)
       this.authService.setUserExtlink(this.token);
 
       this.spinnerLoading = false;
@@ -1603,6 +1619,13 @@ export class SuitComponent implements OnInit {
 
   finalSaveAll(){
 
+    var actionBy
+    if(this.INTERNAL_USER){
+      actionBy=this.authService.getUserId()
+    }else{
+      actionBy=this.survey.pid
+    }
+
     this.re_addrData.ReqModifyFlag = this.addrModifyFlag;
     this.work_addrData.ReqModifyFlag = this.addrModifyFlag;
     this.cur_addrData.ReqModifyFlag = this.addrModifyFlag;
@@ -1631,14 +1654,14 @@ export class SuitComponent implements OnInit {
   // this.cddData.incomeSource = incomeSourvceVal;
 
     // CDD
-    observables.push(this.cddService.saveCustCDDInfo(this.survey.pid,this.survey.pid,this.cddData,this.customer.OTP_ID));
-    observables.push(this.suiteService.saveFATCA(this.survey.pid,this.survey.pid,this.fatcaQuestions,this.customer.OTP_ID));
+    observables.push(this.cddService.saveCustCDDInfo(actionBy,this.survey.pid,this.cddData,this.customer.OTP_ID));
+    observables.push(this.suiteService.saveFATCA(actionBy,this.survey.pid,this.fatcaQuestions,this.customer.OTP_ID));
     // observables.push(this.childService.delAllChildren(this.survey.pid));
 
     // Children
     console.log('SAVE Chile>>'+JSON.stringify(this.cddData.children));
     for (var i in this.cddData.children) {
-      observables.push(this.childService.saveChild(this.survey.pid,this.survey.pid,this.cddData.children[i],this.customer.OTP_ID));
+      observables.push(this.childService.saveChild(actionBy,this.survey.pid,this.cddData.children[i],this.customer.OTP_ID));
     }
 
     // Check Work Address selected
@@ -1675,19 +1698,18 @@ export class SuitComponent implements OnInit {
       this.mail_addrData.Addr_Seq = this.SEQ_MAIL_ADDR;
 
     // Address
-    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.re_addrData,this.customer.OTP_ID));
-    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.work_addrData,this.customer.OTP_ID));
-    observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.cur_addrData,this.customer.OTP_ID));
+    observables.push(this.cddService.saveCustCDDAddr(actionBy,this.survey.pid,this.re_addrData,this.customer.OTP_ID));
+    observables.push(this.cddService.saveCustCDDAddr(actionBy,this.survey.pid,this.work_addrData,this.customer.OTP_ID));
+    observables.push(this.cddService.saveCustCDDAddr(actionBy,this.survey.pid,this.cur_addrData,this.customer.OTP_ID));
 
     if(this.cddData.MailSameAs !== 'email'){
-      observables.push(this.cddService.saveCustCDDAddr(this.survey.pid,this.survey.pid,this.mail_addrData,this.customer.OTP_ID));
+      observables.push(this.cddService.saveCustCDDAddr(actionBy,this.survey.pid,this.mail_addrData,this.customer.OTP_ID));
     }
 
     console.log('suitModifyFlag >>'+this.suitModifyFlag);
 
     if(this.suitModifyFlag){
-      observables.push(this.suiteService.saveSuitabilityByPID(
-        this.survey.pid, this.survey.pid,
+      observables.push(this.suiteService.saveSuitabilityByPID(actionBy, this.survey.pid,
         this.formService.suitSerieId,
         this.survey.suitScore,
         this.survey.riskLevel,

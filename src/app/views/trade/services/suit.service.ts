@@ -59,11 +59,11 @@ export class SuiteService {
     return this.http.post<{ message: string, result: string }>(BACKEND_URL + '/evaluate', data);
   }
 
-  saveSuitabilityByPID(_userId: string,_pid: string,_suitSerieId: string,
+  saveSuitabilityByPID(actionBy: string,_pid: string,_suitSerieId: string,
     _suitScore: number, _riskLevel: number, _riskLevelTxt: string, _riskLevelDesc: string, _ans: Array<Question>,_OTP_ID:string): Observable<any> {
     // console.log(`Service saveSuitability()  ${_pid} `);
     const data = {
-      'userId': _userId,
+      'userId': actionBy,
       'pid': _pid,
       'suitSerieId': _suitSerieId,
       'score': _suitScore,

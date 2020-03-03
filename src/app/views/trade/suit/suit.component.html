@@ -181,7 +181,6 @@
             </div>
 
             <mat-card-actions class="stepper_action center-screen ">
-                <!-- <a  mat-flat-button color="accent" (click)="fatcaOnChange()" class ="act_button col-sm-4"> Edit  <i class="fas fa-pencil-alt"></i></a> -->
                 <button mat-flat-button  matStepperPrevious color="accent" class="col-sm-12 col-lg-3" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
                 <button mat-flat-button  matStepperNext color="primary" (click)=fatch_FormInvalid(FATCAGroup) class="col-sm-12 col-lg-3" > {{formService.LABEL_NEXT}} <i class="fas fa-chevron-right"></i></button>
             </mat-card-actions>
@@ -201,8 +200,6 @@
       <div class = 'row center-screen2'>
           <code>
             <br>
-                <!-- <p><span class='txt_warning'>หลังจากที่ท่านกด ยืนยันข้อมูล  ท่านจะได้รับอีเมล์ ตอบรับจาก wealthservice@merchantasset.co.th เพื่อยืนยันว่าระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว </span></p>
-                <p><span class='txt_warning'>หากท่านมิได้รับอีเมล์ ดังกล่าว กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ โทร 02- 660-6696 หรือ ทางอีเมล์ wealthservice@merchantasset.co.th</span></p> -->
                 <h5>หลังจากที่ท่านกดยืนยันข้อมูล  ท่านจะได้รับอีเมล์ตอบรับจากบริษัท เพื่อยืนยันว่าระบบได้รับข้อมูลของท่านเรียบร้อยแล้ว </h5>
                 <br>
                 <h5>หากท่านมิได้รับอีเมล์ ดังกล่าว กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์ โทร <a href="tel:026606689">02-660-6689</a> หรือ ทางอีเมล์ <a href="mailto:wealthservice@merchantasset.co.th" >wealthservice@merchantasset.co.th</a></h5>
@@ -212,31 +209,10 @@
       <div  class="row center-screen ">
           <button mat-flat-button  matStepperPrevious color="accent" style="margin-left: 10px" class="col-sm-12 col-lg-3" ><i class="fas fa-chevron-left"></i> {{formService.LABEL_BACK}}</button>
           <button *ngIf="survey.riskLevel" mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" class="col-sm-12 col-lg-3" >{{formService.LABEL_CONFIRM_DATA}}  </button>
-          <!-- <button mat-flat-button  matStepperNext color="primary" style="margin-left: 10px" (click)="finalSaveAll()" >{{formService.LABEL_SAVE}}   <i class="far fa-save fa-2x"></i></button> -->
       </div>
     </mat-step>
 </mat-horizontal-stepper>
 </div>
-
-<!--
-<div *ngIf="saveAllComplete" class="row center-screen2 ">
-    <div class='branner col-md-6'>
-      <img  src="assets/img/brand/MPAM-logo.png" />
-    </div>
-
-          <br>
-          <h4>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </h4>
-          <h4>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  โทร 02-660-6689 หรือ wealthservice@merchantasset.co.th</h4>
-          <br>
-          <p>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
-          <p>942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4</p>
-          <p>แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500</p>
-          <p>โทร. 02 660 6689</p>
-          <p>แฟกซ์. 02 660 6678</p>
-          <p>เว็บไซต์ : www.merchantasset.co.th</p>
-          <p>อีเมล : wealthservice@merchantasset.co.th </p>
-</div> -->
-
 
 <mat-card id="thk_card" *ngIf="saveAllComplete && !INTERNAL_USER" class="divCenter" >
   <mat-card-header>
@@ -262,30 +238,12 @@
     </div>
   </mat-card-footer>
 </mat-card>
-<!--
-<div *ngIf="saveAllComplete" class="row center-screen2 ">
-  <div class='branner col-md-6'>
-      <img  src="assets/img/brand/MPAM-logo.png" />
+
+
+
+    <div class="thk_card_content" *ngIf="saveAllComplete && INTERNAL_USER">
+      <p>Survey Complete </p>
+      <button  mat-flat-button color="primary" type='button' [routerLink]="['/trade/surveySearch']" >Main screen</button>
     </div>
-  <code >
-      <div>
-        <h3>บริษัทขอขอบพระคุณท่านที่สละเวลาในการตรวจสอบข้อมูล </h3>
-        <h3>หากท่านมีข้อสอบถามเพิ่มเติม กรุณาติดต่อเจ้าหน้าที่ลูกค้าสัมพันธ์  โทร 02-660-6689 หรือ wealthservice@merchantasset.co.th </h3>
-      </div>
-
-      <div>
-        บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด
-        942/170-171 ชาญอิสสระทาวเวอร์ 1 ชั้น 25 ถนนพระราม 4
-        แขวงสุริยวงศ์ เขตบางรัก กรุงเทพมหานคร 10500
-        โทร. 02 660 6689
-        แฟกซ์. 02 660 6678
-        เว็บไซต์ : www.merchantasset.co.th
-        อีเมล : wealthservice@merchantasset.co.th
-      </div>
-
-  </code>
-</div> -->
 
 
-<!-- </div> -->
-<!-- </mat-card> -->

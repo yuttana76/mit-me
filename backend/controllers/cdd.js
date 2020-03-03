@@ -194,6 +194,7 @@ exports.saveCDDInfo = (req, res, next) => {
 
 
   var logMsg = `POST API /saveCDDInfo - ${req.originalUrl} - ${req.ip} - ${Cust_Code}`;
+
   logger.info( logMsg);
 
   var queryStr = `

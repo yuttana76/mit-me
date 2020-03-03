@@ -294,6 +294,11 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
   const _compInfo = mailConfig.mailCompInfo_TH;
   var logMsg ;
 
+  logger.info(`API /sendMailThankCustSuit  -  Fail cause env.production=${process.env.production} `);
+  if(!process.env.production){
+    logger.info(`Send mail unsuccessful env.production=${process.env.production} `);
+    res.status(200).json({ message: `Send mail unsuccessful env.production=${process.env.production} `});
+  }
 
   getCustomerInfo(_PID).then( (_data) =>{
 
@@ -430,34 +435,34 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
         /**
          * SEND mail to suctomer
          */
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              return logger.error(`API /sendMailToRelated - ${error} `);
-                // return console.log(error);
-            }
-              /*
-              Save MIT_LOG
-              */
-             mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
-            logger.info(`API /sendMailToRelated -  Send mail successful!`);
-            res.status(200).json({ message: 'Send mail successful!' });
-          });
+          // transporter.sendMail(mailOptions, (error, info) => {
+          //   if (error) {
+          //     return logger.error(`API /sendMailToRelated - ${error} `);
+          //       // return console.log(error);
+          //   }
+          //     /*
+          //     Save MIT_LOG
+          //     */
+          //    mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+          //   logger.info(`API /sendMailToRelated -  Send mail successful!`);
+          //   res.status(200).json({ message: 'Send mail successful!' });
+          // });
 
            /**
          * SEND mail RM.
          */
-        transporter.sendMail(mailOptions_RM, (error, info) => {
-          if (error) {
-            return logger.error(`API /sendMailToRelated - ${error} `);
-              // return console.log(error);
-          }
-            /*
-            Save MIT_LOG
-            */
-          //  mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
-          logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
-          res.status(200).json({ message: 'Send mail successful!' });
-        });
+        // transporter.sendMail(mailOptions_RM, (error, info) => {
+        //   if (error) {
+        //     return logger.error(`API /sendMailToRelated - ${error} `);
+        //       // return console.log(error);
+        //   }
+        //     /*
+        //     Save MIT_LOG
+        //     */
+        //   //  mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+        //   logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
+        //   res.status(200).json({ message: 'Send mail successful!' });
+        // });
 
 
 
@@ -700,6 +705,14 @@ exports.sendMailThankCust = (req, res, next) =>{
   let _msgRM = '';
   const _compInfo = mailConfig.mailCompInfo_TH;
   var logMsg ;
+
+  // Environment checking
+  logger.info(`API /sendMailThankCustSuit  -  Fail cause env.production=${process.env.production} `);
+
+  if(process.env.production==='false'){
+    logger.info(`STEP 1 `);
+    return res.status(200).json({ message: `Send mail unsuccessful env.production=${process.env.production} `});
+  }
 
   getCustomerInfo(_PID).then( (_data) =>{
 
@@ -959,7 +972,9 @@ function wating(res,data){
 }
 
 function surveyDashboardFc(custCode,SurveyStartDate,SurveyToDate) {
+
   logger.info('surveyDashboardFc()');
+
   let condition =''
 
   if(custCode){

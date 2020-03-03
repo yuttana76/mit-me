@@ -1659,7 +1659,7 @@ export class SuitComponent implements OnInit {
     // observables.push(this.childService.delAllChildren(this.survey.pid));
 
     // Children
-    console.log('SAVE Chile>>'+JSON.stringify(this.cddData.children));
+    // console.log('SAVE Chile>>'+JSON.stringify(this.cddData.children));
     for (var i in this.cddData.children) {
       observables.push(this.childService.saveChild(actionBy,this.survey.pid,this.cddData.children[i],this.customer.OTP_ID));
     }
@@ -1705,8 +1705,6 @@ export class SuitComponent implements OnInit {
     if(this.cddData.MailSameAs !== 'email'){
       observables.push(this.cddService.saveCustCDDAddr(actionBy,this.survey.pid,this.mail_addrData,this.customer.OTP_ID));
     }
-
-    console.log('suitModifyFlag >>'+this.suitModifyFlag);
 
     if(this.suitModifyFlag){
       observables.push(this.suiteService.saveSuitabilityByPID(actionBy, this.survey.pid,
@@ -1768,18 +1766,16 @@ export class SuitComponent implements OnInit {
           }
 
           // Send mail to who relate(Owner & RM)
-          this.suiteService.mailThankCust(this.survey.pid)
-          .finally(() => {
-            // Execute after graceful or exceptionally termination
-          })
-          .subscribe((data: any) => {
-              console.log("Send maill finalSaveAll:" + JSON.stringify(data));
-            },
-            error => () => {
-              console.log("Send maill finalSaveAll was error", error);
-            }
-          );
+          // if ( !this.INTERNAL_USER ) {
 
+            this.suiteService.mailThankCust(this.survey.pid)
+            .subscribe((data: any) => {
+                console.log("Send maill finalSaveAll:" + JSON.stringify(data));
+              },error => () => {
+                console.log("Send maill finalSaveAll was error", error);
+              }
+            );
+          // }
 
           this.toastr.info(`Survey complete please see result below.`,
             this.formService.SAVE_INFO,

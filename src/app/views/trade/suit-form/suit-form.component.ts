@@ -130,10 +130,7 @@ export class SuitFormComponent implements OnInit {
         this.onSuitCalculate = false;
       })
       .subscribe((data: any) => {
-          console.log(
-            "HTTP return  evaluateRiskLevel :" + JSON.stringify(data)
-          );
-
+          // console.log("HTTP return  evaluateRiskLevel :" + JSON.stringify(data));
           if (data) {
             this.survey.riskLevel = data.DATA.RiskLevel;
             this.survey.riskLevelTxt = data.DATA.RiskLevelTxt;

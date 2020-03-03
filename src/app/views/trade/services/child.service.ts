@@ -43,7 +43,7 @@ export class ChildService {
 
   saveChild(ActionBy:string,custCode: string, child: PersonModel,opt_id: string) {
 
-    console.log('Welcome saveChild() service.');
+    console.log('Welcome saveChild() id:' + child.cardNumber);
 
     let newDate;
     let day;

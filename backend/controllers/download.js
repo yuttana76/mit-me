@@ -5,8 +5,9 @@ var fs = require('fs');
 const path = require("path");
 var logger = require('../config/winston');
 
-exports.downloadNAV = (req, res, next) => {
+const  DOWNLOAD_PATH = './backend/downloadFiles/files/';
 
+exports.downloadNAV = (req, res, next) => {
 
     var file = req.params.file;
     var fileLocation = path.join('./backend/uploadFiles',file);
@@ -26,6 +27,31 @@ exports.downloadNAV = (req, res, next) => {
       res.download(fileLocation, file);
 
     });
+
+  }
+
+exports.downloadfile = (req, res, next) => {
+
+    var fileName = req.params.fileName;
+
+    var fileLocation = path.join(DOWNLOAD_PATH,fileName);
+
+        logger.info('/api/download/file  file=' + fileName);
+
+    // Check if the file exists in the current directory.
+    fs.access(DOWNLOAD_PATH+fileName, fs.constants.F_OK, (err) => {
+
+      if(err){
+        logger.error(DOWNLOAD_PATH + err);
+        res.status(422).json({
+          message: "Unprocessable Entity"
+        });
+      }
+
+      res.download(fileLocation, fileName);
+
+    });
+
 
 
 

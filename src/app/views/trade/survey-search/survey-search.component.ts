@@ -12,6 +12,8 @@ import {dateDBFormatPipe} from '../pipe/dateFormatPipe';
 import { SelectionModel } from '@angular/cdk/collections';
 import { KycDetailDialogComponent } from '../dialog/kyc-detail-dialog/kyc-detail-dialog.component';
 import { SurveySearchActionDialogComponent } from '../dialog/surveySearch-action-dialog/surveySearch-action-dialog.component';
+import { ExportPDFService } from './exportPDF.service';
+
 
 @Component({
   selector: 'app-survey-search',
@@ -49,6 +51,7 @@ export class SurveySearchComponent implements OnInit {
     private authService: AuthService,
     private toastr: ToastrService,
     public dialog: MatDialog,
+    public exportPDFService: ExportPDFService,
   ) {
 
   }
@@ -169,6 +172,12 @@ export class SurveySearchComponent implements OnInit {
 
     });
   }
+
+  onExportPDF(Cust_Code: string) {
+
+    this.exportPDFService.KYC_SUIT_ToPDF(Cust_Code);
+  }
+
 
   onActionDialog(Cust_Code: string) {
 

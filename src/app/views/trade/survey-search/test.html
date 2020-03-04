@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>jsPDF customfonts example</title>
+    <script language="javascript" type="text/javascript" src="./dist/jspdf.customfonts.min.js"></script>
+    <script language="javascript" type="text/javascript" src="defaultVFS.js"></script>
+</head>
+
+<body>
+    <script>
+        var doc = new jsPDF();
+
+        doc.addFont('supermarket.ttf', 'supermarket', 'normal');
+
+        doc.setFont('supermarket');
+        doc.text(15, 15, 'สวัสดี ยินดีที่ได้รู้จักคุณ');
+
+        doc.save('custom_fonts.pdf');
+    </script>
+</body>
+
+</html>

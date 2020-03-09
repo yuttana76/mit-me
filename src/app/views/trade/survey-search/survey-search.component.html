@@ -37,11 +37,10 @@
           <button mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
           <button mat-stroked-button color="warn" type='reset'>Reset</button>
           <button mat-stroked-button color="primary" type='button' [routerLink]="['/trade/suit',cust_Code_Cond,'SEARCH_SCR']" >New survey</button>
-          <button mat-stroked-button color="primary" type='button' (click)="onExportPDF(123)" >PDF</button>
+          <button mat-stroked-button color="primary" type='button' (click)="onExportPDF()" >View PDF</button>
+          <button mat-stroked-button color="primary" type='button' (click)="onCreatePDF()" >Create PDF</button>
         </div>
-
       </div>
-
     </mat-card-content>
 
   </form>

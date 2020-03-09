@@ -16,6 +16,7 @@
 /backend/controllers/readFiles/SURVEY
 /backend/controllers/readFiles/SURVEYBackup
 /backend/controllers/readFiles/suit
+/backend/node_modules
 /backend/.env
 backend/angular
 /dist-server

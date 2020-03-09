@@ -398,7 +398,6 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
       const attachSuitFilepath = __dirname + '/readFiles/suit/'+result.filePDF;
       const attachFileName = 'แบบประเมินSuittability.pdf';
 
-
           // message to customer
           let mailOptions = {
             from: _from,

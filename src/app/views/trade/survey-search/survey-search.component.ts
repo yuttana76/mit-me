@@ -51,7 +51,6 @@ export class SurveySearchComponent implements OnInit {
     private authService: AuthService,
     private toastr: ToastrService,
     public dialog: MatDialog,
-    public exportPDFService: ExportPDFService,
   ) {
 
   }
@@ -156,7 +155,8 @@ export class SurveySearchComponent implements OnInit {
       data: Cust_Code
     });
 
-    this.kycDetailDialogComponent.afterClosed().subscribe(result => {
+    this.kycDetailDialogComponent.afterClosed()
+    .subscribe(result => {
         console.log('onNewMobileDialog afterClosed()=> ', result);
 
         // if(result ==='newMobileSuccess'){
@@ -173,11 +173,33 @@ export class SurveySearchComponent implements OnInit {
     });
   }
 
-  onExportPDF(Cust_Code: string) {
+  onCreatePDF() {
 
-    this.exportPDFService.KYC_SUIT_ToPDF(Cust_Code);
+    this.spinnerLoading=true;
+    this.suiteService.createKYCForm(this.authService.getUserId(),this.cust_Code_Cond)
+    .finally(() => {
+      this.spinnerLoading=false;
+    })
+    .subscribe((rs)=>{
+     if(rs.filePDF){
+      this.suiteService.downloadKYCForm(this.authService.getUserId(),rs.filePDF).subscribe((rs)=>{
+        const blob = new Blob([rs], { type: 'application/pdf' });
+        const url= window.URL.createObjectURL(blob);
+        window.open(url);
+        });
+     }
+    });
+
   }
 
+  onExportPDF() {
+
+    this.suiteService.downloadKYCForm(this.authService.getUserId(),this.cust_Code_Cond).subscribe((rs)=>{
+      const blob = new Blob([rs], { type: 'application/pdf' });
+      const url= window.URL.createObjectURL(blob);
+      window.open(url);
+    });
+  }
 
   onActionDialog(Cust_Code: string) {
 

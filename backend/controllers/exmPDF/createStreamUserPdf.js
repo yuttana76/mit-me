@@ -13,7 +13,8 @@ const printPdf = async (_htmlPath) => {
 	await page.goto(_htmlPath, { waitUntil: 'networkidle0' });
 	/* 3- Take a snapshot of the PDF */
 	const pdf = await page.pdf({
-		format: 'A4',
+    format: 'A4',
+    printBackground:true,
 		margin: {
 			top: '20px',
 			right: '20px',
@@ -23,8 +24,10 @@ const printPdf = async (_htmlPath) => {
 	});
 	/* 4- Cleanup: close browser. */
 	await browser.close();
-	console.log('Ending: Generating PDF Process');
-	return pdf;
+  // console.log('Ending: Generating PDF Process');
+
+  return pdf;
+
 };
 
 const init = async (_htmlPath,_pdfPath) => {

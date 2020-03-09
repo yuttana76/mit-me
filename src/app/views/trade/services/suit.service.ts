@@ -11,15 +11,13 @@ const BACKEND_URL_FATCA = environment.apiURL + '/fatca';
 const BACKEND_URL_OTP = environment.apiURL + '/otp';
 const BACKEND_URL_SURVEY = environment.apiURL + '/survey';
 const BACKEND_URL_FC = environment.apiURL + '/fundConnext';
-
-
+const BACKEND_DOWNLOAD = environment.apiURL + '/download';
 
 @Injectable({ providedIn: 'root' })
 export class SuiteService {
 
   private kycSurveyList: KycSurveyList[] = [];
   private kycSurveyListUpdated = new Subject<KycSurveyList[]>();
-
 
   constructor(private http: HttpClient) { }
 
@@ -215,4 +213,47 @@ export class SuiteService {
     }
     return this.http.post<{ result: any}>(BACKEND_URL_SURVEY + '/surveyKYCByID', data);
   }
+
+  /*
+  1:Create PDF document.
+  2:Download PDF file.
+   */
+  // createKYCForm(actionBy,custCode): Observable<any> {
+
+  //   console.log('createKYCForm()' + custCode);
+
+  //   const data = {
+  //     "actionBy":"SYSTEM",
+  //     "docType":"KYC-SUIT",
+  //     "id":"123"
+  //   }
+  //   return this.http.post<any>(BACKEND_URL_SURVEY + '/createPDF',data);
+  // }
+
+
+  createKYCForm(actionBy,custCode): Observable<any> {
+    console.log('createKYCForm()' + custCode);
+    const data = {
+      "actionBy":actionBy,
+      "docType":"KYC-SUIT",
+      "id":custCode
+    };
+    return this.http.post<{any}>(BACKEND_URL + '/createPDF', data);
+  }
+
+
+
+  downloadKYCForm(actionBy,fileName):Observable<any>{
+
+    // Download file when finish created PDF .
+    // const fileName = 'sa_user_manual-1561450402378.pdf';
+
+    console.log('downloadKYCForm()' + fileName);
+
+    let headers = new HttpHeaders();
+    headers = headers.set('Accept', 'application/pdf');
+    return this.http.get(BACKEND_DOWNLOAD + '/file/' + fileName,{ headers: headers, responseType: 'blob' });
+
+  }
+
 }

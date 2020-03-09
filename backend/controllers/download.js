@@ -36,7 +36,7 @@ exports.downloadfile = (req, res, next) => {
 
     var fileLocation = path.join(DOWNLOAD_PATH,fileName);
 
-        logger.info('/api/download/file  file=' + fileName);
+      logger.info('/api/download/file  file=' + fileName);
 
     // Check if the file exists in the current directory.
     fs.access(DOWNLOAD_PATH+fileName, fs.constants.F_OK, (err) => {

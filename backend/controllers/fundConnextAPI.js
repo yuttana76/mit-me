@@ -165,7 +165,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
     saveMIT_FC_CUST_INFO(custInfoObj,actionBy).then((result)=>{
       logger.info("MIT_FC_CUST_INFO() successful")
     },err=>{
-      logger.err("ERROR MIT_FC_CUST_INFO() :" + err)
+      logger.error("ERROR MIT_FC_CUST_INFO() :" + err)
       reject(err);
     })
 
@@ -173,7 +173,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
     saveMIT_FC_CUST_ADDR(custInfoObj,actionBy).then(result=>{
       logger.info("saveMIT_FC_CUST_ADDR() successful")
     },err=>{
-      logger.err("saveMIT_FC_CUST_ADDR() error:" + err)
+      logger.error("saveMIT_FC_CUST_ADDR() error:" + err)
       reject(err);
     })
 
@@ -181,7 +181,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
     saveMIT_FC_CUST_CHILDREN(custInfoObj,actionBy).then(result=>{
       logger.info("saveMIT_FC_CUST_CHILDREN() successful")
     },err=>{
-      logger.err("saveMIT_FC_CUST_CHILDREN() error:" + err)
+      logger.error("saveMIT_FC_CUST_CHILDREN() error:" + err)
       reject(err);
     })
 
@@ -201,7 +201,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
         logger.info("saveMIT_FC_CUST_SUIT_Detail() successful")
 
         },err=>{
-          logger.err("saveMIT_FC_CUST_SUIT_Detail() error:" + err)
+          logger.error("saveMIT_FC_CUST_SUIT_Detail() error:" + err)
           reject(err);
         })
     }
@@ -214,10 +214,11 @@ function getIndCustDEVProc(custInfoObj,actionBy){
 
 
 function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
-  logger.info('saveMIT_FC_CUST_INFO()'+custInfoObj.cardNumber);
 
-  // return new Promise(function(resolve, reject) {
-  // resolve(custInfoObj.cardNumber);
+  logger.info('saveMIT_FC_CUST_INFO()');
+
+  if(custInfoObj.cardExpiryDate ==='N/A')
+    custInfoObj.cardExpiryDate=''
 
   var fncName = "saveMIT_FC_CUST_INFO()";
   var queryStr = `
@@ -419,13 +420,15 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
     `;
   const sql = require("mssql");
   return new Promise(function(resolve, reject) {
+
+    try{
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
         .request() // or: new sql.Request(pool1)
         .input("cardNumber", sql.VarChar(20), custInfoObj.cardNumber)
         .input("thFirstName", sql.NVarChar(100), custInfoObj.thFirstName)
         .input("thLastName", sql.NVarChar(100), custInfoObj.thLastName)
-        .input("birthDate", sql.VarChar(10), custInfoObj.birthDate)
+        .input("birthDate", sql.VarChar(10), custInfoObj.birthDate || '')
         .input("mobileNumber", sql.VarChar(50), custInfoObj.mobileNumber)
         .input("email", sql.NVarChar(100), custInfoObj.email)
         .input("occupationId", sql.VarChar(3), custInfoObj.occupationId)
@@ -442,7 +445,7 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
         .input("titleOther", sql.NVarChar(100), custInfoObj.titleOther)
         .input("enFirstName", sql.NVarChar(100), custInfoObj.enFirstName)
         .input("enLastName", sql.NVarChar(100), custInfoObj.enLastName)
-        .input("cardExpiryDate", sql.VarChar(10), custInfoObj.cardExpiryDate)
+        .input("cardExpiryDate", sql.VarChar(10), custInfoObj.cardExpiryDate || '')
         .input("maritalStatus", sql.VarChar(10), custInfoObj.maritalStatus)
         .input("SPidentificationCardType", sql.VarChar(15), custInfoObj.spouse.identificationCardType)
         .input("SPpassportCountry", sql.VarChar(2), custInfoObj.spouse.passportCountry)
@@ -451,7 +454,7 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
         .input("SPtitleOther", sql.NVarChar(100), custInfoObj.spouse.titleOther)
         .input("SPthFirstName", sql.NVarChar(50), custInfoObj.spouse.thFirstName)
         .input("SPthLastName", sql.NVarChar(50), custInfoObj.spouse.thLastName)
-        .input("SPidCardExpiryDate", sql.VarChar(10), custInfoObj.spouse.idCardExpiryDate)
+        .input("SPidCardExpiryDate", sql.VarChar(10), custInfoObj.spouse.idCardExpiryDate || '')
         .input("SPphoneNumber", sql.VarChar(20), custInfoObj.spouse.phoneNumber)
         .input("committedMoneyLaundering", sql.VarChar(10), custInfoObj.committedMoneyLaundering)
         .input("politicalRelatedPerson", sql.VarChar(10), custInfoObj.politicalRelatedPerson)
@@ -459,13 +462,13 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
         .input("confirmTaxDeduction", sql.VarChar(10), custInfoObj.confirmTaxDeduction)
         .input("nationality", sql.VarChar(2), custInfoObj.nationality)
         .input("cddScore", sql.VarChar(1), custInfoObj.cddScore)
-        .input("cddDate", sql.VarChar(10), custInfoObj.cddDate)
+        .input("cddDate", sql.VarChar(10), custInfoObj.cddDate || '')
         .input("canAcceptDerivativeInvestment", sql.VarChar(10), custInfoObj.canAcceptDerivativeInvestment)
         .input("canAcceptFxRisk", sql.VarChar(10), custInfoObj.canAcceptFxRisk)
         .input("accompanyingDocument", sql.VarChar(20), custInfoObj.accompanyingDocument)
         .input("gender", sql.VarChar(10), custInfoObj.gender)
         .input("referalPerson", sql.NVarChar(100), custInfoObj.referalPerson)
-        .input("applicationDate", sql.VarChar(10), custInfoObj.applicationDate)
+        .input("applicationDate", sql.VarChar(10), custInfoObj.applicationDate || '')
         .input("incomeSourceCountry", sql.VarChar(2), custInfoObj.incomeSourceCountry)
         .input("acceptBy", sql.NVarChar(100), custInfoObj.acceptBy)
         .input("openFundConnextFormFlag", sql.VarChar(10), custInfoObj.openFundConnextFormFlag)
@@ -475,9 +478,9 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
         .input("ndidFlag", sql.VarChar(10), custInfoObj.ndidFlag)
         .input("ndidRequestId", sql.VarChar(100), custInfoObj.ndidRequestId)
         .input("suitabilityRiskLevel", sql.VarChar(1), custInfoObj.suitabilityRiskLevel)
-        .input("suitabilityEvaluationDate", sql.VarChar(10), custInfoObj.suitabilityEvaluationDate)
+        .input("suitabilityEvaluationDate", sql.VarChar(10), custInfoObj.suitabilityEvaluationDate || '')
         .input("fatca", sql.VarChar(10), custInfoObj.fatca)
-        .input("fatcaDeclarationDate", sql.VarChar(10), custInfoObj.fatcaDeclarationDate)
+        .input("fatcaDeclarationDate", sql.VarChar(10), custInfoObj.fatcaDeclarationDate || '')
 
         .input("workAddressSameAsFlag", sql.VarChar(50), custInfoObj.workAddressSameAsFlag)
         .input("currentAddressSameAsFlag", sql.VarChar(50), custInfoObj.currentAddressSameAsFlag)
@@ -487,19 +490,23 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
           if (err) {
             console.log(fncName + " Quey db. Was err !!!" + err);
             reject(err);
-
           } else {
-            // console.log(" Quey RS>>" + JSON.stringify(result));
             resolve(result);
-
           }
+
         });
     });
+
     pool1.on("error", err => {
       console.log("ERROR>>" + err);
       reject(err);
 
     });
+
+  }catch(e){
+    logger.error(e);
+  }
+
   });
 
 }

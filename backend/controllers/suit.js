@@ -5,7 +5,13 @@ var prop = require("../config/backend-property");
 var logger = require("../config/winston");
 var mitLog = require('./mitLog');
 
+// const suitPDFController = require('../controllers/exmPDF/suitPDF');
+const createKYCToPDFController = require('../controllers/exmPDF/createKYCToPDF');
+const fcOpenAccountPDF =require('../controllers/exmPDF/fcOpenAccountPDF');
+
+
 var config = dbConfig.dbParameters;
+const {validationResult } = require('express-validator');
 
 // const SALT_WORK_FACTOR = 10;
 const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
@@ -233,6 +239,48 @@ exports.suitEvaluate = (req, res, next) => {
 //   }
 // };
 
+
+exports.createPDF_FCOpenAccount = (req, res, next) => {
+
+  logger.info(`API /createPDF `);
+
+  var actionBy = req.body.actionBy || 'SYSTEM';
+  var docType = req.body.docType;
+  var custCode = req.body.id;
+
+  logger.info(` Parameters;
+    actionBy=${actionBy},
+    docType=${docType},
+    id=${custCode},
+    `)
+
+    switch(docType) {
+      case 'KYC-SUIT':
+        // code block
+          try {
+            getSurveyData(custCode).then( (_data) =>{
+              fcOpenAccountPDF.createFundConnextOpenAccount(custCode,_data[0]).then(result=>{
+                res.status(200).json({
+                        msg:'successful',
+                    });
+              });
+            });
+          } catch (e) {
+            res.status(401).json(e);
+          }
+        break;
+
+      default:
+        res.status(400).json({
+          code:'xxx',
+          msg: 'Need more param.'
+        });
+
+    }
+
+
+
+}
 
 exports.suitSave = (req, res, next) => {
 
@@ -604,6 +652,98 @@ function saveSuitScore(_AccSuitId,_QuesNo,_ChoiceNo,_Score){
     });
     pool1.on("error", err => {
       reject(err);
+    });
+  });
+}
+
+
+
+function getSurveyData(Cust_Code) {
+
+  logger.info("Welcome getCustSuitData() " + Cust_Code);
+
+  var queryStr = `
+  BEGIN
+
+  SELECT TOP 1 B.Cust_Code
+  ,CASE B.identificationCardType
+    WHEN 'PASSPORT' THEN 'PASSPORT'
+    WHEN 'CITIZEN_CARD' THEN 'CITIZEN_CARD'
+    WHEN 'GOVERNMENT_ID' THEN 'GOVERNMENT_ID'
+    WHEN 'DRIVER_LICENSE' THEN 'DRIVER_LICENSE'
+    WHEN 'ALIEN_CARD' THEN 'ALIEN_CARD'
+    ELSE 'CITIZEN_CARD'
+    END AS identificationCardType
+  ,B.cardExpiryDate,B.passportCountry
+
+  ,CASE B.title
+    WHEN 'MR' THEN 'นาย'
+    WHEN 'MRS' THEN 'นาง'
+    WHEN 'MISS' THEN 'นางสาว'
+    ELSE B.titleOther
+    END AS title
+
+  ,CASE B.title
+    WHEN 'MR' THEN 'Mr.'
+    WHEN 'MRS' THEN 'Mrs.'
+    WHEN 'MISS' THEN 'Miss.'
+    ELSE B.titleOther
+    END AS title_e
+
+  , B.First_Name_T + ' ' +B.Last_Name_T AS FullName_th
+  , B.First_Name_E + ' ' +B.Last_Name_E AS FullName_en
+  ,B.Mobile,B.Email,B.Birth_Day
+  ,CASE B.Nationality
+    WHEN 'TH' THEN 'Thai'
+    ELSE B.Nationality
+    END AS Nationality
+  ,B.MaritalStatus
+
+  ,a.RiskLevel,a.TotalScore, convert(varchar, a.CreateDate, 103) as SuitDate
+  ,A.RiskLevelTxt,A.Type_Investor
+  ,a.ANS_JSON as Ans
+  from MIT_CUSTOMER_SUIT a,MIT_CUSTOMER_INFO B
+  where a.CustCode = b.Cust_Code
+  and a.CustCode= @Cust_Code
+  AND a.Status ='A'
+  ORDER BY a.CreateDate DESC
+
+  END
+    `;
+
+  const sql = require("mssql");
+
+  return new Promise(function(resolve, reject) {
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("Cust_Code", sql.VarChar(50), Cust_Code)
+        .query(queryStr, (err, result) => {
+          if (err) {
+
+            // console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" Quey RS>>" + JSON.stringify(result));
+            if(result.recordset.length>0){
+              resolve(result.recordset);
+            }else{
+              resolve(result.recordsets[1]);
+            }
+
+            // resolve(result.recordsets);
+            // resolve(result.recordset[0]);
+
+          }
+        });
+    });
+    pool1.on("error", err => {
+
+      console.log("ERROR>>" + err);
+      reject(err);
+
     });
   });
 }

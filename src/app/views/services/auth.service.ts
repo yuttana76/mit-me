@@ -104,7 +104,7 @@ export class AuthService {
             , FULLNAME: string, DEP_CODE: string, MIT_GROUP: string }>( BACKEND_URL + 'login', authData)
       .subscribe(response => {
 
-        console.log('Auth Service LOGIN()>>', JSON.stringify(response));
+        // console.log('Auth Service LOGIN()>>', JSON.stringify(response));
 
         const token = response.token;
         this.token = token;

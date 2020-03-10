@@ -258,13 +258,23 @@ exports.createPDF_FCOpenAccount = (req, res, next) => {
       case 'KYC-SUIT':
         // code block
           try {
-            getSurveyData(custCode).then( (_data) =>{
-              fcOpenAccountPDF.createFundConnextOpenAccount(custCode,_data[0]).then(result=>{
-                res.status(200).json({
-                        msg:'successful',
-                    });
-              });
+
+            fnArray=[];
+            fnArray.push(getSurveyData(custCode));
+
+            Promise.all(fnArray).then(_data => {
+                fcOpenAccountPDF.createFundConnextOpenAccount(custCode,_data[0][0]).then(result=>{
+                    res.status(200).json({
+                            msg:'successful',
+                        });
+                  });
+            })
+            .catch(error => {
+              logger.error(error.message)
+              res.status(401).json(error.message);
             });
+
+
           } catch (e) {
             res.status(401).json(e);
           }
@@ -657,8 +667,7 @@ function saveSuitScore(_AccSuitId,_QuesNo,_ChoiceNo,_Score){
 }
 
 
-
-function getSurveyData(Cust_Code) {
+function  getSurveyData(Cust_Code) {
 
   logger.info("Welcome getCustSuitData() " + Cust_Code);
 
@@ -666,32 +675,19 @@ function getSurveyData(Cust_Code) {
   BEGIN
 
   SELECT TOP 1 B.Cust_Code
-  ,CASE B.identificationCardType
-    WHEN 'PASSPORT' THEN 'PASSPORT'
-    WHEN 'CITIZEN_CARD' THEN 'CITIZEN_CARD'
-    WHEN 'GOVERNMENT_ID' THEN 'GOVERNMENT_ID'
-    WHEN 'DRIVER_LICENSE' THEN 'DRIVER_LICENSE'
-    WHEN 'ALIEN_CARD' THEN 'ALIEN_CARD'
-    ELSE 'CITIZEN_CARD'
-    END AS identificationCardType
-  ,B.cardExpiryDate,B.passportCountry
+  ,ISNULL(B.identificationCardType,'CITIZEN_CARD') AS identificationCardType
+  ,B.cardExpiryDate,B.cardNotExp
+  -- ,B.passportCountry
+  ,CASE B.passportCountry
+    WHEN 'TH' THEN 'Thai'
+    ELSE B.passportCountry
+    END AS passportCountry
 
-  ,CASE B.title
-    WHEN 'MR' THEN 'นาย'
-    WHEN 'MRS' THEN 'นาง'
-    WHEN 'MISS' THEN 'นางสาว'
-    ELSE B.titleOther
-    END AS title
+  ,B.gender
+  ,B.title,B.titleOther
 
-  ,CASE B.title
-    WHEN 'MR' THEN 'Mr.'
-    WHEN 'MRS' THEN 'Mrs.'
-    WHEN 'MISS' THEN 'Miss.'
-    ELSE B.titleOther
-    END AS title_e
-
-  , B.First_Name_T + ' ' +B.Last_Name_T AS FullName_th
-  , B.First_Name_E + ' ' +B.Last_Name_E AS FullName_en
+  ,B.First_Name_T + ' ' +B.Last_Name_T AS FullName_th
+  ,B.First_Name_E + ' ' +B.Last_Name_E AS FullName_en
   ,B.Mobile,B.Email,B.Birth_Day
   ,CASE B.Nationality
     WHEN 'TH' THEN 'Thai'
@@ -699,10 +695,51 @@ function getSurveyData(Cust_Code) {
     END AS Nationality
   ,B.MaritalStatus
 
+  ,ISNULL(B.SpouseCardType,'CITIZEN_CARD') AS SpouseCardType
+  ,B.SpouseCardNumber,B.SpouseIDExpDate,B.SpouseIDNotExp
+  -- ,B.SpousePassportCountry
+  ,CASE B.SpousePassportCountry
+    WHEN 'TH' THEN 'Thai'
+    ELSE B.SpousePassportCountry
+    END AS SpousePassportCountry
+
+
+  ,B.SpouseTitle  ,B.SpouseTitleOther
+  ,B.SpouseFirstName + ' ' +B.SpouseLastName AS SpouseFullName
+  ,B.SpouseTel
+
+  ,B.Occupation_Code
+  ,B.Occupation_Desc
+  ,C.Thai_Name  AS Occu_Desc
+
+  ,B.BusinessType_Code
+  ,B.BusinessType_Desc
+  ,D.Thai_Name AS Bis_Desc
+
+
+	,B.Income_Source_Code
+	,B.Income_Source_Desc
+  ,B.IncomeSourceCountry
+
+  ,B.Income_Code
+	,B.Income_Desc
+  ,F.Thai_Name AS In_Desc
+
+
+  ,B.MoneyLaundaring
+  ,B.PoliticalRelate
+  ,B.RejectFinancial
+  ,B.TaxDeduction
+
+  -- Suitability
   ,a.RiskLevel,a.TotalScore, convert(varchar, a.CreateDate, 103) as SuitDate
   ,A.RiskLevelTxt,A.Type_Investor
   ,a.ANS_JSON as Ans
   from MIT_CUSTOMER_SUIT a,MIT_CUSTOMER_INFO B
+  left join MIT_FC_OCCUPATION C ON B.Occupation_Code=C.Code
+  left join MIT_FC_BUSINESS_TYPE D ON D.Code=B.BusinessType_Code
+  left join MIT_FC_INCOME_LEVEL F ON B.Income_Code=F.Code
+
   where a.CustCode = b.Cust_Code
   and a.CustCode= @Cust_Code
   AND a.Status ='A'

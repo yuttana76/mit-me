@@ -12,7 +12,7 @@ const moment = require('moment');
 
 const filePDFName ='fundConnextOpenAccount.pdf';
 const createPath = path.resolve('./backend/downloadFiles/files/')
-const pdfTemplate ='fundConnextOpenAccount_template'
+const pdfTemplate ='fcOpenAccount_template'
 
 const compile = async function(templateName,data){
   const filePath = path.join(__dirname,'templates',`${templateName}.hbs`);
@@ -22,11 +22,23 @@ const compile = async function(templateName,data){
 
 //{{dateFormat xxx 'DD/MM/YYYY'}}
 hbs.registerHelper('dateFormat',function(value,format){
-  return moment(value).format(format);
+  if(value){
+    return moment(value).format(format);
+  }else{
+    return '';
+  }
 });
 
 hbs.registerHelper('isdefined', function (value) {
   return value !== undefined;
+});
+
+hbs.registerHelper('isset', function (value) {
+  return value === '1';
+});
+
+hbs.registerHelper('isNotset', function (value) {
+  return value !== '1';
 });
 
 hbs.registerHelper('isnull', function (value) {
@@ -37,8 +49,14 @@ hbs.registerHelper('isNA', function (value) {
   return value === 'N/A';
 });
 
+hbs.registerHelper('isChecked', function (val1,val2) {
+  return val1 === val2? 'checked':'';
+});
+
+
 // Start function
 const startPDF = async function(custCode,data) {
+
   try{
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -67,6 +85,7 @@ const startPDF = async function(custCode,data) {
 }
 
 exports.createFundConnextOpenAccount = async (custCode,fcdata) => {
+  // console.log("createFundConnextOpenAccount()"+JSON.stringify(fcdata));
   return new Promise(function(resolve, reject) {
     try{
       startPDF(custCode,fcdata).then(result=>{

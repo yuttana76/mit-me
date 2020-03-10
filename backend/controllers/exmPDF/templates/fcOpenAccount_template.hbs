@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>CSS Template</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+
+   font-family: 'Helvetica Neue','Helvethaica Adjusted';
+      font-weight: 400;
+    font-size: 14px;
+}
+
+table {
+    border: solid;
+    border-width: thin;
+    width: 580pt;
+
+}
+
+td,img {
+padding:0px;
+border-width:0px;
+margin:0px;
+}
+
+table td p{
+color:gray;
+}
+
+.header1 {
+  text-align: start;
+  font-size: 15.0pt;
+  color: #0C45A1;
+  text-indent: 5px;
+}
+.header2 {
+    background-color: #1365BF;
+    color: white;
+    width:100%;
+    text-indent: 5px;
+}
+.header3{
+    color: #0C45A1;
+    font-weight: bold;
+    text-indent: 5px;
+}
+.header3 p{
+    color: #0C45A1;
+    font-weight: bold;
+    text-indent: 5px;
+}
+
+.content1{
+text-indent: 20px;
+}
+
+.content2{
+text-indent: 50px;
+}
+
+.sameLine{
+display: inline-block
+}
+
+.tab{
+  margin-left: 2.5em;
+}
+.underDotted {
+    border-bottom: 1px dashed #000;
+    text-decoration: none;
+}
+
+input[type="checkbox"]{
+  margin-left: 10px;
+}
+
+/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+@media (max-width: 600px) {
+  nav, article {
+    width: 100%;
+    height: auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<table>
+<tbody>
+<tr>
+<td >
+<span class='header1 '>FundConnext </span>
+</td>
+</tr>
+
+<tr class='header2'>
+  <td>
+  1. ข้อมูลส่วนบุคคลสำหรับประกอบการเปิดบัญชีกองทุนรวม Personal Information - For Mutual Fund Account
+  </td>
+ </tr>
+
+<tr class='content1'>
+  <td><p>ประเภทบัตร*
+  <input type="checkbox" {{isChecked identificationCardType 'CITIZEN_CARD'}} >
+  <label >บัตรประชาชน ID Card</label>
+   <input type="checkbox" {{isChecked identificationCardType 'GOVERNMENT_ID'}}>
+  <label >บัตรข้าราชการ / รัฐวิสาหกิจ Government ID / State Enterprise ID</label>
+  <input type="checkbox" {{isChecked identificationCardType 'DRIVER_LICENSE'}} >
+  <label >ใบขับขี่ Driver License</label>
+  <input type="checkbox" {{isChecked identificationCardType 'ALIEN_CARD'}} >
+  <label >บัตรคนต่างด้าว Alien Registration Card</label>
+
+  <input type="checkbox" {{isChecked identificationCardType 'PASSPORT'}}>
+  <label >พาสปอร์ต Passport</label>
+  {{#if (isnull passportCountry)}}
+  Issuing Country <span class="underDotted"> {{passportCountry}} </span>
+  {{/if}}
+
+  </p></td>
+ </tr>
+<tr class='content2 sameLine'>
+  <td >
+  <p >เลขที่ No. <span class="underDotted"> {{Cust_Code}}</span>
+
+   {{#if (isNotset cardNotExp)}}
+    วันหมดอายุ (ค.ศ.) Expiry Date: (ฺA.D.) <span class="underDotted">{{dateFormat cardExpiryDate 'DD/MM/YYYY'}} </span>
+   {{/if}}
+
+   {{#if (isset cardNotExp)}}
+     <input type="checkbox" checked>
+    <label >บัตรตลอดชีพ Not Expired </label>
+   {{/if}}
+
+  </p>
+  </td>
+ </tr>
+
+<tr class='content1'>
+  <td>
+  <p>เพศ Gender*
+  <input type="checkbox" {{isChecked gender 'Male'}}>
+  <label >ชาย Male</label>
+
+  <input type="checkbox" {{isChecked gender 'Female'}} >
+  <label >หญิง Female</label>
+  </p> </td>
+ </tr>
+
+<tr class='content1'>
+  <td>
+  <p>คำนำหน้า Title*
+ <input type="checkbox" {{isChecked title 'MR'}}>
+  <label > นาย Mr.</label>
+
+  <input type="checkbox" {{isChecked title 'MRS'}} >
+  <label > นาง Mrs.</label>
+
+  <input type="checkbox" {{isChecked title 'MISS'}}>
+  <label > นางสาว Miss</label>
+
+  <input type="checkbox" {{isChecked title 'OTHER'}} >
+  <label > อื่นๆ Other</label>
+    {{#if (isnull titleOther)}}
+     <span class="underDotted"> {{titleOther}} </span>
+     {{/if}}
+
+  </p> </td>
+ </tr>
+
+ <tr class='content1'>
+  <td>
+  <p class='sameLine'>ชื่อ - นามสกุล (ภาษาไทย)* <span class="underDotted">{{FullName_th}} </span>
+  <span class="tab" >มือถือ Mobile* </span> <span class="underDotted">{{Mobile}} </span> </p> </td>
+ </tr>
+
+ <tr class='content1'>
+  <td>
+  <p class='sameLine'>Name - Surname (English)* <span class="underDotted">{{FullName_en}} </span>
+    <span class="tab" >อีเมล์ E-mail</span>  <span class="underDotted">{{Email}} </span></p></td>
+ </tr>
+
+
+ <tr class='content1 sameLine'>
+  <td >
+  <p>วันเดือนปีเกิด (ค.ศ.) Date of Birth (ฺA.D.)*  <span class="underDotted">{{dateFormat Birth_Day 'DD/MM/YYYY'}}</span>
+    <span class="tab" >สัญชาติ Nationality* </span>  <span class="underDotted">{{Nationality}} </span></p>
+ </tr>
+
+  <tr class='content1 sameLine'>
+  <td><p>
+  สถานภาพ Marital Status*
+  <input type="checkbox" {{isChecked MaritalStatus 'Single'}}>
+  <label for="vehicle1"> โสด Single</label>
+
+  <input type="checkbox" {{isChecked MaritalStatus 'Married'}} >
+  <label for="vehicle2"> สมรส Married</label>
+
+  <input type="checkbox" {{isChecked MaritalStatus 'Divorced'}}>
+  <label for="vehicle3"> หย่า Divorced</label>
+
+  <input type="checkbox" {{isChecked MaritalStatus 'Widowed'}} >
+  <label for="vehicle3"> หม้ายWidowed</label>
+
+  </p></td>
+ </tr>
+
+ <tr class='header3'>
+  <td>
+  <p>ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (if any)</p>
+  </td>
+ </tr>
+ <tr class='content1'>
+  <td>
+    <p>ประเภทบัตร*
+    <input type="checkbox" {{isChecked SpouseCardType 'CITIZEN_CARD'}} >
+    <label >บัตรประชาชน ID Card</label>
+    <input type="checkbox" {{isChecked SpouseCardType 'GOVERNMENT_ID'}}>
+    <label >บัตรข้าราชการ / รัฐวิสาหกิจ Government ID / State Enterprise ID</label>
+    <input type="checkbox" {{isChecked SpouseCardType 'DRIVER_LICENSE'}} >
+    <label >ใบขับขี่ Driver License</label>
+    <input type="checkbox" {{isChecked SpouseCardType 'ALIEN_CARD'}} >
+    <label >บัตรคนต่างด้าว Alien Registration Card</label>
+
+    <input type="checkbox" {{isChecked SpouseCardType 'PASSPORT'}}>
+    <label >พาสปอร์ต Passport</label>
+
+     {{#if (isnull SpousePassportCountry)}}
+     Issuing Country <span class="underDotted"> {{SpousePassportCountry}} </span>
+     {{/if}}
+
+    </p>
+  </td>
+ </tr>
+<tr class='content2'>
+  <td >
+  <p >เลขที่ No. <span class="underDotted"> {{SpouseCardNumber}}</span>
+
+   {{#if (isNotset SpouseIDNotExp)}}
+    วันหมดอายุ (ค.ศ.) Expiry Date: (ฺA.D.) <span class="underDotted">{{dateFormat SpouseIDExpDate 'DD/MM/YYYY'}} </span>
+   {{/if}}
+
+   {{#if (isset SpouseIDNotExp)}}
+     <input type="checkbox" checked>
+    <label >บัตรตลอดชีพ Not Expired </label>
+   {{/if}}
+
+  </td>
+ </tr>
+ <tr class='content1'>
+  <td>
+  <p>คำนำหน้า Title*
+
+ <input type="checkbox" {{isChecked SpouseTitle 'MR'}}>
+  <label > นาย Mr.</label>
+
+  <input type="checkbox" {{isChecked SpouseTitle 'MRS'}} >
+  <label > นาง Mrs.</label>
+
+  <input type="checkbox" {{isChecked SpouseTitle 'MISS'}}>
+  <label > นางสาว Miss</label>
+
+  <input type="checkbox" {{isChecked SpouseTitle 'OTHER'}} >
+  <label > อื่นๆ Other</label>
+    {{#if (isnull SpouseTitleOther)}}
+     <span class="underDotted"> {{SpouseTitleOther}} </span>
+     {{/if}}
+  </p> </td>
+ </tr>
+
+ <tr class='content1'>
+  <td>
+  <p class='sameLine'>ชื่อ - นามสกุล (ภาษาไทย)* <span class="underDotted">{{SpouseFullName}} </span>
+  <span class="tab" >โทรศัพท์ Telephone</span> <span class="underDotted">{{SpouseTel}} </span> </p> </td>
+ </tr>
+
+
+ <tr class='header3'>
+  <td>
+  <p>จำนวนบุตรหรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปี และ ยังไม่ได้สมรส)</p>
+  <p>Number of children who is under 20 and not married</p>
+  </td>
+ </tr>
+
+ <tr class='content1'>
+
+  <td>
+  <p>ประเภทบัตร*  {VAL1}</p>
+  </td>
+
+ </tr>
+
+<tr class='content2'>
+  <td >
+  <p >เลขที่ No.  {123456789}        Issuing Country {Thai}</p>
+  <p class='sameLine'>วันหมดอายุ (ค.ศ.) Expiry Date: (ฺA.D.) {01/01/2020}    บัตรตลอดชีพ Not Expired</p>
+  </td>
+ </tr>
+ <tr class='content1'>
+  <td>
+  <p>คำนำหน้า Title*</p> </td>
+ </tr>
+ <tr class='content1'>
+  <td>
+  <p>ชื่อ - นามสกุล Name - Surname*    xxxx - yyyy  โทรศัพท์ Telephone{08-97765-331}</p>
+  </td>
+ </tr>
+  <tr class='content1'>
+  <td>
+  <p>วันเดือนปีเกิด (ค.ศ.) Date of Birth (ฺA.D.) </p>
+  </td>
+ </tr>
+
+ <!--Address-->
+ <tr class='header2'>
+  <td>2. ที่อยู่ Address </td>
+ </tr>
+
+ <tr class='header3'>
+  <td>
+  <p>ที่อยู่ตามทะเบียนบ้าน / ที่อยู่ในประเทศเจ้าของสัญชาติ </p>
+  <p>Residence Registration Address / Address in home country*</p>
+  </td>
+ </tr>
+
+<tr class='content1'>
+ <td>
+  <p>เลขที่ Address No.        หมู่ที่ Moo No.         อาคาร/หมู่บ้าน Building/Mooban </p>
+  <p>ชั้น Floor ซอย Soi       ถนน Road</p>
+  <p>ตำบล Sub-district/Tambon    อำเภอ District/Amphur </p>
+  <p>จังหวัด Province รหัสไปรษณีย์ Postal Code </p>
+  <p>โทรศัพท์ Telephone</p>
+ </td>
+ </tr>
+ <tr class='header3'>
+  <td>
+  <p>ที่อยู่ที่ทำงาน Workplace Address* </p>
+  </td>
+ </tr>
+
+ <tr class='content1'>
+  <td>
+  <p>
+  <input type="radio" name="workAddr">ตามทะเบียนบ้าน Same as Residence Registration Address
+  <input type="radio" name="workAddr">อื่นๆ (โปรดระบุ) Other (Please specify)
+  </p>
+  <p>บริษัท Company name</p>
+  </td>
+ </tr>
+
+ <tr class='header3'>
+  <td>
+  <p>ที่อยู่ปัจจุบัน Current Address*</p>
+  </td>
+ </tr>
+
+  <tr class='content1'>
+  <td>
+  <p>
+  <input type="radio" name="currentAddr">ตามทะเบียนบ้าน Same as Residence Registration Address
+  <input type="radio" name="currentAddr">ตามที่ทำงาน Workplace Address
+  <input type="radio" name="currentAddr">อื่นๆ (โปรดระบุ) Other (Please specify)
+  </p>
+  </td>
+ </tr>
+ <!--Background-->
+ <tr class='header2'>
+  <td>3. ข้อมูลเพิ่มเติม Background</td>
+ </tr>
+
+ <tr >
+  <td>
+  <p class='header3'>อาชีพ Occupation*</p>
+  <p class='content1'>{{Occu_Desc}}</p>
+  </td>
+ </tr>
+
+ <tr >
+  <td>
+  <p class='header3'>ประเภทธุรกิจ Business Type*</p>
+  <p class='content1'>{{Bis_Desc}}</p>
+  </td>
+ </tr>
+
+ <tr >
+  <td>
+  <p class='header3'>แหล่งที่มาของรายได้จากประเทศ Source of Income's Country*</p>
+  <p class='content1'>{{IncomeSourceCountry}}</p>
+  </td>
+ </tr>
+
+  <tr >
+  <td>
+  <p class='header3'>แหล่งที่มาของรายได้ Source of Income*</p>
+  <p class='content1'>{{Income_Source_Code}}</p>
+  </td>
+ </tr>
+
+ <tr >
+  <td>
+  <p class='header3' >ต่อเดือน (บาท) Monthly Income (Baht)*</p>
+  <p class='content1'>
+  <input type="checkbox" {{isChecked Income_Code 'LEVEL1'}}>
+  <label > < 15,000</label>
+  <input type="checkbox" {{isChecked Income_Code 'LEVEL2'}}>
+  <label >15,001 - 30,000</label>
+  <input type="checkbox" {{isChecked Income_Code 'LEVEL3'}}>
+  <label >30,001 - 50,000</label>
+  <input type="checkbox" {{isChecked Income_Code 'LEVEL4'}}>
+  <label >50,001 - 100,000</label>
+  <input type="checkbox" {{isChecked Income_Code 'LEVEL5'}}>
+  <label >100,001 - 500,000</label>
+  <input type="checkbox" {{isChecked Income_Code 'LEVEL6'}}>
+  <label >500,001 - 1,000,000</label>
+  <input type="checkbox" {{isChecked Income_Code 'LEVEL7'}}>
+  <label >> 1,000,000</label>
+  </p>
+
+  </td>
+ </tr>
+
+  <tr class='header3'>
+  <td>
+  	<p>ท่านเคยมีประวัติการกระทำผิดกฏหมายฟอกเงินหรือไม่*</p>
+	<p>Do you have any money laundering record?</p>
+  </td>
+ </tr>
+<tr class='content1'>
+ <td>
+   <p>
+  <input type="checkbox" {{isChecked MoneyLaundaring 'Y'}}>
+  <label > ใช่ Yes</label>
+  <input type="checkbox" {{isChecked MoneyLaundaring 'N'}}>
+  <label >ไม่ใช่ No</label>
+  </p>
+ </td>
+ </tr>
+
+ <tr class='header3'>
+  <td>
+  	<p>ท่านเป็นนักการเมืองหรือเกี่ยวข้องกับนักการเมือง หรือบุคคลที่มีสถานภาพทางการเมืองหรือไม่*</p>
+	<p>Are you a politician or connected to any Political person?</p>
+  </td>
+ </tr>
+<tr class='content1'>
+ <td>
+ <p>
+  <input type="checkbox" {{isChecked PoliticalRelate 'Y'}}>
+  <label > ใช่ Yes</label>
+  <input type="checkbox" {{isChecked PoliticalRelate 'N'}}>
+  <label >ไม่ใช่ No</label>
+  </p>
+ </td>
+ </tr>
+
+
+<tr class='header3'>
+  <td>
+  	<p>ท่านเคยถูกปฏิเสธการรับทำธุรกรรมทางการเงินจากสถาบันทางการเงินอื่นหรือไม่*</p>
+	<p>Have you ever been denied to process transaction from other financial institutions?</p>
+  </td>
+ </tr>
+
+ <tr class='content1'>
+ <td>
+ <p>
+  <input type="checkbox" {{isChecked RejectFinancial 'Y'}}>
+  <label > ใช่ Yes</label>
+  <input type="checkbox" {{isChecked RejectFinancial 'N'}}>
+  <label >ไม่ใช่ No</label>
+  </p>
+ </td>
+ </tr>
+
+</tbody>
+</table
+
+</body>
+</html>

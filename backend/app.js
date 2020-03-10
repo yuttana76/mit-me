@@ -56,6 +56,7 @@ const streamingRoutes = require('./routes/streaming');
 const smsRoutes = require('./routes/sms');
 const surveyRoutes = require('./routes/survey');
 const graphQLRoutes = require('./routes/graphQL');
+const slackRoutes = require('./routes/slack');
 
 const app = express();
 
@@ -172,6 +173,7 @@ app.use("/api/account",openAccountRoutes);
 app.use("/api/survey",surveyRoutes);
 
 app.use("/api/graphQL",graphQLRoutes);
+app.use("/api/slack",slackRoutes);
 
 
 app.use((req, res, next) => {

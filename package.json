@@ -95,6 +95,7 @@
     "rxjs": "^6.5.1",
     "rxjs-compat": "^6.5.1",
     "simple-line-icons": "^2.4.1",
+    "slack-notify": "^0.1.7",
     "soap": "^0.28.0",
     "tedious": "^2.6.4",
     "ts-helpers": "^1.1.2",

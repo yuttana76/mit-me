@@ -1,0 +1,56 @@
+<tr class='content2'>
+  <td>
+    <p class='content1'>บุตรคนที่ {{math @index "+" 1}}</p>
+    <p>ประเภทบัตร ID type</p>
+  <div class="grid-container-2col">
+  <div>
+    <input type="checkbox" {{isChecked ChildIDType 'CITIZEN_CARD'}} >
+    <label >บัตรประชาชน ID Card</label>
+  </div>
+    <div>
+  <input type="checkbox" {{isChecked ChildIDType 'GOVERNMENT_ID'}}>
+  <label >บัตรข้าราชการ / รัฐวิสาหกิจ Government ID / State Enterprise ID</label>
+  </div>
+  <div>
+  <input type="checkbox" {{isChecked ChildIDType 'DRIVER_LICENSE'}} >
+  <label >ใบขับขี่ Driver License</label>
+
+  </div>
+
+    <div>
+  <input type="checkbox" {{isChecked ChildIDType 'ALIEN_CARD'}} >
+  <label >บัตรคนต่างด้าว Alien Registration Card</label>
+
+  </div>
+</div>
+  <div class="grid-container-2col">
+    <div>
+      <input type="checkbox" {{isChecked ChildIDType 'PASSPORT'}}>
+      <label>พาสปอร์ต Passport</label>
+      {{#if (isnull ChildPassportCountry)}}
+        <label>Issuing Country</label> <span class="underDotted">{{ChildPassportCountry}}</span>
+      {{/if}}
+    </div>
+  </div>
+  </td>
+ </tr>
+
+<tr class='content2'>
+  <td >
+  <p >เลขที่ No.  <span class="underDotted">{{ChildCardNumber}}</span>
+
+   {{#if (isNotset cardNotExt)}}
+    <label>วันหมดอายุ (ค.ศ.) Expiry Date: (ฺA.D.)</label> <span class="underDotted">{{dateFormat cardExpiryDate 'DD/MM/YYYY'}} </span>
+   {{/if}}
+
+  {{#if (isset cardNotExt)}}
+     <input type="checkbox" checked>
+    <label >บัตรตลอดชีพ Not Expired </label>
+   {{/if}}
+
+  <p>คำนำหน้า Title* <span class="underDotted"> {{title}}  {{titleOther}} </span></p>
+  <p>ชื่อ - นามสกุล Name - Surname*    <span class="underDotted">{{First_Name_T}}  {{Last_Name_T}}</span> </p>
+  <p>วันเดือนปีเกิด (ค.ศ.) Date of Birth (ฺA.D.) <span class="underDotted">{{dateFormat Birth_Day 'DD/MM/YYYY'}}</span> </p>
+  </td>
+ </tr>
+

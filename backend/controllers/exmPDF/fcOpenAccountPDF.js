@@ -7,12 +7,14 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 var logger = require("../../config/winston");
 var hbs = require("handlebars");
-// const data = require('./templates/database.json');
 const moment = require('moment');
 
 const filePDFName ='fundConnextOpenAccount.pdf';
 const createPath = path.resolve('./backend/downloadFiles/files/')
 const pdfTemplate ='fcOpenAccount_template'
+
+const child_partial_filePath = path.join(__dirname,'templates',`child_partial.hbs`);
+const addr_partial_filePath = path.join(__dirname,'templates',`addr_partial.hbs`);
 
 const compile = async function(templateName,data){
   const filePath = path.join(__dirname,'templates',`${templateName}.hbs`);
@@ -42,7 +44,7 @@ hbs.registerHelper('isNotset', function (value) {
 });
 
 hbs.registerHelper('isnull', function (value) {
-  return value !== null;
+  return value == null;
 });
 
 hbs.registerHelper('isNA', function (value) {
@@ -53,14 +55,42 @@ hbs.registerHelper('isChecked', function (val1,val2) {
   return val1 === val2? 'checked':'';
 });
 
+hbs.registerHelper('isNotChecked', function (val1,val2) {
+  return val1 !== val2? 'checked':'';
+});
+
+hbs.registerHelper('equal', function (val1,val2) {
+  return val1 == val2;
+});
+
+hbs.registerHelper('isCheckedInclude', function (str,val) {
+  return str.includes(val)? 'checked':'';
+});
+
+hbs.registerHelper("math", function(lvalue, operator, rvalue, options) {
+  lvalue = parseFloat(lvalue);
+  rvalue = parseFloat(rvalue);
+
+  return {
+      "+": lvalue + rvalue
+  }[operator];
+});
+
+
+hbs.registerPartial('child_partial', fs.readFileSync(child_partial_filePath, 'utf8'));
+hbs.registerPartial('addr_partial', fs.readFileSync(addr_partial_filePath, 'utf8'));
 
 // Start function
 const startPDF = async function(custCode,data) {
 
+  var surveyinfo=data[0][0]
+  surveyinfo['childrens'] = data[1][0]
+  surveyinfo['AddrList'] = data[2][0]
+
   try{
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    const content = await compile(pdfTemplate,data);
+    const content = await compile(pdfTemplate,surveyinfo);
 
     await page.setContent(content);
     await page.emulateMedia('screen');
@@ -84,11 +114,11 @@ const startPDF = async function(custCode,data) {
   }
 }
 
-exports.createFundConnextOpenAccount = async (custCode,fcdata) => {
+exports.createFundConnextOpenAccount = async (custCode,data) => {
   // console.log("createFundConnextOpenAccount()"+JSON.stringify(fcdata));
   return new Promise(function(resolve, reject) {
     try{
-      startPDF(custCode,fcdata).then(result=>{
+      startPDF(custCode,data).then(result=>{
         resolve('Succesfully created an PDF table :' + result)
       });
 

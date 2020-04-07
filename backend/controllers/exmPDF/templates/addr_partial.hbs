@@ -1,0 +1,50 @@
+
+
+{{!--
+<tr class='header3'>
+  <td>
+  <p>ที่อยู่ตามทะเบียนบ้าน / ที่อยู่ในประเทศเจ้าของสัญชาติ </p>
+  <p>Residence Registration Address / Address in home country*</p>
+  </td>
+ </tr> --}}
+
+
+<tr class='content1'>
+  <td>
+    {{#if (equal Addr_Seq 1)}}
+      <p>ที่อยู่ตามทะเบียนบ้าน</p>
+    {{/if}}
+    {{#if (equal Addr_Seq 2)}}
+      <p>ที่อยู่ปัจจุบัน</p>
+    {{/if}}
+    {{#if (equal Addr_Seq 3)}}
+      <p>ที่อยู่ที่ทำงาน</p>
+    {{/if}}
+
+
+
+{{#if (isnull SameAs)}}
+    <p class='content2'>{{Print_Address}}</p>
+    <p class='content2'>โทรศัพท์ Telephone {{Tel}}</p>
+
+{{else}}
+
+<div class="grid-container-3col content2">
+  <div>
+    <input type="checkbox" {{isChecked SameAs 1}} >
+    <label >ตามทะเบียนบ้าน </label>
+  </div>
+  <div>
+  <input type="checkbox" {{isChecked SameAs 2}}>
+  <label >ตามที่ทำงาน</label>
+  </div>
+  <div>
+  <input type="checkbox" {{isChecked SameAs 9}}>
+  <label >อื่นๆ</label>
+  </div>
+</div>
+
+{{/if}}
+
+</td>
+</tr>

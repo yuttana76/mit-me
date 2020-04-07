@@ -11,9 +11,9 @@
 
 body {
 
-   font-family: 'Helvetica Neue','Helvethaica Adjusted';
-      font-weight: 400;
-    font-size: 14px;
+  font-family: 'Helvetica Neue','Helvethaica Adjusted';
+  font-weight: 400;
+  font-size: 14px;
 }
 
 table {
@@ -30,7 +30,12 @@ margin:0px;
 }
 
 table td p{
-color:gray;
+color:black;
+}
+
+label{
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .header1 {
@@ -80,6 +85,22 @@ input[type="checkbox"]{
   margin-left: 10px;
 }
 
+.grid-container-3col {
+  display: grid;
+  align-content: center;
+  grid-template-columns: auto auto auto;
+}
+.grid-container-2col {
+  display: grid;
+  align-content: center;
+  grid-template-columns: auto auto;
+}
+
+.grid-container-2col .grid-container-3col > div {
+  text-align: left;
+  text-indent: 5px;
+}
+
 /* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
 @media (max-width: 600px) {
   nav, article {
@@ -107,20 +128,41 @@ input[type="checkbox"]{
 
 <tr class='content1'>
   <td><p>ประเภทบัตร*
-  <input type="checkbox" {{isChecked identificationCardType 'CITIZEN_CARD'}} >
-  <label >บัตรประชาชน ID Card</label>
-   <input type="checkbox" {{isChecked identificationCardType 'GOVERNMENT_ID'}}>
+
+
+<div class="grid-container-2col">
+  <div>
+    <input type="checkbox" {{isChecked identificationCardType 'CITIZEN_CARD'}} >
+    <label >บัตรประชาชน ID Card</label>
+  </div>
+    <div>
+  <input type="checkbox" {{isChecked identificationCardType 'GOVERNMENT_ID'}}>
   <label >บัตรข้าราชการ / รัฐวิสาหกิจ Government ID / State Enterprise ID</label>
+  </div>
+  <div>
   <input type="checkbox" {{isChecked identificationCardType 'DRIVER_LICENSE'}} >
   <label >ใบขับขี่ Driver License</label>
+
+  </div>
+
+    <div>
   <input type="checkbox" {{isChecked identificationCardType 'ALIEN_CARD'}} >
   <label >บัตรคนต่างด้าว Alien Registration Card</label>
 
+  </div>
+  </div>
+
+  <div class="grid-container-2col">
+  <div>
   <input type="checkbox" {{isChecked identificationCardType 'PASSPORT'}}>
   <label >พาสปอร์ต Passport</label>
-  {{#if (isnull passportCountry)}}
-  Issuing Country <span class="underDotted"> {{passportCountry}} </span>
-  {{/if}}
+  </div>
+    <div>
+    {{#if (isnull passportCountry)}}
+    Issuing Country <span class="underDotted"> {{passportCountry}} </span>
+    {{/if}}
+  </div>
+  </div>
 
   </p></td>
  </tr>
@@ -218,21 +260,37 @@ input[type="checkbox"]{
  <tr class='content1'>
   <td>
     <p>ประเภทบัตร*
-    <input type="checkbox" {{isChecked SpouseCardType 'CITIZEN_CARD'}} >
-    <label >บัตรประชาชน ID Card</label>
-    <input type="checkbox" {{isChecked SpouseCardType 'GOVERNMENT_ID'}}>
-    <label >บัตรข้าราชการ / รัฐวิสาหกิจ Government ID / State Enterprise ID</label>
-    <input type="checkbox" {{isChecked SpouseCardType 'DRIVER_LICENSE'}} >
-    <label >ใบขับขี่ Driver License</label>
-    <input type="checkbox" {{isChecked SpouseCardType 'ALIEN_CARD'}} >
-    <label >บัตรคนต่างด้าว Alien Registration Card</label>
 
-    <input type="checkbox" {{isChecked SpouseCardType 'PASSPORT'}}>
-    <label >พาสปอร์ต Passport</label>
+    <div class="grid-container-2col">
+      <div>
+      <input type="checkbox" {{isChecked SpouseCardType 'CITIZEN_CARD'}} >
+      <label >บัตรประชาชน ID Card</label>
+      </div>
 
-     {{#if (isnull SpousePassportCountry)}}
-     Issuing Country <span class="underDotted"> {{SpousePassportCountry}} </span>
-     {{/if}}
+      <div>
+      <input type="checkbox" {{isChecked SpouseCardType 'GOVERNMENT_ID'}}>
+      <label >บัตรข้าราชการ / รัฐวิสาหกิจ Government ID / State Enterprise ID</label>
+      </div>
+
+      <div>
+      <input type="checkbox" {{isChecked SpouseCardType 'DRIVER_LICENSE'}} >
+      <label >ใบขับขี่ Driver License</label>
+      </div>
+
+      <div>
+      <input type="checkbox" {{isChecked SpouseCardType 'ALIEN_CARD'}} >
+      <label >บัตรคนต่างด้าว Alien Registration Card</label>
+      </div>
+
+      <div>
+      <input type="checkbox" {{isChecked SpouseCardType 'PASSPORT'}}>
+      <label >พาสปอร์ต Passport</label>
+      {{#if (isnull SpousePassportCountry)}}
+      Issuing Country <span class="underDotted"> {{SpousePassportCountry}} </span>
+      {{/if}}
+      </div>
+
+     </div>
 
     </p>
   </td>
@@ -240,7 +298,6 @@ input[type="checkbox"]{
 <tr class='content2'>
   <td >
   <p >เลขที่ No. <span class="underDotted"> {{SpouseCardNumber}}</span>
-
    {{#if (isNotset SpouseIDNotExp)}}
     วันหมดอายุ (ค.ศ.) Expiry Date: (ฺA.D.) <span class="underDotted">{{dateFormat SpouseIDExpDate 'DD/MM/YYYY'}} </span>
    {{/if}}
@@ -249,11 +306,8 @@ input[type="checkbox"]{
      <input type="checkbox" checked>
     <label >บัตรตลอดชีพ Not Expired </label>
    {{/if}}
+   </p>
 
-  </td>
- </tr>
- <tr class='content1'>
-  <td>
   <p>คำนำหน้า Title*
 
  <input type="checkbox" {{isChecked SpouseTitle 'MR'}}>
@@ -270,13 +324,10 @@ input[type="checkbox"]{
     {{#if (isnull SpouseTitleOther)}}
      <span class="underDotted"> {{SpouseTitleOther}} </span>
      {{/if}}
-  </p> </td>
- </tr>
-
- <tr class='content1'>
-  <td>
+  </p>
   <p class='sameLine'>ชื่อ - นามสกุล (ภาษาไทย)* <span class="underDotted">{{SpouseFullName}} </span>
-  <span class="tab" >โทรศัพท์ Telephone</span> <span class="underDotted">{{SpouseTel}} </span> </p> </td>
+  <span class="tab" >โทรศัพท์ Telephone</span> <span class="underDotted">{{SpouseTel}} </span> </p>
+  </td>
  </tr>
 
 
@@ -287,40 +338,19 @@ input[type="checkbox"]{
   </td>
  </tr>
 
- <tr class='content1'>
-
-  <td>
-  <p>ประเภทบัตร*  {VAL1}</p>
-  </td>
-
- </tr>
-
-<tr class='content2'>
-  <td >
-  <p >เลขที่ No.  {123456789}        Issuing Country {Thai}</p>
-  <p class='sameLine'>วันหมดอายุ (ค.ศ.) Expiry Date: (ฺA.D.) {01/01/2020}    บัตรตลอดชีพ Not Expired</p>
-  </td>
- </tr>
- <tr class='content1'>
-  <td>
-  <p>คำนำหน้า Title*</p> </td>
- </tr>
- <tr class='content1'>
-  <td>
-  <p>ชื่อ - นามสกุล Name - Surname*    xxxx - yyyy  โทรศัพท์ Telephone{08-97765-331}</p>
-  </td>
- </tr>
-  <tr class='content1'>
-  <td>
-  <p>วันเดือนปีเกิด (ค.ศ.) Date of Birth (ฺA.D.) </p>
-  </td>
- </tr>
+    {{#each childrens}}
+      {{> child_partial }}
+    {{/each}}
 
  <!--Address-->
  <tr class='header2'>
   <td>2. ที่อยู่ Address </td>
  </tr>
 
+  {{#each AddrList}}
+      {{> addr_partial }}
+  {{/each}}
+{{!--
  <tr class='header3'>
   <td>
   <p>ที่อยู่ตามทะเบียนบ้าน / ที่อยู่ในประเทศเจ้าของสัญชาติ </p>
@@ -328,30 +358,23 @@ input[type="checkbox"]{
   </td>
  </tr>
 
-<tr class='content1'>
- <td>
-  <p>เลขที่ Address No.        หมู่ที่ Moo No.         อาคาร/หมู่บ้าน Building/Mooban </p>
-  <p>ชั้น Floor ซอย Soi       ถนน Road</p>
-  <p>ตำบล Sub-district/Tambon    อำเภอ District/Amphur </p>
-  <p>จังหวัด Province รหัสไปรษณีย์ Postal Code </p>
-  <p>โทรศัพท์ Telephone</p>
- </td>
- </tr>
+{{> addr_partial }}
+
  <tr class='header3'>
   <td>
   <p>ที่อยู่ที่ทำงาน Workplace Address* </p>
   </td>
  </tr>
-
  <tr class='content1'>
   <td>
   <p>
   <input type="radio" name="workAddr">ตามทะเบียนบ้าน Same as Residence Registration Address
   <input type="radio" name="workAddr">อื่นๆ (โปรดระบุ) Other (Please specify)
   </p>
-  <p>บริษัท Company name</p>
+    <p>บริษัท Company name</p>
   </td>
  </tr>
+{{> addr_partial }}
 
  <tr class='header3'>
   <td>
@@ -368,6 +391,8 @@ input[type="checkbox"]{
   </p>
   </td>
  </tr>
+ {{> addr_partial }} --}}
+
  <!--Background-->
  <tr class='header2'>
   <td>3. ข้อมูลเพิ่มเติม Background</td>
@@ -376,50 +401,129 @@ input[type="checkbox"]{
  <tr >
   <td>
   <p class='header3'>อาชีพ Occupation*</p>
-  <p class='content1'>{{Occu_Desc}}</p>
+
+  <div class="grid-container-2col">
+    <div>
+      <input type="checkbox" checked>
+      <label >{{Occu_Desc}}</label>
+    </div>
+  </div>
   </td>
  </tr>
 
  <tr >
   <td>
   <p class='header3'>ประเภทธุรกิจ Business Type*</p>
-  <p class='content1'>{{Bis_Desc}}</p>
+    <div class="grid-container-2col">
+      <div>
+        <input type="checkbox" checked>
+        <label >{{Bis_Desc}}</label>
+      </div>
+    </div>
   </td>
  </tr>
 
  <tr >
   <td>
   <p class='header3'>แหล่งที่มาของรายได้จากประเทศ Source of Income's Country*</p>
-  <p class='content1'>{{IncomeSourceCountry}}</p>
+  <div class="grid-container-2col">
+  <div>
+    <input type="checkbox" {{isChecked IncomeSourceCountry 'TH'}}>
+    <label >ประเทศไทย Thailand</label>
+  </div>
+
+    <div>
+    <input type="checkbox" {{isNotChecked IncomeSourceCountry 'TH'}}>
+    <label > อื่นๆ (โปรดระบุ) Other (Please specify) {{IncomeSourceCountryOther}}</label>
+  </div>
+  </div>
+
   </td>
  </tr>
 
   <tr >
   <td>
   <p class='header3'>แหล่งที่มาของรายได้ Source of Income*</p>
-  <p class='content1'>{{Income_Source_Code}}</p>
+      <div class="grid-container-2col">
+      <div>
+        <input type="checkbox" {{isCheckedInclude Income_Source_Code 'SALARY'}}>
+        <label >เงินเดือน Salary</label>
+      </div>
+
+        <div>
+        <input type="checkbox" {{isCheckedInclude Income_Source_Code 'HERITAGE'}}>
+        <label >มรดก Inheritance</label>
+      </div>
+
+      <div>
+        <input type="checkbox" {{isCheckedInclude Income_Source_Code 'SAVINGS'}}>
+        <label >เงินออม Savings</label>
+      </div>
+
+      <div>
+        <input type="checkbox" {{isCheckedInclude Income_Source_Code 'INVESTMENT'}}>
+        <label >การลงทุน Investment</label>
+      </div>
+
+      <div>
+      <input type="checkbox" {{isCheckedInclude Income_Source_Code 'RETIREMENT'}}>
+      <label >เงินเกษียณ Retirement Fund</label>
+      </div>
+
+      <div>
+      <input type="checkbox" {{isCheckedInclude Income_Source_Code 'BUSINESS'}}>
+      <label >ประกอบธุรกิจ Own Business</label>
+      </div>
+
+      <div>
+      <input type="checkbox" {{isCheckedInclude Income_Source_Code 'OTHER'}}>
+      <label >อื่นๆ (โปรดระบุ) Other (Please specify) {{Income_Source_Desc}}</label>
+      </div>
+    </div>
   </td>
  </tr>
 
  <tr >
   <td>
   <p class='header3' >ต่อเดือน (บาท) Monthly Income (Baht)*</p>
-  <p class='content1'>
-  <input type="checkbox" {{isChecked Income_Code 'LEVEL1'}}>
-  <label > < 15,000</label>
-  <input type="checkbox" {{isChecked Income_Code 'LEVEL2'}}>
-  <label >15,001 - 30,000</label>
-  <input type="checkbox" {{isChecked Income_Code 'LEVEL3'}}>
-  <label >30,001 - 50,000</label>
-  <input type="checkbox" {{isChecked Income_Code 'LEVEL4'}}>
-  <label >50,001 - 100,000</label>
+
+  <div class="grid-container-2col">
+  <div>
+    <input type="checkbox" {{isChecked Income_Code 'LEVEL1'}}>
+    <label >< 15,000</label>
+  </div>
+
+    <div>
+    <input type="checkbox" {{isChecked Income_Code 'LEVEL2'}}>
+    <label >15,001 - 30,000</label>
+  </div>
+
+  <div>
+    <input type="checkbox" {{isChecked Income_Code 'LEVEL3'}}>
+    <label >30,001 - 50,000</label>
+  </div>
+
+  <div>
+    <input type="checkbox" {{isChecked Income_Code 'LEVEL4'}}>
+    <label >50,001 - 100,000</label>
+  </div>
+
+  <div>
   <input type="checkbox" {{isChecked Income_Code 'LEVEL5'}}>
   <label >100,001 - 500,000</label>
+  </div>
+
+  <div>
   <input type="checkbox" {{isChecked Income_Code 'LEVEL6'}}>
   <label >500,001 - 1,000,000</label>
+  </div>
+
+  <div>
   <input type="checkbox" {{isChecked Income_Code 'LEVEL7'}}>
   <label >> 1,000,000</label>
-  </p>
+  </div>
+
+    </div>
 
   </td>
  </tr>
@@ -432,12 +536,14 @@ input[type="checkbox"]{
  </tr>
 <tr class='content1'>
  <td>
+
    <p>
   <input type="checkbox" {{isChecked MoneyLaundaring 'Y'}}>
   <label > ใช่ Yes</label>
   <input type="checkbox" {{isChecked MoneyLaundaring 'N'}}>
   <label >ไม่ใช่ No</label>
   </p>
+
  </td>
  </tr>
 

@@ -157,7 +157,8 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
 
 // GET
 function getIndCustDEVProc(custInfoObj,actionBy){
-  console.log("Welcome getIndCustDEVProc()"+ JSON.stringify(custInfoObj));
+  console.log("Welcome getIndCustDEVProc()");
+  // console.log("Welcome getIndCustDEVProc()"+ JSON.stringify(custInfoObj));
 
   return new Promise(function(resolve, reject) {
 
@@ -542,6 +543,14 @@ function saveMIT_FC_CUST_ACCOUNT(obj,actionBy) {
         saveMIT_FC_CUST_ACCOUNT_Detail(obj.cardNumber,obj.accounts[i],actionBy).then((result=>{
           logger.info(`Save accounts ${i} complete`);
         }));
+
+        // 4:mail addr.
+        // let addrObj = obj.residence;
+        if(obj.accounts[i].mailing){
+          saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.accounts[i].mailing,4,actionBy).then((result=>{
+            logger.info(" Save Resident complete");
+          }));
+        }
 
       }
       resolve({code:0});

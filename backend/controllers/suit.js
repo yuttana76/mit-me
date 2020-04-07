@@ -261,9 +261,13 @@ exports.createPDF_FCOpenAccount = (req, res, next) => {
 
             fnArray=[];
             fnArray.push(getSurveyData(custCode));
+            fnArray.push(getSurveyDataChild(custCode));
+            fnArray.push(getSurveyDataAddr(custCode));
 
             Promise.all(fnArray).then(_data => {
-                fcOpenAccountPDF.createFundConnextOpenAccount(custCode,_data[0][0]).then(result=>{
+              // console.log('EXEC DATA>' + JSON.stringify(_data));
+                // fcOpenAccountPDF.createFundConnextOpenAccount(custCode,_data[0][0],_data[1][0]).then(result=>{
+                fcOpenAccountPDF.createFundConnextOpenAccount(custCode,_data).then(result=>{
                     res.status(200).json({
                             msg:'successful',
                         });
@@ -716,15 +720,15 @@ function  getSurveyData(Cust_Code) {
   ,B.BusinessType_Desc
   ,D.Thai_Name AS Bis_Desc
 
-
 	,B.Income_Source_Code
-	,B.Income_Source_Desc
+  ,B.Income_Source_Desc
+
   ,B.IncomeSourceCountry
+  ,B.IncomeSourceCountryOther
 
   ,B.Income_Code
 	,B.Income_Desc
   ,F.Thai_Name AS In_Desc
-
 
   ,B.MoneyLaundaring
   ,B.PoliticalRelate
@@ -735,6 +739,11 @@ function  getSurveyData(Cust_Code) {
   ,a.RiskLevel,a.TotalScore, convert(varchar, a.CreateDate, 103) as SuitDate
   ,A.RiskLevelTxt,A.Type_Investor
   ,a.ANS_JSON as Ans
+
+  ,B.MailSameAs
+  ,B.workAddressSameAsFlag
+  ,B.currentAddressSameAsFlag
+
   from MIT_CUSTOMER_SUIT a,MIT_CUSTOMER_INFO B
   left join MIT_FC_OCCUPATION C ON B.Occupation_Code=C.Code
   left join MIT_FC_BUSINESS_TYPE D ON D.Code=B.BusinessType_Code
@@ -781,6 +790,109 @@ function  getSurveyData(Cust_Code) {
       console.log("ERROR>>" + err);
       reject(err);
 
+    });
+  });
+}
+
+
+function  getSurveyDataChild(Cust_Code) {
+  var queryStr = `
+  BEGIN
+    SELECT [Cust_Code]
+    ,[ChildIDType]
+    ,[ChildPassportCountry]
+    ,[ChildCardNumber]
+    ,[cardExpiryDate]
+    ,[cardNotExt]
+    ,[title]
+    ,[titleOther]
+    ,[First_Name_T]
+    ,[Last_Name_T]
+    ,[First_Name_E]
+    ,[Last_Name_E]
+    ,[Birth_Day]
+    ,[CreateBy]
+    ,[CreateDate]
+    ,[UpdateBy]
+    ,[UpdateDate]
+    ,[OTP_ID]
+  FROM [MIT_CUSTOMER_CHILDREN]
+  where Cust_Code= @Cust_Code
+
+  END
+    `;
+
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("Cust_Code", sql.VarChar(50), Cust_Code)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result.recordsets);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+function  getSurveyDataAddr(Cust_Code) {
+  var queryStr = `
+  BEGIN
+    SELECT [Cust_Code]
+    ,[Addr_Seq]
+    ,[Addr_No]
+    ,[Moo]
+    ,[Place]
+    ,[Floor]
+    ,[Soi]
+    ,[Road]
+    ,[Tambon_Id]
+    ,[Amphur_Id]
+    ,[Province_Id]
+    ,[Country_Id]
+    ,[Zip_Code]
+    ,[Print_Address]
+    ,[Tel]
+    ,[Fax]
+    ,[CreateBy]
+    ,[CreateDate]
+    ,[UpdateBy]
+    ,[UpdateDate]
+    ,[SameAs]
+    ,[ReqModifyFlag]
+    ,[Country_oth]
+    ,[OTP_ID]
+  FROM [MIT_CUSTOMER_ADDR]
+  where Cust_Code= @Cust_Code
+
+  END
+    `;
+
+  const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("Cust_Code", sql.VarChar(50), Cust_Code)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result.recordsets);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
     });
   });
 }

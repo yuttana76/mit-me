@@ -23,12 +23,12 @@ fundConnextApi_PROD = {
     }
   }
 
-exports.FC_API_URI= process.env.FC_API_URI || fundConnextApi_STAGE.FC_API_URI;
-exports.FC_API_AUTH= process.env.FC_API_AUTH || fundConnextApi_STAGE.FC_API_AUTH;
+// exports.FC_API_URI= process.env.FC_API_URI || fundConnextApi_STAGE.FC_API_URI;
+// exports.FC_API_AUTH= process.env.FC_API_AUTH || fundConnextApi_STAGE.FC_API_AUTH;
 
 //Production
-// exports.FC_API_URI= fundConnextApi_PROD.FC_API_URI;
-// exports.FC_API_AUTH= fundConnextApi_PROD.FC_API_AUTH;
+exports.FC_API_URI= fundConnextApi_PROD.FC_API_URI;
+exports.FC_API_AUTH= fundConnextApi_PROD.FC_API_AUTH;
 
 exports.FC_API_PATH = {
   AUTH_PATH :"/api/auth",

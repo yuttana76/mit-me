@@ -9,7 +9,7 @@ var logger = require("../../config/winston");
 var hbs = require("handlebars");
 const moment = require('moment');
 
-const filePDFName ='fundConnextOpenAccount.pdf';
+const filePDFsuffix ='fundConnextOpenAccount.pdf';
 const createPath = path.resolve('./backend/downloadFiles/files/')
 const pdfTemplate ='fcOpenAccount_template'
 
@@ -95,7 +95,7 @@ const startPDF = async function(custCode,data) {
     await page.setContent(content);
     await page.emulateMedia('screen');
 
-    var createPdfPath = createPath+"/"+custCode+"_"+filePDFName
+    var createPdfPath = createPath+"/"+custCode+"_"+filePDFsuffix
 
     await page.pdf({
       path:createPdfPath,

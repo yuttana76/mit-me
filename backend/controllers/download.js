@@ -32,7 +32,7 @@ exports.downloadNAV = (req, res, next) => {
 
 exports.downloadfile = (req, res, next) => {
 
-    var fileName = req.params.fileName;
+    var fileName = req.params.fileName + '_fundConnextOpenAccount.pdf';
 
     var fileLocation = path.join(DOWNLOAD_PATH,fileName);
 

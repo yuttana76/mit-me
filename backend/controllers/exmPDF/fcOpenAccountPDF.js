@@ -100,7 +100,13 @@ const startPDF = async function(custCode,data) {
     await page.pdf({
       path:createPdfPath,
       format:'A4',
-      printBackground:true
+      printBackground:true,
+      border: "10mm",
+      margin: {
+        top: "30px",
+        bottom: "0px"
+      },
+
     });
 
     logger.info('Create pdf fundConnextOpenAccount successful.');

@@ -238,9 +238,9 @@ export class SuiteService {
       "docType":"KYC-SUIT",
       "id":custCode
     };
+
     return this.http.post<{any}>(BACKEND_URL + '/createPDF', data);
   }
-
 
 
   downloadKYCForm(actionBy,fileName):Observable<any>{
@@ -252,6 +252,7 @@ export class SuiteService {
 
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
+
     return this.http.get(BACKEND_DOWNLOAD + '/file/' + fileName,{ headers: headers, responseType: 'blob' });
 
   }

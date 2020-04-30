@@ -242,13 +242,11 @@ exports.suitEvaluate = (req, res, next) => {
 
 exports.createPDF_FCOpenAccount = (req, res, next) => {
 
-  logger.info(`API /createPDF `);
-
   var actionBy = req.body.actionBy || 'SYSTEM';
   var docType = req.body.docType;
   var custCode = req.body.id;
 
-  logger.info(` Parameters;
+  logger.info(` API /createPDF ;
     actionBy=${actionBy},
     docType=${docType},
     id=${custCode},
@@ -270,6 +268,7 @@ exports.createPDF_FCOpenAccount = (req, res, next) => {
                 fcOpenAccountPDF.createFundConnextOpenAccount(custCode,_data).then(result=>{
                     res.status(200).json({
                             msg:'successful',
+                            code:'0'
                         });
                   });
             })

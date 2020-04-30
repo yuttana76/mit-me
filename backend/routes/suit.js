@@ -10,7 +10,7 @@ router.post("/verifyExtLink",checkAuth,suitController.verifyExtLink);
 router.post("/evaluate",checkAuth,suitController.suitEvaluate);
 router.post("/suitSave",checkAuth,suitController.suitSave);
 
-router.post("/createPDF_FCOpenAccount",suitController.createPDF_FCOpenAccount);
+router.post("/createPDF",suitController.createPDF_FCOpenAccount);
 
 // router.get("/getSuit/:cusCode",suitController.getSuit);
 

@@ -173,7 +173,7 @@ export class SurveySearchComponent implements OnInit {
     });
   }
 
-  onCreatePDF() {
+  onCreateViewPDF() {
 
     this.spinnerLoading=true;
     this.suiteService.createKYCForm(this.authService.getUserId(),this.cust_Code_Cond)
@@ -181,25 +181,27 @@ export class SurveySearchComponent implements OnInit {
       this.spinnerLoading=false;
     })
     .subscribe((rs)=>{
-     if(rs.filePDF){
-      this.suiteService.downloadKYCForm(this.authService.getUserId(),rs.filePDF).subscribe((rs)=>{
+
+      console.log('RS Create:'+JSON.stringify(rs));
+
+     if(rs.code == '0'){
+
+      this.suiteService.downloadKYCForm(this.authService.getUserId(),this.cust_Code_Cond).subscribe((rs)=>{
         const blob = new Blob([rs], { type: 'application/pdf' });
         const url= window.URL.createObjectURL(blob);
         window.open(url);
         });
      }
     });
-
   }
 
-  onExportPDF() {
-
-    this.suiteService.downloadKYCForm(this.authService.getUserId(),this.cust_Code_Cond).subscribe((rs)=>{
-      const blob = new Blob([rs], { type: 'application/pdf' });
-      const url= window.URL.createObjectURL(blob);
-      window.open(url);
-    });
-  }
+  // onExportPDF() {
+  //   this.suiteService.downloadKYCForm(this.authService.getUserId(),this.cust_Code_Cond).subscribe((rs)=>{
+  //     const blob = new Blob([rs], { type: 'application/pdf' });
+  //     const url= window.URL.createObjectURL(blob);
+  //     window.open(url);
+  //   });
+  // }
 
   onActionDialog(Cust_Code: string) {
 

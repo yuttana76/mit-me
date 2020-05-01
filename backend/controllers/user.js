@@ -1,13 +1,13 @@
 
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const jwt = requirse('jsonwebtoken');
 const dbConfig = require('../config/db-config');
 var prop = require('../config/backend-property');
 
 var logger = require('../config/winston');
 
 var config = dbConfig.dbParameters;
-
+s
 // const SALT_WORK_FACTOR = 10;
 const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
 

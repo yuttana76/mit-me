@@ -16,7 +16,7 @@ import { mimeType } from './mime-type.validator';
 export class AnoucementDialogComponent implements OnInit {
 
   form: FormGroup;
-  imagePreview: string;
+  imagePreview;
   spinnerLoading = false;
   appId: string;
   insertMode: boolean;

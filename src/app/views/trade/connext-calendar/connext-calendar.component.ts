@@ -49,7 +49,7 @@ export class ConnextCalendarComponent implements OnInit {
 
   // constructor() { }
 
-  @ViewChild('modalContent')
+  @ViewChild('modalContent', { static: true })
   modalContent: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;

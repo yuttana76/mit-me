@@ -3,9 +3,9 @@ import { User } from '../model/user.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { UserFormService } from './userForm.service';
-import { DATE_REGEX, TIME_REGEX, stringsToDate } from '../trade.factory';
-import { DatePipe, Location } from '@angular/common';
-import { DISABLED } from '@angular/forms/src/model';
+// import { DATE_REGEX, TIME_REGEX, stringsToDate } from '../trade.factory';
+// import { DatePipe, Location } from '@angular/common';
+// import { DISABLED } from '@angular/forms/src/model';
 import { Department } from '../model/department.model';
 import { DepartmentService } from '../services/department.service';
 import { UserService } from '../services/user.service';
@@ -55,7 +55,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.location.back();
+    // this.location.back();
   }
 
   private _bindValue() {

@@ -15,7 +15,9 @@ import { Authority } from '../model/authority.model';
 import { ReportsService } from '../services/reports.service';
 import fileSaver from 'file-saver';
 import { ReportGeneral } from '../model/reportGeneral.model';
-import * as moment from 'moment';
+
+import * as moment from 'moment'
+
 import { ShareDataService } from '../services/shareData.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatSelectChange } from '@angular/material';

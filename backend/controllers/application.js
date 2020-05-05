@@ -1,5 +1,5 @@
-const dbConfig = require('../config/db-config');
-var config = dbConfig.dbParameters;
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
 var logger = require("../config/winston");
 
 exports.getApplication = (req, res, next) => {

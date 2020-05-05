@@ -1,12 +1,8 @@
-const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
 const dbConfig = require('../config/db-config');
-const FC_API_Config = require('../config/fundConnextAPI');
+const mpamConfig = require('../config/mpam-config');
 var logger = require("../config/winston");
-// const log = require('logger')('myfilename');
-
-var mail = require('./mail');
 const https = require('https')
 const download = require('download');
 const { check, validationResult } = require('express-validator');
@@ -16,22 +12,25 @@ var mitLog = require('./mitLog');
 var  FCCustInfo = require('../models/fcCustInfo.model');
 var  util = require('./utility');
 
-const FC_API_URI= FC_API_Config.FC_API_URI
-const FC_API_AUTH=FC_API_Config.FC_API_AUTH
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+//FundConnext configuration
+const FC_API_URI= mpamConfig.FC_API_URI
+const FC_API_AUTH=mpamConfig.FC_API_AUTH
 
-const FC_AUTH_PATH = FC_API_Config.FC_API_PATH.AUTH_PATH
-const FC_DOWNLOAD_PATH = FC_API_Config.FC_API_PATH.DOWNLOAD_PATH
-const DOWNLOAD_PATH  = FC_API_Config.LOCAL.DOWNLOAD_PATH
-const INVEST_PROFILE_PATH = FC_API_Config.FC_API_PATH.INVEST_PROFILE_PATH
-const INVEST_INDIVIDUAL = FC_API_Config.FC_API_PATH.INVEST_INDIVIDUAL
+const FC_AUTH_PATH = mpamConfig.AUTH_PATH
+const FC_DOWNLOAD_PATH = mpamConfig.API_DOWNLOAD_PATH
+const DOWNLOAD_PATH  = mpamConfig.DOWNLOAD_PATH
+const INVEST_PROFILE_PATH = mpamConfig.INVEST_PROFILE_PATH
+const INVEST_INDIVIDUAL = mpamConfig.INVEST_INDIVIDUAL
 const FC_API_MODULE ='FC API';
 
-var config_BULK = dbConfig.dbParameters_BULK;
-var config = dbConfig.dbParameters;
+// Database configuration
+var config_BULK = mpamConfig.dbParameters_BULK;
+var config = mpamConfig.dbParameters;
 
 exports.getIndCust = (req, res, next) =>{
 
-  logger.info("Validate API /GetIndCust/");
+  // logger.info("Validate API /GetIndCust/");
   var actionBy = req.params.actionBy || 'SYSTEM';
 
   const errors = validationResult(req);
@@ -44,10 +43,7 @@ exports.getIndCust = (req, res, next) =>{
 
     fnGetIndCust(cardNumber).then(obj=>{
 
-      // console.log('FC result->' + JSON.stringify(obj))
       if(obj.errMsg){
-        // {"errMsg":{"code":"E114","message":"Customer not found"}}
-        // res.status(200).json({"code":obj.errMsg.code,"message":obj.errMsg.message});
         res.status(200).json(obj.errMsg);
       }
 
@@ -158,7 +154,6 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
 // GET
 function getIndCustDEVProc(custInfoObj,actionBy){
   console.log("Welcome getIndCustDEVProc()");
-  // console.log("Welcome getIndCustDEVProc()"+ JSON.stringify(custInfoObj));
 
   return new Promise(function(resolve, reject) {
 
@@ -216,7 +211,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
 
 function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
 
-  logger.info('saveMIT_FC_CUST_INFO()');
+  logger.info('saveMIT_FC_CUST_INFO()->' + JSON.stringify(config));
 
   if(custInfoObj.cardExpiryDate ==='N/A')
     custInfoObj.cardExpiryDate=''
@@ -282,14 +277,11 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
     ,suitabilityEvaluationDate=@suitabilityEvaluationDate
     ,fatca=@fatca
     ,fatcaDeclarationDate=@fatcaDeclarationDate
-
     ,workAddressSameAsFlag=@workAddressSameAsFlag
     ,currentAddressSameAsFlag=@currentAddressSameAsFlag
-
-    ,CreateBy=@CreateBy
-    ,CreateDate=getdate()
+    ,UpdateBy=@CreateBy
+    ,UpdateDate=getdate()
     WHERE cardNumber=@cardNumber
-
 
     IF @@ROWCOUNT =0
     BEGIN
@@ -1137,8 +1129,6 @@ function fnGetIndCust(cardNumber){
           const option = {
             'X-Auth-Token':resultObj.access_token,
           };
-
-          console.log("OPTION>>" +JSON.stringify(option));
 
           request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
             // logger.info(response.body.url);
@@ -3598,9 +3588,7 @@ function fnFCAuth(){
       },
     };
 
-  // console.log('***FC_API_URI > ' + JSON.stringify(FC_API_URI));
-  // console.log('***FC_AUTH_PATH > ' + JSON.stringify(FC_AUTH_PATH));
-  // console.log('***FC_API_AUTH > ' + JSON.stringify(FC_API_AUTH));
+  console.log('***options > ' + JSON.stringify(options));
 
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 

@@ -1,10 +1,7 @@
-// import { inspect } from 'util' // or directly
-var util = require('util')
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
 
-const dbConfig = require('../config/db-config');
-var config = dbConfig.dbParameters;
 var logger = require('../config/winston');
-
 
 exports.getAnoucement = (req, res, next) => {
 

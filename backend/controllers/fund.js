@@ -1,6 +1,7 @@
-const dbConfig = require('../config/db-config');
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
+
 var AdmZip = require('adm-zip');
-var config = dbConfig.dbParameters;
 var fs = require('fs');
 
 exports.getFunds = (req, res, next) => {

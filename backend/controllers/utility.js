@@ -1,20 +1,20 @@
 
 const bcrypt = require('bcryptjs');
-const dbConfig = require('../config/db-config');
+const mpamConfig = require('../config/mpam-config');
 var logger = require('../config/winston');
-var config = dbConfig.dbParameters;
+var config = mpamConfig.dbParameters;
 const mailConfig = require('../config/mail-conf');
 const nodemailer = require('nodemailer');
 
 // const SALT_WORK_FACTOR = 10;
-const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
-let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
+const SALT_WORK_FACTOR = mpamConfig.SALT_WORK_FACTOR;
+let transporter = nodemailer.createTransport(mpamConfig.MPAM_MailParameters); //MPAM
 
 exports.autoGeneratePassword = (req,res,next)=>{
 
   logger.info( `API /autoGeneratePassword - ${req.originalUrl} - ${req.ip} - ${req.body.privtecode} - ${req.body.password}`);
 
-  var _privtecode = dbConfig.UTIL_PRIVATE_CODE;
+  var _privtecode = mpamConfig.UTIL_PRIVATE_CODE;
   var _password = req.body.password;
 
   if (_privtecode === req.body.privtecode ){

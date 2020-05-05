@@ -146,7 +146,7 @@ app.use("/api/otp",otpTokenRoutes);
 app.use("/api/cdd",cddRoutes);
 
 app.use("/api/child",custChildrenRoutes);
-s
+
 app.use("/api/led",ledRoutes);
 app.use("/api/ledApi",ledApiRoutes);
 

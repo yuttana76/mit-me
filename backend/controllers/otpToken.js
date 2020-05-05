@@ -2,8 +2,10 @@
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+
 const config = require('../config/mail-conf');
-const dbConfig = require('../config/db-config');
+
+const mpamConfig = require('../config/mpam-config');
 
 const smsConfig = require('../config/sms-conf');
 
@@ -12,7 +14,7 @@ var logger = require("../config/winston");
 var request = require("request");
 var mitLog = require('./mitLog');
 
-var dbParameters = dbConfig.dbParameters;
+var dbParameters = mpamConfig.dbParameters;
 
 /*
 https://www.npmjs.com/package/otpauth

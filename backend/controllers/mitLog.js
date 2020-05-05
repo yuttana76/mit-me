@@ -1,7 +1,7 @@
-const dbConfig = require('../config/db-config');
+const mpamConfig = require('../config/mpam-config');
 var prop = require('../config/backend-property');
 var logger = require('../config/winston');
-var config = dbConfig.dbParameters;
+var config = mpamConfig.dbParameters;
 
 module.exports = {
 

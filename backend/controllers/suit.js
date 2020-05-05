@@ -1,20 +1,17 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const dbConfig = require("../config/db-config");
+const mpamConfig = require('../config/mpam-config');
 var prop = require("../config/backend-property");
 var logger = require("../config/winston");
 var mitLog = require('./mitLog');
-
 // const suitPDFController = require('../controllers/exmPDF/suitPDF');
 const createKYCToPDFController = require('../controllers/exmPDF/createKYCToPDF');
 const fcOpenAccountPDF =require('../controllers/exmPDF/fcOpenAccountPDF');
-
-
-var config = dbConfig.dbParameters;
+var config = mpamConfig.dbParameters;
 const {validationResult } = require('express-validator');
 
 // const SALT_WORK_FACTOR = 10;
-const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
+const JWT_SECRET_STRING = mpamConfig.JWT_SECRET_STRING;
 
 exports.verifyExtLink_TEST = (req, res, next) => {
   logger.info(`API /verifyExtLink - ${req.originalUrl} - ${req.ip} `);

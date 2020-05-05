@@ -1,10 +1,10 @@
 
 const bcrypt = require('bcryptjs');
-const dbConfig = require('../config/db-config');
 var logger = require('../config/winston');
-var config = dbConfig.dbParameters;
-
 var V_RESULT;
+
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
 
 exports.splitRiskSuit = (req,res,next)=>{
 

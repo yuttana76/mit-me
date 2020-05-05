@@ -1,8 +1,6 @@
-const dbConfig = require('../config/db-config');
 const fs = require('fs');
 const path = require('path');
 
-var config = dbConfig.dbParameters;
 const https = require('https')
 const crypto = require('crypto');
 var logger = require("../config/winston");
@@ -12,14 +10,11 @@ exports.simpleExcel = (req, res, next) => {
 
   logger.info("/api/export/simpleExcel" + JSON.stringify(req.body));
 
-
   fnSimpleExcel().then(result=>{
     res.status(200).json(result);
   },err=>{
     res.status(401).json(err);
   });
-
-
 }
 
 

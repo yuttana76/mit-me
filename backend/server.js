@@ -104,6 +104,7 @@ const option = {
   ca: fs.readFileSync(__dirname+'/merchantasset_CA/inter.pem'),
     passphrase: 'mpam@2019'
 };
+
 var server = https.createServer(option, app)
 .listen(port,function () {
   console.log("Listening on port https://localhost:%s", server.address().port);

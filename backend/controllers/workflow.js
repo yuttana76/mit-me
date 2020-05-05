@@ -1,9 +1,5 @@
-// var Promise = require('bluebird');
-
-const dbConfig = require('../config/db-config');
-// var sql = require("mssql");
-var config = dbConfig.dbParameters;
-
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
 
 exports.getWorkFlowByAppRef = (req, res, next) => {
 

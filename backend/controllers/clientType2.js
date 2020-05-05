@@ -1,6 +1,6 @@
-const dbConfig = require('../config/db-config');
 
-var config = dbConfig.dbParameters;
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
 
 exports.getClientTypes = (req, res, next) => {
 

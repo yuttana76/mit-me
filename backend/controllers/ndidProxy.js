@@ -1,11 +1,10 @@
-const dbConfig = require('../config/db-config');
 const fs = require('fs');
 const path = require('path');
-
-var config = dbConfig.dbParameters;
+const mpamConfig = require('../config/mpam-config');
 const https = require('https')
 const crypto = require('crypto');
 var logger = require("../config/winston");
+var config = mpamConfig.dbParameters;
 
 // SIT Environment: https://ndidproxydev.finnet.co.th
 // UAT Environment: https://ndidproxytest.finnet.co.th

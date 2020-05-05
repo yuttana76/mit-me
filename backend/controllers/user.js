@@ -1,18 +1,15 @@
 
 const bcrypt = require('bcryptjs');
-const jwt = requirse('jsonwebtoken');
-const dbConfig = require('../config/db-config');
+const jwt = require('jsonwebtoken');
+const mpamConfig = require('../config/mpam-config');
 var prop = require('../config/backend-property');
-
 var logger = require('../config/winston');
+var config = mpamConfig.dbParameters;
 
-var config = dbConfig.dbParameters;
-s
 // const SALT_WORK_FACTOR = 10;
-const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
-
-const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
-const JWT_EXPIRES = dbConfig.JWT_EXPIRES;
+const SALT_WORK_FACTOR = mpamConfig.SALT_WORK_FACTOR;
+const JWT_SECRET_STRING = mpamConfig.JWT_SECRET_STRING;
+const JWT_EXPIRES = mpamConfig.JWT_EXPIRES;
 const TOKEN_EXPIRES_SEC = 3600;
 
 exports.userLoginByParam = (req, res, next) => {

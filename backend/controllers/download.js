@@ -1,6 +1,3 @@
-const dbConfig = require('../config/db-config');
-var config = dbConfig.dbParameters;
-var AdmZip = require('adm-zip');
 var fs = require('fs');
 const path = require("path");
 var logger = require('../config/winston');

@@ -1,6 +1,5 @@
-const dbConfig = require('../config/db-config');
-
-var config = dbConfig.dbParameters;
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
 
 exports.getThaiTitles = (req, res, next) => {
 

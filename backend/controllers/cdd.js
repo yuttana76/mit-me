@@ -1,6 +1,7 @@
 
-const dbConfig = require('../config/db-config');
-var config = dbConfig.dbParameters;
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
+
 var logger = require('../config/winston');
 var prop = require("../config/backend-property");
 var mitLog = require('./mitLog');

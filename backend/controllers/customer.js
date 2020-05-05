@@ -1,10 +1,8 @@
-// var Promise = require('bluebird');
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
 
-const dbConfig = require('../config/db-config');
-// var sql = require("mssql");
-var config = dbConfig.dbParameters;
 var logger = require('../config/winston');
-const masterdataController = require('../controllers/masterdata')
+
 exports.searchCustomers = (req, res, next) => {
   var fncName = "searchCustomers";
 

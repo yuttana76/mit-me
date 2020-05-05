@@ -5,7 +5,7 @@ const mailConfig = require('../config/mail-conf');
 const path = require('path');
 const readline = require('readline');
 const fs = require('fs');
-const dbConfig = require('../config/db-config');
+const mpamConfig = require('../config/mpam-config');
 
 const utility = require('./utility');
 var request = require("request");
@@ -18,15 +18,13 @@ const smsConfig = require('../config/sms-conf');
 
 const suitPDFController = require('../controllers/exmPDF/suitPDF');
 
-const SALT_WORK_FACTOR = dbConfig.SALT_WORK_FACTOR;
-const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
-const JWT_EXPIRES = dbConfig.JWT_EXPIRES;
-const JWT_EXTERNAL_EXPIRES = dbConfig.JWT_EXTERNAL_EXPIRES;
+const SALT_WORK_FACTOR = mpamConfig.SALT_WORK_FACTOR;
+const JWT_SECRET_STRING = mpamConfig.JWT_SECRET_STRING;
+const JWT_EXPIRES = mpamConfig.JWT_EXPIRES;
+const JWT_EXTERNAL_EXPIRES = mpamConfig.JWT_EXTERNAL_EXPIRES;
 
-var config = dbConfig.dbParameters;
-
-let transporter = nodemailer.createTransport(mailConfig.MPAM_MailParameters); //MPAM
-// let transporter = nodemailer.createTransport(mailConfig.GmailParameters); //GMAIL
+var config = mpamConfig.dbParameters;
+let transporter = nodemailer.createTransport(mpamConfig.MPAM_MailParameters); //MPAM
 
 //reference https://nodemailer.com/about/
 /*
@@ -141,8 +139,6 @@ Send mail  by encypt use bcrypt
 // const FILE_SEND_MAIL = __dirname+'..\downloadFiles\mail\mail.txt';
 
 exports.surveyKYCBulkFile = (req, res, next) =>{
-
-  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
 
   let _target = req.body.target || 'test';
   let _url='';
@@ -495,8 +491,6 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
 
 exports.surveySuitBulkFile = (req, res, next) =>{
 
-  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
-
   let _target = req.body.target || 'test';
   let _url='';
 
@@ -593,8 +587,6 @@ Send mail  by encypt use bcrypt
 // const FILE_SEND_MAIL = __dirname+'..\downloadFiles\mail\mail.txt';
 
 exports.surveyBulkFile = (req, res, next) =>{
-
-  // let transporter = nodemailer.createTransport(mailConfig.GmailParameters);
 
   let _target = req.body.target || 'test';
   let _url='';

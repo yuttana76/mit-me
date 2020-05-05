@@ -1,12 +1,10 @@
 const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
-const dbConfig = require('../config/db-config');
+const mpamConfig = require('../config/mpam-config');
 const utility = require('./utility');
 
-var prop = require("../config/backend-property");
 var logger = require("../config/winston");
-var mitLog = require('./mitLog');
 var soap = require('soap');
 var cron = require('node-cron');
 
@@ -16,9 +14,8 @@ var led = require('./led');
 var mail = require('./mail');
 
 
-var config = dbConfig.dbParameters;
-var config_BULK = dbConfig.dbParameters_BULK;
-var config_stream = dbConfig.dbParameters_stream;
+var config = mpamConfig.dbParameters;
+var config_BULK = mpamConfig.dbParameters_BULK;
 
 const mysql_dbConfig = require("../config/mysql-config");
 var swan_config = mysql_dbConfig.swan_dbParameters;

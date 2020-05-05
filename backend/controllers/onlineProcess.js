@@ -1,8 +1,7 @@
-const dbConfig = require('../config/db-config');
+const mpamConfig = require('../config/mpam-config');
 const fs = require('fs');
 const path = require('path');
-
-var config = dbConfig.dbParameters;
+var config = mpamConfig.dbParameters;
 const https = require('https')
 const crypto = require('crypto');
 var logger = require("../config/winston");

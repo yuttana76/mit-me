@@ -1,7 +1,5 @@
-const dbConfig = require('../config/db-config');
-
-var config = dbConfig.dbParameters;
-
+const mpamConfig = require('../config/mpam-config');
+var config = mpamConfig.dbParameters;
 
 exports.getDepartments = (req, res, next) => {
 
@@ -9,7 +7,7 @@ exports.getDepartments = (req, res, next) => {
 
   var queryStr = `
   SELECT *
-  FROM [MFTS].[dbo].[MIT_DEPARTMENT]
+  FROM [MIT_DEPARTMENT]
   ORDER BY NAME
   `;
 

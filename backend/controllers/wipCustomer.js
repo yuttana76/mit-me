@@ -4,10 +4,9 @@
   // Boolean -> sql.Bit
   // Date -> sql.DateTime
 
-const dbConfig = require('../config/db-config');
+const mpamConfig = require('../config/mpam-config');
 var sql = require("mssql");
-var config = dbConfig.dbParameters;
-
+var config = mpamConfig.dbParameters;
 
 exports.ExeInsertWIPCustomer = (req, res, next) => {
 

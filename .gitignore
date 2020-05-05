@@ -39,7 +39,7 @@ package-lock.json
 .settings/
 *.sublime-workspace
 .env
-
+.env.PROD
 
 # IDE - VSCode
 .vscode/*

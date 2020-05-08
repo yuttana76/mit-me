@@ -1,7 +1,9 @@
+const mpamConfig = require('../config/mpam-config');
+
 exports.swan_dbParameters = {
   connectionLimit : 10,
-  host            : '192.168.10.32',
-  user            : 'root',
-  password        : 'password',
+  host            : mpamConfig.MYSQL_SERVER,
+  user            : mpamConfig.MYSQL_USER,
+  password        : mpamConfig.MYSQL_PASSWORD,
   // database        : 'my_db'
 }

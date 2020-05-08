@@ -16,7 +16,10 @@ const {
   SQL_PASSWORD,
   SQL_DATABASE,
   SQL_SERVER,
-  SQL_ENCRYPT,
+  // SQL_ENCRYPT,
+  MYSQL_SERVER,
+  MYSQL_USER,
+  MYSQL_PASSWORD,
   SALT_WORK_FACTOR,
   JWT_SECRET_STRING,
   JWT_EXPIRES,
@@ -26,6 +29,10 @@ const {
   MAIL_PORT,
   MAIL_USER,
   MAIL_PASSWORD,
+  SMS_URL,
+  SMS_USER,
+  SMS_PASSWORD,
+  SMS_SENDER
 } = process.env;
 
 // validate the required configuration information
@@ -37,7 +44,7 @@ assert( SQL_USER, "SQL_USER configuration is required." );
 assert( SQL_PASSWORD, "SQL_PASSWORD configuration is required." );
 assert( SQL_DATABASE, "SQL_DATABASE configuration is required." );
 assert( SQL_SERVER, "SQL_SERVER configuration is required." );
-assert( SQL_ENCRYPT, "SQL_ENCRYPT configuration is required." );
+// assert( SQL_ENCRYPT, "SQL_ENCRYPT configuration is required." );
 assert( SALT_WORK_FACTOR, "SALT_WORK_FACTOR configuration is required." );
 assert( JWT_SECRET_STRING, "JWT_SECRET_STRING configuration is required." );
 assert( JWT_EXPIRES, "JWT_EXPIRES configuration is required." );
@@ -48,7 +55,12 @@ assert( MAIL_PORT, "MAIL_PORT configuration is required." );
 assert( MAIL_USER, "MAIL_USER configuration is required." );
 assert( MAIL_PASSWORD, "MAIL_PASSWORD configuration is required." );
 
-// export the configuration information
+
+assert( SMS_URL, "SMS_URL configuration is required." );
+// assert( SMS_USER, "SMS_USER configuration is required." );
+// assert( SMS_PASSWORD, "SMS_PASSWORD configuration is required." );
+// assert( SMS_SENDER, "SMS_SENDER configuration is required." );
+
 module.exports = {
   SALT_WORK_FACTOR:SALT_WORK_FACTOR,
   JWT_SECRET_STRING:JWT_SECRET_STRING,
@@ -69,9 +81,9 @@ module.exports = {
 
   //
   dbParameters:{
-    server: SQL_SERVER,
     user: SQL_USER,
     password: SQL_PASSWORD,
+    server: SQL_SERVER,
     database: SQL_DATABASE,
     pool: {
       max: 10,
@@ -79,7 +91,7 @@ module.exports = {
       idleTimeoutMillis: 30000
     },
     options: {
-      encrypt: SQL_ENCRYPT
+      encrypt: false
     }
   },
 
@@ -95,10 +107,16 @@ module.exports = {
       idleTimeoutMillis: 30000
     },
     options: {
-      encrypt: SQL_ENCRYPT
+      encrypt: false
     }
   },
 
+  // MYSQL
+  MYSQL_SERVER:MYSQL_SERVER,
+  MYSQL_USER:MYSQL_USER,
+  MYSQL_PASSWORD:MYSQL_PASSWORD,
+
+  // Email
   MPAM_MailParameters:{
     host:MAIL_HOST,
     port:MAIL_PORT,
@@ -108,5 +126,11 @@ module.exports = {
         pass:MAIL_PASSWORD
     }
   },
+
+  //SMS
+  SMS_URL:SMS_URL,
+  SMS_USER:SMS_USER,
+  SMS_PASSWORD:SMS_PASSWORD,
+  SMS_SENDER:SMS_SENDER
 
 }

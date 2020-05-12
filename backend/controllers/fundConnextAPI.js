@@ -151,6 +151,55 @@ exports.updateCustomerIndPartial = (req, res, next) =>{
 
 }
 
+
+
+exports.createCustomerIndividual = (req, res, next) =>{
+
+  logger.info("Validate API /createCustomerIndividual/");
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  // On develop
+  // var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
+  // var actionBy = req.body.actionBy;
+
+  var identificationCardType = req.body.identificationCardType;
+  var passportCountry = req.body.passportCountry;
+  var cardNumber = req.body.cardNumber;
+  var referralPerson = req.body.referralPerson;
+  var approved = req.body.approved;
+  var suitabilityRiskLevel = req.body.suitabilityRiskLevel;
+  var suitabilityEvaluationDate = req.body.suitabilityEvaluationDate;
+  var fatca = req.body.fatca;
+  var fatcaDeclarationDate = req.body.fatcaDeclarationDate;
+  var cddScore = req.body.cddScore;
+  var cddDate = req.body.cddDate;
+  var actionBy = req.body.actionBy;
+
+  // EXECUTE
+  fnArray=[];
+
+  fnArray.push(createCustomerIndividualProc(req,actionBy));
+  // fnArray.push(execSUIT(cardNumber,actionBy)); // 2. MIT_CUST_CHILDREN
+
+
+  Promise.all(fnArray)
+  .then(result => {
+
+    console.log('RS>>' +JSON.stringify(result));
+    res.status(200).json({code:"000",resust:result[0]});
+  })
+  .catch(error => {
+
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+}
+
+
 // GET
 function getIndCustDEVProc(custInfoObj,actionBy){
   console.log("Welcome getIndCustDEVProc()");
@@ -1224,6 +1273,90 @@ function updateCustomerIndPartial(req,identificationCardType,passportCountry,car
           data.cddDate=currentDate;
         }
        }
+
+      var options = {
+        host: FC_API_URI,
+        path:INVEST_INDIVIDUAL,
+        // path:"/api/customer/individual",
+        method: "PATCH",
+        timeout: 10000,
+        headers: {
+          'X-Auth-Token':resultObj.access_token,
+          "content-type": "application/json"
+        },
+      };
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      const request = https.request(options,(res) => {
+
+        var _chunk="";
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          _chunk=_chunk.concat(chunk);
+        });
+        res.on('end', () => {
+
+          if(_chunk !='OK'){
+            apiRS =JSON.parse(_chunk);
+            logger.error(JSON.stringify(apiRS.errMsg));
+            reject(apiRS.errMsg);
+          }else{
+            mitLog.saveMITlog(referralPerson,FC_API_MODULE+INVEST_INDIVIDUAL,data,req.ip,req.originalUrl,function(){});
+            resolve(_chunk);
+          }
+
+        });
+      });
+      request.on('error', (e) => {
+        reject(e);
+      });
+      // Write data to request body
+      logger.info(`DATA>>${JSON.stringify(data)}`);
+      request.write(JSON.stringify(data));
+      request.end();
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  },err =>{
+    logger.error('ERR AUTH>>'+err);
+    reject(err);
+  });
+  });
+
+}
+// ************************************
+
+
+// POST
+function createCustomerIndividualProc(req,actionBy){
+
+  logger.info("Welcome createCustomerIndividualProc()");
+
+  return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      var currentDate = util.getDate_yyyymmdd();
+      /**
+       * HTTPS REQUEST
+       */
+      fnFCAuth().then(result =>{
+        resultObj =JSON.parse(result);
+
+       var data={
+        "identificationCardType": identificationCardType,
+        "passportCountry": passportCountry,
+        "cardNumber" : cardNumber,
+        "referralPerson": referralPerson,
+        "approved": approved,
+        "suitabilityRiskLevel":"",
+        "suitabilityEvaluationDate":"",
+        "fatca":"",
+        "fatcaDeclarationDate":"",
+        "cddScore":"",
+        "cddDate":"",
+       };
 
       var options = {
         host: FC_API_URI,

@@ -103,8 +103,6 @@ export class SurveySearchComponent implements OnInit {
 
   onSurveySerach() {
 
-    console.log('onSerachCust ! ');
-
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);
       return true;

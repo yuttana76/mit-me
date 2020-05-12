@@ -77,21 +77,15 @@
             <th mat-header-cell *matHeaderCellDef> KYC </th>
             <td mat-cell *matCellDef="let element" >
               <div class="row KYC_Result">
-
-
-                <div class="col-sm-3">
+                <div class="Action_Result" *ngIf="element.KYC_C_DATE" >
                   <i class="far fa-2x fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View KYC"></i>
-                  <!-- <i class="far fa-2x fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View"></i> -->
                 </div>
+
                 <div class="col-sm-6">
                   <p><span>Create</span> {{element.KYC_C_DATE}}</p>
                   <p><span>Update</span> {{element.KYC_U_DATE}}</p>
                 </div>
 
-                <!-- <i class="far fa-2x fa-file-alt" (click)="onKYCdetail(element.Cust_Code)"></i>
-                <p><span>Create</span> {{element.KYC_C_DATE}}  </p>
-                <p><span>Update</span> {{element.KYC_U_DATE}}</p>
-              -->
               </div>
 
             </td>
@@ -113,7 +107,7 @@
           <ng-container matColumnDef="Action">
             <th mat-header-cell *matHeaderCellDef> Action </th>
             <td mat-cell *matCellDef="let element">
-              <div class="Action_Result">
+              <div class="Action_Result" *ngIf="element.KYC_C_DATE" >
                 <i class="far fa-2x fa-edit" matTooltip="View" (click)="onActionDialog(element.Cust_Code)" ></i>
                 <i class="far fa-2x fa-file-pdf" matTooltip="Export" (click)="onCreateViewPDF(element.Cust_Code)" ></i>
                 <!-- <i class="far fa-2x fa-file-alt" (click)="onKYCdetail(element.Cust_Code)" matTooltip="View"></i> -->

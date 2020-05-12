@@ -135,9 +135,7 @@ export class SuiteService {
     if(SurveyToDate){
       queryParams += `&SurveyToDate=${SurveyToDate}`;
     }
-
-    console.log('queryParams>' + queryParams);
-
+    // console.log('queryParams>' + queryParams);
     this.http.get<{ msg: string, data: any }>(BACKEND_URL_SURVEY+'/dashboard' + queryParams)
     .pipe(map((resultData) => {
 
@@ -181,8 +179,7 @@ export class SuiteService {
       "actionBy":actionBy,
      };
 
-     console.log( "FC API>" +JSON.stringify(data));
-
+    //  console.log( "FC API>" +JSON.stringify(data));
     let observableBatch = [];
     observableBatch.push(this.http.patch<{ message: string, result: string }>(BACKEND_URL_FC + '/customer/individual/', data));
 

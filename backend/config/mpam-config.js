@@ -76,7 +76,8 @@ module.exports = {
   AUTH_PATH :"/api/auth",
   API_DOWNLOAD_PATH :"/api/files/",
   INVEST_PROFILE_PATH :"/api/customer/individual/investor/profile",
-  INVEST_INDIVIDUAL :"/api/customer/individual",
+  // INVEST_INDIVIDUAL :"/api/customer/individual",
+  INVEST_INDIVIDUAL :"/api/customer/individual/v2",
   DOWNLOAD_PATH :'./backend/downloadFiles/fundConnext/',
 
   //

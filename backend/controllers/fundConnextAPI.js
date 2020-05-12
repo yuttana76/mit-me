@@ -166,23 +166,23 @@ exports.createCustomerIndividual = (req, res, next) =>{
   // var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
   // var actionBy = req.body.actionBy;
 
-  var identificationCardType = req.body.identificationCardType;
-  var passportCountry = req.body.passportCountry;
-  var cardNumber = req.body.cardNumber;
-  var referralPerson = req.body.referralPerson;
-  var approved = req.body.approved;
-  var suitabilityRiskLevel = req.body.suitabilityRiskLevel;
-  var suitabilityEvaluationDate = req.body.suitabilityEvaluationDate;
-  var fatca = req.body.fatca;
-  var fatcaDeclarationDate = req.body.fatcaDeclarationDate;
-  var cddScore = req.body.cddScore;
-  var cddDate = req.body.cddDate;
-  var actionBy = req.body.actionBy;
+  // var identificationCardType = req.body.identificationCardType;
+  // var passportCountry = req.body.passportCountry;
+  // var cardNumber = req.body.cardNumber;
+  // var referralPerson = req.body.referralPerson;
+  // var approved = req.body.approved;
+  // var suitabilityRiskLevel = req.body.suitabilityRiskLevel;
+  // var suitabilityEvaluationDate = req.body.suitabilityEvaluationDate;
+  // var fatca = req.body.fatca;
+  // var fatcaDeclarationDate = req.body.fatcaDeclarationDate;
+  // var cddScore = req.body.cddScore;
+  // var cddDate = req.body.cddDate;
+  // var actionBy = req.body.actionBy;
 
   // EXECUTE
   fnArray=[];
 
-  fnArray.push(createCustomerIndividualProc(req,actionBy));
+  fnArray.push(createCustomerIndividualProc(req,'tester'));
   // fnArray.push(execSUIT(cardNumber,actionBy)); // 2. MIT_CUST_CHILDREN
 
 
@@ -1345,24 +1345,23 @@ function createCustomerIndividualProc(req,actionBy){
         resultObj =JSON.parse(result);
 
        var data={
-        "identificationCardType": identificationCardType,
-        "passportCountry": passportCountry,
-        "cardNumber" : cardNumber,
-        "referralPerson": referralPerson,
-        "approved": approved,
-        "suitabilityRiskLevel":"",
-        "suitabilityEvaluationDate":"",
-        "fatca":"",
-        "fatcaDeclarationDate":"",
-        "cddScore":"",
-        "cddDate":"",
+        // "identificationCardType": identificationCardType,
+        // "passportCountry": passportCountry,
+        // "cardNumber" : cardNumber,
+        // "referralPerson": referralPerson,
+        // "approved": approved,
+        // "suitabilityRiskLevel":"",
+        // "suitabilityEvaluationDate":"",
+        // "fatca":"",
+        // "fatcaDeclarationDate":"",
+        // "cddScore":"",
+        // "cddDate":"",
        };
 
       var options = {
         host: FC_API_URI,
         path:INVEST_INDIVIDUAL,
-        // path:"/api/customer/individual",
-        method: "PATCH",
+        method: "POST",
         timeout: 10000,
         headers: {
           'X-Auth-Token':resultObj.access_token,

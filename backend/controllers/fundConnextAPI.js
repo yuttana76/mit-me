@@ -185,7 +185,6 @@ exports.createCustomerIndividual = (req, res, next) =>{
   fnArray.push(createCustomerIndividualProc(req,'tester'));
   // fnArray.push(execSUIT(cardNumber,actionBy)); // 2. MIT_CUST_CHILDREN
 
-
   Promise.all(fnArray)
   .then(result => {
 
@@ -1344,7 +1343,7 @@ function createCustomerIndividualProc(req,actionBy){
       fnFCAuth().then(result =>{
         resultObj =JSON.parse(result);
 
-       var data={
+      //  var data={
         // "identificationCardType": identificationCardType,
         // "passportCountry": passportCountry,
         // "cardNumber" : cardNumber,
@@ -1356,6 +1355,87 @@ function createCustomerIndividualProc(req,actionBy){
         // "fatcaDeclarationDate":"",
         // "cddScore":"",
         // "cddDate":"",
+      //  };
+
+      var data= {
+        identificationCardType: 'CITIZEN_CARD',
+        cardNumber : '3560100350330',
+        thFirstName: 'xxx',
+      
+        
+        // passportCountry
+        title:'MR',
+        thLastName:'yyy',
+        birthDate:'20000101',
+        cardExpiryDate:'N/A',
+        gender:'Male',
+        enFirstName:'AAA',
+        enLastName:'BBB',
+        nationality:'TH',
+        mobileNumber:'089',
+        // email:'xxx@gmail.com', //not require
+        maritalStatus:'Single',
+
+        companyName:'NPAM',
+        occupationId:'170',
+        occupationOther:'Not',
+        businessTypeId:'180',
+        businessTypeOther:'Not',
+        monthlyIncomeLevel:'LEVEL1',
+        incomeSource:'SALARY,SAVINGS',
+        // incomeSourceOther:'Not',
+
+        committedMoneyLaundering: true,
+        politicalRelatedPerson: false,
+        rejectFinancialTransaction: true,
+
+        canAcceptFxRisk: true,
+        canAcceptDerivativeInvestment: true,
+
+        suitabilityRiskLevel:'1',
+        suitabilityEvaluationDate:'20000101',
+        fatca: false,
+        fatcaDeclarationDate:'20000101',
+        cddScore:'1',
+        cddDate:'20000101',
+
+        applicationDate:'20000101',
+        incomeSourceCountry:'TH',
+        acceptBy:'BOMB',
+
+        residence : {
+          no: '93',
+          road: 'รัชดาภิเษก',
+          subDistrict : 'ดินแดง',
+          district: 'ดินแดง',
+          province : 'กรุงเทพมหานคร',
+          postalCode: '10400',
+          country : 'TH'
+        },
+        work : {
+          no: '93',
+          road: 'รัชดาภิเษก',
+          subDistrict : 'ดินแดง',
+          district: 'ดินแดง',
+          province : 'กรุงเทพมหานคร',
+          postalCode: '10400',
+          country : 'TH'
+        },
+        currentAddressSameAsFlag:'Residence',
+        committedMoneyLaundaring : false,
+        
+        children: [
+          {
+            identificationCardType: 'CITIZEN_CARD',
+            cardNumber: '1234567891030',
+            title: 'MR',
+            thFirstName: 'ชัยฉัตร',
+            thLastName:'xxx',
+            birthDate:'20000101',
+            idCardExpiryDate:'20210101',
+
+          }
+        ]
        };
 
       var options = {
@@ -1384,7 +1464,7 @@ function createCustomerIndividualProc(req,actionBy){
             logger.error(JSON.stringify(apiRS.errMsg));
             reject(apiRS.errMsg);
           }else{
-            mitLog.saveMITlog(referralPerson,FC_API_MODULE+INVEST_INDIVIDUAL,data,req.ip,req.originalUrl,function(){});
+            // mitLog.saveMITlog(referralPerson,FC_API_MODULE+INVEST_INDIVIDUAL,data,req.ip,req.originalUrl,function(){});
             resolve(_chunk);
           }
 

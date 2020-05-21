@@ -291,5 +291,36 @@ verifyExtLink(_pid: string): Observable<any> {
 }
 
 
+deleteUser(userId: string): Observable<any> {
+  console.log(' deleteUser() service:' + userId)
+
+  return new Observable((observer) => {
+      this.http
+      .delete<{ message: string, result: string }>( BACKEND_URL + userId)
+      .subscribe((data) => {
+                  // console.log(' deleteUser() successful:');
+                  // const user = this.userList.filter(obj => obj.USERID !== userId);
+                  // this.userList = user;
+                  // this.userUpdated.next([...this.userList]);
+                  // observer.next(data);
+              });
+    });
+}
+
+
+// deleteUserGroupByAppId(userId: string, groupId: string): Observable<any> {
+//   return new Observable((observer) => {
+//       this.http
+//       .delete<{ message: string, result: string }>( BACKEND_URL + 'userGroupByUserId/' + userId + '/' + groupId)
+//       .subscribe((data) => {
+//                   const _groupList = this.userGroupList.filter(list => list.GroupId !== groupId);
+//                   this.userGroupList = _groupList;
+//                   this.userGroupUpdated.next([...this.userGroupList]);
+//                   observer.next(data);
+//               });
+//     });
+// }
+
+
 
 }

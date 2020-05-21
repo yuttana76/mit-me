@@ -12,6 +12,9 @@ export class UserListFormService {
   timeFormat = 'h:mm AM/PM';
 
   // Label
+  editAction = 'Edit';
+  removeAction = 'Remove';
+
   from_title = 'Search User';
   login_label = 'Login';
   firstName_label = 'First Name';

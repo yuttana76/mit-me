@@ -12,6 +12,8 @@ router.get("/userLevel", checkAuth,userController.getUserLevel);
 
 router.get("/userLevelByUserId",userController.getUserLevelByUserId);
 router.delete("/userLevelByAppId/:userId/:appId",userController.deleteUserLevelByAppId);
+// router.delete("/user/:userId",userController.deleteUser);
+
 router.post("/addUserLevel",userController.addUserLevel);
 
 router.get("/userGroupByUserId",userController.getUserGroupByUserId);

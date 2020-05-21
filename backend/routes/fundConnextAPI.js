@@ -6,13 +6,12 @@ const selfAuth = require('../middleware/self-auth');
 const fundConnextAPIController = require('../controllers/fundConnextAPI')
 const { check } = require('express-validator');
 
-
+// customer/individual/
 router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);
 router.get("/customer/individual-DEV/:cardNumber", fundConnextAPIController.getIndCustDEV);
-router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);
-
-// customer/individual/v2
 router.post("/customer/individual", fundConnextAPIController.createCustomerIndividual);
+router.put("/customer/individual", fundConnextAPIController.updateCustomerIndividual);
+router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);
 
 
 router.get("/downloadFileAPI/",[
@@ -35,14 +34,14 @@ router.get("/downloadInfo/",[
 ], fundConnextAPIController.downloadInfo);
 
 
-router.post("/uploadMITNAVdb/",[
-  check('fileType')
-    .exists().withMessage('must have param fileType')
-    .isLength({ min: 1 }).withMessage('fileType must have value '),
-  check('fileName')
-    .exists().withMessage('must have param fileName')
-    .isLength({ min: 1 }).withMessage('fileName must have value '),
-], fundConnextAPIController.uploadMITNAV_db);
+// router.post("/uploadMITNAVdb/",[
+//   check('fileType')
+//     .exists().withMessage('must have param fileType')
+//     .isLength({ min: 1 }).withMessage('fileType must have value '),
+//   check('fileName')
+//     .exists().withMessage('must have param fileName')
+//     .isLength({ min: 1 }).withMessage('fileName must have value '),
+// ], fundConnextAPIController.uploadMITNAV_db);
 
 
 // ********* Download V1
@@ -50,27 +49,27 @@ router.post("/uploadMITNAVdb/",[
  * parameter
 * /downloadFileNavAPI?businessDate=20191031
  **/
-router.get("/downloadFileNavAPI/",[
-  check('businessDate')
-    .exists().withMessage('must have Param businessDate')
-    .isLength({ min: 1 }).withMessage('businessDate must have value '),
-], fundConnextAPIController.downloadFileNavAPI);
+// router.get("/downloadFileNavAPI/",[
+//   check('businessDate')
+//     .exists().withMessage('must have Param businessDate')
+//     .isLength({ min: 1 }).withMessage('businessDate must have value '),
+// ], fundConnextAPIController.downloadFileNavAPI);
 
 
 /** STEP2
  * parameter
  * createDate: format  yyyymmdd(20191030)
  */
-router.post("/navSync/",[selfAuth
-,  check('createDate')
-  .isLength({ min: 1 }).withMessage('must have createDate value')
-],fundConnextAPIController.navSync);
+// router.post("/navSync/",[selfAuth
+// ,  check('createDate')
+//   .isLength({ min: 1 }).withMessage('must have createDate value')
+// ],fundConnextAPIController.navSync);
 
 
 // ********* Download NAV V2
 //Download NAV & Sync DB.
 router.post("/downloadNavAPI/v2/",[check('businessDate')
-    .isLength({ min: 1 }).withMessage('must have businessDate value')
+    // .isLength({ min: 1 }).withMessage('must have businessDate value')
   ],fundConnextAPIController.downloadNavAPI_V2);
 
 router.post("/downloadNavSchedule/",[selfAuth

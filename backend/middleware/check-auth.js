@@ -1,9 +1,8 @@
 const jwt = require("jsonwebtoken");
 var logger = require('../config/winston');
-const dbConfig = require('../config/db-config');
+const mpamConfig = require('../config/mpam-config');
 
-// const TOKEN_SECRET_STRING = dbConfig.TOKEN_SECRET_STRING;
-const JWT_SECRET_STRING = dbConfig.JWT_SECRET_STRING;
+const JWT_SECRET_STRING = mpamConfig.JWT_SECRET_STRING;
 
 module.exports = (req,res,next)=>{
 

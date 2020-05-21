@@ -8,6 +8,8 @@ import { PageEvent } from '@angular/material';
 import { UserListFormService } from './userListForm.service';
 import { User } from '../model/user.model';
 import { UserService } from '../services/user.service';
+import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-user-list',
@@ -36,7 +38,10 @@ export class UserListComponent implements OnInit , OnDestroy {
   constructor(
     public userListFormService: UserListFormService,
     public userService: UserService,
-    private departmentService: DepartmentService
+    private departmentService: DepartmentService,
+    public formService: UserListFormService,
+    private toastr: ToastrService,
+    private confirmationDialogService: ConfirmationDialogService,
     ) { }
 
   ngOnInit() {
@@ -116,4 +121,22 @@ export class UserListComponent implements OnInit , OnDestroy {
           this.dataSource.next(this.userList);
       });
   }
+
+    public onDelete(userId: string,usrName: string) {
+    this.confirmationDialogService.confirm('Please confirm..', `Do you really want to delete  ${usrName} ?`)
+    .then((confirmed) => {
+      if ( confirmed ) {
+
+        this.userService.deleteUser(userId).subscribe(response => {
+          this.toastr.success( 'Delete group successful' , 'Delete Successful', {
+            timeOut: 5000,
+            positionClass: 'toast-top-center',
+          });
+        });
+
+      }
+    }).catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
+  }
+
+
 }

@@ -162,33 +162,13 @@ exports.createCustomerIndividual = (req, res, next) =>{
     return res.status(422).json({ errors: errors.array() });
   }
 
-  // On develop
-  // var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
-  // var actionBy = req.body.actionBy;
-
-  // var identificationCardType = req.body.identificationCardType;
-  // var passportCountry = req.body.passportCountry;
-  // var cardNumber = req.body.cardNumber;
-  // var referralPerson = req.body.referralPerson;
-  // var approved = req.body.approved;
-  // var suitabilityRiskLevel = req.body.suitabilityRiskLevel;
-  // var suitabilityEvaluationDate = req.body.suitabilityEvaluationDate;
-  // var fatca = req.body.fatca;
-  // var fatcaDeclarationDate = req.body.fatcaDeclarationDate;
-  // var cddScore = req.body.cddScore;
-  // var cddDate = req.body.cddDate;
-  // var actionBy = req.body.actionBy;
-
   // EXECUTE
   fnArray=[];
-
-  fnArray.push(createCustomerIndividualProc(req,'tester'));
+  fnArray.push(createCustomerIndividualProc(req));
   // fnArray.push(execSUIT(cardNumber,actionBy)); // 2. MIT_CUST_CHILDREN
-
   Promise.all(fnArray)
   .then(result => {
-
-    console.log('RS>>' +JSON.stringify(result));
+    // console.log('RS>>' +JSON.stringify(result));
     res.status(200).json({code:"000",resust:result[0]});
   })
   .catch(error => {
@@ -197,6 +177,34 @@ exports.createCustomerIndividual = (req, res, next) =>{
     res.status(401).json(error.message);
   });
 }
+
+
+exports.updateCustomerIndividual = (req, res, next) =>{
+
+  logger.info("Validate API /updateCustomerIndividual/");
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  // EXECUTE
+  fnArray=[];
+  fnArray.push(updateCustomerIndividualProc(req));
+  // fnArray.push(execSUIT(cardNumber,actionBy)); // 2. MIT_CUST_CHILDREN
+  Promise.all(fnArray)
+  .then(result => {
+    // console.log('RS>>' +JSON.stringify(result));
+    res.status(200).json({code:"000",resust:result[0]});
+  })
+  .catch(error => {
+
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+}
+
+
 
 
 // GET
@@ -249,10 +257,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
           reject(err);
         })
     }
-
-
       resolve({code:0})
-
   });
 }
 
@@ -1328,120 +1333,95 @@ function updateCustomerIndPartial(req,identificationCardType,passportCountry,car
 
 
 // POST
-function createCustomerIndividualProc(req,actionBy){
+function createCustomerIndividualProc(req){
 
   logger.info("Welcome createCustomerIndividualProc()");
+    var data = req.body;
+    console.log('cardNumber>>' + data['cardNumber']);
 
   return new Promise(function(resolve, reject) {
 
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
-
-      var currentDate = util.getDate_yyyymmdd();
+      // var currentDate = util.getDate_yyyymmdd();
       /**
        * HTTPS REQUEST
        */
       fnFCAuth().then(result =>{
         resultObj =JSON.parse(result);
 
-      //  var data={
-        // "identificationCardType": identificationCardType,
-        // "passportCountry": passportCountry,
-        // "cardNumber" : cardNumber,
-        // "referralPerson": referralPerson,
-        // "approved": approved,
-        // "suitabilityRiskLevel":"",
-        // "suitabilityEvaluationDate":"",
-        // "fatca":"",
-        // "fatcaDeclarationDate":"",
-        // "cddScore":"",
-        // "cddDate":"",
-      //  };
-
-      var data= {
-        identificationCardType: 'CITIZEN_CARD',
-        cardNumber : '3560100350330',
-        thFirstName: 'xxx',
-      
-        
-        // passportCountry
-        title:'MR',
-        thLastName:'yyy',
-        birthDate:'20000101',
-        cardExpiryDate:'N/A',
-        gender:'Male',
-        enFirstName:'AAA',
-        enLastName:'BBB',
-        nationality:'TH',
-        mobileNumber:'089',
-        // email:'xxx@gmail.com', //not require
-        maritalStatus:'Single',
-
-        companyName:'NPAM',
-        occupationId:'170',
-        occupationOther:'Not',
-        businessTypeId:'180',
-        businessTypeOther:'Not',
-        monthlyIncomeLevel:'LEVEL1',
-        incomeSource:'SALARY,SAVINGS',
-        // incomeSourceOther:'Not',
-
-        committedMoneyLaundering: true,
-        politicalRelatedPerson: false,
-        rejectFinancialTransaction: true,
-
-        canAcceptFxRisk: true,
-        canAcceptDerivativeInvestment: true,
-
-        suitabilityRiskLevel:'1',
-        suitabilityEvaluationDate:'20000101',
-        fatca: false,
-        fatcaDeclarationDate:'20000101',
-        cddScore:'1',
-        cddDate:'20000101',
-
-        applicationDate:'20000101',
-        incomeSourceCountry:'TH',
-        acceptBy:'BOMB',
-
-        residence : {
-          no: '93',
-          road: 'รัชดาภิเษก',
-          subDistrict : 'ดินแดง',
-          district: 'ดินแดง',
-          province : 'กรุงเทพมหานคร',
-          postalCode: '10400',
-          country : 'TH'
-        },
-        work : {
-          no: '93',
-          road: 'รัชดาภิเษก',
-          subDistrict : 'ดินแดง',
-          district: 'ดินแดง',
-          province : 'กรุงเทพมหานคร',
-          postalCode: '10400',
-          country : 'TH'
-        },
-        currentAddressSameAsFlag:'Residence',
-        committedMoneyLaundaring : false,
-        
-        children: [
-          {
-            identificationCardType: 'CITIZEN_CARD',
-            cardNumber: '1234567891030',
-            title: 'MR',
-            thFirstName: 'ชัยฉัตร',
-            thLastName:'xxx',
-            birthDate:'20000101',
-            idCardExpiryDate:'20210101',
-
-          }
-        ]
-       };
-
       var options = {
         host: FC_API_URI,
         path:INVEST_INDIVIDUAL,
         method: "POST",
+        timeout: 10000,
+        headers: {
+          'X-Auth-Token':resultObj.access_token,
+          "content-type": "application/json"
+        },
+      };
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      const request = https.request(options,(res) => {
+
+        var _chunk="";
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          _chunk=_chunk.concat(chunk);
+        });
+        res.on('end', () => {
+
+          if(_chunk !='OK'){
+            apiRS =JSON.parse(_chunk);
+            logger.error(JSON.stringify(apiRS.errMsg));
+            reject(apiRS.errMsg);
+          }else{
+            // mitLog.saveMITlog(referralPerson,FC_API_MODULE+INVEST_INDIVIDUAL,data,req.ip,req.originalUrl,function(){});
+            resolve(_chunk);
+          }
+
+        });
+      });
+      request.on('error', (e) => {
+        reject(e);
+      });
+      // Write data to request body
+      logger.info(`DATA>>${JSON.stringify(data)}`);
+      request.write(JSON.stringify(data));
+      request.end();
+    /**
+     * HTTPS REQUEST (END)
+     */
+
+  },err =>{
+    logger.error('ERR AUTH>>'+err);
+    reject(err);
+  });
+  });
+
+}
+// ************************************
+
+// PUT
+function updateCustomerIndividualProc(req){
+
+  logger.info("Welcome updateCustomerIndividualProc()");
+    var data = req.body;
+    console.log('cardNumber>>' + data['cardNumber']);
+
+  return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+      // var currentDate = util.getDate_yyyymmdd();
+      /**
+       * HTTPS REQUEST
+       */
+      fnFCAuth().then(result =>{
+        resultObj =JSON.parse(result);
+
+      var options = {
+        host: FC_API_URI,
+        path:INVEST_INDIVIDUAL,
+        method: "PUT",
         timeout: 10000,
         headers: {
           'X-Auth-Token':resultObj.access_token,
@@ -2603,8 +2583,12 @@ exports.downloadNavAPI_V2 = (req, res, next) =>{
     return res.status(422).json({ errors: errors.array() });
   }
 
-  logger.info("Welcome to API /downloadNavAPI_V2/");
-  var businessDate = req.body.businessDate
+  var businessDate
+  if(!req.body.businessDate){
+    businessDate = fundConnextCurrentDate();
+  } else{
+    businessDate = req.body.businessDate
+  }
 
   downloadNavAPIproc(businessDate).then(dwRs=>{
 
@@ -2714,15 +2698,9 @@ function downloadNavAPIproc(businessDate){
 
               //STEP 4: Syncy to MFTS (MFTS_NavTable)
               navSyncFunc(navToDB_RS.businessDate).then(syncData=>{
-
                 _rtn_msg={DownloadRecord:navToDB_RS["records"],FundRecord:syncData[0][0]["FUND_RECORD"]}
-
-
                 resolve(_rtn_msg)
-                // res.status(200).json({message: syncData});
-
               },syncErr=>{
-                // res.status(422).json({error: syncErr});
                 reject(syncErr);
               })
 
@@ -2961,6 +2939,60 @@ exports.exportExcel = (req, res, next) =>{
         break
     }
 }
+
+
+
+// *****************************************************
+// createDate format  yyyymmdd(20191030)
+function delMIT_FC_NAV(businessDate){
+  logger.info('delMIT_FC_NAV-' + businessDate);
+  return new Promise(function(resolve, reject) {
+    try{
+
+// ********************************************
+var queryStr = `
+
+BEGIN
+
+  DECLARE @businessDate VARCHAR(20) ='${businessDate}';
+
+  DELETE
+  from MIT_FC_NAV
+  where businessDate = @businessDate
+
+END
+`;
+  const sql = require('mssql')
+
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        if(err){
+          logger.error('SQL Error >' +err);
+          reject(err);
+        }else {
+          // logger.info(JSON.stringify(result))
+          // resolve(result.rowsAffected.length)
+          resolve(result.recordsets)
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    logger.error('POOL Error >'+err);
+  })
+
+// ********************************************
+
+    }catch(e){
+      logger.error('CATCH >' + e);
+      reject(e);
+    }
+
+  });
+}
+
+
 
 // *****************************************************
 // createDate format  yyyymmdd(20191030)
@@ -3518,7 +3550,7 @@ function fcNAV_ToDB(fileName,businessDate){
 
   const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
   const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
-  const userCode='SYSTEM';
+  const userCode='MIT-SYSTEM';
 
   return new Promise(function(resolve, reject) {
 
@@ -3532,100 +3564,112 @@ function fcNAV_ToDB(fileName,businessDate){
           reject(err);
         }
 
-        //Table config
-        const sql = require('mssql');
-        const pool1 = new sql.ConnectionPool(config_BULK, err => {
+        // Delete NAV same day
+        delMIT_FC_NAV(businessDate).then(()=>{
 
-        const table = new sql.Table('MIT_FC_NAV');
-        table.create = true;
-        table.columns.add('AMCCode', sql.VarChar(50), {nullable: true});
-        table.columns.add('FundCode', sql.VarChar(50),{nullable: true});
-        table.columns.add('AUM', sql.Numeric(18,2), { nullable: true });
-        table.columns.add('NAV', sql.Numeric(18,4), { nullable: true });
-        table.columns.add('OfferNAV', sql.Numeric(18,4), { nullable: true });
-        table.columns.add('BidNAV', sql.Numeric(18,4), { nullable: true });
-        table.columns.add('SwitchOutNAV', sql.Numeric(18,4), { nullable: true });
-        table.columns.add('SwitchInNAV', sql.Numeric(18,4), { nullable: true });
-        table.columns.add('NAVDate', sql.VarChar(10), { nullable: true });
-        table.columns.add('SACode', sql.VarChar(15), { nullable: true });
-        table.columns.add('TotalUnit', sql.Numeric(18,4), { nullable: true });
-        table.columns.add('TotalAUM', sql.Numeric(18,2), { nullable: true });
-        table.columns.add('businessDate', sql.VarChar(50), { nullable: true });
-        table.columns.add('createBy', sql.VarChar(50), { nullable: true });
-        table.columns.add('createDate', sql.SmallDateTime, { nullable: true });
+            //Table config
+            const sql = require('mssql');
+            const pool1 = new sql.ConnectionPool(config_BULK, err => {
 
-        var array = data.toString().split("\n");
-        array.shift(); //removes the first array element
+            const table = new sql.Table('MIT_FC_NAV');
+            table.create = true;
+            table.columns.add('AMCCode', sql.VarChar(50), {nullable: true});
+            table.columns.add('FundCode', sql.VarChar(50),{nullable: true});
+            table.columns.add('AUM', sql.Numeric(18,2), { nullable: true });
+            table.columns.add('NAV', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('OfferNAV', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('BidNAV', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('SwitchOutNAV', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('SwitchInNAV', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('NAVDate', sql.VarChar(10), { nullable: true });
+            table.columns.add('SACode', sql.VarChar(15), { nullable: true });
+            table.columns.add('TotalUnit', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('TotalAUM', sql.Numeric(18,2), { nullable: true });
+            table.columns.add('businessDate', sql.VarChar(50), { nullable: true });
+            table.columns.add('createBy', sql.VarChar(50), { nullable: true });
+            table.columns.add('createDate', sql.SmallDateTime, { nullable: true });
 
-        var _row =0;
-          for(i in array) {
+            var array = data.toString().split("\n");
+            array.shift(); //removes the first array element
 
-            var item = array[i].split("|") ;
+            var _row =0;
+              for(i in array) {
 
-            // console.log("item >> "+item);
-             AMCCode_Str = String(item[0]).trim();
-             FundCode_Str = String(item[1]).trim();
-             AUM_int = item[2]?item[2].trim():'';
-              NAV_int =item[3]?item[3].trim():'';
-              OfferNAV_int =item[4]?item[4].trim():'';
-              BidNAV_int =item[5]?item[5].trim():'';
-              SwitchOutNAV_int= item[6]?item[6].trim():'';
-              SwitchInNAV_int= item[7]?item[7].trim():'';
-              NAVDate_date= item[8]?item[8]:'';
-              SACode_str= item[9]?item[9]:'';
-              TotalUnit_int= item[10]?item[10].trim():'';
-              TotalAUM_int=item[11]?item[11].trim():'';
+                var item = array[i].split("|") ;
 
-              if(item[0]){
-                table.rows.add(AMCCode_Str
-                  ,FundCode_Str
-                  ,AUM_int
-                  ,NAV_int
-                  ,OfferNAV_int
-                  ,BidNAV_int
-                  ,SwitchOutNAV_int
-                  ,SwitchInNAV_int
-                  ,NAVDate_date
-                  ,SACode_str
-                  ,TotalUnit_int
-                  ,TotalAUM_int
-                  ,businessDate
-                  ,userCode
-                  ,new Date);
+                // console.log("item >> "+item);
+                AMCCode_Str = String(item[0]).trim();
+                FundCode_Str = String(item[1]).trim();
+                AUM_int = item[2]?item[2].trim():'';
+                  NAV_int =item[3]?item[3].trim():'';
+                  OfferNAV_int =item[4]?item[4].trim():'';
+                  BidNAV_int =item[5]?item[5].trim():'';
+                  SwitchOutNAV_int= item[6]?item[6].trim():'';
+                  SwitchInNAV_int= item[7]?item[7].trim():'';
+                  NAVDate_date= item[8]?item[8]:'';
+                  SACode_str= item[9]?item[9]:'';
+                  TotalUnit_int= item[10]?item[10].trim():'';
+                  TotalAUM_int=item[11]?item[11].trim():'';
+
+                  if(item[0]){
+                    table.rows.add(AMCCode_Str
+                      ,FundCode_Str
+                      ,AUM_int
+                      ,NAV_int
+                      ,OfferNAV_int
+                      ,BidNAV_int
+                      ,SwitchOutNAV_int
+                      ,SwitchInNAV_int
+                      ,NAVDate_date
+                      ,SACode_str
+                      ,TotalUnit_int
+                      ,TotalAUM_int
+                      ,businessDate
+                      ,userCode
+                      ,new Date);
+                  }
+                  _row++;
               }
-              _row++;
-          }
 
-          // ***************** EXECUTE insert Bulk data to  MIT_LED table
-          const request = new sql.Request(pool1)
-          request.bulk(table, (err, result) => {
-              // ... error checks
-              // console.log('ERROR BULK>>' + err);
-            if(err){
-              // console.log(err);
-              logger.error(err);
-              reject(err);
-            }
-
-            if(result){
-              var today = new Date();
-              var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
-              msg={msg:'Insert NAV DB. successful.',records:_row,'businessDate': yyyymmddDate}
-
-              logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
-              //Move to backup folder
-              fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
-                if (err) {
+              // ***************** EXECUTE insert Bulk data to  MIT_LED table
+              const request = new sql.Request(pool1)
+              request.bulk(table, (err, result) => {
+                  // ... error checks
+                  // console.log('ERROR BULK>>' + err);
+                if(err){
+                  // console.log(err);
+                  logger.error(err);
                   reject(err);
-                };
+                }
 
-                resolve(msg);
+                if(result){
+                  var today = new Date();
+                  var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2); //Current date
+                  msg={msg:'Insert NAV DB. successful.',records:_row,'businessDate': yyyymmddDate}
+
+                  logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
+                  //Move to backup folder
+                  fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
+                    if (err) {
+                      reject(err);
+                    };
+
+                    resolve(msg);
+                  });
+
+                }
               });
+              // ***************** Execute insert Bulk data to  MIT_LED table
+            });//sql.ConnectionPool
 
-            }
-          });
-          // ***************** Execute insert Bulk data to  MIT_LED table
-        });//sql.ConnectionPool
+
+      },err=>{
+        console.log('Error delMIT_FC_NAV()>' + err )
+        // reject(err);
+        // res.status(422).json({error: err});
+      });
+
+
       });//fs.readFile
 
     }catch(e){
@@ -3642,7 +3686,7 @@ function unZipFile(filePaht){
   var arr = filePaht.toString().split("/");
   var fileName = arr[arr.length-1]
   const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
-  const DOWNLOAD_DIR2 = './backend/downloadFiles/fundConnext/';
+  // const DOWNLOAD_DIR2 = './backend/downloadFiles/fundConnext/';
   var _zipFile= DOWNLOAD_DIR+'/'+fileName;
   var _unzipPath="";
 
@@ -3659,6 +3703,8 @@ function unZipFile(filePaht){
     });
 
       zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
+
+      resolve(extAccFileName);
 
       //file removed
       fs.unlink(_zipFile, (err) => {
@@ -3800,9 +3846,8 @@ function fnFCAuth(){
       },
     };
 
-  console.log('***options > ' + JSON.stringify(options));
-
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+  // console.log('***options > ' + JSON.stringify(options));
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
   const request = https.request(options,(res) => {
     var _chunk="";
@@ -3896,38 +3941,54 @@ function downloadNavSchedule(schStatus){
   if(schStatus.toUpperCase() === SCH_START){
 
     // START SCH
-    var SCH_JOB_SCH = '30 09 * * Mon-Fri';  // Run at Mon-Fri on 09:30 AM
-    // var SCH_JOB_SCH = '31 16 * * Mon-Fri';  // Run at Mon-Fri on 09:30 AM
+    // var SCH_JOB_SCH = '30 09 * * Mon-Fri';  // Schedual at Mon-Fri on 09:30 AM
+
+    // var SCH_JOB_SCH = '1 * * * Mon-Fri';  // Schedual at Mon-Fri on 09:30 AM
+    // var SCH_JOB_SCH = '*/2 * * * Mon-Fri';  // Schedual at Mon-Fri on 09:30 AM
+
+    // Schedual 9:10 ,14:10 ,16:10 ,22:10
+    var SCH_JOB_SCH = '10 09,14,16,22 * * Mon-Fri';  // Schedual 9:10 ,14:10 ,16:10 ,22:10   at Mon-Fri
+
 
     logger.info("START NAV SCH>" + SCH_JOB_SCH);
-    SCH_JOB = new CronJob(SCH_JOB_SCH, function() {
 
-      logger.info("Nav schedual running..."+new Date());
+    var job = new CronJob(SCH_JOB_SCH, function() {
 
-      var today = new Date();
-      var navDate_yyyymmddDate;
-      // var navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+      logger.info("Nav schedual running..." +SCH_JOB_SCH +' ON ' +new Date());
 
-      // Check is monday ?
-      // if is monday use friday date instead
-      if(today.getDay() == 1 ){
-        // logger.info(`To day(${yyyymmddDate}) is monday backword to friday`);
-        today.setDate(today.getDate()-3);
-        navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
-      }else{
-        today.setDate(today.getDate()-1);
-        navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
-      }
+      // var today = new Date();
+      // var navDate_yyyymmddDate;
+      // /**
+      //  * Check is monday ?
+      //   if is monday use friday date instead
+      //  */
+      // if(today.getDay() == 1 ){
+      //   today.setDate(today.getDate()-3);
+      //   navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+      // }else{
+      //   today.setDate(today.getDate()-1);
+      //   navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+      // }
 
-      downloadNavAPIproc(navDate_yyyymmddDate).then(dwRs=>{
-        logger.info(`Download NAV(${navDate_yyyymmddDate}) API schedual on  ${new Date()}successful `  );
-      },err=>{
-        logger.error(`Download NAV(${navDate_yyyymmddDate}) API schedual on  ${new Date()} Error: ${err}`  );
-      });
+      // downloadNavAPIproc(navDate_yyyymmddDate).then(dwRs=>{
+      //   logger.info(`Download NAV(${navDate_yyyymmddDate}) API schedual on  ${new Date()}successful `  );
+      // },err=>{
+      //   logger.error(`Download NAV(${navDate_yyyymmddDate}) API schedual on  ${new Date()} Error: ${err}`  );
+      // });
 
-    });
 
-    SCH_JOB.start();
+    },null, true, 'America/Los_Angeles');
+
+    job.start();
+
+//     var CronJob = require('cron').CronJob;
+// var job = new CronJob('* * * * * *', function() {
+//   console.log('You will see this message every second');
+// }, null, true, 'America/Los_Angeles');
+// job.start();
+
+
+
   }else if(schStatus.toUpperCase() === SCH_STOP){
 
     SCH_JOB.stop();
@@ -3936,5 +3997,19 @@ function downloadNavSchedule(schStatus){
   }else{
 
   }
+}
 
+function fundConnextCurrentDate(){
+  var today = new Date();
+  var navDate_yyyymmddDate;
+
+  if(today.getDay() == 1 ){
+    today.setDate(today.getDate()-3);
+    navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+  }else{
+    today.setDate(today.getDate()-1);
+    navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+  }
+
+  return navDate_yyyymmddDate
 }

@@ -482,6 +482,53 @@ exports.deleteUserLevelByAppId = (req, res, next) => {
 }
 
 
+exports.deleteUser = (req, res, next) => {
+
+  var fncName = 'deleteUser()';
+  var _userId = req.params.userId || '';
+
+  console.log('Server site '+fncName + _userId);
+
+  res.status(200).json({'msg':'OK'});
+
+  // logger.info( `API /deleteUserLevelByAppId - ${req.originalUrl} - ${req.ip} - ;USERID=${_userId}  ;APPID=${_appId}`);
+
+  // var queryStr = `
+  // BEGIN TRANSACTION TranName;
+
+  //   DELETE FROM MIT_USERS WHERE USERID = @userId'
+  //   DELETE FROM MIT_USERS_GROUP WHERE USERID = @userId'
+  //   DELETE FROM MIT_USERS_LEVEL WHERE USERID = @userId'
+
+  // COMMIT TRANSACTION TranName;
+
+  //   `;
+
+  // const sql = require('mssql')
+  // const pool1 = new sql.ConnectionPool(config, err => {
+  //   pool1.request() // or: new sql.Request(pool1)
+  //   .input("userId", sql.VarChar(20), cardNumber)
+  //   .query(queryStr, (err, result) => {
+  //       // ... error checks
+  //       if(err){
+  //         console.log( fncName +' Quey db. Was err !!!' + err);
+  //         res.status(201).json({
+  //           message: err,
+  //         });
+  //       }else {
+  //         res.status(200).json({
+  //           message: fncName + "Quey db. successfully!",
+  //           result: result.recordset
+  //         });
+  //       }
+  //   })
+  // })
+  // pool1.on('error', err => {
+  //   console.log("EROR>>"+err);
+  // })
+}
+
+
 exports.addUserLevel = (req,res,next)=>{
 
   logger.info( `API /addUserLevel - ${req.originalUrl} - ${req.ip} - ${req.body.email}`);

@@ -157,9 +157,7 @@ var msg ={
 
 //  Create Slack API
 
-
 function sendSlack(msg){
-
 
   return new Promise(function(resolve, reject) {
 
@@ -179,7 +177,16 @@ function sendSlack(msg){
 }
 
 
-exports.slackmsg = (req, res, next) => {
+exports.slackMsg=() =>{
+
+  sendSlack(msg).then((rs)=>{
+    // Send Slack msg successful
+  },err=>{
+    log.err('Slack msg error')
+  });
+}
+
+exports.slackmsgAPI = (req, res, next) => {
 
   sendSlack(msg).then((rs)=>{
     res.status(200).json({

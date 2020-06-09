@@ -81,6 +81,17 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
             url: '/trade/TradeDash',
             icon: 'icon-speedometer',
           } ,
+
+          {
+            name: 'E-Open(DEV)',
+            url: '/trade/open-account-first',
+            icon: 'icon-speedometer',
+            // badge: {
+            //   variant: 'info',
+            //   text: 'NEW'
+            // }
+          },
+
           { name: 'Anoucement',
             url: '/trade/anoucementr',
             icon: 'icon-bell',

@@ -46,7 +46,6 @@ export class FcInvesCompDialogComponent implements OnInit {
 
     this.loadCustData();
 
-
   }
 
   loadCustData(){
@@ -55,22 +54,30 @@ export class FcInvesCompDialogComponent implements OnInit {
 
     this.customerService.getInvestorComparision(this.custCode).subscribe(res => {
 
-      console.log("RESULT DATA>" + JSON.stringify(res));
+    /*
+    res[0]  //Original data
+    res[1]  //FundConnext data
+    */
 
-      //Original data
-      this.mftsCustomer = JSON.parse(JSON.stringify(res[0].result));
-      this.mftsCustomerExt = JSON.parse(JSON.stringify(res[0].result));
+    //Original data
 
-      if (res[0].result.ext) {
-      this.mftsCustomerExt = JSON.parse(JSON.stringify(res[0].result.ext));
+
+      if(res[0] && res[0].result)
+        this.mftsCustomer = JSON.parse(JSON.stringify(res[0].result));
+
+      if(res[0] && res[0].result)
+        this.mftsCustomerExt = JSON.parse(JSON.stringify(res[0].result));
+
+      if (res[0] && res[0].result.ext) {
+        this.mftsCustomerExt = JSON.parse(JSON.stringify(res[0].result.ext));
       }
 
-      if(res[0].result.children){
+      if(res[0] && res[0].result.children){
         this.mftsCustomerExt.children =JSON.parse(JSON.stringify(res[0].result.children));
       }
 
       // FundConnext data
-      if(res[1].result)
+      if(res[1] && res[1].result)
       this.fcCustomer= JSON.parse(JSON.stringify(res[1].result));
 
       this.spinnerLoading = false;

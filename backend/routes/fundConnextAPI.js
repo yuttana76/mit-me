@@ -6,14 +6,14 @@ const selfAuth = require('../middleware/self-auth');
 const fundConnextAPIController = require('../controllers/fundConnextAPI')
 const { check } = require('express-validator');
 
-// customer/individual/
+// customer/individual/ API
 router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);
 router.get("/customer/individual-DEV/:cardNumber", fundConnextAPIController.getIndCustDEV);
 router.post("/customer/individual", fundConnextAPIController.createCustomerIndividual);
 router.put("/customer/individual", fundConnextAPIController.updateCustomerIndividual);
-router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);
+router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);//Partrial
 
-
+// download API
 router.get("/downloadFileAPI/",[
   check('fileType')
     .exists().withMessage('must have param fileType')

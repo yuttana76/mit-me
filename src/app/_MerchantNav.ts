@@ -11,6 +11,15 @@ export const navItems = [
     // }
   },
   {
+    name: 'E-Open(DEV)',
+    url: '/trade/open-account-first',
+    icon: 'icon-speedometer',
+    // badge: {
+    //   variant: 'info',
+    //   text: 'NEW'
+    // }
+  },
+  {
     name: 'Anoucement',
     url: '',
     icon: 'icon-bell',

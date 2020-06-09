@@ -82,6 +82,7 @@ import { BankAccountDialogComponent } from './dialog/bank-account-dialog/bank-ac
 import { FCUtilityComponent } from './fcutility/fcutility.component';
 import { FcInvesCompDialogComponent } from './dialog/fc-inves-comp-dialog/fc-inves-comp-dialog.component';
 import { TestGraphQLComponent } from './test-graph-ql/test-graph-ql.component';
+import { OpenAccountFirstComponent } from './open-account-first/open-account-first.component';
 
 @NgModule({
   imports: [
@@ -172,6 +173,7 @@ import { TestGraphQLComponent } from './test-graph-ql/test-graph-ql.component';
     FCUtilityComponent,
     FcInvesCompDialogComponent,
     TestGraphQLComponent,
+    OpenAccountFirstComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

@@ -11,6 +11,7 @@ var CronJob = require('cron').CronJob;
 var mitLog = require('./mitLog');
 var  FCCustInfo = require('../models/fcCustInfo.model');
 var  util = require('./utility');
+var slackTools = require('./tools/slack')
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 //FundConnext configuration
@@ -2956,9 +2957,7 @@ BEGIN
 
   DECLARE @businessDate VARCHAR(20) ='${businessDate}';
 
-  DELETE
-  from MIT_FC_NAV
-  where businessDate = @businessDate
+  DELETE  from MIT_FC_NAV  where businessDate = @businessDate
 
 END
 `;
@@ -3947,28 +3946,27 @@ function downloadNavSchedule(schStatus){
     // var SCH_JOB_SCH = '*/2 * * * Mon-Fri';  // Schedual at Mon-Fri on 09:30 AM
 
     // Schedual 9:10 ,14:10 ,16:10 ,22:10
-    var SCH_JOB_SCH = '10 09,14,16,22 * * Mon-Fri';  // Schedual 9:10 ,14:10 ,16:10 ,22:10   at Mon-Fri
-
+    // var SCH_JOB_SCH = '* * * * * ';  //
+    var SCH_JOB_SCH = '30 9,10,11,12,14,15,22 * * Mon-Fri';  //
 
     logger.info("START NAV SCH>" + SCH_JOB_SCH);
 
     var job = new CronJob(SCH_JOB_SCH, function() {
-
       logger.info("Nav schedual running..." +SCH_JOB_SCH +' ON ' +new Date());
 
-      // var today = new Date();
-      // var navDate_yyyymmddDate;
-      // /**
-      //  * Check is monday ?
-      //   if is monday use friday date instead
-      //  */
-      // if(today.getDay() == 1 ){
-      //   today.setDate(today.getDate()-3);
-      //   navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
-      // }else{
-      //   today.setDate(today.getDate()-1);
-      //   navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
-      // }
+      var today = new Date();
+      var navDate_yyyymmddDate;
+      /**
+       * Check is monday ?
+        if is monday use friday date instead
+       */
+      if(today.getDay() == 1 ){
+        today.setDate(today.getDate()-3);
+        navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+      }else{
+        today.setDate(today.getDate()-1);
+        navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+      }
 
       // downloadNavAPIproc(navDate_yyyymmddDate).then(dwRs=>{
       //   logger.info(`Download NAV(${navDate_yyyymmddDate}) API schedual on  ${new Date()}successful `  );
@@ -3976,15 +3974,14 @@ function downloadNavSchedule(schStatus){
       //   logger.error(`Download NAV(${navDate_yyyymmddDate}) API schedual on  ${new Date()} Error: ${err}`  );
       // });
 
-
-    },null, true, 'America/Los_Angeles');
+    },null, true, 'Asia/Bangkok');
 
     job.start();
 
 //     var CronJob = require('cron').CronJob;
 // var job = new CronJob('* * * * * *', function() {
 //   console.log('You will see this message every second');
-// }, null, true, 'America/Los_Angeles');
+// }, null, true, 'Asia/Bangkok');
 // job.start();
 
 

@@ -28,6 +28,7 @@ import { SetRegis2Component } from './set-regis2/set-regis2.component';
 import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 import { SurveySearchComponent } from './survey-search/survey-search.component';
 import { FCUtilityComponent } from './fcutility/fcutility.component';
+import { OpenAccountFirstComponent } from './open-account-first/open-account-first.component';
 
 const routes: Routes = [
 
@@ -242,6 +243,13 @@ const routes: Routes = [
         component: OpenAccountComponent,
         data: {
           title: 'Open account'
+        }
+      },
+      {
+        path: 'open-account-first',
+        component: OpenAccountFirstComponent,
+        data: {
+          title: 'Open account first step'
         }
       },
       {

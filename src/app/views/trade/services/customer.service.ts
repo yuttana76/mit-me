@@ -20,6 +20,9 @@ export class CustomerService {
   constructor(private http: HttpClient , private router: Router) { }
 
   getCustomers(rowPerPage: number, currentPage: number, conditionObj: CustomerCond) {
+
+    console.log('Execute getCustomers()');
+
     let queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
     const splitted = conditionObj.custId.split('-');
 
@@ -28,6 +31,8 @@ export class CustomerService {
     } else {
       queryParams += `&cust_id=${conditionObj.custId}`;
     }
+
+    console.log('Execute getCustomers()' + BACKEND_URL+queryParams );
 
     this.http.get<{ message: string, result: any }>(BACKEND_URL + queryParams)
     .pipe(map((resultData) => {

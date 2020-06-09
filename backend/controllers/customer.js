@@ -12,20 +12,50 @@ exports.searchCustomers = (req, res, next) => {
   var cust_name = req.query.cust_name || false;
   var whereCond = "";
 
-  if (custId !== false) {
-    whereCond = `Cust_Code like '%${custId}%'`;
-    // whereCond = `CONTAINS(Cust_Code,${custId})`;
-  } else {
-    whereCond = `First_Name_T like N'%${cust_name}%'`;
-    // whereCond = `CONTAINS(First_Name_T, ${cust_name})`;
-  }
 
-  var queryStr = `SELECT * FROM (
-    SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,
-           * FROM [Account_Info] WHERE ${whereCond}
-      ) AS TBL
-WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
-ORDER BY Cust_Code`;
+  var queryStr = `
+  BEGIN
+  DECLARE  @Cust_Code VARCHAR(20) ='${custId}';
+
+  SELECT * FROM (
+  SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER
+  ,Cust_Code,Title_Name_T,First_Name_T,Last_Name_T,Group_Code,Birth_Day
+  FROM [Account_Info] WHERE Cust_Code =@Cust_Code
+
+    ) AS TBL
+  WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+  ORDER BY Cust_Code
+
+  IF @@ROWCOUNT=0 BEGIN
+  SELECT * FROM (
+      SELECT ROW_NUMBER() OVER(ORDER BY cardNumber) AS NUMBER
+      ,cardNumber AS Cust_Code,' (New) ' + title AS Title_Name_T,thFirstName AS First_Name_T ,thLastName AS Last_Name_T ,'1' AS Group_Code,birthDate AS Birth_Day
+      FROM [MIT_FC_CUST_INFO] WHERE cardNumber =@Cust_Code
+
+    ) AS TBL
+  WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+  ORDER BY Cust_Code
+
+  END
+END
+    `;
+
+
+    // console.log('QUERY>' + queryStr);
+  //   if (custId !== false) {
+  //     whereCond = `Cust_Code = '${custId}'`;
+  //     // whereCond = `Cust_Code like '%${custId}%'`;
+  //   } else {
+  //     whereCond = `First_Name_T like N'%${cust_name}%'`;
+  //   }
+
+
+  // var queryStr = `SELECT * FROM (
+  //   SELECT ROW_NUMBER() OVER(ORDER BY Cust_Code) AS NUMBER,
+  //          * FROM [Account_Info] WHERE ${whereCond}
+  //     ) AS TBL
+  //   WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+  //   ORDER BY Cust_Code`;
 
   const sql = require("mssql");
   const pool1 = new sql.ConnectionPool(config, err => {
@@ -39,9 +69,11 @@ ORDER BY Cust_Code`;
             message: err
           });
         } else {
+
+          // console.log('Query result>>' + JSON.stringify(result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1]))
           res.status(200).json({
             message: fncName + "Quey db. successfully!",
-            result: result.recordset
+            result: result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1]
           });
         }
       });
@@ -57,6 +89,8 @@ exports.getCustomer = (req, res, next) => {
 
   var fncName = 'getCustomer';
   var custCode = req.params.cusCode;
+
+  console.log('getCustomer()' + custCode)
 
   var queryStr = `select *
   FROM [Account_Info]
@@ -124,6 +158,8 @@ exports.getORG_CustomerInfo = (req, res, next) => {
 
   var custCode = req.params.cusCode;
 
+  console.log('getORG_CustomerInfo() > ' + custCode)
+
   fnArray=[];
   fnArray.push(getMFTS_CustomerInfo(custCode));
   fnArray.push(getMFTS_CustomerInfoExt(custCode));
@@ -134,36 +170,50 @@ exports.getORG_CustomerInfo = (req, res, next) => {
 
   Promise.all(fnArray).then(values => {
 
-      custInfo=values[0][0]
-      custInfo["ext"] ={};
+    console.log('getORG_CustomerInfo(RS) >' + JSON.stringify(values))
 
-      if (values[1].length>0){
-        custInfo.ext=values[1][0]
+      // if ( typeof values[0][0] !== 'undefined' && values[0][0] )
+      if ( typeof values[0][0] === 'undefined' )  {
+        console.log('>> undefined')
+        res.status(204).json({msg:'Not fund Data'});
+
+
+      }else{
+
+        console.log('Step 1.' + values[0][0])
+        custInfo=values[0][0];
+        custInfo["ext"] ={};
+
+        console.log('Step 2.')
+
+        if (values[1].length>0){
+          custInfo.ext=values[1][0]
+        }
+
+        custInfo.ext.residence=[];
+        if(values[2].length>0){
+            custInfo.ext.residence=values[2][0]
+        }
+
+        custInfo.ext.current=[];
+        if(values[3].length>0){
+          custInfo.ext.current=values[3][0]
+        }
+
+        custInfo.ext.work=[];
+        if(values[4].length>0){
+          custInfo.ext.work=values[4][0]
+        }
+
+        if(values[5].length>0){
+          custInfo.children=values[5]
+        }
+
+        res.status(200).json({
+          result: custInfo
+        });
+
       }
-
-      custInfo.ext.residence=[];
-      if(values[2].length>0){
-          custInfo.ext.residence=values[2][0]
-      }
-
-      custInfo.ext.current=[];
-      if(values[3].length>0){
-        custInfo.ext.current=values[3][0]
-      }
-
-      custInfo.ext.work=[];
-      if(values[4].length>0){
-        custInfo.ext.work=values[4][0]
-      }
-
-      if(values[5].length>0){
-        custInfo.children=values[5]
-      }
-
-      res.status(200).json({
-      result: custInfo
-    });
-
   })
   .catch(error => {
     logger.error(error.message)
@@ -174,8 +224,9 @@ exports.getORG_CustomerInfo = (req, res, next) => {
 
 exports.getFC_CustomerInfo = (req, res, next) => {
 
-  // console.log('Welcome getFC_CustomerInfo()')
   var custCode = req.params.cusCode;
+
+  console.log('getFC_CustomerInfo() > ' + custCode)
 
   fnArray=[];
   fnArray.push(getFC_CustomerInfo(custCode));
@@ -507,6 +558,35 @@ function update_CustomerInfo(custObj,actionBy){
     ,Sex=@Sex
     WHERE Cust_Code=@Cust_Code
 
+    IF @@ROWCOUNT=0
+    BEGIN
+        INSERT INTO Account_Info(Cust_Code
+          ,Card_Type
+          ,First_Name_T
+          ,Last_Name_T
+          ,Title_Name_E
+          ,First_Name_E
+          ,Last_Name_E
+          ,Birth_Day
+          ,Nation_Code
+          ,Email
+          ,Mobile
+          ,Sex
+      ) VALUES(@Cust_Code
+          ,@Card_Type
+          ,@First_Name_T
+          ,@Last_Name_T
+          ,@Title_Name_E
+          ,@First_Name_E
+          ,@Last_Name_E
+          ,@Birth_Day
+          ,@Nation_Code
+          ,@Email
+          ,@Mobile
+          ,@Sex
+      )
+    END
+
     -- Extension
     UPDATE MIT_ACCOUNT_INFO_EXT SET
     occupationId = @occupationId
@@ -662,10 +742,8 @@ function update_CustomerInfo(custObj,actionBy){
         ,@fatcaDeclarationDate
         ,@workAddressSameAsFlag
         ,@currentAddressSameAsFlag
-
         ,@actionBy
         ,getDate()
-
         ,@actionBy  --MpamApproveBy
         ,getDate()  --MpamApproveDate
         )
@@ -1407,8 +1485,8 @@ function update_Account(accObj,actionBy){
 function getMFTS_CustomerInfo(custCode){
 
   var fncName = 'getMFTS_CustomerInfo() ';
-
-  var queryStr = `select *
+  var queryStr = `
+  select *
   FROM [Account_Info]
   WHERE Cust_Code= @Cust_Code`;
   const sql = require('mssql')
@@ -1423,7 +1501,6 @@ function getMFTS_CustomerInfo(custCode){
           logger.error(err);
           reject(fncName + err);
         }else {
-
           resolve(result.recordset);
         }
     })

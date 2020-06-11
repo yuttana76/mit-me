@@ -1,6 +1,8 @@
-var Report = require('fluentReports' ).Report;
+// var Report = require('../../node_modules/fluentreports' ).Report;
+// D:\Merchants\apps\mit\node_modules\fluentreports
+
 var request = require("request");
-var Report = require('fluentReports' ).Report;
+// var Report = require('fluentReports' ).Report;
 var logger = require('../../config/winston');
 var util = require("../../util/validateUtil");
 var rptPATH = './backend/downloadFiles/reports/';

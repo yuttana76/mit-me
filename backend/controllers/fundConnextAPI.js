@@ -2971,7 +2971,8 @@ END
           reject(err);
         }else {
           // logger.info(JSON.stringify(result))
-          // resolve(result.rowsAffected.length)
+          // logger.info('MIT_FC_NAV Deleted='+result.rowsAffected.length)
+          logger.info('MIT_FC_NAV Deleted='+JSON.stringify(result))
           resolve(result.recordsets)
         }
     })

@@ -55,15 +55,15 @@ console.log('PORT='+port);
 
 app.set("port", port);
 
-// // HTTP
-// const server = http.createServer(app);
-// server.on("error", onError);
-// server.on("listening", onListening);
-// server.listen(port,function () {
-//   console.log("Listening on port http://localhost:%s", server.address().port);
-// })
+// ************************************** HTTP
+const server = http.createServer(app);
+server.on("error", onError);
+server.on("listening", onListening);
+server.listen(port,function () {
+  console.log("Listening on port http://localhost:%s", server.address().port);
+})
 
-// HTTPS
+// ************************************** HTTPS Configuratrion
 
 // var intermediateCertificate = fs.readFileSync('intermediate.pem', 'utf8');
 // https.createServer({
@@ -74,38 +74,34 @@ app.set("port", port);
 
 // console.log('DIR>' + __dirname);
 // ************************************** GET IP address
+/*
 var os = require('os');
 var ifaces = os.networkInterfaces();
-
 Object.keys(ifaces).forEach(function (ifname) {
   var alias = 0;
-
   ifaces[ifname].forEach(function (iface) {
     if ('IPv4' !== iface.family || iface.internal !== false) {
-      // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
       return;
     }
 
     if (alias >= 1) {
-      // this single interface has multiple ipv4 addresses
       console.log(ifname + ':' + alias, iface.address);
     } else {
-      // this interface has only one ipv4 adress
       console.log(ifname, iface.address);
     }
     ++alias;
   });
 
 });
-// ************************************** HTTPS
+
 const option = {
   key: fs.readFileSync(__dirname+'/merchantasset_CA/key.pem'),
   cert: fs.readFileSync(__dirname+'/merchantasset_CA/cert.pem'),
   ca: fs.readFileSync(__dirname+'/merchantasset_CA/inter.pem'),
     passphrase: 'mpam@2019'
 };
-
 var server = https.createServer(option, app)
 .listen(port,function () {
   console.log("Listening on port https://localhost:%s", server.address().port);
 })
+*/

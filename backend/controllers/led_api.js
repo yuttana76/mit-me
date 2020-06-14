@@ -39,12 +39,12 @@ https://debtor.led.go.th/api/public/GetBankruptList
 // const HOST_LED= "uatdebtor.led.go.th";
 const HOST_LED= "debtor.led.go.th";
 
-var userPath = path.resolve('./backend/merchantasset_CA/led/led_user.json');
+// var userPath = path.resolve('./backend/merchantasset_CA/led/led_user.json');
+var userPath = path.resolve('./merchantasset_CA/led/led_user.json');
 var userData = fs.readFileSync(userPath, "utf8"); //ascii,utf8
 
 // const API_KEY ="328010cc65ecf3a5f0bcdbb51e339d36";//UAT
 const API_KEY =JSON.parse(userData).apikey;
-
 
 const PATH_GetBankruptList ="/api/public/GetBankruptList";
 const PATH_ReceiverBreezeWebService ="/api/public/ReceiverBreezeWebService";

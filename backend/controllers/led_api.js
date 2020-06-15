@@ -46,7 +46,6 @@ var userData = fs.readFileSync(userPath, "utf8"); //ascii,utf8
 // const API_KEY ="328010cc65ecf3a5f0bcdbb51e339d36";//UAT
 const API_KEY =JSON.parse(userData).apikey;
 
-
 const PATH_GetBankruptList ="/api/public/GetBankruptList";
 const PATH_ReceiverBreezeWebService ="/api/public/ReceiverBreezeWebService";
 const PATH_GetBankruptListByDate ="/api/public/GetBankruptListByDate";

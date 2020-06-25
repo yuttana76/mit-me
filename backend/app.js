@@ -58,6 +58,8 @@ const surveyRoutes = require('./routes/survey');
 const graphQLRoutes = require('./routes/graphQL');
 const slackRoutes = require('./routes/slack');
 
+var logger = require("./config/winston");
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -95,7 +97,7 @@ app.use(("/api/test"),(req, res, next)=>{
      req.socket.remoteAddress ||
      (req.connection.socket ? req.connection.socket.remoteAddress : null);
 
-  console.log("Test API. " +  ip)
+  logger.info("/api/test > " +  ip)
 
   res.status(200).json({
     message: "MIT API test successful!",

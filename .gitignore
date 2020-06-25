@@ -6,7 +6,6 @@
 /backend/downloadFiles
 /backend/controllers/readFiles
 /backend/controllers/readFiles/LED
-/backend/controllers/readFiles/LED - PROD
 /backend/controllers/readFiles/LED-PROD
 /backend/controllers/readFiles/LEDBackup
 /backend/controllers/readFiles/sms

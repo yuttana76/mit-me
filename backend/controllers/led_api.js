@@ -117,7 +117,7 @@ exports.ledDecrypt = (req, res, next) =>{
 }
 
 exports.callGetBankruptList = (req, res, next) =>{
-  // console.log("Welcome to API /callGetBankruptList/");
+
   fnGetBankruptList().then(result =>{
     res.status(200).json({
       message: "Successfully!",
@@ -1236,14 +1236,12 @@ function fnGetBankruptList(){
       fncSOAPEncrypt().then(result =>{
 
         input= result.EncryptResult;
-
-        // console.log("Input >>" + JSON.stringify(input));
+        console.log("SOAPEncrypt RS >>" + JSON.stringify(input));
 
         // #2 Call APIs
         fnCallLEDapis(PATH_GetBankruptList,input).then(result =>{
 
           // console.log("fnCallLEDapis>> "+ result);
-
           var resultObj =  JSON.parse(result);
 
           if(resultObj.responseCode == "000"){
@@ -1439,7 +1437,7 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
 
     }
 
-    // console.log("input>" + JSON.stringify(userDataObj));
+    console.log("input>" + JSON.stringify(userDataObj));
     // console.log("signerCertificate>" + JSON.stringify(signerCert));
     // console.log("recipientCertificate>" + JSON.stringify(recipientCert));
 
@@ -1457,9 +1455,10 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
         console.log('WAS ERROR  createClient() >>'+err)
         reject(err);
       }else{
-        // console.log('setEndpoint>>' +HTTP_SOAP);
+        console.log('setEndpoint>>' +HTTP_SOAP);
         client.setEndpoint(HTTP_SOAP);
         // client.setEndpoint('https://192.168.10.48:444/CrytoService.svc');
+        //Encryp by SOAP
         client.Encrypt(args, function(err, result) {
           if(err){
             console.log("WAS ERROR Encrypt() >>" + err);

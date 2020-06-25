@@ -90,6 +90,13 @@ app.use((req, res, next) => {
 
 app.use(("/api/test"),(req, res, next)=>{
 
+  var ip = req.headers['x-forwarded-for'] ||
+     req.connection.remoteAddress ||
+     req.socket.remoteAddress ||
+     (req.connection.socket ? req.connection.socket.remoteAddress : null);
+
+  console.log("Test API. " +  ip)
+
   res.status(200).json({
     message: "MIT API test successful!",
 

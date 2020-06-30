@@ -1236,41 +1236,42 @@ function fnGetBankruptList(){
       fncSOAPEncrypt().then(result =>{
 
         input= result.EncryptResult;
-        console.log("SOAPEncrypt RS >>" + JSON.stringify(input));
+        logger.info("SOAPEncrypt RS >" + JSON.stringify(input));
+        logger.info('LED API path >' + PATH_GetBankruptList)
 
-        // #2 Call APIs
-        fnCallLEDapis(PATH_GetBankruptList,input).then(result =>{
+        // // #2 Call APIs
+        // fnCallLEDapis(PATH_GetBankruptList,input).then(result =>{
 
-          // console.log("fnCallLEDapis>> "+ result);
-          var resultObj =  JSON.parse(result);
+        //   // console.log("fnCallLEDapis>> "+ result);
+        //   var resultObj =  JSON.parse(result);
 
-          if(resultObj.responseCode == "000"){
-            if(resultObj.data){
-            // #3 Decrypt
-            fncSOAPDecrypt(resultObj.data).then(result =>{
+        //   if(resultObj.responseCode == "000"){
+        //     if(resultObj.data){
+        //     // #3 Decrypt
+        //     fncSOAPDecrypt(resultObj.data).then(result =>{
 
-              // #4 write file
-              writeLocalFile(result,LED_LIST_FILE_NAME).then(result =>{
-                resolve(result);
-              },err=>{
-                logger.error(err);
-                reject(err);
-              });
+        //       // #4 write file
+        //       writeLocalFile(result,LED_LIST_FILE_NAME).then(result =>{
+        //         resolve(result);
+        //       },err=>{
+        //         logger.error(err);
+        //         reject(err);
+        //       });
 
-            },err=>{
-              logger.error(err);
-              reject(err);
-            })
+        //     },err=>{
+        //       logger.error(err);
+        //       reject(err);
+        //     })
 
-            }
-          }else{
-            resolve(result);
-          }
-        },err=>{
-          logger.error(err);
-          reject(err);
+        //     }
+        //   }else{
+        //     resolve(result);
+        //   }
 
-        })
+        // },err=>{
+        //   logger.error(err);
+        //   reject(err);
+        // })
 
       },err=>{
         logger.error(err);
@@ -1401,7 +1402,7 @@ function fnCallLEDapis(path,input){
 
 function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
 
-  logger.info(`Welcome fncEncry() req_key:${req_key}; req_status:${req_status}; startdate:${startdate}; enddate:${enddate}` );
+  logger.info(`Welcome fncSOAPEncrypt() req_key:${req_key}; req_status:${req_status}; startdate:${startdate}; enddate:${enddate}` );
 
   return new Promise(function(resolve, reject) {
 
@@ -1437,7 +1438,7 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
 
     }
 
-    console.log("input>" + JSON.stringify(userDataObj));
+    // console.log("input>" + JSON.stringify(userDataObj));
     // console.log("signerCertificate>" + JSON.stringify(signerCert));
     // console.log("recipientCertificate>" + JSON.stringify(recipientCert));
 
@@ -1448,8 +1449,10 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
       'recipientCertificate':recipientCert
     };
 
+    logger.info("args > " +JSON.stringify(args) )
     // console.log('input>' + JSON.stringify(args));
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
     soap.createClient(url, function(err, client) {
       if(err){
         console.log('WAS ERROR  createClient() >>'+err)
@@ -1457,15 +1460,19 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
       }else{
         console.log('setEndpoint>>' +HTTP_SOAP);
         client.setEndpoint(HTTP_SOAP);
-        // client.setEndpoint('https://192.168.10.48:444/CrytoService.svc');
         //Encryp by SOAP
         client.Encrypt(args, function(err, result) {
+
+          logger.info('result>' + JSON.stringify(result));
+          logger.info('err>' + JSON.stringify(err));
+
           if(err){
             console.log("WAS ERROR Encrypt() >>" + err);
             reject(err);
           }else{
             resolve(result);
           }
+
         });
       }
     });

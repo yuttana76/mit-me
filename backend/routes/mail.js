@@ -16,4 +16,8 @@ router.post("/merchant",mailController.sendMail);
 router.post("/mailStreamingCustFile",mailController.mailStreamingCustFile);
 router.post("/smsStreamingCustFile",mailController.smsStreamingCustFile);
 
+
+// Send mail generial purpost
+router.post("/mailGenerialByFile",mailController.mailGenerialByFile);
+
 module.exports = router;

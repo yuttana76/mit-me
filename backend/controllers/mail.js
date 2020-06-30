@@ -142,7 +142,6 @@ checkFile.on('close', function(line) {
 }
 
 
-
 exports.mailStreamingCustFile = (req, res, next) =>{
 
 var today = new Date();
@@ -235,6 +234,98 @@ checkFile.on('close', function(line) {
  });
 
 }
+
+
+
+exports.mailGenerialByFile = (req, res, next) =>{
+
+  var today = new Date();
+  var date = today.getFullYear()+""+(today.getMonth()+1)+""+today.getDate();
+  var time = today.getHours() +""+  today.getMinutes()
+  // var time = today.getHours() + "-" + today.getMinutes() + ":" + today.getSeconds();
+  var dateTime = date+''+time;
+
+  const readPath = __dirname + '/readFiles/sendMail/';
+  const readFile = 'listmail.txt';
+
+  const bakPath = __dirname + '/readFiles/sendMailBackup/';
+  const bakFile =  dateTime+'-'+readFile;
+
+  let checkFile = readline.createInterface({
+    input: fs.createReadStream(readPath+readFile)
+  });
+
+  checkFile.on('error', function(){ /*handle error*/
+    res.status(400).json({ message: `${readFile} File not found` });
+  });
+
+
+  // Check data is correct
+  let line_no = 0;
+  let numData = 0;
+
+  checkFile.on('line', function(line) {
+    line_no++;
+    if (line_no == 1){
+      numData = line;
+    }
+  });
+  // end
+  checkFile.on('close', function(line) {
+
+      if(((line_no-1) == numData) && (numData != 0) ){
+
+        line_no = 0;
+        let rFile = readline.createInterface({
+          input: fs.createReadStream(readPath+readFile)
+        });
+
+        rFile.on('line', function(line) {
+            line_no++;
+            console.log('line_no >>:' + line_no);
+            if(line_no >1){
+
+              console.log('line data :' + line );
+
+              //SEND mail function
+              mailGenerial(req,res,line).then(data=>{
+                // res.status(200).json(data);
+                console.log('Success Email >' + line);
+                // res.status(200).json('Send mail completed');
+
+              },err=>{
+                res.status(400).json({
+                  message: err,
+                  code:"999",
+                });
+              });
+
+            }
+        });
+
+        // end
+        rFile.on('close', function(line) {
+          console.log('Total lines : ' + line_no);
+
+          // //Move file to Backup
+          fs.rename(readPath+readFile, bakPath+bakFile,  (err) => {
+            if (err) throw err;
+            console.log('Rename/Move complete!');
+          });
+
+        });
+
+
+        res.status(200).json('Send mail completed');
+      }else{
+        console.log('Data incorrect ; data lines =' + (line_no-1) + ' ;Header =' + numData );
+
+        res.status(501).json({ message: 'Data incorrect' });
+      }
+
+   });
+
+  }
 
 
 exports.smsStreamingCustFile = (req, res, next) =>{
@@ -492,6 +583,208 @@ function senMailFromFile(req,res,_PID,_Email,_url){
     res.status(400).json({ message: 'surveyByMailToken' });
 
   }
+
+}
+
+
+function mailGenerial(req,res,_Email){
+
+  const fileName1='StreamingforFund_Letter.pdf';
+  const attachfile1 = __dirname + '/readFiles/Streaming/'+fileName1;
+
+  // const attachfile2 = __dirname + '/readFiles/Streaming/NDID Specification.pdf';
+
+  // const _compInfo = mailConfig.mailCompInfo_TH;
+  let _from = 'bd@merchantasset.co.th';
+  let _subject = 'สัมมนา Second half 2020 : Post-pandemic investment outlook ทิศทางเศรษฐกิจการลงทุนครึ่งปีหลัง 2563'
+
+  let _msgTH = '';
+
+  return new Promise(function(resolve, reject) {
+
+  try {
+    logger.info(`mailStreaming() ;_Email=${_Email}`);
+
+    // Incase has Email
+      if(_Email){
+
+        // Thai message
+        _msgTH = `
+        <html>
+        <head>
+        <style>
+
+        .blog-content-outer {
+          border: 1px solid #e1e1e1;
+          border-radius: 5px;
+          margin-top: 40px;
+          margin-bottom: 20px;
+          padding: 0 15px;
+          font-size: 16px;
+          width:70%;
+        }
+
+        .logo-area{
+          margin-top:20px;
+          margin-left:60px;
+          margin-bottom:20px;
+        }
+
+		    .tab { margin-left: 40px; }
+        .tab2 { margin-left: 80px; }
+
+        div.a {
+          text-indent: 50px;
+        }
+
+        .nowrap{white-space: nowrap;}
+
+        .txtCenter{
+          text-align: center;
+        }
+
+        .download{
+          margin:auto;
+          margin-left: 100px;
+        }
+        .download img{
+          width:150px;
+          height: 49px;
+        }
+
+        </style>
+        </head>
+        <body>
+        <br>
+
+        <div class='blog-content-outer'>
+
+        <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+        <a href="https://www.merchantasset.co.th/home.html"><img src="https://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+        </div>
+
+        <br>
+        <p >เรียน ท่านลูกค้าที่นับถือ</p>
+        <br>
+
+        <br>
+        <div class="a">
+        <p>
+
+        บริษัท หลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด ขอเชิญลูกค้าทุกท่านเข้าร่วมสัมมนา Online ผ่าน Zoom Webinar
+        ในหัวข้อ Second half 2020 : Post-pandemic investment outlook ทิศทางเศรษฐกิจการลงทุนครึ่งปีหลัง 2563 ... ฟื้นหรือยังหลังโควิด
+        โดย :
+        </p>
+
+        <p>
+        คุณรัฐพล ขัตติยะสุวงศ์
+        <span> CFA, FRM</span>
+        </p>
+
+        <p>
+        คุณประกิต สิริวัฒนเกตุ
+        </p>
+
+        <p>
+        Mr.Ved Vyas
+        <span>CFA</span>
+        </p>
+
+
+        <p>
+        ในวันอังคารที่ 30 มิถุนายน 2563
+        โดยจะเปิดให้เข้าระบบเวลา 13.30 น. และเริ่มการสัมมนาเวลา 14.00 – 15.30
+        </p>
+
+        <p>
+        สัมมนาฟรี ไม่มีค่าใช้จ่าย รับจำนวนจำกัดเพียง 100 ท่าน
+        </p>
+
+        <p>
+        *ลูกค้าท่านใด มีความสนใจเข้าร่วมการสัมมนาในครั้งนี้ สามารถลงทะเบียนเพื่อเข้าร่วมงานได้ตาม link : https://us02web.zoom.us/webinar/register/WN_3KqRhboaTmmf3IrDV4c55w
+        หรือหากลูกค้าต้องการสอบถามข้อมูลเพิ่มเติม สามารติดต่อเข้ามาได้ที่เบอร์ 02-6606644 หรือ Email bd@merchantasset.co.th
+        </p>
+
+        </div>
+
+        <br>
+        <br>
+        <p>
+        ขอแสดงความนับถือ
+        </p>
+      <br>
+      <p>บริษัทหลักทรัพย์จัดการกองทุน เมอร์ชั่น พาร์ทเนอร์ จำกัด</p>
+      <br>
+        </body>
+        </html>
+
+        <br>
+        <p>
+        <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+        <p>
+
+        `;
+
+        // _msgTH +=_compInfo
+
+
+        // setup email data with unicode symbols
+        let mailOptions = {
+          from: _from,
+          to: _Email,
+          subject: _subject,
+          html: _msgTH,
+
+        //   attachments: [{
+        //     filename: fileName1,
+        //     path: attachfile1,
+        //     contentType: 'application/pdf'
+        //   },
+        //   // {
+        //   //   filename: 'file2.pdf',
+        //   //   path: attachfile2,
+        //   //   contentType: 'application/pdf'
+        //   // },
+        // ],
+        };
+
+      /**
+       * SEND mail to suctomer
+       */
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            reject(error);
+          }
+
+            // /*
+            // Save MIT_LOG
+            // */
+            // try {
+            //   mitLog.saveMITlog('SYSTEM','SEND_MAIL_CUST_STREAMING',logMsg,req.ip,req.originalUrl,function(){
+            //         // console.log("Save MIT log");
+            //   })
+            // } catch (error) {
+            //   console.log(error);
+            // }
+
+          logger.info(`API /surveyByMailToken -  Send mail successful!`);
+          // res.status(200).json({ message: 'Send mail successful!' });
+          resolve('Send mail successful');
+
+        });
+
+        // Incase No Email
+      }else{
+        logger.error(`API /surveyByMailToken - NO E-mail`);
+
+      }
+  } catch (error) {
+    // res.status(400).json({ message: 'surveyByMailToken' });
+
+    reject(error);
+  }
+
+});
 
 }
 

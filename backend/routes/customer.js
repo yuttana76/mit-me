@@ -4,7 +4,8 @@ const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
 const customerController = require('../controllers/customer')
 
-// router.get("", checkAuth, fundController.getFunds);
+router.get("/testAPI",customerController.testAPI);
+
 router.get("", customerController.searchCustomers);
 router.get("/:cusCode", checkAuth, customerController.getCustomer);
 router.post("", checkAuth, customerController.CreateCustomer);

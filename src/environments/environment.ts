@@ -5,6 +5,6 @@
 
 export const environment = {
   production: false,
-  // apiURL: 'https://localhost:3009/api'
-  apiURL: 'http://192.168.50.22/api'// Test nginx
+  apiURL: 'http://localhost:3009/api'
+  // apiURL: 'http://192.168.50.22/api'// Test nginx
 };

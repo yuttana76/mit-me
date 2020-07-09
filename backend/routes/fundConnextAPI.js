@@ -8,6 +8,7 @@ const { check } = require('express-validator');
 
 // customer/individual/ API
 router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);
+
 router.get("/customer/individual-DEV/:cardNumber", fundConnextAPIController.getIndCustDEV);
 router.post("/customer/individual", fundConnextAPIController.createCustomerIndividual);
 router.put("/customer/individual", fundConnextAPIController.updateCustomerIndividual);

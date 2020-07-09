@@ -100,7 +100,6 @@ function getDateTime(){
 
 }
 
-
 exports.getDate_yyyymmdd = ()=>{
 
   var date = new Date();
@@ -125,6 +124,22 @@ exports.getDate_yyyymmdd = ()=>{
   // return day +"/"+ month +"/"+ year + "  " + hour + ":" + min ;
   return year+month+day;
 
+}
+
+
+// YYYYMMDDHHMMSS -> YYYY/MM/DD HH:MM:SS
+exports.txtToDateTimeFormat = (str)=>{
+
+  return new Promise(function(resolve, reject) {
+    var _yyyy= str.substring(0, 3);
+    var _mm = str.substring(4, 5);
+    var _dd = str.substring(6, 7);
+    var _hh = str.substring(8, 9);
+    var _min = str.substring(10, 11);
+    var _ss = str.substring(12, 13);
+    var resultStr = _yyyy+'/'+_mm+'/'+_dd+' '+_hh+':'+_min+':'+_ss;
+    resolve(resultStr)
+  });
 }
 
 
@@ -212,7 +227,27 @@ function regisToMail(name,surName,phone,email,lineId,description){
       }
       resolve(info)
     });
+  });
+}
 
 
+
+exports.txtToDateTimeFormat = (str)=>{
+
+  return new Promise(function(resolve, reject) {
+    try{
+      var _yyyy= str.substring(0, 4);
+      var _mm = str.substring(4, 6);
+      var _dd = str.substring(6, 8);
+      var _hh = str.substring(8, 10);
+      var _min = str.substring(10, 12);
+      var _ss = str.substring(12, 14);
+      var resultStr = _yyyy+'/'+_mm+'/'+_dd+' '+_hh+':'+_min+':'+_ss;
+      // console.log('txtToDateTimeFormat: '+str + '>>' + resultStr);
+      resolve(resultStr)
+    }
+    catch(err) {
+      resolve(null)
+    }
   });
 }

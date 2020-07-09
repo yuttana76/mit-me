@@ -3,6 +3,22 @@ var config = mpamConfig.dbParameters;
 
 var logger = require('../config/winston');
 
+exports.testAPI = (req, res, next) => {
+
+
+  fnArray=[];
+  fnArray.push(update_MFTS_Account('1770300019400','999'));
+  Promise.all(fnArray)
+  .then(data => {
+      res.status(200).json('Test successful');
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+
+}
+
 exports.searchCustomers = (req, res, next) => {
   var fncName = "searchCustomers";
 
@@ -842,6 +858,147 @@ function update_CustomerInfo(custObj,actionBy){
 }
 
 
+function update_MFTS_Account(cardNumber,actionBy){
+
+    console.log("update_MFTS_Account()" + cardNumber);
+
+    var queryStr = `
+    BEGIN TRANSACTION TranName;
+
+    --DECLARE  @cardNumber VARCHAR(50) ='1770300019400';
+    --DECLARE  @actionBy VARCHAR(10) ='99';
+
+    DECLARE  @Ref_No VARCHAR(12)='002';
+    DECLARE  @accountId VARCHAR(50);
+    DECLARE  @Title_Name_T VARCHAR(10);
+    DECLARE  @First_Name_T VARCHAR(100);
+    DECLARE  @Last_Name_T VARCHAR(100);
+    DECLARE  @Title_Name_E VARCHAR(10);
+    DECLARE  @First_Name_E VARCHAR(100);
+    DECLARE  @Last_Name_E VARCHAR(100);
+    DECLARE  @Birth_Day VARCHAR(50);
+    DECLARE  @Sex VARCHAR(10);
+    DECLARE  @Email VARCHAR(100);
+    DECLARE  @Mobile_No VARCHAR(20);
+    DECLARE  @PID_ExpiryDate VARCHAR(20);
+
+    select  @Title_Name_T=title
+    ,@First_Name_T=thFirstName
+    ,@Last_Name_T=thLastName
+    ,@Title_Name_E=title
+    ,@First_Name_E=enFirstName
+    ,@Last_Name_E=enLastName
+    ,@Birth_Day=birthDate
+    ,@Sex=gender
+
+    ,@Email=email
+    ,@Mobile_No=mobileNumber
+    ,@PID_ExpiryDate=cardExpiryDate
+    FROM MIT_FC_CUST_INFO
+    where cardNumber = @cardNumber
+
+    select  @Sex=case gender
+      when 'Female' then 'F'
+      when 'Male' then 'M'
+      else null
+      end
+    FROM MIT_FC_CUST_INFO
+    where cardNumber = @cardNumber
+
+    select top 1 @accountId = accountId
+    from MIT_FC_CUST_ACCOUNT where cardNumber= @cardNumber
+
+    UPDATE MFTS_Account SET
+    Title_Name_T=@Title_Name_T
+    ,First_Name_T=@First_Name_T
+    ,Last_Name_T=@Last_Name_T
+    ,Title_Name_E=@Title_Name_E
+    ,First_Name_E=@First_Name_E
+    ,Last_Name_E=@Last_Name_E
+    ,Birth_Day=@Birth_Day
+    ,Sex=@Sex
+    ,Email=@Email
+    ,Mobile_No=@Mobile_No
+    ,PID_ExpiryDate=@PID_ExpiryDate
+    ,Modify_By=@actionBy
+    ,Modify_Date=getDate()
+    WHERE Account_No=@accountId AND PID_No=@cardNumber AND Ref_No=@Ref_No
+
+    IF @@ROWCOUNT=0
+    BEGIN
+        INSERT INTO  MFTS_Account(
+        Ref_No
+        ,PID_No
+        ,Account_No
+        ,Title_Name_T
+        ,First_Name_T
+        ,Last_Name_T
+        ,Title_Name_E
+        ,First_Name_E
+        ,Last_Name_E
+        ,Birth_Day
+        ,Sex
+        ,Email
+        ,Mobile_No
+        ,PID_ExpiryDate
+        ,Create_By
+        ,Modify_By
+        ,Create_Date
+        ,Modify_Date
+        )
+        VALUES(
+        @Ref_No
+        ,@cardNumber
+        ,@accountId
+        ,@Title_Name_T
+        ,@First_Name_T
+        ,@Last_Name_T
+        ,@Title_Name_E
+        ,@First_Name_E
+        ,@Last_Name_E
+        ,@Birth_Day
+        ,@Sex
+        ,@Email
+        ,@Mobile_No
+        ,@PID_ExpiryDate
+        ,@actionBy
+        ,@actionBy
+        ,getDate()
+        ,getDate()
+        )
+    END
+
+    COMMIT TRANSACTION TranName;
+    `;
+
+    const sql = require('mssql')
+
+    return new Promise(function(resolve, reject) {
+
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request()
+        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .input("actionBy", sql.VarChar(50), actionBy)
+
+        // .input("ProvinceName", sql.NVarChar(100), addrObj.province)
+        .query(queryStr, (err, result) => {
+          // console.log(JSON.stringify(result));
+            if(err){
+              const err_msg=err;
+              logger.error('Messge:'+err_msg);
+              resolve({code:'9',message:''+err_msg});
+            }else {
+              resolve({code:'0'});
+            }
+        })
+      })
+      pool1.on('error', err => {
+        logger.error(err);
+        reject(err);
+      })
+    });
+  }
+
 function update_Address(addrObj,seq,actionBy){
 
   // console.log("update_Address()");
@@ -884,6 +1041,7 @@ function update_Address(addrObj,seq,actionBy){
     ,[Country_Id]=@Country_ID
     ,[Zip_Code]=@postalCode
     ,[Print_Address]=@printTxt
+    ,[Tel]=@phoneNumber
   WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
   IF @@ROWCOUNT=0
   BEGIN
@@ -898,6 +1056,7 @@ function update_Address(addrObj,seq,actionBy){
       ,[Country_Id]
       ,[Zip_Code]
       ,[Print_Address]
+      ,[Tel]
       )
       VALUES(@cardNumber
       ,@Addr_Seq
@@ -910,6 +1069,7 @@ function update_Address(addrObj,seq,actionBy){
       ,@Country_ID
       ,@postalCode
       ,@printTxt
+      ,@phoneNumber
       )
   END
 

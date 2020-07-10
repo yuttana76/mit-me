@@ -11,7 +11,8 @@ var CronJob = require('cron').CronJob;
 var mitLog = require('./mitLog');
 var  FCCustInfo = require('../models/fcCustInfo.model');
 var  util = require('./utility');
-var slackTools = require('./tools/slack')
+var slackTools = require('./tools/slack');
+const { JsonFormatter } = require('tslint/lib/formatters');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 //FundConnext configuration
@@ -29,9 +30,28 @@ const FC_API_MODULE ='FC API';
 var config_BULK = mpamConfig.dbParameters_BULK;
 var config = mpamConfig.dbParameters;
 
-exports.getIndCust = (req, res, next) =>{
+exports.scheduleDownloadAllotedAPIproc = (req, res, next) => {
 
-  // logger.info("Validate API /GetIndCust/");
+  var businessDate = fundConnextCurrentDate();
+  logger.info('Execute scheduleDownloadAllotedAPIproc(); businessDate:' + businessDate )
+
+  // Transaction API
+  fnArray=[];
+  fnArray.push(downloadAllotedAPIproc(businessDate));
+  Promise.all(fnArray)
+  .then(data => {
+      res.status(200).json('Test successful' + data);
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+
+}
+
+
+
+exports.getIndCust = (req, res, next) =>{
   var actionBy = req.params.actionBy || 'SYSTEM';
 
   const errors = validationResult(req);
@@ -1342,7 +1362,7 @@ function createCustomerIndividualProc(req){
 
   logger.info("Welcome createCustomerIndividualProc()");
     var data = req.body;
-    console.log('cardNumber>>' + data['cardNumber']);
+    // console.log('cardNumber>>' + data['cardNumber']);
 
   return new Promise(function(resolve, reject) {
 
@@ -1411,7 +1431,7 @@ function updateCustomerIndividualProc(req){
 
   logger.info("Welcome updateCustomerIndividualProc()");
     var data = req.body;
-    console.log('cardNumber>>' + data['cardNumber']);
+    // console.log('cardNumber>>' + data['cardNumber']);
 
   return new Promise(function(resolve, reject) {
 
@@ -2606,7 +2626,6 @@ exports.downloadNavAPI_V2 = (req, res, next) =>{
 }
 
 
-
 exports.downloadAllottedAPI = (req, res, next) =>{
 
   logger.info("Validate  API /downloadAllottedAPI/");
@@ -3440,7 +3459,7 @@ function fcAlloted_ToDB(fileName){
 
             var item = array[i].split("|") ;
 
-            console.log('Number>> ' + _row+1)
+            // console.log('Number>> ' + _row+1)
 
                 fnArray=[];
                 fnArray.push(update_MIT_FC_TransAllotted(item,'999'));
@@ -3594,7 +3613,7 @@ function update_MIT_FC_TransAllotted(item,ActionBy){
             // 57 Credit card issuer
             var creditCardIssuer =item[56]?item[56].trim():''
 
-  console.log("update_MIT_FC_TransAllotted()");
+  // console.log("update_MIT_FC_TransAllotted()");
   //  console.log(`
   //               ;transactionID=${transactionID}
   //               ;transactionCode=${transactionCode}

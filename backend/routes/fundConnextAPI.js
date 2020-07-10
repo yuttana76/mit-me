@@ -5,6 +5,10 @@ const selfAuth = require('../middleware/self-auth');
 
 const fundConnextAPIController = require('../controllers/fundConnextAPI')
 const { check } = require('express-validator');
+const { route } = require('./customer');
+
+// Schedule
+router.get("/scheduleDownloadAlloted/",fundConnextAPIController.scheduleDownloadAllotedAPIproc);
 
 // customer/individual/ API
 router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);
@@ -106,6 +110,7 @@ router.post("/exportExcel/",[
 
 
 router.post("/testUpdateSuit/",fundConnextAPIController.updateSuitAPI);
+
 
 
 module.exports = router;

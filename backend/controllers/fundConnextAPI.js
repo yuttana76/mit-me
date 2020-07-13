@@ -3614,23 +3614,6 @@ function update_MIT_FC_TransAllotted(item,ActionBy){
             var creditCardIssuer =item[56]?item[56].trim():''
 
   // console.log("update_MIT_FC_TransAllotted()");
-  //  console.log(`
-  //               ;transactionID=${transactionID}
-  //               ;transactionCode=${transactionCode}
-  //               ;status=${status}
-  //             ;amount=${amount}
-  //             ;unit=${unit}
-  //             ;allottedNAV=${allottedNAV}
-  //             ;allottedAmount=${allottedAmount}
-  //             ;allotedUnit=${allotedUnit}
-  //             ;fee =${fee}
-  //             ;withholdTax=${withholdTax}
-  //             ;VAT=${VAT}
-  //             ;brokerageFee =${brokerageFee}
-  //             ;WithholdTaxLTF_RMF=${WithholdTaxLTF_RMF}
-  //             ;brokerFeeVAT=${brokerFeeVAT}
-  //               `)
-
 
       const sql = require('mssql')
       var queryStr = `
@@ -3828,13 +3811,16 @@ function update_MIT_FC_TransAllotted(item,ActionBy){
   fnArray.push(util.txtToDateTimeFormat(transactionDateTxt));
   Promise.all(fnArray)
   .then(data => {
+
+    console.log("update_MIT_FC_TransAllotted(): "+transactionID + ';transactionDateTxt>'+transactionDateTxt + ';convert>' + data[0]);
+
     //Convert result
     transactionDate = data[0]
 
     // Execute db
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request()
-      .input("transactionID", sql.VarChar(30), transactionID)
+      // .input("transactionID", sql.VarChar(30), transactionID)
       .input("SAreferenceNo", sql.VarChar(30), SAreferenceNo)
       .input("transactionDate", sql.VarChar(50), transactionDate?transactionDate:null)
       .input("transactionDateTxt", sql.VarChar(50), transactionDateTxt)

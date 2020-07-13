@@ -16,7 +16,7 @@ const { JsonFormatter } = require('tslint/lib/formatters');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 //FundConnext configuration
-const FC_API_URI= mpamConfig.FC_API_URI
+const FC_API_URL= mpamConfig.FC_API_URL
 const FC_API_AUTH=mpamConfig.FC_API_AUTH
 
 const FC_AUTH_PATH = mpamConfig.AUTH_PATH
@@ -1203,7 +1203,7 @@ function fnGetIndCust(cardNumber){
 
         // console.log("AUTH result >>" + JSON.stringify(resultObj));
           const request = require('request');
-          const HTTPS_ENDPOIN =`https://${FC_API_URI}${INVEST_PROFILE_PATH}?cardNumber=${cardNumber}`;
+          const HTTPS_ENDPOIN =`https://${FC_API_URL}${INVEST_PROFILE_PATH}?cardNumber=${cardNumber}`;
           const option = {
             'X-Auth-Token':resultObj.access_token,
           };
@@ -1304,7 +1304,7 @@ function updateCustomerIndPartial(req,identificationCardType,passportCountry,car
        }
 
       var options = {
-        host: FC_API_URI,
+        host: FC_API_URL,
         path:INVEST_INDIVIDUAL,
         // path:"/api/customer/individual",
         method: "PATCH",
@@ -1375,7 +1375,7 @@ function createCustomerIndividualProc(req){
         resultObj =JSON.parse(result);
 
       var options = {
-        host: FC_API_URI,
+        host: FC_API_URL,
         path:INVEST_INDIVIDUAL,
         method: "POST",
         timeout: 10000,
@@ -1444,7 +1444,7 @@ function updateCustomerIndividualProc(req){
         resultObj =JSON.parse(result);
 
       var options = {
-        host: FC_API_URI,
+        host: FC_API_URL,
         path:INVEST_INDIVIDUAL,
         method: "PUT",
         timeout: 10000,
@@ -3813,7 +3813,7 @@ function update_MIT_FC_TransAllotted(item,ActionBy){
   Promise.all(fnArray)
   .then(data => {
 
-    console.log("update_MIT_FC_TransAllotted(): "+transactionID + ';transactionDateTxt>'+transactionDateTxt + ';convert>' + data[0]);
+    // console.log("update_MIT_FC_TransAllotted(): "+transactionID + ';transactionDateTxt>'+transactionDateTxt + ';convert>' + data[0]);
 
     //Convert result
     transactionDate = data[0]
@@ -4193,7 +4193,7 @@ function fnFCAuth(){
   return new Promise(function(resolve, reject) {
 
     var options = {
-      host: FC_API_URI,
+      host: FC_API_URL,
       path:FC_AUTH_PATH,
       method: "POST",
       headers: {
@@ -4243,7 +4243,7 @@ function fnGetDownloadAPI(businessDate,fileType){
 
       logger.info("***TOKEN>>"+resultObj.access_token);
 
-      const HTTPS_ENDPOIN =`https://${FC_API_URI}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
+      const HTTPS_ENDPOIN =`https://${FC_API_URL}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
       const propertiesObject = {
         "x-auth-token":resultObj.access_token,
         "Content-Type": "application/json"

@@ -3459,8 +3459,8 @@ function fcAlloted_ToDB(fileName){
 
             var item = array[i].split("|") ;
 
-            // console.log('Number>> ' + _row+1)
-
+              if(item[30]){
+                // console.log('Number>> ' + _row+1)
                 fnArray=[];
                 fnArray.push(update_MIT_FC_TransAllotted(item,'999'));
 
@@ -3473,9 +3473,8 @@ function fcAlloted_ToDB(fileName){
                   logger.error(error.message)
                   reject(error);
                 });
-
                 _row++;
-
+              }
           }
 
           // //Move to backup folder

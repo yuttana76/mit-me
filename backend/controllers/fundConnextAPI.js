@@ -4253,7 +4253,6 @@ function fnGetDownloadAPI(businessDate,fileType){
       console.log('HTTPS_ENDPOIN >>' + HTTPS_ENDPOIN);
 
       download(HTTPS_ENDPOIN,{'headers':propertiesObject}).then(data => {
-        console.log('AIP RS >' );
         try{
           fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
             if(err) {

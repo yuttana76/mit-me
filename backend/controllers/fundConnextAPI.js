@@ -3459,8 +3459,6 @@ function fcAlloted_ToDB(fileName){
 
             var item = array[i].split("|") ;
 
-            console.log('item[30]>> ' + item[30]
-            )
               if(item[30]){
                 // console.log('Number>> ' + _row+1)
                 fnArray=[];

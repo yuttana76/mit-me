@@ -462,6 +462,7 @@ exports.approveCustInfo = (req, res, next) => {
   }
 
   fnArray=[];
+  //Updat customer & suit
   fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
 
   if(fcCustInfoObj.residence)
@@ -486,7 +487,8 @@ exports.approveCustInfo = (req, res, next) => {
   fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
 
   fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
-
+  fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
+  //Suit by  account
 
 
   Promise.all(fnArray)
@@ -1406,6 +1408,9 @@ function update_CustAccountInDB(cardNumber,actionBy){
             )
         END;
 
+
+
+
       FETCH NEXT FROM @AccountCursor INTO @accountId,@icLicense,@accountOpenDate,@investmentObjective,@investmentObjectiveOther,@approvedDate,@mailingAddressSameAsFlag,@openOmnibusFormFlag;
     END
     CLOSE @AccountCursor;
@@ -1440,6 +1445,113 @@ function update_CustAccountInDB(cardNumber,actionBy){
   });
 }
 
+
+
+
+function update_MFTS_Suit(cardNumber,actionBy){
+
+  // console.log("update_MFTS_Suit()" + cardNumber);
+  const sql = require('mssql')
+
+  var queryStr = `
+
+
+  BEGIN TRANSACTION TranName;
+
+  DECLARE @AccountCursor as CURSOR;
+
+  --DECLARE @cardNumber as VARCHAR(20) ='3560100350330';
+  --DECLARE @actionBy as VARCHAR(500)='SYSTEM';
+  DECLARE @Account_No as VARCHAR(20);
+  DECLARE @suitabilityRiskLevel as VARCHAR(1);
+  DECLARE @suitabilityEvaluationDate as date
+  DECLARE @Risk_Profile as VARCHAR(100);
+  DECLARE @Risk_Description as VARCHAR(500);
+
+
+  select @suitabilityRiskLevel=A.suitabilityRiskLevel
+          ,@suitabilityEvaluationDate=A.suitabilityEvaluationDate
+          ,@Risk_Profile=B.Risk_Profile
+          ,@Risk_Description=B.Description
+  from MIT_FC_CUST_INFO  A
+  left join MFTS_Suit_Risk B  ON A.suitabilityRiskLevel =B.Risk_Level
+  where cardNumber=@cardNumber
+
+  SET @AccountCursor = CURSOR FOR
+  select accountId
+  FROM MIT_FC_CUST_ACCOUNT where cardNumber= @cardNumber;
+
+  --Insert /Update  MFTS_Suit by @accountId
+  OPEN @AccountCursor;
+  FETCH NEXT FROM @AccountCursor INTO @Account_No;
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+
+  UPDATE MFTS_Suit SET
+      Document_Date=@suitabilityEvaluationDate
+      ,Risk_Level=@Risk_Profile
+      ,Risk_Level_Desc=@Risk_Description
+      ,Active_Flag='A'
+      ,Modify_By=@actionBy
+      ,Modify_Date=getDate()
+      WHERE Account_No=@Account_No
+
+      IF @@ROWCOUNT=0
+      BEGIN
+        INSERT INTO  MFTS_Suit (
+          Account_No
+          ,Document_Date
+          ,Risk_Level
+          ,Risk_Level_Desc
+          ,Active_Flag
+          ,[Create_By]
+          ,[Create_Date]
+          )
+        VALUES(
+          @Account_No
+          ,@suitabilityEvaluationDate
+          ,@Risk_Profile
+          ,@Risk_Description
+          ,'A'
+          ,@actionBy
+          ,getDate()
+          )
+      END;
+
+
+    FETCH NEXT FROM @AccountCursor INTO @Account_No;
+  END
+  CLOSE @AccountCursor;
+  DEALLOCATE @AccountCursor;
+
+  COMMIT TRANSACTION TranName;
+
+  `;
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+        // console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
 
 
 function update_CustBankInDB(cardNumber,actionBy){

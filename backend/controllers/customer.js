@@ -1458,16 +1458,14 @@ function update_MFTS_Suit(cardNumber,actionBy){
 
   BEGIN TRANSACTION TranName;
 
+  -- Code here
   DECLARE @AccountCursor as CURSOR;
-
-  --DECLARE @cardNumber as VARCHAR(20) ='3560100350330';
-  --DECLARE @actionBy as VARCHAR(500)='SYSTEM';
   DECLARE @Account_No as VARCHAR(20);
   DECLARE @suitabilityRiskLevel as VARCHAR(1);
   DECLARE @suitabilityEvaluationDate as date
   DECLARE @Risk_Profile as VARCHAR(100);
   DECLARE @Risk_Description as VARCHAR(500);
-
+  DECLARE @RowCount as INT;
 
   select @suitabilityRiskLevel=A.suitabilityRiskLevel
           ,@suitabilityEvaluationDate=A.suitabilityEvaluationDate
@@ -1487,18 +1485,19 @@ function update_MFTS_Suit(cardNumber,actionBy){
   WHILE @@FETCH_STATUS = 0
   BEGIN
 
-  UPDATE MFTS_Suit SET
-      Document_Date=@suitabilityEvaluationDate
-      ,Risk_Level=@Risk_Profile
-      ,Risk_Level_Desc=@Risk_Description
-      ,Active_Flag='A'
-      ,Modify_By=@actionBy
-      ,Modify_Date=getDate()
+
+  select  @RowCount = COUNT(*)
+  from MFTS_Suit
+  WHERE Account_No=@Account_No
+  AND CAST(Document_Date AS DATE) >= CAST(@suitabilityEvaluationDate AS DATE)  AND Active_Flag='A'
+
+  IF @RowCount =0
+  BEGIN
+      UPDATE MFTS_Suit
+      SET Active_Flag='I'
       WHERE Account_No=@Account_No
 
-      IF @@ROWCOUNT=0
-      BEGIN
-        INSERT INTO  MFTS_Suit (
+      INSERT INTO  MFTS_Suit (
           Account_No
           ,Document_Date
           ,Risk_Level
@@ -1507,7 +1506,7 @@ function update_MFTS_Suit(cardNumber,actionBy){
           ,[Create_By]
           ,[Create_Date]
           )
-        VALUES(
+      VALUES(
           @Account_No
           ,@suitabilityEvaluationDate
           ,@Risk_Profile
@@ -1516,16 +1515,15 @@ function update_MFTS_Suit(cardNumber,actionBy){
           ,@actionBy
           ,getDate()
           )
-      END;
+  END;
 
-
-    FETCH NEXT FROM @AccountCursor INTO @Account_No;
+  FETCH NEXT FROM @AccountCursor INTO @Account_No;
   END
+
   CLOSE @AccountCursor;
   DEALLOCATE @AccountCursor;
 
   COMMIT TRANSACTION TranName;
-
   `;
 
   return new Promise(function(resolve, reject) {

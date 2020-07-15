@@ -30,7 +30,7 @@ const FC_API_MODULE ='FC API';
 var config_BULK = mpamConfig.dbParameters_BULK;
 var config = mpamConfig.dbParameters;
 
-exports.scheduleDownloadAllotedAPIproc = (req, res, next) => {
+exports.scheduleDownload = (req, res, next) => {
 
   var businessDate = fundConnextCurrentDate();
   logger.info('Execute scheduleDownloadAllotedAPIproc(); businessDate:' + businessDate )
@@ -38,6 +38,8 @@ exports.scheduleDownloadAllotedAPIproc = (req, res, next) => {
   // Transaction API
   fnArray=[];
   fnArray.push(downloadAllotedAPIproc(businessDate));
+  fnArray.push(downloadNavAPIproc(businessDate));
+
   Promise.all(fnArray)
   .then(data => {
       res.status(200).json('Test successful' + data);
@@ -2658,8 +2660,8 @@ exports.allotedFile = (req, res, next) =>{
 
 function downloadAllotedAPIproc(businessDate){
 
+  logger.info('downloadAllotedAPIproc(); businessDate:' + businessDate )
   return new Promise(function(resolve, reject) {
-
     const fileType = 'AllottedTransactions.zip';
 
       // STEP 1: CALL API download
@@ -2707,6 +2709,7 @@ function downloadAllotedAPIproc(businessDate){
 
 function downloadNavAPIproc(businessDate){
 
+  logger.info('downloadNavAPIproc(); businessDate:' + businessDate )
   return new Promise(function(resolve, reject) {
 
     const fileType = 'Nav.zip';

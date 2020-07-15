@@ -8,7 +8,7 @@ const { check } = require('express-validator');
 const { route } = require('./customer');
 
 // Schedule
-router.get("/scheduleDownloadAlloted/",fundConnextAPIController.scheduleDownloadAllotedAPIproc);
+router.get("/scheduleDownload/",fundConnextAPIController.scheduleDownload);
 
 // customer/individual/ API
 router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);

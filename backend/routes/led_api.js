@@ -9,8 +9,9 @@ const router = express.Router();
 router.get("/checkGetAPI/", led_apiController.checkAPI);
 router.post("/checkPostAPI",led_apiController.checkPostAPI);
 
-router.post("/ledMpamEncrypt/", led_apiController.ledEncrypt);
-router.post("/ledMpamDecrypt/", led_apiController.ledDecrypt);
+router.get("/ledMpamEncrypt/", led_apiController.ledEncrypt);
+// router.post("/ledMpamEncrypt/", led_apiController.ledEncrypt);
+// router.post("/ledMpamDecrypt/", led_apiController.ledDecrypt);
 
 // #1 get data from LED dialy api.
 router.post("/mpamGetBankruptList/",led_apiController.callGetBankruptList);

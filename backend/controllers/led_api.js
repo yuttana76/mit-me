@@ -28,8 +28,8 @@ const LED_FILE_PATH = __dirname + '/readFiles/LED/';
 const LED_FILE_NAME= "led_list.txt";
 const LED_LIST_FILE_NAME = 'led_list.txt';
 
-// const HTTP_SOAP = 'https://192.168.10.48:444/CrytoService.svc';
-const HTTP_SOAP = 'https://192.168.10.58:444/CrytoService.svc';
+const HTTP_SOAP = 'https://192.168.10.48:444/CrytoService.svc';
+// const HTTP_SOAP = 'https://192.168.10.58:444/CrytoService.svc';
 
 
 /*
@@ -585,7 +585,7 @@ function getLedFiles(){
         }
         );
 
-        console.log("num_files >" + num_files);
+        console.log("num_files:" + num_files);
         if(num_files==0){
           reject('Not found LED files.');
         }
@@ -1236,42 +1236,40 @@ function fnGetBankruptList(){
       fncSOAPEncrypt().then(result =>{
 
         input= result.EncryptResult;
-        logger.info("SOAPEncrypt RS >" + JSON.stringify(input));
-        logger.info('LED API path >' + PATH_GetBankruptList)
 
-        // // #2 Call APIs
-        // fnCallLEDapis(PATH_GetBankruptList,input).then(result =>{
+        // #2 Call APIs
+        fnCallLEDapis(PATH_GetBankruptList,input).then(result =>{
 
-        //   // console.log("fnCallLEDapis>> "+ result);
-        //   var resultObj =  JSON.parse(result);
+          // console.log("fnCallLEDapis>> "+ result);
+          var resultObj =  JSON.parse(result);
 
-        //   if(resultObj.responseCode == "000"){
-        //     if(resultObj.data){
-        //     // #3 Decrypt
-        //     fncSOAPDecrypt(resultObj.data).then(result =>{
+          if(resultObj.responseCode == "000"){
+            if(resultObj.data){
+            // #3 Decrypt
+            fncSOAPDecrypt(resultObj.data).then(result =>{
 
-        //       // #4 write file
-        //       writeLocalFile(result,LED_LIST_FILE_NAME).then(result =>{
-        //         resolve(result);
-        //       },err=>{
-        //         logger.error(err);
-        //         reject(err);
-        //       });
+              // #4 write file
+              writeLocalFile(result,LED_LIST_FILE_NAME).then(result =>{
+                resolve(result);
+              },err=>{
+                logger.error(err);
+                reject(err);
+              });
 
-        //     },err=>{
-        //       logger.error(err);
-        //       reject(err);
-        //     })
+            },err=>{
+              logger.error(err);
+              reject(err);
+            })
 
-        //     }
-        //   }else{
-        //     resolve(result);
-        //   }
+            }
+          }else{
+            resolve(result);
+          }
 
-        // },err=>{
-        //   logger.error(err);
-        //   reject(err);
-        // })
+        },err=>{
+          logger.error(err);
+          reject(err);
+        })
 
       },err=>{
         logger.error(err);
@@ -1449,7 +1447,7 @@ function fncSOAPEncrypt(req_key,req_status,startdate,enddate){
       'recipientCertificate':recipientCert
     };
 
-    logger.info("args > " +JSON.stringify(args) )
+    // logger.info("args > " +JSON.stringify(args) )
     // console.log('input>' + JSON.stringify(args));
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 

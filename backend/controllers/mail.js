@@ -1,8 +1,9 @@
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-// const mailConfig = require('../config/mail-conf');
+const mailConfig = require('../config/mail-conf');
 const mpamConfig = require('../config/mpam-config');
+
 const path = require('path');
 const readline = require('readline');
 const fs = require('fs');

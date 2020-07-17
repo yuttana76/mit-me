@@ -32,17 +32,18 @@ var config = mpamConfig.dbParameters;
 
 exports.scheduleDownload = (req, res, next) => {
 
+  var userCode = 'MPAM_SCH'
   var businessDate = fundConnextCurrentDate();
   logger.info('Execute scheduleDownloadAllotedAPIproc(); businessDate:' + businessDate )
 
   // Transaction API
   fnArray=[];
-  fnArray.push(downloadAllotedAPIproc(businessDate));
-  fnArray.push(downloadNavAPIproc(businessDate));
+  fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
+  fnArray.push(downloadNavAPIproc(businessDate,userCode));
 
   Promise.all(fnArray)
   .then(data => {
-      res.status(200).json('Test successful' + data);
+      res.status(200).json('Schedule successful. ' + JSON.stringify(data));
   })
   .catch(error => {
     logger.error(error.message)
@@ -2650,15 +2651,16 @@ exports.downloadAllottedAPI = (req, res, next) =>{
 exports.allotedFile = (req, res, next) =>{
 
   fileName = '20191104_MPAM_ALLOTTEDTRANSACTIONS.txt';
+  var userCode ='test'
 
-  fcAlloted_ToDB(fileName).then(allottedToDB_RS=>{
+  fcAlloted_ToDB(fileName,userCode).then(allottedToDB_RS=>{
     res.status(200).json({message: allottedToDB_RS});
   },err=>{
     res.status(422).json(err);
   });
 }
 
-function downloadAllotedAPIproc(businessDate){
+function downloadAllotedAPIproc(businessDate,userCode){
 
   logger.info('downloadAllotedAPIproc(); businessDate:' + businessDate )
   return new Promise(function(resolve, reject) {
@@ -2671,7 +2673,7 @@ function downloadAllotedAPIproc(businessDate){
           unZipFile(data.path).then(fileName=>{
 
           //   //STEP 3: Insert to DB.(MIT_FC_NAV)
-            fcAlloted_ToDB(fileName).then(allottedToDB_RS=>{
+            fcAlloted_ToDB(fileName,userCode).then(allottedToDB_RS=>{
 
               resolve(allottedToDB_RS)
 
@@ -2707,7 +2709,7 @@ function downloadAllotedAPIproc(businessDate){
 
 
 
-function downloadNavAPIproc(businessDate){
+function downloadNavAPIproc(businessDate,userCode){
 
   logger.info('downloadNavAPIproc(); businessDate:' + businessDate )
   return new Promise(function(resolve, reject) {
@@ -2721,7 +2723,7 @@ function downloadNavAPIproc(businessDate){
           unZipFile(data.path).then(fileName=>{
 
             //STEP 3: Insert to DB.(MIT_FC_NAV)
-            fcNAV_ToDB(fileName,businessDate).then(navToDB_RS=>{
+            fcNAV_ToDB(fileName,businessDate,userCode).then(navToDB_RS=>{
 
               //STEP 4: Syncy to MFTS (MFTS_NavTable)
               navSyncFunc(navToDB_RS.businessDate).then(syncData=>{
@@ -3435,12 +3437,12 @@ function fcNAV_ToExcel(fileName,businessDate){
   });
 }
 
-function fcAlloted_ToDB(fileName){
+function fcAlloted_ToDB(fileName,userCode){
   logger.info('Function fcAlloted_ToDB() //'+fileName);
 
   const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
   const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
-  const userCode='SYSTEM';
+  // const userCode='SYSTEM';
 
   return new Promise(function(resolve, reject) {
 
@@ -3465,7 +3467,7 @@ function fcAlloted_ToDB(fileName){
               if(item[30]){
                 // console.log('Number>> ' + _row+1)
                 fnArray=[];
-                fnArray.push(update_MIT_FC_TransAllotted(item,'999'));
+                fnArray.push(update_MIT_FC_TransAllotted(item,userCode));
 
                 Promise.all(fnArray)
                 .then(data => {
@@ -3902,12 +3904,12 @@ function update_MIT_FC_TransAllotted(item,ActionBy){
 }
 
 
-function fcNAV_ToDB(fileName,businessDate){
+function fcNAV_ToDB(fileName,businessDate,userCode){
   logger.info('Function fcNAV_ToDB() //'+fileName);
 
   const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
   const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
-  const userCode='MIT-SYSTEM';
+  // const userCode='MIT-SYSTEM';
 
   return new Promise(function(resolve, reject) {
 
@@ -4010,7 +4012,6 @@ function fcNAV_ToDB(fileName,businessDate){
                     if (err) {
                       reject(err);
                     };
-
                     resolve(msg);
                   });
 

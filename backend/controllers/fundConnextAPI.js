@@ -2520,6 +2520,8 @@ exports.downloadFileAPI = (req, res, next) =>{
 
   const ACCOUNT_PROFILE='AccountProfile.zip';
 
+  // fileType = 'CustomerProfile.zip';
+
   var businessDate = req.query.businessDate
   var fileType = req.query.fileType
   var fileAs = req.query.fileAs
@@ -2545,6 +2547,7 @@ exports.downloadFileAPI = (req, res, next) =>{
             // Export to general  data
             // res.status(200).json(data);
           }
+
         }else{  // Other file Nav.zip
 
           console.log('STEP 1-2');
@@ -2557,6 +2560,44 @@ exports.downloadFileAPI = (req, res, next) =>{
           });
         }
 
+    },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+    });
+}
+
+
+
+exports.downloadFileAPICustomerProfile = (req, res, next) =>{
+  console.log("Validate  API /downloadFileAPICustomerProfile/");
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  var businessDate = req.query.businessDate
+  var businessDate = getCurrentDate();
+
+  const fileType='CustomerProfile.zip';
+  const MPAM_INDIVIDUAL = businessDate.concat('_MPAM_INDIVIDUAL.json');
+
+
+    fnGetDownloadAPI(businessDate,fileType).then(data=>{
+
+      fnExtractCustomerProfile(data.path).then(excelFile=>{
+        res.download(excelFile);
+        },err=>{
+          res.status(400).json({
+            message: err,
+            code:"999",
+          });
+        });
+
+
+
 
     },err=>{
       res.status(400).json({
@@ -2565,6 +2606,7 @@ exports.downloadFileAPI = (req, res, next) =>{
       });
     });
 }
+
 
 
 exports.downloadFileNavAPI = (req, res, next) =>{
@@ -4188,6 +4230,84 @@ function fnAccToExcel(filePaht){
 }
 
 
+
+function fnExtractCustomerProfile(filePaht){
+
+  console.log('Welcome fnExtractCustomerProfile() '+ filePaht);
+  // Split name
+  var arr = filePaht.toString().split("/");
+  var fileName = arr[arr.length-1]
+  var fileNameArr = fileName.toString().split("-");
+  var _prefix =fileNameArr[0];
+
+  // '20190820_MPAM_ACCOUNT.txt'
+  // var extAccFileName = _prefix+'_MPAM_ACCOUNT.txt';
+  var extAccFileName ;
+
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+
+  var _zipFile= DOWNLOAD_DIR+'/'+fileName;
+  const EXCEL_FILE_NAME=_prefix+'_MPAM_ACCOUNT.xlsx';
+
+  return new Promise(function(resolve, reject) {
+
+    //Unzip file
+    try{
+      var zip = new AdmZip(_zipFile);
+
+      var zipEntries = zip.getEntries();
+      zipEntries.forEach(function(zipEntry) {
+        extAccFileName = zipEntry.entryName // 20200720_MPAM_INDIVIDUAL.json
+    });
+
+      zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
+    }
+    catch (e) {
+      reject(e)
+    }
+
+    //Read file
+    fs.readFile(DOWNLOAD_DIR +"/"+ extAccFileName, function(err, data) {
+      if(err) {
+        reject(err);
+      }
+      var array = data.toString().split("\n");
+      var attr = array[0].split("|") ;
+
+      if ( attr[2] != (array.length - 1 ) ){
+        logger.error('Download data missing. Try again');
+        reject('Download data missing. Try again');
+      }
+
+    // console.log('Process NEXT !')
+    array.shift(); //removes the first array element
+
+    var _row =1;
+      for(i in array) {
+        var item = array[i].split("|") ;
+
+        // // Account ID
+        // ws.cell(_row, 1).string(item[1]).style(style);
+        // // Gender
+        // ws.cell(_row, 2).string(item[34]).style(style);
+        // // Title
+        // ws.cell(_row, 3).string(item[35]).style(style);
+        // // First Name TH
+        // ws.cell(_row, 4).string(item[36]).style(style);
+        // // Last Name TH
+        // ws.cell(_row, 5).string(item[37]).style(style);
+        // // First Name EN
+        // ws.cell(_row, 6).string(item[38]).style(style);
+        // // Last Name EN
+        // ws.cell(_row, 7).string(item[39]).style(style);
+
+      }
+
+    });
+  });
+}
+
+
 // Login to the FC. system and acquire access tokens
 function fnFCAuth(){
   console.log('Welcome fnFCAuth() ');
@@ -4356,15 +4476,26 @@ function downloadNavSchedule(schStatus){
 
 function fundConnextCurrentDate(){
   var today = new Date();
-  var navDate_yyyymmddDate;
+  var returnDate_yyyymmddDate;
 
   if(today.getDay() == 1 ){
     today.setDate(today.getDate()-3);
-    navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+    returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
   }else{
     today.setDate(today.getDate()-1);
-    navDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+    returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
   }
 
-  return navDate_yyyymmddDate
+  return returnDate_yyyymmddDate
+}
+
+
+function getCurrentDate(){
+  var today = new Date();
+  var returnDate_yyyymmddDate;
+
+  today.setDate(today.getDate());
+  returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+
+  return returnDate_yyyymmddDate
 }

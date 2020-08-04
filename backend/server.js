@@ -100,13 +100,25 @@ Object.keys(ifaces).forEach(function (ifname) {
 
 });
 
+key_path= mpamConfig.key_path? mpamConfig.key_path:__dirname+'/merchantasset_CA/key.pem';
+cert_path= mpamConfig.cert_path? mpamConfig.cert_path:__dirname+'/merchantasset_CA/cert.pem';
+ca_path= mpamConfig.ca_path? mpamConfig.ca_path:__dirname+'/merchantasset_CA/inter.pem';
+
+// const option = {
+//   key: fs.readFileSync(key_path),
+//   cert: fs.readFileSync(cert_path),
+//   ca: fs.readFileSync(ca_path),
+//   passphrase: mpamConfig.cert_passphrase
+// };
+
 const option = {
-  key: fs.readFileSync(__dirname+'/merchantasset_CA/key.pem'),
-  cert: fs.readFileSync(__dirname+'/merchantasset_CA/cert.pem'),
-  ca: fs.readFileSync(__dirname+'/merchantasset_CA/inter.pem'),
-    passphrase: mpamConfig.cert_passphrase
-    // passphrase: 'mpam@2019'
+  key: fs.readFileSync(key_path),
+  cert: fs.readFileSync(cert_path),
+  passphrase: mpamConfig.cert_passphrase
 };
+
+if(ca_path)
+  option.ca=fs.readFileSync(ca_path);
 
 logger.info('HTTS config >>' + JSON.stringify(__dirname))
 

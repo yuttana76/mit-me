@@ -31,7 +31,8 @@ const {
   SMS_URL,
   SMS_USER,
   SMS_PASSWORD,
-  SMS_SENDER
+  SMS_SENDER,
+  cert_passphrase,
 } = process.env;
 
 // validate the required configuration information
@@ -56,6 +57,7 @@ assert( MAIL_PASSWORD, "MAIL_PASSWORD configuration is required." );
 
 
 assert( SMS_URL, "SMS_URL configuration is required." );
+assert( cert_passphrase, "Certificate passphrase is required." );
 // assert( SMS_USER, "SMS_USER configuration is required." );
 // assert( SMS_PASSWORD, "SMS_PASSWORD configuration is required." );
 // assert( SMS_SENDER, "SMS_SENDER configuration is required." );

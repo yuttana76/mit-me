@@ -4,6 +4,9 @@ const http = require("http");
 const https = require('https');
 const fs = require('fs');
 
+var logger = require('./config/winston');
+const mpamConfig = require('./config/mpam-config');
+
 const normalizePort = val => {
   var port = parseInt(val, 10);
 
@@ -56,12 +59,14 @@ console.log('PORT='+port);
 app.set("port", port);
 
 // ************************************** HTTP
+/*
 const server = http.createServer(app);
 server.on("error", onError);
 server.on("listening", onListening);
 server.listen(port,function () {
   console.log("Listening on port http://localhost:%s", server.address().port);
 })
+*/
 
 // ************************************** HTTPS Configuratrion
 
@@ -74,8 +79,9 @@ server.listen(port,function () {
 
 // console.log('DIR>' + __dirname);
 // ************************************** GET IP address
-/*
+
 var os = require('os');
+// const { logger } = require("handlebars");
 var ifaces = os.networkInterfaces();
 Object.keys(ifaces).forEach(function (ifname) {
   var alias = 0;
@@ -98,10 +104,14 @@ const option = {
   key: fs.readFileSync(__dirname+'/merchantasset_CA/key.pem'),
   cert: fs.readFileSync(__dirname+'/merchantasset_CA/cert.pem'),
   ca: fs.readFileSync(__dirname+'/merchantasset_CA/inter.pem'),
-    passphrase: 'mpam@2019'
+    passphrase: mpamConfig.cert_passphrase
+    // passphrase: 'mpam@2019'
 };
+
+logger.info('HTTS config >>' + JSON.stringify(__dirname))
+
 var server = https.createServer(option, app)
 .listen(port,function () {
   console.log("Listening on port https://localhost:%s", server.address().port);
 })
-*/
+

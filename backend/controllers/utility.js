@@ -251,3 +251,27 @@ exports.txtToDateTimeFormat = (str)=>{
     }
   });
 }
+
+exports.readJSONfile =(filePath,fileName)=>{
+  logger.info("readJSONfile()"+ filePath +"/"+fileName)
+  return new Promise(function(resolve, reject) {
+    try{
+      const fs = require("fs");
+      // Read users.json file
+      fs.readFile(filePath +"/"+ fileName, function(err, data) {
+
+          // Check for errors
+          if (err) reject(err);
+
+          // Converting to JSON
+          const jsonObj = JSON.parse(data);
+          resolve(jsonObj)
+      });
+    }
+    catch(err) {
+      reject(err)
+    }
+
+  });
+
+}

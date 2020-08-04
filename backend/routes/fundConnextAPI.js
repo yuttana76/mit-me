@@ -18,15 +18,9 @@ router.post("/customer/individual", fundConnextAPIController.createCustomerIndiv
 router.put("/customer/individual", fundConnextAPIController.updateCustomerIndividual);
 router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);//Partrial
 
-// download API CustomerProfile
-router.get("/downloadFileAPICustomerProfile/",[
-  // check('fileType')
-  //   .exists().withMessage('must have param fileType')
-  //   .isLength({ min: 1 }).withMessage('fileType must have value '),
-  // check('businessDate')
-  //   .exists().withMessage('must have Param businessDate')
-  //   .isLength({ min: 1 }).withMessage('businessDate must have value '),
-], fundConnextAPIController.downloadFileAPICustomerProfile);
+//(DEVELOPING !!) download API CustomerProfile
+router.get("/downloadCustomerProfile/",[
+], fundConnextAPIController.downloadCustomerProfile);
 
 
 // download API

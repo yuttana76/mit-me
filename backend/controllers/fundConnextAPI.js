@@ -30,6 +30,8 @@ const FC_API_MODULE ='FC API';
 var config_BULK = mpamConfig.dbParameters_BULK;
 var config = mpamConfig.dbParameters;
 
+const sql = require("mssql");
+
 exports.scheduleDownload = (req, res, next) => {
 
   var userCode = 'MPAM_SCH'
@@ -52,6 +54,28 @@ exports.scheduleDownload = (req, res, next) => {
 
 }
 
+
+
+exports.downloadCustomerProfile = (req, res, next) => {
+
+  var userCode = 'MPAM_API'
+  var businessDate = getCurrentDate();
+
+  logger.info('downloadCustomerProfile API; businessDate:' + businessDate )
+
+  // Transaction API
+  fnArray=[];
+  fnArray.push(customerProfileProc(businessDate,userCode));
+
+  Promise.all(fnArray)
+  .then(data => {
+      res.status(200).json('downloadCustomerProfile API successful. ' + JSON.stringify(data));
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+}
 
 
 exports.getIndCust = (req, res, next) =>{
@@ -78,11 +102,9 @@ exports.getIndCust = (req, res, next) =>{
       },err=>{
         res.status(401).json(err);
       });
-
     },err=>{
       res.status(401).json(err);
     });
-
 }
 
 
@@ -231,12 +253,11 @@ exports.updateCustomerIndividual = (req, res, next) =>{
 }
 
 
-
-
 // GET
 function getIndCustDEVProc(custInfoObj,actionBy){
+
   console.log("Welcome getIndCustDEVProc()" );
-  // console.log("custInfoObj --> " + JSON.stringify(custInfoObj));
+  console.log("custInfoObj --> " + JSON.stringify(custInfoObj));
 
   return new Promise(function(resolve, reject) {
 
@@ -290,7 +311,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
 
 function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
 
-  logger.info('saveMIT_FC_CUST_INFO()->');
+  logger.info('saveMIT_FC_CUST_INFO()->' + JSON.stringify(custInfoObj) );
 
   if(custInfoObj.cardExpiryDate ==='N/A')
     custInfoObj.cardExpiryDate=''
@@ -490,7 +511,7 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
 
   END
     `;
-  const sql = require("mssql");
+  // const sql = require("  ");
   return new Promise(function(resolve, reject) {
 
     try{
@@ -541,7 +562,7 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
         .input("canAcceptFxRisk", sql.VarChar(10), custInfoObj.canAcceptFxRisk)
         .input("accompanyingDocument", sql.VarChar(20), custInfoObj.accompanyingDocument)
         .input("gender", sql.VarChar(10), custInfoObj.gender)
-        .input("referalPerson", sql.NVarChar(100), custInfoObj.referalPerson)
+        .input("referalPerson", sql.NVarChar(100), custInfoObj.referralPerson)
         .input("applicationDate", sql.VarChar(10), custInfoObj.applicationDate || '')
         .input("incomeSourceCountry", sql.VarChar(2), custInfoObj.incomeSourceCountry)
         .input("acceptBy", sql.NVarChar(100), custInfoObj.acceptBy)
@@ -712,7 +733,7 @@ function saveMIT_FC_CUST_ACCOUNT_Detail(cardNumber,obj,actionBy) {
   END
 
     `;
-  const sql = require("mssql");
+  // const sql = require("mssql");
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
@@ -819,7 +840,7 @@ function saveMIT_FC_CUST_CHILDREN_Detail(cardNumber,obj,actionBy) {
 
   END
     `;
-  const sql = require("mssql");
+  // const sql = require("mssql");
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
@@ -905,7 +926,7 @@ function saveMIT_FC_CUST_BANK_Detail(cardNumber,accountId,accType,obj,actionBy) 
 
   END
     `;
-  const sql = require("mssql");
+  // const sql = require("mssql");
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
@@ -1047,7 +1068,7 @@ function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
 
   END
     `;
-  const sql = require("mssql");
+  // const sql = require("mssql");
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
@@ -1154,7 +1175,7 @@ function saveMIT_FC_CUST_SUIT_Detail(cardNumber,obj,actionBy) {
 
   END
     `;
-  const sql = require("mssql");
+  // const sql = require("mssql");
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
@@ -1204,7 +1225,7 @@ function fnGetIndCust(cardNumber){
     fnFCAuth().then(result =>{
       resultObj =JSON.parse(result);
 
-        // console.log("AUTH result >>" + JSON.stringify(resultObj));
+        // logger.info("AUTH result >>" + JSON.stringify(resultObj));
           const request = require('request');
           const HTTPS_ENDPOIN =`https://${FC_API_URL}${INVEST_PROFILE_PATH}?cardNumber=${cardNumber}`;
           const option = {
@@ -1227,9 +1248,7 @@ function fnGetIndCust(cardNumber){
         console.log('ERR AUTH>>'+err);
         reject(err);
       });
-
   });
-
 }
 
 // PATCH
@@ -1534,7 +1553,7 @@ function updateMFTSsuit(cardNumber,suitabilityRiskLevel,suitabilityEvaluationDat
 END
     `;
 
-  const sql = require("mssql");
+  // const sql = require("mssql");
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
@@ -2433,7 +2452,7 @@ function updateMIT_ACCOUNT_INFO_EXT(cardNumber ,cddScore, cddDate ,suitabilityRi
   END
     `;
 
-  const sql = require("mssql");
+  // const sql = require("mssql");
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
@@ -2484,7 +2503,7 @@ function updateSuit(custCode,riskLevel,UpdateBy) {
   END
     `;
 
-  const sql = require("mssql");
+  // const sql = require("mssql");
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
@@ -2567,46 +2586,6 @@ exports.downloadFileAPI = (req, res, next) =>{
       });
     });
 }
-
-
-
-exports.downloadFileAPICustomerProfile = (req, res, next) =>{
-  console.log("Validate  API /downloadFileAPICustomerProfile/");
-
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
-
-  var businessDate = req.query.businessDate
-  var businessDate = getCurrentDate();
-
-  const fileType='CustomerProfile.zip';
-  const MPAM_INDIVIDUAL = businessDate.concat('_MPAM_INDIVIDUAL.json');
-
-
-    fnGetDownloadAPI(businessDate,fileType).then(data=>{
-
-      fnExtractCustomerProfile(data.path).then(excelFile=>{
-        res.download(excelFile);
-        },err=>{
-          res.status(400).json({
-            message: err,
-            code:"999",
-          });
-        });
-
-
-
-
-    },err=>{
-      res.status(400).json({
-        message: err,
-        code:"999",
-      });
-    });
-}
-
 
 
 exports.downloadFileNavAPI = (req, res, next) =>{
@@ -2703,52 +2682,73 @@ exports.allotedFile = (req, res, next) =>{
 }
 
 function downloadAllotedAPIproc(businessDate,userCode){
-
   logger.info('downloadAllotedAPIproc(); businessDate:' + businessDate )
   return new Promise(function(resolve, reject) {
     const fileType = 'AllottedTransactions.zip';
-
       // STEP 1: CALL API download
       fnGetDownloadAPI(businessDate,fileType).then(data=>{
-
           // //STEP 2: Upzip downloaded file.
           unZipFile(data.path).then(fileName=>{
-
           //   //STEP 3: Insert to DB.(MIT_FC_NAV)
             fcAlloted_ToDB(fileName,userCode).then(allottedToDB_RS=>{
-
               resolve(allottedToDB_RS)
-
-          //     //STEP 4: Syncy to MFTS (MFTS_NavTable)
-          //     navSyncFunc(navToDB_RS.businessDate).then(syncData=>{
-
-          //       resolve(syncData)
-          //       // res.status(200).json({message: syncData});
-
-          //     },syncErr=>{
-          //       // res.status(422).json({error: syncErr});
-          //       reject(syncErr);
-          //     })
-
             },err=>{
               reject(err);
-              // res.status(422).json({error: err});
             });
-
-          //   //Update to
           },err=>{
             reject(err);
-              // res.status(422).json(err);
           });
-
       },err=>{
         reject(err);
       });
-
   });
-
 }
 
+/**
+ * For download API CustomerProfile”
+ */
+function customerProfileProc(businessDate,actionBy){
+
+  logger.info('customerProfileProc(); businessDate:' + businessDate )
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+
+  return new Promise(function(resolve, reject) {
+    const fileType = 'CustomerProfile.zip';
+      // STEP 1: CALL API download
+      fnGetDownloadAPI(businessDate,fileType).then(data=>{
+          // //STEP 2: Upzip downloaded file.
+          unZipFile(data.path).then(fileName=>{
+
+            MPAM_INDIVIDUAL_FILE=businessDate+"_MPAM_INDIVIDUAL.json"
+            util.readJSONfile(DOWNLOAD_DIR,MPAM_INDIVIDUAL_FILE).then(data=>{
+
+              // Implement here
+              data.forEach(function(item){
+
+                logger.info(">>>"+JSON.stringify(item))
+
+                  // getIndCustDEVProc(item,actionBy).then(result=>{
+                  //   // res.status(200).json(result);
+                  // },err=>{
+                  //   // res.status(401).json(err);
+                  // });
+
+              });
+
+
+              resolve(data.length);
+            },err=>{
+              reject(err);
+            })
+
+          },err=>{
+            reject(err);
+          });
+      },err=>{
+        reject(err);
+      });
+  });
+}
 
 
 function downloadNavAPIproc(businessDate,userCode){
@@ -4078,7 +4078,7 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
     }
   });
 }
-
+// #1
 function unZipFile(filePaht){
 
   console.log('Welcome unZipFile() '+ filePaht);
@@ -4090,31 +4090,33 @@ function unZipFile(filePaht){
   var _zipFile= DOWNLOAD_DIR+'/'+fileName;
   var _unzipPath="";
 
-
   return new Promise(function(resolve, reject) {
-
+    let extAccFileName =[]
     //Unzip file
     try{
       var zip = new AdmZip(_zipFile);
 
       var zipEntries = zip.getEntries();
       zipEntries.forEach(function(zipEntry) {
-        extAccFileName = zipEntry.entryName
+        console.log('***AdmZip' + JSON.stringify(zipEntry))
+        // extAccFileName = zipEntry.entryName
+        extAccFileName.push(zipEntry.entryName)
+
+        zip.extractEntryTo(/*entry name*/zipEntry.entryName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
     });
 
-      zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
+      // zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
 
       resolve(extAccFileName);
 
-      //file removed
-      fs.unlink(_zipFile, (err) => {
-        if (err) {
-          reject(err)
-        }
-        _unzipPath=_unzipPath.concat(DOWNLOAD_DIR,"/",extAccFileName);
-        // resolve(_unzipPath);
-        resolve(extAccFileName);
-      })
+      //Remove file
+      // fs.unlink(_zipFile, (err) => {
+      //   if (err) {
+      //     reject(err)
+      //   }
+      //   _unzipPath=_unzipPath.concat(DOWNLOAD_DIR,"/",extAccFileName);
+      //   resolve(extAccFileName);
+      // })
 
     }
     catch (e) {
@@ -4230,88 +4232,9 @@ function fnAccToExcel(filePaht){
 }
 
 
-
-function fnExtractCustomerProfile(filePaht){
-
-  console.log('Welcome fnExtractCustomerProfile() '+ filePaht);
-  // Split name
-  var arr = filePaht.toString().split("/");
-  var fileName = arr[arr.length-1]
-  var fileNameArr = fileName.toString().split("-");
-  var _prefix =fileNameArr[0];
-
-  // '20190820_MPAM_ACCOUNT.txt'
-  // var extAccFileName = _prefix+'_MPAM_ACCOUNT.txt';
-  var extAccFileName ;
-
-  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
-
-  var _zipFile= DOWNLOAD_DIR+'/'+fileName;
-  const EXCEL_FILE_NAME=_prefix+'_MPAM_ACCOUNT.xlsx';
-
-  return new Promise(function(resolve, reject) {
-
-    //Unzip file
-    try{
-      var zip = new AdmZip(_zipFile);
-
-      var zipEntries = zip.getEntries();
-      zipEntries.forEach(function(zipEntry) {
-        extAccFileName = zipEntry.entryName // 20200720_MPAM_INDIVIDUAL.json
-    });
-
-      zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
-    }
-    catch (e) {
-      reject(e)
-    }
-
-    //Read file
-    fs.readFile(DOWNLOAD_DIR +"/"+ extAccFileName, function(err, data) {
-      if(err) {
-        reject(err);
-      }
-      var array = data.toString().split("\n");
-      var attr = array[0].split("|") ;
-
-      if ( attr[2] != (array.length - 1 ) ){
-        logger.error('Download data missing. Try again');
-        reject('Download data missing. Try again');
-      }
-
-    // console.log('Process NEXT !')
-    array.shift(); //removes the first array element
-
-    var _row =1;
-      for(i in array) {
-        var item = array[i].split("|") ;
-
-        // // Account ID
-        // ws.cell(_row, 1).string(item[1]).style(style);
-        // // Gender
-        // ws.cell(_row, 2).string(item[34]).style(style);
-        // // Title
-        // ws.cell(_row, 3).string(item[35]).style(style);
-        // // First Name TH
-        // ws.cell(_row, 4).string(item[36]).style(style);
-        // // Last Name TH
-        // ws.cell(_row, 5).string(item[37]).style(style);
-        // // First Name EN
-        // ws.cell(_row, 6).string(item[38]).style(style);
-        // // Last Name EN
-        // ws.cell(_row, 7).string(item[39]).style(style);
-
-      }
-
-    });
-  });
-}
-
-
 // Login to the FC. system and acquire access tokens
 function fnFCAuth(){
-  console.log('Welcome fnFCAuth() ');
-
+  logger.info('Welcome fnFCAuth() ');
   return new Promise(function(resolve, reject) {
 
     var options = {
@@ -4324,7 +4247,7 @@ function fnFCAuth(){
       },
     };
 
-  // console.log('***options > ' + JSON.stringify(options));
+    // logger.info('***options > ' + JSON.stringify(options));
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
   const request = https.request(options,(res) => {
@@ -4340,11 +4263,12 @@ function fnFCAuth(){
   });
 
   request.on('error', (e) => {
-    console.log('err fnFCAuth>' + e);
+    logger.error('err fnFCAuth>' + e);
     reject(e);
   });
 
   // Write data to request body
+  // logger.info('***FC_API_AUTH > ' + JSON.stringify(FC_API_AUTH));
   request.write(JSON.stringify(FC_API_AUTH));
   request.end();
 

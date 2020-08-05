@@ -59,14 +59,14 @@ console.log('PORT='+port);
 app.set("port", port);
 
 // ************************************** HTTP
-/*
+
 const server = http.createServer(app);
 server.on("error", onError);
 server.on("listening", onListening);
 server.listen(port,function () {
   console.log("Listening on port http://localhost:%s", server.address().port);
 })
-*/
+
 
 // ************************************** HTTPS Configuratrion
 
@@ -80,56 +80,38 @@ server.listen(port,function () {
 // console.log('DIR>' + __dirname);
 // ************************************** GET IP address
 
-var os = require('os');
-// const { logger } = require("handlebars");
-var ifaces = os.networkInterfaces();
-Object.keys(ifaces).forEach(function (ifname) {
-  var alias = 0;
-  ifaces[ifname].forEach(function (iface) {
-    if ('IPv4' !== iface.family || iface.internal !== false) {
-      return;
-    }
+// var os = require('os');
+// var ifaces = os.networkInterfaces();
+// Object.keys(ifaces).forEach(function (ifname) {
+//   var alias = 0;
+//   ifaces[ifname].forEach(function (iface) {
+//     if ('IPv4' !== iface.family || iface.internal !== false) {
+//       return;
+//     }
 
-    if (alias >= 1) {
-      console.log(ifname + ':' + alias, iface.address);
-    } else {
-      console.log(ifname, iface.address);
-    }
-    ++alias;
-  });
+//     if (alias >= 1) {
+//       console.log(ifname + ':' + alias, iface.address);
+//     } else {
+//       console.log(ifname, iface.address);
+//     }
+//     ++alias;
+//   });
 
-});
+// });
 
-key_path= mpamConfig.key_path? mpamConfig.key_path:__dirname+'/merchantasset_CA/key.pem';
-cert_path= mpamConfig.cert_path? mpamConfig.cert_path:__dirname+'/merchantasset_CA/cert.pem';
-ca_path= mpamConfig.ca_path? mpamConfig.ca_path:__dirname+'/merchantasset_CA/inter.pem';
-
-const option = {
-  key: fs.readFileSync('/home/api/self-signed-cert/server.key'),
-  cert: fs.readFileSync('/home/api/self-signed-cert/server.cert')
-};
+// key_path= mpamConfig.key_path? mpamConfig.key_path:__dirname+'/merchantasset_CA/key.pem';
+// cert_path= mpamConfig.cert_path? mpamConfig.cert_path:__dirname+'/merchantasset_CA/cert.pem';
+// ca_path= mpamConfig.ca_path? mpamConfig.ca_path:__dirname+'/merchantasset_CA/inter.pem';
 
 // const option = {
-//   key: fs.readFileSync(key_path),
-//   cert: fs.readFileSync(cert_path),
-//   ca: fs.readFileSync(ca_path),
-//   passphrase: mpamConfig.cert_passphrase
+//   key: fs.readFileSync('/home/api/self-signed-cert/server.key'),
+//   cert: fs.readFileSync('/home/api/self-signed-cert/server.cert')
 // };
 
-// const option = {
-//   key: fs.readFileSync(key_path),
-//   cert: fs.readFileSync(cert_path),
-//   passphrase: mpamConfig.cert_passphrase
-// };
-// if(ca_path)
-//   option.ca=fs.readFileSync(ca_path);
+// logger.info('HTTS config >>' + JSON.stringify(__dirname))
 
-
-
-logger.info('HTTS config >>' + JSON.stringify(__dirname))
-
-var server = https.createServer(option, app)
-.listen(port,function () {
-  console.log("Listening on port https://localhost:%s", server.address().port);
-})
+// var server = https.createServer(option, app)
+// .listen(port,function () {
+//   console.log("Listening on port https://localhost:%s", server.address().port);
+// })
 

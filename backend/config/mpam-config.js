@@ -55,7 +55,6 @@ assert( MAIL_PORT, "MAIL_PORT configuration is required." );
 assert( MAIL_USER, "MAIL_USER configuration is required." );
 assert( MAIL_PASSWORD, "MAIL_PASSWORD configuration is required." );
 
-
 assert( SMS_URL, "SMS_URL configuration is required." );
 assert( cert_passphrase, "Certificate passphrase is required." );
 // assert( SMS_USER, "SMS_USER configuration is required." );

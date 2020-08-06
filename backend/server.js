@@ -52,8 +52,11 @@ const onListening = () => {
 const dotenv = require('dotenv');
 dotenv.config();
 
-const port = normalizePort(process.env.PORT || "3009");
-console.log('NODE_ENV=' +process.env.NODE_ENV );
+const port = normalizePort(process.env.PORT || "3000");
+
+console.log('NODE_ENV =' +process.env.NODE_ENV );
+console.log('SQL_SERVER =' +process.env.SQL_SERVER );
+console.log('production =' +process.env.production );
 console.log('PORT='+port);
 
 app.set("port", port);

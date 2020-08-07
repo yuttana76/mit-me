@@ -1,5 +1,7 @@
 
 const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcrypt');
+
 const jwt = require('jsonwebtoken');
 const mpamConfig = require('../config/mpam-config');
 var prop = require('../config/backend-property');
@@ -103,83 +105,86 @@ exports.createUser = (req,res,next)=>{
   logger.info( `API /register - ${req.originalUrl} - ${req.ip} - ${req.body.email}`);
 
   var _userName = req.body.email
-  bcrypt.hash(req.body.password, SALT_WORK_FACTOR)
-  .then(hash =>{
+  bcrypt.genSalt(parseInt(SALT_WORK_FACTOR), function(err, salt) {
+    bcrypt.hash(req.body.password, salt)
+    .then(hash =>{
 
-      var queryStr = `INSERT INTO   [MFTS].[dbo].[MIT_USERS] (LoginName,USERID,PASSWD,EMAIL,STATUS,CREATEBY,CREATEDATE)
-                      VALUES('${_userName}','${_userName}','${hash}','${_userName}','A','WEB-APP',GETDATE());`;
+        var queryStr = `INSERT INTO   [MFTS].[dbo].[MIT_USERS] (LoginName,USERID,PASSWD,EMAIL,STATUS,CREATEBY,CREATEDATE)
+                        VALUES('${_userName}','${_userName}','${hash}','${_userName}','A','WEB-APP',GETDATE());`;
 
-      var sql = require("mssql");
+        var sql = require("mssql");
 
-      sql.connect(config, err => {
-        new sql.Request().query(queryStr, (err, result) => {
-          sql.close();
-            if(err){
-              res.status(500).json({
-                error:err
-              });
-
-            } else {
-              res.status(200).json({
-                message: 'User created',
-                result: result
-              });
-            }
-
-        })
-
-      });
-
-      sql.on("error", err => {
-
-        logger.error( `API /register - ${err}`);
-
-        sql.close();
-        res.status(500).json({
-          error:err
+        sql.connect(config, err => {
+          new sql.Request().query(queryStr, (err, result) => {
+            sql.close();
+              if(err){
+                res.status(500).json({
+                  error:err
+                });
+              } else {
+                res.status(200).json({
+                  message: 'User created',
+                  result: result
+                });
+              }
+          })
         });
-      });
+
+        sql.on("error", err => {
+
+          logger.error( `API /register - ${err}`);
+
+          sql.close();
+          res.status(500).json({
+            error:err
+          });
+        });
+    }).catch(err => console.log(err));
   });
 }
 
 exports.resetPassword = (req,res,next)=>{
 
   logger.info( `API /resetPassword - ${req.originalUrl} - ${req.ip} - ${req.body.LoginName}`);
-  bcrypt.hash(req.body.password, SALT_WORK_FACTOR)
-  .then(hash =>{
 
-      var queryStr = `UPDATE [MFTS].[dbo].[MIT_USERS]
-                      SET PASSWD='${hash}',UPDATEBY='WEB-APP',UPDATEDATE=GETDATE()
-                      WHERE LoginName='${req.body.LoginName}'`;
+    // bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+    bcrypt.genSalt(parseInt(SALT_WORK_FACTOR), function(err, salt) {
+      bcrypt.hash(req.body.password, salt)
+      .then(hash =>{
 
-      var sql = require("mssql");
+          var queryStr = `UPDATE [MFTS].[dbo].[MIT_USERS]
+                          SET PASSWD='${hash}',UPDATEBY='WEB-APP',UPDATEDATE=GETDATE()
+                          WHERE LoginName='${req.body.LoginName}'`;
 
-      sql.connect(config, err => {
-        new sql.Request().query(queryStr, (err, result) => {
-          sql.close();
-            if(err){
-              res.status(500).json({
-                error:err
-              });
+          var sql = require("mssql");
 
-            } else {
-              res.status(200).json({
-                message: 'User updated',
-                result: result
-              });
-            }
+          sql.connect(config, err => {
+            new sql.Request().query(queryStr, (err, result) => {
+              sql.close();
+                if(err){
+                  res.status(500).json({
+                    error:err
+                  });
 
-        })
-      });
+                } else {
+                  res.status(200).json({
+                    message: 'User updated',
+                    result: result
+                  });
+                }
 
-      sql.on("error", err => {
+            })
+          });
 
-        logger.error( `API /register - ${err}`);
+          sql.on("error", err => {
 
-        sql.close();
-        res.status(500).json({
-          error:err
-        });
+            logger.error( `API /register - ${err}`);
+
+            sql.close();
+            res.status(500).json({
+              error:err
+            });
+          });
       });
   });
 }
@@ -356,14 +361,11 @@ exports.ExeUserEmp = (req, res, next) => {
   // userObj.PASSWD = userObj.LoginName
 
   // console.log('PASSWD>>', userObj.PASSWD);
-
-  bcrypt.hash(userObj.PASSWD, SALT_WORK_FACTOR)
+  bcrypt.genSalt(parseInt(SALT_WORK_FACTOR), function(err, salt) {
+  bcrypt.hash(userObj.PASSWD, salt)
   .then(hash =>{
 
       userObj.PASSWD =hash;
-
-
-      // console.log('PASSWD (hash)>>',userObj.PASSWD);
 
       const sql = require("mssql");
       const pool1 = new sql.ConnectionPool(config, err => {
@@ -399,11 +401,10 @@ exports.ExeUserEmp = (req, res, next) => {
         // ... error handler
         console.log("EROR>>" + err);
       });
-
   });
+});
+
 };
-
-
 
 exports.getUserLevelByUserId = (req, res, next) => {
 

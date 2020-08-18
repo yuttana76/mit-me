@@ -290,11 +290,11 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
   const _compInfo = mailConfig.mailCompInfo_TH;
   var logMsg ;
 
-  logger.info(`API /sendMailThankCustSuit  -  Fail cause env.production=${process.env.production} `);
-  if(!process.env.production){
-    logger.info(`Send mail unsuccessful env.production=${process.env.production} `);
-    res.status(200).json({ message: `Send mail unsuccessful env.production=${process.env.production} `});
-  }
+  // logger.info(`API /sendMailThankCustSuit  -  Fail cause env.production=${process.env.production} `);
+  // if(!process.env.production){
+  //   logger.info(`Send mail unsuccessful env.production=${process.env.production} `);
+  //   res.status(200).json({ message: `Send mail unsuccessful env.production=${process.env.production} `});
+  // }
 
   getCustomerInfo(_PID).then( (_data) =>{
 
@@ -386,86 +386,146 @@ exports.sendMailThankCustSuit = (req, res, next) =>{
 
 
   // Get Suit data
-  getCustSuitData(data.Cust_Code).then( (_data) =>{
+  // getCustSuitData(data.Cust_Code).then( (_data) =>{
 
-    //Create Suit PDF
-    suitPDFController.suitCreatePDF(_data[0]).then(result=>{
+  //   // message to customer
+  //   let mailOptions = {
+  //     from: _from,
+  //     to: _to,
+  //     subject: _subject,
+  //     html: _msgTH,
 
-      const attachSuitFilepath = __dirname + '/readFiles/suit/'+result.filePDF;
-      const attachFileName = 'แบบประเมินSuittability.pdf';
-
-          // message to customer
-          let mailOptions = {
-            from: _from,
-            to: _to,
-            subject: _subject,
-            html: _msgTH,
-            attachments: [
-              {
-                filename: attachFileName,
-                path: attachSuitFilepath,
-                contentType: 'application/pdf'
-              },
-            ]
-          };
+  //   };
 
 
-          // message to RM.
-          _subjectRM += ` (${data.fullName})`;
-          _msgRM = `
-          ${data.fullName}  was finish survey on ${utility.getDateTime()}
-          <br>
-          <br>Code: ${_PID}
-          <br>Name: ${data.fullName}
-          <br>
-          `;
+  //   // message to RM.
+  //   _subjectRM += ` (${data.fullName})`;
+  //   _msgRM = `
+  //   ${data.fullName}  was finish survey on ${utility.getDateTime()}
+  //   <br>
+  //   <br>Code: ${_PID}
+  //   <br>Name: ${data.fullName}
+  //   <br>
+  //   `;
 
-          let mailOptions_RM = {
-            from: _from,
-            to: _toRM,
-            subject: _subjectRM,
-            html: _msgRM
-          };
+  //   let mailOptions_RM = {
+  //     from: _from,
+  //     to: _toRM,
+  //     subject: _subjectRM,
+  //     html: _msgRM
+  //   };
 
-        /**
-         * SEND mail to suctomer
-         */
-          // transporter.sendMail(mailOptions, (error, info) => {
-          //   if (error) {
-          //     return logger.error(`API /sendMailToRelated - ${error} `);
-          //       // return console.log(error);
-          //   }
-          //     /*
-          //     Save MIT_LOG
-          //     */
-          //    mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
-          //   logger.info(`API /sendMailToRelated -  Send mail successful!`);
-          //   res.status(200).json({ message: 'Send mail successful!' });
-          // });
+  //    /**
+  //        * SEND mail to suctomer
+  //        */
+  //         // transporter.sendMail(mailOptions, (error, info) => {
+  //         //   if (error) {
+  //         //     return logger.error(`API /sendMailToRelated - ${error} `);
+  //         //       // return console.log(error);
+  //         //   }
+  //         //     /*
+  //         //     Save MIT_LOG
+  //         //     */
+  //         //    mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+  //         //   logger.info(`API /sendMailToRelated -  Send mail successful!`);
+  //         //   res.status(200).json({ message: 'Send mail successful!' });
+  //         // });
 
-           /**
-         * SEND mail RM.
-         */
-        // transporter.sendMail(mailOptions_RM, (error, info) => {
-        //   if (error) {
-        //     return logger.error(`API /sendMailToRelated - ${error} `);
-        //       // return console.log(error);
-        //   }
-        //     /*
-        //     Save MIT_LOG
-        //     */
-        //   //  mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
-        //   logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
-        //   res.status(200).json({ message: 'Send mail successful!' });
-        // });
+  //          /**
+  //        * SEND mail RM.
+  //        */
+  //       // transporter.sendMail(mailOptions_RM, (error, info) => {
+  //       //   if (error) {
+  //       //     return logger.error(`API /sendMailToRelated - ${error} `);
+  //       //       // return console.log(error);
+  //       //   }
+  //       //     /*
+  //       //     Save MIT_LOG
+  //       //     */
+  //       //   //  mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+  //       //   logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
+  //       //   res.status(200).json({ message: 'Send mail successful!' });
+  //       // });
+
+
+  //   //Create Suit PDF
+  //   suitPDFController.suitCreatePDF(_data[0]).then(result=>{
+
+  //     const attachSuitFilepath = __dirname + '/readFiles/suit/'+result.filePDF;
+  //     const attachFileName = 'แบบประเมินSuittability.pdf';
+
+  //         // message to customer
+  //         let mailOptions = {
+  //           from: _from,
+  //           to: _to,
+  //           subject: _subject,
+  //           html: _msgTH,
+  //           attachments: [
+  //             {
+  //               filename: attachFileName,
+  //               path: attachSuitFilepath,
+  //               contentType: 'application/pdf'
+  //             },
+  //           ]
+  //         };
+
+
+  //         // message to RM.
+  //         _subjectRM += ` (${data.fullName})`;
+  //         _msgRM = `
+  //         ${data.fullName}  was finish survey on ${utility.getDateTime()}
+  //         <br>
+  //         <br>Code: ${_PID}
+  //         <br>Name: ${data.fullName}
+  //         <br>
+  //         `;
+
+  //         let mailOptions_RM = {
+  //           from: _from,
+  //           to: _toRM,
+  //           subject: _subjectRM,
+  //           html: _msgRM
+  //         };
+
+  //       /**
+  //        * SEND mail to suctomer
+  //        */
+  //         // transporter.sendMail(mailOptions, (error, info) => {
+  //         //   if (error) {
+  //         //     return logger.error(`API /sendMailToRelated - ${error} `);
+  //         //       // return console.log(error);
+  //         //   }
+  //         //     /*
+  //         //     Save MIT_LOG
+  //         //     */
+  //         //    mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+  //         //   logger.info(`API /sendMailToRelated -  Send mail successful!`);
+  //         //   res.status(200).json({ message: 'Send mail successful!' });
+  //         // });
+
+  //          /**
+  //        * SEND mail RM.
+  //        */
+  //       // transporter.sendMail(mailOptions_RM, (error, info) => {
+  //       //   if (error) {
+  //       //     return logger.error(`API /sendMailToRelated - ${error} `);
+  //       //       // return console.log(error);
+  //       //   }
+  //       //     /*
+  //       //     Save MIT_LOG
+  //       //     */
+  //       //   //  mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+  //       //   logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
+  //       //   res.status(200).json({ message: 'Send mail successful!' });
+  //       // });
 
 
 
-    },err=>{
-      res.status(401).json(err);
-    });
+  //   },err=>{
+  //     res.status(401).json(err);
+  //   });
 
-  });
+  // });
 
 
           // Incase No Email
@@ -705,6 +765,7 @@ exports.sendMailThankCust = (req, res, next) =>{
     return res.status(200).json({ message: `Send mail unsuccessful env.production=${process.env.production} `});
   }
 
+  logger.info(`STEP 2 `);
   getCustomerInfo(_PID).then( (_data) =>{
 
     data = _data[0];
@@ -834,18 +895,21 @@ exports.sendMailThankCust = (req, res, next) =>{
         /**
          * SEND mail to suctomer
          */
-          // transporter.sendMail(mailOptions, (error, info) => {
-          //   if (error) {
-          //     return logger.error(`API /sendMailToRelated - ${error} `);
-          //       // return console.log(error);
-          //   }
-          //     /*
-          //     Save MIT_LOG
-          //     */
-          //    mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
-          //   logger.info(`API /sendMailToRelated -  Send mail successful!`);
-          //   res.status(200).json({ message: 'Send mail successful!' });
-          // });
+        if(process.env.production==='true'){
+
+          logger.info(`SEND mail to suctomer :` + process.env.production);
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              return logger.error(`API /sendMailToRelated - ${error} `);
+                // return console.log(error);
+            }
+              /*
+              Save MIT_LOG
+              */
+             mitLog.saveMITlog('SYSTEM','SEND_MAIL_USER_FINISH_SURVEY',logMsg,req.ip,req.originalUrl,function(){});
+            logger.info(`API /sendMailToRelated -  Send mail successful!`);
+            res.status(200).json({ message: 'Send mail successful!' });
+          });
 
          /**
          * SEND mail RM.
@@ -855,7 +919,6 @@ exports.sendMailThankCust = (req, res, next) =>{
           //     return logger.error(`API /sendMailToRelated - ${error} `);
           //       // return console.log(error);
           //   }
-
           //     /*
           //     Save MIT_LOG
           //     */
@@ -863,6 +926,8 @@ exports.sendMailThankCust = (req, res, next) =>{
           //   logger.info(`API /sendMailToRelated -  Send mail to RM. successful!`);
           //   res.status(200).json({ message: 'Send mail successful!' });
           // });
+
+        }
 
           // Incase No Email
         }else{
@@ -1112,7 +1177,6 @@ function getCustomerInfo(Cust_Code) {
 
   logger.info('getCustomerInfo()' + Cust_Code);
 
-  logger
   var fncName = "getCustomerData";
   var queryStr = ` BEGIN
 

@@ -51,14 +51,11 @@ const onListening = () => {
 //Lode global environment
 const dotenv = require('dotenv');
 dotenv.config();
-
 const port = normalizePort(process.env.PORT || "3000");
-
 console.log('NODE_ENV =' +process.env.NODE_ENV );
 console.log('SQL_SERVER =' +process.env.SQL_SERVER );
 console.log('production =' +process.env.production );
 console.log('PORT='+port);
-
 app.set("port", port);
 
 // ************************************** HTTP
@@ -71,7 +68,7 @@ server.listen(port,function () {
 })
 
 
-// ************************************** HTTPS Configuratrion
+// // ************************************** HTTPS Configuratrion
 
 // var intermediateCertificate = fs.readFileSync('intermediate.pem', 'utf8');
 // https.createServer({
@@ -80,8 +77,8 @@ server.listen(port,function () {
 //     ca: [ intermediateCertificate ]
 // }, app).listen(port);
 
-// console.log('DIR>' + __dirname);
-// ************************************** GET IP address
+// // console.log('DIR>' + __dirname);
+// // ************************************** GET IP address
 
 // var os = require('os');
 // var ifaces = os.networkInterfaces();
@@ -102,17 +99,23 @@ server.listen(port,function () {
 
 // });
 
+// // Fron key
+// const option = {
+//   key: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
+//   cert: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
+// };
+
+// // Backend
 // key_path= mpamConfig.key_path? mpamConfig.key_path:__dirname+'/merchantasset_CA/key.pem';
 // cert_path= mpamConfig.cert_path? mpamConfig.cert_path:__dirname+'/merchantasset_CA/cert.pem';
 // ca_path= mpamConfig.ca_path? mpamConfig.ca_path:__dirname+'/merchantasset_CA/inter.pem';
-
 // const option = {
 //   key: fs.readFileSync('/home/api/self-signed-cert/server.key'),
 //   cert: fs.readFileSync('/home/api/self-signed-cert/server.cert')
 // };
 
-// logger.info('HTTS config >>' + JSON.stringify(__dirname))
 
+// logger.info('HTTS config >>' + JSON.stringify(__dirname))
 // var server = https.createServer(option, app)
 // .listen(port,function () {
 //   console.log("Listening on port https://localhost:%s", server.address().port);

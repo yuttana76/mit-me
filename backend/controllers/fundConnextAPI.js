@@ -615,9 +615,9 @@ function saveMIT_FC_CUST_ACCOUNT(obj,actionBy) {
     if(obj.accounts){
       for(var i = 0; i < obj.accounts.length;i++){
 
-        logger.info(`Save accounts ${i}  ${obj.accounts[i].accountId}`);
-        logger.info(`subscriptionBankAccounts >> ${i}  ${obj.accounts[i].subscriptionBankAccounts.length}`);
-        logger.info(`redemptionBankAccounts >> ${i}  ${obj.accounts[i].redemptionBankAccounts.length}`);
+        // logger.info(`Save accounts ${i}  ${obj.accounts[i].accountId}`);
+        // logger.info(`subscriptionBankAccounts >> ${i}  ${obj.accounts[i].subscriptionBankAccounts.length}`);
+        // logger.info(`redemptionBankAccounts >> ${i}  ${obj.accounts[i].redemptionBankAccounts.length}`);
 
         // subscriptionBankAccounts
         if(obj.accounts[i].subscriptionBankAccounts && obj.accounts[i].subscriptionBankAccounts.length >0){
@@ -685,9 +685,14 @@ function saveMIT_FC_CUST_ACCOUNT(obj,actionBy) {
 
 function saveMIT_FC_CUST_ACCOUNT_Detail(cardNumber,obj,actionBy) {
 
-  logger.info('saveMIT_FC_CUST_ACCOUNT_Detail()'+obj.cardNumber);
+  logger.info('saveMIT_FC_CUST_ACCOUNT_Detail()'+ JSON.stringify(obj));
 
   var fncName = "saveMIT_FC_CUST_ACCOUNT_Detail()";
+
+  // if(obj.openOmnibusFormFlag==null)
+  //   obj.openOmnibusFormFlag=''
+  // console.log('**openOmnibusFormFlag>'+obj.openOmnibusFormFlag)
+
   var queryStr = `
   BEGIN
     UPDATE MIT_FC_CUST_ACCOUNT
@@ -744,9 +749,9 @@ function saveMIT_FC_CUST_ACCOUNT_Detail(cardNumber,obj,actionBy) {
         .input("accountOpenDate", sql.VarChar(20), obj.accountOpenDate)
         .input("investmentObjective", sql.NVarChar(100), obj.investmentObjective)
         .input("investmentObjectiveOther", sql.NVarChar(100), obj.investmentObjectiveOther)
-        .input("approvedDate", sql.VarChar(20), obj.approvedDate)
+        .input("approvedDate", sql.VarChar(50), obj.approvedDate)
         .input("mailingAddressSameAsFlag", sql.VarChar(20), obj.mailingAddressSameAsFlag)
-        .input("openOmnibusFormFlag", sql.VarChar(10), obj.openOmnibusFormFlag)
+        .input("openOmnibusFormFlag", sql.VarChar(1), obj.openOmnibusFormFlag)
         .input("CreateBy", sql.VarChar(50), actionBy)
         .query(queryStr, (err, result) => {
           if (err) {
@@ -1225,7 +1230,7 @@ function fnGetIndCust(cardNumber){
     fnFCAuth().then(result =>{
       resultObj =JSON.parse(result);
 
-        // logger.info("AUTH result >>" + JSON.stringify(resultObj));
+        logger.info("API token >>" + JSON.stringify(resultObj));
           const request = require('request');
           const HTTPS_ENDPOIN =`https://${FC_API_URL}${INVEST_PROFILE_PATH}?cardNumber=${cardNumber}`;
           const option = {

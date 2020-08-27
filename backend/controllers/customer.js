@@ -190,17 +190,12 @@ exports.getORG_CustomerInfo = (req, res, next) => {
 
       // if ( typeof values[0][0] !== 'undefined' && values[0][0] )
       if ( typeof values[0][0] === 'undefined' )  {
-        console.log('>> undefined')
         res.status(204).json({msg:'Not fund Data'});
-
 
       }else{
 
-        console.log('Step 1.' + values[0][0])
         custInfo=values[0][0];
         custInfo["ext"] ={};
-
-        console.log('Step 2.')
 
         if (values[1].length>0){
           custInfo.ext=values[1][0]
@@ -437,6 +432,29 @@ exports.approveCustInfo = (req, res, next) => {
 // VALIDATE data
 
 // CONVERT data.
+  fcCustInfoObj.Group_code='1';
+
+  switch (fcCustInfoObj.title) {
+    case 'MR':
+      fcCustInfoObj.Title_Name_T = 'นาย';
+      break;
+    case 'MRS':
+      fcCustInfoObj.Title_Name_T = 'นาง';
+      break;
+    case 'MISS':
+      fcCustInfoObj.Title_Name_T = 'นางสาว';
+      break;
+    case 'OTHER':
+      fcCustInfoObj.Title_Name_T = fcCustInfoObj.titleOther;
+      break;
+    default:
+      fcCustInfoObj.Title_Name_T = 'อื่นๆ';
+  }
+
+  fcCustInfoObj.IT_SentRepByEmail='Y'
+
+  fcCustInfoObj.IT_FundConnext='Y'
+
 // Card_Type
   switch (fcCustInfoObj.identificationCardType) {
     case 'CITIZEN_CARD':
@@ -490,12 +508,16 @@ exports.approveCustInfo = (req, res, next) => {
   fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
   //Suit by  account
 
-
   Promise.all(fnArray)
   .then(data => {
 
-    // console.log("approveCustInfo()" + JSON.stringify(data));
-      res.status(200).json(data[0]);
+    update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
+      // console.log("approveCustInfo()" + JSON.stringify(data));
+      res.status(200).json(data);
+    })
+
+    //  res.status(200).json(data[0]);
+
   })
   .catch(error => {
     logger.error(error.message)
@@ -554,8 +576,11 @@ function update_CustomerInfo(custObj,actionBy){
   // Convert Refer code 6 charactors
   var referalPerson = ""
 
-  if(custObj.referalPerson)
+
+  if(custObj.referalPerson){
+    custObj.referalPerson = custObj.referalPerson.replace(/\s/g, '');// remove sapce
     referalPerson = custObj.referalPerson.substr(0, 6);
+  }
 
   // Convert Date split 10 charactors
   if(custObj.birthDate)
@@ -647,10 +672,17 @@ function update_CustomerInfo(custObj,actionBy){
   BEGIN TRANSACTION TranName;
 
     DECLARE  @Nation_Code VARCHAR(10);
+    DECLARE  @Create_By VARCHAR(20);
+    DECLARE  @MktId VARCHAR(20);
 
     SELECT @Nation_Code=Nation_Code
     FROM REF_Nations
     WHERE SET_Code= @SET_Code
+
+
+    --MktId
+    select  @MktId=Id from MFTS_SalesCode
+    where License_Code=@IT_SAcode
 
     --#BACKUP DATA
     DECLARE  @actionByInt int =999;
@@ -1119,6 +1151,8 @@ function update_CustomerInfo(custObj,actionBy){
     --Begin Execute
     Update Account_Info SET
     Card_Type=@Card_Type
+    ,Group_code=@Group_code
+    ,Title_Name_T=@Title_Name_T
     ,First_Name_T=@First_Name_T
     ,Last_Name_T=@Last_Name_T
     ,Title_Name_E=@Title_Name_E
@@ -1130,12 +1164,18 @@ function update_CustomerInfo(custObj,actionBy){
     ,Mobile=@Mobile
     ,Sex=@Sex
     ,IT_SAcode=@IT_SAcode
+    ,IT_SentRepByEmail=@IT_SentRepByEmail
+    ,IT_PID_No=@IT_PID_No
+    ,IT_PID_ExpiryDate=@IT_PID_ExpiryDate
+    ,Modify_Date=GETDATE()
     WHERE Cust_Code=@Cust_Code
 
     IF @@ROWCOUNT=0
     BEGIN
         INSERT INTO Account_Info(Cust_Code
           ,Card_Type
+          ,Group_code
+          ,Title_Name_T
           ,First_Name_T
           ,Last_Name_T
           ,Title_Name_E
@@ -1147,8 +1187,17 @@ function update_CustomerInfo(custObj,actionBy){
           ,Mobile
           ,Sex
           ,IT_SAcode
+          ,IT_SentRepByEmail
+          ,IT_PID_No
+          ,IT_PID_ExpiryDate
+          ,IT_FundConnext
+          ,IT_FundConnextDT
+          ,Create_By
+          ,Create_Date
       ) VALUES(@Cust_Code
           ,@Card_Type
+          ,@Group_code
+          ,@Title_Name_T
           ,@First_Name_T
           ,@Last_Name_T
           ,@Title_Name_E
@@ -1160,6 +1209,13 @@ function update_CustomerInfo(custObj,actionBy){
           ,@Mobile
           ,@Sex
           ,@IT_SAcode
+          ,@IT_SentRepByEmail
+          ,@IT_PID_No
+          ,@IT_PID_ExpiryDate
+          ,@IT_FundConnext
+          ,GETDATE()
+          ,@Create_By
+          ,GETDATE()
       )
     END
 
@@ -1334,7 +1390,9 @@ function update_CustomerInfo(custObj,actionBy){
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request()
       .input("Cust_Code", sql.VarChar(20), custObj.cardNumber)
+      .input("Group_code", sql.VarChar(20), custObj.Group_code)
       .input("Card_Type", sql.VarChar(10), custObj.Card_Type)
+      .input("Title_Name_T", sql.NVarChar(10), custObj.Title_Name_T)
       .input("First_Name_T", sql.NVarChar(100), custObj.thFirstName)
       .input("Last_Name_T", sql.NVarChar(100), custObj.thLastName)
       .input("Title_Name_E", sql.NVarChar(100), custObj.title)
@@ -1346,6 +1404,11 @@ function update_CustomerInfo(custObj,actionBy){
       .input("Mobile", sql.VarChar(50), custObj.mobileNumber)
       .input("Sex", sql.VarChar(10), custObj.Sex)
       .input("IT_SAcode", sql.NVarChar(20), referalPerson)
+
+      .input("IT_SentRepByEmail", sql.NVarChar(20), custObj.IT_SentRepByEmail)
+      .input("IT_PID_No", sql.NVarChar(20), custObj.cardNumber)
+      .input("IT_PID_ExpiryDate", sql.NVarChar(50), custObj.cardExpiryDate)
+      .input("IT_FundConnext", sql.NVarChar(20), custObj.IT_FundConnext)
 
       .input("cardNumber", sql.VarChar(20), custObj.cardNumber)
       .input("occupationId", sql.VarChar(10), custObj.occupationId)
@@ -1968,7 +2031,7 @@ function update_Children(childrenObj,actionBy){
 
 function update_SuitInDB(cardNumber,actionBy){
 
-  // console.log("update_AccountInDB()" + cardNumber);
+  console.log("update_AccountInDB()" + cardNumber);
   const sql = require('mssql')
 
   var queryStr = `
@@ -2030,7 +2093,7 @@ function update_SuitInDB(cardNumber,actionBy){
 
 function update_CustAccountInDB(cardNumber,actionBy){
 
-  // console.log("update_AccountInDB()" + cardNumber);
+  logger.info("update_AccountInDB()" + cardNumber);
   const sql = require('mssql')
 
   var queryStr = `
@@ -2047,9 +2110,10 @@ function update_CustAccountInDB(cardNumber,actionBy){
     DECLARE @approvedDate as VARCHAR(50);
     DECLARE @mailingAddressSameAsFlag as NVARCHAR(50);
     DECLARE @openOmnibusFormFlag as VARCHAR(10);
+    DECLARE @MktId as VARCHAR(10);
 
     SET @AccountCursor = CURSOR FOR
-    select accountId
+    SELECT accountId
       ,[icLicense]
       ,[accountOpenDate]
       ,[investmentObjective]
@@ -2060,11 +2124,12 @@ function update_CustAccountInDB(cardNumber,actionBy){
     FROM MIT_FC_CUST_ACCOUNT where cardNumber= @cardNumber;
 
     OPEN @AccountCursor;
-
     FETCH NEXT FROM @AccountCursor INTO @accountId,@icLicense,@accountOpenDate,@investmentObjective,@investmentObjectiveOther,@approvedDate,@mailingAddressSameAsFlag,@openOmnibusFormFlag;
-
     WHILE @@FETCH_STATUS = 0
     BEGIN
+
+    SELECT  @MktId = Id from [MFTS_SalesCode] where License_Code = @icLicense
+    UPDATE Account_Info SET MktId = @MktId where Cust_Code=@cardNumber
 
     UPDATE MIT_CUST_ACCOUNT SET
             [icLicense]=@icLicense
@@ -2143,15 +2208,12 @@ function update_CustAccountInDB(cardNumber,actionBy){
 }
 
 
-
-
 function update_MFTS_Suit(cardNumber,actionBy){
 
-  // console.log("update_MFTS_Suit()" + cardNumber);
+  console.log("update_MFTS_Suit()" + cardNumber);
   const sql = require('mssql')
 
   var queryStr = `
-
 
   BEGIN TRANSACTION TranName;
 
@@ -2163,6 +2225,7 @@ function update_MFTS_Suit(cardNumber,actionBy){
   DECLARE @Risk_Profile as VARCHAR(100);
   DECLARE @Risk_Description as VARCHAR(500);
   DECLARE @RowCount as INT;
+  DECLARE @Series_Id as INT;
 
   select @suitabilityRiskLevel=A.suitabilityRiskLevel
           ,@suitabilityEvaluationDate=A.suitabilityEvaluationDate
@@ -2182,7 +2245,6 @@ function update_MFTS_Suit(cardNumber,actionBy){
   WHILE @@FETCH_STATUS = 0
   BEGIN
 
-
   select  @RowCount = COUNT(*)
   from MFTS_Suit
   WHERE Account_No=@Account_No
@@ -2190,12 +2252,16 @@ function update_MFTS_Suit(cardNumber,actionBy){
 
   IF @RowCount =0
   BEGIN
+
+      SElECT @Series_Id =  Id FROM [MFTS_Suit_Series] WHERE  Active_Flag='A'
+
       UPDATE MFTS_Suit
       SET Active_Flag='I'
       WHERE Account_No=@Account_No
 
       INSERT INTO  MFTS_Suit (
-          Account_No
+          Series_Id
+          ,Account_No
           ,Document_Date
           ,Risk_Level
           ,Risk_Level_Desc
@@ -2204,7 +2270,388 @@ function update_MFTS_Suit(cardNumber,actionBy){
           ,[Create_Date]
           )
       VALUES(
-          @Account_No
+          @Series_Id
+          ,@Account_No
+          ,@suitabilityEvaluationDate
+          ,@Risk_Profile
+          ,@Risk_Description
+          ,'A'
+          ,@actionBy
+          ,getDate()
+          )
+  END;
+
+  FETCH NEXT FROM @AccountCursor INTO @Account_No;
+  END
+
+  CLOSE @AccountCursor;
+  DEALLOCATE @AccountCursor;
+
+  COMMIT TRANSACTION TranName;
+  `;
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+        // console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
+
+
+
+function update_MFTS_Suit_Detail(cardNumber,actionBy){
+
+  console.log("update_MFTS_Suit_Detail()" + cardNumber);
+  const sql = require('mssql')
+
+  var queryStr = `
+
+  BEGIN TRANSACTION TranName;
+
+      DECLARE  @actionByInt int =999;
+      DECLARE @Quest4_CURSOR as CURSOR;
+
+      DECLARE @Suit_Id as INT;
+      DECLARE @QId as INT;
+      DECLARE @CId as INT;
+      DECLARE  @OLD_DATA  AS INT;
+
+      DECLARE @suitNo1 as VARCHAR(20);
+      DECLARE @suitNo2 as VARCHAR(20);
+      DECLARE @suitNo3 as VARCHAR(20);
+      DECLARE @suitNo4 as VARCHAR(20);
+      DECLARE @suitNo4_split as VARCHAR(20);
+      DECLARE @suitNo5 as VARCHAR(20);
+      DECLARE @suitNo6 as VARCHAR(20);
+      DECLARE @suitNo7 as VARCHAR(20);
+      DECLARE @suitNo8 as VARCHAR(20);
+      DECLARE @suitNo9 as VARCHAR(20);
+      DECLARE @suitNo10 as VARCHAR(20);
+
+      -- Get FundConnext Suit
+      SELECT  @suitNo1=suitNo1,
+      @suitNo2=suitNo2,
+      @suitNo3=suitNo3,
+      @suitNo4=suitNo4,
+      @suitNo5=suitNo5,
+      @suitNo6=suitNo6,
+      @suitNo7=suitNo7,
+      @suitNo8=suitNo8,
+      @suitNo9=suitNo9,
+      @suitNo10=suitNo10
+      FROM MIT_CUST_SUIT  WHERE cardNumber=@cardNumber
+
+      -- Insert Suit detail
+      SELECT @Suit_Id = Suit_Id FROM MFTS_Suit WHERE Account_No=@cardNumber  AND Active_Flag='A'
+      IF @@RowCount >0
+      BEGIN
+
+          -- **@suitNo1
+          SELECT @QId =13
+          SELECT @CId= a.CId FROM(
+              select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+              from MFTS_Suit_Question_Choice
+              where QId=@QId
+          ) a   WHERE  a.RowNumber =@suitNo1
+          --BACKUP
+          SELECT @OLD_DATA = CId FROM MFTS_Suit_Detail WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @OLD_DATA <> @CId AND @@ROWCOUNT>0
+          BEGIN
+              INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+              VALUES (@cardNumber,'SuitNo1',@OLD_DATA,@CId,GETDATE(),@actionByInt);
+          END;
+          -- Update & Insert Value
+          UPDATE MFTS_Suit_Detail SET CId=@CId WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @@ROWCOUNT = 0
+          INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+
+          -- **@suitNo2
+          SELECT @QId =14
+          SELECT @CId= a.CId FROM(
+              select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+              from MFTS_Suit_Question_Choice
+              where QId=@QId
+          ) a   WHERE  a.RowNumber =@suitNo2
+          --BACKUP
+          SELECT @OLD_DATA = CId FROM MFTS_Suit_Detail WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @OLD_DATA <> @CId AND @@ROWCOUNT>0
+          BEGIN
+              INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+              VALUES (@cardNumber,'SuitNo2',@OLD_DATA,@CId,GETDATE(),@actionByInt);
+          END;
+          -- Update & Insert Value
+          UPDATE MFTS_Suit_Detail SET CId=@CId WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @@ROWCOUNT = 0
+          INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+
+          --** @suitNo3
+          SELECT @QId =15
+          SELECT @CId= a.CId FROM(
+              select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+              from MFTS_Suit_Question_Choice
+              where QId=@QId
+          ) a   WHERE  a.RowNumber =@suitNo3
+          --BACKUP
+          SELECT @OLD_DATA = CId FROM MFTS_Suit_Detail WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @OLD_DATA <> @CId AND @@ROWCOUNT>0
+          BEGIN
+              INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+              VALUES (@cardNumber,'SuitNo3',@OLD_DATA,@CId,GETDATE(),@actionByInt);
+          END;
+          -- Update & Insert Value
+          UPDATE MFTS_Suit_Detail SET CId=@CId WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @@ROWCOUNT = 0
+          INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+
+          --**@suitNo4 (Multiple choice)
+          SELECT @QId =16
+
+          -- Delete data on Question 16 (Multiple choice only)
+          Delete MFTS_Suit_Detail WHERE Suit_Id=@Suit_Id AND QId=@QId
+
+          SET @Quest4_CURSOR = CURSOR FOR
+          SELECT * FROM dbo.splitstring(@suitNo4);
+          OPEN @Quest4_CURSOR;
+          FETCH NEXT FROM @Quest4_CURSOR INTO @suitNo4_split;
+          WHILE @@FETCH_STATUS = 0
+          BEGIN
+              SELECT @CId= a.CId FROM(
+                  select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+                  from MFTS_Suit_Question_Choice
+                  where QId=@QId
+              ) a   WHERE  a.RowNumber =@suitNo4_split
+
+          -- Insert New value
+              INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+              --
+              FETCH NEXT FROM @Quest4_CURSOR INTO @suitNo4_split;
+          END
+
+          --** @suitNo5
+          SELECT @QId =17
+          SELECT @CId= a.CId FROM(
+              select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+              from MFTS_Suit_Question_Choice
+              where QId=@QId
+          ) a   WHERE  a.RowNumber =@suitNo5
+          --BACKUP
+          SELECT @OLD_DATA = CId FROM MFTS_Suit_Detail WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @OLD_DATA <> @CId AND @@ROWCOUNT>0
+          BEGIN
+              INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+              VALUES (@cardNumber,'SuitNo5',@OLD_DATA,@CId,GETDATE(),@actionByInt);
+          END;
+          -- Update & Insert Value
+          UPDATE MFTS_Suit_Detail SET CId=@CId WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @@ROWCOUNT = 0
+          INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+
+          --** @suitNo6
+          SELECT @QId =18
+          SELECT @CId= a.CId FROM(
+              select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+              from MFTS_Suit_Question_Choice
+              where QId=@QId
+          ) a   WHERE  a.RowNumber =@suitNo6
+          --BACKUP
+          SELECT @OLD_DATA = CId FROM MFTS_Suit_Detail WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @OLD_DATA <> @CId AND @@ROWCOUNT>0
+          BEGIN
+              INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+              VALUES (@cardNumber,'SuitNo6',@OLD_DATA,@CId,GETDATE(),@actionByInt);
+          END;
+          -- Update & Insert Value
+          UPDATE MFTS_Suit_Detail SET CId=@CId WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @@ROWCOUNT = 0
+          INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+
+          --** @suitNo7
+          SELECT @QId =19
+          SELECT @CId= a.CId FROM(
+              select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+              from MFTS_Suit_Question_Choice
+              where QId=@QId
+          ) a   WHERE  a.RowNumber =@suitNo7
+          --BACKUP
+          SELECT @OLD_DATA = CId FROM MFTS_Suit_Detail WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @OLD_DATA <> @CId AND @@ROWCOUNT>0
+          BEGIN
+              INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+              VALUES (@cardNumber,'SuitNo7',@OLD_DATA,@CId,GETDATE(),@actionByInt);
+          END;
+          -- Update & Insert Value
+          UPDATE MFTS_Suit_Detail SET CId=@CId WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @@ROWCOUNT = 0
+          INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+
+          --** @suitNo8
+          SELECT @QId =20
+          SELECT @CId= a.CId FROM(
+              select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+              from MFTS_Suit_Question_Choice
+              where QId=@QId
+          ) a   WHERE  a.RowNumber =@suitNo8
+          --BACKUP
+          SELECT @OLD_DATA = CId FROM MFTS_Suit_Detail WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @OLD_DATA <> @CId AND @@ROWCOUNT>0
+          BEGIN
+              INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+              VALUES (@cardNumber,'SuitNo8',@OLD_DATA,@CId,GETDATE(),@actionByInt);
+          END;
+          -- Update & Insert Value
+          UPDATE MFTS_Suit_Detail SET CId=@CId WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @@ROWCOUNT = 0
+          INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+
+          --** @suitNo9
+          SELECT @QId =21
+          SELECT @CId= a.CId FROM(
+              select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+              from MFTS_Suit_Question_Choice
+              where QId=@QId
+          ) a   WHERE  a.RowNumber =@suitNo9
+          --BACKUP
+          SELECT @OLD_DATA = CId FROM MFTS_Suit_Detail WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @OLD_DATA <> @CId AND @@ROWCOUNT>0
+          BEGIN
+              INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+              VALUES (@cardNumber,'SuitNo9',@OLD_DATA,@CId,GETDATE(),@actionByInt);
+          END;
+          -- Update & Insert Value
+          UPDATE MFTS_Suit_Detail SET CId=@CId WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @@ROWCOUNT = 0
+          INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+
+          --** @suitNo10
+          SELECT @QId =22
+          SELECT @CId= a.CId FROM(
+              select  ROW_NUMBER() OVER (ORDER BY CId) AS RowNumber ,*
+              from MFTS_Suit_Question_Choice
+              where QId=@QId
+          ) a   WHERE  a.RowNumber =@suitNo10
+          --BACKUP
+          SELECT @OLD_DATA = CId FROM MFTS_Suit_Detail WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @OLD_DATA <> @CId AND @@ROWCOUNT>0
+          BEGIN
+              INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+              VALUES (@cardNumber,'SuitNo10',@OLD_DATA,@CId,GETDATE(),@actionByInt);
+          END;
+          -- Update & Insert Value
+          UPDATE MFTS_Suit_Detail SET CId=@CId WHERE Suit_Id= @Suit_Id AND QId=@QId
+          IF @@ROWCOUNT = 0
+          INSERT INTO MFTS_Suit_Detail(Suit_Id,QId,CId)VALUES(@Suit_Id,@QId,@CId)
+
+      END
+
+  COMMIT TRANSACTION TranName;
+  `;
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+        // console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
+
+function update_MFTS_Suit(cardNumber,actionBy){
+
+  console.log("update_MFTS_Suit()" + cardNumber);
+  const sql = require('mssql')
+
+  var queryStr = `
+  BEGIN TRANSACTION TranName;
+
+  -- Code here
+  DECLARE @AccountCursor as CURSOR;
+  DECLARE @Account_No as VARCHAR(20);
+  DECLARE @suitabilityRiskLevel as VARCHAR(1);
+  DECLARE @suitabilityEvaluationDate as date
+  DECLARE @Risk_Profile as VARCHAR(100);
+  DECLARE @Risk_Description as VARCHAR(500);
+  DECLARE @RowCount as INT;
+  DECLARE @Series_Id as INT;
+
+  select @suitabilityRiskLevel=A.suitabilityRiskLevel
+          ,@suitabilityEvaluationDate=A.suitabilityEvaluationDate
+          ,@Risk_Profile=B.Risk_Profile
+          ,@Risk_Description=B.Description
+  from MIT_FC_CUST_INFO  A
+  left join MFTS_Suit_Risk B  ON A.suitabilityRiskLevel =B.Risk_Level
+  where cardNumber=@cardNumber
+
+  SET @AccountCursor = CURSOR FOR
+  select accountId
+  FROM MIT_FC_CUST_ACCOUNT where cardNumber= @cardNumber;
+
+  --Insert /Update  MFTS_Suit by @accountId
+  OPEN @AccountCursor;
+  FETCH NEXT FROM @AccountCursor INTO @Account_No;
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+
+  select  @RowCount = COUNT(*)
+  from MFTS_Suit
+  WHERE Account_No=@Account_No
+  AND CAST(Document_Date AS DATE) >= CAST(@suitabilityEvaluationDate AS DATE)  AND Active_Flag='A'
+
+  IF @@RowCount =0
+  BEGIN
+
+      SElECT @Series_Id =  Id FROM [MFTS_Suit_Series] WHERE  Active_Flag='A'
+
+      UPDATE MFTS_Suit
+      SET Active_Flag='I'
+      WHERE Account_No=@Account_No
+
+      INSERT INTO  MFTS_Suit (
+          Series_Id
+          ,Account_No
+          ,Document_Date
+          ,Risk_Level
+          ,Risk_Level_Desc
+          ,Active_Flag
+          ,[Create_By]
+          ,[Create_Date]
+          )
+      VALUES(
+          @Series_Id
+          ,@Account_No
           ,@suitabilityEvaluationDate
           ,@Risk_Profile
           ,@Risk_Description

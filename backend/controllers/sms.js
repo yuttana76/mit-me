@@ -87,6 +87,7 @@ exports.smsDeb = (req, res, next) =>{
   });
 
   // end
+
   checkFile.on('close', function(line) {
 
       if(((line_no-1) == numData) && (numData != 0) ){
@@ -136,6 +137,7 @@ exports.smsDeb = (req, res, next) =>{
         res.status(501).json({ message: 'Data incorrect' });
       }
    });
+
 }
 
 

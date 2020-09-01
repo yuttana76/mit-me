@@ -2282,22 +2282,22 @@ function update_MFTS_Suit(cardNumber,actionBy){
       INSERT INTO  MFTS_Suit (
           Series_Id
           ,Account_No
-          ,Document_Date
+          --,Document_Date
           ,Risk_Level
           ,Risk_Level_Desc
           ,Active_Flag
           ,[Create_By]
-          ,[Create_Date]
+          --,[Create_Date]
           )
       VALUES(
           @Series_Id
           ,@Account_No
-          ,@suitabilityEvaluationDate
+          -- ,@suitabilityEvaluationDate
           ,@Risk_Profile
           ,@Risk_Description
           ,'A'
           ,@actionBy
-          ,getDate()
+          -- ,getDate()
           )
   END;
 

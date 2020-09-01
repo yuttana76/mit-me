@@ -532,10 +532,9 @@ exports.approveCustInfo = (req, res, next) => {
   Promise.all(fnArray)
   .then(data => {
 
-    update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
-      // console.log("approveCustInfo()" + JSON.stringify(data));
-      res.status(200).json(data);
-    })
+    // update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
+    //   res.status(200).json(data);
+    // })
 
     //  res.status(200).json(data[0]);
 

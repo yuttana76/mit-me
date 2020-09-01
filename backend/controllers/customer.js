@@ -502,6 +502,7 @@ exports.approveCustInfo = (req, res, next) => {
 
   fnArray=[];
   //Updat customer & suit
+
   fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
 
   if(fcCustInfoObj.residence)
@@ -526,15 +527,16 @@ exports.approveCustInfo = (req, res, next) => {
   fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
 
   fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+
   fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
   //Suit by  account
 
   Promise.all(fnArray)
   .then(data => {
 
-    // update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
-    //   res.status(200).json(data);
-    // })
+    update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
+      res.status(200).json(data);
+    })
 
     //  res.status(200).json(data[0]);
 
@@ -545,51 +547,6 @@ exports.approveCustInfo = (req, res, next) => {
   });
 
 }
-
-// exports.approveCustInfo = (req, res, next) => {
-
-//   console.log("approveCustInfo()");
-
-//   // var mftsCustInfoObj = JSON.parse(req.body.mftsCustInfo)
-//   var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
-//   var actionBy = req.body.actionBy;
-
-// // VALIDATE data
-
-// // CONVERT data.
-// // Card_Type
-//   switch (fcCustInfoObj.identificationCardType) {
-//     case 'CITIZEN_CARD':
-//       fcCustInfoObj.Card_Type = 'C';
-//       break;
-//     case 'PASSPORT':
-//       fcCustInfoObj.Card_Type = 'P';
-//       break;
-//     default:
-//       fcCustInfoObj.Card_Type = '';
-//   }
-
-// // GENDER
-//   switch (fcCustInfoObj.gender) {
-//     case 'Male':
-//       fcCustInfoObj.Sex = 'M';
-//       break;
-//     case 'Female':
-//       fcCustInfoObj.Sex = 'F';
-//       break;
-//     default:
-//       fcCustInfoObj.Sex = '';
-//   }
-
-//   // console.log("approveCustInfo()" + actionBy + " ;OBJ>" + JSON.stringify(fcCustInfoObj));
-//   update_CustomerInfo(fcCustInfoObj,actionBy).then( (data) =>{
-//     res.status(200).json(data);
-//   },err=>{
-//     res.status(401).json(err);
-//   });
-
-// }
-
 
 function update_CustomerInfo(custObj,actionBy){
 
@@ -689,7 +646,11 @@ function update_CustomerInfo(custObj,actionBy){
   }
 
   var queryStr = `
-  BEGIN TRANSACTION TranName;
+  BEGIN
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
+
+  BEGIN TRANSACTION update_CustomerInfo;
 
     DECLARE  @Nation_Code VARCHAR(10);
     DECLARE  @Create_By VARCHAR(20);
@@ -699,10 +660,11 @@ function update_CustomerInfo(custObj,actionBy){
     FROM REF_Nations
     WHERE SET_Code= @SET_Code
 
-
     --MktId
     select  @MktId=Id from MFTS_SalesCode
     where License_Code=@IT_SAcode
+
+
 
     --#BACKUP DATA
     DECLARE  @actionByInt int =999;
@@ -1400,8 +1362,8 @@ function update_CustomerInfo(custObj,actionBy){
         ,getDate()  --MpamApproveDate
         )
         END
-
-      COMMIT TRANSACTION TranName;
+      COMMIT TRANSACTION update_CustomerInfo;
+  END
   `;
 
   const sql = require('mssql')
@@ -1650,6 +1612,12 @@ function update_Address(addrObj,seq,actionBy){
     addrObj.soi= '-';
 
   var queryStr = `
+
+  BEGIN
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
+
+
   BEGIN TRANSACTION TranName;
 
   DECLARE  @Country_ID VARCHAR(10);
@@ -1844,10 +1812,9 @@ function update_Address(addrObj,seq,actionBy){
         ,@actionBy
         ,getDate()
         )
-
         END
-
       COMMIT TRANSACTION TranName;
+  END
   `;
 
   const sql = require('mssql')
@@ -1903,6 +1870,11 @@ function update_Children(childrenObj,actionBy){
 
 
   var queryStr = `
+
+  BEGIN
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
+
   BEGIN TRANSACTION TranName;
 
     --BACKUP
@@ -2009,6 +1981,7 @@ function update_Children(childrenObj,actionBy){
         )
         END
       COMMIT TRANSACTION TranName;
+  END
   `;
 
   const sql = require('mssql')
@@ -2055,8 +2028,11 @@ function update_SuitInDB(cardNumber,actionBy){
   const sql = require('mssql')
 
   var queryStr = `
+  BEGIN
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
 
-    BEGIN TRANSACTION TranName;
+    BEGIN TRANSACTION update_SuitInDB;
 
     MERGE MIT_CUST_SUIT AS target
         USING (SELECT * FROM MIT_FC_CUST_SUIT WHERE cardNumber= @cardNumber )AS source
@@ -2081,8 +2057,8 @@ function update_SuitInDB(cardNumber,actionBy){
             VALUES (source.cardNumber,source.suitNo1,source.suitNo2,source.suitNo3,source.suitNo4,source.suitNo5,source.suitNo6,source.suitNo7,source.suitNo8,source.suitNo9,source.suitNo10
             ,source.suitNo11,source.suitNo12,@actionBy,getDate())   ;
 
-    COMMIT TRANSACTION TranName;
-
+    COMMIT TRANSACTION update_SuitInDB;
+  END
   `;
 
   return new Promise(function(resolve, reject) {
@@ -2117,8 +2093,11 @@ function update_CustAccountInDB(cardNumber,actionBy){
   const sql = require('mssql')
 
   var queryStr = `
+  BEGIN
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
 
-    BEGIN TRANSACTION TranName;
+    BEGIN TRANSACTION update_CustAccountInDB;
 
     DECLARE @AccountCursor as CURSOR;
 
@@ -2198,8 +2177,8 @@ function update_CustAccountInDB(cardNumber,actionBy){
     CLOSE @AccountCursor;
     DEALLOCATE @AccountCursor;
 
-    COMMIT TRANSACTION TranName;
-
+    COMMIT TRANSACTION update_CustAccountInDB;
+  END
   `;
 
   return new Promise(function(resolve, reject) {
@@ -2234,8 +2213,12 @@ function update_MFTS_Suit(cardNumber,actionBy){
   const sql = require('mssql')
 
   var queryStr = `
+BEGIN
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
 
-  BEGIN TRANSACTION TranName;
+
+  BEGIN TRANSACTION update_MFTS_Suit;
 
   -- Code here
   DECLARE @AccountCursor as CURSOR;
@@ -2265,10 +2248,10 @@ function update_MFTS_Suit(cardNumber,actionBy){
   WHILE @@FETCH_STATUS = 0
   BEGIN
 
-  select  @RowCount = COUNT(*)
-  from MFTS_Suit
-  WHERE Account_No=@Account_No
-  AND CAST(Document_Date AS DATE) >= CAST(@suitabilityEvaluationDate AS DATE)  AND Active_Flag='A'
+    select  @RowCount = COUNT(*)
+    from MFTS_Suit
+    WHERE Account_No=@Account_No
+    AND CAST(Document_Date AS DATE) >= CAST(@suitabilityEvaluationDate AS DATE)  AND Active_Flag='A'
 
   IF @RowCount =0
   BEGIN
@@ -2282,22 +2265,22 @@ function update_MFTS_Suit(cardNumber,actionBy){
       INSERT INTO  MFTS_Suit (
           Series_Id
           ,Account_No
-          --,Document_Date
+          ,Document_Date
           ,Risk_Level
           ,Risk_Level_Desc
           ,Active_Flag
           ,[Create_By]
-          --,[Create_Date]
+          ,[Create_Date]
           )
       VALUES(
           @Series_Id
           ,@Account_No
-          -- ,@suitabilityEvaluationDate
+          ,@suitabilityEvaluationDate
           ,@Risk_Profile
           ,@Risk_Description
           ,'A'
           ,@actionBy
-          -- ,getDate()
+          ,getDate()
           )
   END;
 
@@ -2307,7 +2290,9 @@ function update_MFTS_Suit(cardNumber,actionBy){
   CLOSE @AccountCursor;
   DEALLOCATE @AccountCursor;
 
-  COMMIT TRANSACTION TranName;
+  COMMIT TRANSACTION update_MFTS_Suit;
+
+END
   `;
 
   return new Promise(function(resolve, reject) {
@@ -2343,8 +2328,12 @@ function update_MFTS_Suit_Detail(cardNumber,actionBy){
   const sql = require('mssql')
 
   var queryStr = `
+  BEGIN
 
-  BEGIN TRANSACTION TranName;
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
+
+  BEGIN TRANSACTION update_MFTS_Suit_Detail;
 
       DECLARE  @actionByInt int =999;
       DECLARE @Quest4_CURSOR as CURSOR;
@@ -2581,7 +2570,9 @@ function update_MFTS_Suit_Detail(cardNumber,actionBy){
 
       END
 
-  COMMIT TRANSACTION TranName;
+  COMMIT TRANSACTION update_MFTS_Suit_Detail;
+
+  END
   `;
 
   return new Promise(function(resolve, reject) {
@@ -2722,85 +2713,90 @@ function update_CustBankInDB(cardNumber,actionBy){
   const sql = require('mssql')
 
   var queryStr = `
-
-  BEGIN TRANSACTION TranName;
-
-  DECLARE @BankCursor as CURSOR;
-
-  DECLARE @accType as VARCHAR(10);
-  DECLARE @accountId as VARCHAR(20);
-  DECLARE @bankCode as VARCHAR(10);
-  DECLARE @bankBranchCode as VARCHAR(10);
-  DECLARE @bankAccountNo as VARCHAR(20);
-  DECLARE @default as VARCHAR(10);
-  DECLARE @finnetCustomerNo as VARCHAR(50);
-
-  SET @BankCursor = CURSOR FOR
-  SELECT
-    [accType]
-    ,[accountId]
-    ,[bankCode]
-    ,[bankBranchCode]
-    ,[bankAccountNo]
-    ,[default]
-    ,[finnetCustomerNo]
-  FROM MIT_FC_CUST_BANK where cardNumber= @cardNumber;
-
-  OPEN @BankCursor;
-
-  FETCH NEXT FROM @BankCursor INTO @accType,@accountId,@bankCode,@bankBranchCode,@bankAccountNo,@default,@finnetCustomerNo;
-
-  WHILE @@FETCH_STATUS = 0
   BEGIN
+    --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+    SET XACT_ABORT ON
 
-   UPDATE MIT_CUST_BANK SET
-    [accType]=@accType
-    ,[bankCode]=@bankCode
-    ,[bankBranchCode]=@bankBranchCode
-    ,[bankAccountNo]=@bankAccountNo
-    ,[default]=@default
-    ,[finnetCustomerNo]=@finnetCustomerNo
-      ,UpdateBy=@actionBy
-      ,UpdateDate=getDate()
-      WHERE cardNumber=@cardNumber
-    AND bankAccountNo=@bankAccountNo
-    AND accType=@accType
+    BEGIN TRANSACTION update_CustBankInDB;
 
-      IF @@ROWCOUNT=0
-      BEGIN
-        INSERT INTO  MIT_CUST_BANK (
-       cardNumber
-      ,[accType]
+    DECLARE @BankCursor as CURSOR;
+
+    DECLARE @accType as VARCHAR(10);
+    DECLARE @accountId as VARCHAR(20);
+    DECLARE @bankCode as VARCHAR(10);
+    DECLARE @bankBranchCode as VARCHAR(10);
+    DECLARE @bankAccountNo as VARCHAR(20);
+    DECLARE @default as VARCHAR(10);
+    DECLARE @finnetCustomerNo as VARCHAR(50);
+
+    SET @BankCursor = CURSOR FOR
+    SELECT
+      [accType]
       ,[accountId]
       ,[bankCode]
       ,[bankBranchCode]
       ,[bankAccountNo]
       ,[default]
       ,[finnetCustomerNo]
-          ,[CreateBy]
-          ,[CreateDate]
-          )
-        VALUES(
-       @cardNumber
-          ,@accType
-      ,@accountId
-      ,@bankCode
-      ,@bankBranchCode
-      ,@bankAccountNo
-      ,@default
-      ,@finnetCustomerNo
-          ,@actionBy
-          ,getDate()
-          )
-      END;
+    FROM MIT_FC_CUST_BANK where cardNumber= @cardNumber;
+
+    OPEN @BankCursor;
 
     FETCH NEXT FROM @BankCursor INTO @accType,@accountId,@bankCode,@bankBranchCode,@bankAccountNo,@default,@finnetCustomerNo;
-   END
 
-  CLOSE @BankCursor;
-  DEALLOCATE @BankCursor;
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
 
-  COMMIT TRANSACTION TranName;
+    UPDATE MIT_CUST_BANK SET
+      [accType]=@accType
+      ,[bankCode]=@bankCode
+      ,[bankBranchCode]=@bankBranchCode
+      ,[bankAccountNo]=@bankAccountNo
+      ,[default]=@default
+      ,[finnetCustomerNo]=@finnetCustomerNo
+        ,UpdateBy=@actionBy
+        ,UpdateDate=getDate()
+        WHERE cardNumber=@cardNumber
+      AND bankAccountNo=@bankAccountNo
+      AND accType=@accType
+
+        IF @@ROWCOUNT=0
+        BEGIN
+          INSERT INTO  MIT_CUST_BANK (
+        cardNumber
+        ,[accType]
+        ,[accountId]
+        ,[bankCode]
+        ,[bankBranchCode]
+        ,[bankAccountNo]
+        ,[default]
+        ,[finnetCustomerNo]
+            ,[CreateBy]
+            ,[CreateDate]
+            )
+          VALUES(
+        @cardNumber
+            ,@accType
+        ,@accountId
+        ,@bankCode
+        ,@bankBranchCode
+        ,@bankAccountNo
+        ,@default
+        ,@finnetCustomerNo
+            ,@actionBy
+            ,getDate()
+            )
+        END;
+
+      FETCH NEXT FROM @BankCursor INTO @accType,@accountId,@bankCode,@bankBranchCode,@bankAccountNo,@default,@finnetCustomerNo;
+    END
+
+    CLOSE @BankCursor;
+    DEALLOCATE @BankCursor;
+
+    COMMIT TRANSACTION update_CustBankInDB;
+
+  END
 
   `;
 

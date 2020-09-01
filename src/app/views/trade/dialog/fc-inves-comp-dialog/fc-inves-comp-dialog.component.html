@@ -99,11 +99,11 @@
     </tr>
     <tr >
       <td >
-        Gender: {{mftsCustomer.Sex}}
+        Gender: {{mftsCustomer.SexDisplay }}
       </td>
       <td>
-        <span *ngIf="mftsCustomer.Sex !== fcCustomer.gender" class="gotDiff" > Gender: {{fcCustomer.gender}} </span>
-        <span *ngIf="mftsCustomer.Sex === fcCustomer.gender" > Gender: {{fcCustomer.gender}} </span>
+        <span *ngIf="mftsCustomer.SexDisplay !== fcCustomer.gender" class="gotDiff" > Gender: {{fcCustomer.gender}} </span>
+        <span *ngIf="mftsCustomer.SexDisplay === fcCustomer.gender" > Gender: {{fcCustomer.gender}} </span>
       </td>
     </tr>
 
@@ -141,11 +141,11 @@
 
     <tr >
       <td >
-        Nationality:{{mftsCustomer.Nation_Code}}
+        Nationality: {{mftsCustomer.Nation_Desc}} &nbsp;({{mftsCustomer.SET_Code}})
       </td>
       <td>
-        <span *ngIf="mftsCustomer.Nation_Code !== fcCustomer.nationality" class="gotDiff" > Nationality:{{fcCustomer.nationality}} </span>
-        <span *ngIf="mftsCustomer.Nation_Code === fcCustomer.nationality" > Nationality:{{fcCustomer.nationality}} </span>
+        <span *ngIf="mftsCustomer.SET_Code !== fcCustomer.nationality" class="gotDiff" > Nationality:{{fcCustomer.nationality}} </span>
+        <span *ngIf="mftsCustomer.SET_Code === fcCustomer.nationality" > Nationality:{{fcCustomer.nationality}} </span>
       </td>
     </tr>
 
@@ -225,46 +225,15 @@
         Residence Address
       </td>
     </tr>
-
     <tr>
       <td class="show_block">
-        <p>
-          Address: {{mftsCustomerExt.residence.no}} {{mftsCustomerExt.residence.building}} {{mftsCustomerExt.residence.floor}} {{mftsCustomerExt.residence.soi}} {{mftsCustomerExt.residence.road}} {{mftsCustomerExt.residence.moo}}
-        </p>
-        <p>
-          Subdistrict/Tambol:{{mftsCustomerExt.residence.subDistrict}}
-        </p>
-        <p>
-          District/Amphur:{{mftsCustomerExt.residence.district}}
-        </p>
-        <p>
-          Province:{{mftsCustomerExt.residence.province}}
-        </p>
-        <p>
-          Post Code:{{mftsCustomerExt.residence.postalCode}}
-        </p>
-        <p>
-          Country:{{mftsCustomerExt.residence.country}}
+        <p *ngIf="mftsCustomerExt.residence">
+          {{mftsCustomerExt.residence.printTxt}}
         </p>
       </td>
       <td class="show_block">
-        <p>
-          Address: {{fcCustomer.residence.no}} {{fcCustomer.residence.building}} {{fcCustomer.residence.floor}} {{fcCustomer.residence.soi}} {{fcCustomer.residence.road}} {{fcCustomer.residence.moo}}
-        </p>
-        <p>
-          Subdistrict/Tambol:{{fcCustomer.residence.subDistrict}}
-        </p>
-        <p>
-          District/Amphur:{{fcCustomer.residence.district}}
-        </p>
-        <p>
-          Province:{{fcCustomer.residence.province}}
-        </p>
-        <p>
-          Post Code:{{fcCustomer.residence.postalCode}}
-        </p>
-        <p>
-          Country:{{fcCustomer.residence.country}}
+        <p *ngIf="fcCustomer.residence">
+          {{fcCustomer.residence.printTxt}}
         </p>
       </td>
     </tr>
@@ -282,49 +251,21 @@
     <tr>
         <td class="show_block">
           <p class="p_companyName">
-            Company Name: {{mftsCustomerExt.companyName}}
+            {{mftsCustomerExt.companyName}}
           </p>
-          <p>
-            Address: {{mftsCustomerExt.work.no}} {{mftsCustomerExt.work.building}} {{mftsCustomerExt.work.floor}} {{mftsCustomerExt.work.soi}} {{mftsCustomerExt.work.road}} {{mftsCustomerExt.work.moo}}
+          <p *ngIf="mftsCustomerExt.work" >
+            {{mftsCustomerExt.work.printTxt}}
           </p>
-          <p>
-            Subdistrict/Tambol:{{mftsCustomerExt.work.subDistrict}}
-          </p>
-          <p>
-            District/Amphur:{{mftsCustomerExt.work.district}}
-          </p>
-          <p>
-            Province:{{mftsCustomerExt.work.province}}
-          </p>
-          <p>
-            Post Code:{{mftsCustomerExt.work.postalCode}}
-          </p>
-          <p>
-            Country:{{mftsCustomerExt.work.country}}
-          </p>
+
         </td>
       <td class="show_block">
         <p class="p_companyName">
-          Company Name: {{fcCustomer.companyName}}
+          {{fcCustomer.companyName}}
         </p>
-        <p>
-          Address: {{fcCustomer.work.no}} {{fcCustomer.work.building}} {{fcCustomer.work.floor}} {{fcCustomer.work.soi}} {{fcCustomer.work.road}} {{fcCustomer.work.moo}}
+        <p *ngIf="fcCustomer.work" >
+          {{fcCustomer.work.printTxt}}
         </p>
-        <p>
-          Subdistrict/Tambol:{{fcCustomer.work.subDistrict}}
-        </p>
-        <p>
-          District/Amphur:{{fcCustomer.work.district}}
-        </p>
-        <p>
-          Province:{{fcCustomer.work.province}}
-        </p>
-        <p>
-          Post Code:{{fcCustomer.work.postalCode}}
-        </p>
-        <p>
-          Country:{{fcCustomer.work.country}}
-        </p>
+
       </td>
     </tr>
     <!-- Current Address -->
@@ -339,45 +280,17 @@
 
     <tr>
       <td class="show_block">
-        <p>
-          Address: {{mftsCustomerExt.current.no}} {{mftsCustomerExt.current.building}} {{mftsCustomerExt.current.floor}} {{mftsCustomerExt.current.soi}} {{mftsCustomerExt.current.road}} {{mftsCustomerExt.current.moo}}
+        <p *ngIf="mftsCustomerExt.current" >
+          {{mftsCustomerExt.current.printTxt}}
         </p>
-        <p>
-          Subdistrict/Tambol:{{mftsCustomerExt.current.subDistrict}}
-        </p>
-        <p>
-          District/Amphur:{{mftsCustomerExt.current.district}}
-        </p>
-        <p>
-          Province:{{mftsCustomerExt.current.province}}
-        </p>
-        <p>
-          Post Code:{{mftsCustomerExt.current.postalCode}}
-        </p>
-        <p>
-          Country:{{mftsCustomerExt.current.country}}
-        </p>
+
       </td>
 
       <td class="show_block">
-        <p>
-          Address: {{fcCustomer.current.no}} {{fcCustomer.current.building}} {{fcCustomer.current.floor}} {{fcCustomer.current.soi}} {{fcCustomer.current.road}} {{fcCustomer.current.moo}}
+        <p *ngIf="fcCustomer.current">
+          {{fcCustomer.current.printTxt}}
         </p>
-        <p>
-          Subdistrict/Tambol:{{fcCustomer.current.subDistrict}}
-        </p>
-        <p>
-          District/Amphur:{{fcCustomer.current.district}}
-        </p>
-        <p>
-          Province:{{fcCustomer.current.province}}
-        </p>
-        <p>
-          Post Code:{{fcCustomer.current.postalCode}}
-        </p>
-        <p>
-          Country:{{fcCustomer.current.country}}
-        </p>
+
       </td>
     </tr>
 

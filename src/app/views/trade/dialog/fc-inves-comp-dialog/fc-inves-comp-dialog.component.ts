@@ -9,6 +9,8 @@ import { PersonModel } from '../../model/person.model';
 import { CustomerExt } from '../../model/customerExt.model';
 import { AuthService } from '../../../services/auth.service';
 
+import {genderTransform} from '../../pipe/personalPipe';
+
 @Component({
   selector: 'app-fc-inves-comp-dialog',
   templateUrl: './fc-inves-comp-dialog.component.html',
@@ -62,8 +64,11 @@ export class FcInvesCompDialogComponent implements OnInit {
     //Original data
 
 
-      if(res[0] && res[0].result)
+      if(res[0] && res[0].result){
         this.mftsCustomer = JSON.parse(JSON.stringify(res[0].result));
+        this.mftsCustomer.SexDisplay = new genderTransform().transform(this.mftsCustomer.Sex)
+      }
+
 
       if(res[0] && res[0].result)
         this.mftsCustomerExt = JSON.parse(JSON.stringify(res[0].result));

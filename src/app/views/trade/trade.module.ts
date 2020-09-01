@@ -61,7 +61,7 @@ import { LedInspHistoryComponent } from './led-insp-history/led-insp-history.com
 import { LedInspResourceComponent } from './led-insp-resource/led-insp-resource.component';
 import { LedInspCustDetailComponent } from './dialog/led-insp-cust-detail/led-insp-cust-detail.component';
 import { LedMasDetailComponent } from './dialog/led-mas-detail/led-mas-detail.component';
-import { LedReqStatusPipeComponent } from './pipe/led-req-status-pipe/led-req-status-pipe.component';
+
 import { OpenAccountComponent } from './open-account/open-account.component';
 import { SetRegistrationComponent } from './set-registration/set-registration.component';
 import { RecaptchaModule } from 'angular-google-recaptcha';
@@ -83,6 +83,10 @@ import { FCUtilityComponent } from './fcutility/fcutility.component';
 import { FcInvesCompDialogComponent } from './dialog/fc-inves-comp-dialog/fc-inves-comp-dialog.component';
 import { TestGraphQLComponent } from './test-graph-ql/test-graph-ql.component';
 import { OpenAccountFirstComponent } from './open-account-first/open-account-first.component';
+
+// Pipe
+import { LedReqStatusPipeComponent } from './pipe/led-req-status-pipe/led-req-status-pipe.component';
+import { genderTransform } from './pipe/personalPipe';
 
 @NgModule({
   imports: [
@@ -174,6 +178,7 @@ import { OpenAccountFirstComponent } from './open-account-first/open-account-fir
     FcInvesCompDialogComponent,
     TestGraphQLComponent,
     OpenAccountFirstComponent,
+    genderTransform,
   ],
   providers: [DatePipe],
   entryComponents: [

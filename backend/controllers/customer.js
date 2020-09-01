@@ -106,7 +106,7 @@ exports.getCustomer = (req, res, next) => {
   var fncName = 'getCustomer';
   var custCode = req.params.cusCode;
 
-  console.log('getCustomer()' + custCode)
+  // console.log('getCustomer()' + custCode)
 
   var queryStr = `select *
   FROM [Account_Info]
@@ -237,7 +237,7 @@ exports.getFC_CustomerInfo = (req, res, next) => {
 
   var custCode = req.params.cusCode;
 
-  console.log('getFC_CustomerInfo() > ' + custCode)
+  // console.log('getFC_CustomerInfo() > ' + custCode)
 
   fnArray=[];
   fnArray.push(getFC_CustomerInfo(custCode));
@@ -278,7 +278,7 @@ exports.getFC_CustomerInfo = (req, res, next) => {
 
 const getORG_Children = (cardNumber) => {
   return new Promise((resolve, reject) => {
-      var fncName = 'getFC_Address() ';
+      var fncName = 'getORG_Children() ';
 
       const sql = require('mssql')
       var queryStr = `
@@ -308,7 +308,7 @@ const getORG_Children = (cardNumber) => {
 
 const getFC_Children = (cardNumber) => {
   return new Promise((resolve, reject) => {
-      var fncName = 'getFC_Address() ';
+      var fncName = 'getFC_Children() ';
 
       const sql = require('mssql')
       // var queryStr = `
@@ -352,12 +352,25 @@ const getFC_Children = (cardNumber) => {
 
 const getORG_Address = (cardNumber,seq) => {
   return new Promise((resolve, reject) => {
-      var fncName = 'getFC_Address() ';
+      var fncName = 'getORG_Address() ';
 
       const sql = require('mssql')
-      var queryStr = `SELECT *
-      FROM [MIT_CUST_ADDR]
-      WHERE cardNumber=@cardNumber AND Addr_Seq=@Addr_Seq `;
+      var queryStr = `SELECT
+      A.Addr_No,
+      [Place],
+      [Road],
+
+      [Tambon_Id],
+      [Amphur_Id],
+      [Province_Id],
+      [Country_Id],
+      [Zip_Code],
+      [Print_Address] AS printTxt,
+      [Tel],
+      [Fax]
+      FROM [Account_Address] A
+      WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+      `;
 
       const pool1 = new sql.ConnectionPool(config, err => {
         pool1.request() // or: new sql.Request(pool1)
@@ -385,11 +398,19 @@ const getFC_Address = (cardNumber,seq) => {
       var fncName = 'getFC_Address() ';
 
       const sql = require('mssql')
-      var queryStr = `SELECT A.*
-      ,ISNULL(A.[no],'') +' '+ISNULL(A.building,'')+' ชั้น' + ISNULL(a.[floor],'') +' '+ ISNULL(a.soi, '') +'ถ.'  +ISNULL(a.road,'') +' '+ISNULL(A.moo,'') + ' ' +ISNULL(A.subDistrict,'') +' '+ ISNULL(A.subDistrict,'') +' '+
-ISNULL(A.province,'') +' '+ ISNULL(A.postalCode,'') AS printTxt
+      var queryStr = `
+      SELECT
+      ISNULL(' '+A.[no],'') +' '+ISNULL(' '+A.building,'')+ISNULL(' ชั้น ' + a.[floor],'') +' '+ ISNULL(' ซ.'+a.soi, '')
+      +ISNULL(' ถ.'+ a.road,'')
+      +ISNULL(' หมู่'+A.moo,'')
+      +ISNULL(' '+A.subDistrict,'')
+      +ISNULL(' '+A.subDistrict,'')
+      +ISNULL(' '+A.province,'')
+      +ISNULL(' '+A.postalCode,'') AS printTxt
+      ,A.*
       FROM [MIT_FC_CUST_ADDR] A
-      WHERE A.cardNumber=@cardNumber AND A.Addr_Seq=@Addr_Seq `;
+      WHERE A.cardNumber=@cardNumber AND A.Addr_Seq=@Addr_Seq
+      `;
 
       const pool1 = new sql.ConnectionPool(config, err => {
         pool1.request() // or: new sql.Request(pool1)
@@ -2900,8 +2921,10 @@ function getMFTS_CustomerInfo(custCode){
 
   var fncName = 'getMFTS_CustomerInfo() ';
   var queryStr = `
-  select *
-  FROM [Account_Info]
+  select B.Nation_Desc,B.SET_Code
+  ,A.*
+  FROM [Account_Info] A
+  LEFT JOIN REF_Nations B ON A.Nation_Code=B.Nation_Code
   WHERE Cust_Code= @Cust_Code`;
   const sql = require('mssql')
 

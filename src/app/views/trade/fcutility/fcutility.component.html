@@ -39,7 +39,7 @@
       <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
 
       <form [formGroup]="downloadNAVForm"  #custForm="ngForm">
-          <label for="businessDate" class="col-sm-3 col-form-label">Business Date</label>
+          <label for="businessDate" class="col-sm-3 col-form-label">Business Date(T-1)</label>
           <mat-form-field class="col-sm-3" >
             <input matInput id="businessDate" formControlName="businessDate"  [(ngModel)]="fcdownloadAPI.businessDate" [matDatepicker]="businessDate"
              placeholder="" readonly=true>

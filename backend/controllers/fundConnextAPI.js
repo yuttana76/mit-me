@@ -40,7 +40,7 @@ exports.scheduleDownload = (req, res, next) => {
 
   // Transaction API
   fnArray=[];
-  fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
+  // fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
   fnArray.push(downloadNavAPIproc(businessDate,userCode));
 
   Promise.all(fnArray)

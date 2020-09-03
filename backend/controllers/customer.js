@@ -656,6 +656,11 @@ function update_CustomerInfo(custObj,actionBy){
     DECLARE  @Create_By VARCHAR(20);
     DECLARE  @MktId VARCHAR(20);
 
+
+    SELECT @Title_Name_E = [Title_Name]
+    FROM [MFTS].[dbo].[REF_Title_Englishs]
+    where Title_Name like '%'+@Title_Name_E+'%'
+
     SELECT @Nation_Code=Nation_Code
     FROM REF_Nations
     WHERE SET_Code= @SET_Code
@@ -663,8 +668,6 @@ function update_CustomerInfo(custObj,actionBy){
     --MktId
     select  @MktId=Id from MFTS_SalesCode
     where License_Code=@IT_SAcode
-
-
 
     --#BACKUP DATA
     DECLARE  @actionByInt int =999;
@@ -1635,13 +1638,13 @@ function update_Address(addrObj,seq,actionBy){
 
   select @Amphur_ID=Amphur_ID
   from REF_Amphurs
-  where Name_Thai like '%'+LEFT(@district,6)+'%'
-  AND Province_ID =@Province_ID
+  WHERE Province_ID =@Province_ID
+  AND Name_Thai like '%'+@district+'%'
 
   select @Tambon_ID=Tambon_ID
   from REF_Tambons
-  where Name_Thai like '%'+LEFT(@subDistrict,6)+'%'
-  AND Amphur_ID=@Amphur_ID
+  WHERE Amphur_ID=@Amphur_ID
+  AND Name_Thai like '%'+@subDistrict+'%'
 
   -- BACKUP
   DECLARE  @actionByInt int =999;

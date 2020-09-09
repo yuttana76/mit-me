@@ -18,9 +18,8 @@ router.post("/customer/individual", fundConnextAPIController.createCustomerIndiv
 router.put("/customer/individual", fundConnextAPIController.updateCustomerIndividual);
 router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);//Partrial
 
-//(DEVELOPING !!) download API CustomerProfile
-router.get("/downloadCustomerProfile/",[
-], fundConnextAPIController.downloadCustomerProfile);
+//(DEVELOPING !!) download API CustomerProfile List all New/Update
+router.get("/downloadCustomerProfile",fundConnextAPIController.downloadCustomerProfile);
 
 
 // download API

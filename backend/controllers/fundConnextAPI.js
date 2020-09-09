@@ -34,9 +34,9 @@ const sql = require("mssql");
 
 exports.scheduleDownload = (req, res, next) => {
 
+  logger.info('Start Execute FundConnext schedule;' )
   var userCode = 'MPAM_SCH'
   var businessDate = fundConnextCurrentDate();
-  logger.info('Execute scheduleDownloadAllotedAPIproc(); businessDate:' + businessDate )
 
   // Transaction API
   fnArray=[];
@@ -45,16 +45,14 @@ exports.scheduleDownload = (req, res, next) => {
 
   Promise.all(fnArray)
   .then(data => {
-      res.status(200).json('Schedule successful. ' + JSON.stringify(data));
+    logger.info('Finish Execute FundConnext schedule;' )
+      res.status(200).json('API Schedule successful. ' + JSON.stringify(data));
   })
   .catch(error => {
-    logger.error(error.message)
+    logger.error('Error FundConnext schedule;' +error.message)
     res.status(401).json(error.message);
   });
-
 }
-
-
 
 exports.downloadCustomerProfile = (req, res, next) => {
 
@@ -2730,7 +2728,8 @@ function customerProfileProc(businessDate,actionBy){
               // Implement here
               data.forEach(function(item){
 
-                logger.info(">>>"+JSON.stringify(item))
+                // logger.info(">>>"+JSON.stringify(item))
+                logger.info(">>>"+JSON.stringify(item.cardNumber))
 
                   // getIndCustDEVProc(item,actionBy).then(result=>{
                   //   // res.status(200).json(result);
@@ -4415,6 +4414,7 @@ function fundConnextCurrentDate(){
     returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
   }
 
+  console.log('fundConnextCurrentDate()'+returnDate_yyyymmddDate);
   return returnDate_yyyymmddDate
 }
 

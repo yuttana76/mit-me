@@ -444,11 +444,12 @@ const getFC_Address = (cardNumber,seq) => {
  */
 exports.approveCustInfo = (req, res, next) => {
 
-  console.log("approveCustInfo()" );
+  logger.info("approveCustInfo()");
 
   // var mftsCustInfoObj = JSON.parse(req.body.mftsCustInfo)
   var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
-  var actionBy = req.body.actionBy;
+  var actionBy='MIT';
+  // var actionBy = req.body.actionBy;
 
 // VALIDATE data
 
@@ -505,40 +506,40 @@ exports.approveCustInfo = (req, res, next) => {
 
   fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
 
-  if(fcCustInfoObj.residence)
-    fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
+  // if(fcCustInfoObj.residence)
+  //   fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
 
-  if(fcCustInfoObj.current)
-    fnArray.push(update_Address(fcCustInfoObj.current,2,actionBy));
+  // if(fcCustInfoObj.current)
+  //   fnArray.push(update_Address(fcCustInfoObj.current,2,actionBy));
 
-  if(fcCustInfoObj.work)
-    fnArray.push(update_Address(fcCustInfoObj.work,3,actionBy));
+  // if(fcCustInfoObj.work)
+  //   fnArray.push(update_Address(fcCustInfoObj.work,3,actionBy));
 
-  //Update Children
-    for (var i in fcCustInfoObj.children) {
-        if(fcCustInfoObj.children[i])
-          fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
-    }
+  // //Update Children
+  //   for (var i in fcCustInfoObj.children) {
+  //       if(fcCustInfoObj.children[i])
+  //         fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
+  //   }
 
-  //ACCOUNT
-  fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
+  // //ACCOUNT
+  // fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
 
-  //BANK ACCOUNT
-  fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
+  // //BANK ACCOUNT
+  // fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
 
-  fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+  // fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
 
-  fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
+  // fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
   //Suit by  account
 
   Promise.all(fnArray)
   .then(data => {
 
-    update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
-      res.status(200).json(data);
-    })
+    // update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
+    //   res.status(200).json(data);
+    // })
 
-    //  res.status(200).json(data[0]);
+     res.status(200).json(data[0]);
 
   })
   .catch(error => {
@@ -550,6 +551,8 @@ exports.approveCustInfo = (req, res, next) => {
 
 function update_CustomerInfo(custObj,actionBy){
 
+  logger.info("update_CustomerInfo()" + custObj.cardNumber);
+
   // Convert Refer code 6 charactors
   var referalPerson = ""
 
@@ -560,11 +563,15 @@ function update_CustomerInfo(custObj,actionBy){
   }
 
   // Convert Date split 10 charactors
-  if(custObj.birthDate)
+  if(custObj.birthDate){
     custObj.birthDate = custObj.birthDate.substr(0, 10);
+  }
 
-  if(custObj.SPidCardExpiryDate)
+
+  if(custObj.SPidCardExpiryDate){
     custObj.SPidCardExpiryDate = custObj.SPidCardExpiryDate.substr(0, 10);
+  }
+
 
   if(custObj.cddDate)
     custObj.cddDate = custObj.cddDate.substr(0, 10);
@@ -653,8 +660,11 @@ function update_CustomerInfo(custObj,actionBy){
   BEGIN TRANSACTION update_CustomerInfo;
 
     DECLARE  @Nation_Code VARCHAR(10);
-    DECLARE  @Create_By VARCHAR(20);
+    --DECLARE  @Create_By VARCHAR(20);
     DECLARE  @MktId VARCHAR(20);
+
+    DECLARE  @actionByInt int =999;
+    DECLARE  @OLD_DATA  NVARCHAR(100);
 
 
     SELECT @Title_Name_E = [Title_Name]
@@ -670,8 +680,6 @@ function update_CustomerInfo(custObj,actionBy){
     where License_Code=@IT_SAcode
 
     --#BACKUP DATA
-    DECLARE  @actionByInt int =999;
-    DECLARE  @OLD_DATA  NVARCHAR(100);
 
     --Card_Type
     SELECT @OLD_DATA = Card_Type FROM Account_Info WHERE Cust_Code =@Cust_Code
@@ -681,7 +689,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'Card_Type',@OLD_DATA,@Card_Type,GETDATE(),@actionByInt);
     END;
 
-    -- First_Name_T
+    -- -- First_Name_T
     SELECT @OLD_DATA = First_Name_T FROM Account_Info WHERE Cust_Code =@Cust_Code
     IF @OLD_DATA <> @First_Name_T AND @@ROWCOUNT>0
     BEGIN
@@ -721,20 +729,23 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'Last_Name_E',@Old_data,@Last_Name_E,GETDATE(),@actionByInt);
     END;
 
-    -- Birth_Day
-    SELECT @OLD_DATA =  convert(varchar, ISNULL(Birth_Day,''), 23) FROM Account_Info WHERE Cust_Code =@Cust_Code
-    IF CONVERT(DATE, @OLD_DATA) <> CONVERT(DATE, @Birth_Day) AND @@ROWCOUNT>0
+    -- -- Birth_Day
+    IF EXISTS(SELECT Birth_Day FROM Account_Info WHERE Cust_Code =@Cust_Code)
     BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'Birth_Day',@Old_data,@Birth_Day,GETDATE(),@actionByInt);
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(Birth_Day,''), 23) FROM Account_Info WHERE Cust_Code =@Cust_Code
+      IF CONVERT(DATE, @OLD_DATA) <> CONVERT(DATE, @Birth_Day) AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'Birth_Day',@Old_data,@Birth_Day,GETDATE(),@actionByInt);
+      END;
     END;
 
-    -- Nation_Code
+    -- -- Nation_Code
     SELECT @OLD_DATA = Nation_Code FROM Account_Info WHERE Cust_Code =@Cust_Code
     IF @OLD_DATA <> @Nation_Code AND @@ROWCOUNT>0
     BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'Nation_Code',@Old_data,@Nation_Code,GETDATE(),@actionByInt);
+         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+         VALUES (@Cust_Code,'Nation_Code',@Old_data,@Nation_Code,GETDATE(),@actionByInt);
     END;
 
     -- Email
@@ -842,15 +853,19 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'titleOther',@Old_data,@titleOther,GETDATE(),@actionByInt);
     END;
 
-    -- ,cardExpiryDate=@cardExpiryDate
-    SELECT @OLD_DATA =  convert(varchar, cardExpiryDate, 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
-    IF CONVERT(DATE, @OLD_DATA) <> CONVERT(DATE, @cardExpiryDate) AND @@ROWCOUNT>0
+    -- -- -- ,cardExpiryDate=@cardExpiryDate
+    IF EXISTS(SELECT cardExpiryDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
     BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'cardExpiryDate',@Old_data,@cardExpiryDate,GETDATE(),@actionByInt);
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(cardExpiryDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF CONVERT(DATE, @OLD_DATA) <> CONVERT(DATE, @cardExpiryDate) AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'cardExpiryDate',@Old_data,@cardExpiryDate,GETDATE(),@actionByInt);
+      END;
     END;
 
-        -- ,maritalStatus=@maritalStatus
+
+    -- ,maritalStatus=@maritalStatus
     SELECT @OLD_DATA = maritalStatus FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @maritalStatus AND @@ROWCOUNT>0
     BEGIN
@@ -858,7 +873,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'maritalStatus',@Old_data,@maritalStatus,GETDATE(),@actionByInt);
     END;
 
-        -- ,SPidentificationCardType=@SPidentificationCardType
+    --     -- ,SPidentificationCardType=@SPidentificationCardType
     SELECT @OLD_DATA = SPidentificationCardType FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @SPidentificationCardType AND @@ROWCOUNT>0
     BEGIN
@@ -866,7 +881,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'SPidentificationCardType',@Old_data,@SPidentificationCardType,GETDATE(),@actionByInt);
     END;
 
-        -- ,SPpassportCountry=@SPpassportCountry
+    --     -- ,SPpassportCountry=@SPpassportCountry
     SELECT @OLD_DATA = SPpassportCountry FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @SPpassportCountry AND @@ROWCOUNT>0
     BEGIN
@@ -874,7 +889,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'SPpassportCountry',@Old_data,@SPpassportCountry,GETDATE(),@actionByInt);
     END;
 
-        -- ,SPcardNumber=@SPcardNumber
+    --     -- ,SPcardNumber=@SPcardNumber
     SELECT @OLD_DATA = SPcardNumber FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @SPcardNumber AND @@ROWCOUNT>0
     BEGIN
@@ -882,7 +897,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'SPcardNumber',@Old_data,@SPcardNumber,GETDATE(),@actionByInt);
     END;
 
-        -- ,SPtitle=@SPtitle
+    --     -- ,SPtitle=@SPtitle
     SELECT @OLD_DATA = SPtitle FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @SPtitle AND @@ROWCOUNT>0
     BEGIN
@@ -898,7 +913,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'SPtitleOther',@Old_data,@SPtitleOther,GETDATE(),@actionByInt);
     END;
 
-        -- ,SPthFirstName=@SPthFirstName
+    --     -- ,SPthFirstName=@SPthFirstName
     SELECT @OLD_DATA = SPthFirstName FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @SPthFirstName AND @@ROWCOUNT>0
     BEGIN
@@ -914,15 +929,18 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'SPthLastName',@Old_data,@SPthLastName,GETDATE(),@actionByInt);
     END;
 
-        -- ,SPidCardExpiryDate=@SPidCardExpiryDate
-    SELECT @OLD_DATA = SPidCardExpiryDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
-    IF @OLD_DATA <> @SPidCardExpiryDate AND @@ROWCOUNT>0
+    -- -- ,SPidCardExpiryDate=@SPidCardExpiryDate
+    IF EXISTS(SELECT SPidCardExpiryDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
     BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'SPidCardExpiryDate',@Old_data,@SPidCardExpiryDate,GETDATE(),@actionByInt);
+      SELECT @OLD_DATA = convert(varchar, ISNULL(SPidCardExpiryDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF @OLD_DATA <> @SPidCardExpiryDate AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'SPidCardExpiryDate',@Old_data,@SPidCardExpiryDate,GETDATE(),@actionByInt);
+      END;
     END;
 
-        -- ,SPphoneNumber=@SPphoneNumber
+    -- ,SPphoneNumber=@SPphoneNumber
     SELECT @OLD_DATA = SPphoneNumber FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @SPphoneNumber AND @@ROWCOUNT>0
     BEGIN
@@ -970,16 +988,19 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'cddScore',@Old_data,@cddScore,GETDATE(),@actionByInt);
     END;
 
-        -- ,cddDate=@cddDate
-    SELECT @OLD_DATA =  convert(varchar, ISNULL(cddDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
-    IF @OLD_DATA <> @cddDate AND @@ROWCOUNT>0
+    -- -- ,cddDate=@cddDate
+    IF EXISTS(SELECT cddDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
     BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'cddDate',@Old_data,@cddDate,GETDATE(),@actionByInt);
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(cddDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF @OLD_DATA <> @cddDate AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'cddDate',@Old_data,@cddDate,GETDATE(),@actionByInt);
+      END;
     END;
 
 
-        -- ,canAcceptDerivativeInvestment=@canAcceptDerivativeInvestment
+    -- ,canAcceptDerivativeInvestment=@canAcceptDerivativeInvestment
     SELECT @OLD_DATA = canAcceptDerivativeInvestment FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @canAcceptDerivativeInvestment AND @@ROWCOUNT>0
     BEGIN
@@ -987,7 +1008,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'canAcceptDerivativeInvestment',@Old_data,@canAcceptDerivativeInvestment,GETDATE(),@actionByInt);
     END;
 
-        -- ,canAcceptFxRisk=@canAcceptFxRisk
+    -- ,canAcceptFxRisk=@canAcceptFxRisk
     SELECT @OLD_DATA = canAcceptFxRisk FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @canAcceptFxRisk AND @@ROWCOUNT>0
     BEGIN
@@ -995,7 +1016,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'canAcceptFxRisk',@Old_data,@canAcceptFxRisk,GETDATE(),@actionByInt);
     END;
 
-        -- ,accompanyingDocument=@accompanyingDocument
+    -- ,accompanyingDocument=@accompanyingDocument
     SELECT @OLD_DATA = accompanyingDocument FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @accompanyingDocument AND @@ROWCOUNT>0
     BEGIN
@@ -1003,7 +1024,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'accompanyingDocument',@Old_data,@accompanyingDocument,GETDATE(),@actionByInt);
     END;
 
-        -- ,referalPerson=@referalPerson
+    -- ,referalPerson=@referalPerson
     SELECT @OLD_DATA = referalPerson FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @referalPerson AND @@ROWCOUNT>0
     BEGIN
@@ -1011,15 +1032,19 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'referalPerson',@Old_data,@referalPerson,GETDATE(),@actionByInt);
     END;
 
-        -- ,applicationDate=@applicationDate
-    SELECT @OLD_DATA =  convert(varchar, ISNULL(applicationDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
-    IF @OLD_DATA <> @applicationDate AND @@ROWCOUNT>0
+    -- -- ,applicationDate=@applicationDate
+    IF EXISTS(SELECT applicationDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
     BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'applicationDate',@Old_data,@applicationDate,GETDATE(),@actionByInt);
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(applicationDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF @OLD_DATA <> @applicationDate AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'applicationDate',@Old_data,@applicationDate,GETDATE(),@actionByInt);
+      END;
     END;
 
-        -- ,incomeSourceCountry=@incomeSourceCountry
+
+    -- ,incomeSourceCountry=@incomeSourceCountry
     SELECT @OLD_DATA = incomeSourceCountry FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @incomeSourceCountry AND @@ROWCOUNT>0
     BEGIN
@@ -1027,7 +1052,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'incomeSourceCountry',@Old_data,@incomeSourceCountry,GETDATE(),@actionByInt);
     END;
 
-        -- ,acceptBy=@acceptBy
+    -- ,acceptBy=@acceptBy
     SELECT @OLD_DATA = acceptBy FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @acceptBy AND @@ROWCOUNT>0
     BEGIN
@@ -1035,7 +1060,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'acceptBy',@Old_data,@acceptBy,GETDATE(),@actionByInt);
     END;
 
-        -- ,openFundConnextFormFlag=@openFundConnextFormFlag
+    -- ,openFundConnextFormFlag=@openFundConnextFormFlag
     SELECT @OLD_DATA = openFundConnextFormFlag FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @openFundConnextFormFlag AND @@ROWCOUNT>0
     BEGIN
@@ -1043,7 +1068,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'openFundConnextFormFlag',@Old_data,@openFundConnextFormFlag,GETDATE(),@actionByInt);
     END;
 
-        -- ,approved=@approved
+    -- ,approved=@approved
     SELECT @OLD_DATA = approved FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @approved AND @@ROWCOUNT>0
     BEGIN
@@ -1051,7 +1076,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'approved',@Old_data,@approved,GETDATE(),@actionByInt);
     END;
 
-        -- ,vulnerableFlag=@vulnerableFlag
+    -- ,vulnerableFlag=@vulnerableFlag
     SELECT @OLD_DATA = vulnerableFlag FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @vulnerableFlag AND @@ROWCOUNT>0
     BEGIN
@@ -1067,7 +1092,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'vulnerableDetail',@Old_data,@vulnerableDetail,GETDATE(),@actionByInt);
     END;
 
-        -- ,ndidFlag=@ndidFlag
+    -- ,ndidFlag=@ndidFlag
     SELECT @OLD_DATA = ndidFlag FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @ndidFlag AND @@ROWCOUNT>0
     BEGIN
@@ -1075,7 +1100,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'ndidFlag',@Old_data,@ndidFlag,GETDATE(),@actionByInt);
     END;
 
-        -- ,ndidRequestId=@ndidRequestId
+    --     -- ,ndidRequestId=@ndidRequestId
     SELECT @OLD_DATA = ndidRequestId FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @ndidRequestId AND @@ROWCOUNT>0
     BEGIN
@@ -1083,7 +1108,7 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'ndidRequestId',@Old_data,@ndidRequestId,GETDATE(),@actionByInt);
     END;
 
-        -- ,suitabilityRiskLevel=@suitabilityRiskLevel
+    --     -- ,suitabilityRiskLevel=@suitabilityRiskLevel
     SELECT @OLD_DATA = suitabilityRiskLevel FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @suitabilityRiskLevel AND @@ROWCOUNT>0
     BEGIN
@@ -1091,15 +1116,18 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'suitabilityRiskLevel',@Old_data,@suitabilityRiskLevel,GETDATE(),@actionByInt);
     END;
 
-    --     -- ,suitabilityEvaluationDate=@suitabilityEvaluationDate
-    SELECT @OLD_DATA =  convert(varchar, ISNULL(suitabilityEvaluationDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
-    IF @OLD_DATA <> @suitabilityEvaluationDate AND @@ROWCOUNT>0
+    -- -- ,suitabilityEvaluationDate=@suitabilityEvaluationDate
+    IF EXISTS(SELECT suitabilityEvaluationDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
     BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'suitabilityEvaluationDate',@Old_data,@suitabilityEvaluationDate,GETDATE(),@actionByInt);
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(suitabilityEvaluationDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF @OLD_DATA <> @suitabilityEvaluationDate AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'suitabilityEvaluationDate',@Old_data,@suitabilityEvaluationDate,GETDATE(),@actionByInt);
+      END;
     END;
 
-        -- ,fatca=@fatca
+    -- -- ,fatca=@fatca
     SELECT @OLD_DATA = fatca FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @fatca AND @@ROWCOUNT>0
     BEGIN
@@ -1107,15 +1135,18 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'fatca',@Old_data,@fatca,GETDATE(),@actionByInt);
     END;
 
-        -- ,fatcaDeclarationDate=@fatcaDeclarationDate
-    SELECT @OLD_DATA =  convert(varchar, ISNULL(fatcaDeclarationDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
-    IF @OLD_DATA <> @fatcaDeclarationDate AND @@ROWCOUNT>0
+    --     -- ,fatcaDeclarationDate=@fatcaDeclarationDate
+    IF EXISTS(SELECT fatcaDeclarationDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
     BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'fatcaDeclarationDate',@Old_data,@fatcaDeclarationDate,GETDATE(),@actionByInt);
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(fatcaDeclarationDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF @OLD_DATA <> @fatcaDeclarationDate AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'fatcaDeclarationDate',@Old_data,@fatcaDeclarationDate,GETDATE(),@actionByInt);
+      END;
     END;
 
-        -- ,workAddressSameAsFlag=@workAddressSameAsFlag
+    -- -- ,workAddressSameAsFlag=@workAddressSameAsFlag
     SELECT @OLD_DATA = workAddressSameAsFlag FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @workAddressSameAsFlag AND @@ROWCOUNT>0
     BEGIN
@@ -1123,13 +1154,15 @@ function update_CustomerInfo(custObj,actionBy){
         VALUES (@Cust_Code,'workAddressSameAsFlag',@Old_data,@workAddressSameAsFlag,GETDATE(),@actionByInt);
     END;
 
-        -- ,currentAddressSameAsFlag=@currentAddressSameAsFlag
+    -- -- ,currentAddressSameAsFlag=@currentAddressSameAsFlag
     SELECT @OLD_DATA = currentAddressSameAsFlag FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @currentAddressSameAsFlag AND @@ROWCOUNT>0
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
         VALUES (@Cust_Code,'currentAddressSameAsFlag',@Old_data,@currentAddressSameAsFlag,GETDATE(),@actionByInt);
     END;
+
+
 
     --#BACKUP DATA
 
@@ -1152,6 +1185,7 @@ function update_CustomerInfo(custObj,actionBy){
     ,IT_SentRepByEmail=@IT_SentRepByEmail
     ,IT_PID_No=@IT_PID_No
     ,IT_PID_ExpiryDate=@IT_PID_ExpiryDate
+    ,Modify_By = @actionBy
     ,Modify_Date=GETDATE()
     WHERE Cust_Code=@Cust_Code
 
@@ -1199,7 +1233,7 @@ function update_CustomerInfo(custObj,actionBy){
           ,@IT_PID_ExpiryDate
           ,@IT_FundConnext
           ,GETDATE()
-          ,@Create_By
+          ,@actionBy
           ,GETDATE()
       )
     END
@@ -1383,22 +1417,19 @@ function update_CustomerInfo(custObj,actionBy){
       .input("Title_Name_E", sql.NVarChar(100), custObj.title)
       .input("First_Name_E", sql.NVarChar(100), custObj.enFirstName)
       .input("Last_Name_E", sql.NVarChar(100), custObj.enLastName)
-      .input("Birth_Day", sql.NVarChar(100), custObj.birthDate)
+      .input("Birth_Day", sql.NVarChar(100), custObj.birthDate) // Date
       .input("SET_Code", sql.NVarChar(100), custObj.nationality)
       .input("Email", sql.NVarChar(100), custObj.email)
       .input("Mobile", sql.VarChar(50), custObj.mobileNumber)
       .input("Sex", sql.VarChar(10), custObj.Sex)
       .input("IT_SAcode", sql.NVarChar(20), referalPerson)
-
       .input("IT_SentRepByEmail", sql.NVarChar(20), custObj.IT_SentRepByEmail)
       .input("IT_PID_No", sql.NVarChar(20), custObj.cardNumber)
-      .input("IT_PID_ExpiryDate", sql.NVarChar(50), custObj.cardExpiryDate)
+      .input("IT_PID_ExpiryDate", sql.NVarChar(50), custObj.cardExpiryDate) // Date
       .input("IT_FundConnext", sql.NVarChar(20), custObj.IT_FundConnext)
-
       .input("cardNumber", sql.VarChar(20), custObj.cardNumber)
       .input("occupationId", sql.VarChar(10), custObj.occupationId)
       .input("occupationOther", sql.NVarChar(100), custObj.occupationOther)
-
       .input("businessTypeId", sql.VarChar(3), custObj.businessTypeId)
       .input("businessTypeOther", sql.NVarChar(100), custObj.businessTypeOther)
       .input("monthlyIncomeLevel", sql.VarChar(10), custObj.monthlyIncomeLevel)
@@ -1407,7 +1438,7 @@ function update_CustomerInfo(custObj,actionBy){
       .input("companyName", sql.NVarChar(100), custObj.companyName)
       .input("passportCountry", sql.VarChar(2), custObj.passportCountry)
       .input("titleOther", sql.NVarChar(100), custObj.titleOther)
-      .input("cardExpiryDate", sql.NVarChar(50), custObj.cardExpiryDate)
+      .input("cardExpiryDate", sql.NVarChar(50), custObj.cardExpiryDate) // Date
       .input("maritalStatus", sql.VarChar(10), custObj.maritalStatus)
       .input("SPidentificationCardType", sql.VarChar(15), custObj.SPidentificationCardType)
       .input("SPpassportCountry", sql.VarChar(2), custObj.SPpassportCountry)
@@ -1416,19 +1447,19 @@ function update_CustomerInfo(custObj,actionBy){
       .input("SPtitleOther", sql.NVarChar(50), custObj.SPtitleOther)
       .input("SPthFirstName", sql.NVarChar(100), custObj.SPthFirstName)
       .input("SPthLastName", sql.NVarChar(100), custObj.SPthLastName)
-      .input("SPidCardExpiryDate", sql.VarChar(50), custObj.SPidCardExpiryDate)
+      .input("SPidCardExpiryDate", sql.VarChar(50), custObj.SPidCardExpiryDate) // Date
       .input("SPphoneNumber", sql.VarChar(20), custObj.SPphoneNumber)
       .input("committedMoneyLaundering", sql.VarChar(10), custObj.committedMoneyLaundering)
       .input("politicalRelatedPerson", sql.VarChar(10), custObj.politicalRelatedPerson)
       .input("rejectFinancialTransaction", sql.VarChar(10), custObj.rejectFinancialTransaction)
       .input("confirmTaxDeduction", sql.VarChar(10), custObj.confirmTaxDeduction)
       .input("cddScore", sql.VarChar(1), custObj.cddScore)
-      .input("cddDate", sql.VarChar(50), custObj.cddDate)
+      .input("cddDate", sql.VarChar(50), custObj.cddDate) // Date
       .input("canAcceptDerivativeInvestment", sql.VarChar(10), custObj.canAcceptDerivativeInvestment)
       .input("canAcceptFxRisk", sql.VarChar(10), custObj.canAcceptFxRisk)
       .input("accompanyingDocument", sql.VarChar(20), custObj.accompanyingDocument)
       .input("referalPerson", sql.NVarChar(100), referalPerson)
-      .input("applicationDate", sql.VarChar(50), custObj.applicationDate)
+      .input("applicationDate", sql.VarChar(50), custObj.applicationDate) // Date
       .input("incomeSourceCountry", sql.VarChar(2), custObj.incomeSourceCountry)
       .input("acceptBy", sql.VarChar(100), custObj.acceptBy)
       .input("openFundConnextFormFlag", sql.VarChar(10), custObj.openFundConnextFormFlag)
@@ -1438,9 +1469,9 @@ function update_CustomerInfo(custObj,actionBy){
       .input("ndidFlag", sql.VarChar(10), custObj.ndidFlag)
       .input("ndidRequestId", sql.NVarChar(100), custObj.ndidRequestId)
       .input("suitabilityRiskLevel", sql.VarChar(1), custObj.suitabilityRiskLevel)
-      .input("suitabilityEvaluationDate", sql.VarChar(50), custObj.suitabilityEvaluationDate)
+      .input("suitabilityEvaluationDate", sql.VarChar(50), custObj.suitabilityEvaluationDate) // Date
       .input("fatca", sql.VarChar(10), custObj.fatca)
-      .input("fatcaDeclarationDate", sql.VarChar(50), custObj.fatcaDeclarationDate)
+      .input("fatcaDeclarationDate", sql.VarChar(50), custObj.fatcaDeclarationDate) // Date
       .input("workAddressSameAsFlag", sql.VarChar(20), custObj.workAddressSameAsFlag)
       .input("currentAddressSameAsFlag", sql.VarChar(20), custObj.currentAddressSameAsFlag)
 

@@ -506,40 +506,40 @@ exports.approveCustInfo = (req, res, next) => {
 
   fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
 
-  // if(fcCustInfoObj.residence)
-  //   fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
+  if(fcCustInfoObj.residence)
+    fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
 
-  // if(fcCustInfoObj.current)
-  //   fnArray.push(update_Address(fcCustInfoObj.current,2,actionBy));
+  if(fcCustInfoObj.current)
+    fnArray.push(update_Address(fcCustInfoObj.current,2,actionBy));
 
-  // if(fcCustInfoObj.work)
-  //   fnArray.push(update_Address(fcCustInfoObj.work,3,actionBy));
+  if(fcCustInfoObj.work)
+    fnArray.push(update_Address(fcCustInfoObj.work,3,actionBy));
 
-  // //Update Children
-  //   for (var i in fcCustInfoObj.children) {
-  //       if(fcCustInfoObj.children[i])
-  //         fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
-  //   }
+  //Update Children
+    for (var i in fcCustInfoObj.children) {
+        if(fcCustInfoObj.children[i])
+          fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
+    }
 
-  // //ACCOUNT
-  // fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
+  //ACCOUNT
+  fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
 
-  // //BANK ACCOUNT
-  // fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
+  //BANK ACCOUNT
+  fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
 
-  // fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+  fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
 
-  // fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
+  fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
   //Suit by  account
 
   Promise.all(fnArray)
   .then(data => {
 
-    // update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
-    //   res.status(200).json(data);
-    // })
+    update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
+      res.status(200).json(data);
+    })
 
-     res.status(200).json(data[0]);
+    //  res.status(200).json(data[0]);
 
   })
   .catch(error => {
@@ -666,7 +666,6 @@ function update_CustomerInfo(custObj,actionBy){
     DECLARE  @actionByInt int =999;
     DECLARE  @OLD_DATA  NVARCHAR(100);
 
-
     SELECT @Title_Name_E = [Title_Name]
     FROM [MFTS].[dbo].[REF_Title_Englishs]
     where Title_Name like '%'+@Title_Name_E+'%'
@@ -676,8 +675,13 @@ function update_CustomerInfo(custObj,actionBy){
     WHERE SET_Code= @SET_Code
 
     --MktId
-    select  @MktId=Id from MFTS_SalesCode
-    where License_Code=@IT_SAcode
+    --select  @MktId=Id from MFTS_SalesCode
+    --where License_Code=@IT_SAcode
+
+    SELECT @MktId=b.Id
+    FROM MIT_FC_CUST_ACCOUNT a
+    left join MFTS_SalesCode b on b.License_Code=a.icLicense
+    WHERE cardNumber=@Cust_Code
 
     --#BACKUP DATA
 
@@ -754,6 +758,22 @@ function update_CustomerInfo(custObj,actionBy){
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
         VALUES (@Cust_Code,'Email',@Old_data,@Email,GETDATE(),@actionByInt);
+    END;
+
+    --MktId
+    SELECT @OLD_DATA = MktId FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @MktId AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'MktId',@Old_data,@MktId,GETDATE(),@actionByInt);
+    END;
+
+    --Tax_No
+    SELECT @OLD_DATA = Tax_No FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @Cust_Code AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'Tax_No',@Old_data,@Cust_Code,GETDATE(),@actionByInt);
     END;
 
     -- Mobile
@@ -1179,8 +1199,10 @@ function update_CustomerInfo(custObj,actionBy){
     ,Birth_Day=@Birth_Day
     ,Nation_Code=@Nation_Code
     ,Email=@Email
+    ,MktId=@MktId
     ,Mobile=@Mobile
     ,Sex=@Sex
+    ,Tax_No=@Cust_Code
     ,IT_SAcode=@IT_SAcode
     ,IT_SentRepByEmail=@IT_SentRepByEmail
     ,IT_PID_No=@IT_PID_No
@@ -1203,8 +1225,10 @@ function update_CustomerInfo(custObj,actionBy){
           ,Birth_Day
           ,Nation_Code
           ,Email
+          ,MktId
           ,Mobile
           ,Sex
+          ,Tax_No
           ,IT_SAcode
           ,IT_SentRepByEmail
           ,IT_PID_No
@@ -1225,8 +1249,10 @@ function update_CustomerInfo(custObj,actionBy){
           ,@Birth_Day
           ,@Nation_Code
           ,@Email
+          ,@MktId
           ,@Mobile
           ,@Sex
+          ,@Cust_Code
           ,@IT_SAcode
           ,@IT_SentRepByEmail
           ,@IT_PID_No

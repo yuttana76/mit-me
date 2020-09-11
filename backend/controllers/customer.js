@@ -661,7 +661,7 @@ function update_CustomerInfo(custObj,actionBy){
 
     DECLARE  @Nation_Code VARCHAR(10);
     --DECLARE  @Create_By VARCHAR(20);
-    DECLARE  @MktId VARCHAR(20);
+    DECLARE  @MktId VARCHAR(20)='0';
 
     DECLARE  @actionByInt int =999;
     DECLARE  @OLD_DATA  NVARCHAR(100);
@@ -678,7 +678,7 @@ function update_CustomerInfo(custObj,actionBy){
     --select  @MktId=Id from MFTS_SalesCode
     --where License_Code=@IT_SAcode
 
-    SELECT @MktId=b.Id
+    SELECT @MktId=ISNULL(b.Id,'0')
     FROM MIT_FC_CUST_ACCOUNT a
     left join MFTS_SalesCode b on b.License_Code=a.icLicense
     WHERE cardNumber=@Cust_Code

@@ -11,7 +11,7 @@ const { route } = require('./customer');
 router.get("/scheduleDownload/",fundConnextAPIController.scheduleDownload);
 
 // customer/individual/ API
-router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);
+router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCgiust);
 
 router.get("/customer/individual-DEV/:cardNumber", fundConnextAPIController.getIndCustDEV);
 router.post("/customer/individual", fundConnextAPIController.createCustomerIndividual);
@@ -20,6 +20,8 @@ router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndP
 
 //(DEVELOPING !!) download API CustomerProfile List all New/Update
 router.get("/downloadCustomerProfile",fundConnextAPIController.downloadCustomerProfile);
+
+router.post("/uploadCustomerProfile",fundConnextAPIController.uploadCustomerProfile);
 
 
 // download API

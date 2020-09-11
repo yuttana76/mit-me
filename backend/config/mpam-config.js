@@ -135,3 +135,5 @@ module.exports = {
   SMS_SENDER:SMS_SENDER
 
 }
+
+console.log('SQL_SERVER:' + SQL_SERVER)

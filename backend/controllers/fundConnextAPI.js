@@ -67,6 +67,8 @@ exports.downloadCustomerProfile = (req, res, next) => {
 
   Promise.all(fnArray)
   .then(data => {
+      // Report process result by Mail
+
       res.status(200).json('downloadCustomerProfile API successful. ' + JSON.stringify(data));
   })
   .catch(error => {
@@ -100,6 +102,7 @@ exports.getIndCust = (req, res, next) =>{
       },err=>{
         res.status(401).json(err);
       });
+
     },err=>{
       res.status(401).json(err);
     });
@@ -255,7 +258,7 @@ exports.updateCustomerIndividual = (req, res, next) =>{
 function getIndCustDEVProc(custInfoObj,actionBy){
 
   console.log("Welcome getIndCustDEVProc()" );
-  console.log("custInfoObj --> " + JSON.stringify(custInfoObj));
+  // console.log("custInfoObj --> " + JSON.stringify(custInfoObj));
 
   return new Promise(function(resolve, reject) {
 
@@ -302,6 +305,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
           reject(err);
         })
     }
+
       resolve({code:0})
   });
 }
@@ -309,7 +313,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
 
 function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
 
-  logger.info('saveMIT_FC_CUST_INFO()->' + JSON.stringify(custInfoObj) );
+  // logger.info('saveMIT_FC_CUST_INFO()->' + JSON.stringify(custInfoObj) );
 
   if(custInfoObj.cardExpiryDate ==='N/A')
     custInfoObj.cardExpiryDate=''
@@ -776,7 +780,7 @@ function saveMIT_FC_CUST_CHILDREN(obj,actionBy) {
   return new Promise(function(resolve, reject) {
 
     if(obj.children){
-      console.log("Has children");
+      // console.log("Has children");
       for(var i = 0; i < obj.children.length;i++){
 
         saveMIT_FC_CUST_CHILDREN_Detail(obj.cardNumber,obj.children[i],actionBy).then((result=>{
@@ -965,7 +969,7 @@ function saveMIT_FC_CUST_BANK_Detail(cardNumber,accountId,accType,obj,actionBy) 
 }
 
 function saveMIT_FC_CUST_ADDR(obj,actionBy) {
-  logger.info('saveMIT_FC_CUST_ADDR()'+obj.cardNumber);
+  // logger.info('saveMIT_FC_CUST_ADDR()'+obj.cardNumber);
 
   return new Promise(function(resolve, reject) {
   // 1:Resident
@@ -1005,7 +1009,7 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
 
 function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
 
-  logger.info('saveMIT_FC_CUST_ADDR_Detail()'+seq);
+  // logger.info('saveMIT_FC_CUST_ADDR_Detail()'+seq);
 
   // logger.info('OBJ>>'+JSON.stringify(obj));
 
@@ -2720,39 +2724,100 @@ function customerProfileProc(businessDate,actionBy){
       // STEP 1: CALL API download
       fnGetDownloadAPI(businessDate,fileType).then(data=>{
           // //STEP 2: Upzip downloaded file.
-          unZipFile(data.path).then(fileName=>{
+          // unZipFile(data.path).then(fileName=>{
+          //   MPAM_INDIVIDUAL_FILE=businessDate+"_MPAM_INDIVIDUAL.json"
+          //   util.readJSONfile(DOWNLOAD_DIR,MPAM_INDIVIDUAL_FILE).then(data=>{
+          //     // Implement here
+          //     data.forEach(function(item){
 
-            MPAM_INDIVIDUAL_FILE=businessDate+"_MPAM_INDIVIDUAL.json"
-            util.readJSONfile(DOWNLOAD_DIR,MPAM_INDIVIDUAL_FILE).then(data=>{
-
-              // Implement here
-              data.forEach(function(item){
-
-                // logger.info(">>>"+JSON.stringify(item))
-                logger.info(">>>"+JSON.stringify(item.cardNumber))
-
-                  // getIndCustDEVProc(item,actionBy).then(result=>{
-                  //   // res.status(200).json(result);
-                  // },err=>{
-                  //   // res.status(401).json(err);
-                  // });
-
-              });
+          //       logger.info(">>>"+JSON.stringify(item.cardNumber))
 
 
-              resolve(data.length);
-            },err=>{
-              reject(err);
-            })
+          //     });
+          //     resolve(data.length);
+          //   },err=>{
+          //     reject(err);
+          //   })
+          // },err=>{
+          //   reject(err);
+          // });
 
-          },err=>{
-            reject(err);
-          });
+          resolve();
+
       },err=>{
         reject(err);
       });
+
   });
 }
+
+exports.uploadCustomerProfile = (req, res, next) => {
+
+  var actionBy = 'MPAM_API'
+  var businessDate = getCurrentDate();
+
+  logger.info('uploadCustomerProfile API; businessDate:' + businessDate )
+
+  // Transaction API
+  fnArray=[];
+  fnArray.push(exports.uploadCustomerProfilePROC(businessDate,actionBy));
+
+  Promise.all(fnArray)
+  .then(data => {
+
+    // Report process result by Mail
+
+    res.status(200).json('uploadCustomerProfile API successful.');
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+}
+
+exports.uploadCustomerProfilePROC = ((businessDate,actionBy) => {
+
+logger.info('uploadCustomerProfilePROC()' + businessDate);
+
+const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+const filePath= DOWNLOAD_DIR.concat('/',businessDate,'-','CustomerProfile.zip');
+const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
+
+  return new Promise(function(resolve, reject) {
+
+    unZipFile(filePath).then(fileName=>{
+      util.readJSONfile(DOWNLOAD_DIR,MPAM_INDIVIDUAL_FILE).then(data=>{
+
+        // Implement here
+        data.forEach(function(item){
+
+          logger.info(">>>"+JSON.stringify(item.cardNumber))
+
+          // 2. Save to MIT_FC_XXX
+          getIndCustDEVProc(item,actionBy).then(result=>{
+          // res.status(200).json(result);
+          resolve();
+
+        },err=>{
+          // res.status(401).json(err);
+          reject(err)
+        });
+
+        });
+
+      },err=>{
+        logger.error( err)
+        reject(err);
+      })
+
+    },err=>{
+      reject(err);
+    });
+
+  });
+
+});
+
 
 
 function downloadNavAPIproc(businessDate,userCode){
@@ -4102,15 +4167,13 @@ function unZipFile(filePaht){
 
       var zipEntries = zip.getEntries();
       zipEntries.forEach(function(zipEntry) {
-        console.log('***AdmZip' + JSON.stringify(zipEntry))
+        // console.log('***AdmZip' + JSON.stringify(zipEntry))
         // extAccFileName = zipEntry.entryName
-        extAccFileName.push(zipEntry.entryName)
+      extAccFileName.push(zipEntry.entryName)
 
-        zip.extractEntryTo(/*entry name*/zipEntry.entryName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
+      zip.extractEntryTo(/*entry name*/zipEntry.entryName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
     });
-
       // zip.extractEntryTo(/*entry name*/extAccFileName, /*target path*/DOWNLOAD_DIR, /*maintainEntryPath*/false, /*overwrite*/true);
-
       resolve(extAccFileName);
 
       //Remove file

@@ -261,11 +261,15 @@ exports.readJSONfile =(filePath,fileName)=>{
       fs.readFile(filePath +"/"+ fileName, function(err, data) {
 
           // Check for errors
-          if (err) reject(err);
+          if (err){
+            logger.error( err)
+            reject(err);
+          }else{
+            // Converting to JSON
+            const jsonObj = JSON.parse(data);
+            resolve(jsonObj)
 
-          // Converting to JSON
-          const jsonObj = JSON.parse(data);
-          resolve(jsonObj)
+          }
       });
     }
     catch(err) {

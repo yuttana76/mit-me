@@ -106,7 +106,7 @@ Object.keys(ifaces).forEach(function (ifname) {
 const option = {
   key: fs.readFileSync(process.env.CA_KEY_PATH),
   cert: fs.readFileSync(process.env.CA_CERT_PATH),
-  ca: fs.readFileSync(process.env.CA_PATH)
+  ca: fs.readFileSync(process.env.CA_PATH),
   // key: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
   // cert: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
 };

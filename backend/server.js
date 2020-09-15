@@ -60,15 +60,15 @@ app.set("port", port);
 
 // ************************************** HTTP
 
-const server = http.createServer(app);
-server.on("error", onError);
-server.on("listening", onListening);
-server.listen(port,function () {
-  console.log("Listening on port http://localhost:%s", server.address().port);
-})
+// const server = http.createServer(app);
+// server.on("error", onError);
+// server.on("listening", onListening);
+// server.listen(port,function () {
+//   console.log("Listening on port http://localhost:%s", server.address().port);
+// })
 
 
-// // ************************************** HTTPS Configuratrion
+// ************************************** HTTPS Configuratrion
 
 // var intermediateCertificate = fs.readFileSync('intermediate.pem', 'utf8');
 // https.createServer({
@@ -77,47 +77,53 @@ server.listen(port,function () {
 //     ca: [ intermediateCertificate ]
 // }, app).listen(port);
 
-// // console.log('DIR>' + __dirname);
-// // ************************************** GET IP address
+// console.log('DIR>' + __dirname);
+// ************************************** GET IP address
 
-// var os = require('os');
-// var ifaces = os.networkInterfaces();
-// Object.keys(ifaces).forEach(function (ifname) {
-//   var alias = 0;
-//   ifaces[ifname].forEach(function (iface) {
-//     if ('IPv4' !== iface.family || iface.internal !== false) {
-//       return;
-//     }
+var os = require('os');
+var ifaces = os.networkInterfaces();
+Object.keys(ifaces).forEach(function (ifname) {
+  var alias = 0;
+  ifaces[ifname].forEach(function (iface) {
+    if ('IPv4' !== iface.family || iface.internal !== false) {
+      return;
+    }
 
-//     if (alias >= 1) {
-//       console.log(ifname + ':' + alias, iface.address);
-//     } else {
-//       console.log(ifname, iface.address);
-//     }
-//     ++alias;
-//   });
+    if (alias >= 1) {
+      console.log(ifname + ':' + alias, iface.address);
+    } else {
+      console.log(ifname, iface.address);
+    }
+    ++alias;
+  });
 
-// });
+});
 
-// // Fron key
-// const option = {
-//   key: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
-//   cert: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
-// };
+// Fron key
+console.log("CA_KEY_PATH>" +process.env.CA_KEY_PATH);
+console.log("CA_PATH>" +process.env.CA_PATH);
+
+const option = {
+  key: fs.readFileSync(process.env.CA_KEY_PATH),
+  cert: fs.readFileSync(process.env.CA_PATH),
+  // key: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
+  // cert: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
+};
 
 // // Backend
 // key_path= mpamConfig.key_path? mpamConfig.key_path:__dirname+'/merchantasset_CA/key.pem';
 // cert_path= mpamConfig.cert_path? mpamConfig.cert_path:__dirname+'/merchantasset_CA/cert.pem';
 // ca_path= mpamConfig.ca_path? mpamConfig.ca_path:__dirname+'/merchantasset_CA/inter.pem';
+
 // const option = {
 //   key: fs.readFileSync('/home/api/self-signed-cert/server.key'),
 //   cert: fs.readFileSync('/home/api/self-signed-cert/server.cert')
 // };
 
 
-// logger.info('HTTS config >>' + JSON.stringify(__dirname))
-// var server = https.createServer(option, app)
-// .listen(port,function () {
-//   console.log("Listening on port https://localhost:%s", server.address().port);
-// })
+logger.info('HTTS config >>' + JSON.stringify(__dirname))
+var server = https.createServer(option, app)
+.listen(port,function () {
+  console.log("Listening on port https://localhost:%s", server.address().port);
+})
 

@@ -5,8 +5,6 @@
 
 export const environment = {
   production: false,
-  apiURL: 'http://localhost:3000/api' // Development
-  // apiURL: 'http://192.168.50.22/api'// TEST nginx
-  // apiURL: 'http://192.168.10.58/api'// PROD nginx
+  apiURL: 'https://localhost:3000/api' // Development
   // apiURL: 'https://mpamapi.merchantasset.co.th/api' // PROD nginx
 };

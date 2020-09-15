@@ -57,7 +57,8 @@ exports.scheduleDownload = (req, res, next) => {
 exports.downloadCustomerProfile = (req, res, next) => {
 
   var userCode = 'MPAM_API'
-  var businessDate = getCurrentDate();
+  // var businessDate = getCurrentDate();
+  var businessDate = fundConnextCurrentDate();
 
   logger.info('downloadCustomerProfile API; businessDate:' + businessDate )
 

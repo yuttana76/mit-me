@@ -4355,7 +4355,7 @@ function fnGetDownloadAPI(businessDate,fileType){
     fnFCAuth().then(result =>{
       resultObj =JSON.parse(result);
 
-      logger.info("***TOKEN>>"+resultObj.access_token);
+      // logger.info("***TOKEN>>"+resultObj.access_token);
 
       const HTTPS_ENDPOIN =`https://${FC_API_URL}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
       const propertiesObject = {
@@ -4368,8 +4368,10 @@ function fnGetDownloadAPI(businessDate,fileType){
 
       download(HTTPS_ENDPOIN,{'headers':propertiesObject}).then(data => {
         try{
+
           fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
             if(err) {
+                logger.error(err)
                 reject(err);
             }
             resolve({path:DOWNLOAD_PATH_FILENAME});
@@ -4380,12 +4382,14 @@ function fnGetDownloadAPI(businessDate,fileType){
         }
 
       },err=>{
-        console.log('AIP ERR >' + err);
+        // console.log('A ERR >' + err);
+        logger.error(err)
         reject(err);
       });
 
     },err =>{
-      console.log('ERR AUTH>>'+err);
+      // console.log('ERR AUTH>>'+err);
+      logger.error(err)
       reject(err);
     });
 

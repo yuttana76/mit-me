@@ -100,12 +100,13 @@ Object.keys(ifaces).forEach(function (ifname) {
 });
 
 // Fron key
-console.log("CA_KEY_PATH>" +process.env.CA_KEY_PATH);
-console.log("CA_PATH>" +process.env.CA_PATH);
+// console.log("CA_KEY_PATH>" +process.env.CA_KEY_PATH);
+// console.log("CA_PATH>" +process.env.CA_PATH);
 
 const option = {
   key: fs.readFileSync(process.env.CA_KEY_PATH),
-  cert: fs.readFileSync(process.env.CA_PATH),
+  cert: fs.readFileSync(process.env.CA_CERT_PATH),
+  ca: fs.readFileSync(process.env.CA_PATH)
   // key: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
   // cert: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
 };
@@ -121,7 +122,7 @@ const option = {
 // };
 
 
-logger.info('HTTS config >>' + JSON.stringify(__dirname))
+// logger.info('HTTS config >>' + JSON.stringify(__dirname))
 var server = https.createServer(option, app)
 .listen(port,function () {
   console.log("Listening on port https://localhost:%s", server.address().port);

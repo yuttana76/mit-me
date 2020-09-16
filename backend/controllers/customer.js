@@ -506,6 +506,10 @@ exports.approveCustInfo = (req, res, next) => {
 
   fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
 
+
+  //  1 : residence
+  //  2 : current
+  //  3 : work
   if(fcCustInfoObj.residence)
     fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
 
@@ -1684,6 +1688,7 @@ function update_Address(addrObj,seq,actionBy){
   DECLARE  @Province_ID VARCHAR(10);
   DECLARE  @Amphur_ID VARCHAR(10);
   DECLARE  @Tambon_ID VARCHAR(10);
+  DECLARE  @Place VARCHAR(500);
 
   select @Country_ID=Country_ID
   from REF_Countrys
@@ -1691,12 +1696,12 @@ function update_Address(addrObj,seq,actionBy){
 
   select @Province_ID=Province_ID
   from REF_Provinces
-  where Name_Thai like '%'+LEFT(@province,6)+'%'
+  where Name_Thai like '%'+LEFT(@province,5)+'%'
 
   select @Amphur_ID=Amphur_ID
   from REF_Amphurs
   WHERE Province_ID =@Province_ID
-  AND Name_Thai like '%'+@district+'%'
+  AND Name_Thai like '%'+ LEFT(@district,5)+'%'
 
   select @Tambon_ID=Tambon_ID
   from REF_Tambons
@@ -1773,10 +1778,12 @@ function update_Address(addrObj,seq,actionBy){
       VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Tel',@Old_data,@phoneNumber,GETDATE(),@actionByInt);
   END;
 
+  SELECT @Place = ISNULL(@floor,'') +' '+ ISNULL(@building,'')+ ' หมู่ ' + ISNULL(@moo,'')+' ซ.' +ISNULL(@soi,'')
+
   --EXECUTE
   UPDATE Account_Address
   SET[Addr_No]=@no
-    ,[Place]=@floor +' '+ @building+' ' +@soi
+    ,[Place]=@Place
     ,[Road]=@road
     ,[Tambon_Id]=@Tambon_ID
     ,[Amphur_Id]=@Amphur_ID
@@ -1804,7 +1811,7 @@ function update_Address(addrObj,seq,actionBy){
       VALUES(@cardNumber
       ,@Addr_Seq
       ,@no
-      ,@floor +' '+ @building+' ' +@soi
+      ,@Place
       ,@road
       ,@Tambon_ID
       ,@Amphur_ID

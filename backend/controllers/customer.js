@@ -1696,17 +1696,17 @@ function update_Address(addrObj,seq,actionBy){
 
   select @Province_ID=Province_ID
   from REF_Provinces
-  where Name_Thai like '%'+LEFT(@province,5)+'%'
+  where LEFT(Name_Thai ,5) like '%'+LEFT(@province,5)+'%'
 
   select @Amphur_ID=Amphur_ID
   from REF_Amphurs
   WHERE Province_ID =@Province_ID
-  AND Name_Thai like '%'+ LEFT(@district,5)+'%'
+  AND LEFT(Name_Thai,5) like '%'+ LEFT(@district,5)+'%'
 
   select @Tambon_ID=Tambon_ID
   from REF_Tambons
   WHERE Amphur_ID=@Amphur_ID
-  AND Name_Thai like '%'+@subDistrict+'%'
+  AND LEFT(Name_Thai,5) like '%'+LEFT(@subDistrict,5)+'%'
 
   -- BACKUP
   DECLARE  @actionByInt int =999;

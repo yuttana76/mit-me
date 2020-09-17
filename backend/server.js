@@ -58,8 +58,9 @@ console.log('production =' +process.env.production );
 console.log('PORT='+port);
 app.set("port", port);
 
-// ************************************** HTTP
-
+/****************************************
+ * HTTP
+ */
 // const server = http.createServer(app);
 // server.on("error", onError);
 // server.on("listening", onListening);
@@ -68,18 +69,10 @@ app.set("port", port);
 // })
 
 
-// ************************************** HTTPS Configuratrion
-
-// var intermediateCertificate = fs.readFileSync('intermediate.pem', 'utf8');
-// https.createServer({
-//     key: privateKey,
-//     cert: certificate,
-//     ca: [ intermediateCertificate ]
-// }, app).listen(port);
-
-// console.log('DIR>' + __dirname);
-// ************************************** GET IP address
-
+/****************************************
+ * HTTPS Configuratrion
+ *
+*/
 var os = require('os');
 var ifaces = os.networkInterfaces();
 Object.keys(ifaces).forEach(function (ifname) {
@@ -96,31 +89,13 @@ Object.keys(ifaces).forEach(function (ifname) {
     }
     ++alias;
   });
-
 });
-
-// Fron key
-// console.log("CA_KEY_PATH>" +process.env.CA_KEY_PATH);
-// console.log("CA_PATH>" +process.env.CA_PATH);
 
 const option = {
   key: fs.readFileSync(process.env.CA_KEY_PATH),
   cert: fs.readFileSync(process.env.CA_CERT_PATH),
   ca: fs.readFileSync(process.env.CA_PATH),
-  // key: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
-  // cert: fs.readFileSync(__dirname+'/merchantasset_CA/wealthpm.pem'),
 };
-
-// // Backend
-// key_path= mpamConfig.key_path? mpamConfig.key_path:__dirname+'/merchantasset_CA/key.pem';
-// cert_path= mpamConfig.cert_path? mpamConfig.cert_path:__dirname+'/merchantasset_CA/cert.pem';
-// ca_path= mpamConfig.ca_path? mpamConfig.ca_path:__dirname+'/merchantasset_CA/inter.pem';
-
-// const option = {
-//   key: fs.readFileSync('/home/api/self-signed-cert/server.key'),
-//   cert: fs.readFileSync('/home/api/self-signed-cert/server.cert')
-// };
-
 
 // logger.info('HTTS config >>' + JSON.stringify(__dirname))
 var server = https.createServer(option, app)

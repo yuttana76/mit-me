@@ -4366,7 +4366,7 @@ function fnGetDownloadAPI(businessDate,fileType){
       // console.log(' propertiesObject >>' + JSON.stringify(propertiesObject) );
       console.log('HTTPS_ENDPOIN >>' + HTTPS_ENDPOIN);
 
-      download(HTTPS_ENDPOIN,{'headers':propertiesObject}).then(data => {
+      download(HTTPS_ENDPOIN,{'headers':propertiesObject,'rejectUnauthorized': false}).then(data => {
         try{
 
           console.log('DOWNLOAD_PATH_FILENAME >>' + DOWNLOAD_PATH_FILENAME);

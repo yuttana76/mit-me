@@ -4369,6 +4369,8 @@ function fnGetDownloadAPI(businessDate,fileType){
       download(HTTPS_ENDPOIN,{'headers':propertiesObject}).then(data => {
         try{
 
+          console.log('DOWNLOAD_PATH_FILENAME >>' + DOWNLOAD_PATH_FILENAME);
+
           fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
             if(err) {
                 logger.error(err)
@@ -4383,13 +4385,13 @@ function fnGetDownloadAPI(businessDate,fileType){
 
       },err=>{
         // console.log('A ERR >' + err);
-        logger.error(err)
+        logger.error('DOWNLOAD'+err)
         reject(err);
       });
 
     },err =>{
       // console.log('ERR AUTH>>'+err);
-      logger.error(err)
+      logger.error('AUTH:'+err)
       reject(err);
     });
 

@@ -539,12 +539,13 @@ exports.approveCustInfo = (req, res, next) => {
   Promise.all(fnArray)
   .then(data => {
 
+    exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.cardNumber).then(data =>{
+    })
+
     update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
       res.status(200).json(data);
     })
-
     //  res.status(200).json(data[0]);
-
   })
   .catch(error => {
     logger.error(error.message)
@@ -1672,8 +1673,12 @@ function update_MFTS_Account(cardNumber,actionBy){
 function update_Address(addrObj,seq,actionBy){
 
   // console.log("update_Address()");
-  if(!addrObj.soi)
-    addrObj.soi= '-';
+  if(addrObj.soi && addrObj.soi !='' )
+    addrObj.soi = 'ซ. ' + addrObj.soi;
+
+  if(addrObj.moo && addrObj.moo !='' )
+    addrObj.moo= 'หมู่ ' + addrObj.moo;
+
 
   var queryStr = `
 
@@ -1701,7 +1706,7 @@ function update_Address(addrObj,seq,actionBy){
   select @Amphur_ID=Amphur_ID
   from REF_Amphurs
   WHERE Province_ID =@Province_ID
-  AND LEFT(Name_Thai,5) like '%'+ LEFT(@district,5)+'%'
+  AND LEFT(Name_Thai,6) LIKE '%'+ LEFT(@district,5) + '%'
 
   select @Tambon_ID=Tambon_ID
   from REF_Tambons
@@ -1778,7 +1783,7 @@ function update_Address(addrObj,seq,actionBy){
       VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Tel',@Old_data,@phoneNumber,GETDATE(),@actionByInt);
   END;
 
-  SELECT @Place = ISNULL(@floor,'') +' '+ ISNULL(@building,'')+ ' หมู่ ' + ISNULL(@moo,'')+' ซ.' +ISNULL(@soi,'')
+  SELECT @Place = ISNULL(@floor,'') +' '+ ISNULL(@building,'')+ ' ' + ISNULL(@moo,'')+' ' +ISNULL(@soi,'')
 
   --EXECUTE
   UPDATE Account_Address
@@ -3192,7 +3197,283 @@ function validStr(val, defaultVal = "") {
   }
 }
 
+exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
 
+  logger.info('cloneCustomerAddrSameAsFlag()' +  cardNumber);
+
+  return new Promise(function(resolve, reject) {
+    try{
+      var queryStr = `
+      BEGIN
+      /*
+        1 : residence
+        2 : current
+        3 : work
+      */
+      --For dev
+      --DECLARE  @cardNumber VARCHAR(20)='3330900258804';
+
+      --Residence
+      --Work
+      DECLARE @workAddressSameAsFlag  VARCHAR(50);
+      DECLARE @currentAddressSameAsFlag  VARCHAR(50);
+
+      DECLARE @Addr_Seq_source [int];
+      DECLARE @Addr_Seq_target [int];
+
+
+        DECLARE @Addr_No [varchar](100);
+        DECLARE @Place [nvarchar](100);
+        DECLARE @Road [nvarchar](100)
+        DECLARE @Tambon_Id [int];
+        DECLARE @Amphur_Id [int];
+        DECLARE @Province_Id [int];
+        DECLARE @Country_Id [int];
+        DECLARE @Zip_Code [varchar](10);
+        DECLARE @Print_Address [nvarchar](500);
+        DECLARE @Tel [varchar](100);
+        DECLARE @Fax [varchar](100);
+
+      DECLARE ACCOUNT_ADDRESS_CURSOR CURSOR LOCAL  FOR
+          SELECT a.workAddressSameAsFlag,a.currentAddressSameAsFlag
+          FROM MIT_ACCOUNT_INFO_EXT a WHERE cardNumber = @cardNumber
+
+      OPEN ACCOUNT_ADDRESS_CURSOR
+        FETCH NEXT FROM ACCOUNT_ADDRESS_CURSOR INTO @workAddressSameAsFlag,@currentAddressSameAsFlag
+
+          WHILE @@FETCH_STATUS = 0
+              BEGIN
+
+                      IF @workAddressSameAsFlag='Residence'
+                      BEGIN
+                        -- PRINT 'Work <- Residence'
+                        SELECT @Addr_Seq_source = 1;
+                        SELECT @Addr_Seq_target = 3;
+
+                        --CLONE ADDRESS
+                        select 	@Addr_No=[Addr_No],
+                        @Place=[Place],
+                        @Road=[Road],
+                        @Tambon_Id=[Tambon_Id],
+                        @Amphur_Id=[Amphur_Id],
+                        @Province_Id=[Province_Id],
+                        @Country_Id=[Country_Id],
+                        @Zip_Code=[Zip_Code],
+                        @Print_Address=[Print_Address],
+                        @Tel=[Tel],
+                        @Fax=[Fax]
+                        FROM  Account_Address
+                      where  Addr_Seq=@Addr_Seq_source AND  Cust_Code =@cardNumber;
+
+                      UPDATE Account_Address SET
+                      Addr_No=@Addr_No,
+                       Place=@Place,
+                        Road=@Road,
+                        Tambon_Id=@Tambon_Id,
+                        Amphur_Id=@Amphur_Id,
+                        Province_Id=@Province_Id,
+                        Country_Id=@Country_Id,
+                        Zip_Code=@Zip_Code,
+                        Print_Address=@Print_Address,
+                        Tel=@Tel,
+                        Fax=@Fax
+                      where  Addr_Seq=@Addr_Seq_target AND  Cust_Code =@cardNumber;
+                      IF @@ROWCOUNT=0
+                      BEGIN
+                      Insert Account_Address(Cust_Code,
+                        Addr_Seq,
+                        Addr_No,
+                        Place,
+                        Road,
+                        Tambon_Id,
+                        Amphur_Id,
+                        Province_Id,
+                        Country_Id,
+                        Zip_Code,
+                        Print_Address,
+                        Tel,
+                        Fax)
+                      VALUES(@cardNumber,
+                        @Addr_Seq_target,
+                        @Addr_No,
+                        @Place,
+                        @Road,
+                        @Tambon_Id,
+                        @Amphur_Id,
+                        @Province_Id,
+                        @Country_Id,
+                        @Zip_Code,
+                        @Print_Address,
+                        @Tel,
+                        @Fax)
+                      END
+                      --CLONE ADDRESS
+
+                      END;
+
+                      IF @currentAddressSameAsFlag='Residence'
+                      BEGIN
+                        -- PRINT 'Current <- Residence'
+                        SELECT @Addr_Seq_source = 1;
+                        SELECT @Addr_Seq_target = 2;
+
+                        --CLONE ADDRESS
+                        select 	@Addr_No=[Addr_No],
+                        @Place=[Place],
+                        @Road=[Road],
+                        @Tambon_Id=[Tambon_Id],
+                        @Amphur_Id=[Amphur_Id],
+                        @Province_Id=[Province_Id],
+                        @Country_Id=[Country_Id],
+                        @Zip_Code=[Zip_Code],
+                        @Print_Address=[Print_Address],
+                        @Tel=[Tel],
+                        @Fax=[Fax]
+                        FROM  Account_Address
+                      where  Addr_Seq=@Addr_Seq_source AND  Cust_Code =@cardNumber;
+
+                      UPDATE Account_Address SET
+                      Addr_No=@Addr_No,
+                       Place=@Place,
+                        Road=@Road,
+                        Tambon_Id=@Tambon_Id,
+                        Amphur_Id=@Amphur_Id,
+                        Province_Id=@Province_Id,
+                        Country_Id=@Country_Id,
+                        Zip_Code=@Zip_Code,
+                        Print_Address=@Print_Address,
+                        Tel=@Tel,
+                        Fax=@Fax
+                      where  Addr_Seq=@Addr_Seq_target AND  Cust_Code =@cardNumber;
+                      IF @@ROWCOUNT=0
+                      BEGIN
+                      Insert Account_Address(Cust_Code,
+                        Addr_Seq,
+                        Addr_No,
+                        Place,
+                        Road,
+                        Tambon_Id,
+                        Amphur_Id,
+                        Province_Id,
+                        Country_Id,
+                        Zip_Code,
+                        Print_Address,
+                        Tel,
+                        Fax)
+                      VALUES(@cardNumber,
+                        @Addr_Seq_target,
+                        @Addr_No,
+                        @Place,
+                        @Road,
+                        @Tambon_Id,
+                        @Amphur_Id,
+                        @Province_Id,
+                        @Country_Id,
+                        @Zip_Code,
+                        @Print_Address,
+                        @Tel,
+                        @Fax)
+                      END
+                      --CLONE ADDRESS
+
+                      END;
+
+                      IF @currentAddressSameAsFlag='Work'
+                      BEGIN
+                        -- PRINT 'Current <- Work'
+                        SELECT @Addr_Seq_source = 3;
+                        SELECT @Addr_Seq_target = 2;
+
+                        --CLONE ADDRESS
+                        select 	@Addr_No=[Addr_No],
+                        @Place=[Place],
+                        @Road=[Road],
+                        @Tambon_Id=[Tambon_Id],
+                        @Amphur_Id=[Amphur_Id],
+                        @Province_Id=[Province_Id],
+                        @Country_Id=[Country_Id],
+                        @Zip_Code=[Zip_Code],
+                        @Print_Address=[Print_Address],
+                        @Tel=[Tel],
+                        @Fax=[Fax]
+                        FROM  Account_Address
+                      where  Addr_Seq=@Addr_Seq_source AND  Cust_Code =@cardNumber;
+
+                      UPDATE Account_Address SET
+                      Addr_No=@Addr_No,
+                       Place=@Place,
+                        Road=@Road,
+                        Tambon_Id=@Tambon_Id,
+                        Amphur_Id=@Amphur_Id,
+                        Province_Id=@Province_Id,
+                        Country_Id=@Country_Id,
+                        Zip_Code=@Zip_Code,
+                        Print_Address=@Print_Address,
+                        Tel=@Tel,
+                        Fax=@Fax
+                      where  Addr_Seq=@Addr_Seq_target AND  Cust_Code =@cardNumber;
+                      IF @@ROWCOUNT=0
+                      BEGIN
+                      Insert Account_Address(Cust_Code,
+                        Addr_Seq,
+                        Addr_No,
+                        Place,
+                        Road,
+                        Tambon_Id,
+                        Amphur_Id,
+                        Province_Id,
+                        Country_Id,
+                        Zip_Code,
+                        Print_Address,
+                        Tel,
+                        Fax)
+                      VALUES(@cardNumber,
+                        @Addr_Seq_target,
+                        @Addr_No,
+                        @Place,
+                        @Road,
+                        @Tambon_Id,
+                        @Amphur_Id,
+                        @Province_Id,
+                        @Country_Id,
+                        @Zip_Code,
+                        @Print_Address,
+                        @Tel,
+                        @Fax)
+                      END
+                      --CLONE ADDRESS
+
+                      END;
+                  FETCH NEXT FROM ACCOUNT_ADDRESS_CURSOR INTO @workAddressSameAsFlag,@currentAddressSameAsFlag
+              END;
+        CLOSE ACCOUNT_ADDRESS_CURSOR;
+        DEALLOCATE ACCOUNT_ADDRESS_CURSOR
+      END
+      `;
+      const sql = require('mssql')
+
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .query(queryStr, (err, result) => {
+            if(err){
+              logger.error(err);
+              reject(err);
+            }else {
+              logger.info('cloneCustomerAddrSameAsFlag() Successful')
+              resolve(result.recordsets)
+            }
+        })
+      })
+      pool1.on('error', err => {
+        logger.error(err);
+      })
+    }catch(e){
+      logger.error(e);
+      reject(e);
+    }
+  });
+}
 
 // exports.getCDDinfo = (req, res, next) => {
 

@@ -61,45 +61,45 @@ app.set("port", port);
 /****************************************
  * HTTP
 //  */
-const server = http.createServer(app);
-server.on("error", onError);
-server.on("listening", onListening);
-server.listen(port,function () {
-  console.log("Listening on port http://localhost:%s", server.address().port);
-})
+// const server = http.createServer(app);
+// server.on("error", onError);
+// server.on("listening", onListening);
+// server.listen(port,function () {
+//   console.log("Listening on port http://localhost:%s", server.address().port);
+// })
 
 
 /****************************************
  * HTTPS Configuratrion
  *
 */
-// var os = require('os');
-// var ifaces = os.networkInterfaces();
-// Object.keys(ifaces).forEach(function (ifname) {
-//   var alias = 0;
-//   ifaces[ifname].forEach(function (iface) {
-//     if ('IPv4' !== iface.family || iface.internal !== false) {
-//       return;
-//     }
+var os = require('os');
+var ifaces = os.networkInterfaces();
+Object.keys(ifaces).forEach(function (ifname) {
+  var alias = 0;
+  ifaces[ifname].forEach(function (iface) {
+    if ('IPv4' !== iface.family || iface.internal !== false) {
+      return;
+    }
 
-//     if (alias >= 1) {
-//       console.log(ifname + ':' + alias, iface.address);
-//     } else {
-//       console.log(ifname, iface.address);
-//     }
-//     ++alias;
-//   });
-// });
+    if (alias >= 1) {
+      console.log(ifname + ':' + alias, iface.address);
+    } else {
+      console.log(ifname, iface.address);
+    }
+    ++alias;
+  });
+});
 
-// const option = {
-//   key: fs.readFileSync(process.env.CA_KEY_PATH),
-//   cert: fs.readFileSync(process.env.CA_CERT_PATH),
-//   ca: fs.readFileSync(process.env.CA_PATH),
-// };
+const option = {
+  key: fs.readFileSync(process.env.CA_KEY_PATH),
+  cert: fs.readFileSync(process.env.CA_CERT_PATH),
+  ca: fs.readFileSync(process.env.CA_PATH),
+};
 
-// // logger.info('HTTS config >>' + JSON.stringify(__dirname))
-// var server = https.createServer(option, app)
-// .listen(port,function () {
-//   console.log("Listening on port https://localhost:%s", server.address().port);
-// })
+// logger.info('HTTS config >>' + JSON.stringify(__dirname))
+var server = https.createServer(option, app)
+.listen(port,function () {
+  console.log("Listening on port https://localhost:%s", server.address().port);
+})
 

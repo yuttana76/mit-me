@@ -14,6 +14,30 @@ const JWT_SECRET_STRING = mpamConfig.JWT_SECRET_STRING;
 const JWT_EXPIRES = mpamConfig.JWT_EXPIRES;
 const TOKEN_EXPIRES_SEC = 3600;
 
+exports.quickExample = (req, res, next) => {
+
+  const sql = require('mssql')
+  console.log('****quickExample' );
+
+async () => {
+    try {
+        // make sure that any items are correctly URL encoded in the connection string
+        await sql.connect('mssql://mftsuser:P@ssw0rds@192.168.10.48/MFTS')
+        const result = await sql.query`select * from MIT_USERS `
+        console.dir(result)
+
+        res.status(200).json({
+          message:'OK'
+        });
+
+    } catch (err) {
+        // ... error checks
+        logger.error(err)
+    }
+}
+
+}
+
 exports.userLoginByParam = (req, res, next) => {
 
   let fetchedUser;
@@ -23,11 +47,21 @@ exports.userLoginByParam = (req, res, next) => {
   let queryStr = `SELECT a.* ,b.FIRST_NAME + ' ' + b.LAST_NAME AS FULLNAME
                   FROM [MIT_USERS] a
                   LEFT JOiN MIT_EMPLOYEE b ON a.USERID = b.USERID
-                 WHERE a.STATUS = 'A'  AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
+                 WHERE a.STATUS = 'A'
+                 AND CURRENT_TIMESTAMP < ISNULL(EXPIRE_DATE,CURRENT_TIMESTAMP+1)
                  AND MIT_GROUP <>'C1'
                  AND LoginName=@input_userName
                  `;
+
   const sql = require('mssql')
+
+  // const config = {
+  //   user: 'mftsuser',
+  //   password: 'P@ssw0rds',
+  //   server: '192.168.10.48',
+  //   database: 'MFTS',
+  // }
+  // logger.info(`CONFIG>${JSON.stringify(config)}`)
 
  sql.connect(config).then(pool => {
     // Query
@@ -35,8 +69,6 @@ exports.userLoginByParam = (req, res, next) => {
     .input('input_userName', sql.VarChar(50), _userName)
     .query(queryStr)})
     .then(user => {
-
-      console.log();
 
       if(!user){
        logger.error( `API /Login Auth failed. 1 - ${req.originalUrl} - ${req.ip} `);
@@ -47,6 +79,7 @@ exports.userLoginByParam = (req, res, next) => {
       } else {
          sql.close();
          fetchedUser = user;
+
          return bcrypt.compare(req.body.password,user.recordset[0].PASSWD);
       }
 
@@ -81,6 +114,8 @@ exports.userLoginByParam = (req, res, next) => {
     })
     .catch(err => {
         // NOT FOUND USER
+        logger.error(`${err}`);
+
         logger.warn( `API /Login Auth failed by no user - ${req.originalUrl} - ${req.ip} - ${_userName} `);
         sql.close();
         return res.status(401).json({
@@ -99,6 +134,71 @@ exports.userLoginByParam = (req, res, next) => {
 
   });
  }
+
+
+ exports.test_tedious = (req, res, next) => {
+
+    try {
+
+      var Connection = require('tedious').Connection;
+      var Request = require('tedious').Request;
+      var TYPES = require('tedious').TYPES;
+
+    //   const config = {
+    //     user: 'mftsuser',
+    //     password: 'P@ssw0rds',
+    //     server: '192.168.10.48', // You can use 'localhost\\instance' to connect to named instance
+    //     database: 'MFTS',
+    //     port : 1433 ,
+    // }
+      // Create connection to database
+      var config = {
+        server: '192.168.10.48',
+        authentication: {
+            type: 'default',
+            options: {
+                userName: 'mftsuser', // update me
+                password: 'P@ssw0rds' // update me
+            }
+        },
+        options: {
+            database: 'MFTS',
+        }
+      }
+
+      console.log('CONFIG>' + JSON.stringify(config))
+      var connection = new Connection(config);
+
+      // Attempt to connect and execute queries if connection goes through
+      connection.on('connect', function(err) {
+        if (err) {
+          console.log(err);
+
+          res.status(500).json({
+            error: err,
+          });
+
+
+        } else {
+
+          console.log('Connected');
+
+          res.status(200).json({
+            message: 'test tedious OK!',
+          });
+
+
+        }
+      });
+
+
+    } catch (error) {
+      console.error(error);
+    }
+
+
+ }
+
 
 exports.createUser = (req,res,next)=>{
 

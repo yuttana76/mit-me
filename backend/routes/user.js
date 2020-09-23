@@ -6,6 +6,10 @@ const router = express.Router();
 
 router.post("/register",userController.createUser);
 router.post("/login", userController.userLoginByParam);
+
+router.get("/quickExample", userController.quickExample);  // TEST
+router.post("/test_tedious", userController.test_tedious); //TEST
+
 router.post("/resetPassword",userController.resetPassword);
 router.get("/userInfo", checkAuth,userController.getUserInfo);
 router.get("/userLevel", checkAuth,userController.getUserLevel);

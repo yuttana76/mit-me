@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AuthData } from './auth/auth-data.model';
 import { environment } from '../../../environments/environment';
+import { listenToTriggers } from 'ngx-bootstrap/utils';
 
 const BACKEND_URL = environment.apiURL + '/user/';
 
@@ -128,6 +129,7 @@ export class AuthService {
           this.router.navigate(['/']);
         }
       }, error => {
+        console.log('ERROR>' +error);
         this.authStatusListener.next(false);
       });
   }

@@ -404,7 +404,7 @@ const getFC_Address = (cardNumber,seq) => {
       +ISNULL(' ถ.'+ a.road,'')
       +ISNULL(' หมู่'+A.moo,'')
       +ISNULL(' '+A.subDistrict,'')
-      +ISNULL(' '+A.subDistrict,'')
+      +ISNULL(' '+A.district,'')
       +ISNULL(' '+A.province,'')
       +ISNULL(' '+A.postalCode,'') AS printTxt
       ,A.*
@@ -1553,18 +1553,17 @@ function update_MFTS_Account(cardNumber,actionBy){
     DECLARE  @Mobile_No VARCHAR(20);
     DECLARE  @PID_ExpiryDate VARCHAR(20);
 
-    select  @Title_Name_T=title
-    ,@First_Name_T=thFirstName
-    ,@Last_Name_T=thLastName
-    ,@Title_Name_E=title
-    ,@First_Name_E=enFirstName
-    ,@Last_Name_E=enLastName
-    ,@Birth_Day=birthDate
-    ,@Sex=gender
-
-    ,@Email=email
-    ,@Mobile_No=mobileNumber
-    ,@PID_ExpiryDate=cardExpiryDate
+    select  @Title_Name_T=ISNULL(title,'')
+    ,@First_Name_T=ISNULL(thFirstName,'')
+    ,@Last_Name_T=ISNULL(thLastName,'')
+    ,@Title_Name_E=ISNULL(title,'')
+    ,@First_Name_E=ISNULL(enFirstName,'')
+    ,@Last_Name_E=ISNULL(enLastName,'')
+    ,@Birth_Day=ISNULL(birthDate,'')
+    ,@Sex=ISNULL(gender,'')
+    ,@Email=ISNULL(email,'')
+    ,@Mobile_No=ISNULL(mobileNumber,'')
+    ,@PID_ExpiryDate=ISNULL(cardExpiryDate,'')
     FROM MIT_FC_CUST_INFO
     where cardNumber = @cardNumber
 
@@ -1701,12 +1700,12 @@ function update_Address(addrObj,seq,actionBy){
 
   select @Province_ID=Province_ID
   from REF_Provinces
-  where LEFT(Name_Thai ,5) like '%'+LEFT(@province,5)+'%'
+  where LEFT(Name_Thai ,7) like '%'+LEFT(@province,7)+'%'
 
   select @Amphur_ID=Amphur_ID
   from REF_Amphurs
   WHERE Province_ID =@Province_ID
-  AND LEFT(Name_Thai,6) LIKE '%'+ LEFT(@district,5) + '%'
+  AND LEFT(Name_Thai,5) LIKE '%'+ LEFT(@district,5) + '%'
 
   select @Tambon_ID=Tambon_ID
   from REF_Tambons
@@ -1894,21 +1893,21 @@ function update_Address(addrObj,seq,actionBy){
   return new Promise(function(resolve, reject) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request()
-      .input("cardNumber", sql.VarChar(20), addrObj.cardNumber)
+      .input("cardNumber", sql.VarChar(20), addrObj.cardNumber==null?'':addrObj.cardNumber)
       .input("Addr_Seq", sql.VarChar(1), seq)
-      .input("no", sql.NVarChar(100), addrObj.no)
-      .input("floor", sql.NVarChar(100), addrObj.floor)
-      .input("building", sql.NVarChar(100), addrObj.building)
-      .input("soi", sql.NVarChar(100), addrObj.soi)
-      .input("road", sql.NVarChar(100), addrObj.road)
-      .input("moo", sql.NVarChar(100), addrObj.moo)
-      .input("subDistrict", sql.NVarChar(100), addrObj.subDistrict)
-      .input("district", sql.NVarChar(100), addrObj.district)
-      .input("province", sql.NVarChar(100), addrObj.province)
-      .input("postalCode", sql.NVarChar(100), addrObj.postalCode)
-      .input("country", sql.NVarChar(100), addrObj.country)
-      .input("phoneNumber", sql.NVarChar(100), addrObj.phoneNumber)
-      .input("printTxt", sql.NVarChar(200), addrObj.printTxt)
+      .input("no", sql.NVarChar(100), addrObj.no==null?'':addrObj.no)
+      .input("floor", sql.NVarChar(100), addrObj.floor==null?'':addrObj.floor)
+      .input("building", sql.NVarChar(100), addrObj.building==null?'':addrObj.building)
+      .input("soi", sql.NVarChar(100), addrObj.soi==null?'':addrObj.soi)
+      .input("road", sql.NVarChar(100), addrObj.road==null?'':addrObj.road)
+      .input("moo", sql.NVarChar(100), addrObj.moo==null?'':addrObj.moo)
+      .input("subDistrict", sql.NVarChar(100), addrObj.subDistrict==null?'0':addrObj.subDistrict)
+      .input("district", sql.NVarChar(100), addrObj.district==null?'0':addrObj.district)
+      .input("province", sql.NVarChar(100), addrObj.province==null?'0':addrObj.province)
+      .input("postalCode", sql.NVarChar(100), addrObj.postalCode==null?'':addrObj.postalCode)
+      .input("country", sql.NVarChar(100), addrObj.country==null?'0':addrObj.country)
+      .input("phoneNumber", sql.NVarChar(100), addrObj.phoneNumber==null?'':addrObj.phoneNumber)
+      .input("printTxt", sql.NVarChar(200), addrObj.printTxt==null?'':addrObj.printTxt)
       .input("actionBy", sql.VarChar(50), actionBy)
 
       // .input("ProvinceName", sql.NVarChar(100), addrObj.province)

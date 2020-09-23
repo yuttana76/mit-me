@@ -36,7 +36,7 @@ exports.scheduleDownload = (req, res, next) => {
 
   logger.info('Start Execute FundConnext schedule;' )
   var userCode = 'MPAM_SCH'
-  var businessDate = fundConnextCurrentDate();
+  var businessDate = fundConnextBusinessDate();
 
   // Transaction API
   fnArray=[];
@@ -57,8 +57,8 @@ exports.scheduleDownload = (req, res, next) => {
 exports.downloadCustomerProfile = (req, res, next) => {
 
   var userCode = 'MPAM_API'
-  // var businessDate = getCurrentDate();
-  var businessDate = fundConnextCurrentDate();
+  var businessDate = getCurrentDate();
+  // var businessDate = fundConnextBusinessDate();
 
   logger.info('downloadCustomerProfile API; businessDate:' + businessDate )
 
@@ -975,7 +975,9 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
   return new Promise(function(resolve, reject) {
   // 1:Resident
   // let addrObj = obj.residence;
+
   if(obj.residence){
+    console.log("***Residence>" + JSON.stringify(obj.residence))
     saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.residence,1,actionBy).then((result=>{
       logger.info(" Save Resident complete");
     }));
@@ -989,6 +991,7 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
   //   }));
   // }
   if(obj.current){
+    console.log("***Current>" + JSON.stringify(obj.current))
     saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.current,2,actionBy).then((result=>{
       logger.info(" Save Current address complete");
     }));
@@ -997,6 +1000,7 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
   // 3:Work
   // let workObj = obj.work;
   if(obj.work){
+    console.log("***Work>" + JSON.stringify(obj.work))
     saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.work,3,actionBy).then((result=>{
       logger.info(" Save Work address complete");
     }));
@@ -2642,7 +2646,7 @@ exports.downloadNavAPI_V2 = (req, res, next) =>{
 
   var businessDate
   if(!req.body.businessDate){
-    businessDate = fundConnextCurrentDate();
+    businessDate = fundConnextBusinessDate();
   } else{
     businessDate = req.body.businessDate
   }
@@ -4369,8 +4373,6 @@ function fnGetDownloadAPI(businessDate,fileType){
       download(HTTPS_ENDPOIN,{'headers':propertiesObject,'rejectUnauthorized': false}).then(data => {
         try{
 
-          console.log('DOWNLOAD_PATH_FILENAME >>' + DOWNLOAD_PATH_FILENAME);
-
           fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
             if(err) {
                 logger.error(err)
@@ -4472,7 +4474,7 @@ function downloadNavSchedule(schStatus){
   }
 }
 
-function fundConnextCurrentDate(){
+function fundConnextBusinessDate(){
   var today = new Date();
   var returnDate_yyyymmddDate;
 
@@ -4484,7 +4486,7 @@ function fundConnextCurrentDate(){
     returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
   }
 
-  console.log('fundConnextCurrentDate()'+returnDate_yyyymmddDate);
+  console.log('fundConnextBusinessDate()'+returnDate_yyyymmddDate);
   return returnDate_yyyymmddDate
 }
 

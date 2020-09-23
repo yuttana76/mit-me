@@ -79,6 +79,8 @@ module.exports = {
   // INVEST_INDIVIDUAL :"/api/customer/individual",
   INVEST_INDIVIDUAL :"/api/customer/individual/v2",
   DOWNLOAD_PATH :'./backend/downloadFiles/fundConnext/',
+  // FundConnext
+  FC_DOWNLOAD_HEADER:"{'headers':propertiesObject,'rejectUnauthorized': false}",
 
   //
   dbParameters:{
@@ -88,13 +90,27 @@ module.exports = {
     database: SQL_DATABASE,
     pool: {
       max: 10,
-      min: 0,
+      min: 1,
       idleTimeoutMillis: 30000
     },
     options: {
       encrypt: false
     }
   },
+  // dbParameters:{
+  //   user: SQL_USER,
+  //   password: SQL_PASSWORD,
+  //   server: SQL_SERVER,
+  //   database: SQL_DATABASE,
+  //   pool: {
+  //     max: 10,
+  //     min: 0,
+  //     idleTimeoutMillis: 30000
+  //   },
+  //   options: {
+  //     encrypt: false
+  //   }
+  // },
 
   dbParameters_BULK:{
     server: SQL_SERVER,
@@ -132,8 +148,11 @@ module.exports = {
   SMS_URL:SMS_URL,
   SMS_USER:SMS_USER,
   SMS_PASSWORD:SMS_PASSWORD,
-  SMS_SENDER:SMS_SENDER
-
+  SMS_SENDER:SMS_SENDER,
 }
 
+console.log('FC_API_URL:' + FC_API_URL)
 console.log('SQL_SERVER:' + SQL_SERVER)
+
+console.log('SQL_USER:' + SQL_USER)
+console.log('SQL_PASSWORD:' + SQL_PASSWORD)

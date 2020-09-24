@@ -47,6 +47,30 @@ exports.sendMail = (req, res, next) =>{
 }
 
 
+exports.sendMailToRespondor = (obj) =>{
+
+  if(!obj.to){
+    obj.to = mailConfig.mail_developer;
+  }
+
+  // setup email data with unicode symbols
+  let mailOptions = {
+    from: mailConfig.mail_it,
+    to: obj.to,
+    subject: obj.subject ,
+    html: obj.body
+  };
+
+  // send mail with defined transport object
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+        logger.error(error);
+    }
+
+  });
+}
+
+
 /*
 Send mail  by encypt use bcrypt
 */

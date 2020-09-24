@@ -14,6 +14,7 @@ var  util = require('./utility');
 var slackTools = require('./tools/slack');
 const { JsonFormatter } = require('tslint/lib/formatters');
 const customer = require('./customer');
+const mail = require('./mail');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 //FundConnext configuration
@@ -46,7 +47,20 @@ exports.scheduleDownload = (req, res, next) => {
 
   Promise.all(fnArray)
   .then(data => {
-    logger.info('Finish Execute FundConnext schedule;' )
+    logger.info('Finish Execute FundConnext schedule;' + JSON.stringify(data) )
+
+      //Mail for staff
+      var mailObj={
+        subject:`Schedule NAV Download on  ${data[0].businessDate} `,
+        body:`<h1>NAV Download on  ${data[0].businessDate} </h1>
+        <p>FundConnext Download: <b>${data[0].DownloadRecord}</b></p>
+        <p>MFTS fund update: <b>${data[0].FundRecord}</b></p>
+        <br><br>
+        <p>Send time ${getCurrentDate_Time()}</p>
+        `
+      }
+      mail.sendMailToRespondor(mailObj);
+
       res.status(200).json('API Schedule successful. ' + JSON.stringify(data));
   })
   .catch(error => {
@@ -2848,9 +2862,10 @@ function downloadNavAPIproc(businessDate,userCode){
 
               //STEP 4: Syncy to MFTS (MFTS_NavTable)
               navSyncFunc(navToDB_RS.businessDate).then(syncData=>{
-                _rtn_msg={DownloadRecord:navToDB_RS["records"],FundRecord:syncData[0][0]["FUND_RECORD"]}
-
-                //Mail for staff
+                _rtn_msg={
+                  businessDate:businessDate
+                  ,DownloadRecord:navToDB_RS["records"]
+                  ,FundRecord:syncData[0][0]["FUND_RECORD"]}
 
                 resolve(_rtn_msg)
               },syncErr=>{
@@ -4507,4 +4522,25 @@ function getCurrentDate(){
   returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
 
   return returnDate_yyyymmddDate
+}
+
+function getCurrentDate_Time(){
+  var today = new Date();
+  var returnDate_yyyymmddDate;
+
+  today.setDate(today.getDate());
+
+
+  // current hours
+let hours = today.getHours();
+
+// current minutes
+let minutes = today.getMinutes();
+
+// current seconds
+let seconds = today.getSeconds();
+
+  returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+
+  return returnDate_yyyymmddDate + ` ${hours}:${minutes}:${seconds}`
 }

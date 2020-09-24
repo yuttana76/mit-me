@@ -153,6 +153,3 @@ module.exports = {
 
 console.log('FC_API_URL:' + FC_API_URL)
 console.log('SQL_SERVER:' + SQL_SERVER)
-
-console.log('SQL_USER:' + SQL_USER)
-console.log('SQL_PASSWORD:' + SQL_PASSWORD)

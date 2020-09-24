@@ -444,6 +444,135 @@ const getFC_Address = (cardNumber,seq) => {
  */
 exports.approveCustInfo = (req, res, next) => {
 
+  var obj = JSON.parse(req.body.fcCustInfo)
+
+  exports.approveCustInfoProcess(obj).then(result=>{
+    logger.info('approveCustInfo Finish >'+ JSON.stringify(result))
+    res.status(200).json(result);
+  })
+
+}
+
+exports.approveCustInfoProcess = (fcCustInfoObj) => {
+
+return new Promise(function(resolve, reject) {
+
+  logger.info("approveCustInfoProcess()"+ fcCustInfoObj.cardNumber);
+
+  // var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
+  var actionBy='MIT';
+  // var actionBy = req.body.actionBy;
+
+// VALIDATE data
+
+// CONVERT data.
+  fcCustInfoObj.Group_code='1';
+
+  switch (fcCustInfoObj.title) {
+    case 'MR':
+      fcCustInfoObj.Title_Name_T = 'นาย';
+      break;
+    case 'MRS':
+      fcCustInfoObj.Title_Name_T = 'นาง';
+      break;
+    case 'MISS':
+      fcCustInfoObj.Title_Name_T = 'นางสาว';
+      break;
+    case 'OTHER':
+      fcCustInfoObj.Title_Name_T = fcCustInfoObj.titleOther;
+      break;
+    default:
+      fcCustInfoObj.Title_Name_T = 'อื่นๆ';
+  }
+
+  fcCustInfoObj.IT_SentRepByEmail='Y'
+
+  fcCustInfoObj.IT_FundConnext='Y'
+
+// Card_Type
+  switch (fcCustInfoObj.identificationCardType) {
+    case 'CITIZEN_CARD':
+      fcCustInfoObj.Card_Type = 'C';
+      break;
+    case 'PASSPORT':
+      fcCustInfoObj.Card_Type = 'P';
+      break;
+    default:
+      fcCustInfoObj.Card_Type = '';
+  }
+
+// GENDER
+  switch (fcCustInfoObj.gender) {
+    case 'Male':
+      fcCustInfoObj.Sex = 'M';
+      break;
+    case 'Female':
+      fcCustInfoObj.Sex = 'F';
+      break;
+    default:
+      fcCustInfoObj.Sex = '';
+  }
+
+  fnArray=[];
+  //Updat customer & suit
+
+  fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
+
+
+  //  1 : residence
+  //  2 : current
+  //  3 : work
+  if(fcCustInfoObj.residence)
+    fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
+
+  if(fcCustInfoObj.current)
+    fnArray.push(update_Address(fcCustInfoObj.current,2,actionBy));
+
+  if(fcCustInfoObj.work)
+    fnArray.push(update_Address(fcCustInfoObj.work,3,actionBy));
+
+  //Update Children
+    for (var i in fcCustInfoObj.children) {
+        if(fcCustInfoObj.children[i])
+          fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
+    }
+
+  //ACCOUNT
+  fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
+
+  //BANK ACCOUNT
+  fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
+
+  fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+
+  fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
+  //Suit by  account
+
+  Promise.all(fnArray)
+  .then(data => {
+
+    exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.cardNumber).then(data =>{
+    })
+
+    update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
+      // res.status(200).json(data);
+      resolve(data);
+    })
+    //  res.status(200).json(data[0]);
+  })
+  .catch(error => {
+    // logger.error(error.message)
+    // res.status(401).json(error.message);
+    reject(error)
+  });
+
+});
+
+}
+
+/*
+exports.approveCustInfo = (req, res, next) => {
+
   logger.info("approveCustInfo()");
 
   // var mftsCustInfoObj = JSON.parse(req.body.mftsCustInfo)
@@ -551,8 +680,8 @@ exports.approveCustInfo = (req, res, next) => {
     logger.error(error.message)
     res.status(401).json(error.message);
   });
-
 }
+*/
 
 function update_CustomerInfo(custObj,actionBy){
 
@@ -782,11 +911,11 @@ function update_CustomerInfo(custObj,actionBy){
     END;
 
     -- Mobile
-    SELECT @OLD_DATA = Email FROM Account_Info WHERE Cust_Code =@Cust_Code
-    IF @OLD_DATA <> @Email AND @@ROWCOUNT>0
+    SELECT @OLD_DATA = Mobile FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @Mobile AND @@ROWCOUNT>0
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'Email',@Old_data,@Email,GETDATE(),@actionByInt);
+        VALUES (@Cust_Code,'Mobile',@Old_data,@Mobile,GETDATE(),@actionByInt);
     END;
 
     -- Sex

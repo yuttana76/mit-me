@@ -13,6 +13,7 @@ var  FCCustInfo = require('../models/fcCustInfo.model');
 var  util = require('./utility');
 var slackTools = require('./tools/slack');
 const { JsonFormatter } = require('tslint/lib/formatters');
+const customer = require('./customer');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 //FundConnext configuration
@@ -70,7 +71,7 @@ exports.downloadCustomerProfile = (req, res, next) => {
   .then(data => {
       // Report process result by Mail
 
-      res.status(200).json('downloadCustomerProfile API successful. ' + JSON.stringify(data));
+      res.status(200).json('downloadCustomerProfile API successful. ');
   })
   .catch(error => {
     logger.error(error.message)
@@ -688,9 +689,10 @@ function saveMIT_FC_CUST_ACCOUNT(obj,actionBy) {
 
 function saveMIT_FC_CUST_ACCOUNT_Detail(cardNumber,obj,actionBy) {
 
-  logger.info('saveMIT_FC_CUST_ACCOUNT_Detail()'+ JSON.stringify(obj));
+  logger.info('saveMIT_FC_CUST_ACCOUNT_Detail() ');
 
   var fncName = "saveMIT_FC_CUST_ACCOUNT_Detail()";
+
 
   // if(obj.openOmnibusFormFlag==null)
   //   obj.openOmnibusFormFlag=''
@@ -886,8 +888,7 @@ function saveMIT_FC_CUST_CHILDREN_Detail(cardNumber,obj,actionBy) {
 
 function saveMIT_FC_CUST_BANK_Detail(cardNumber,accountId,accType,obj,actionBy) {
 
-  logger.info('saveMIT_FC_CUST_BANK_Detail()'+cardNumber);
-  logger.info('saveMIT_FC_CUST_BANK_Detail()'+JSON.stringify(obj));
+  logger.info('saveMIT_FC_CUST_BANK_Detail() ;cardNumber:'+cardNumber + ' ;accountId:' +accountId);
 
   var fncName = "saveMIT_FC_CUST_BANK_Detail()";
   var queryStr = `
@@ -940,7 +941,7 @@ function saveMIT_FC_CUST_BANK_Detail(cardNumber,accountId,accType,obj,actionBy) 
       pool1
         .request() // or: new sql.Request(pool1)
         .input("cardNumber", sql.VarChar(13), cardNumber)
-        .input("accountId", sql.VarChar(10), accountId)
+        .input("accountId", sql.VarChar(20), accountId)
         .input("accType", sql.VarChar(10), accType)
         .input("bankCode", sql.VarChar(4),obj.bankCode)
         .input("bankBranchCode", sql.VarChar(5),obj.bankBranchCode)
@@ -977,7 +978,6 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
   // let addrObj = obj.residence;
 
   if(obj.residence){
-    console.log("***Residence>" + JSON.stringify(obj.residence))
     saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.residence,1,actionBy).then((result=>{
       logger.info(" Save Resident complete");
     }));
@@ -991,7 +991,6 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
   //   }));
   // }
   if(obj.current){
-    console.log("***Current>" + JSON.stringify(obj.current))
     saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.current,2,actionBy).then((result=>{
       logger.info(" Save Current address complete");
     }));
@@ -1000,7 +999,6 @@ function saveMIT_FC_CUST_ADDR(obj,actionBy) {
   // 3:Work
   // let workObj = obj.work;
   if(obj.work){
-    console.log("***Work>" + JSON.stringify(obj.work))
     saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.work,3,actionBy).then((result=>{
       logger.info(" Save Work address complete");
     }));
@@ -2767,6 +2765,7 @@ exports.uploadCustomerProfile = (req, res, next) => {
   fnArray=[];
   fnArray.push(exports.uploadCustomerProfilePROC(businessDate,actionBy));
 
+
   Promise.all(fnArray)
   .then(data => {
 
@@ -2800,8 +2799,14 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
 
           // 2. Save to MIT_FC_XXX
           getIndCustDEVProc(item,actionBy).then(result=>{
-          // res.status(200).json(result);
-          resolve();
+
+          // Approve
+
+          customer.approveCustInfoProcess(item).then(result2=>{
+            resolve();
+          })
+
+          // resolve();
 
         },err=>{
           // res.status(401).json(err);
@@ -2844,6 +2849,9 @@ function downloadNavAPIproc(businessDate,userCode){
               //STEP 4: Syncy to MFTS (MFTS_NavTable)
               navSyncFunc(navToDB_RS.businessDate).then(syncData=>{
                 _rtn_msg={DownloadRecord:navToDB_RS["records"],FundRecord:syncData[0][0]["FUND_RECORD"]}
+
+                //Mail for staff
+
                 resolve(_rtn_msg)
               },syncErr=>{
                 reject(syncErr);

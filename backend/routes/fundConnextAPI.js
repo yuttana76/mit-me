@@ -19,8 +19,9 @@ router.put("/customer/individual", fundConnextAPIController.updateCustomerIndivi
 router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);//Partrial
 
 //(DEVELOPING !!) download API CustomerProfile List all New/Update
+// Step 1 Download FC data
 router.get("/downloadCustomerProfile",fundConnextAPIController.downloadCustomerProfile);
-
+// Step 2 Upload data to MFTS(Approve)
 router.post("/uploadCustomerProfile",fundConnextAPIController.uploadCustomerProfile);
 
 

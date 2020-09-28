@@ -800,7 +800,7 @@ function update_CustomerInfo(custObj,actionBy){
     DECLARE  @actionByInt int =999;
     DECLARE  @OLD_DATA  NVARCHAR(100);
 
-    SELECT @Title_Name_E = [Title_Name]
+    SELECT  TOP 1 @Title_Name_E = [Title_Name]
     FROM [MFTS].[dbo].[REF_Title_Englishs]
     where Title_Name like '%'+@Title_Name_E+'%'
 

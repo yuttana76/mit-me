@@ -42,11 +42,7 @@ const onError = error => {
   }
 };
 
-const onListening = () => {
-  const addr = server.address();
-  const bind = typeof port === "string" ? "pipe " + port : "port " + port;
-  debug("Listening on " + bind);
-};
+
 
 //Lode global environment
 const dotenv = require('dotenv');
@@ -58,21 +54,33 @@ console.log('production =' +process.env.production );
 console.log('PORT='+port);
 app.set("port", port);
 
+
+if(process.env.production =='false'){
 /****************************************
- * HTTP
-// //  */
-// const server = http.createServer(app);
-// server.on("error", onError);
-// server.on("listening", onListening);
-// server.listen(port,function () {
-//   console.log("Listening on port http://localhost:%s", server.address().port);
-// })
+ * HTTP On development
+//  */
+
+const onListening = () => {
+  const addr = server.address();
+  const bind = typeof port === "string" ? "pipe " + port : "port " + port;
+  debug("Listening on " + bind);
+};
+
+const server = http.createServer(app);
+server.on("error", onError);
+server.on("listening", onListening);
+server.listen(port,function () {
+  console.log("Listening on port http://localhost:%s", server.address().port);
+})
 
 
+
+}else{
+
 /****************************************
- * HTTPS Configuratrion
+ * HTTPS On Production
  *
-// */
+*/
 var os = require('os');
 var ifaces = os.networkInterfaces();
 Object.keys(ifaces).forEach(function (ifname) {
@@ -97,9 +105,17 @@ const option = {
   ca: fs.readFileSync(process.env.CA_PATH),
 };
 
+
+const onListening = () => {
+  const addr = server.address();
+  const bind = typeof port === "string" ? "pipe " + port : "port " + port;
+  debug("Listening on " + bind);
+};
+
 // logger.info('HTTS config >>' + JSON.stringify(__dirname))
 var server = https.createServer(option, app)
 .listen(port,function () {
   console.log("Listening on port https://localhost:%s", server.address().port);
 })
 
+}

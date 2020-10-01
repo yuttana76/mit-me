@@ -36,7 +36,8 @@
         <div class="col-sm-6 ">
           <button mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
           <button mat-stroked-button color="warn" type='reset'>Reset</button>
-          <button mat-stroked-button color="primary" type='button' disabled= "cust_Code_Cond==''" [routerLink]="['/trade/suit',cust_Code_Cond,'SEARCH_SCR']" >New survey</button>
+          <button mat-stroked-button color="primary" type='button' [routerLink]="['/trade/suit',cust_Code_Cond,'SEARCH_SCR']" >New survey</button>
+          <!-- <button mat-stroked-button color="primary" type='button' disabled= "cust_Code_Cond==''" [routerLink]="['/trade/suit',cust_Code_Cond,'SEARCH_SCR']" >New survey</button> -->
           <!-- <button mat-stroked-button color="primary" type='button' (click)="onExportPDF()" >View PDF</button> -->
           <!-- <button mat-stroked-button color="primary" type='button' (click)="onCreateViewPDF()" >Create & View PDF</button> -->
         </div>

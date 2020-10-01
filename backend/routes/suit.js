@@ -6,7 +6,8 @@ const selfAuth = require('../middleware/self-auth');
 const router = express.Router();
 const { check } = require('express-validator');
 
-router.post("/verifyExtLink",checkAuth,suitController.verifyExtLink);
+// router.post("/verifyExtLink",checkAuth,suitController.verifyExtLink);
+router.post("/verifyExtLink",suitController.verifyExtLink);
 router.post("/evaluate",checkAuth,suitController.suitEvaluate);
 router.post("/suitSave",checkAuth,suitController.suitSave);
 

@@ -49,17 +49,20 @@ exports.scheduleDownload = (req, res, next) => {
   .then(data => {
     logger.info('Finish Execute FundConnext schedule;' + JSON.stringify(data) )
 
-      //Mail for staff
-      var mailObj={
-        subject:`Schedule NAV Download on  ${data[0].businessDate} `,
-        body:`<h1>NAV Download on  ${data[0].businessDate} </h1>
-        <p>FundConnext Download: <b>${data[0].DownloadRecord}</b></p>
-        <p>MFTS fund update: <b>${data[0].FundRecord}</b></p>
-        <br><br>
-        <p>Send time ${getCurrentDate_Time()}</p>
-        `
-      }
-      mail.sendMailToRespondor(mailObj);
+    mitLog.saveMITlog(userCode,'FC_API_SCH_NAV', `FundConnext Download: ${data[0].DownloadRecord}    ;MFTS fund update: ${data[0].FundRecord}` ,'','',function(){});
+
+
+      // //Mail for staff
+      // var mailObj={
+      //   subject:`Schedule NAV Download on  ${data[0].businessDate} `,
+      //   body:`<h1>NAV Download on  ${data[0].businessDate} </h1>
+      //   <p>FundConnext Download: <b>${data[0].DownloadRecord}</b></p>
+      //   <p>MFTS fund update: <b>${data[0].FundRecord}</b></p>
+      //   <br><br>
+      //   <p>Send time ${getCurrentDate_Time()}</p>
+      //   `
+      // }
+      // mail.sendMailToRespondor(mailObj);
 
       res.status(200).json('API Schedule successful. ' + JSON.stringify(data));
   })
@@ -2740,26 +2743,38 @@ function customerProfileProc(businessDate,actionBy){
     const fileType = 'CustomerProfile.zip';
       // STEP 1: CALL API download
       fnGetDownloadAPI(businessDate,fileType).then(data=>{
-          // //STEP 2: Upzip downloaded file.
-          // unZipFile(data.path).then(fileName=>{
-          //   MPAM_INDIVIDUAL_FILE=businessDate+"_MPAM_INDIVIDUAL.json"
-          //   util.readJSONfile(DOWNLOAD_DIR,MPAM_INDIVIDUAL_FILE).then(data=>{
-          //     // Implement here
-          //     data.forEach(function(item){
+          //STEP 2: Upzip downloaded file.
+          unZipFile(data.path).then(fileName=>{
+            MPAM_INDIVIDUAL_FILE=businessDate+"_MPAM_INDIVIDUAL.json"
+            util.readJSONfile(DOWNLOAD_DIR,MPAM_INDIVIDUAL_FILE).then(data=>{
+              // Implement here
+              data.forEach(function(item){
 
-          //       logger.info(">>>"+JSON.stringify(item.cardNumber))
+              // 2. Save to MIT_FC_XXX
+              getIndCustDEVProc(item,actionBy).then(result=>{
 
+                    // // 3.get data MIT_FX_XXX
+                    // customer.getFC_CustomerInfo_proc(item.cardNumber).then(CustomerData=>{
 
-          //     });
-          //     resolve(data.length);
-          //   },err=>{
-          //     reject(err);
-          //   })
-          // },err=>{
-          //   reject(err);
-          // });
+                    // },err=>{
+                    //   reject(err)
+                    // });
 
-          resolve();
+                },err=>{
+                  reject(err)
+                });
+              });
+
+              resolve(data.length);
+
+            },err=>{
+              reject(err);
+            })
+          },err=>{
+            reject(err);
+          });
+
+          // resolve();
 
       },err=>{
         reject(err);
@@ -2779,13 +2794,12 @@ exports.uploadCustomerProfile = (req, res, next) => {
   fnArray=[];
   fnArray.push(exports.uploadCustomerProfilePROC(businessDate,actionBy));
 
-
   Promise.all(fnArray)
   .then(data => {
 
     // Report process result by Mail
-
     res.status(200).json('uploadCustomerProfile API successful.');
+
   })
   .catch(error => {
     logger.error(error.message)
@@ -2794,7 +2808,6 @@ exports.uploadCustomerProfile = (req, res, next) => {
 }
 
 exports.uploadCustomerProfilePROC = ((businessDate,actionBy) => {
-
 logger.info('uploadCustomerProfilePROC()' + businessDate);
 
 const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
@@ -2809,26 +2822,22 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
         // Implement here
         data.forEach(function(item){
 
-          logger.info(">>>"+JSON.stringify(item.cardNumber))
+              // 3.get data MIT_FX_XXX
+              customer.getFC_CustomerInfo_proc(item.cardNumber).then(CustomerData=>{
 
-          // 2. Save to MIT_FC_XXX
-          getIndCustDEVProc(item,actionBy).then(result=>{
+                // // Approve
+                CustomerData = JSON.parse(JSON.stringify(CustomerData));
+                customer.approveCustInfoProcess(CustomerData).then(result2=>{
 
-          // Approve
+                  mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',CustomerData.cardNumber ,'','',function(){});
+                  resolve(CustomerData);
 
-          customer.approveCustInfoProcess(item).then(result2=>{
-            resolve();
-          })
-
-          // resolve();
-
-        },err=>{
-          // res.status(401).json(err);
-          reject(err)
-        });
+                })
+              },err=>{
+                reject(err)
+              });
 
         });
-
       },err=>{
         logger.error( err)
         reject(err);
@@ -2839,10 +2848,86 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
     });
 
   });
-
 });
 
 
+exports.reportSCHMitlog = (req, res, next) => {
+  var businessDate = getCurrentDate();
+  logger.info('reportSCHMitlog API; businessDate:' + businessDate )
+
+  fnArray=[];
+  fnArray.push(exports.reportSCHMitlogPROC(businessDate,'FC_API_SCH_CUST_INFO'));
+  fnArray.push(exports.reportSCHMitlogPROC(businessDate,'FC_API_SCH_NAV'));
+
+  Promise.all(fnArray)
+  .then(repData => {
+
+    // Report process result by Mail
+    // logger.info('Report Download ' +JSON.stringify(repData))
+
+    var mailBody='<h1>Schedult Report On' + businessDate + '</h1>'
+    mailBody += '<h3>Download Customer Profile</h3>'
+
+    // logger.info('Customer Profile>>'+JSON.stringify(repData[0]))
+    repData[0].forEach(function(item){
+      mailBody += '<p>Card Number: ' +  item.msg +'</p>'
+    })
+
+    // logger.info('NAV>>'+JSON.stringify(repData[1]))
+    mailBody +='<BR><h3>Download NAV</h3>'
+    if(repData[1] && repData[1].length>0)
+      mailBody +='<p>Code: ' + repData[1][0].msg +'</p>'
+
+    // logger.info(JSON.stringify(mailBody))
+    //Send mail
+    // //Mail for staff
+      var mailObj={
+        subject:`Schedult Report On  ${businessDate} `,
+        body:mailBody
+      }
+    mail.sendMailToRespondor(mailObj);
+    res.status(200).json('reportSCHMitlog successful.');
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+}
+
+
+exports.reportSCHMitlogPROC = ((_date,keyword) => {
+
+  // logger.info('reportSCHMitlogPROC()' + _date + ' ;keyword:' + keyword);
+
+  return new Promise((resolve, reject) => {
+
+    const sql = require('mssql')
+
+    var queryStr = `
+    SELECT distinct(log_msg) AS msg
+    FROM MIT_LOG
+    WHERE [module]= @module
+    AND CONVERT(varchar,LogDateTime,112)  = CONVERT(varchar,@LogDateTime,112)
+    `
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input("module", sql.VarChar(50), keyword)
+      .input("LogDateTime", sql.VarChar(50), _date)
+      .query(queryStr, (err, result) => {
+          if(err){
+            logger.error(err);
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      logger.error(err);
+      resolve(err);
+    })
+  });
+});
 
 function downloadNavAPIproc(businessDate,userCode){
 
@@ -3249,9 +3334,9 @@ OPEN MIT_FC_NAV_cursor
     CLOSE MIT_FC_NAV_cursor
     DEALLOCATE MIT_FC_NAV_cursor
 
-select  count(Fund_Id) AS FUND_RECORD
-from MFTS_NavTable
-where CONVERT(VARCHAR(10), Modify_Date, 112) = CONVERT(VARCHAR(10), getdate(), 112)
+  select  count(Fund_Id) AS FUND_RECORD
+  from MFTS_NavTable
+  where CONVERT(VARCHAR(10), ISNULL(Modify_Date,Create_Date), 112) = CONVERT(VARCHAR(10), getdate(), 112)
 
 END
 `;

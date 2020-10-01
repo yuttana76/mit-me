@@ -237,9 +237,25 @@ exports.getFC_CustomerInfo = (req, res, next) => {
 
   var custCode = req.params.cusCode;
 
-  // console.log('getFC_CustomerInfo() > ' + custCode)
+  exports.getFC_CustomerInfo_proc(custCode).then(custInfo=>{
 
-  fnArray=[];
+      res.status(200).json({
+      result: custInfo
+    });
+
+  },err=>{
+    res.status(401).json(err.message);
+  })
+
+}
+
+exports.getFC_CustomerInfo_proc = (custCode) => {
+
+  logger.info('Start getFC_CustomerInfo_proc()' + custCode)
+
+  return new Promise(function(resolve, reject) {
+
+    fnArray=[];
   fnArray.push(getFC_CustomerInfo(custCode));
   fnArray.push(getFC_Address(custCode,1));
   fnArray.push(getFC_Address(custCode,2));
@@ -265,15 +281,63 @@ exports.getFC_CustomerInfo = (req, res, next) => {
       if(values[4].length >0)
         custInfo.children=values[4]
 
-      res.status(200).json({
-      result: custInfo
-    });
+        resolve(custInfo)
+    //   res.status(200).json({
+    //   result: custInfo
+    // });
+
   })
   .catch(error => {
     logger.error(error.message)
-    res.status(401).json(error.message);
+    // res.status(401).json(error.message);
+    reject(error)
   });
+
+  });
+
+
 }
+
+// exports.getFC_CustomerInfo = (req, res, next) => {
+
+//   logger.info('Start getFC_CustomerInfo()')
+
+//   var custCode = req.params.cusCode;
+//   fnArray=[];
+//   fnArray.push(getFC_CustomerInfo(custCode));
+//   fnArray.push(getFC_Address(custCode,1));
+//   fnArray.push(getFC_Address(custCode,2));
+//   fnArray.push(getFC_Address(custCode,3));
+//   fnArray.push(getFC_Children(custCode));
+
+//   Promise.all(fnArray).then(values => {
+
+//     // console.log('FC data>'+JSON.stringify(values))
+//       custInfo=values[0][0]
+
+//       if(values[1].length>0)
+//         custInfo.residence=values[1][0]
+
+//       // custInfo.current=[]
+//       if(values[2].length>0)
+//         custInfo.current=values[2][0]
+
+//       // custInfo.work=[]
+//       if(values[3].length>0)
+//         custInfo.work=values[3][0]
+
+//       if(values[4].length >0)
+//         custInfo.children=values[4]
+
+//       res.status(200).json({
+//       result: custInfo
+//     });
+//   })
+//   .catch(error => {
+//     logger.error(error.message)
+//     res.status(401).json(error.message);
+//   });
+// }
 
 
 const getORG_Children = (cardNumber) => {
@@ -447,7 +511,7 @@ exports.approveCustInfo = (req, res, next) => {
   var obj = JSON.parse(req.body.fcCustInfo)
 
   exports.approveCustInfoProcess(obj).then(result=>{
-    logger.info('approveCustInfo Finish >'+ JSON.stringify(result))
+    // logger.info('approveCustInfo Finish >'+ JSON.stringify(result))
     res.status(200).json(result);
   })
 
@@ -457,11 +521,7 @@ exports.approveCustInfoProcess = (fcCustInfoObj) => {
 
 return new Promise(function(resolve, reject) {
 
-  logger.info("approveCustInfoProcess()"+ fcCustInfoObj.cardNumber);
-
-  // var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
   var actionBy='MIT';
-  // var actionBy = req.body.actionBy;
 
 // VALIDATE data
 
@@ -516,7 +576,7 @@ return new Promise(function(resolve, reject) {
   fnArray=[];
   //Updat customer & suit
 
-  fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
+  fnArray.push(update_CustomerInfo(fcCustInfoObj),actionBy);
 
 
   //  1 : residence
@@ -525,8 +585,9 @@ return new Promise(function(resolve, reject) {
   if(fcCustInfoObj.residence)
     fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
 
-  if(fcCustInfoObj.current)
+  if(fcCustInfoObj.current){
     fnArray.push(update_Address(fcCustInfoObj.current,2,actionBy));
+  }
 
   if(fcCustInfoObj.work)
     fnArray.push(update_Address(fcCustInfoObj.work,3,actionBy));
@@ -561,8 +622,7 @@ return new Promise(function(resolve, reject) {
     //  res.status(200).json(data[0]);
   })
   .catch(error => {
-    // logger.error(error.message)
-    // res.status(401).json(error.message);
+    logger.error(error.message)
     reject(error)
   });
 
@@ -690,34 +750,31 @@ function update_CustomerInfo(custObj,actionBy){
   // Convert Refer code 6 charactors
   var referalPerson = ""
 
-
   if(custObj.referalPerson){
     custObj.referalPerson = custObj.referalPerson.replace(/\s/g, '');// remove sapce
     referalPerson = custObj.referalPerson.substr(0, 6);
   }
 
   // Convert Date split 10 charactors
-  if(custObj.birthDate){
-    custObj.birthDate = custObj.birthDate.substr(0, 10);
-  }
-
+    if(custObj.birthDate){
+      custObj.birthDate = String(custObj.birthDate).substr(0, 10);
+    }
 
   if(custObj.SPidCardExpiryDate){
-    custObj.SPidCardExpiryDate = custObj.SPidCardExpiryDate.substr(0, 10);
+    custObj.SPidCardExpiryDate = String(custObj.SPidCardExpiryDate).substr(0, 10);
   }
 
-
   if(custObj.cddDate)
-    custObj.cddDate = custObj.cddDate.substr(0, 10);
+    custObj.cddDate = String(custObj.cddDate).substr(0, 10);
 
   if(custObj.applicationDate)
-    custObj.applicationDate = custObj.applicationDate.substr(0, 10);
+    custObj.applicationDate = String(custObj.applicationDate).substr(0, 10);
 
   if(custObj.suitabilityEvaluationDate)
-    custObj.suitabilityEvaluationDate = custObj.suitabilityEvaluationDate.substr(0, 10);
+    custObj.suitabilityEvaluationDate = String(custObj.suitabilityEvaluationDate).substr(0, 10);
 
   if(custObj.fatcaDeclarationDate)
-    custObj.fatcaDeclarationDate = custObj.fatcaDeclarationDate.substr(0, 10);
+    custObj.fatcaDeclarationDate = String(custObj.fatcaDeclarationDate).substr(0, 10);
 
   // Convert Boolean
   if(custObj.committedMoneyLaundering ==true){
@@ -1640,8 +1697,9 @@ function update_CustomerInfo(custObj,actionBy){
 
         // console.log(JSON.stringify(result));
           if(err){
+            logger.error(' Account Info Error SQL:'+err);
             const err_msg=err;
-            logger.error('Messge:'+err_msg);
+            logger.error(' Account Info Error SQL:'+err_msg);
 
             resolve({code:'9',message:''+err_msg});
           }else {
@@ -1801,11 +1859,12 @@ function update_MFTS_Account(cardNumber,actionBy){
 function update_Address(addrObj,seq,actionBy){
 
   // console.log("update_Address()");
+
   if(addrObj.soi && addrObj.soi !='' )
-    addrObj.soi = 'ซ. ' + addrObj.soi;
+    addrObj.soi =  'ซ.'+addrObj.soi;
 
   if(addrObj.moo && addrObj.moo !='' )
-    addrObj.moo= 'หมู่ ' + addrObj.moo;
+    addrObj.moo=  'หมู่ '+ addrObj.moo
 
 
   var queryStr = `
@@ -1827,16 +1886,16 @@ function update_Address(addrObj,seq,actionBy){
   from REF_Countrys
   WHERE Country_Code=@country
 
-  select @Province_ID=Province_ID
+  select TOP 1 @Province_ID=Province_ID
   from REF_Provinces
   where LEFT(Name_Thai ,7) like '%'+LEFT(@province,7)+'%'
 
-  select @Amphur_ID=Amphur_ID
+  select TOP 1 @Amphur_ID=Amphur_ID
   from REF_Amphurs
   WHERE Province_ID =@Province_ID
   AND LEFT(Name_Thai,5) LIKE '%'+ LEFT(@district,5) + '%'
 
-  select @Tambon_ID=Tambon_ID
+  select TOP 1 @Tambon_ID=Tambon_ID
   from REF_Tambons
   WHERE Amphur_ID=@Amphur_ID
   AND LEFT(Name_Thai,5) like '%'+LEFT(@subDistrict,5)+'%'

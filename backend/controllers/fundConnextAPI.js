@@ -2893,6 +2893,13 @@ tr:nth-child(even) {
 </html>
   `;
 
+  const MaskData = require('maskdata');
+  const maskCardOptions = {
+    maskWith: "X",
+    unmaskedStartDigits: 4,
+    unmaskedEndDigits: 3
+  };
+
 
   fnArray=[];
   fnArray.push(exports.reportSCHMitlogPROC(businessDate,'FC_API_SCH_CUST_INFO'));
@@ -2903,7 +2910,7 @@ tr:nth-child(even) {
 
     // Report process result by Mail
     var mailBody='<h1>FundConnext Download Report On' + businessDate + '</h1>'
-    mailBody += '<h3>Download Customer Profile ('+repData[0].length+') </h3>'
+    mailBody += '<h3>Customer Profile Download ('+repData[0].length+') </h3>'
 
     // *** Customer profile
     mailBody +=`<TABLE>
@@ -2914,11 +2921,10 @@ tr:nth-child(even) {
   `
 
     repData[0].forEach(function(item){
-      logger.info('***Cust>>' + item.msg)
       var _splitData = item.msg.split("|")
-
+      const dataAfterMasking = MaskData.maskCard(_splitData[0], maskCardOptions);
       mailBody += '<tr>'
-      + '<td>' +_splitData[0]+ '</td>'
+      + '<td>' +dataAfterMasking+ '</td>'
       + '<td>' +_splitData[1]+' ' + _splitData[2] +'</td>'
       + '<td>' +_splitData[3]+ '</td>'
       + '<td>' +_splitData[4]+ '</td>'
@@ -2931,9 +2937,7 @@ tr:nth-child(even) {
     mailBody +='<BR><h3>NAV Download </h3>'
     mailBody +=`<TABLE>`
     if(repData[1] && repData[1].length>0){
-      logger.info('***NAV>>'+repData[1][0].msg)
       var _splitData = repData[1][0].msg.split("|")
-      // mailBody +='<p>Code: ' + _splitData[1] +'</p>'
 
       mailBody += '<tr>'
       + '<td>' +_splitData[0]+ '</td>'
@@ -2949,7 +2953,7 @@ tr:nth-child(even) {
       subject:REPORT_SUBJECT,
       body:HTML_HEADER + mailBody + HTML_FOOTER
     }
-    mail.sendMailToRespondor(mailObj);
+    mail.sendMailIT(mailObj);
     res.status(200).json('reportSCHMitlog successful.');
   })
   .catch(error => {

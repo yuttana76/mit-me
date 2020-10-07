@@ -30,6 +30,7 @@
     "fs-extra": "^8.1.0",
     "handlebars": "^4.7.3",
     "jsonwebtoken": "^8.3.0",
+    "maskdata": "^1.1.2",
     "moment": "^2.24.0",
     "mssql": "^5.1.0",
     "mutationobserver-shim": "^0.3.2",

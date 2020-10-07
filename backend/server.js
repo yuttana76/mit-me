@@ -105,7 +105,6 @@ const option = {
   ca: fs.readFileSync(process.env.CA_PATH),
 };
 
-
 const onListening = () => {
   const addr = server.address();
   const bind = typeof port === "string" ? "pipe " + port : "port " + port;

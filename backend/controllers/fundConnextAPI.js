@@ -49,22 +49,11 @@ exports.scheduleDownload = (req, res, next) => {
   .then(data => {
     logger.info('Finish Execute FundConnext schedule;' + JSON.stringify(data) )
 
-    mitLog.saveMITlog(userCode,'FC_API_SCH_NAV', `FundConnext Download: ${data[0].DownloadRecord}    ;MFTS fund update: ${data[0].FundRecord}` ,'','',function(){});
+    //Save log
+    mitLog.saveMITlog(userCode,'FC_API_SCH_NAV', `NAV date ${businessDate}|FundConnext Download: ${data[0].DownloadRecord} |MFTS fund update: ${data[0].FundRecord}` ,'','',function(){});
 
-
-      // //Mail for staff
-      // var mailObj={
-      //   subject:`Schedule NAV Download on  ${data[0].businessDate} `,
-      //   body:`<h1>NAV Download on  ${data[0].businessDate} </h1>
-      //   <p>FundConnext Download: <b>${data[0].DownloadRecord}</b></p>
-      //   <p>MFTS fund update: <b>${data[0].FundRecord}</b></p>
-      //   <br><br>
-      //   <p>Send time ${getCurrentDate_Time()}</p>
-      //   `
-      // }
-      // mail.sendMailToRespondor(mailObj);
-
-      res.status(200).json('API Schedule successful. ' + JSON.stringify(data));
+    // Return
+    res.status(200).json('API Schedule successful. ' + JSON.stringify(data));
   })
   .catch(error => {
     logger.error('Error FundConnext schedule;' +error.message)
@@ -2829,7 +2818,28 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
                 CustomerData = JSON.parse(JSON.stringify(CustomerData));
                 customer.approveCustInfoProcess(CustomerData).then(result2=>{
 
-                  mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',CustomerData.cardNumber ,'','',function(){});
+                  var logMsg= ''.concat(CustomerData.cardNumber,'|',CustomerData.thFirstName,'|',CustomerData.thLastName,'|',CustomerData.referalPerson)
+
+                  var  currentDate =new Date();
+                  var _applicationDate = new Date();
+                  if(CustomerData.applicationDate){
+                    // console.log(`***ApplicationDate:${CustomerData.applicationDate}`)
+                    var _splitDate = CustomerData.applicationDate.split("-")
+                    _applicationDate.setFullYear(_splitDate[0])
+                    _applicationDate.setMonth(_splitDate[1]-1)
+                    _applicationDate.setDate(_splitDate[2])
+
+                  }
+
+                  // To calculate the time difference of two dates
+                  var Difference_In_Time = currentDate.getTime() - _applicationDate.getTime();
+
+                  // To calculate the no. of days between two dates
+                  var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+                  logMsg = logMsg+''.concat('|',CustomerData.applicationDate, '(',Difference_In_Days,')')
+
+                  mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',logMsg ,'','',function(){});
                   resolve(CustomerData);
 
                 })
@@ -2854,6 +2864,35 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
 exports.reportSCHMitlog = (req, res, next) => {
   var businessDate = getCurrentDate();
   logger.info('reportSCHMitlog API; businessDate:' + businessDate )
+  const REPORT_SUBJECT =`FundConnext  Download On  ${businessDate} `
+  const HTML_HEADER=`
+  <head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+  `;
+
+  const HTML_FOOTER=`
+  </body>
+</html>
+  `;
+
 
   fnArray=[];
   fnArray.push(exports.reportSCHMitlogPROC(businessDate,'FC_API_SCH_CUST_INFO'));
@@ -2863,28 +2902,53 @@ exports.reportSCHMitlog = (req, res, next) => {
   .then(repData => {
 
     // Report process result by Mail
-    // logger.info('Report Download ' +JSON.stringify(repData))
+    var mailBody='<h1>FundConnext Download Report On' + businessDate + '</h1>'
+    mailBody += '<h3>Download Customer Profile ('+repData[0].length+') </h3>'
 
-    var mailBody='<h1>Schedult Report On' + businessDate + '</h1>'
-    mailBody += '<h3>Download Customer Profile</h3>'
+    // *** Customer profile
+    mailBody +=`<TABLE>
+    <th>Code</th>
+    <th>Name</th>
+    <th>Reference</th>
+    <th>Application Date</th>
+  `
 
-    // logger.info('Customer Profile>>'+JSON.stringify(repData[0]))
     repData[0].forEach(function(item){
-      mailBody += '<p>Card Number: ' +  item.msg +'</p>'
+      logger.info('***Cust>>' + item.msg)
+      var _splitData = item.msg.split("|")
+
+      mailBody += '<tr>'
+      + '<td>' +_splitData[0]+ '</td>'
+      + '<td>' +_splitData[1]+' ' + _splitData[2] +'</td>'
+      + '<td>' +_splitData[3]+ '</td>'
+      + '<td>' +_splitData[4]+ '</td>'
+      +'</tr>'
+
     })
+    mailBody +='</TABLE>'
 
-    // logger.info('NAV>>'+JSON.stringify(repData[1]))
-    mailBody +='<BR><h3>Download NAV</h3>'
-    if(repData[1] && repData[1].length>0)
-      mailBody +='<p>Code: ' + repData[1][0].msg +'</p>'
+    // *** NAV
+    mailBody +='<BR><h3>NAV Download </h3>'
+    mailBody +=`<TABLE>`
+    if(repData[1] && repData[1].length>0){
+      logger.info('***NAV>>'+repData[1][0].msg)
+      var _splitData = repData[1][0].msg.split("|")
+      // mailBody +='<p>Code: ' + _splitData[1] +'</p>'
 
-    // logger.info(JSON.stringify(mailBody))
-    //Send mail
-    // //Mail for staff
-      var mailObj={
-        subject:`Schedult Report On  ${businessDate} `,
-        body:mailBody
-      }
+      mailBody += '<tr>'
+      + '<td>' +_splitData[0]+ '</td>'
+      + '<td>' +_splitData[1]+ '</td>'
+      + '<td>' +_splitData[2]+ '</td>'
+      +'</tr>'
+
+    }
+    mailBody +='</TABLE>'
+
+    // *** Send mail
+    var mailObj={
+      subject:REPORT_SUBJECT,
+      body:HTML_HEADER + mailBody + HTML_FOOTER
+    }
     mail.sendMailToRespondor(mailObj);
     res.status(200).json('reportSCHMitlog successful.');
   })

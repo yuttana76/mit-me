@@ -49,9 +49,9 @@ exports.sendMail = (req, res, next) =>{
 
 exports.sendMailToRespondor = (obj) =>{
 
-  if(!obj.to){
-    obj.to = mailConfig.mail_developer;
-  }
+  // if(!obj.to){
+  //   obj.to = mailConfig.mail_developer;
+  // }
 
   // setup email data with unicode symbols
   let mailOptions = {

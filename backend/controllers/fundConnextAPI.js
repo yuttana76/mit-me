@@ -104,6 +104,8 @@ exports.getIndCust = (req, res, next) =>{
         res.status(200).json(obj.errMsg);
       }
 
+      console.log("GetIndCust>>" + JSON.stringify(obj))
+
       // 2. Save to MIT_FC_XXX
       getIndCustDEVProc(obj,actionBy).then(result=>{
         res.status(200).json(result);
@@ -1242,6 +1244,7 @@ function fnGetIndCust(cardNumber){
       resultObj =JSON.parse(result);
 
         logger.info("API token >>" + JSON.stringify(resultObj));
+
           const request = require('request');
           const HTTPS_ENDPOIN =`https://${FC_API_URL}${INVEST_PROFILE_PATH}?cardNumber=${cardNumber}`;
           const option = {
@@ -1249,7 +1252,7 @@ function fnGetIndCust(cardNumber){
           };
 
           request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
-            // logger.info(response.body.url);
+
             if(err) {
               logger.error(err);
               reject(err);

@@ -579,20 +579,21 @@ return new Promise(function(resolve, reject) {
   console.log('approveCustInfoProcess accountId >>'+fcCustInfoObj.accountId)
 
   // fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
-  fnArray.push(update_CustomerInfo_ByAccountId(fcCustInfoObj.accountId+'-x',fcCustInfoObj,actionBy));
+  fnArray.push(update_CustomerInfo_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj,actionBy));
 
   //  1 : residence
   //  2 : current
   //  3 : work
   if(fcCustInfoObj.residence)
-    fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
+    // fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
+    fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.residence,1,actionBy));
 
   if(fcCustInfoObj.current){
-    fnArray.push(update_Address(fcCustInfoObj.current,2,actionBy));
+    fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.current,2,actionBy));
   }
 
   if(fcCustInfoObj.work)
-    fnArray.push(update_Address(fcCustInfoObj.work,3,actionBy));
+    fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.work,3,actionBy));
 
   //Update Children
     for (var i in fcCustInfoObj.children) {
@@ -608,13 +609,14 @@ return new Promise(function(resolve, reject) {
 
   fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
 
-  fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
+  // fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
+  fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
   //Suit by  account
 
   Promise.all(fnArray)
   .then(data => {
 
-    exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.cardNumber).then(data =>{
+    exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.accountId,fcCustInfoObj.cardNumber).then(data =>{
     })
 
     update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
@@ -1840,13 +1842,10 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
     WHERE SET_Code= @SET_Code
 
     --MktId
-    --select  @MktId=Id from MFTS_SalesCode
-    --where License_Code=@IT_SAcode
-
     SELECT @MktId=ISNULL(b.Id,'0')
     FROM MIT_FC_CUST_ACCOUNT a
     left join MFTS_SalesCode b on b.License_Code=a.icLicense
-    WHERE cardNumber=@Cust_Code
+    WHERE cardNumber=@cardNumber
 
     --#BACKUP DATA
 
@@ -2832,7 +2831,6 @@ function update_MFTS_Account(cardNumber,actionBy){
   }
 
 function update_Address(addrObj,seq,actionBy){
-
   // console.log("update_Address()");
 
   if(addrObj.soi && addrObj.soi !='' )
@@ -2840,7 +2838,6 @@ function update_Address(addrObj,seq,actionBy){
 
   if(addrObj.moo && addrObj.moo !='' )
     addrObj.moo=  'หมู่ '+ addrObj.moo
-
 
   var queryStr = `
 
@@ -2959,7 +2956,9 @@ function update_Address(addrObj,seq,actionBy){
     ,[Zip_Code]=@postalCode
     ,[Print_Address]=@printTxt
     ,[Tel]=@phoneNumber
-  WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  WHERE Cust_Code=@cardNumber
+  AND Addr_Seq=@Addr_Seq
+
   IF @@ROWCOUNT=0
   BEGIN
       INSERT INTO  Account_Address(Cust_Code
@@ -3092,6 +3091,268 @@ function update_Address(addrObj,seq,actionBy){
   });
 }
 
+
+function update_Address_ByAccountId(accountId,addrObj,seq,actionBy){
+  // console.log("update_Address()");
+
+  if(addrObj.soi && addrObj.soi !='' )
+    addrObj.soi =  'ซ.'+addrObj.soi;
+
+  if(addrObj.moo && addrObj.moo !='' )
+    addrObj.moo=  'หมู่ '+ addrObj.moo
+
+  var queryStr = `
+
+  BEGIN
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
+
+
+  BEGIN TRANSACTION TranName;
+
+  DECLARE  @Country_ID VARCHAR(10);
+  DECLARE  @Province_ID VARCHAR(10);
+  DECLARE  @Amphur_ID VARCHAR(10);
+  DECLARE  @Tambon_ID VARCHAR(10);
+  DECLARE  @Place VARCHAR(500);
+
+  select @Country_ID=Country_ID
+  from REF_Countrys
+  WHERE Country_Code=@country
+
+  select TOP 1 @Province_ID=Province_ID
+  from REF_Provinces
+  where LEFT(Name_Thai ,7) like '%'+LEFT(@province,7)+'%'
+
+  select TOP 1 @Amphur_ID=Amphur_ID
+  from REF_Amphurs
+  WHERE Province_ID =@Province_ID
+  AND LEFT(Name_Thai,5) LIKE '%'+ LEFT(@district,5) + '%'
+
+  select TOP 1 @Tambon_ID=Tambon_ID
+  from REF_Tambons
+  WHERE Amphur_ID=@Amphur_ID
+  AND LEFT(Name_Thai,5) like '%'+LEFT(@subDistrict,5)+'%'
+
+  -- BACKUP
+  DECLARE  @actionByInt int =999;
+  DECLARE  @OLD_DATA  NVARCHAR(100);
+
+  -- Addr_No
+  SELECT @OLD_DATA = Addr_No FROM Account_Address WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  IF @OLD_DATA <> @no AND @@ROWCOUNT>0
+  BEGIN
+      INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+      VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Addr_No',@Old_data,@no,GETDATE(),@actionByInt);
+  END;
+
+  -- Place
+
+  -- @Road
+  SELECT @OLD_DATA = Road FROM Account_Address WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  IF @OLD_DATA <> @Road AND @@ROWCOUNT>0
+  BEGIN
+      INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+      VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Road',@Old_data,@Road,GETDATE(),@actionByInt);
+  END;
+
+  -- Tambon_Id
+  SELECT @OLD_DATA = Tambon_Id FROM Account_Address WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  IF @OLD_DATA <> @Tambon_Id AND @@ROWCOUNT>0
+  BEGIN
+      INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+      VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Tambon_Id',@Old_data,@Tambon_Id,GETDATE(),@actionByInt);
+  END;
+
+  -- Amphur_Id
+  SELECT @OLD_DATA = Amphur_Id FROM Account_Address WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  IF @OLD_DATA <> @Amphur_ID AND @@ROWCOUNT>0
+  BEGIN
+      INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+      VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Amphur_Id',@Old_data,@Amphur_ID,GETDATE(),@actionByInt);
+  END;
+
+  -- Province_Id
+  SELECT @OLD_DATA = Province_Id FROM Account_Address WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  IF @OLD_DATA <> @Province_ID AND @@ROWCOUNT>0
+  BEGIN
+      INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+      VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Province_ID',@Old_data,@Province_ID,GETDATE(),@actionByInt);
+  END;
+
+  -- Country_Id
+  SELECT @OLD_DATA = Country_Id FROM Account_Address WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  IF @OLD_DATA <> @Country_ID AND @@ROWCOUNT>0
+  BEGIN
+      INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+      VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Country_ID',@Old_data,@Country_ID,GETDATE(),@actionByInt);
+  END;
+
+  -- Zip_Code
+  SELECT @OLD_DATA = Zip_Code FROM Account_Address WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  IF @OLD_DATA <> @postalCode AND @@ROWCOUNT>0
+  BEGIN
+      INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+      VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Zip_Code',@Old_data,@postalCode,GETDATE(),@actionByInt);
+  END;
+
+  -- Tel
+  SELECT @OLD_DATA = Tel FROM Account_Address WHERE Cust_Code=@cardNumber AND Addr_Seq=@Addr_Seq
+  IF @OLD_DATA <> @phoneNumber AND @@ROWCOUNT>0
+  BEGIN
+      INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+      VALUES (@cardNumber,'Addr_Seq:'+@Addr_Seq+' ;Tel',@Old_data,@phoneNumber,GETDATE(),@actionByInt);
+  END;
+
+  SELECT @Place = ISNULL(@floor,'') +' '+ ISNULL(@building,'')+ ' ' + ISNULL(@moo,'')+' ' +ISNULL(@soi,'')
+
+  --EXECUTE
+  UPDATE Account_Address
+  SET[Addr_No]=@no
+    ,[Place]=@Place
+    ,[Road]=@road
+    ,[Tambon_Id]=@Tambon_ID
+    ,[Amphur_Id]=@Amphur_ID
+    ,[Province_Id]=@Province_ID
+    ,[Country_Id]=@Country_ID
+    ,[Zip_Code]=@postalCode
+    ,[Print_Address]=@printTxt
+    ,[Tel]=@phoneNumber
+  WHERE Cust_Code=@accountId
+  AND Addr_Seq=@Addr_Seq
+
+  IF @@ROWCOUNT=0
+  BEGIN
+      INSERT INTO  Account_Address(Cust_Code
+      ,Addr_Seq
+      ,[Addr_No]
+      ,[Place]
+      ,[Road]
+      ,[Tambon_Id]
+      ,[Amphur_Id]
+      ,[Province_Id]
+      ,[Country_Id]
+      ,[Zip_Code]
+      ,[Print_Address]
+      ,[Tel]
+      )
+      VALUES(@accountId
+      ,@Addr_Seq
+      ,@no
+      ,@Place
+      ,@road
+      ,@Tambon_ID
+      ,@Amphur_ID
+      ,@Province_ID
+      ,@Country_ID
+      ,@postalCode
+      ,@printTxt
+      ,@phoneNumber
+      )
+  END
+
+    -- Extension
+    UPDATE MIT_CUST_ADDR SET
+     [no]=@no
+    ,[floor]=@floor
+    ,[building]=@building
+    ,[soi]=@soi
+    ,[road]=@road
+    ,[moo]=@moo
+    ,[subDistrict]=@Tambon_ID
+    ,[district]=@Amphur_ID
+    ,[province]=@Province_ID
+    ,[postalCode]=@postalCode
+    ,[country]=@country
+    ,[phoneNumber]=@phoneNumber
+    ,UpdateBy=@actionBy
+    ,UpdateDate=getDate()
+    WHERE cardNumber=@cardNumber AND Addr_Seq=@Addr_Seq
+
+    IF @@ROWCOUNT=0
+    BEGIN
+      INSERT INTO  MIT_CUST_ADDR (
+        cardNumber
+        ,Addr_Seq
+        ,[no]
+        ,[floor]
+        ,[building]
+        ,[soi]
+        ,[road]
+        ,[moo]
+        ,[subDistrict]
+        ,[district]
+        ,[province]
+        ,[postalCode]
+        ,[country]
+        ,[phoneNumber]
+        ,CreateBy
+        ,CreateDate
+        )
+      VALUES(@cardNumber
+        ,@Addr_Seq
+        ,@no
+        ,@floor
+        ,@building
+        ,@soi
+        ,@road
+        ,@moo
+        ,@Tambon_ID
+        ,@Amphur_ID
+        ,@Province_ID
+        ,@postalCode
+        ,@country
+        ,@phoneNumber
+        ,@actionBy
+        ,getDate()
+        )
+        END
+      COMMIT TRANSACTION TranName;
+  END
+  `;
+
+  const sql = require('mssql')
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("accountId", sql.VarChar(20), accountId)
+      .input("cardNumber", sql.VarChar(20), addrObj.cardNumber==null?'':addrObj.cardNumber)
+      .input("Addr_Seq", sql.VarChar(1), seq)
+      .input("no", sql.NVarChar(100), addrObj.no==null?'':addrObj.no)
+      .input("floor", sql.NVarChar(100), addrObj.floor==null?'':addrObj.floor)
+      .input("building", sql.NVarChar(100), addrObj.building==null?'':addrObj.building)
+      .input("soi", sql.NVarChar(100), addrObj.soi==null?'':addrObj.soi)
+      .input("road", sql.NVarChar(100), addrObj.road==null?'':addrObj.road)
+      .input("moo", sql.NVarChar(100), addrObj.moo==null?'':addrObj.moo)
+      .input("subDistrict", sql.NVarChar(100), addrObj.subDistrict==null?'0':addrObj.subDistrict)
+      .input("district", sql.NVarChar(100), addrObj.district==null?'0':addrObj.district)
+      .input("province", sql.NVarChar(100), addrObj.province==null?'0':addrObj.province)
+      .input("postalCode", sql.NVarChar(100), addrObj.postalCode==null?'':addrObj.postalCode)
+      .input("country", sql.NVarChar(100), addrObj.country==null?'0':addrObj.country)
+      .input("phoneNumber", sql.NVarChar(100), addrObj.phoneNumber==null?'':addrObj.phoneNumber)
+      .input("printTxt", sql.NVarChar(200), addrObj.printTxt==null?'':addrObj.printTxt)
+      .input("actionBy", sql.VarChar(50), actionBy)
+
+      // .input("ProvinceName", sql.NVarChar(100), addrObj.province)
+      .query(queryStr, (err, result) => {
+        // console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
+
 function update_Children(childrenObj,actionBy){
 
   // console.log("update_Children()" + JSON.stringify(childrenObj));
@@ -3121,7 +3382,7 @@ function update_Children(childrenObj,actionBy){
     IF @OLD_DATA <> @identificationCardType AND @@ROWCOUNT>0
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Remark,Change_DateTime,Change_By)
-        VALUES (@cardNumber,'identificationCardType',@Old_data,@identificationCardType,@childCardNumber,GETDATE(),@actionByInt);
+        VALUES (@cardNumber,'Children identificationCardType',@Old_data,@identificationCardType,@childCardNumber,GETDATE(),@actionByInt);
     END;
 
     --     ,[passportCountry]=@passportCountry
@@ -3130,7 +3391,7 @@ function update_Children(childrenObj,actionBy){
     BEGIN
         PRINT N' Insert '
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Remark,Change_DateTime,Change_By)
-        VALUES (@cardNumber,'passportCountry',@Old_data,@passportCountry,@childCardNumber,GETDATE(),@actionByInt);
+        VALUES (@cardNumber,'Children passportCountry',@Old_data,@passportCountry,@childCardNumber,GETDATE(),@actionByInt);
     END;
 
     --     ,[idCardExpiryDate]=@idCardExpiryDate
@@ -3138,7 +3399,7 @@ function update_Children(childrenObj,actionBy){
     IF @OLD_DATA <> @idCardExpiryDate AND @@ROWCOUNT>0
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Remark,Change_DateTime,Change_By)
-        VALUES (@cardNumber,'idCardExpiryDate',@Old_data,@idCardExpiryDate,@childCardNumber,GETDATE(),@actionByInt);
+        VALUES (@cardNumber,'Children idCardExpiryDate',@Old_data,@idCardExpiryDate,@childCardNumber,GETDATE(),@actionByInt);
     END;
 
     --     ,[title]=@title
@@ -3146,7 +3407,7 @@ function update_Children(childrenObj,actionBy){
     IF @OLD_DATA <> @title AND @@ROWCOUNT>0
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Remark,Change_DateTime,Change_By)
-        VALUES (@cardNumber,'title',@Old_data,@title,@childCardNumber,GETDATE(),@actionByInt);
+        VALUES (@cardNumber,'Children title',@Old_data,@title,@childCardNumber,GETDATE(),@actionByInt);
     END;
 
     --     ,[thFirstName]=@thFirstName
@@ -3154,7 +3415,7 @@ function update_Children(childrenObj,actionBy){
     IF @OLD_DATA <> @thFirstName AND @@ROWCOUNT>0
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Remark,Change_DateTime,Change_By)
-        VALUES (@cardNumber,'thFirstName',@Old_data,@thFirstName,@childCardNumber,GETDATE(),@actionByInt);
+        VALUES (@cardNumber,'Children thFirstName',@Old_data,@thFirstName,@childCardNumber,GETDATE(),@actionByInt);
     END;
 
     --     ,[thLastName]=@thLastName
@@ -3162,7 +3423,7 @@ function update_Children(childrenObj,actionBy){
     IF @OLD_DATA <> @thLastName AND @@ROWCOUNT>0
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Remark,Change_DateTime,Change_By)
-        VALUES (@cardNumber,'thLastName',@Old_data,@thLastName,@childCardNumber,GETDATE(),@actionByInt);
+        VALUES (@cardNumber,'Children thLastName',@Old_data,@thLastName,@childCardNumber,GETDATE(),@actionByInt);
     END;
 
     --     ,[birthDate]=@birthDate
@@ -3170,7 +3431,7 @@ function update_Children(childrenObj,actionBy){
     IF @OLD_DATA <> @birthDate AND @@ROWCOUNT>0
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Remark,Change_DateTime,Change_By)
-        VALUES (@cardNumber,'birthDate',@Old_data,@birthDate,@childCardNumber,GETDATE(),@actionByInt);
+        VALUES (@cardNumber,'Children birthDate',@Old_data,@birthDate,@childCardNumber,GETDATE(),@actionByInt);
     END;
 
 
@@ -3361,8 +3622,8 @@ function update_CustAccountInDB(cardNumber,actionBy){
     WHILE @@FETCH_STATUS = 0
     BEGIN
 
-    SELECT  @MktId = Id from [MFTS_SalesCode] where License_Code = @icLicense
-    UPDATE Account_Info SET MktId = @MktId where Cust_Code=@cardNumber
+    --SELECT  @MktId = Id from [MFTS_SalesCode] where License_Code = @icLicense
+    --UPDATE Account_Info SET MktId = @MktId where Cust_Code=@cardNumber
 
     UPDATE MIT_CUST_ACCOUNT SET
             [icLicense]=@icLicense
@@ -3554,6 +3815,119 @@ END
   });
 }
 
+
+function update_MFTS_Suit_ByAccountId(cardNumber,actionBy){
+
+  console.log("update_MFTS_Suit()" + cardNumber);
+  const sql = require('mssql')
+
+  var queryStr = `
+BEGIN
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
+
+
+  BEGIN TRANSACTION update_MFTS_Suit;
+
+  -- Code here
+  DECLARE @AccountCursor as CURSOR;
+  DECLARE @Account_No as VARCHAR(20);
+  DECLARE @suitabilityRiskLevel as VARCHAR(1);
+  DECLARE @suitabilityEvaluationDate as date
+  DECLARE @Risk_Profile as VARCHAR(100);
+  DECLARE @Risk_Description as VARCHAR(500);
+  DECLARE @RowCount as INT;
+  DECLARE @Series_Id as INT;
+
+  select @suitabilityRiskLevel=A.suitabilityRiskLevel
+          ,@suitabilityEvaluationDate=A.suitabilityEvaluationDate
+          ,@Risk_Profile=B.Risk_Profile
+          ,@Risk_Description=B.Description
+  from MIT_FC_CUST_INFO  A
+  left join MFTS_Suit_Risk B  ON A.suitabilityRiskLevel =B.Risk_Level
+  where cardNumber=@cardNumber
+
+  SET @AccountCursor = CURSOR FOR
+  select accountId
+  FROM MIT_FC_CUST_ACCOUNT where cardNumber= @cardNumber;
+
+  --Insert /Update  MFTS_Suit by @accountId
+  OPEN @AccountCursor;
+  FETCH NEXT FROM @AccountCursor INTO @Account_No;
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+
+    select  @RowCount = COUNT(*)
+    from MFTS_Suit
+    WHERE Account_No=@Account_No
+    AND CAST(Document_Date AS DATE) >= CAST(@suitabilityEvaluationDate AS DATE)  AND Active_Flag='A'
+
+   IF @RowCount =0
+   BEGIN
+
+      SElECT @Series_Id =  Id FROM [MFTS_Suit_Series] WHERE  Active_Flag='A'
+
+      UPDATE MFTS_Suit
+      SET Active_Flag='I'
+      WHERE Account_No=@Account_No
+
+      INSERT INTO  MFTS_Suit (
+          Series_Id
+          ,Account_No
+          ,Document_Date
+          ,Risk_Level
+          ,Risk_Level_Desc
+          ,Active_Flag
+          ,[Create_By]
+          ,[Create_Date]
+          )
+      VALUES(
+          @Series_Id
+          ,@Account_No
+          ,@suitabilityEvaluationDate
+          ,@Risk_Profile
+          ,@Risk_Description
+          ,'A'
+          ,@actionBy
+          ,getDate()
+          )
+  END;
+
+  FETCH NEXT FROM @AccountCursor INTO @Account_No;
+  END
+
+  CLOSE @AccountCursor;
+  DEALLOCATE @AccountCursor;
+
+  COMMIT TRANSACTION update_MFTS_Suit;
+
+END
+  `;
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+        // console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
 
 
 function update_MFTS_Suit_Detail(cardNumber,actionBy){
@@ -3988,35 +4362,36 @@ function update_CustBankInDB(cardNumber,actionBy){
       ,[bankAccountNo]=@bankAccountNo
       ,[default]=@default
       ,[finnetCustomerNo]=@finnetCustomerNo
-        ,UpdateBy=@actionBy
-        ,UpdateDate=getDate()
-        WHERE cardNumber=@cardNumber
+      ,UpdateBy=@actionBy
+      ,UpdateDate=getDate()
+      WHERE cardNumber=@cardNumber
+      AND accountId=@accountId
       AND bankAccountNo=@bankAccountNo
       AND accType=@accType
 
         IF @@ROWCOUNT=0
         BEGIN
           INSERT INTO  MIT_CUST_BANK (
-        cardNumber
-        ,[accType]
-        ,[accountId]
-        ,[bankCode]
-        ,[bankBranchCode]
-        ,[bankAccountNo]
-        ,[default]
-        ,[finnetCustomerNo]
+            cardNumber
+            ,[accType]
+            ,[accountId]
+            ,[bankCode]
+            ,[bankBranchCode]
+            ,[bankAccountNo]
+            ,[default]
+            ,[finnetCustomerNo]
             ,[CreateBy]
             ,[CreateDate]
             )
           VALUES(
         @cardNumber
             ,@accType
-        ,@accountId
-        ,@bankCode
-        ,@bankBranchCode
-        ,@bankAccountNo
-        ,@default
-        ,@finnetCustomerNo
+            ,@accountId
+            ,@bankCode
+            ,@bankBranchCode
+            ,@bankAccountNo
+            ,@default
+            ,@finnetCustomerNo
             ,@actionBy
             ,getDate()
             )
@@ -4360,7 +4735,7 @@ function validStr(val, defaultVal = "") {
   }
 }
 
-exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
+exports.cloneCustomerAddrSameAsFlag = (accountId,cardNumber)=>{
 
   logger.info('cloneCustomerAddrSameAsFlag()' +  cardNumber);
 
@@ -4426,7 +4801,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
                         @Tel=[Tel],
                         @Fax=[Fax]
                         FROM  Account_Address
-                      where  Addr_Seq=@Addr_Seq_source AND  Cust_Code =@cardNumber;
+                      where  Addr_Seq=@Addr_Seq_source AND  Cust_Code =@accountId;
 
                       UPDATE Account_Address SET
                       Addr_No=@Addr_No,
@@ -4440,7 +4815,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
                         Print_Address=@Print_Address,
                         Tel=@Tel,
                         Fax=@Fax
-                      where  Addr_Seq=@Addr_Seq_target AND  Cust_Code =@cardNumber;
+                      where  Addr_Seq=@Addr_Seq_target AND  Cust_Code =@accountId;
                       IF @@ROWCOUNT=0
                       BEGIN
                       Insert Account_Address(Cust_Code,
@@ -4456,7 +4831,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
                         Print_Address,
                         Tel,
                         Fax)
-                      VALUES(@cardNumber,
+                      VALUES(@accountId,
                         @Addr_Seq_target,
                         @Addr_No,
                         @Place,
@@ -4493,7 +4868,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
                         @Tel=[Tel],
                         @Fax=[Fax]
                         FROM  Account_Address
-                      where  Addr_Seq=@Addr_Seq_source AND  Cust_Code =@cardNumber;
+                      where  Addr_Seq=@Addr_Seq_source AND  Cust_Code =@accountId;
 
                       UPDATE Account_Address SET
                       Addr_No=@Addr_No,
@@ -4507,7 +4882,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
                         Print_Address=@Print_Address,
                         Tel=@Tel,
                         Fax=@Fax
-                      where  Addr_Seq=@Addr_Seq_target AND  Cust_Code =@cardNumber;
+                      where  Addr_Seq=@Addr_Seq_target AND  Cust_Code =@accountId;
                       IF @@ROWCOUNT=0
                       BEGIN
                       Insert Account_Address(Cust_Code,
@@ -4523,7 +4898,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
                         Print_Address,
                         Tel,
                         Fax)
-                      VALUES(@cardNumber,
+                      VALUES(@accountId,
                         @Addr_Seq_target,
                         @Addr_No,
                         @Place,
@@ -4560,7 +4935,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
                         @Tel=[Tel],
                         @Fax=[Fax]
                         FROM  Account_Address
-                      where  Addr_Seq=@Addr_Seq_source AND  Cust_Code =@cardNumber;
+                      where  Addr_Seq=@Addr_Seq_source AND  Cust_Code =@accountId;
 
                       UPDATE Account_Address SET
                       Addr_No=@Addr_No,
@@ -4574,7 +4949,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
                         Print_Address=@Print_Address,
                         Tel=@Tel,
                         Fax=@Fax
-                      where  Addr_Seq=@Addr_Seq_target AND  Cust_Code =@cardNumber;
+                      where  Addr_Seq=@Addr_Seq_target AND  Cust_Code =@accountId;
                       IF @@ROWCOUNT=0
                       BEGIN
                       Insert Account_Address(Cust_Code,
@@ -4590,7 +4965,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
                         Print_Address,
                         Tel,
                         Fax)
-                      VALUES(@cardNumber,
+                      VALUES(@accountId,
                         @Addr_Seq_target,
                         @Addr_No,
                         @Place,
@@ -4617,6 +4992,7 @@ exports.cloneCustomerAddrSameAsFlag = (cardNumber)=>{
 
       const pool1 = new sql.ConnectionPool(config, err => {
         pool1.request() // or: new sql.Request(pool1)
+        .input("accountId", sql.VarChar(20), accountId)
         .input("cardNumber", sql.VarChar(20), cardNumber)
         .query(queryStr, (err, result) => {
             if(err){

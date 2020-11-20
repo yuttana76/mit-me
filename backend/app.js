@@ -54,6 +54,7 @@ const exportFileRoutes = require('./routes/exportFile');
 const fundConnextAPIRoutes = require('./routes/fundConnextAPI');
 const streamingRoutes = require('./routes/streaming');
 const streaming2faRoutes = require('./routes/streaming2fa');
+const sttEopenRoutes = require('./routes/sttEopen');
 
 const smsRoutes = require('./routes/sms');
 const surveyRoutes = require('./routes/survey');
@@ -182,7 +183,10 @@ app.use("/api/fundConnext",fundConnextAPIRoutes);
 
 // Streaming
 app.use("/api/stream",streamingRoutes);
+
 app.use("/api/stream2fa",streaming2faRoutes);
+
+app.use("/api/stteopen",sttEopenRoutes);
 
 //SMS API
 app.use("/api/sms",smsRoutes);

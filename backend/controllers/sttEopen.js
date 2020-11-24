@@ -22,7 +22,7 @@ const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', {
 });
 
 
-const option = {
+const eOpen = {
   publicKey: fs.readFileSync(process.env.EOPEN_PUBLIC_KEY),
   privateKey: fs.readFileSync(process.env.EOPEN_PRIVATE_KEY),
 };
@@ -42,13 +42,13 @@ exports.brokerLogin = (req,res,next)=>{
   const sign = crypto.createSign('SHA256')
   sign.write(requestTime)
   sign.end()
-  const signature = sign.sign(option.privateKey, 'hex')
+  const signature = sign.sign(eOpen.privateKey, 'hex')
 
 
   const verify = crypto.createVerify('SHA256');
   verify.write(requestTime);
   verify.end();
-  verifyResult =  verify.verify(option.publicKey, signature,'hex')
+  verifyResult =  verify.verify(eOpen.publicKey, signature,'hex')
 
 
   console.log(verifyResult)

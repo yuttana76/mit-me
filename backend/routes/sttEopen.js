@@ -7,6 +7,12 @@ const sttEopen = require('../controllers/sttEopen');
 
 //Save Register information
 
+router.post("/signVerify",sttEopen.signVerify);
+
 router.post("/broker-login",sttEopen.brokerLogin);
+router.post("/broker-login",sttEopen.brokerLogin);
+
+router.get("/downloadJSON/:applicationId",sttEopen.downloadJSON);
+
 
 module.exports = router;

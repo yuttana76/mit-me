@@ -11,13 +11,25 @@ export const navItems = [
     // }
   },
   {
-    name: 'E-Open(DEV)',
+    name: 'E-Open(DEV)-YYY',
     url: '/trade/open-account-first',
     icon: 'icon-speedometer',
     // badge: {
     //   variant: 'info',
     //   text: 'NEW'
     // }
+  },
+  {
+    name: 'CRM-Personal-Data',
+    url: '/trade/CRM-Personal-Data',
+    icon: 'icon-speedometer',
+
+  },
+  {
+    name: 'CRM-Personal-Search',
+    url: '/trade/CRM-Personal-Search',
+    icon: 'icon-speedometer',
+
   },
   {
     name: 'Anoucement',

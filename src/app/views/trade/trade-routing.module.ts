@@ -29,6 +29,9 @@ import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 import { SurveySearchComponent } from './survey-search/survey-search.component';
 import { FCUtilityComponent } from './fcutility/fcutility.component';
 import { OpenAccountFirstComponent } from './open-account-first/open-account-first.component';
+import { CrmPersonalComponent } from './crm-personal/crm-personal.component';
+import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
+import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-search.component';
 
 const routes: Routes = [
 
@@ -286,6 +289,27 @@ const routes: Routes = [
         component: SurveySearchComponent,
         data: {
           title: 'Welcome Servey Search'
+        }
+      },
+      {
+        path: 'CRM-Personal',
+        component: CrmPersonalComponent,
+        data: {
+          title: 'Welcome CRM Personal'
+        }
+      },
+      {
+        path: 'CRM-Personal-Data',
+        component: CrmPersonalDataComponent,
+        data: {
+          title: 'Welcome CRM Personal Data'
+        }
+      },
+      {
+        path: 'CRM-Personal-Search',
+        component: CrmPersonalSearchComponent,
+        data: {
+          title: 'Welcome CRM Personal Search'
         }
       },
 

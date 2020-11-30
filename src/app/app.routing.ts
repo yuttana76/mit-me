@@ -18,6 +18,7 @@ import { SuitSurveyComponent } from './views/trade/suit-survey/suit-survey.compo
 import { SurveySearchComponent } from './views/trade/survey-search/survey-search.component';
 import { FCUtilityComponent } from './views/trade/fcutility/fcutility.component';
 import { TestGraphQLComponent } from './views/trade/test-graph-ql/test-graph-ql.component';
+import { CrmPersonalComponent } from './views/trade/crm-personal/crm-personal.component';
 
 export const routes: Routes = [
   {
@@ -113,6 +114,14 @@ export const routes: Routes = [
       title: 'Welcome Test Graph QL.'
     }
   },
+
+  // {
+  //   path: 'CRM-Personal',
+  //   component: CrmPersonalComponent,
+  //   data: {
+  //     title: 'Welcome CRM Personal.'
+  //   }
+  // },
 
   // For devement; Delete on PROD
   // {

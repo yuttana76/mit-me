@@ -87,6 +87,9 @@ import { OpenAccountFirstComponent } from './open-account-first/open-account-fir
 // Pipe
 import { LedReqStatusPipeComponent } from './pipe/led-req-status-pipe/led-req-status-pipe.component';
 import { genderTransform } from './pipe/personalPipe';
+import { CrmPersonalComponent } from './crm-personal/crm-personal.component';
+import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-search.component';
+import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
 
 @NgModule({
   imports: [
@@ -179,6 +182,9 @@ import { genderTransform } from './pipe/personalPipe';
     TestGraphQLComponent,
     OpenAccountFirstComponent,
     genderTransform,
+    CrmPersonalComponent,
+    CrmPersonalSearchComponent,
+    CrmPersonalDataComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

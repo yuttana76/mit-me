@@ -3,12 +3,12 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { navItems } from './../../_MerchantNav';
 // import { navItems } from './../../_devNav'; // For development
 
-
 import { AuthService } from '../../views/services/auth.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { MitDynaNavService } from '../../views/trade/services/_mitDynaNav.service';
 
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -53,9 +53,12 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
     });
 
   // ***************************   Dynamic NAV
-  this.navItems =  null;  // For production
+  // this.navItems =  null;  // For production
+  // if ( this.navItems == null ) {
 
-  if ( this.navItems == null ) {
+  console.log(`*** Environment ${environment.production}`);
+
+  if ( environment.production ) {
 
       this.dynaNav.getMitNav2U(this.userData).subscribe( menuDyna => { // Load menu setting from db.
 
@@ -82,15 +85,15 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
             icon: 'icon-speedometer',
           } ,
 
-          {
-            name: 'E-Open(DEV)',
-            url: '/trade/open-account-first',
-            icon: 'icon-speedometer',
-            // badge: {
-            //   variant: 'info',
-            //   text: 'NEW'
-            // }
-          },
+          // {
+          //   name: 'E-Open(DEV)',
+          //   url: '/trade/open-account-first',
+          //   icon: 'icon-speedometer',
+          //   // badge: {
+          //   //   variant: 'info',
+          //   //   text: 'NEW'
+          //   // }
+          // },
 
           { name: 'Anoucement',
             url: '/trade/anoucementr',

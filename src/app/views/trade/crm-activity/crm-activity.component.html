@@ -1,0 +1,207 @@
+<form class="example-form">
+
+<mat-card class="cust-container" >
+
+  <mat-card-title>CRM Activity</mat-card-title>
+     <!-- CustomerGroup -->
+  <mat-form-field class="example-full-width">
+    <mat-label>ประเภท Activity</mat-label>
+    <mat-select >
+        <mat-option  *ngFor="let obj of actTypeList" [value]="obj.code">
+          {{obj.desc}}
+        </mat-option>
+      </mat-select>
+    <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
+  </mat-form-field>
+
+
+  <mat-card-actions>
+    <button mat-button>SAVE</button>
+    <button mat-button>CLOSE</button>
+  </mat-card-actions>
+
+  </mat-card>
+</form>
+
+
+<form class="example-form">
+  <mat-card class="cust-container" >
+    <h2>Contact Customer</h2>
+<!--
+  CONTACT
+  contactCustAct={contactChannel:'',dateTime:'',prod:'',contactResult:'',nextTime:'',note:''}
+   -->
+   <div class ='contact_class'>
+    <mat-label>Contact Channel</mat-label>
+    <section class="example-full-width">
+      <mat-radio-group >
+        <mat-radio-button class="example-margin"  *ngFor="let obj of contactChannelList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+      </mat-radio-group>
+    </section>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Contact Date</mat-label>
+      <input matInput [matDatepicker]="contactDate"
+        placeholder="DOB"
+        [readonly]="true" >
+      <mat-datepicker-toggle matSuffix [for]="contactDate"></mat-datepicker-toggle>
+      <mat-datepicker #contactDate disabled="false"></mat-datepicker>
+      <!-- <mat-error *ngIf="form.get('contactDate').invalid ">Please correct date expire date</mat-error> -->
+    </mat-form-field>
+
+      <section class="example-full-width">
+        <mat-label>Product</mat-label>
+        <mat-radio-group >
+          <mat-radio-button class="example-margin"  *ngFor="let obj of prodGroupList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+        </mat-radio-group>
+      </section>
+
+      <section class="example-full-width">
+        <mat-label>Contact Result</mat-label>
+        <mat-radio-group >
+          <mat-radio-button class="example-margin"  *ngFor="let obj of contactResult" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+        </mat-radio-group>
+      </section>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Next Deal Date</mat-label>
+      <input matInput [matDatepicker]="nextDate"
+        placeholder="DOB"
+        [readonly]="true" >
+      <mat-datepicker-toggle matSuffix [for]="nextDate"></mat-datepicker-toggle>
+      <mat-datepicker #nextDate disabled="false"></mat-datepicker>
+      <!-- <mat-error *ngIf="form.get('nextDate').invalid ">Please correct date expire date</mat-error> -->
+    </mat-form-field>
+
+    <!-- InvestCondition -->
+    <mat-form-field class="example-full-width">
+      <mat-label>Note
+      </mat-label>
+      <textarea matInput placeholder="ข้อจำกัดของลูกค้า"></textarea>
+    </mat-form-field>
+    </div>
+  <!--
+    CONTACT
+  -->
+</mat-card>
+</form>
+
+<!--
+  MEET CUSTTOMER
+  meetCustAct={datetime:dd/mm/yyyy hh:mm,locate:xxxx, Note:xxxx,}
+   -->
+<form class="example-form">
+  <mat-card class="cust-container" >
+   <div class ='contact_class'>
+    <h2>Meet Customer</h2>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Contact Date</mat-label>
+      <input matInput [matDatepicker]="meetDate"
+        placeholder="Contact Date"
+        [readonly]="true" >
+      <mat-datepicker-toggle matSuffix [for]="meetDate"></mat-datepicker-toggle>
+      <mat-datepicker #meetDate disabled="false"></mat-datepicker>
+      <!-- <mat-error *ngIf="form.get('contactDate').invalid ">Please correct date expire date</mat-error> -->
+    </mat-form-field>
+
+    <!-- Locate -->
+    <mat-form-field class="example-full-width">
+      <mat-label>Locate
+      </mat-label>
+      <textarea matInput placeholder="Locate"></textarea>
+    </mat-form-field>
+
+    <!-- note -->
+    <mat-form-field class="example-full-width">
+      <mat-label>Note
+      </mat-label>
+      <textarea matInput placeholder="Note"></textarea>
+    </mat-form-field>
+    </div>
+  <!--
+    CONTACT
+  -->
+</mat-card>
+</form>
+
+<!--
+  Appointment
+  appointmentAct={subject:xxxx,startTime:dd/mm/yyyy hh:mm,endTime:dd/mm/yyyy hh:mm, Note:xxxx,allDay:Y/N,}
+   -->
+   <form class="example-form">
+    <mat-card class="cust-container" >
+     <div class ='contact_class'>
+      <h2>Appointment</h2>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Contact Date</mat-label>
+        <input matInput [matDatepicker]="appointStartDate"
+          placeholder="Contact Date"
+          [readonly]="true" >
+        <mat-datepicker-toggle matSuffix [for]="appointStartDate"></mat-datepicker-toggle>
+        <mat-datepicker #appointStartDate disabled="false"></mat-datepicker>
+        <!-- <mat-error *ngIf="form.get('contactDate').invalid ">Please correct date expire date</mat-error> -->
+      </mat-form-field>
+
+
+      <section class="example-section">
+        <mat-checkbox class="example-margin">All day</mat-checkbox>
+      </section>
+
+      <!-- note -->
+      <mat-form-field class="example-full-width">
+        <mat-label>Note
+        </mat-label>
+        <textarea matInput placeholder="Note"></textarea>
+      </mat-form-field>
+      </div>
+    <!--
+      CONTACT
+    -->
+  </mat-card>
+  </form>
+
+    <!--
+  Offer
+   offerAct={prod:xxxx,offerResult:xxxx,amount:yyyy,note:xxxx,offerDate}
+   -->
+   <form class="example-form">
+    <mat-card class="cust-container" >
+     <div class ='contact_class'>
+      <h2>Offer</h2>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>ประเภท Activity</mat-label>
+        <mat-select >
+            <mat-option  *ngFor="let obj of ProductList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
+      </mat-form-field>
+
+      <section class="example-full-width">
+        <mat-label>Offer Result</mat-label>
+        <mat-radio-group >
+          <mat-radio-button class="example-margin"  *ngFor="let obj of offerResult" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+        </mat-radio-group>
+      </section>
+
+      <mat-form-field class="example-full-width">
+        <!-- <mat-label>FirstName</mat-label> -->
+        <input matInput placeholder="amount" value="">
+      </mat-form-field>
+
+      <!-- note -->
+      <mat-form-field class="example-full-width">
+        <mat-label>Note
+        </mat-label>
+        <textarea matInput placeholder="Note"></textarea>
+      </mat-form-field>
+      </div>
+    <!--
+      CONTACT
+    -->
+  </mat-card>
+  </form>

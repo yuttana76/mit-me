@@ -19,6 +19,7 @@ export class CrmPersonModel {
   public Class: string;
   public InvestCondition: string;
   public Note: string;
+
   public CreateBy: string;
   public CreateDate: string;
   public UpdateBy: string;

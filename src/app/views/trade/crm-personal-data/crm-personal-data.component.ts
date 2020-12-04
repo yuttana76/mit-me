@@ -39,15 +39,91 @@ stateList = [{
 },
 ];
 
-typeList = [{
+custTypeList = [{
   code:'Business',
   desc:'Business',
-},
-{
-  code:'Individual',
-  desc:'Individual',
-},
+  },
+  {
+    code:'Individual',
+    desc:'Individual',
+  },
 ];
+
+custGroupList = [{
+  code:'Online',
+  desc:'Online',
+  },
+  {
+    code:'Agent',
+    desc:'ตัวแทน',
+  },
+  {
+    code:'General',
+    desc:'ทั่วไป',
+  },
+];
+
+interestList= [{
+  code:'PF',
+  desc:'PF',
+  },
+  {
+    code:'BF',
+    desc:'BF',
+  },
+  {
+    code:'Bond',
+    desc:'Bond',
+  },
+  {
+    code:'BE',
+    desc:'BE',
+  },
+];
+
+SourceOfCustomerList = [{
+  code:'Facebook',
+  desc:'Facebook',
+  },
+  {
+    code:'Line',
+    desc:'Line',
+  },
+];
+
+ReferList = [{
+  code:'Pine',
+  desc:'K.Pine',
+  },
+  {
+    code:'Sale A',
+    desc:'Sale A',
+  },
+  {
+    code:'Sale B',
+    desc:'Sale B',
+  },
+  {
+    code:'Sale C',
+    desc:'Sale C',
+  },
+];
+
+ClassList = [{
+  code:'Retail',
+  desc:'Retail',
+  },
+  {
+    code:'HNW',
+    desc:'HNW',
+  },
+  {
+    code:'U-HNW',
+    desc:'U-HNW',
+  },
+
+];
+
 
 // customerGroupList = [{
 //   code:'Online',
@@ -113,21 +189,14 @@ typeList = [{
     // this.formChangeSub.unsubscribe();
   }
 
-  onAddNew() {
+  onSave() {
 
     if (this.form.invalid) {
       console.log('form.invalid() ' + this.form.invalid);
       return true;
     }
-}
+  }
 
-  onUpdate() {
-
-    if (this.form.invalid) {
-      console.log('form.invalid() ' + this.form.invalid);
-      return true;
-    }
-}
 
   goBack() {
     this.location.back();

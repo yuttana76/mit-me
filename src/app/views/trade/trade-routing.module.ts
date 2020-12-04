@@ -32,6 +32,7 @@ import { OpenAccountFirstComponent } from './open-account-first/open-account-fir
 import { CrmPersonalComponent } from './crm-personal/crm-personal.component';
 import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
 import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-search.component';
+import { CrmActivityComponent } from './crm-activity/crm-activity.component';
 
 const routes: Routes = [
 
@@ -310,6 +311,13 @@ const routes: Routes = [
         component: CrmPersonalSearchComponent,
         data: {
           title: 'Welcome CRM Personal Search'
+        }
+      },
+      {
+        path: 'CRM-Activity',
+        component: CrmActivityComponent,
+        data: {
+          title: 'Welcome CRM Activity'
         }
       },
 

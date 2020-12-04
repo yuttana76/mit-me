@@ -5,7 +5,6 @@
 }
 
 
-
 .example-full-width {
   width: 100%;
 }
@@ -29,8 +28,20 @@ mat-expansion-panel {
   margin-top: 10px;
  }
 
+ mat-card {
+  margin-top: 10px;
+ }
+
  mat-card-actions {
    margin-bottom: 10px;
+ }
+
+ mat-form-field {
+    margin-top: 10px;
+ }
+
+ section{
+  margin-top: 10px;
  }
 
  .button_card_action {

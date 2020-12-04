@@ -94,15 +94,15 @@ const eOnpeAuth = () => {
     signerObject.update(requestTime);
     // var signature2 = signerObject.sign({key:eOpen.privateKey,padding:crypto.constants.RSA_PKCS1_PSS_PADDING}, "base64");
     var signature2 = signerObject.sign({key:eOpen.privateKey}, "base64");
-    logger.info(`***encypted METHOD2: ${signature2.toString("base64")}`);
 
+    logger.info(`***signature : ${signature2.toString("base64")}`);
 
     //verify String
     var verifierObject = crypto.createVerify("RSA-SHA256");
     verifierObject.update(requestTime);
-    //  var verified = verifierObject.verify({key:eOpen.publicKey, padding:crypto.constants.RSA_PKCS1_PSS_PADDING}, signature, "base64");
+    //  var verified = verifierObject.verify({key:eOpen.publicKey, padding:crypto.constants.RSA_PKCS1_PSS_PADDING}, signature2, "base64");
     var verified = verifierObject.verify({key:eOpen.publicKey}, signature2, "base64");
-    logger.info(`is signature ok? ${verified}`)
+    logger.info(`signature verify? ${verified}`)
     // *********METHOD 2************
 
     //Body
@@ -123,12 +123,12 @@ const eOnpeAuth = () => {
       },
     };
 
-    // logger.info('***options > ' + JSON.stringify(options));
+    logger.info('***options > ' + JSON.stringify(options));
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
   const request = https.request(options,(res) => {
 
-    console.log(`statusCode: ${res.statusCode}`)
+    logger.info(`statusCode: ${res.statusCode}`)
 
     var _chunk="";
     res.setEncoding('utf8');
@@ -138,26 +138,26 @@ const eOnpeAuth = () => {
     res.on('end', () => {
       resolve(_chunk);
     });
-
   });
-
   request.on('error', (e) => {
     logger.error('err fnFCAuth>');
     reject(e);
   });
 
-  // Write data to request body
-  // logger.info('***FC_API_AUTH > ' + JSON.stringify(FC_API_AUTH));
   request.write(body);
   request.end();
 
   });
 }
 
+// Test data
+// AppID:11002915
+// CID:1309913659936
 
 exports.downloadJSON = (req, res, next) =>{
 
   var cardNapplicationIdumber = req.params.applicationId;
+
 
   downloadJSON(cardNapplicationIdumber).then(result =>{
 
@@ -180,9 +180,13 @@ exports.downloadJSON = (req, res, next) =>{
 // function downloadJSON(applicationId){
 const downloadJSON = async (applicationId) => {
 
+  logger.info(`applicationId : ${applicationId}`)
+
   const token = await eOnpeAuth()
 
   return new Promise(function(resolve, reject) {
+
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
     var options = {
       host: 'oacctest.settrade.com',
@@ -195,9 +199,10 @@ const downloadJSON = async (applicationId) => {
     };
 
     logger.info('***token > ' + token);
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
     logger.info('***options > ' + JSON.stringify(options));
-  const request = https.request(options,(res) => {
+
+
+    const request = https.request(options,(res) => {
 
     console.log(`statusCode: ${res.statusCode}`)
 

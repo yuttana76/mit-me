@@ -90,6 +90,7 @@ import { genderTransform } from './pipe/personalPipe';
 import { CrmPersonalComponent } from './crm-personal/crm-personal.component';
 import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-search.component';
 import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
+import { CrmActivityComponent } from './crm-activity/crm-activity.component';
 
 @NgModule({
   imports: [
@@ -185,6 +186,7 @@ import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.
     CrmPersonalComponent,
     CrmPersonalSearchComponent,
     CrmPersonalDataComponent,
+    CrmActivityComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

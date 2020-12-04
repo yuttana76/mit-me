@@ -336,8 +336,9 @@ exports.mailGenerialByFile = (req, res, next) =>{
               console.log('line data :' + line );
 
               //SEND mail function
-              mailGenerial(req,res,line).then(data=>{
-                // res.status(200).json(data);
+              // mailGenerial(req,res,line).then(data=>{
+                 mailMaintenance(req,res,line).then(data=>{
+
                 console.log('Success Email >' + line);
                 // res.status(200).json('Send mail completed');
 
@@ -631,20 +632,293 @@ function senMailFromFile(req,res,_PID,_Email,_url){
     res.status(400).json({ message: 'surveyByMailToken' });
 
   }
-
 }
 
 
-function mailGenerial(req,res,_Email){
+function mailGenerial2_Attach(req,res,_Email){
 
-  const fileName1='StreamingforFund_Letter.pdf';
+  const fileName1='STT_Main_newAcc.pdf';
   const attachfile1 = __dirname + '/readFiles/Streaming/'+fileName1;
 
   // const attachfile2 = __dirname + '/readFiles/Streaming/NDID Specification.pdf';
 
   // const _compInfo = mailConfig.mailCompInfo_TH;
-  let _from = 'wealth@merchantasset.co.th';
-  let _subject = 'ขอนำเสนอการลงทุนในหุ้นกู้ บมจ.เนชั่นแนล เพาเวอร์ ซัพพลาย (NPS)'
+  let _from = 'wealthservice@merchantasset.co.th';
+  let _subject = 'แจ้งปิดระบบ Streaming For Fund เพื่อปรับปรุงระบบ '
+
+  let _msgTH = '';
+
+  return new Promise(function(resolve, reject) {
+
+  try {
+    logger.info(`mailStreaming() ;_Email=${_Email}`);
+
+    // Incase has Email
+      if(_Email){
+
+        // Thai message
+        _msgTH = `
+        <html>
+        <head>
+        </head>
+        <body>
+
+
+
+        </body>
+        </html>
+
+        <br>
+        <p>
+        <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+        <p>
+        `;
+        // _msgTH +=_compInfo
+        // setup email data with unicode symbols
+        let mailOptions = {
+          from: _from,
+          to: _Email,
+          subject: _subject,
+          html: _msgTH,
+
+          attachments: [{
+            filename: fileName1,
+            path: attachfile1,
+            contentType: 'application/pdf'
+          },
+          // {
+          //   filename: 'file2.pdf',
+          //   path: attachfile2,
+          //   contentType: 'application/pdf'
+          // },
+        ],
+        };
+
+      /**
+       * SEND mail to suctomer
+       */
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            reject(error);
+          }
+
+            // /*
+            // Save MIT_LOG
+            // */
+            // try {
+            //   mitLog.saveMITlog('SYSTEM','SEND_MAIL_CUST_STREAMING',logMsg,req.ip,req.originalUrl,function(){
+            //         // console.log("Save MIT log");
+            //   })
+            // } catch (error) {
+            //   console.log(error);
+            // }
+
+          logger.info(`API /surveyByMailToken -  Send mail successful!`);
+          // res.status(200).json({ message: 'Send mail successful!' });
+          resolve('Send mail successful');
+
+        });
+
+        // Incase No Email
+      }else{
+        logger.error(`API /surveyByMailToken - NO E-mail`);
+
+      }
+  } catch (error) {
+    // res.status(400).json({ message: 'surveyByMailToken' });
+
+    reject(error);
+  }
+
+});
+}
+
+
+function mailMaintenance(req,res,_Email){
+
+  const fileName1='STT_Main_newAcc.pdf';
+  const attachfile1 = __dirname + '/readFiles/Streaming/'+fileName1;
+
+  // const attachfile2 = __dirname + '/readFiles/Streaming/NDID Specification.pdf';
+
+  // const _compInfo = mailConfig.mailCompInfo_TH;
+  let _from = 'wealthservice@merchantasset.co.th';
+  let _subject = 'แจ้งปิดระบบ Streaming For Fund เพื่อปรับปรุงระบบ '
+
+  let _msgTH = '';
+
+  return new Promise(function(resolve, reject) {
+
+  try {
+    logger.info(`mailStreaming() ;_Email=${_Email}`);
+
+    // Incase has Email
+      if(_Email){
+
+        // Thai message
+        _msgTH = `
+
+        <html>
+        <head>
+        <style>
+
+        .blog-content-outer {
+          border: 1px solid #e1e1e1;
+          border-radius: 5px;
+          margin-top: 40px;
+          margin-bottom: 20px;
+          padding: 0 15px;
+          font-size: 16px;
+          width:70%;
+        }
+
+        .logo-area{
+          margin-top:20px;
+          margin-left:60px;
+          margin-bottom:20px;
+        }
+
+		    .tab { margin-left: 40px; }
+        .tab2 { margin-left: 80px; }
+
+        div.a {
+          text-indent: 50px;
+        }
+
+        .nowrap{white-space: nowrap;}
+
+        .txtCenter{
+          text-align: center;
+        }
+
+        .download{
+          margin:auto;
+          margin-left: 100px;
+        }
+        .download img{
+          width:150px;
+          height: 49px;
+        }
+
+        </style>
+        </head>
+        <body>
+        <br>
+
+        <div class='blog-content-outer'>
+
+        <br>
+        <div class="logo-area col-xs-12 col-sm-12 col-md-3">
+        <a href="https://www.merchantasset.co.th/home.html"><img src="https://www.merchantasset.co.th/assets/images/logo.png" title=""></a>
+        </div>
+
+        <br>
+        <p >เรียน ท่านลูกค้า</p>
+        <br>
+
+        <div class="a">
+        <p>
+        แจ้งปิดระบบ Streaming For Fund เพื่อปรับปรุงระบบ <br>
+        </p>
+        <p>ตั้งแต่ วันที่ 03/12/2020  เวลา 18.00 น. ถึง วันที่ 04/12/2020 เวลา 06.00 น.
+        </p>
+
+        <p>หากท่านพบปัญหากรุณาติดต่อ wealthservice@merchantasset.co.th<br>
+        </p>
+
+        <p>โทร 02-660-6689<br></p>
+        <p>Line:@merchantasset
+        </p>
+        <p>ขออภัยในความไม่สะดวกมา ณ ที่นี้
+        </p>
+
+        <br>
+        </div>
+
+
+        </body>
+        </html>
+
+        <br>
+        <p>
+        <br>*** อีเมลนี้เป็นการแจ้งจากระบบอัตโนมัติ กรุณาอย่าตอบกลับ ***
+        <p>
+
+        `;
+
+        // _msgTH +=_compInfo
+
+
+        // setup email data with unicode symbols
+        let mailOptions = {
+          from: _from,
+          to: _Email,
+          subject: _subject,
+          html: _msgTH,
+          // attachments: [{
+          //   filename: fileName1,
+          //   path: attachfile1,
+          //   contentType: 'application/pdf'
+          // },
+          //       // {
+          //       //   filename: 'file2.pdf',
+          //       //   path: attachfile2,
+          //       //   contentType: 'application/pdf'
+          //       // },
+          // ],
+
+        };
+
+      /**
+       * SEND mail to suctomer
+       */
+      transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            reject(error);
+          }
+
+            // /*
+            // Save MIT_LOG
+            // */
+            // try {
+            //   mitLog.saveMITlog('SYSTEM','SEND_MAIL_CUST_STREAMING',logMsg,req.ip,req.originalUrl,function(){
+            //         // console.log("Save MIT log");
+            //   })
+            // } catch (error) {
+            //   console.log(error);
+            // }
+
+          logger.info(`API /surveyByMailToken -  Send mail successful!`);
+          // res.status(200).json({ message: 'Send mail successful!' });
+          resolve('Send mail successful');
+
+        });
+
+        // Incase No Email
+      }else{
+        logger.error(`API /surveyByMailToken - NO E-mail`);
+
+      }
+  } catch (error) {
+    // res.status(400).json({ message: 'surveyByMailToken' });
+
+    reject(error);
+  }
+
+});
+
+}
+
+function mailGenerial(req,res,_Email){
+
+  const fileName1='STT_Main_newAcc.pdf';
+  const attachfile1 = __dirname + '/readFiles/Streaming/'+fileName1;
+
+  // const attachfile2 = __dirname + '/readFiles/Streaming/NDID Specification.pdf';
+
+  // const _compInfo = mailConfig.mailCompInfo_TH;
+  let _from = 'wealthservice@merchantasset.co.th';
+  let _subject = 'แจ้งปิดระบบ Streaming For Fund เพื่อปรับปรุงระบบ '
 
   let _msgTH = '';
 
@@ -768,6 +1042,7 @@ function mailGenerial(req,res,_Email){
         //   //   contentType: 'application/pdf'
         //   // },
         // ],
+
         };
 
       /**

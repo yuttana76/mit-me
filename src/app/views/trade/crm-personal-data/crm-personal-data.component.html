@@ -38,35 +38,27 @@
     <!-- <mat-error *ngIf="form.get('empDate').invalid ">Please correct date expire date</mat-error> -->
   </mat-form-field>
 
+  <mat-label>Sex</mat-label>
   <section class="example-full-width">
-    <mat-label>Sex</mat-label>
+      <mat-radio-group >
+        <mat-radio-button class="example-margin"  *ngFor="let obj of SexList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+      </mat-radio-group>
+  </section>
+
+  <mat-label>สถานะลูกค้า</mat-label>
+  <section class="example-full-width">
     <mat-radio-group >
-      <mat-radio-button class="example-margin"  *ngFor="let obj of SexList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+      <mat-radio-button class="example-margin"  *ngFor="let obj of stateList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
     </mat-radio-group>
   </section>
 
 
-    <mat-form-field class="example-full-width">
-      <mat-label>สถานะ</mat-label>
-      <mat-select  placeholder="สถานะ"     >
-          <mat-option  *ngFor="let obj of stateList" [value]="obj.code">
-            {{obj.desc}}
-          </mat-option>
-        </mat-select>
-      <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
-    </mat-form-field>
-
-
-  <mat-form-field class="example-full-width">
-    <mat-label>ประเภทของลูกค้า</mat-label>
-    <mat-select >
-        <mat-option  *ngFor="let obj of typeList" [value]="obj.code">
-          {{obj.desc}}
-        </mat-option>
-      </mat-select>
-    <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
-  </mat-form-field>
-
+  <mat-label>ประเภทของลูกค้า</mat-label>
+  <section class="example-full-width">
+    <mat-radio-group >
+      <mat-radio-button class="example-margin"  *ngFor="let obj of custTypeList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+    </mat-radio-group>
+  </section>
 
 
     <mat-form-field class="example-full-width">
@@ -95,13 +87,18 @@
     </mat-error> -->
   </mat-form-field>
 
-
-
   <!-- SocialAccount -->
   <mat-form-field class="example-full-width">
-    <mat-label>SocialAccount
-    </mat-label>
-    <input matInput placeholder="SocialAccount">
+    <mat-label>SocialAccount</mat-label>
+    <input type="email" matInput
+           placeholder="FC, LinkIn, Line">
+    <mat-hint>Errors appear instantly!</mat-hint>
+    <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+      Please enter a valid email address
+    </mat-error>
+    <mat-error *ngIf="emailFormControl.hasError('required')">
+      Email is <strong>required</strong>
+    </mat-error> -->
   </mat-form-field>
 
   <!-- Fax -->
@@ -112,51 +109,64 @@
   </mat-form-field>
 
   <!-- CustomerGroup -->
-  <!-- <mat-form-field class="example-full-width">
+  <mat-form-field class="example-full-width">
     <mat-label>CustomerGroup</mat-label>
-    <mat-select  formControlName="State" placeholder="CustomerGroup"     >
-        <mat-option  *ngFor="let obj of customerGroupList" [value]="obj.code">
+    <mat-select >
+        <mat-option  *ngFor="let obj of custGroupList" [value]="obj.code">
           {{obj.desc}}
         </mat-option>
       </mat-select>
-    <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error>
-  </mat-form-field> -->
+    <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
+  </mat-form-field>
 
 
   <!-- Interested -->
   <mat-form-field class="example-full-width">
-    <mat-label>Interested
-    </mat-label>
-    <input matInput placeholder="Interested">
+    <mat-label>Interested</mat-label>
+    <mat-select >
+        <mat-option  *ngFor="let obj of interestList" [value]="obj.code">
+          {{obj.desc}}
+        </mat-option>
+      </mat-select>
+    <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
   </mat-form-field>
 
   <!-- SourceOfCustomer -->
   <mat-form-field class="example-full-width">
-    <mat-label>SourceOfCustomer
-    </mat-label>
-    <input matInput placeholder="SourceOfCustomer">
+    <mat-label>SourceOfCustomer</mat-label>
+    <mat-select >
+        <mat-option  *ngFor="let obj of SourceOfCustomerList" [value]="obj.code">
+          {{obj.desc}}
+        </mat-option>
+      </mat-select>
+    <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
   </mat-form-field>
 
   <!-- UserOwner -->
   <mat-form-field class="example-full-width">
-    <mat-label>SourceOfCustomer
+    <mat-label>UserOwner
     </mat-label>
-    <input matInput placeholder="SourceOfCustomer">
+    <input matInput disabled placeholder="SourceOfCustomer">
   </mat-form-field>
 
   <!-- Refer -->
   <mat-form-field class="example-full-width">
-    <mat-label>Refer
-    </mat-label>
-    <input matInput placeholder="Refer">
+    <mat-label>Refer</mat-label>
+    <mat-select >
+        <mat-option  *ngFor="let obj of ReferList" [value]="obj.code">
+          {{obj.desc}}
+        </mat-option>
+      </mat-select>
+    <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
   </mat-form-field>
 
   <!-- Class -->
-  <mat-form-field class="example-full-width">
-    <mat-label>Class
-    </mat-label>
-    <input matInput placeholder="class ลูกค้า (Retail, HNW,U-HNW)">
-  </mat-form-field>
+  <mat-label>Class</mat-label>
+  <section class="example-full-width">
+    <mat-radio-group >
+      <mat-radio-button class="example-margin"  *ngFor="let obj of ClassList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+    </mat-radio-group>
+  </section>
 
   <!-- InvestCondition -->
   <mat-form-field class="example-full-width">
@@ -175,8 +185,8 @@
 
 
   <mat-card-actions>
-    <a mat-flat-button class="button_card_action" color="primary" (click)="onAddNew()"  >SAVE</a>
-    <a mat-flat-button class="button_card_action" color="primary" (click)="onUpdate()"  >Update</a>
+    <a mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >SAVE</a>
+    <!-- <a mat-flat-button class="button_card_action" color="primary" (click)="onUpdate()"  >Update</a> -->
     <a  class="button_card_action" mat-flat-button color="primary"  (click)="goBack()"> BACK
         <!-- {{this.userFormService.back_btn}} -->
     </a>

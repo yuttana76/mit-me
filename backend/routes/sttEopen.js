@@ -10,7 +10,6 @@ const sttEopen = require('../controllers/sttEopen');
 router.post("/signVerify",sttEopen.signVerify);
 
 router.post("/broker-login",sttEopen.brokerLogin);
-router.post("/broker-login",sttEopen.brokerLogin);
 
 router.get("/downloadJSON/:applicationId",sttEopen.downloadJSON);
 

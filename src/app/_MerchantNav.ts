@@ -32,6 +32,12 @@ export const navItems = [
 
   },
   {
+    name: 'CRM-Activity',
+    url: '/trade/CRM-Activity',
+    icon: 'icon-speedometer',
+
+  },
+  {
     name: 'Anoucement',
     url: '',
     icon: 'icon-bell',

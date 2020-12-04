@@ -52,13 +52,12 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
       this.userAuthenticated = isAuthenticated;
     });
 
+    console.log(`*** Environment ${environment.production}`);
   // ***************************   Dynamic NAV
-  // this.navItems =  null;  // For production
-  // if ( this.navItems == null ) {
+  // this.navItems =  null;  // For PROD
+  // if ( this.navItems == null ) { //For PROD
 
-  console.log(`*** Environment ${environment.production}`);
-
-  if ( environment.production ) {
+  if ( environment.production ) { //For DEV
 
       this.dynaNav.getMitNav2U(this.userData).subscribe( menuDyna => { // Load menu setting from db.
 

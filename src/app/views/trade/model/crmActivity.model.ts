@@ -1,6 +1,7 @@
 export class CrmActivity {
   public CompCode: string;
   public CustCode: string;
+
   public actId: string;
   public actType: string;
   public actData: string;

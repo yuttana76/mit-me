@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe, Location } from '@angular/common';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { CrmActivity } from '../model/crmActivity.model';
+import { CrmContactCustAct } from '../model/crmContactCustAct.model';
 
 @Component({
   selector: 'app-crm-activity',
@@ -11,7 +12,7 @@ import { CrmActivity } from '../model/crmActivity.model';
 })
 export class CrmActivityComponent implements  OnInit, OnDestroy  {
 
-  form: FormGroup;
+  contactForm: FormGroup;
   paramId: String = '';
   activityObj: CrmActivity = new CrmActivity();
 
@@ -66,6 +67,10 @@ contactChannelList =[ {
 
 prodGroupList=[
   {
+    code:'000',
+    desc:'ไม่ระบุ',
+  },
+  {
     code:'bond',
     desc:'Bond',
   },
@@ -78,7 +83,6 @@ prodGroupList=[
     desc:'PF',
   },
 ];
-
 
 contactResult=[
   {
@@ -104,6 +108,10 @@ contactResult=[
 ]
 
 ProductList=[
+  {
+    code:'000',
+    desc:'ไม่ระบุ',
+  },
   {
     code:'1',
     desc:'Chaiyo',
@@ -151,68 +159,79 @@ offerResult=[
 ]
 
 // generalAct
-contactCustAct={contactChannel:'',dateTime:'',prod:'',contactResult:'',nextTime:'',note:''}
+// contactCustAct = {contactChannel:'',prodCat:'',product:'',contactDate:'',contactResult:'',nextTime:'',note:'',createBy:'',createDate:''}
+contactCustAct = new CrmContactCustAct();
+
 // meetCustAct={datetime:dd/mm/yyyy hh:mm,locate:xxxx,note:xxxx,}
 // appointmentAct={subject:xxxx,startTime:dd/mm/yyyy hh:mm,endTime:dd/mm/yyyy hh:mm,note:xxxx,allDay:Y/N}
 // sendGoodAct={doc:xxNamexx,path:xxxx,datetime:dd/mm/yyyy hh:mm,by:xxxx,app:xxxappNamexxx,appId:IDxxx,note:xxxx}
-// offerAct={prod:xxxx,offerResult:xxxx,amount:yyyy,note:xxxx,offerDate}
-// orderAct={prod:xxxx,amount:yyyy,note:xxxx}
+// offerAct={product:xxxx,offerResult:xxxx,amount:yyyy,note:xxxx,offerDate}
+// orderAct={product:xxxx,amount:yyyy,note:xxxx}
 // complainAct={Type:xxxx,Desc:xxxx,Status:Open,ActionBy:xxxx,ActionDate:dd/mm/yyy hh:mm};
 
 
 
 constructor(
   private location: Location,
-) {
+  ) {
 
  }
 
 ngOnInit() {
-  this._buildForm();
+
+  this.contact_Form();
 }
 
-private _buildForm() {
-  // Initial Form fields
-  this.form = new FormGroup({
+private contact_Form() {
 
-   firstName: new FormControl(null, {
+this.contactForm = new FormGroup({
+
+    contactChannel: new FormControl(null, {
      validators: [Validators.required]
    }),
-   lastName: new FormControl(null, {
+   prodCat: new FormControl(null, {
      validators: [Validators.required]
    }),
-   dob: new FormControl(null, {
-     // validators: [Validators.required
-       //  , Validators.pattern(DATE_REGEX)
-     // ]
+   product: new FormControl(null, {
+    //  validators: [Validators.required]
    }),
-   department: new FormControl(null, {
+   contactDate: new FormControl(null, {
+     validators: [Validators.required
+        // , Validators.pattern(DATE_REGEX)
+     ]
+   }),
+   contactResult: new FormControl(null, {
      validators: [Validators.required]
    }),
-   position: new FormControl(null, {
+   nextTime: new FormControl(null, {
+    //  validators: [Validators.required]
+   }),
+   note: new FormControl(null, {
      validators: [Validators.required]
    }),
-   officePhone: new FormControl(null, {
+   createBy: new FormControl(null, {
      // validators: [Validators.required]
    }),
-   mobPhone: new FormControl(null, {
-     // validators: [Validators.required]
-   }),
-   othEmail: new FormControl(null, {
+   createDate: new FormControl(null, {
      // validators: [Validators.required]
    }),
 
   });
 }
 
+public hasError = (controlName: string, errorName: string) =>{
+  return this.contactForm.controls[controlName].hasError(errorName);
+}
+
+
 ngOnDestroy() {
   // this.formChangeSub.unsubscribe();
 }
 
-  onSave() {
+onSave() {
 
-    if (this.form.invalid) {
-      console.log('form.invalid() ' + this.form.invalid);
+    if (this.contactForm.invalid) {
+      console.log('form.invalid() ' + this.contactForm.invalid);
       return true;
     }
 }

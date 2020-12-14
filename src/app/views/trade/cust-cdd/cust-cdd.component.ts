@@ -84,10 +84,10 @@ export class CustCDDComponent implements OnInit {
 
 
   ngOnInit() {
-    this.initialData();
+    this.initialForm();
   }
 
-  initialData() {
+  initialForm() {
 
     // this.cardNotExpChecked =    this.cddData.cardNotExp === 'Y' ? true : false;
     this.SPcardNotExpChecked =    this.cddData.SPpersonModel.cardNotExp === 'Y' ? true : false;
@@ -158,29 +158,29 @@ export class CustCDDComponent implements OnInit {
 
   ngAfterViewInit(){
 
-    if (this.cddFormGroup.invalid ) {
-      this.cddFormGroup.enable();
-      // this.modifyFlag  = true;
-      this.cddData.ReqModifyFlag = true;
+    // if (this.cddFormGroup.invalid ) {
+    //   this.cddFormGroup.enable();
+    //   // this.modifyFlag  = true;
+    //   this.cddData.ReqModifyFlag = true;
 
-      const controls = this.cddFormGroup.controls;
-      for (const name in controls) {
-          if (controls[name].invalid) {
-              this.cddFormGroup.controls[name].markAsTouched();
-          }
-      }
+    //   const controls = this.cddFormGroup.controls;
+    //   for (const name in controls) {
+    //       if (controls[name].invalid) {
+    //           this.cddFormGroup.controls[name].markAsTouched();
+    //       }
+    //   }
 
-    } else {
-      this.cddFormGroup.disable();
-      // this.modifyFlag  = false;
-      this.cddData.ReqModifyFlag = false;
-    }
+    // } else {
+    //   this.cddFormGroup.disable();
+    //   // this.modifyFlag  = false;
+    //   this.cddData.ReqModifyFlag = false;
+    // }
 
-    // Check Readonly Input parameter
-    if(this.readOnly){
-      this.cddFormGroup.disable();
-      this.cddData.ReqModifyFlag = false;
-    }
+    // // Check Readonly Input parameter
+    // if(this.readOnly){
+    //   this.cddFormGroup.disable();
+    //   this.cddData.ReqModifyFlag = false;
+    // }
 
   }
 

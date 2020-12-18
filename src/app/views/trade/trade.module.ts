@@ -92,6 +92,7 @@ import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-s
 import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
 import { CrmActivityComponent } from './crm-activity/crm-activity.component';
 
+
 @NgModule({
   imports: [
     CommonModule,
@@ -113,6 +114,8 @@ import { CrmActivityComponent } from './crm-activity/crm-activity.component';
     }),
     BsDropdownModule.forRoot(),
     NgxFloatButtonModule,
+
+
   ],
   declarations: [
     SummaryRepComponent,

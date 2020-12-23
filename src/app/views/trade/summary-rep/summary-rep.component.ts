@@ -28,7 +28,7 @@ import { MatSelectChange } from '@angular/material';
 
 export class SummaryRepComponent implements OnInit, OnDestroy {
 
-  @ViewChild('repContent') content: ElementRef;
+  @ViewChild('repContent', {static: false}) content: ElementRef;
 
   spinnerLoading = false;
   form: FormGroup;

@@ -38,6 +38,12 @@ export const navItems = [
 
   },
   {
+    name: 'Calendar Example',
+    url: '/trade/connextCalendar',
+    icon: 'icon-speedometer',
+
+  },
+  {
     name: 'Anoucement',
     url: '',
     icon: 'icon-bell',

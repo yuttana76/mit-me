@@ -214,17 +214,29 @@
       Investment
     </ng-template>
 
-    <mat-card>
-      <h1>ngx-echarts</h1>
+    <div class="card-columns">
+        <div class="card">
+          <div class="card-header">
+            Portfolio
+            <div class="card-header-actions">
+              <a href="http://www.chartjs.org">
+                <small class="text-muted">docs</small>
+              </a>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrapper">
+              <canvas baseChart class="chart"
+              [data]="doughnutChartData"
+              [labels]="doughnutChartLabels"
+              [chartType]="doughnutChartType"
+              (chartHover)="chartHovered($event)"
+              (chartClick)="chartClicked($event)"></canvas>
+            </div>
+          </div>
+        </div>
+    </div>
 
-      <!-- <div class="button-groups">
-        <button (click)="theme=undefined" nz-button nzType="default">default</button>
-        <button (click)="theme='macarons'" nz-button nzType="default">macarons</button>
-        <button (click)="theme='dark'" nz-button nzType="default">dark</button>
-      </div>
-      <div echarts [options]="options" [theme]="theme" class="demo-chart"></div> -->
-
-    </mat-card>
 
   </mat-tab>
 

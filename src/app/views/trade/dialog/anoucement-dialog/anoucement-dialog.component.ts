@@ -141,7 +141,7 @@ export class AnoucementDialogComponent implements OnInit {
 
     const reader = new FileReader();
     reader.onload = () => {
-     this.imagePreview = reader.result;
+    //  this.imagePreview = reader.result;
 
     };
     reader.readAsDataURL(file);

@@ -3,12 +3,18 @@ import { DatePipe, Location } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CrmPersonModel } from '../model/crmPersonal.model';
 
+// import { CalendarOptions } from '@fullcalendar/angular'; // useful for typechecking
+
 @Component({
   selector: 'app-crm-personal-data',
   templateUrl: './crm-personal-data.component.html',
   styleUrls: ['./crm-personal-data.component.scss']
 })
 export class CrmPersonalDataComponent implements OnInit, OnDestroy {
+
+  // calendarOptions: CalendarOptions = {
+  //   initialView: 'dayGridMonth'
+  // };
 
   form: FormGroup;
   paramId: String = '';
@@ -123,6 +129,13 @@ ClassList = [{
   },
 ];
 
+
+  // Doughnut
+  public doughnutChartLabels: string[] = ['Private Fund', 'Bond', 'LBDU'];
+  public doughnutChartData: number[] = [350, 450, 100];
+  public doughnutChartType = 'doughnut';
+
+
   constructor(
     private location: Location,
   ) {
@@ -226,5 +239,15 @@ ClassList = [{
   // };
 
   // ******************************
+
+    // events
+    public chartClicked(e: any): void {
+      console.log(e);
+    }
+
+    public chartHovered(e: any): void {
+      console.log(e);
+    }
+
 
 }

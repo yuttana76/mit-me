@@ -91,6 +91,8 @@ import { CrmPersonalComponent } from './crm-personal/crm-personal.component';
 import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-search.component';
 import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
 import { CrmActivityComponent } from './crm-activity/crm-activity.component';
+import { CrmActDashboardComponent } from './crm-act-dashboard/crm-act-dashboard.component';
+
 
 @NgModule({
   imports: [
@@ -189,6 +191,7 @@ import { CrmActivityComponent } from './crm-activity/crm-activity.component';
     CrmPersonalSearchComponent,
     CrmPersonalDataComponent,
     CrmActivityComponent,
+    CrmActDashboardComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

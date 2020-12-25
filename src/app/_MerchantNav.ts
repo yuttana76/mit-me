@@ -38,8 +38,8 @@ export const navItems = [
 
   },
   {
-    name: 'Calendar Example',
-    url: '/trade/connextCalendar',
+    name: 'CRM-Activity-Dashboard',
+    url: '/trade/CRM-ActDash',
     icon: 'icon-speedometer',
 
   },

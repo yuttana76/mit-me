@@ -33,6 +33,7 @@ import { CrmPersonalComponent } from './crm-personal/crm-personal.component';
 import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
 import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-search.component';
 import { CrmActivityComponent } from './crm-activity/crm-activity.component';
+import { CrmActDashboardComponent } from './crm-act-dashboard/crm-act-dashboard.component';
 
 const routes: Routes = [
 
@@ -318,6 +319,13 @@ const routes: Routes = [
         component: CrmActivityComponent,
         data: {
           title: 'Welcome CRM Activity'
+        }
+      },
+      {
+        path: 'CRM-ActDash',
+        component: CrmActDashboardComponent,
+        data: {
+          title: 'Welcome CRM Activity Dashboard'
         }
       },
 

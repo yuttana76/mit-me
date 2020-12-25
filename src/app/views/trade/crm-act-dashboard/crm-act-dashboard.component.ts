@@ -1,4 +1,3 @@
-
 import {
   Component,
   OnInit,
@@ -41,11 +40,12 @@ const colors: any = {
 };
 
 @Component({
-  selector: 'app-connext-calendar',
-  templateUrl: './connext-calendar.component.html',
-  styleUrls: ['./connext-calendar.component.scss']
+  selector: 'app-crm-act-dashboard',
+  templateUrl: './crm-act-dashboard.component.html',
+  styleUrls: ['./crm-act-dashboard.component.scss']
 })
-export class ConnextCalendarComponent implements OnInit {
+export class CrmActDashboardComponent implements OnInit {
+
 
   @ViewChild('modalContent', {static: false})
   modalContent: TemplateRef<any>;

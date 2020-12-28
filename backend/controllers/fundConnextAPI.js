@@ -4538,7 +4538,7 @@ function fnGetDownloadAPI(businessDate,fileType){
     fnFCAuth().then(result =>{
       resultObj =JSON.parse(result);
 
-      // logger.info("***TOKEN>>"+resultObj.access_token);
+      logger.info("***TOKEN>>"+resultObj.access_token);
 
       const HTTPS_ENDPOIN =`https://${FC_API_URL}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
       const propertiesObject = {

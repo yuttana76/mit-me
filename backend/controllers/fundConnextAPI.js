@@ -577,7 +577,7 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
         .input("referalPerson", sql.NVarChar(100), custInfoObj.referralPerson)
         .input("applicationDate", sql.VarChar(10), custInfoObj.applicationDate || '')
         .input("incomeSourceCountry", sql.VarChar(2), custInfoObj.incomeSourceCountry)
-        .input("acceptBy", sql.NVarChar(100), custInfoObj.acceptBy)
+        .input("acceptBy", sql.NVarChar(100), custInfoObj.acceptedBy)
         .input("openFundConnextFormFlag", sql.VarChar(10), custInfoObj.openFundConnextFormFlag)
         .input("approved", sql.VarChar(10), custInfoObj.approved)
         .input("vulnerableFlag", sql.VarChar(10), custInfoObj.vulnerableFlag)

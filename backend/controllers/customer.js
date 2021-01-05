@@ -1934,10 +1934,10 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
 
     --Tax_No
     SELECT @OLD_DATA = Tax_No FROM Account_Info WHERE Cust_Code =@Cust_Code
-    IF @OLD_DATA <> @Cust_Code AND @@ROWCOUNT>0
+    IF @OLD_DATA <> @IT_PID_No AND @@ROWCOUNT>0
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'Tax_No',@Old_data,@Cust_Code,GETDATE(),@actionByInt);
+        VALUES (@Cust_Code,'Tax_No',@Old_data,@IT_PID_No,GETDATE(),@actionByInt);
     END;
 
     -- Mobile

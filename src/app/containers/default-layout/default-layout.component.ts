@@ -55,10 +55,10 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
     console.log(`*** Environment ${environment.production}`);
 
   // ***************************   Dynamic NAV
-  // this.navItems =  null;  // For PROD
-  // if ( this.navItems == null ) { //For PROD
+  this.navItems =  null;  // For PROD
+  if ( this.navItems == null ) { //For PROD
 
-  if ( environment.production ) { //For DEV
+  // if ( environment.production ) { //For DEV
 
       this.dynaNav.getMitNav2U(this.userData).subscribe( menuDyna => { // Load menu setting from db.
 

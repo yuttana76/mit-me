@@ -2607,41 +2607,41 @@ exports.downloadFileAPI = (req, res, next) =>{
 }
 
 
-exports.downloadFileNavAPI = (req, res, next) =>{
-  logger.info("Validate  API /downloadFileNavAPI/");
-  const fileType = 'Nav.zip';
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
+// exports.downloadFileNavAPI = (req, res, next) =>{
+//   logger.info("Validate  API /downloadFileNavAPI/");
+//   const fileType = 'Nav.zip';
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(422).json({ errors: errors.array() });
+//   }
 
-  logger.info("Welcome to API /downloadFileNavAPI/");
-  var businessDate = req.query.businessDate
+//   logger.info("Welcome to API /downloadFileNavAPI/");
+//   var businessDate = req.query.businessDate
 
-    fnGetDownloadAPI(businessDate,fileType).then(data=>{
+//     fnGetDownloadAPI(businessDate,fileType).then(data=>{
 
-        unZipFile(data.path).then(fileName=>{
+//         unZipFile(data.path).then(fileName=>{
 
-          // res.status(200).json(fileName);
-          fcNAV_ToDB(fileName,businessDate).then(data=>{
-            res.status(200).json({data: data});
+//           // res.status(200).json(fileName);
+//           fcNAV_ToDB(fileName,businessDate).then(data=>{
+//             res.status(200).json({data: data});
 
-          },err=>{
-            res.status(422).json({error: err});
-          });
+//           },err=>{
+//             res.status(422).json({error: err});
+//           });
 
-          //Update to
-        },err=>{
-            res.status(422).json(err);
-        });
+//           //Update to
+//         },err=>{
+//             res.status(422).json(err);
+//         });
 
-    },err=>{
-      res.status(400).json({
-        message: err,
-        code:"999",
-      });
-    });
-}
+//     },err=>{
+//       res.status(400).json({
+//         message: err,
+//         code:"999",
+//       });
+//     });
+// }
 
 exports.downloadNavAPI_V2 = (req, res, next) =>{
 
@@ -3320,7 +3320,9 @@ END
 // *****************************************************
 // createDate format  yyyymmdd(20191030)
 function navSyncFunc(createDate){
+
   logger.info('navSyncFunc-' + createDate);
+
   return new Promise(function(resolve, reject) {
     try{
 
@@ -4218,6 +4220,7 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
           reject(err);
         }
 
+
         // Delete NAV same day
         delMIT_FC_NAV(businessDate).then(()=>{
 
@@ -4252,6 +4255,7 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
                 var item = array[i].split("|") ;
 
                 // console.log("item >> "+item);
+
                 AMCCode_Str = String(item[0]).trim();
                 FundCode_Str = String(item[1]).trim();
                 AUM_int = item[2]?item[2].trim():'';
@@ -4264,6 +4268,9 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
                   SACode_str= item[9]?item[9]:'';
                   TotalUnit_int= item[10]?item[10].trim():'';
                   TotalAUM_int=item[11]?item[11].trim():'';
+
+                  if (FundCode_Str==='KT-JAPAN-A')
+                    logger.info('***item >> '+item);
 
                   if(item[0]){
                     table.rows.add(AMCCode_Str

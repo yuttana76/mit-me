@@ -1,58 +1,36 @@
-  <mat-card class="example-card">
-    <mat-card-header>
-      <mat-card-title>
-        <h5>คุณ ประกิต xxxx</h5>
-      </mat-card-title>
-      <mat-card-subtitle>
-        by hason / ติดต่อลูกค้า/โทรศัพท์
-        <br> 2020 dec 25 / 1h
-      </mat-card-subtitle>
-    </mat-card-header>
+<div>
+  <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+</div>
+
+<!-- <mat-card> -->
+<div class="master_div">
+  <form [formGroup]="searchForm" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading">
+    <mat-card-title>Search Customer Information
+      <!-- <a mat-button routerLink="/trade/customerDetail" routerLinkActive="mat-accent" matTooltip="New customer">
+        <i class="fas fa-user-plus fa-2x" ></i>
+      </a> -->
+    </mat-card-title>
     <mat-card-content>
-      <p>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-        bred for hunting.
-      </p>
+      <div class="condition-div">
+        <mat-form-field>
+          <input matInput formControlName="custId" placeholder="Card No./ Name">
+          <!-- <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error> -->
+        </mat-form-field>
+
+        <!-- <mat-form-field>
+          <mat-select  formControlName="custType"  placeholder="Type of Unitholder">
+            <mat-option value="option">Option</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('custType').invalid">Please enter a condition.</mat-error>
+        </mat-form-field> -->
+      </div>
+
     </mat-card-content>
-  </mat-card>
+    <mat-card-actions>
+      <button  [disabled]="searchForm.invalid" mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
+      <button mat-stroked-button color="warn" type='reset' (click)="onReset()" >Reset</button>
 
-
-  <mat-card class="example-card">
-    <mat-card-header>
-      <mat-card-title>
-        <h5>คุณ ประยุทธ xxxx</h5>
-      </mat-card-title>
-      <mat-card-subtitle>
-        by hason / เสนอขาย /
-        <br> 2020 dec 24 / 1d
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-        bred for hunting.
-      </p>
-    </mat-card-content>
-  </mat-card>
-
-
-  <mat-card class="example-card">
-    <mat-card-header>
-      <mat-card-title>
-        <h5>คุณ ประชัน xxxx</h5>
-      </mat-card-title>
-      <mat-card-subtitle>
-        by hason / นัดหมาย /
-        <br> 2020 dec 20 / 5d
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-        bred for hunting.
-      </p>
-    </mat-card-content>
-  </mat-card>
+    </mat-card-actions>
+  </form>
+</div>
+<!-- </mat-card> -->

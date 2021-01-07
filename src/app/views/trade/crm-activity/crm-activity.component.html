@@ -1,3 +1,44 @@
+
+<mat-horizontal-stepper labelPosition="bottom" #stepper>
+  <mat-step [stepControl]="firstFormGroup">
+    <form [formGroup]="firstFormGroup">
+      <ng-template matStepLabel>Fill data</ng-template>
+
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
+      </mat-form-field>
+
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="feedbackForm" optional>
+    <form [formGroup]="feedbackForm">
+      <ng-template matStepLabel>Save</ng-template>
+      <h5>Feedback</h5>
+     
+      <mat-form-field class="example-full-width">
+        <mat-label>Feedback</mat-label>
+        <mat-select formControlName="feedback" >
+            <mat-option  *ngFor="let obj of Feedback" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+      
+
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div>
+    </form>
+  </mat-step>
+  
+</mat-horizontal-stepper>
+
 <form class="example-form" [formGroup]="activityForm" >
 
 <mat-card class="cust-container" >

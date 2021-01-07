@@ -14,7 +14,12 @@ import { MatSelectChange } from '@angular/material';
 })
 export class CrmActivityComponent implements  OnInit, OnDestroy  {
 
+  firstFormGroup: FormGroup;
+  secondFormGroup: FormGroup;
+
   activityForm: FormGroup;
+  feedbackForm: FormGroup;
+
   contactForm: FormGroup;
   meetCusForm: FormGroup;
   appointmentForm: FormGroup;
@@ -265,17 +270,27 @@ assignTo=[
 
 
 constructor(
+  private _formBuilder: FormBuilder,
   private location: Location,
   ) {}
 
 ngOnInit() {
   this.build_activity_Form();
+
+  this.build_feedback_Form();
   this.build_contact_Form();
   this.build_meetCust_Form();
   this.build_appointment_Form();
   this.build_offer_Form();
   this.build_order_Form();
   this.build_complain_Form();
+
+  this.firstFormGroup = this._formBuilder.group({
+    firstCtrl: ['', Validators.required]
+  });
+  this.secondFormGroup = this._formBuilder.group({
+    secondCtrl: ['', Validators.required]
+  });
 
 }
 
@@ -300,6 +315,18 @@ private build_activity_Form() {
      validators: [Validators.required
      ]
    }),
+   feedback: new FormControl(null, {
+     validators: [Validators.required]
+   }),
+   feedbackOth: new FormControl(null, { }),
+   attachFiles: new FormControl(null, {  }),
+   assignTo: new FormControl(null, {  }),
+  });
+}
+
+private build_feedback_Form() {
+  this.feedbackForm = new FormGroup({
+
    feedback: new FormControl(null, {
      validators: [Validators.required]
    }),

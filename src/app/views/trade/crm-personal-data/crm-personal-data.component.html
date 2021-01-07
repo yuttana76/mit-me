@@ -24,22 +24,22 @@
       </mat-form-field> -->
 
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="col-md-6">
         <!-- <mat-label>FirstName</mat-label> -->
         <input matInput placeholder="FirstName" value="">
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="col-md-6">
         <mat-label>LastName</mat-label>
         <input matInput placeholder="LastName" value="">
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="col-md-6">
         <mat-label>CustomerAlias</mat-label>
         <input matInput placeholder="CustomerAlias" value="">
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="col-md-6">
         <mat-label>วันเกิด</mat-label>
         <input matInput [matDatepicker]="empDate"
           placeholder="DOB"
@@ -56,13 +56,89 @@
           </mat-radio-group>
       </section>
 
-      <mat-label>สถานะลูกค้า</mat-label>
-      <section class="example-full-width">
-        <mat-radio-group >
-          <mat-radio-button class="example-margin"  *ngFor="let obj of stateList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
-        </mat-radio-group>
-      </section>
+    
+      <mat-form-field class="col-md-6">
+        <mat-label>Mobile</mat-label>
+        <input matInput #Mobile placeholder="เบอร์มือถือ">
+        <mat-hint align="end">{{Mobile.value.length}} / 10</mat-hint>
+      </mat-form-field>
 
+      <mat-form-field class="col-md-6">
+        <mat-label>Telephone
+        </mat-label>
+        <input matInput placeholder="Telephone">
+      </mat-form-field>
+
+    <!-- Fax -->
+    <mat-form-field class="col-md-6">
+      <mat-label>Fax
+      </mat-label>
+      <input matInput placeholder="Fax">
+    </mat-form-field>
+<div>
+    <!-- Email -->
+    <mat-form-field class="col-md-6">
+      <mat-label>Email</mat-label>
+      <input type="email" matInput
+             placeholder="Ex. pat@example.com">
+      <mat-hint>Errors appear instantly!</mat-hint>
+      <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+        Please enter a valid email address
+      </mat-error>
+      <mat-error *ngIf="emailFormControl.hasError('required')">
+        Email is <strong>required</strong>
+      </mat-error> -->
+    </mat-form-field>
+
+    <!-- SocialAccount -->
+    <mat-form-field class="col-md-6">
+      <mat-label>SocialAccount</mat-label>
+      <input type="email" matInput
+             placeholder="FC, LinkIn, Line">
+      <mat-hint>Errors appear instantly!</mat-hint>
+      <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+        Please enter a valid email address
+      </mat-error>
+      <mat-error *ngIf="emailFormControl.hasError('required')">
+        Email is <strong>required</strong>
+      </mat-error> -->
+    </mat-form-field>
+  </div>
+
+    <div>
+      <h3>Important data</h3>
+      <!-- <mat-divider [inset]="true"></mat-divider> -->
+
+      <mat-form-field class="example-full-width">
+        <textarea matInput placeholder="Input impotant data of investor" rows=5></textarea>
+      </mat-form-field>
+    </div>
+
+      <div>
+        <h2>Invest Info</h2>
+        <!-- <mat-divider [inset]="true"></mat-divider> -->
+      </div>
+
+      <!-- Refer -->
+      <mat-form-field class="col-md-6">
+        <mat-label>Refer</mat-label>
+        <mat-select >
+            <mat-option  *ngFor="let obj of ReferList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
+        <!-- <mat-hint>Referial</mat-hint> -->
+      </mat-form-field>
+
+      <div>
+        <mat-label>สถานะลูกค้า</mat-label>
+        <section class="example-full-width">
+          <mat-radio-group >
+            <mat-radio-button class="example-margin"  *ngFor="let obj of stateList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+          </mat-radio-group>
+        </section>
+      </div>
 
       <mat-label>ประเภทของลูกค้า</mat-label>
       <section class="example-full-width">
@@ -71,68 +147,27 @@
         </mat-radio-group>
       </section>
 
-
-        <mat-form-field class="example-full-width">
-          <mat-label>Mobile</mat-label>
-          <input matInput #Mobile placeholder="เบอร์มือถือ">
-          <mat-hint align="end">{{Mobile.value.length}} / 10</mat-hint>
-        </mat-form-field>
-
-        <mat-form-field class="example-full-width">
-          <mat-label>Telephone
-          </mat-label>
-          <input matInput placeholder="Telephone">
-        </mat-form-field>
-
-      <!-- Email -->
-      <mat-form-field class="example-full-width">
-        <mat-label>Email</mat-label>
-        <input type="email" matInput
-               placeholder="Ex. pat@example.com">
-        <mat-hint>Errors appear instantly!</mat-hint>
-        <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-          Please enter a valid email address
-        </mat-error>
-        <mat-error *ngIf="emailFormControl.hasError('required')">
-          Email is <strong>required</strong>
-        </mat-error> -->
-      </mat-form-field>
-
-      <!-- SocialAccount -->
-      <mat-form-field class="example-full-width">
-        <mat-label>SocialAccount</mat-label>
-        <input type="email" matInput
-               placeholder="FC, LinkIn, Line">
-        <mat-hint>Errors appear instantly!</mat-hint>
-        <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-          Please enter a valid email address
-        </mat-error>
-        <mat-error *ngIf="emailFormControl.hasError('required')">
-          Email is <strong>required</strong>
-        </mat-error> -->
-      </mat-form-field>
-
-      <!-- Fax -->
-      <mat-form-field class="example-full-width">
-        <mat-label>Fax
-        </mat-label>
-        <input matInput placeholder="Fax">
-      </mat-form-field>
+       <!-- Class -->
+       <mat-label>Class</mat-label>
+       <section class="example-full-width">
+         <mat-radio-group >
+           <mat-radio-button class="example-margin"  *ngFor="let obj of ClassList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+         </mat-radio-group>
+       </section>
 
       <!-- CustomerGroup -->
-      <mat-form-field class="example-full-width">
+      <!-- <mat-form-field class="example-full-width">
         <mat-label>CustomerGroup</mat-label>
         <mat-select >
             <mat-option  *ngFor="let obj of custGroupList" [value]="obj.code">
               {{obj.desc}}
             </mat-option>
           </mat-select>
-        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
-      </mat-form-field>
+      </mat-form-field> -->
 
 
       <!-- Interested -->
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="col-md-6">
         <mat-label>Interested</mat-label>
         <mat-select >
             <mat-option  *ngFor="let obj of interestList" [value]="obj.code">
@@ -142,8 +177,9 @@
         <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
       </mat-form-field>
 
+      <div>
       <!-- SourceOfCustomer -->
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="col-md-6">
         <mat-label>SourceOfCustomer</mat-label>
         <mat-select >
             <mat-option  *ngFor="let obj of SourceOfCustomerList" [value]="obj.code">
@@ -155,48 +191,27 @@
       </mat-form-field>
 
       <!-- UserOwner -->
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="col-md-6">
         <mat-label>UserOwner
         </mat-label>
         <input matInput disabled placeholder="SourceOfCustomer">
         <mat-hint>Marketing</mat-hint>
       </mat-form-field>
 
-      <!-- Refer -->
-      <mat-form-field class="example-full-width">
-        <mat-label>Refer</mat-label>
-        <mat-select >
-            <mat-option  *ngFor="let obj of ReferList" [value]="obj.code">
-              {{obj.desc}}
-            </mat-option>
-          </mat-select>
-        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
-        <mat-hint>Referial</mat-hint>
-      </mat-form-field>
-
-      <!-- Class -->
-      <mat-label>Class</mat-label>
-      <section class="example-full-width">
-        <mat-radio-group >
-          <mat-radio-button class="example-margin"  *ngFor="let obj of ClassList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
-        </mat-radio-group>
-      </section>
+    </div>
 
       <!-- InvestCondition -->
       <mat-form-field class="example-full-width">
         <mat-label>InvestCondition
         </mat-label>
-        <textarea matInput placeholder="ข้อจำกัดของลูกค้า"></textarea>
+        <textarea matInput placeholder="ข้อจำกัดของลูกค้า" rows="3"></textarea>
       </mat-form-field>
-
-
-      <!-- Note -->
+<!-- 
       <mat-form-field class="example-full-width">
         <mat-label>Note</mat-label>
-        <textarea matInput placeholder="รายละเอียดเพิ่มเติมเกี่ยวกับลูกค้า"></textarea>
+        <textarea matInput placeholder="รายละเอียดเพิ่มเติมเกี่ยวกับลูกค้า" rows="3"></textarea>
       </mat-form-field>
-
-
+ -->
 
       <mat-card-actions>
         <a mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >SAVE</a>
@@ -214,33 +229,146 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon"><i class="fas fa-money-check-alt"></i></mat-icon>
-      Investment
+      Portfolio
     </ng-template>
 
-    <div class="card-columns">
-        <div class="card">
-          <div class="card-header">
-            Portfolio
-            <div class="card-header-actions">
-              <a href="http://www.chartjs.org">
-                <small class="text-muted">docs</small>
-              </a>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="chart-wrapper">
+      <h3>All invest </h3>
+            <div class="chart-wrapper col-md-6">
               <canvas baseChart class="chart"
-              [data]="doughnutChartData"
-              [labels]="doughnutChartLabels"
-              [chartType]="doughnutChartType"
+              [data]="alldoughnutChartData"
+              [labels]="alldoughnutChartLabels"
+              [chartType]="alldoughnutChartType"
               (chartHover)="chartHovered($event)"
               (chartClick)="chartClicked($event)"></canvas>
             </div>
-          </div>
-        </div>
+        
+    <div>
+      <h3>LBDU</h3>
+
+      <div class="chart-wrapper col-md-6">
+        <canvas baseChart class="chart"
+        [data]="lbdu_DoughnutChartData"
+        [labels]="lbdu_DoughnutChartLabels"
+        [chartType]="lbdu_DoughnutChartType"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"></canvas>
+      </div>
+
+      <table mat-table [dataSource]="lbdu_dataSource" class="col-md-6">
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="Fund_Code">
+          <th mat-header-cell *matHeaderCellDef> Fund_Code </th>
+          <td mat-cell *matCellDef="let element"> {{element.Fund_Code}} </td>
+        </ng-container>
+
+        <!--  Column -->
+        <ng-container matColumnDef="NAV">
+          <th mat-header-cell *matHeaderCellDef> NAV </th>
+          <td mat-cell *matCellDef="let element">{{element.NAV}} </td>
+        </ng-container>
+
+        <!--  Column -->
+        <ng-container matColumnDef="MKT_Value">
+          <th mat-header-cell *matHeaderCellDef> MKT_Value </th>
+          <td mat-cell *matCellDef="let element"> {{element.MKT_Value }} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="lbdu_displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: lbdu_displayedColumns;"></tr>
+      </table>
+
     </div>
+    
+    <div>
+      <h3>PRIVATE</h3>
+
+      <div class="chart-wrapper col-md-6">
+        <canvas baseChart class="chart"
+        [data]="private_DoughnutChartData"
+        [labels]="private_DoughnutChartLabels"
+        [chartType]="private_DoughnutChartType"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"></canvas>
+      </div>
+
+      <table mat-table [dataSource]="private_dataSource" class="col-md-6">
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="Symbol">
+          <th mat-header-cell *matHeaderCellDef> Symbol </th>
+          <td mat-cell *matCellDef="let element"> {{element.Symbol}} </td>
+        </ng-container>
+
+        <!--  Column -->
+        <ng-container matColumnDef="Val">
+          <th mat-header-cell *matHeaderCellDef> Val </th>
+          <td mat-cell *matCellDef="let element"> {{element.Val }} </td>
+        </ng-container>
+
+        <!--  Column -->
+        <ng-container matColumnDef="Avg">
+          <th mat-header-cell *matHeaderCellDef> Avg </th>
+          <td mat-cell *matCellDef="let element"> {{element.Avg }} </td>
+        </ng-container>
+
+          <!--  Column -->
+          <ng-container matColumnDef="Market">
+            <th mat-header-cell *matHeaderCellDef> Market </th>
+            <td mat-cell *matCellDef="let element">{{element.Market}} </td>
+          </ng-container>
+
+          <!--  Column -->
+          <ng-container matColumnDef="Amount">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let element">{{element.Amount}} </td>
+          </ng-container>
+
+          <!--  Column -->
+          <ng-container matColumnDef="MarketVal">
+            <th mat-header-cell *matHeaderCellDef> MarketVal </th>
+            <td mat-cell *matCellDef="let element">{{element.MarketVal}} </td>
+          </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="private_displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: private_displayedColumns;"></tr>
+      </table>
+
+    </div>
+    
+    <div>
+      <h3>BOND</h3>
+
+      <div class="chart-wrapper col-md-6">
+        <canvas baseChart class="chart"
+        [data]="bond_DoughnutChartData"
+        [labels]="bond_DoughnutChartLabels"
+        [chartType]="bond_DoughnutChartType"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"></canvas>
+      </div>
+
+      <table mat-table [dataSource]="bond_dataSource" class="col-md-6">
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="Symbol">
+          <th mat-header-cell *matHeaderCellDef> Symbol </th>
+          <td mat-cell *matCellDef="let element"> {{element.Symbol}} </td>
+        </ng-container>
 
 
+          <!--  Column -->
+          <ng-container matColumnDef="Amount">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let element">{{element.Amount}} </td>
+          </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="bond_displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: bond_displayedColumns;"></tr>
+      </table>
+
+    </div>
+    
   </mat-tab>
 
   <mat-tab>
@@ -265,7 +393,6 @@
         bred for hunting.
     </mat-expansion-panel>
 
-
     <mat-expansion-panel class="example-expansion">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -281,6 +408,24 @@
         A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
         bred for hunting.
     </mat-expansion-panel>
+
+
+    <mat-expansion-panel class="example-expansion">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          2020 dec 11
+          <br>6d
+        </mat-panel-title>
+        <mat-panel-description>
+          <!-- <mat-icon>date_range</mat-icon> -->
+          by hason / Call Report
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
+        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
+        bred for hunting.
+    </mat-expansion-panel>
+
 
 
   </mat-tab>

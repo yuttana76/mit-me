@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe, Location } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CrmPersonModel } from '../model/crmPersonal.model';
+import { BehaviorSubject } from 'rxjs';
 
 // import { CalendarOptions } from '@fullcalendar/angular'; // useful for typechecking
 
@@ -19,6 +20,58 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
   form: FormGroup;
   paramId: String = '';
   customer: CrmPersonModel = new CrmPersonModel();
+
+
+
+  // All Doughnut
+  public alldoughnutChartLabels: string[] = ['Private Fund', 'Bond', 'LBDU'];
+  public alldoughnutChartData: number[] = [350, 450, 100];
+  public alldoughnutChartType = 'doughnut';
+
+  // LBDU Doughnut
+  public lbdu_DoughnutChartLabels: string[] = ['KF-RMF', 'KFGTECHRMF', 'KF-SSF','TISCO-SSF','KBANK-SSF'];
+  public lbdu_DoughnutChartData: number[] = [100000.00, 144059.82, 20569.98,50123.98,5123.98];
+  public lbdu_DoughnutChartType = 'doughnut';
+
+
+   lbdu_list=[{'Fund_Code':'KF-RMF', 'NAV':'10.0000','MKT_Value':'100,000.00'}
+   ,{'Fund_Code':'KFGTECHRMF', 'NAV':'15.123','MKT_Value':'144,059.82'}
+   ,{'Fund_Code':'KF-SSF', 'NAV':'11.6336','MKT_Value':'20,569.98'}
+   ,{'Fund_Code':'TISCO-SSF', 'NAV':'15.6336','MKT_Value':'50,123.98'}
+   ,{'Fund_Code':'KBANK-SSF', 'NAV':'10.6336','MKT_Value':'5123.98'}
+  ];
+
+  lbdu_displayedColumns: string[] = ['Fund_Code', 'NAV','MKT_Value'];
+  lbdu_dataSource = new BehaviorSubject(this.lbdu_list);
+
+  // Private Doughnut
+  public private_DoughnutChartLabels: string[] = ['PTT','KBANK'];
+  public private_DoughnutChartData: number[] = [4400, 10000];
+  public private_DoughnutChartType = 'doughnut';
+
+
+  private_list=[{'Symbol':'PTT', 'Val':'100','Avg':'40','Market':'44','Amount':'4,000','MarketVal':'4,400'}
+   ,{'Symbol':'KBANK', 'Val':'100','Avg':'90','Market':'100','Amount':'9,000','MarketVal':'10,000'}
+  
+  ];
+
+  private_displayedColumns: string[] = ['Symbol', 'Val','Avg','Market','Amount','MarketVal'];
+  private_dataSource = new BehaviorSubject(this.private_list);
+
+  // Bond Doughnut
+  public bond_DoughnutChartLabels: string[] = ['CHAIYO','SANSIRI','MAGNOLIA'];
+  public bond_DoughnutChartData: number[] = [1000000, 500000,10000000];
+  public bond_DoughnutChartType = 'doughnut';
+
+
+  bond_list=[{'Symbol':'CHAIYO', 'Amount':'1,000,000'}
+   ,{'Symbol':'SANSIRI', 'Amount':'500,000'}
+   ,{'Symbol':'MAGNOLIA', 'Amount':'10,000,000'}
+  
+  ];
+
+  bond_displayedColumns: string[] = ['Symbol', 'Amount'];
+  bond_dataSource = new BehaviorSubject(this.bond_list);
 
   SexList =[
     {
@@ -128,12 +181,6 @@ ClassList = [{
     desc:'U-HNW',
   },
 ];
-
-
-  // Doughnut
-  public doughnutChartLabels: string[] = ['Private Fund', 'Bond', 'LBDU'];
-  public doughnutChartData: number[] = [350, 450, 100];
-  public doughnutChartType = 'doughnut';
 
 
   constructor(

@@ -2,8 +2,6 @@
 <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
 
 <mat-card class="example-card">
-
-
   <form [formGroup]="form" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading">
     <mat-card-title>Customer Information
       <a mat-button routerLink="/trade/customerDetail" routerLinkActive="mat-accent" matTooltip="New customer">

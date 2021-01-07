@@ -44,6 +44,7 @@ exports.scheduleDownload = (req, res, next) => {
   fnArray=[];
   // fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
   fnArray.push(downloadNavAPIproc(businessDate,userCode));
+  fnArray.push(downloadAllotedAPIproc(businessDate));
 
   Promise.all(fnArray)
   .then(data => {
@@ -2671,14 +2672,20 @@ exports.downloadNavAPI_V2 = (req, res, next) =>{
 
 exports.downloadAllottedAPI = (req, res, next) =>{
 
-  logger.info("Validate  API /downloadAllottedAPI/");
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
+  // logger.info("Validate  API /downloadAllottedAPI/");
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   return res.status(422).json({ errors: errors.array() });
+  // }
 
   logger.info("Welcome to API /downloadAllottedAPI/");
-  var businessDate = req.body.businessDate
+
+  var businessDate
+  if(!req.body.businessDate){
+    businessDate = fundConnextBusinessDate();
+  } else{
+    businessDate = req.body.businessDate
+  }
 
   downloadAllotedAPIproc(businessDate).then(dwRs=>{
     res.status(200).json({message: dwRs});

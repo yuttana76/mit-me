@@ -94,8 +94,7 @@ router.post("/downloadNavSchedule/",[selfAuth
 // ********* Download V2
 
 // ********* Download AllottedTransactions
-router.post("/downloadAllottedAPI",[selfAuth
-  ,  check('businessDate')
+router.post("/downloadAllottedAPI",[check('businessDate')
     .isLength({ min: 1 }).withMessage('must have businessDate value')
   ],fundConnextAPIController.downloadAllottedAPI);
 

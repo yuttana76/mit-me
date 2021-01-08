@@ -44,7 +44,7 @@ exports.scheduleDownload = (req, res, next) => {
   fnArray=[];
   // fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
   fnArray.push(downloadNavAPIproc(businessDate,userCode));
-  fnArray.push(downloadAllotedAPIproc(businessDate));
+  fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
 
   Promise.all(fnArray)
   .then(data => {
@@ -2716,7 +2716,7 @@ function downloadAllotedAPIproc(businessDate,userCode){
           // //STEP 2: Upzip downloaded file.
           unZipFile(data.path).then(fileName=>{
           //   //STEP 3: Insert to DB.(MIT_FC_NAV)
-            fcAlloted_ToDB(fileName,userCode).then(allottedToDB_RS=>{
+            fcAlloted_ToDB(fileName,userCode,businessDate).then(allottedToDB_RS=>{
               resolve(allottedToDB_RS)
             },err=>{
               reject(err);
@@ -3739,7 +3739,7 @@ function fcNAV_ToExcel(fileName,businessDate){
   });
 }
 
-function fcAlloted_ToDB(fileName,userCode){
+function fcAlloted_ToDB(fileName,userCode,businessDate){
   logger.info('Function fcAlloted_ToDB() //'+fileName);
 
   const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
@@ -3769,7 +3769,7 @@ function fcAlloted_ToDB(fileName,userCode){
               if(item[30]){
                 // console.log('Number>> ' + _row+1)
                 fnArray=[];
-                fnArray.push(update_MIT_FC_TransAllotted(item,userCode));
+                fnArray.push(update_MIT_FC_TransAllotted(item,userCode,businessDate));
 
                 Promise.all(fnArray)
                 .then(data => {
@@ -3802,7 +3802,7 @@ function fcAlloted_ToDB(fileName,userCode){
 }
 
 
-function update_MIT_FC_TransAllotted(item,ActionBy){
+function update_MIT_FC_TransAllotted(item,ActionBy,businessDate){
 
 
             // 1	SA Order Reference No
@@ -3983,7 +3983,8 @@ function update_MIT_FC_TransAllotted(item,ActionBy){
       creditCardIssuer=@creditCardIssuer,
       UpdateBy=@ActionBy,
       [UpdateDate]=getDate()
-      WHERE transactionID=@transactionID AND transactionCode=@transactionCode AND status=@status
+      WHERE SAreferenceNo=@SAreferenceNo AND accountID=@accountID AND unitholderID=@unitholderID AND  fundCode=@fundCode AND businessDate=@businessDate AND transactionDateTxt
+=@transactionDateTxt AND  status=@status
 
         IF @@ROWCOUNT=0
         BEGIN
@@ -4043,8 +4044,9 @@ function update_MIT_FC_TransAllotted(item,ActionBy){
       NAVdate,
       collateralAccount,
       creditCardIssuer,
-          [CreateBy],
-          [CreateDate]
+      businessDate,
+      [CreateBy],
+      [CreateDate]
         )
         VALUES(
           @SAreferenceNo,
@@ -4102,8 +4104,9 @@ function update_MIT_FC_TransAllotted(item,ActionBy){
       @NAVdate,
       @collateralAccount,
       @creditCardIssuer,
-          @ActionBy,
-          getDate()
+      @businessDate,
+      @ActionBy,
+      getDate()
         )
         END
 
@@ -4183,6 +4186,7 @@ function update_MIT_FC_TransAllotted(item,ActionBy){
       .input("collateralAccount", sql.VarChar(20), collateralAccount)
       .input("creditCardIssuer", sql.VarChar(20), creditCardIssuer)
       .input("ActionBy", sql.VarChar(100), ActionBy)
+      .input("businessDate", sql.VarChar(20), businessDate)
       .query(queryStr, (err, result) => {
         // console.log(JSON.stringify(result));
           if(err){

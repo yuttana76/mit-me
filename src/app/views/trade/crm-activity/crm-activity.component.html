@@ -1,125 +1,53 @@
 
-<mat-horizontal-stepper labelPosition="bottom" #stepper>
+<mat-horizontal-stepper labelPosition="bottom" #stepper class="col-md-6">
   <mat-step [stepControl]="firstFormGroup">
     <form [formGroup]="firstFormGroup">
       <ng-template matStepLabel>Fill data</ng-template>
 
-      <mat-form-field>
+      <!-- <mat-form-field>
         <mat-label>Name</mat-label>
         <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
-      </mat-form-field>
+      </mat-form-field> -->
 
-      <div>
-        <button mat-button matStepperNext>Next</button>
-      </div>
-    </form>
-  </mat-step>
-
-  <mat-step [stepControl]="feedbackForm" optional>
-    <form [formGroup]="feedbackForm">
-      <ng-template matStepLabel>Save</ng-template>
-      <h5>Feedback</h5>
-     
       <mat-form-field class="example-full-width">
-        <mat-label>Feedback</mat-label>
-        <mat-select formControlName="feedback" >
-            <mat-option  *ngFor="let obj of Feedback" [value]="obj.code">
+        <mat-label>ประเภท Activity ({{activityObj.actType}})</mat-label>
+        <mat-select [(ngModel)]="activityObj.actType" formControlName="actType" (selectionChange) ="activityChange($event)">
+            <mat-option  *ngFor="let obj of actTypeList" [value]="obj.code">
               {{obj.desc}}
             </mat-option>
           </mat-select>
+        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
       </mat-form-field>
-      
 
-      <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button (click)="stepper.reset()">Reset</button>
-      </div>
-    </form>
-  </mat-step>
+      <!--
+  CALL REPORT
+  contactCustAct={contactChannel:'',dateTime:'',prod:'',contactResult:'',nextTime:'',note:''}
+-->
+<form class="example-form" autocomplete="off" novalidate [formGroup]="callreportForm" (ngSubmit)="callReportSubmited(callreportForm.value)"  *ngIf="activityObj.actType=='callReport' ">
+
+  <mat-card class="cust-container" >
+    <h2>Call Report</h2>
   
-</mat-horizontal-stepper>
-
-<form class="example-form" [formGroup]="activityForm" >
-
-<mat-card class="cust-container" >
-
-  <mat-card-title>CRM Activity</mat-card-title>
-     <!-- CustomerGroup -->
+  <div class ='contact_class'>
   <mat-form-field class="example-full-width">
-    <mat-label>ประเภท Activity ({{activityObj.actType}})</mat-label>
-    <mat-select [(ngModel)]="activityObj.actType" formControlName="actType" (selectionChange) ="activityChange($event)">
-        <mat-option  *ngFor="let obj of actTypeList" [value]="obj.code">
-          {{obj.desc}}
-        </mat-option>
-      </mat-select>
-    <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
+    <mat-label> Date</mat-label>
+    <input matInput [matDatepicker]="reportDate"   formControlName="reportDate"     placeholder="Date of Birth" >
+    <mat-datepicker-toggle matSuffix [for]="reportDate"></mat-datepicker-toggle>
+    <mat-datepicker #reportDate disabled="false"></mat-datepicker>
+
+    <mat-error *ngIf="callreportForm.controls['reportDate'].hasError('required')  &&
+    callreportForm.get('reportDate').touched">Please choose Contact Date.</mat-error>
+    <!-- <mat-hint align="end">Not more then 100 characters long.</mat-hint> -->
   </mat-form-field>
 
-  <mat-label> Status</mat-label>
-    <section class="example-full-width">
-      <mat-radio-group formControlName="actStatus"  required>
-        <mat-radio-button class="example-margin"  *ngFor="let obj of actStatusList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
-      </mat-radio-group>
-    </section>
-
-
-    <mat-form-field class="example-full-width">
-      <mat-label>Reminding Date</mat-label>
-      <input matInput [matDatepicker]="remindDateTime"   formControlName="remindDateTime"     placeholder="Date of Birth" >
-      <mat-datepicker-toggle matSuffix [for]="remindDateTime"></mat-datepicker-toggle>
-      <mat-datepicker #remindDateTime disabled="false"></mat-datepicker>
-    </mat-form-field>
-
-
-    <mat-form-field class="example-full-width">
-      <mat-label>Description </mat-label>
-      <textarea matInput formControlName="description" placeholder="Description" ></textarea>
-    </mat-form-field>
-
-    <mat-form-field class="example-full-width">
-      <mat-label>Feedback</mat-label>
-      <mat-select formControlName="feedback" >
-          <mat-option  *ngFor="let obj of Feedback" [value]="obj.code">
-            {{obj.desc}}
-          </mat-option>
-        </mat-select>
-    </mat-form-field>
-
-<!--
-    <mat-form-field class="example-full-width" disable="true">
-      <input matInput  formControlName="feedbackOth" placeholder="FeedbackOth" >
-    </mat-form-field> -->
-
-
-    <mat-form-field class="example-full-width">
-      <mat-label>Assign To</mat-label>
-      <mat-select formControlName="assignTo">
-          <mat-option  *ngFor="let obj of assignTo" [value]="obj.code">
-            {{obj.desc}}
-          </mat-option>
-        </mat-select>
-      <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
-    </mat-form-field>
-
-
-<!-- actType
-actData
-actStatus
-RemindDateTime
-Description
-Feedback
-FeedbackOth
-processApp
-AttachFiles
-assignTo -->
-
-
-
-  <mat-card-actions>
-    <button mat-button (click)="goBack()">Back</button>
-  </mat-card-actions>
-
-  </mat-card>
+   <!-- note -->
+   <mat-form-field class="example-full-width">
+    <mat-label>Note
+    </mat-label>
+    <textarea matInput  formControlName="note" placeholder="Note" rows="5"></textarea>
+  </mat-form-field>
+</div>
+</mat-card>
 </form>
 
 <!--
@@ -169,14 +97,14 @@ assignTo -->
           </mat-select>
       </mat-form-field>
 
-    <section class="example-full-width">
+    <!-- <section class="example-full-width">
       <mat-label>Contact Result</mat-label>
       <mat-radio-group formControlName="contactResult" >
         <mat-radio-button class="example-margin"  *ngFor="let obj of contactResult" [value]="obj.code">{{obj.desc}}</mat-radio-button>
       </mat-radio-group>
       <mat-error *ngIf="contactForm.controls['contactResult'].hasError('required')  &&
         contactForm.get('contactResult').touched">Please choose Contact Result.</mat-error>
-    </section>
+    </section> -->
 
     <mat-form-field class="example-full-width">
       <mat-label>Next Deal Date</mat-label>
@@ -186,7 +114,7 @@ assignTo -->
       <mat-datepicker-toggle matSuffix [for]="nextDate"></mat-datepicker-toggle>
       <mat-datepicker #nextDate disabled="false"></mat-datepicker>
       <!-- <mat-error *ngIf="form.get('nextDate').invalid ">Please correct date expire date</mat-error> -->
-      <mat-hint align="end">Next due date.</mat-hint>
+      <mat-hint align="end">กรณีมีการนัดหมายเพื่อติดต่อครั้งต่อไป.</mat-hint>
     </mat-form-field>
 
     <!-- InvestCondition -->
@@ -227,11 +155,11 @@ assignTo -->
     </mat-form-field>
 
     <!-- Locate -->
-    <mat-form-field class="example-full-width">
+    <!-- <mat-form-field class="example-full-width">
       <mat-label>Locate
       </mat-label>
       <textarea matInput formControlName="locate"  placeholder="Locate"></textarea>
-    </mat-form-field>
+    </mat-form-field> -->
 
     <!-- note -->
     <mat-form-field class="example-full-width">
@@ -264,10 +192,10 @@ assignTo -->
     <mat-card class="cust-container" >
      <div class ='contact_class'>
       <h2>Appointment</h2>
-
+<!-- 
       <mat-form-field class="example-full-width">
         <input matInput formControlName="subject"  placeholder="Subject" >
-      </mat-form-field>
+      </mat-form-field> -->
 
       <mat-form-field class="example-full-width">
         <mat-label>Appointment From</mat-label>
@@ -295,14 +223,9 @@ assignTo -->
       <mat-form-field class="example-full-width">
         <mat-label>Note
         </mat-label>
-        <textarea matInput  formControlName="note" placeholder="Note"></textarea>
+        <textarea matInput  formControlName="note" placeholder="Note" rows="5"></textarea>
       </mat-form-field>
       </div>
-
-      <mat-card-actions>
-        <button mat-button  [disabled]="!appointmentForm.valid" >SAVE</button>
-        <button mat-button type='reset' >Clear</button>
-      </mat-card-actions>
 
   </mat-card>
   </form>
@@ -363,11 +286,6 @@ assignTo -->
       </mat-form-field>
       </div>
 
-      <mat-card-actions>
-        <button mat-button  [disabled]="!offerForm.valid" >SAVE</button>
-        <button mat-button type='reset' >Clear</button>
-      </mat-card-actions>
-
   </mat-card>
   </form>
     <!--
@@ -378,7 +296,7 @@ assignTo -->
   *********************  Order
    Offer{product:xxxx,volumn:yyyy,amount:xxxx,note:xxxx,orderDate}
    -->
-   <form class="example-form" autocomplete="off" novalidate [formGroup]="orderForm" (ngSubmit)="orderFormSubmited(orderForm.value)"
+   <!-- <form class="example-form" autocomplete="off" novalidate [formGroup]="orderForm" (ngSubmit)="orderFormSubmited(orderForm.value)"
    *ngIf="activityObj.actType=='orderAct'" >
 
     <mat-card class="cust-container" >
@@ -392,17 +310,14 @@ assignTo -->
               {{obj.desc}}
             </mat-option>
           </mat-select>
-        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
-        <!-- <mat-label>FirstName</mat-label> -->
         <input matInput formControlName="amount" type="number" placeholder="Amount" value="0">
       </mat-form-field>
 
 
       <mat-form-field class="example-full-width">
-        <!-- <mat-label>FirstName</mat-label> -->
         <input matInput formControlName="volumn" type="number" placeholder="Volumn" value="0">
       </mat-form-field>
 
@@ -413,10 +328,8 @@ assignTo -->
           [readonly]="true" >
         <mat-datepicker-toggle matSuffix [for]="orderDate"></mat-datepicker-toggle>
         <mat-datepicker #orderDate disabled="false"></mat-datepicker>
-        <!-- <mat-error *ngIf="form.get('contactDate').invalid ">Please correct date expire date</mat-error> -->
       </mat-form-field>
 
-      <!-- note -->
       <mat-form-field class="example-full-width">
         <mat-label>Note
         </mat-label>
@@ -431,10 +344,10 @@ assignTo -->
 
   </mat-card>
   </form>
+   -->
     <!--
       Order
     -->
-
 
   <!--
   *********************  Complain
@@ -458,52 +371,127 @@ assignTo -->
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
-        <textarea matInput formControlName="desc" placeholder="Description"></textarea>
+        <textarea matInput formControlName="note" placeholder="Note" rows="5"></textarea>
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <!-- <mat-form-field class="example-full-width">
         <mat-label>status</mat-label>
         <mat-select formControlName="status">
             <mat-option  *ngFor="let obj of compStatus" [value]="obj.code">
               {{obj.desc}}
             </mat-option>
           </mat-select>
-        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
-      </mat-form-field>
+      </mat-form-field> -->
 
-      <mat-form-field class="example-full-width">
-        <mat-label>Assign To</mat-label>
-        <mat-select formControlName="assignTo">
-            <mat-option  *ngFor="let obj of assignTo" [value]="obj.code">
-              {{obj.desc}}
-            </mat-option>
-          </mat-select>
-        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
-      </mat-form-field>
-
-      <mat-form-field class="example-full-width">
-        <mat-label>Assign Date</mat-label>
-        <input matInput [matDatepicker]="assignDate" formControlName="assignDate"
-          placeholder="Order Date 2"
-          [readonly]="true" >
-        <mat-datepicker-toggle matSuffix [for]="assignDate"></mat-datepicker-toggle>
-        <mat-datepicker #assignDate disabled="false"></mat-datepicker>
-        <!-- <mat-error *ngIf="form.get('contactDate').invalid ">Please correct date expire date</mat-error> -->
-      </mat-form-field>
-
-      <!-- note -->
-      <mat-form-field class="example-full-width">
-        <textarea matInput formControlName="note" placeholder="Note"></textarea>
-      </mat-form-field>
       </div>
-
-      <mat-card-actions>
-        <button mat-button  [disabled]="!offerForm.valid" >SAVE</button>
-        <button mat-button type='reset' >Clear</button>
-      </mat-card-actions>
 
   </mat-card>
   </form>
     <!--
-      Order
+      Complain
     -->
+
+    <div>
+      <button mat-button matStepperNext>Next</button>
+    </div>
+
+    </form>
+  </mat-step>
+
+  <!--
+      *********************** SAVE
+    -->
+  <mat-step [stepControl]="feedbackForm" optional>
+    <form [formGroup]="feedbackForm">
+      <ng-template matStepLabel>Save</ng-template>
+      <h5>Feedback</h5>
+     
+      <mat-form-field class="example-full-width">
+        <mat-label>Feedback</mat-label>
+        <mat-select formControlName="feedback" >
+            <mat-option  *ngFor="let obj of Feedback" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <input type="email" matInput
+               placeholder="Other feedback">
+      </mat-form-field>
+
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+        <button mat-button >SAVE</button>
+
+      </div>
+    </form>
+  </mat-step>
+  
+</mat-horizontal-stepper>
+<!-- 
+<form class="example-form" [formGroup]="activityForm" >
+
+<mat-card class="cust-container" >
+
+  <mat-card-title>CRM Activity</mat-card-title>
+  <mat-form-field class="example-full-width">
+    <mat-label>ประเภท Activity ({{activityObj.actType}})</mat-label>
+    <mat-select [(ngModel)]="activityObj.actType" formControlName="actType" (selectionChange) ="activityChange($event)">
+        <mat-option  *ngFor="let obj of actTypeList" [value]="obj.code">
+          {{obj.desc}}
+        </mat-option>
+      </mat-select>
+  </mat-form-field>
+
+  <mat-label> Status</mat-label>
+    <section class="example-full-width">
+      <mat-radio-group formControlName="actStatus"  required>
+        <mat-radio-button class="example-margin"  *ngFor="let obj of actStatusList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+      </mat-radio-group>
+    </section> 
+
+
+  <mat-form-field class="example-full-width">
+      <mat-label>Reminding Date</mat-label>
+      <input matInput [matDatepicker]="remindDateTime"   formControlName="remindDateTime"     placeholder="Date of Birth" >
+      <mat-datepicker-toggle matSuffix [for]="remindDateTime"></mat-datepicker-toggle>
+      <mat-datepicker #remindDateTime disabled="false"></mat-datepicker>
+    </mat-form-field>
+
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Description </mat-label>
+      <textarea matInput formControlName="description" placeholder="Description" ></textarea>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Feedback</mat-label>
+      <mat-select formControlName="feedback" >
+          <mat-option  *ngFor="let obj of Feedback" [value]="obj.code">
+            {{obj.desc}}
+          </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width" disable="true">
+      <input matInput  formControlName="feedbackOth" placeholder="FeedbackOth" >
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Assign To</mat-label>
+      <mat-select formControlName="assignTo">
+          <mat-option  *ngFor="let obj of assignTo" [value]="obj.code">
+            {{obj.desc}}
+          </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+  <mat-card-actions>
+    <button mat-button (click)="goBack()">Back</button>
+  </mat-card-actions>
+
+  </mat-card>
+</form> -->
+

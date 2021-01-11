@@ -11,9 +11,9 @@ export const navItems = [
     // }
   },
   {
-    name: 'E-Open(DEV)-YYY',
-    url: '/trade/open-account-first',
-    icon: 'icon-speedometer',
+    // name: 'E-Open(DEV)-YYY',
+    // url: '/trade/open-account-first',
+    // icon: 'icon-speedometer',
     // badge: {
     //   variant: 'info',
     //   text: 'NEW'
@@ -40,6 +40,12 @@ export const navItems = [
   {
     name: 'CRM-Activity-Dashboard',
     url: '/trade/CRM-ActDash',
+    icon: 'icon-speedometer',
+
+  },
+  {
+    name: 'CRM-Market-Manager',
+    url: '/trade/CRM-Market-Manager',
     icon: 'icon-speedometer',
 
   },

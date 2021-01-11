@@ -75,7 +75,7 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
 
 
   consent_list=[{'topic':'ยินยิมเปิดเผยข้อมูล', 'submitDate':'01/01/2020','status':'Active','action':''}
-   ,{'topic':'ยินยอมให้ข้อมูลการตลาด', 'submitDate':'01/01/2020','status':'Active','action':''}
+   ,{'topic':'ยินยอมให้ข้อมูลการตลาด', 'submitDate':'01/01/2020','status':'Cancel','action':''}
    ,{'topic':'ยิยยอมให้ข้อมูลจัดเก็บต่างประเทศ', 'submitDate':'01/01/2020','status':'Active','action':''}
   
   ];

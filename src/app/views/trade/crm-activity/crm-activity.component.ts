@@ -20,6 +20,7 @@ export class CrmActivityComponent implements  OnInit, OnDestroy  {
   activityForm: FormGroup;
   feedbackForm: FormGroup;
 
+  callreportForm: FormGroup;
   contactForm: FormGroup;
   meetCusForm: FormGroup;
   appointmentForm: FormGroup;
@@ -33,8 +34,8 @@ export class CrmActivityComponent implements  OnInit, OnDestroy  {
 
   actTypeList =[
     {
-    code:'generalAct',
-    desc:'ทั่วไป	General',
+    code:'callReport',
+    desc:'Call report',
   },
   {
     code:'contactCustAct',
@@ -48,18 +49,18 @@ export class CrmActivityComponent implements  OnInit, OnDestroy  {
     code:'appointmentAct',
     desc:'นัดหมาย	Appointment',
   },
-  {
-    code:'sendThingAct',
-    desc:'ส่งเอกสาร	Send',
-  },
+  // {
+  //   code:'sendThingAct',
+  //   desc:'ส่งเอกสาร	Send',
+  // },
   {
     code:'offerAct',
     desc:'เสนอขาย(การจอง)',
   },
-  {
-    code:'orderAct',
-    desc:'ซื้อสินค้า	Order Taking',
-  },
+  // {
+  //   code:'orderAct',
+  //   desc:'ซื้อสินค้า	Order Taking',
+  // },
   {
     code:'complainAct',
     desc:'ร้องเรียน	Complain',
@@ -89,6 +90,10 @@ Feedback=[
   {
   code:'3',
   desc:'ลูกค้ายังไม่แน่ใจ',
+  },
+  {
+  code:'4',
+  desc:'เฉยๆ',
   },
   {
   code:'0',
@@ -218,10 +223,6 @@ compTypeList=[
   },
   {
     code:'3',
-    desc:'การติดต่อ',
-  },
-  {
-    code:'4',
     desc:'บริการ',
   },
 
@@ -278,6 +279,8 @@ ngOnInit() {
   this.build_activity_Form();
 
   this.build_feedback_Form();
+
+  this.build_callReport_Form();
   this.build_contact_Form();
   this.build_meetCust_Form();
   this.build_appointment_Form();
@@ -286,8 +289,30 @@ ngOnInit() {
   this.build_complain_Form();
 
   this.firstFormGroup = this._formBuilder.group({
-    firstCtrl: ['', Validators.required]
+    // firstCtrl: ['', Validators.required]
+
+    actType: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+ 
+    actStatus: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    remindDateTime: new FormControl(null, { }),
+    description: new FormControl(null, {
+      validators: [Validators.required
+      ]
+    }),
+    feedback: new FormControl(null, {
+      validators: [Validators.required]
+    }),
+    feedbackOth: new FormControl(null, { }),
+    attachFiles: new FormControl(null, {  }),
+    assignTo: new FormControl(null, {  }),
+
+
   });
+
   this.secondFormGroup = this._formBuilder.group({
     secondCtrl: ['', Validators.required]
   });
@@ -307,20 +332,6 @@ private build_activity_Form() {
      validators: [Validators.required]
    }),
 
-   actStatus: new FormControl(null, {
-     validators: [Validators.required]
-   }),
-   remindDateTime: new FormControl(null, { }),
-   description: new FormControl(null, {
-     validators: [Validators.required
-     ]
-   }),
-   feedback: new FormControl(null, {
-     validators: [Validators.required]
-   }),
-   feedbackOth: new FormControl(null, { }),
-   attachFiles: new FormControl(null, {  }),
-   assignTo: new FormControl(null, {  }),
   });
 }
 
@@ -333,6 +344,19 @@ private build_feedback_Form() {
    feedbackOth: new FormControl(null, { }),
    attachFiles: new FormControl(null, {  }),
    assignTo: new FormControl(null, {  }),
+  });
+}
+
+private build_callReport_Form() {
+  this.callreportForm = new FormGroup({
+
+    reportDate: new FormControl(null, {
+     validators: [Validators.required]
+   }),
+   note: new FormControl(null, {
+     validators: [Validators.required]
+   }),
+   
   });
 }
 
@@ -442,17 +466,17 @@ private build_complain_Form() {
     compType: new FormControl(null, {
      validators: [Validators.required]
    }),
-   desc: new FormControl(null, {
+   note: new FormControl(null, {
      validators: [Validators.required]
    }),
-   status: new FormControl(null, {
-     validators: [Validators.required]
-   }),
-   assignTo: new FormControl(null, {
-    //  validators: [Validators.required]
-   }),
-   assignDate: new FormControl(null, { }),
-   note: new FormControl(null, { }),
+  //  status: new FormControl(null, {
+  //    validators: [Validators.required]
+  //  }),
+  //  assignTo: new FormControl(null, {
+  //   //  validators: [Validators.required]
+  //  }),
+  //  assignDate: new FormControl(null, { }),
+  //  note: new FormControl(null, { }),
   });
 }
 
@@ -463,6 +487,12 @@ ngOnDestroy() {
 
 goBack() {
   this.location.back();
+}
+
+public callReportSubmited = (formValue) => {
+  if (this.callreportForm.valid) {
+    this.exe_ContactAct(formValue);
+  }
 }
 
 public contactSubmited = (formValue) => {

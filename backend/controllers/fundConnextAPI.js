@@ -2695,6 +2695,34 @@ exports.downloadAllottedAPI = (req, res, next) =>{
 }
 
 
+
+
+exports.UnitholderBalanceAPI = (req, res, next) =>{
+
+  // logger.info("Validate  API /downloadAllottedAPI/");
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   return res.status(422).json({ errors: errors.array() });
+  // }
+
+  logger.info("Welcome to API /downloadUnitholderBalanceAPI/");
+
+  var businessDate
+  if(!req.body.businessDate){
+    businessDate = fundConnextBusinessDate();
+  } else{
+    businessDate = req.body.businessDate
+  }
+
+  UnitholderBalanceAPIProc(businessDate).then(dwRs=>{
+  // downloadAllotedAPIproc(businessDate).then(dwRs=>{
+    res.status(200).json({message: dwRs});
+  },err=>{
+    res.status(422).json(err);
+  });
+}
+
+
 exports.allotedFile = (req, res, next) =>{
 
   fileName = '20191104_MPAM_ALLOTTEDTRANSACTIONS.txt';
@@ -2721,6 +2749,38 @@ function downloadAllotedAPIproc(businessDate,userCode){
             },err=>{
               reject(err);
             });
+          },err=>{
+            reject(err);
+          });
+      },err=>{
+        reject(err);
+      });
+  });
+}
+
+
+function UnitholderBalanceAPIProc(businessDate,userCode){
+  logger.info('UnitholderBalanceAPIProc(); businessDate:' + businessDate )
+  return new Promise(function(resolve, reject) {
+    const fileType = 'UnitholderBalance.zip';
+      // STEP 1: CALL API download
+      fnGetDownloadAPI(businessDate,fileType).then(data=>{
+          // //STEP 2: Upzip downloaded file.
+          unZipFile(data.path).then(fileName=>{
+          //   //STEP 3: Insert to DB.(MIT_FC_NAV)
+            // fcUnitholderBalance_ToDB(fileName,userCode,businessDate).then(_RS=>{
+            //   resolve(_RS)
+            // },err=>{
+            //   reject(err);
+            // });
+
+            fcUnitholderBalance_ToDB_BULK(fileName,userCode,businessDate).then(_RS=>{
+              resolve(_RS)
+            },err=>{
+              reject(err);
+            });
+
+
           },err=>{
             reject(err);
           });
@@ -3272,7 +3332,6 @@ exports.exportExcel = (req, res, next) =>{
 }
 
 
-
 // *****************************************************
 // createDate format  yyyymmdd(20191030)
 function delMIT_FC_NAV(businessDate){
@@ -3280,7 +3339,6 @@ function delMIT_FC_NAV(businessDate){
   return new Promise(function(resolve, reject) {
     try{
 
-// ********************************************
 var queryStr = `
 
 BEGIN
@@ -3311,9 +3369,53 @@ END
   pool1.on('error', err => {
     logger.error('POOL Error >'+err);
   })
+    }catch(e){
+      logger.error('CATCH >' + e);
+      reject(e);
+    }
 
-// ********************************************
+  });
+}
 
+
+
+// *****************************************************
+// createDate format  yyyymmdd(20191030)
+function delMIT_FC_Unitholder(businessDate){
+  // logger.info('delMIT_FC_Unitholder-' + businessDate);
+  return new Promise(function(resolve, reject) {
+    try{
+
+var queryStr = `
+
+BEGIN
+
+  DECLARE @businessDate VARCHAR(20) ='${businessDate}';
+
+  DELETE  from MIT_FC_UnitholderBalance  where businessDate = @businessDate
+
+END
+`;
+  const sql = require('mssql')
+
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .query(queryStr, (err, result) => {
+        if(err){
+          logger.error('SQL Error >' +err);
+          reject(err);
+        }else {
+          // logger.info(JSON.stringify(result))
+          // logger.info('MIT_FC_NAV Deleted='+result.rowsAffected.length)
+          logger.info('MIT_FC_UnitholderBalance Deleted='+JSON.stringify(result))
+          resolve(result.recordsets)
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    logger.error('POOL Error >'+err);
+  })
     }catch(e){
       logger.error('CATCH >' + e);
       reject(e);
@@ -3739,6 +3841,70 @@ function fcNAV_ToExcel(fileName,businessDate){
   });
 }
 
+
+function fcUnitholderBalance_ToDB(fileName,userCode,businessDate){
+  logger.info('Function fcUnitholderBalance_ToDB() //'+fileName);
+
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+  const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
+  // const userCode='SYSTEM';
+
+  return new Promise(function(resolve, reject) {
+
+      //Read file
+      try{
+
+      fs.readFile(DOWNLOAD_DIR +"/"+ fileName, function(err, data) {
+
+        if(err) {
+          logger.error(err);
+          reject(err);
+        }
+
+        var array = data.toString().split("\n");
+        array.shift(); //removes the first array element
+
+        var _row =0;
+          for(i in array) {
+
+            var item = array[i].split("|") ;
+
+              if(item[2]){ // Check has.
+                // console.log('***item>> ' + JSON.stringify(item))
+
+                fnArray=[];
+                fnArray.push(update_MIT_FC_UnitholderBalance(item,userCode,businessDate));
+
+                Promise.all(fnArray)
+                .then(data => {
+                    // res.status(200).json('Test successful');
+                    resolve('Read allocated file successful >>' + _row);
+                })
+                .catch(error => {
+                  logger.error(error.message)
+                  reject(error);
+                });
+                _row++;
+              }
+          }
+
+          // //Move to backup folder
+          // fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
+          //   if (err) {
+          //     reject(err);
+          //   };
+          //   resolve('Read allocated file successful >>' + _row);
+          // });
+
+      });//fs.readFile
+
+    }catch(e){
+      logger.error(e);
+      reject(e);
+    }
+  });
+}
+
 function fcAlloted_ToDB(fileName,userCode,businessDate){
   logger.info('Function fcAlloted_ToDB() //'+fileName);
 
@@ -4120,9 +4286,6 @@ function update_MIT_FC_TransAllotted(item,ActionBy,businessDate){
   fnArray.push(util.txtToDateTimeFormat(transactionDateTxt));
   Promise.all(fnArray)
   .then(data => {
-
-    // console.log("update_MIT_FC_TransAllotted(): "+transactionID + ';transactionDateTxt>'+transactionDateTxt + ';convert>' + data[0]);
-
     //Convert result
     transactionDate = data[0]
 
@@ -4209,6 +4372,289 @@ function update_MIT_FC_TransAllotted(item,ActionBy,businessDate){
   });
 }
 
+
+function update_MIT_FC_UnitholderBalance(item,ActionBy,businessDate){
+
+// console.log('***update_MIT_FC_UnitholderBalance>> ' + JSON.stringify(item))
+
+  // 1	SA Order Reference No
+  var AMC_Code = item[0]?item[0].trim():''
+  var Account_ID = item[1]?item[1].trim():''
+  var Unitholder_ID = item[2]?item[2].trim():''
+  var Fund_Code = item[3]?item[3].trim():''
+  var Unit_balance = item[4]?item[4].trim():''
+  var Amount = item[5]?item[5].trim():''
+  var Available_Unit_Balance = item[6]?item[6].trim():''
+  var Available_Amount = item[7]?item[7].trim():''
+  var Pending_Unit = item[8]?item[8].trim():''
+  var Pending_Amount = item[9]?item[9].trim():''
+  var Pledge_Unit = item[10]?item[10].trim():''
+  var Average_Cost = item[11]?item[11].trim():''
+  var NAV = item[12]?item[12].trim():''
+  var NAVdate = item[13]?item[13].trim():''
+
+const sql = require('mssql')
+var queryStr = `
+BEGIN TRANSACTION TranName;
+
+UPDATE MIT_FC_UnitholderBalance SET
+  Unit_balance=@Unit_balance,
+  Amount=@Amount,
+  Available_Unit_Balance=@Available_Unit_Balance,
+  Available_Amount=@Available_Amount,
+  Pending_Unit=@Pending_Unit,
+  Pending_Amount=@Pending_Amount,
+  Pledge_Unit=@Pledge_Unit,
+  Average_Cost=@Average_Cost,
+  NAV=@NAV,
+  NAVdate=@NAVdate,
+  UpdateBy = @ActionBy,
+  UpdateDate = getDate()
+WHERE
+  businessDate = @businessDate
+  AND AMC_Code = @AMC_Code
+  AND Account_ID = @Account_ID
+  AND Unitholder_ID =@Unitholder_ID
+  AND Fund_Code = @Fund_Code
+
+IF @@ROWCOUNT=0
+BEGIN
+INSERT INTO  MIT_FC_UnitholderBalance(
+  [businessDate],
+  AMC_Code,
+  Account_ID,
+  Unitholder_ID,
+  Fund_Code,
+  Unit_balance,
+  Amount,
+  Available_Unit_Balance,
+  Available_Amount,
+  Pending_Unit,
+  Pending_Amount,
+  Pledge_Unit,
+  Average_Cost,
+  NAV,
+  [NAVdate],
+  [CreateBy],
+  [CreateDate]
+
+)
+VALUES(
+  @businessDate,
+  @AMC_Code,
+  @Account_ID,
+  @Unitholder_ID,
+  @Fund_Code,
+  @Unit_balance,
+  @Amount,
+  @Available_Unit_Balance,
+  @Available_Amount,
+  @Pending_Unit,
+  @Pending_Amount,
+  @Pledge_Unit,
+  @Average_Cost,
+  @NAV,
+  @NAVdate,
+  @ActionBy,
+  getDate()
+)
+END
+
+COMMIT TRANSACTION TranName;
+`;
+
+return new Promise(function(resolve, reject) {
+
+//Convert data
+fnArray=[];
+// fnArray.push(util.txtToDateTimeFormat(transactionDateTxt));
+Promise.all(fnArray)
+.then(data => {
+//Convert result
+transactionDate = data[0]
+
+// Execute db
+const pool1 = new sql.ConnectionPool(config, err => {
+pool1.request()
+.input("businessDate", sql.VarChar(20), businessDate)
+.input("AMC_Code", sql.VarChar(30), AMC_Code?AMC_Code:null)
+.input("Account_ID", sql.VarChar(30), Account_ID?Account_ID:null)
+.input("Unitholder_ID", sql.VarChar(30), Unitholder_ID?Unitholder_ID:null)
+.input("Fund_Code", sql.VarChar(30), Fund_Code?Fund_Code:null)
+.input("Unit_balance", sql.VarChar(30), Unit_balance?Unit_balance:null)
+.input("Amount", sql.VarChar(30), Amount?Amount:null)
+.input("Available_Unit_Balance", sql.VarChar(30), Available_Unit_Balance?Available_Unit_Balance:null)
+.input("Available_Amount", sql.VarChar(30), Available_Amount?Available_Amount:null)
+.input("Pending_Unit", sql.VarChar(30), Pending_Unit?Pending_Unit:null)
+.input("Pending_Amount", sql.VarChar(30), Pending_Amount?Pending_Amount:null)
+.input("Pledge_Unit", sql.VarChar(30), Pledge_Unit?Pledge_Unit:null)
+.input("Average_Cost", sql.VarChar(30), Average_Cost?Average_Cost:null)
+.input("NAV", sql.VarChar(30), NAV?NAV:null)
+.input("NAVdate", sql.VarChar(20), NAVdate?NAVdate:null)
+.input("ActionBy", sql.VarChar(100), ActionBy)
+
+.query(queryStr, (err, result) => {
+// console.log(JSON.stringify(result));
+if(err){
+  const err_msg=err;
+  logger.error('Messge:'+'Account_ID:'+Account_ID +'; Unitholder_ID: ' +Unitholder_ID+';Fund_Code: '+Fund_Code+' ; msg:'+err_msg);
+  resolve({code:'9',message:''+err_msg});
+}else {
+  resolve({code:'0'});
+}
+})
+})
+pool1.on('error', err => {
+logger.error(err);
+reject(err);
+})
+
+})
+
+
+});
+}
+
+function fcUnitholderBalance_ToDB_BULK(fileName,userCode,businessDate){
+
+  logger.info('Function fcUnitholderBalance_ToDB_BULK() //'+fileName + ' ;businessDate=' + businessDate);
+
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+  const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
+  // const userCode='MIT-SYSTEM';
+
+  return new Promise(function(resolve, reject) {
+
+      //Read file
+      try{
+
+      fs.readFile(DOWNLOAD_DIR +"/"+ fileName, function(err, data) {
+
+        if(err) {
+          logger.error(err);
+          reject(err);
+        }
+
+        // Delete NAV same day
+        delMIT_FC_Unitholder(businessDate).then(()=>{
+
+            //Table config
+            const sql = require('mssql');
+            const pool1 = new sql.ConnectionPool(config_BULK, err => {
+
+            const table = new sql.Table('MIT_FC_UnitholderBalance');
+            table.create = true;
+            table.columns.add('businessDate', sql.VarChar(50), { nullable: true });
+            table.columns.add('AMC_Code', sql.VarChar(15), {nullable: true});
+            table.columns.add('Account_ID', sql.VarChar(15),{nullable: true});
+            table.columns.add('Unitholder_ID', sql.VarChar(15),{nullable: true});
+            table.columns.add('Fund_Code', sql.VarChar(30),{nullable: true});
+            table.columns.add('Unit_balance', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('Amount', sql.Numeric(18,2), { nullable: true });
+            table.columns.add('Available_Unit_Balance', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('Available_Amount', sql.Numeric(18,2), { nullable: true });
+            table.columns.add('Pending_Unit', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('Pending_Amount', sql.Numeric(18,2), { nullable: true });
+            table.columns.add('Pledge_Unit', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('Average_Cost', sql.Numeric(13,4), { nullable: true });
+            table.columns.add('NAV', sql.Numeric(13,4), { nullable: true });
+            table.columns.add('NAVdate', sql.VarChar(10), { nullable: true });
+            table.columns.add('createBy', sql.VarChar(50), { nullable: true });
+            table.columns.add('createDate', sql.SmallDateTime, { nullable: true });
+
+            var array = data.toString().split("\n");
+            array.shift(); //removes the first array element
+
+            // logger.info('**DATA->' + JSON.stringify(array))
+
+            var _row =0;
+              for(i in array) {
+
+                var item = array[i].split("|") ;
+
+                 AMC_Code = item[0]?item[0].trim():''
+                 Account_ID = item[1]?item[1].trim():''
+                 Unitholder_ID = item[2]?item[2].trim():''
+                 Fund_Code = item[3]?item[3].trim():''
+                 Unit_balance = item[4]?item[4].trim():''
+                 Amount = item[5]?item[5].trim():''
+                 Available_Unit_Balance = item[6]?item[6].trim():''
+                 Available_Amount = item[7]?item[7].trim():''
+                 Pending_Unit = item[8]?item[8].trim():''
+                 Pending_Amount = item[9]?item[9].trim():''
+                 Pledge_Unit = item[10]?item[10].trim():''
+                 Average_Cost = item[11]?item[11].trim():''
+                 NAV = item[12]?item[12].trim():''
+                 NAVdate = item[13]?item[13].trim():null
+
+                  if(item[0]){
+                    table.rows.add(businessDate
+                      ,AMC_Code
+                      ,Account_ID
+                      ,Unitholder_ID
+                      ,Fund_Code
+                      ,Unit_balance
+                      ,Amount
+                      ,Available_Unit_Balance
+                      ,Available_Amount
+                      ,Pending_Unit
+                      ,Pending_Amount
+                      ,Pledge_Unit
+                      ,Average_Cost
+                      ,NAV
+                      ,NAVdate
+                      ,userCode
+                      ,new Date);
+                  }
+                  _row++;
+              }
+
+              // ***************** EXECUTE insert Bulk data to  MIT_LED table
+              const request = new sql.Request(pool1)
+              request.bulk(table, (err, result) => {
+                  // ... error checks
+                  // console.log('ERROR BULK>>' + err);
+                if(err){
+                  console.log(err);
+                  logger.error(JSON.stringify(err));
+                  reject(err);
+                }
+
+                if(result){
+                  var today = new Date();
+                  var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2); //Current date
+                  msg={msg:'Insert UnitholderBalance” DB. successful.',records:_row,'businessDate': yyyymmddDate}
+
+                  // logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
+                  //Move to backup folder
+                  fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
+                    if (err) {
+                      reject(err);
+                    };
+                    resolve(msg);
+                  });
+
+                }
+              });
+              // ***************** Execute insert Bulk data to  MIT_LED table
+            });//sql.ConnectionPool
+
+
+      },err=>{
+        console.log('Error delMIT_FC_NAV()>' + err )
+        // reject(err);
+        // res.status(422).json({error: err});
+      });
+
+
+      });//fs.readFile
+
+    }catch(e){
+      logger.error(e);
+      reject(e);
+    }
+  });
+}
 
 function fcNAV_ToDB(fileName,businessDate,userCode){
   logger.info('Function fcNAV_ToDB() //'+fileName);
@@ -4342,6 +4788,7 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
     }
   });
 }
+
 // #1
 function unZipFile(filePaht){
 

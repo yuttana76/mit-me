@@ -98,8 +98,12 @@ router.post("/downloadAllottedAPI",[check('businessDate')
     .isLength({ min: 1 }).withMessage('must have businessDate value')
   ],fundConnextAPIController.downloadAllottedAPI);
 
-router.post("/test_allotedFile"
-    ,fundConnextAPIController.allotedFile);
+
+// ********* Download UnitholderBalance
+router.post("/downloadUnitholderBalanceAPI",[check('businessDate')
+.isLength({ min: 1 }).withMessage('must have businessDate value')
+],fundConnextAPIController.UnitholderBalanceAPI);
+
 
 
 // ********* Download AllottedTransactions

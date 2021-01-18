@@ -3465,8 +3465,8 @@ DECLARE MIT_FC_NAV_cursor CURSOR LOCAL  FOR
   FROM MIT_FC_NAV A,MFTS_Fund B
   WHERE CONVERT(varchar, A.createDate , 112)=@createDate
   AND A.FundCode=B.Fund_Code
-  AND B.End_Date_Flag='0'
-  AND ISNULL(B.End_Date,getdate()) >=getdate()
+  --AND B.End_Date_Flag='0'
+  --AND ISNULL(B.End_Date,getdate()) >=getdate()
   order by A.NAVDate
 
 OPEN MIT_FC_NAV_cursor

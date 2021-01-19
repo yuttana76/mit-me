@@ -22,19 +22,17 @@ testMITlog : function(_userName,_module,log_msg,_ip,_url){
 
 saveMITlog : function(_userName,_module,log_msg,_ip,_url,callback){
 
-  // logger.info(`API /saveMITlog - ;_userName= ${_userName} ;_module=${_module} ;log_msg=${log_msg} ;_ip=${_ip} ;_url=${_url}`);
-
   var queryStr = `
   BEGIN
 
-    INSERT INTO MIT_LOG(LoginName,LogDateTime,module,log_msg,ip,url)
-    VALUES('${_userName}',GETDATE(),'${_module}','${log_msg}','${_ip}','${_url}');
+    INSERT INTO MIT_LOG (LoginName,LogDateTime,module,log_msg,ip,url) VALUES('${_userName}',GETDATE(),'${_module}','${log_msg}','${_ip}','${_url}');
 
   END
   `;
 
   const sql = require('mssql')
   const pool1 = new sql.ConnectionPool(config, err => {
+
     pool1.request().query(queryStr, (err, result) => {
 
         if(err){

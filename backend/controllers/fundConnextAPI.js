@@ -2888,7 +2888,10 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
                 CustomerData = JSON.parse(JSON.stringify(CustomerData));
                 customer.approveCustInfoProcess(CustomerData).then(result2=>{
 
-                  var logMsg= ''.concat(CustomerData.cardNumber,'|',CustomerData.thFirstName,'|',CustomerData.thLastName,'|',CustomerData.referalPerson)
+                  var logMsg= ''.concat(CustomerData.thFirstName,'|',CustomerData.thLastName
+                  ,'|',CustomerData.enFirstName,'|',CustomerData.enLastName
+                  ,'|',CustomerData.referalPerson
+                  ,'|',CustomerData.mobileNumber,'|',CustomerData.email,'|',CustomerData.accountId,'|',CustomerData.RM)
 
                   var  currentDate =new Date();
                   var _applicationDate = new Date();
@@ -2906,7 +2909,6 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
 
                   // To calculate the no. of days between two dates
                   var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-
                   logMsg = logMsg+''.concat('|',CustomerData.applicationDate, '(',Difference_In_Days,')')
 
                   mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',logMsg ,'','',function(){});
@@ -2983,23 +2985,37 @@ tr:nth-child(even) {
     mailBody += '<h3>Customer Profile Download ('+repData[0].length+') </h3>'
 
     // *** Customer profile
-    mailBody +=`<TABLE>
-    <th>Code</th>
-    <th>Name</th>
-    <th>Reference</th>
-    <th>Application Date</th>
-  `
+  //   mailBody +=`<TABLE>
+  //   <th>Code</th>
+  //   <th>Name</th>
+  //   <th>Reference</th>
+  //   <th>Application Date</th>
+  // `
 
+ // *** Customer profile
+ mailBody +=`<TABLE>
+ <th>Account</th>
+ <th>Market</th>
+ <th>Thai Name</th>
+ <th>Eng Name</th>
+ <th>Mobile</th>
+ <th>Email</th>
+`
     repData[0].forEach(function(item){
-      var _splitData = item.msg.split("|")
-      const dataAfterMasking = MaskData.maskCard(_splitData[0], maskCardOptions);
-      mailBody += '<tr>'
-      + '<td>' +dataAfterMasking+ '</td>'
-      + '<td>' +_splitData[1]+' ' + _splitData[2] +'</td>'
-      + '<td>' +_splitData[3]+ '</td>'
-      + '<td>' +_splitData[4]+ '</td>'
-      +'</tr>'
 
+      var _splitData = item.msg.split("|")
+      // logger.info('Report before split>>' + JSON.stringify(_splitData))
+
+      const dataAfterMasking = MaskData.maskCard(_splitData[0], maskCardOptions);
+
+      mailBody += '<tr>'
+      + '<td>' +_splitData[7]+ '</td>' // Account
+      + '<td>' +_splitData[8]+ '</td>' // Market
+      + '<td>' +_splitData[0]+' ' + _splitData[1] +'</td>' // Thai name
+      + '<td>' +_splitData[2]+' ' + _splitData[3] +'</td>' // Eng name
+      + '<td>' +_splitData[5]+ '</td>' //Mobile
+      + '<td>' +_splitData[6]+ '</td>' //Email
+      +'</tr>'
     })
     mailBody +='</TABLE>'
 

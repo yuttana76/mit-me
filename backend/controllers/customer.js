@@ -4588,9 +4588,10 @@ function getFC_CustomerInfo(cardNumber){
 
   var fncName = 'getFcCustomerInfo() ';
 
-  var queryStr = `SELECT  TOP 1 B.accountId,A.*
+  var queryStr = `SELECT  TOP 1 B.accountId,C.Full_Name AS RM,A.*
   FROM [MIT_FC_CUST_INFO] A
   LEFT JOIN  MIT_FC_CUST_ACCOUNT B ON A.cardNumber=B.cardNumber
+  LEFT JOIN  [MFTS].[dbo].[VW_MFTS_SaleCode] C ON B.icLicense=C.License_Code
   WHERE A.cardNumber=@cardNumber `;
 
   const sql = require('mssql')
@@ -4737,7 +4738,7 @@ function validStr(val, defaultVal = "") {
 
 exports.cloneCustomerAddrSameAsFlag = (accountId,cardNumber)=>{
 
-  logger.info('cloneCustomerAddrSameAsFlag()' +  cardNumber);
+  // logger.info('cloneCustomerAddrSameAsFlag()' +  cardNumber);
 
   return new Promise(function(resolve, reject) {
     try{
@@ -4999,7 +5000,7 @@ exports.cloneCustomerAddrSameAsFlag = (accountId,cardNumber)=>{
               logger.error(err);
               reject(err);
             }else {
-              logger.info('cloneCustomerAddrSameAsFlag() Successful')
+              // logger.info('cloneCustomerAddrSameAsFlag() Successful')
               resolve(result.recordsets)
             }
         })

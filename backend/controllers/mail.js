@@ -79,6 +79,7 @@ exports.sendMailIT = (obj) =>{
   // setup email data with unicode symbols
   let mailOptions = {
     from: mailConfig.mail_it,
+    // from: mailConfig.mail_developer,
     to: obj.to,
     subject: obj.subject ,
     html: obj.body

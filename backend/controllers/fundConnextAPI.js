@@ -36,15 +36,21 @@ const sql = require("mssql");
 
 exports.scheduleDownload = (req, res, next) => {
 
-  logger.info('Start Execute FundConnext schedule;' )
   var userCode = 'MPAM_SCH'
   var businessDate = fundConnextBusinessDate();
+
+  if(req.query.businessDate){
+    businessDate = req.query.businessDate
+  }
+
+  logger.info('*** scheduleDownload() businessDate >'+  businessDate);
 
   // Transaction API
   fnArray=[];
   // fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
   fnArray.push(downloadNavAPIproc(businessDate,userCode));
   fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
+  fnArray.push(UnitholderBalanceAPIProc(businessDate,userCode));
 
   Promise.all(fnArray)
   .then(data => {

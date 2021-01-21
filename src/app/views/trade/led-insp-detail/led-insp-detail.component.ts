@@ -51,7 +51,7 @@ export class LedInspDetailComponent implements OnInit {
   // Dialog
   ledInspCustDetailComponent: MatDialogRef<LedInspCustDetailComponent>;
 
-  @ViewChild(LedInspHistoryComponent)
+  @ViewChild(LedInspHistoryComponent, {static: false})
   ledInspHistoryComponent: LedInspHistoryComponent;
 
 

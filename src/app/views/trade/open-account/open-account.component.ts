@@ -19,8 +19,6 @@ import { BankAccountDialogComponent } from '../dialog/bank-account-dialog/bank-a
 import { BankAccountModel } from '../model/bankAccount.model';
 import { MatRadioChange } from '@angular/material';
 import { OpenAccService } from '../services/openAcc.service';
-import { JsonPipe } from '@angular/common';
-import { rS } from '@angular/core/src/render3';
 import { AuthService } from '../../services/auth.service';
 
 @Component({

@@ -546,7 +546,7 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
         .input("occupationId", sql.VarChar(3), custInfoObj.occupationId)
         .input("occupationOther", sql.NVarChar(100), custInfoObj.occupationOther)
         .input("businessTypeId", sql.VarChar(3), custInfoObj.businessTypeId)
-        .input("businessTypeOther", sql.NVarChar(50), custInfoObj.businessTypeOther)
+        .input("businessTypeOther", sql.NVarChar(100), custInfoObj.businessTypeOther)
         .input("monthlyIncomeLevel", sql.VarChar(10), custInfoObj.monthlyIncomeLevel)
         .input("incomeSource", sql.VarChar(100), custInfoObj.incomeSource)
         .input("incomeSourceOther", sql.NVarChar(100), custInfoObj.incomeSourceOther)

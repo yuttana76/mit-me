@@ -93,6 +93,7 @@ import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.
 import { CrmActivityComponent } from './crm-activity/crm-activity.component';
 import { CrmActDashboardComponent } from './crm-act-dashboard/crm-act-dashboard.component';
 import { CrmMarketManagerComponent } from './crm-market-manager/crm-market-manager.component';
+import { CrmTaskComponent } from './crm-task/crm-task.component';
 
 
 @NgModule({
@@ -194,6 +195,7 @@ import { CrmMarketManagerComponent } from './crm-market-manager/crm-market-manag
     CrmActivityComponent,
     CrmActDashboardComponent,
     CrmMarketManagerComponent,
+    CrmTaskComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

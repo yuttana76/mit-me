@@ -1725,8 +1725,11 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
 
   // Convert Refer code 6 charactors
   var referalPerson = ""
+  var referalPersonFull = ""
 
   if(custObj.referalPerson){
+    referalPersonFull = custObj.referalPerson
+
     custObj.referalPerson = custObj.referalPerson.replace(/\s/g, '');// remove sapce
     referalPerson = custObj.referalPerson.substr(0, 6);
   }
@@ -1827,8 +1830,8 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
   BEGIN TRANSACTION update_CustomerInfo;
 
     DECLARE  @Nation_Code VARCHAR(10);
-    --DECLARE  @Create_By VARCHAR(20);
     DECLARE  @MktId VARCHAR(20)='0';
+    DECLARE  @IT_SAcode VARCHAR(20)='';
 
     DECLARE  @actionByInt int =999;
     DECLARE  @OLD_DATA  NVARCHAR(100);
@@ -1841,14 +1844,13 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
     FROM REF_Nations
     WHERE SET_Code= @SET_Code
 
-    --MktId
-    SELECT @MktId=ISNULL(b.Id,'0')
+    --MktId & IT_SAcode
+    SELECT @MktId=ISNULL(b.Id,'0'),@IT_SAcode = ISNULL(icLicense,'')
     FROM MIT_FC_CUST_ACCOUNT a
     left join MFTS_SalesCode b on b.License_Code=a.icLicense
     WHERE cardNumber=@cardNumber
 
     --#BACKUP DATA
-
     --Card_Type
     SELECT @OLD_DATA = Card_Type FROM Account_Info WHERE Cust_Code =@Cust_Code
     IF @OLD_DATA <> @Card_Type AND @@ROWCOUNT>0
@@ -1930,6 +1932,14 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
     BEGIN
         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
         VALUES (@Cust_Code,'MktId',@Old_data,@MktId,GETDATE(),@actionByInt);
+    END;
+
+    --IT_SAcode
+    SELECT @OLD_DATA = IT_SAcode FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @IT_SAcode AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'IT_SAcode',@Old_data,@IT_SAcode,GETDATE(),@actionByInt);
     END;
 
     --Tax_No
@@ -2368,6 +2378,7 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
     ,Sex=@Sex
     ,Tax_No=@IT_PID_No
     ,IT_SAcode=@IT_SAcode
+    ,IT_Referral=@IT_Referral
     ,IT_SentRepByEmail=@IT_SentRepByEmail
     ,IT_PID_No=@IT_PID_No
     ,IT_PID_ExpiryDate=@IT_PID_ExpiryDate
@@ -2394,6 +2405,7 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
           ,Sex
           ,Tax_No
           ,IT_SAcode
+          ,IT_Referral
           ,IT_SentRepByEmail
           ,IT_PID_No
           ,IT_PID_ExpiryDate
@@ -2418,6 +2430,7 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
           ,@Sex
           ,@IT_PID_No
           ,@IT_SAcode
+          ,@IT_Referral
           ,@IT_SentRepByEmail
           ,@IT_PID_No
           ,@IT_PID_ExpiryDate
@@ -2427,6 +2440,7 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
           ,GETDATE()
       )
     END
+
 
     -- Extension
     UPDATE MIT_ACCOUNT_INFO_EXT SET
@@ -2613,7 +2627,8 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
       .input("Email", sql.NVarChar(100), custObj.email)
       .input("Mobile", sql.VarChar(50), custObj.mobileNumber)
       .input("Sex", sql.VarChar(10), custObj.Sex)
-      .input("IT_SAcode", sql.NVarChar(20), referalPerson)
+      // .input("IT_SAcode", sql.NVarChar(20), '') //license
+      .input("IT_Referral", sql.NVarChar(20), referalPerson) //
       .input("IT_SentRepByEmail", sql.NVarChar(20), custObj.IT_SentRepByEmail)
       .input("IT_PID_No", sql.NVarChar(20), custObj.cardNumber)
       .input("IT_PID_ExpiryDate", sql.NVarChar(50), custObj.cardExpiryDate) // Date
@@ -2649,7 +2664,7 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
       .input("canAcceptDerivativeInvestment", sql.VarChar(10), custObj.canAcceptDerivativeInvestment)
       .input("canAcceptFxRisk", sql.VarChar(10), custObj.canAcceptFxRisk)
       .input("accompanyingDocument", sql.VarChar(20), custObj.accompanyingDocument)
-      .input("referalPerson", sql.NVarChar(100), referalPerson)
+      .input("referalPerson", sql.NVarChar(100), referalPersonFull)
       .input("applicationDate", sql.VarChar(50), custObj.applicationDate) // Date
       .input("incomeSourceCountry", sql.VarChar(2), custObj.incomeSourceCountry)
       .input("acceptBy", sql.VarChar(100), custObj.acceptBy)

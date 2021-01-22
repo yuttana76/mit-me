@@ -6,12 +6,11 @@ const { check } = require('express-validator');
 const sttEopen = require('../controllers/sttEopen');
 
 //Save Register information
+router.get("/testApi",sttEopen.testApi);
 
 router.post("/signVerify",sttEopen.signVerify);
-
 router.post("/broker-login",sttEopen.brokerLogin);
 
 router.get("/downloadJSON/:applicationId",sttEopen.downloadJSON);
-
 
 module.exports = router;

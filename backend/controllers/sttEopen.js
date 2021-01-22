@@ -33,10 +33,25 @@ const EOPEN_BROKER_ID = process.env.EOPEN_BROKER_ID
 const EOPEN_PATH = '/api/eopenaccount/v1/'+EOPEN_BROKER_ID+'/broker-login'
 
 
+
+exports.testApi = (req,res,next)=>{
+
+  timeSync().then(result =>{
+
+    logger.info("testApi>" + JSON.stringify(result))
+    res.status(200).json({
+      code: '000',
+      msg: JSON.stringify(result),
+    });
+  },err =>{
+    logger.error('ERR testApi>>'+err);
+    res.status(401).json(err.message);
+  });
+}
+
 exports.signVerify = (req,res,next)=>{
 
   logger.info("Welcome API brokerLogin/");
-
   // "requestTime":"yyyyMMddHHmmss",
   var moment = require('moment')
   var requestTime = moment().format('YYYYMMDDHHmmss')
@@ -66,54 +81,123 @@ logger.info(`is signature ok? ${verified}`)
 
 }
 
+
+// exports.brokerLogin = (req,res,next)=>{
+
+//   logger.info("Welcome API brokerLogin/");
+//   eOnpeAuth().then(result =>{
+
+//     logger.info("result>" + JSON.stringify(result))
+
+//   res.status(200).json({
+//     code: '000',
+//     msg: JSON.stringify(result),
+//   });
+//   },err =>{
+//     logger.error('ERR AUTH>>'+err);
+//     res.status(401).json(err.message);
+//   });
+// }
+
 exports.brokerLogin = (req,res,next)=>{
 
   logger.info("Welcome API brokerLogin/");
 
-  eOnpeAuth().then(result =>{
+    fnArray=[];
+    fnArray.push(timeSync());
+    Promise.all(fnArray)
+    .then(data => {
 
-    logger.info("result>" + JSON.stringify(result))
+      console.log('***'+ JSON.stringify(data))
 
-  res.status(200).json({
-    code: '000',
-    msg: JSON.stringify(result),
+      eOnpeAuth(data[0]).then(result =>{
+        logger.info("result>" + JSON.stringify(result))
+        res.status(200).json({
+          code: '000',
+          msg: JSON.stringify(result),
+        });
+      },err =>{
+        logger.error('ERR AUTH>>'+err);
+        res.status(401).json(err.message);
+      });
+
+    })
+  .catch(error => {
+    logger.error('Error FundConnext schedule;' +error.message)
+    res.status(401).json(error.message);
   });
 
-  },err =>{
-
-    logger.error('ERR AUTH>>'+err);
-    res.status(401).json(err.message);
-
-  });
 
 }
 
-const eOnpeAuth = () => {
+
+// time.navy.mi.th
+const timeSync =()=>{
+
+  return new Promise(function(resolve, reject) {
+
+    var ntpClient = require('ntp-client');
+
+// ntpClient.getNetworkTime("asia.pool.ntp.org", 123, function(err, date) {
+ntpClient.getNetworkTime("1.th.pool.ntp.org", 123, function(err, _date) {
+    if(err) {
+        console.error(err);
+        return;
+    }
+
+    console.log("Current time : ");
+    console.log(_date); // Mon Jul 08 2013 21:31:31 GMT+0200 (Paris, Madrid (heure d’été))
+
+    let date_ob = new Date(_date);
+    // current date
+    // adjust 0 before single digit date
+    let date = ("0" + date_ob.getDate()).slice(-2);
+
+    // current month
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+
+    // current year
+    let year = date_ob.getFullYear();
+
+    // current hours
+    let hours = date_ob.getHours();
+
+    // current minutes
+    let minutes = date_ob.getMinutes();
+
+    // current seconds
+    let seconds = date_ob.getSeconds();
+
+
+    // YYYYMMDDHHmmss
+    let dateFormated = ''
+    dateFormated=dateFormated.concat(year,month,date,hours,minutes,seconds)
+
+    resolve(dateFormated)
+});
+
+  });
+}
+
+const eOnpeAuth = (requestTime) => {
 // function eOnpeAuth(){
-  logger.info('Welcome fnFCAuth() ');
+  logger.info('Welcome fnFCAuth() requestTime > ' + requestTime);
 
-    // "requestTime":"yyyyMMddHHmmss",
-    var moment = require('moment')
-    var requestTime = moment().format('YYYYMMDDHHmmss')
-
-    logger.info('***requestTime > ' + requestTime);
+    // Method 1
+    // var moment = require('moment')
+    // var requestTime = moment().format('YYYYMMDDHHmmss')
 
     // signature
-    // *********METHOD 2************
-    // sign String
     var signerObject = crypto.createSign("RSA-SHA256");
     signerObject.update(requestTime);
-    // var signature2 = signerObject.sign({key:eOpen.privateKey,padding:crypto.constants.RSA_PKCS1_PSS_PADDING}, "base64");
     var signature2 = signerObject.sign({key:eOpen.privateKey}, "base64");
-
     logger.info(`***signature : ${signature2.toString("base64")}`);
 
     //verify String
-    var verifierObject = crypto.createVerify("RSA-SHA256");
-    verifierObject.update(requestTime);
-    //  var verified = verifierObject.verify({key:eOpen.publicKey, padding:crypto.constants.RSA_PKCS1_PSS_PADDING}, signature2, "base64");
-    var verified = verifierObject.verify({key:eOpen.publicKey}, signature2, "base64");
-    logger.info(`signature verify? ${verified}`)
+    // var verifierObject = crypto.createVerify("RSA-SHA256");
+    // verifierObject.update(requestTime);
+    // var verified = verifierObject.verify({key:eOpen.publicKey}, signature2, "base64");
+    // logger.info(`signature verify? ${verified}`)
     // *********METHOD 2************
 
     //Body
@@ -135,11 +219,15 @@ const eOnpeAuth = () => {
     };
 
     logger.info('***options > ' + JSON.stringify(options));
+
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
+  // Call STT
   const request = https.request(options,(res) => {
-
     logger.info(`statusCode: ${res.statusCode}`)
+    if(res.statusCode==='400'){
+      reject(res.statusCode);
+    }
 
     var _chunk="";
     res.setEncoding('utf8');

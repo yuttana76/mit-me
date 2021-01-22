@@ -41,10 +41,10 @@ export class CrmTaskComponent implements OnInit {
   //   code:'orderAct',
   //   desc:'ซื้อสินค้า	Order Taking',
   // },
-  {
-    code:'complainAct',
-    desc:'ร้องเรียน	Complain',
-  },
+  // {
+  //   code:'complainAct',
+  //   desc:'ร้องเรียน	Complain',
+  // },
 ];
 
   constructor(
@@ -56,11 +56,11 @@ export class CrmTaskComponent implements OnInit {
 
     this.firstFormGroup = this._formBuilder.group({
       // firstCtrl: ['', Validators.required]
-  
+
       actType: new FormControl(null, {
         validators: [Validators.required]
       }),
-   
+
       actStatus: new FormControl(null, {
         validators: [Validators.required]
       }),
@@ -75,15 +75,15 @@ export class CrmTaskComponent implements OnInit {
       feedbackOth: new FormControl(null, { }),
       attachFiles: new FormControl(null, {  }),
       assignTo: new FormControl(null, {  }),
-  
-  
+
+
     });
   }
 
   activityChange(event: MatSelectChange) {
 
     console.log('***activityChange >>' +  event.value);
-  
+
   }
 
 }

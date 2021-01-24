@@ -232,47 +232,23 @@
       Portfolio
     </ng-template>
 
-      <h3>All invest </h3>
-            <div class="chart-wrapper col-md-6">
-              <canvas baseChart class="chart"
-              [data]="alldoughnutChartData"
-              [labels]="alldoughnutChartLabels"
-              [chartType]="alldoughnutChartType"
-              (chartHover)="chartHovered($event)"
-              (chartClick)="chartClicked($event)"></canvas>
-            </div>
-
-    <div>
-      <h3>LBDU</h3>
-
-      <div class="chart-wrapper col-md-6">
-        <canvas baseChart class="chart"
-        [data]="lbdu_DoughnutChartData"
-        [labels]="lbdu_DoughnutChartLabels"
-        [chartType]="lbdu_DoughnutChartType"
-        (chartHover)="chartHovered($event)"
-        (chartClick)="chartClicked($event)"></canvas>
-      </div>
+     
+    <div class="div_top10">
+      <h3>LBDU <small> 100,000.00</small></h3>
 
       <table mat-table [dataSource]="lbdu_dataSource" class="col-md-6">
-
         <!-- Position Column -->
-        <ng-container matColumnDef="Fund_Code">
-          <th mat-header-cell *matHeaderCellDef> Fund_Code </th>
-          <td mat-cell *matCellDef="let element"> {{element.Fund_Code}} </td>
+        <ng-container matColumnDef="Code">
+          <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
+          <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
         </ng-container>
 
         <!--  Column -->
-        <ng-container matColumnDef="NAV">
-          <th mat-header-cell *matHeaderCellDef> NAV </th>
-          <td mat-cell *matCellDef="let element">{{element.NAV}} </td>
+        <ng-container matColumnDef="Val">
+          <th mat-header-cell *matHeaderCellDef> Val </th>
+          <td mat-cell *matCellDef="let element">{{element.Val}} </td>
         </ng-container>
 
-        <!--  Column -->
-        <ng-container matColumnDef="MKT_Value">
-          <th mat-header-cell *matHeaderCellDef> MKT_Value </th>
-          <td mat-cell *matCellDef="let element"> {{element.MKT_Value }} </td>
-        </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="lbdu_displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: lbdu_displayedColumns;"></tr>
@@ -280,22 +256,13 @@
 
     </div>
 
-    <div>
-      <h3>PRIVATE <small> 100,000.00</small></h3>
+    <div class="div_top10">
+      <h3>PRIVATE <small> 70,000,000.00</small></h3>
 
-      <div class="chart-wrapper col-md-6">
-        <canvas baseChart class="chart"
-        [data]="private_DoughnutChartData"
-        [labels]="private_DoughnutChartLabels"
-        [chartType]="private_DoughnutChartType"
-        (chartHover)="chartHovered($event)"
-        (chartClick)="chartClicked($event)"></canvas>
-      </div>
-<!--
       <table mat-table [dataSource]="private_dataSource" class="col-md-6">
-        <ng-container matColumnDef="Symbol">
-          <th mat-header-cell *matHeaderCellDef> Symbol </th>
-          <td mat-cell *matCellDef="let element"> {{element.Symbol}} </td>
+        <ng-container matColumnDef="Code">
+          <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
+          <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Val">
@@ -303,61 +270,31 @@
           <td mat-cell *matCellDef="let element"> {{element.Val }} </td>
         </ng-container>
 
-        <ng-container matColumnDef="Avg">
-          <th mat-header-cell *matHeaderCellDef> Avg </th>
-          <td mat-cell *matCellDef="let element"> {{element.Avg }} </td>
-        </ng-container>
-
-          <ng-container matColumnDef="Market">
-            <th mat-header-cell *matHeaderCellDef> Market </th>
-            <td mat-cell *matCellDef="let element">{{element.Market}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="Amount">
-            <th mat-header-cell *matHeaderCellDef> Amount </th>
-            <td mat-cell *matCellDef="let element">{{element.Amount}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="MarketVal">
-            <th mat-header-cell *matHeaderCellDef> MarketVal </th>
-            <td mat-cell *matCellDef="let element">{{element.MarketVal}} </td>
-          </ng-container>
-
         <tr mat-header-row *matHeaderRowDef="private_displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: private_displayedColumns;"></tr>
       </table>
-    -->
+  
 
     </div>
 
-    <div>
-      <h3>BOND <small>500,000.00</small></h3>
+    <div class="div_top10">
+      <h3>BOND <small>13,000,000.00</small></h3>
 
-      <div class="chart-wrapper col-md-6">
-        <canvas baseChart class="chart"
-        [data]="bond_DoughnutChartData"
-        [labels]="bond_DoughnutChartLabels"
-        [chartType]="bond_DoughnutChartType"
-        (chartHover)="chartHovered($event)"
-        (chartClick)="chartClicked($event)"></canvas>
-      </div>
-<!--
       <table mat-table [dataSource]="bond_dataSource" class="col-md-6">
-
-        <ng-container matColumnDef="Symbol">
-          <th mat-header-cell *matHeaderCellDef> Symbol </th>
-          <td mat-cell *matCellDef="let element"> {{element.Symbol}} </td>
+        <ng-container matColumnDef="Code">
+          <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
+          <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
         </ng-container>
 
-          <ng-container matColumnDef="Amount">
-            <th mat-header-cell *matHeaderCellDef> Amount </th>
-            <td mat-cell *matCellDef="let element">{{element.Amount}} </td>
+          <ng-container matColumnDef="Val">
+            <th mat-header-cell *matHeaderCellDef> Val </th>
+            <td mat-cell *matCellDef="let element">{{element.Val}} </td>
           </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="bond_displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: bond_displayedColumns;"></tr>
       </table>
-    -->
+  
 
     </div>
 

@@ -3,20 +3,7 @@
 
 <mat-tab-group mat-align-tabs="center">
   <mat-tab label="Dashboard">
-
-        <div  class="col-md-12">
-          <canvas baseChart class="chart col-md-6"
-          [datasets]="lineChartData"
-          [labels]="lineChartLabels"
-          [options]="lineChartOptions"
-          [colors]="lineChartColours"
-          [legend]="lineChartLegend"
-          [chartType]="lineChartType"
-          (chartHover)="chartHovered($event)"
-          (chartClick)="chartClicked($event)"></canvas>
-        </div>
-
-
+    
         <div class="col-md-12">
           <canvas baseChart class="chart col-md-6"
           [datasets]="barChartData"

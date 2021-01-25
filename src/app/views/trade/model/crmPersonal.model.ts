@@ -1,9 +1,13 @@
 export class CrmPersonModel {
   public CompCode: string;
   public CustCode: string;
+  public IdCard: string;
+  public AccountNo: string;
   public FirstName: string;
   public LastName: string;
   public CustomerAlias: string;
+  public Dob: string;
+  public Sex: string;
   public State: string;
   public Type: string;
   public Mobile: string;
@@ -18,8 +22,8 @@ export class CrmPersonModel {
   public Refer: string;
   public Class: string;
   public InvestCondition: string;
+  public ImportantData: string;
   public Note: string;
-
   public CreateBy: string;
   public CreateDate: string;
   public UpdateBy: string;

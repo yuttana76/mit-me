@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe, Location } from '@angular/common';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CrmPersonModel } from '../model/crmPersonal.model';
 import { BehaviorSubject } from 'rxjs';
 
@@ -13,9 +13,10 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class CrmPersonalDataComponent implements OnInit, OnDestroy {
 
-  form: FormGroup;
+  personalForm: FormGroup;
   paramId: String = '';
-  customer: CrmPersonModel = new CrmPersonModel();
+  personal: CrmPersonModel = new CrmPersonModel();
+  isDisableFields = false;
 
    lbdu_list=[{'Code':'KF-RMF','Val':'100,000.00'}
    ,{'Code':'KFGTECHRMF', 'Val':'144,059.82'}
@@ -29,7 +30,7 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
 
   private_list=[{'Code':'PF001', 'Val':'20,000,000'}
    ,{'Code':'PF002', 'Val':'50,000,000'}
-  
+
   ];
 
   private_displayedColumns: string[] = ['Code', 'Val'];
@@ -38,7 +39,7 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
   bond_list=[{'Code':'CHAIYO', 'Val':'1,000,000'}
    ,{'Code':'SANSIRI', 'Val':'2,000,000'}
    ,{'Code':'MAGNOLIA', 'Val':'10,000,000'}
-  
+
   ];
 
   bond_displayedColumns: string[] = ['Code', 'Val'];
@@ -48,7 +49,7 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
   consent_list=[{'topic':'ยินยิมเปิดเผยข้อมูล', 'submitDate':'01/01/2020','status':'Active','action':''}
    ,{'topic':'ยินยอมให้ข้อมูลการตลาด', 'submitDate':'01/01/2020','status':'Cancel','action':''}
    ,{'topic':'ยิยยอมให้ข้อมูลจัดเก็บต่างประเทศ', 'submitDate':'01/01/2020','status':'Active','action':''}
-  
+
   ];
 
   consent_displayedColumns: string[] = ['topic', 'submitDate','status','action'];
@@ -164,7 +165,9 @@ ClassList = [{
 ];
 
 
+
   constructor(
+    // private _formBuilder: FormBuilder,
     private location: Location,
   ) {
 
@@ -176,34 +179,32 @@ ClassList = [{
 
   private _buildForm() {
     // Initial Form fields
-    this.form = new FormGroup({
+    this.personalForm = new FormGroup({
 
-     firstName: new FormControl(null, {
+      FirstName: new FormControl(null, {
        validators: [Validators.required]
      }),
-     lastName: new FormControl(null, {
+     LastName: new FormControl(null, {
        validators: [Validators.required]
      }),
-     dob: new FormControl(null, {
-       // validators: [Validators.required
-         //  , Validators.pattern(DATE_REGEX)
-       // ]
+
+     CustomerAlias: new FormControl(null, {}),
+     Dob: new FormControl(null, {}),
+     Sex: new FormControl(null, {}),
+     Mobile: new FormControl(null, {
+      validators: [Validators.required]
      }),
-     department: new FormControl(null, {
-       validators: [Validators.required]
-     }),
-     position: new FormControl(null, {
-       validators: [Validators.required]
-     }),
-     officePhone: new FormControl(null, {
-       // validators: [Validators.required]
-     }),
-     mobPhone: new FormControl(null, {
-       // validators: [Validators.required]
-     }),
-     othEmail: new FormControl(null, {
-       // validators: [Validators.required]
-     }),
+     Telephone: new FormControl(null, {}),
+     Email: new FormControl(null, {}),
+     SocialAccount: new FormControl(null, {}),
+     ImportantData: new FormControl(null, {}),
+     Refer: new FormControl(null, {}),
+     State: new FormControl(null, {}),
+     Type: new FormControl(null, {}),
+     Class: new FormControl(null, {}),
+     Interested: new FormControl(null, {}),
+     SourceOfCustomer: new FormControl(null, {}),
+     InvestCondition: new FormControl(null, {}),
 
     });
   }
@@ -213,12 +214,14 @@ ClassList = [{
     // this.formChangeSub.unsubscribe();
   }
 
-  onSave() {
+  onPersonFormSubmit() {
 
-    if (this.form.invalid) {
-      console.log('form.invalid() ' + this.form.invalid);
+    if (this.personalForm.invalid) {
+      console.log('form.invalid() ' + this.personalForm.invalid);
       return true;
     }
+
+    console.log('Data is OK !!  ' + this.personalForm.invalid);
   }
 
 

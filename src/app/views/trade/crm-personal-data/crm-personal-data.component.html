@@ -1,6 +1,4 @@
-
-
-  <mat-card >
+<mat-card  class="example-full-width">
 
 <mat-tab-group mat-align-tabs="center">
   <mat-tab>
@@ -10,131 +8,95 @@
     </ng-template>
 
     <mat-card class="cust-container" >
+    <mat-card-title>CRM Personal Data</mat-card-title>
 
-      <mat-card-title>CRM Personal Data</mat-card-title>
-
-    <form class="example-form">
-    <!--
-      <mat-form-field class="example-form-field">
-        <mat-label>Clearable input</mat-label>
-        <input matInput type="text" [(ngModel)]="value">
-        <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field> -->
-
+    <form [formGroup]="personalForm"   >
 
       <mat-form-field class="col-md-6">
-        <!-- <mat-label>FirstName</mat-label> -->
-        <input matInput placeholder="FirstName" value="">
+        <input matInput  formControlName="FirstName" [(ngModel)]="personal.FirstName" placeholder="FirstName" >
       </mat-form-field>
 
       <mat-form-field class="col-md-6">
         <mat-label>LastName</mat-label>
-        <input matInput placeholder="LastName" value="">
+        <input matInput formControlName="LastName" [(ngModel)]="personal.LastName" placeholder="LastName" >
       </mat-form-field>
 
       <mat-form-field class="col-md-6">
         <mat-label>CustomerAlias</mat-label>
-        <input matInput placeholder="CustomerAlias" value="">
+        <input matInput formControlName="CustomerAlias" [(ngModel)]="personal.CustomerAlias"  placeholder="CustomerAlias" >
       </mat-form-field>
 
       <mat-form-field class="col-md-6">
         <mat-label>วันเกิด</mat-label>
-        <input matInput [matDatepicker]="empDate"
+        <input matInput  [matDatepicker]="Dob" formControlName="Dob" [(ngModel)]="personal.Dob"
           placeholder="DOB"
           [readonly]="true" >
-        <mat-datepicker-toggle matSuffix [for]="empDate"></mat-datepicker-toggle>
-        <mat-datepicker #empDate disabled="false"></mat-datepicker>
-        <!-- <mat-error *ngIf="form.get('empDate').invalid ">Please correct date expire date</mat-error> -->
+        <mat-datepicker-toggle matSuffix [for]="Dob"></mat-datepicker-toggle>
+        <mat-datepicker #Dob disabled="false"></mat-datepicker>
       </mat-form-field>
 
       <mat-label>Sex</mat-label>
-      <section class="example-full-width">
-          <mat-radio-group >
+      <section  class="example-full-width" >
+          <mat-radio-group  formControlName="Sex" [(ngModel)]="personal.Sex">
             <mat-radio-button class="example-margin"  *ngFor="let obj of SexList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
           </mat-radio-group>
       </section>
 
-
       <mat-form-field class="col-md-6">
         <mat-label>Mobile</mat-label>
-        <input matInput #Mobile placeholder="เบอร์มือถือ">
+        <input matInput formControlName="Mobile" [(ngModel)]="personal.Mobile" #Mobile >
         <mat-hint align="end">{{Mobile.value.length}} / 10</mat-hint>
       </mat-form-field>
 
       <mat-form-field class="col-md-6">
         <mat-label>Telephone
         </mat-label>
-        <input matInput placeholder="Telephone">
+        <input matInput formControlName="Telephone" [(ngModel)]="personal.Telephone" >
       </mat-form-field>
 
-    <!-- Fax -->
-    <!-- <mat-form-field class="col-md-6">
-      <mat-label>Fax
-      </mat-label>
-      <input matInput placeholder="Fax">
-    </mat-form-field> -->
-<div>
-    <!-- Email -->
-    <mat-form-field class="col-md-6">
-      <mat-label>Email</mat-label>
-      <input type="email" matInput
-             placeholder="Ex. pat@example.com">
-      <mat-hint>Errors appear instantly!</mat-hint>
-      <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-        Please enter a valid email address
-      </mat-error>
-      <mat-error *ngIf="emailFormControl.hasError('required')">
-        Email is <strong>required</strong>
-      </mat-error> -->
-    </mat-form-field>
+      <div>
+        <!-- Email -->
+        <mat-form-field class="col-md-6">
+          <mat-label>Email</mat-label>
+          <input type="email" matInput formControlName="Email" [(ngModel)]="personal.Email" >
+          <mat-hint>jhone@gmail.com</mat-hint>
+        </mat-form-field>
 
-    <!-- SocialAccount -->
-    <mat-form-field class="col-md-6">
-      <mat-label>SocialAccount</mat-label>
-      <input type="email" matInput
-             placeholder="FC, LinkIn, Line">
-      <mat-hint>Errors appear instantly!</mat-hint>
-      <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-        Please enter a valid email address
-      </mat-error>
-      <mat-error *ngIf="emailFormControl.hasError('required')">
-        Email is <strong>required</strong>
-      </mat-error> -->
-    </mat-form-field>
-  </div>
+        <!-- SocialAccount -->
+        <mat-form-field class="col-md-6">
+          <mat-label>SocialAccount</mat-label>
+          <input matInput formControlName="SocialAccount" [(ngModel)]="personal.SocialAccount"  >
+          <mat-hint >FC, LinkIn, Line</mat-hint>
+        </mat-form-field>
 
-    <div>
-      <h3>Important data</h3>
-      <!-- <mat-divider [inset]="true"></mat-divider> -->
+      </div>
 
-      <mat-form-field class="example-full-width">
-        <textarea matInput placeholder="Input impotant data of investor" rows=5></textarea>
-      </mat-form-field>
-    </div>
+      <div>
+        <h3>Important data</h3>
+        <mat-form-field class="col-md-6">
+          <textarea matInput formControlName="ImportantData" [(ngModel)]="personal.ImportantData" rows=5></textarea>
+          <mat-hint >Something is special data for customer</mat-hint>
+        </mat-form-field>
+      </div>
 
       <div>
         <h2>Invest Info</h2>
-        <!-- <mat-divider [inset]="true"></mat-divider> -->
       </div>
 
       <!-- Refer -->
       <mat-form-field class="col-md-6">
         <mat-label>Refer</mat-label>
-        <mat-select >
+        <mat-select formControlName="Refer" [(ngModel)]="personal.Refer" >
             <mat-option  *ngFor="let obj of ReferList" [value]="obj.code">
               {{obj.desc}}
             </mat-option>
           </mat-select>
-        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
-        <!-- <mat-hint>Referial</mat-hint> -->
       </mat-form-field>
 
       <div>
         <mat-label>สถานะลูกค้า</mat-label>
         <section class="example-full-width">
-          <mat-radio-group >
+          <mat-radio-group formControlName="State" [(ngModel)]="personal.State">
             <mat-radio-button class="example-margin"  *ngFor="let obj of stateList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
           </mat-radio-group>
         </section>
@@ -142,7 +104,7 @@
 
       <mat-label>ประเภทของลูกค้า</mat-label>
       <section class="example-full-width">
-        <mat-radio-group >
+        <mat-radio-group formControlName="Type" [(ngModel)]="personal.Type" >
           <mat-radio-button class="example-margin"  *ngFor="let obj of custTypeList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
         </mat-radio-group>
       </section>
@@ -150,7 +112,7 @@
        <!-- Class -->
        <mat-label>Class</mat-label>
        <section class="example-full-width">
-         <mat-radio-group >
+         <mat-radio-group  formControlName="Class" [(ngModel)]="personal.Class" >
            <mat-radio-button class="example-margin"  *ngFor="let obj of ClassList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
          </mat-radio-group>
        </section>
@@ -169,7 +131,7 @@
       <!-- Interested -->
       <mat-form-field class="col-md-6">
         <mat-label>Interested</mat-label>
-        <mat-select >
+        <mat-select multiple formControlName="Interested" [(ngModel)]="personal.Interested" >
             <mat-option  *ngFor="let obj of interestList" [value]="obj.code">
               {{obj.desc}}
             </mat-option>
@@ -178,50 +140,42 @@
       </mat-form-field>
 
       <div>
-      <!-- SourceOfCustomer -->
-      <mat-form-field class="col-md-6">
-        <mat-label>SourceOfCustomer</mat-label>
-        <mat-select >
-            <mat-option  *ngFor="let obj of SourceOfCustomerList" [value]="obj.code">
-              {{obj.desc}}
-            </mat-option>
-          </mat-select>
-          <mat-hint>Accetpt by</mat-hint>
-        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
-      </mat-form-field>
+        <mat-form-field class="col-md-6">
+          <mat-label>SourceOfCustomer</mat-label>
+          <mat-select formControlName="SourceOfCustomer" [(ngModel)]="personal.SourceOfCustomer">
+              <mat-option  *ngFor="let obj of SourceOfCustomerList" [value]="obj.code">
+                {{obj.desc}}
+              </mat-option>
+            </mat-select>
+            <mat-hint>Accetpt by</mat-hint>
+        </mat-form-field>
 
-      <!-- UserOwner -->
-      <mat-form-field class="col-md-6">
-        <mat-label>UserOwner
-        </mat-label>
-        <input matInput disabled placeholder="SourceOfCustomer">
-        <mat-hint>Marketing</mat-hint>
-      </mat-form-field>
-
-    </div>
+        <!-- UserOwner -->
+        <mat-form-field class="col-md-6">
+          <mat-label>UserOwner
+          </mat-label>
+          <input matInput  disabled  [(ngModel)]="personal.UserOwner" [ngModelOptions]="{standalone: true}">
+          <mat-hint>Marketing</mat-hint>
+        </mat-form-field>
+      </div>
 
       <!-- InvestCondition -->
       <mat-form-field class="example-full-width">
-        <mat-label>InvestCondition
-        </mat-label>
-        <textarea matInput placeholder="ข้อจำกัดของลูกค้า" rows="3"></textarea>
+        <mat-label>InvestCondition </mat-label>
+        <textarea matInput rows="3" formControlName="InvestCondition" [(ngModel)]="personal.InvestCondition" ></textarea>
       </mat-form-field>
-<!--
-      <mat-form-field class="example-full-width">
-        <mat-label>Note</mat-label>
-        <textarea matInput placeholder="รายละเอียดเพิ่มเติมเกี่ยวกับลูกค้า" rows="3"></textarea>
-      </mat-form-field>
- -->
 
       <mat-card-actions>
-        <a mat-flat-button class="button_card_action" color="primary" (click)="onSave()"  >SAVE</a>
-        <!-- <a mat-flat-button class="button_card_action" color="primary" (click)="onUpdate()"  >Update</a> -->
-        <a  class="button_card_action" mat-flat-button color="primary"  (click)="goBack()"> BACK
-            <!-- {{this.userFormService.back_btn}} -->
-        </a>
+        <a mat-flat-button class="button_card_action" color="primary" (click)="onPersonFormSubmit()"  >SAVE</a>
+        <!-- <a  class="button_card_action" mat-flat-button color="primary"  (click)="goBack()"> BACK</a> -->
+      <button mat-flat-button class="button_card_action"color="warn" type='reset' *ngIf="!isDisableFields">Reset</button>
+
+
+
       </mat-card-actions>
 
     </form>
+
     </mat-card>
 
   </mat-tab>
@@ -232,7 +186,23 @@
       Portfolio
     </ng-template>
 
-     
+    <div class="div_top10">
+      <h5>Internal </h5>
+
+      <mat-form-field class="col-md-6">
+        <mat-label>ID card</mat-label>
+        <input matInput  [(ngModel)]="personal.IdCard">
+        <!-- <mat-hint align="end">Number 0.0000</mat-hint>  -->
+      </mat-form-field>
+
+      <mat-form-field class="col-md-6">
+        <mat-label>Account No</mat-label>
+        <input matInput [(ngModel)]="personal.AccountNo" >
+        <!-- <mat-hint align="end">Number 0.0000</mat-hint>  -->
+      </mat-form-field>
+
+    </div>
+
     <div class="div_top10">
       <h3>LBDU <small> 100,000.00</small></h3>
 
@@ -273,7 +243,7 @@
         <tr mat-header-row *matHeaderRowDef="private_displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: private_displayedColumns;"></tr>
       </table>
-  
+
 
     </div>
 
@@ -294,7 +264,7 @@
         <tr mat-header-row *matHeaderRowDef="bond_displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: bond_displayedColumns;"></tr>
       </table>
-  
+
 
     </div>
 

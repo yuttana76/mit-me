@@ -11,7 +11,7 @@ import { CrmPersonModel } from '../model/crmPersonal.model';
 const BACKEND_URL = environment.apiURL + '/crm/';
 
 @Injectable({ providedIn: 'root' })
-export class CustomerService {
+export class CrmPersonalService {
   private personList: CrmPersonModel[] = [];
   private personListUpdated = new Subject<CrmPersonModel[]>();
 
@@ -77,7 +77,9 @@ export class CustomerService {
   }
 
 
-  getPersonalr(CustCode: string) {
+  getPersonal(CustCode: string) {
+
+    console.log('Welcome getPersonal()>>', CustCode);
 
     let URL =BACKEND_URL+'person/'
 
@@ -85,7 +87,8 @@ export class CustomerService {
     .pipe(map( fundtData => {
       return fundtData.result.map(data => {
         return {
-          CompCode:data.CompCode,
+          // CompCode:data.CompCode,
+          CompCode:'Test xxx',
           CustCode:data.CustCode,
           IdCard:data.IdCard,
           AccountNo:data.AccountNo,
@@ -119,17 +122,14 @@ export class CustomerService {
     }));
   }
 
-  updatePerson(personal: CrmPersonModel) {
+  updatePerson(personalModel: CrmPersonModel): Observable<any> {
 
     let URL =BACKEND_URL+'person/'
+    console.log('Welcome updatePerson()>>', JSON.stringify(personalModel));
 
-    this.http
-        .post<{ message: string, data: any }>(URL, personal)
-        .subscribe(responseData => {
-          console.log('Service  Result updatePerson()>>', JSON.stringify(responseData));
-            this.router.navigate(['/']);
-        });
+    return this.http
+        .post<{ message: string, data: any }>(URL, personalModel);
+        
   }
-
 
 }

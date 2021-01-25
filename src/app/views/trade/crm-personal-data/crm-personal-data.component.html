@@ -1,4 +1,8 @@
-<mat-card  class="example-full-width">
+
+
+<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+
+<mat-card class="example-full-width" *ngIf="!spinnerLoading">
 
 <mat-tab-group mat-align-tabs="center">
   <mat-tab>

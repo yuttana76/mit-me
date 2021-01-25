@@ -3,6 +3,9 @@ import { DatePipe, Location } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CrmPersonModel } from '../model/crmPersonal.model';
 import { BehaviorSubject } from 'rxjs';
+import { CrmPersonalService } from '../services/crmPerson.service';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
 
 // import { CalendarOptions } from '@fullcalendar/angular'; // useful for typechecking
 
@@ -17,6 +20,15 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
   paramId: String = '';
   personal: CrmPersonModel = new CrmPersonModel();
   isDisableFields = false;
+  spinnerLoading = false;
+  
+  MODE_CREATE = 'create';
+  MODE_EDIT = 'edit';
+
+  formScreen = 'N';
+  private mode = this.MODE_CREATE;
+  private custCode: string;
+
 
    lbdu_list=[{'Code':'KF-RMF','Val':'100,000.00'}
    ,{'Code':'KFGTECHRMF', 'Val':'144,059.82'}
@@ -169,12 +181,82 @@ ClassList = [{
   constructor(
     // private _formBuilder: FormBuilder,
     private location: Location,
+    private crmPersonalService: CrmPersonalService,
+    private router: Router,
+    public dialog: MatDialog,
+    public route: ActivatedRoute,
   ) {
 
    }
 
   ngOnInit() {
+    this.spinnerLoading = true;
     this._buildForm();
+    
+
+  }
+  
+  ngAfterViewInit() {
+
+    this.spinnerLoading = true;
+
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+
+      if (paramMap.has('source')) {
+        // console.log('SOURCE>>', paramMap.get('source'));
+        this.formScreen = paramMap.get('source');
+      }
+
+      if (paramMap.has('cust_Code')) {
+
+        this.mode = this.MODE_EDIT;
+        this.custCode = paramMap.get('cust_Code');
+      }
+
+
+       this.custCode='Input xxx'
+    // Load personal data
+        this.crmPersonalService.getPersonal(this.custCode).subscribe(custData => {
+          this.spinnerLoading = false;
+
+            console.log('Return getPersonal',JSON.stringify(custData))
+          // this.personal ={}
+
+          // this.customer = {
+          //   Cust_Code: custData[0].Cust_Code,
+          //   Card_Type: custData[0].Card_Type,
+          //   Card_IssueDate: custData[0].Birth_Day, // custData.Card_IssueDate,
+          //   Card_ExpDate: custData[0].Card_ExpDate,
+          //   Group_Code: custData[0].Group_Code,
+          //   Title_Name_T: custData[0].Title_Name_T,
+          //   First_Name_T: custData[0].First_Name_T,
+          //   Last_Name_T: custData[0].Last_Name_T,
+          //   Title_Name_E: custData[0].Title_Name_E,
+          //   First_Name_E: custData[0].First_Name_E,
+          //   Last_Name_E: custData[0].Last_Name_E,
+          //   Birth_Day: custData[0].Birth_Day,
+          //   Nation_Code: custData[0].Nation_Code,
+          //   Sex: custData[0].Sex,
+          //   Tax_No: custData[0].Tax_No,
+          //   Mobile: custData[0].Mobile,
+          //   Email: custData[0].Email,
+          //   MktId: custData[0].MktId,
+          //   Create_By: custData[0].Create_By,
+          //   Create_Date: custData[0].Create_Date,
+          //   Modify_By: custData[0].Modify_By,
+          //   Modify_Date: custData[0].Modify_Date,
+          //   IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
+          //   OTP_ID:'',
+          // };
+
+          
+        }, error => () => {
+          console.log('Load error', error);
+      }, () => {
+         console.log('Load complete');
+      });      
+
+    });
   }
 
   private _buildForm() {
@@ -222,6 +304,26 @@ ClassList = [{
     }
 
     console.log('Data is OK !!  ' + this.personalForm.invalid);
+
+    //   console.log('AFTER SAVE', JSON.stringify(data));
+    this.crmPersonalService.updatePerson(this.personal)
+    .subscribe((data: any ) => {
+
+      console.log('Save sucessful', data);
+
+      // if ( data.result && data.result.wfRef !== 'undefined') {
+      //   this.openDialog('success', 'Create customer was successful.', 'The refference number is ' +  data.result.wfRef);
+      //   this.saveCustomerComplete = true;
+      // } else {
+      //   this.openDialog('danger', 'Create customer was error',  data.message.originalError.info.message + '!  Please contact IT staff.' );
+      // }
+
+    }, error => () => {
+        console.log('Save error', error);
+    }, () => {
+       console.log('Loading complete');
+    });
+
   }
 
 

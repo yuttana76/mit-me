@@ -21,7 +21,7 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
   personal: CrmPersonModel = new CrmPersonModel();
   isDisableFields = false;
   spinnerLoading = false;
-  
+
   MODE_CREATE = 'create';
   MODE_EDIT = 'edit';
 
@@ -102,19 +102,6 @@ custTypeList = [{
   },
 ];
 
-custGroupList = [{
-  code:'Online',
-  desc:'Online',
-  },
-  {
-    code:'Agent',
-    desc:'ตัวแทน',
-  },
-  {
-    code:'General',
-    desc:'ทั่วไป',
-  },
-];
 
 interestList= [{
   code:'PF',
@@ -148,6 +135,10 @@ ReferList = [{
   code:'Pine',
   desc:'K.Pine',
   },
+  {
+    code:'FL',
+    desc:'FL',
+    },
   {
     code:'Sale A',
     desc:'Sale A',
@@ -192,10 +183,10 @@ ClassList = [{
   ngOnInit() {
     this.spinnerLoading = true;
     this._buildForm();
-    
+
 
   }
-  
+
   ngAfterViewInit() {
 
     this.spinnerLoading = true;
@@ -249,12 +240,12 @@ ClassList = [{
           //   OTP_ID:'',
           // };
 
-          
+
         }, error => () => {
           console.log('Load error', error);
       }, () => {
          console.log('Load complete');
-      });      
+      });
 
     });
   }

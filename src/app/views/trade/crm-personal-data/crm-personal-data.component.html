@@ -1,8 +1,9 @@
+<!--
+  <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+  <mat-card class="example-full-width" *ngIf="!spinnerLoading">
+-->
 
-
-<mat-spinner *ngIf="spinnerLoading"></mat-spinner>
-
-<mat-card class="example-full-width" *ngIf="!spinnerLoading">
+<mat-card class="example-full-width" >
 
 <mat-tab-group mat-align-tabs="center">
   <mat-tab>
@@ -120,17 +121,6 @@
            <mat-radio-button class="example-margin"  *ngFor="let obj of ClassList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
          </mat-radio-group>
        </section>
-
-      <!-- CustomerGroup -->
-      <!-- <mat-form-field class="example-full-width">
-        <mat-label>CustomerGroup</mat-label>
-        <mat-select >
-            <mat-option  *ngFor="let obj of custGroupList" [value]="obj.code">
-              {{obj.desc}}
-            </mat-option>
-          </mat-select>
-      </mat-form-field> -->
-
 
       <!-- Interested -->
       <mat-form-field class="col-md-6">

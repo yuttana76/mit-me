@@ -1726,13 +1726,34 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
   // Convert Refer code 6 charactors
   var referalPerson = ""
   var referalPersonFull = ""
+  var IT_SAcode_external =""
 
-  if(custObj.referalPerson){
-    referalPersonFull = custObj.referalPerson
+  // if(custObj.referalPerson){
+  //   referalPersonFull = custObj.referalPerson
 
-    custObj.referalPerson = custObj.referalPerson.replace(/\s/g, '');// remove sapce
-    referalPerson = custObj.referalPerson.substr(0, 6);
+  //   custObj.referalPerson = custObj.referalPerson.replace(/\s/g, '');// remove sapce
+  //   referalPerson = custObj.referalPerson.substr(0, 6);
+  // }
+
+  // IT_SAcode_external
+  if(custObj.acceptBy){
+
+    custObj.acceptBy = custObj.acceptBy.replace(/\s/g, '');// remove sapce
+
+    var acceptBy_splited = custObj.acceptBy.split("-");
+    if(acceptBy_splited.length>1){
+      IT_SAcode_external=acceptBy_splited[0];
+    }
+
+    console.log('***acceptBy_splited>' ,JSON.stringify(acceptBy_splited))
+    console.log('***IT_SAcode_external>' ,JSON.stringify(IT_SAcode_external))
+    // referalPerson = custObj.referalPerson.substr(0, 6);
   }
+
+
+  referalPersonFull = custObj.referalPerson
+  referalPerson = custObj.referalPerson
+
 
   // Convert Date split 10 charactors
     if(custObj.birthDate){
@@ -1845,10 +1866,16 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
     WHERE SET_Code= @SET_Code
 
     --MktId & IT_SAcode
-    SELECT @MktId=ISNULL(b.Id,'0'),@IT_SAcode = ISNULL(icLicense,'')
+    -- SELECT @MktId=ISNULL(b.Id,'0'),@IT_SAcode = ISNULL(icLicense,'')
+    SELECT @MktId=ISNULL(b.Id,'0')
     FROM MIT_FC_CUST_ACCOUNT a
     left join MFTS_SalesCode b on b.License_Code=a.icLicense
     WHERE cardNumber=@cardNumber
+
+    IF @IT_SAcode_external  <>''
+    BEGIN
+      SELECT @IT_SAcode = @IT_SAcode_external
+    END;
 
     --#BACKUP DATA
     --Card_Type
@@ -2628,7 +2655,9 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
       .input("Mobile", sql.VarChar(50), custObj.mobileNumber)
       .input("Sex", sql.VarChar(10), custObj.Sex)
       // .input("IT_SAcode", sql.NVarChar(20), '') //license
-      .input("IT_Referral", sql.NVarChar(20), referalPerson) //
+      .input("IT_SAcode_external", sql.NVarChar(20), IT_SAcode_external) //IT_SAcode_external
+
+      .input("IT_Referral", sql.NVarChar(100), referalPerson) //
       .input("IT_SentRepByEmail", sql.NVarChar(20), custObj.IT_SentRepByEmail)
       .input("IT_PID_No", sql.NVarChar(20), custObj.cardNumber)
       .input("IT_PID_ExpiryDate", sql.NVarChar(50), custObj.cardExpiryDate) // Date

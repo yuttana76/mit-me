@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe, Location } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { CrmPersonModel } from '../model/crmPersonal.model';
+import { CrmPersonModel , MasterData} from '../model/crmPersonal.model';
 import { BehaviorSubject } from 'rxjs';
 import { CrmPersonalService } from '../services/crmPerson.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
+import { forkJoin } from 'rxjs';
 
 // import { CalendarOptions } from '@fullcalendar/angular'; // useful for typechecking
 
@@ -78,19 +79,21 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
   },
 ];
 
-stateList = [{
-  code:'Lead',
-  desc:'Lead',
-},
-{
-  code:'Prospect',
-  desc:'Prospect',
-},
-{
-  code:'Customer',
-  desc:'Customer',
-},
-];
+
+stateList: MasterData[] = [];
+// stateList = [{
+//   code:'Lead',
+//   desc:'Lead',
+// },
+// {
+//   code:'Prospect',
+//   desc:'Prospect',
+// },
+// {
+//   code:'Customer',
+//   desc:'Customer',
+// },
+// ];
 
 custTypeList = [{
   code:'Business',
@@ -206,46 +209,59 @@ ClassList = [{
 
 
        this.custCode='Input xxx'
-    // Load personal data
-        this.crmPersonalService.getPersonal(this.custCode).subscribe(custData => {
-          this.spinnerLoading = false;
 
-            console.log('Return getPersonal',JSON.stringify(custData))
-          // this.personal ={}
+      //  Initial load master data
+      var fnArray=[];
+      fnArray.push(this.crmPersonalService.getMastert("custState"));
+      fnArray.push(this.crmPersonalService.getMastert("xxx"));
 
-          // this.customer = {
-          //   Cust_Code: custData[0].Cust_Code,
-          //   Card_Type: custData[0].Card_Type,
-          //   Card_IssueDate: custData[0].Birth_Day, // custData.Card_IssueDate,
-          //   Card_ExpDate: custData[0].Card_ExpDate,
-          //   Group_Code: custData[0].Group_Code,
-          //   Title_Name_T: custData[0].Title_Name_T,
-          //   First_Name_T: custData[0].First_Name_T,
-          //   Last_Name_T: custData[0].Last_Name_T,
-          //   Title_Name_E: custData[0].Title_Name_E,
-          //   First_Name_E: custData[0].First_Name_E,
-          //   Last_Name_E: custData[0].Last_Name_E,
-          //   Birth_Day: custData[0].Birth_Day,
-          //   Nation_Code: custData[0].Nation_Code,
-          //   Sex: custData[0].Sex,
-          //   Tax_No: custData[0].Tax_No,
-          //   Mobile: custData[0].Mobile,
-          //   Email: custData[0].Email,
-          //   MktId: custData[0].MktId,
-          //   Create_By: custData[0].Create_By,
-          //   Create_Date: custData[0].Create_Date,
-          //   Modify_By: custData[0].Modify_By,
-          //   Modify_Date: custData[0].Modify_Date,
-          //   IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
-          //   OTP_ID:'',
-          // };
+      forkJoin(fnArray)
+      //  .subscribe(([call1Response, call2Response]) => {
+       .subscribe((dataRs) => {
+         console.log(" Init RS:" + JSON.stringify(dataRs))
+       });
 
 
-        }, error => () => {
-          console.log('Load error', error);
-      }, () => {
-         console.log('Load complete');
-      });
+    // // Load personal data
+    //     this.crmPersonalService.getPersonal(this.custCode).subscribe(custData => {
+    //       this.spinnerLoading = false;
+
+    //         console.log('Return getPersonal',JSON.stringify(custData))
+    //       // this.personal ={}
+
+    //       // this.customer = {
+    //       //   Cust_Code: custData[0].Cust_Code,
+    //       //   Card_Type: custData[0].Card_Type,
+    //       //   Card_IssueDate: custData[0].Birth_Day, // custData.Card_IssueDate,
+    //       //   Card_ExpDate: custData[0].Card_ExpDate,
+    //       //   Group_Code: custData[0].Group_Code,
+    //       //   Title_Name_T: custData[0].Title_Name_T,
+    //       //   First_Name_T: custData[0].First_Name_T,
+    //       //   Last_Name_T: custData[0].Last_Name_T,
+    //       //   Title_Name_E: custData[0].Title_Name_E,
+    //       //   First_Name_E: custData[0].First_Name_E,
+    //       //   Last_Name_E: custData[0].Last_Name_E,
+    //       //   Birth_Day: custData[0].Birth_Day,
+    //       //   Nation_Code: custData[0].Nation_Code,
+    //       //   Sex: custData[0].Sex,
+    //       //   Tax_No: custData[0].Tax_No,
+    //       //   Mobile: custData[0].Mobile,
+    //       //   Email: custData[0].Email,
+    //       //   MktId: custData[0].MktId,
+    //       //   Create_By: custData[0].Create_By,
+    //       //   Create_Date: custData[0].Create_Date,
+    //       //   Modify_By: custData[0].Modify_By,
+    //       //   Modify_Date: custData[0].Modify_Date,
+    //       //   IT_SentRepByEmail: custData[0].IT_SentRepByEmail,
+    //       //   OTP_ID:'',
+    //       // };
+
+
+    //     }, error => () => {
+    //       console.log('Load error', error);
+    //   }, () => {
+    //      console.log('Load complete');
+    //   });
 
     });
   }

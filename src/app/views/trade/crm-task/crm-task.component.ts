@@ -126,10 +126,10 @@ feedbackResultList=[
   {
     code:'3',
     desc:'ติดตามต่อ',
-  },  
+  },
 ]
 
-feedbackNotList=[
+feedbackNotCategory=[
   {
     code:'1',
     desc:'ไม่น่าสนใจ',
@@ -140,12 +140,12 @@ feedbackNotList=[
   },
   {
     code:'3',
-    desc:'ลงทุนนานเงินไป',
-  },  
+    desc:'ระยะเวลาลงทุนนานเกินไป',
+  },
   {
     code:'4',
     desc:'ไม่ชอบลงทุนต่างประเทศ',
-  },  
+  },
 ]
 
   constructor(
@@ -161,9 +161,9 @@ feedbackNotList=[
       schType: new FormControl(null, {validators: [Validators.required]}),
       // schStatus: new FormControl(null, {validators: [Validators.required]}),
       schStartDate: new FormControl(null, {validators: [Validators.required]}),
-      
+
       note: new FormControl(null, {validators: [Validators.required]}),
-      
+
       channel: new FormControl(null, { }),
       prodCate: new FormControl(null, { }),
       productItem: new FormControl(null, { }),
@@ -175,7 +175,7 @@ feedbackNotList=[
       investType: new FormControl(null, { }),
       investValue: new FormControl(null, { }),
       investDate: new FormControl(null, { }),
-      
+
 
 
     });

@@ -32,3 +32,11 @@ export class CrmPersonModel {
   constructor(){}
 
 }
+
+export class MasterData {
+  public refType: string;
+  public refCode: string;
+  public nameTh: string;
+  public nameEn: string;
+
+}

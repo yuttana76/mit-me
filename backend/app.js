@@ -60,6 +60,7 @@ const smsRoutes = require('./routes/sms');
 const surveyRoutes = require('./routes/survey');
 const graphQLRoutes = require('./routes/graphQL');
 const slackRoutes = require('./routes/slack');
+const mitCrmRoutes = require('./routes/mitCrm');
 
 var logger = require("./config/winston");
 
@@ -200,6 +201,7 @@ app.use("/api/survey",surveyRoutes);
 app.use("/api/graphQL",graphQLRoutes);
 app.use("/api/slack",slackRoutes);
 
+app.use("/api/mitCrm",mitCrmRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

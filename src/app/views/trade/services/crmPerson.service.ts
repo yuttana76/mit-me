@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
 
 import { CrmPersonModel } from '../model/crmPersonal.model';
 
-const BACKEND_URL = environment.apiURL + '/crm/';
+const BACKEND_URL = environment.apiURL + '/mitCrm';
 
 @Injectable({ providedIn: 'root' })
 export class CrmPersonalService {
@@ -16,6 +16,28 @@ export class CrmPersonalService {
   private personListUpdated = new Subject<CrmPersonModel[]>();
 
   constructor(private http: HttpClient , private router: Router) { }
+
+  // getMastert(refType) {
+  //   console.log("*** Service getMastert()>" + refType)
+  //   return this.http
+  //     .get<{ message: string; result: any }>(BACKEND_URL + '/getMastert?refType='+ refType)
+  //     .pipe(map( _data => {
+  //       return _data.result.map(data => {
+  //         console.log("*** RS Service getMastert()>" + JSON.stringify(data))
+  //         return data
+  //       });
+  //     }));
+  // }
+
+  getMastert(refType) {
+    return this.http
+      .get<{ message: string; result: any }>(BACKEND_URL + '/getMastert?refType='+ refType)
+      .pipe( map(fundtData => {
+          return fundtData;
+        })
+      );
+  }
+
 
   getPersonalLists(rowPerPage: number, currentPage: number, idCard: String,name: String,mobile:String,aliasName) {
 
@@ -129,7 +151,7 @@ export class CrmPersonalService {
 
     return this.http
         .post<{ message: string, data: any }>(URL, personalModel);
-        
+
   }
 
 }

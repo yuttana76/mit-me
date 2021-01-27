@@ -90,7 +90,7 @@
 
       <!-- Refer -->
       <mat-form-field class="col-md-6">
-        <mat-label>Refer</mat-label>
+        <mat-label>Referral</mat-label>
         <mat-select formControlName="Refer" [(ngModel)]="personal.Refer" >
             <mat-option  *ngFor="let obj of ReferList" [value]="obj.code">
               {{obj.desc}}
@@ -135,7 +135,7 @@
 
       <div>
         <mat-form-field class="col-md-6">
-          <mat-label>SourceOfCustomer</mat-label>
+          <mat-label>Source of data</mat-label>
           <mat-select formControlName="SourceOfCustomer" [(ngModel)]="personal.SourceOfCustomer">
               <mat-option  *ngFor="let obj of SourceOfCustomerList" [value]="obj.code">
                 {{obj.desc}}

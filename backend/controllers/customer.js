@@ -1741,8 +1741,13 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
     custObj.acceptBy = custObj.acceptBy.replace(/\s/g, '');// remove sapce
 
     var acceptBy_splited = custObj.acceptBy.split("-");
+
     if(acceptBy_splited.length>1){
       IT_SAcode_external=acceptBy_splited[0];
+
+      if (Number(acceptBy_splited[1][0])) {
+        IT_SAcode_external = IT_SAcode_external+"-"+acceptBy_splited[1][0]
+      }
     }
 
     console.log('***acceptBy_splited>' ,JSON.stringify(acceptBy_splited))

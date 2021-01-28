@@ -36,30 +36,67 @@ const sql = require("mssql");
 
 
 
-exports.getMastert = (req, res, next) => {
-
+exports.getMastert = (req, res, next) =>{
+  var compCode = req.query.compCode
   var refType = req.query.refType
+  var lang = req.query.lang
 
   logger.info('Start getMastert;' + refType )
+  getMaster(compCode,refType,lang).then(data=>{
+    res.status(200).json(data);
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
+}
 
-  data = [{
-        refCode:'Lead',
-        nameTh:'Lead-TH',
-        nameEn:'Lead-EN',
-      },
-      {
-        refCode:'Prospect',
-        nameTh:'Prospect-TH',
-        nameEn:'Prospect-EN',
-      },
-      {
-        refCode:'Customer',
-        nameTh:'Customer-TH',
-        nameEn:'Customer-EN',
-      },
-      ];
 
-  // Return
-  res.status(200).json('API Schedule successful. ' + JSON.stringify(data));
+function getMaster(compCode,refType,lang) {
+  logger.info('getMaster()');
 
+  var fncName = "getMaster()";
+  var queryStr = `
+  BEGIN
+
+  SELECT refCode as code ,
+  CASE
+      WHEN @lang = 'TH' THEN nameTh
+      ELSE nameEn
+  END AS text
+  FROM MIT_CRM_MasterData
+  WHERE status='A'
+  AND compCode=@compCode
+  AND refType=@refType
+  ORDER BY nameTh
+
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("compCode", sql.VarChar(20), compCode)
+        .input("refType", sql.VarChar(20), refType)
+        .input("lang", sql.VarChar(20), lang)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
 }

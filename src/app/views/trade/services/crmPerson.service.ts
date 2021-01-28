@@ -9,6 +9,8 @@ import { environment } from '../../../../environments/environment';
 import { CrmPersonModel } from '../model/crmPersonal.model';
 
 const BACKEND_URL = environment.apiURL + '/mitCrm';
+const COMP_CODE='MPAM';
+const LANG='TH';
 
 @Injectable({ providedIn: 'root' })
 export class CrmPersonalService {
@@ -30,8 +32,14 @@ export class CrmPersonalService {
   // }
 
   getMastert(refType) {
+
+    let queryParams = `?compCode=${COMP_CODE}`;
+
+    queryParams += `&refType=${refType}`;
+    queryParams += `&lang=${LANG}`;
+
     return this.http
-      .get<{ message: string; result: any }>(BACKEND_URL + '/getMastert?refType='+ refType)
+      .get<{ message: string; result: any }>(BACKEND_URL + '/getMastert'+ queryParams)
       .pipe( map(fundtData => {
           return fundtData;
         })

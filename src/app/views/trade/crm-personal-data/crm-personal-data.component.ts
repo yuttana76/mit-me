@@ -80,7 +80,7 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
 ];
 
 
-stateList: MasterData[] = [];
+ stateList ; //: MasterData[] = [];
 // stateList = [{
 //   code:'Lead',
 //   desc:'Lead',
@@ -95,15 +95,33 @@ stateList: MasterData[] = [];
 // },
 // ];
 
-custTypeList = [{
-  code:'Business',
-  desc:'Business',
-  },
-  {
-    code:'Individual',
-    desc:'Individual',
-  },
-];
+custTypeList;
+
+// custTypeList = [{
+//   code:'Business',
+//   desc:'Business',
+//   },
+//   {
+//     code:'Individual',
+//     desc:'Individual',
+//   },
+// ];
+
+ClassList
+// ClassList = [{
+//   code:'Retail',
+//   desc:'Retail',
+//   },
+//   {
+//     code:'HNW',
+//     desc:'HNW',
+//   },
+//   {
+//     code:'U-HNW',
+//     desc:'U-HNW',
+//   },
+// ];
+
 
 
 interestList= [{
@@ -156,19 +174,6 @@ ReferList = [{
   },
 ];
 
-ClassList = [{
-  code:'Retail',
-  desc:'Retail',
-  },
-  {
-    code:'HNW',
-    desc:'HNW',
-  },
-  {
-    code:'U-HNW',
-    desc:'U-HNW',
-  },
-];
 
 
 
@@ -213,12 +218,18 @@ ClassList = [{
       //  Initial load master data
       var fnArray=[];
       fnArray.push(this.crmPersonalService.getMastert("custState"));
-      fnArray.push(this.crmPersonalService.getMastert("xxx"));
+      fnArray.push(this.crmPersonalService.getMastert("custType"));
+      fnArray.push(this.crmPersonalService.getMastert("custClass"));
+      // fnArray.push(this.crmPersonalService.getMastert("xxx"));
 
       forkJoin(fnArray)
       //  .subscribe(([call1Response, call2Response]) => {
        .subscribe((dataRs) => {
-         console.log(" Init RS:" + JSON.stringify(dataRs))
+
+         this.stateList=dataRs[0].recordset;
+         this.custTypeList=dataRs[1].recordset;
+         this.ClassList=dataRs[2].recordset;
+
        });
 
 

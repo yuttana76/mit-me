@@ -102,7 +102,7 @@
         <mat-label>สถานะลูกค้า</mat-label>
         <section class="example-full-width">
           <mat-radio-group formControlName="State" [(ngModel)]="personal.State">
-            <mat-radio-button class="example-margin"  *ngFor="let obj of stateList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+            <mat-radio-button class="example-margin"  *ngFor="let obj of stateList" [value]="obj.code">{{obj.text}}</mat-radio-button>
           </mat-radio-group>
         </section>
       </div>
@@ -110,7 +110,7 @@
       <mat-label>ประเภทของลูกค้า</mat-label>
       <section class="example-full-width">
         <mat-radio-group formControlName="Type" [(ngModel)]="personal.Type" >
-          <mat-radio-button class="example-margin"  *ngFor="let obj of custTypeList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+          <mat-radio-button class="example-margin"  *ngFor="let obj of custTypeList" [value]="obj.code">{{obj.text}}</mat-radio-button>
         </mat-radio-group>
       </section>
 
@@ -118,7 +118,7 @@
        <mat-label>Class</mat-label>
        <section class="example-full-width">
          <mat-radio-group  formControlName="Class" [(ngModel)]="personal.Class" >
-           <mat-radio-button class="example-margin"  *ngFor="let obj of ClassList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+           <mat-radio-button class="example-margin"  *ngFor="let obj of ClassList" [value]="obj.code">{{obj.text}}</mat-radio-button>
          </mat-radio-group>
        </section>
 

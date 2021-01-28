@@ -3957,7 +3957,8 @@ function fcAlloted_ToDB(fileName,userCode,businessDate){
               if(item[30]){
                 // console.log('Number>> ' + _row+1)
                 fnArray=[];
-                fnArray.push(update_MIT_FC_TransAllotted(item,userCode,businessDate));
+                // fnArray.push(update_MIT_FC_TransAllotted(item,userCode,businessDate));
+                fnArray.push(update_MIT_FC_TransAllotted_insertAll(item,userCode,businessDate));
 
                 Promise.all(fnArray)
                 .then(data => {
@@ -3988,8 +3989,16 @@ function fcAlloted_ToDB(fileName,userCode,businessDate){
     }
   });
 }
-
-
+/*
+// Update transaction cast
+WHERE SAreferenceNo=@SAreferenceNo
+      AND accountID=@accountID
+      AND unitholderID=@unitholderID
+      AND  fundCode=@fundCode
+      AND businessDate=@businessDate
+      AND transactionDateTxt=@transactionDateTxt
+      AND  status=@status
+*/
 function update_MIT_FC_TransAllotted(item,ActionBy,businessDate){
 
 
@@ -4171,8 +4180,13 @@ function update_MIT_FC_TransAllotted(item,ActionBy,businessDate){
       creditCardIssuer=@creditCardIssuer,
       UpdateBy=@ActionBy,
       [UpdateDate]=getDate()
-      WHERE SAreferenceNo=@SAreferenceNo AND accountID=@accountID AND unitholderID=@unitholderID AND  fundCode=@fundCode AND businessDate=@businessDate AND transactionDateTxt
-=@transactionDateTxt AND  status=@status
+      WHERE SAreferenceNo=@SAreferenceNo
+      AND accountID=@accountID
+      AND unitholderID=@unitholderID
+      AND  fundCode=@fundCode
+      AND businessDate=@businessDate
+      AND transactionDateTxt=@transactionDateTxt
+      AND  status=@status
 
         IF @@ROWCOUNT=0
         BEGIN
@@ -4394,6 +4408,346 @@ function update_MIT_FC_TransAllotted(item,ActionBy,businessDate){
   });
 }
 
+// Insert all transactions
+function update_MIT_FC_TransAllotted_insertAll(item,ActionBy,businessDate){
+
+  // 1	SA Order Reference No
+  var SAreferenceNo = item[0]?item[0].trim():''
+  // 2	Transaction Date-Time(YYYYMMDDHHMMSS)
+  var transactionDateTxt = item[1]?item[1].trim():''
+  var transactionDate = '';
+
+  // 3	Account ID
+  var accountID = item[2]?item[2].trim():''
+  // 4	AMC Code
+  var amc = item[3]?item[3].trim():''
+  // 5	Unitholder ID
+  var unitholderID = item[4]?item[4].trim():''
+  // 6	Filler
+  // 7	Transaction Code
+  var transactionCode = item[6]?item[6].trim():''
+  // 8	Fund Code
+  var fundCode =item[7]?item[7].trim():''
+  // 9	Override RisK Profile Flag
+  var RiskFlag =item[8]?item[8].trim():''
+  // 10	Override FX Risk Flag
+  var FxFlag =item[9]?item[9].trim():''
+  // 11	Redemption Type
+  var redemptionType=item[10]?item[10].trim():''
+  // 12	Amount
+  var amount =item[11]?item[11].trim():''
+  // 13	Unit
+  var unit =item[12]?item[12].trim():''
+  // 14	Effective Date
+  var effectiveDate =item[13]?item[13].trim():''
+  // 15	Filler
+  // 16	Filler
+  // 17	Payment Type
+  var paymentType =item[16]?item[16].trim():''
+  // 18	Bank Code
+  var bankCode =item[17]?item[17].trim():''
+  // 19	Bank Account / Credit Card Number
+  var bankAccount =item[18]?item[18].trim():''
+  // 20	Cheque No
+  var chequeNo =item[19]?item[19].trim():''
+  // 21	Cheque Date
+  var chequeDate =item[20]?item[20].trim():''
+  // 22	IC License
+  var ICLicense =item[21]?item[21].trim():''
+  // 23	Branch No
+  var branchNo =item[22]?item[22].trim():''
+  // 24	Channel
+  var channel =item[23]?item[23].trim():''
+  // 25	Force Entry
+  var forceEntry =item[24]?item[24].trim():''
+  // 26	LTF Condition
+  var LTFcondition =item[25]?item[25].trim():''
+  // 27	Reason to sell LTF/RMF
+  var reasonToSell_LTF_RMF =item[26]?item[26].trim():''
+  // 28	RMF Capital gain withholding tax choice
+  var RMFwithholdChoice =item[27]?item[27].trim():''
+  // 29	RMF Capital amount redeem choice
+  var RMFredeemChoice =item[28]?item[28].trim():''
+  // 30	Auto redeem fund code
+  var autoRedeem =item[29]?item[29].trim():''
+  // 31	Transaction ID
+  var transactionID =item[30]?item[30].trim():''
+  // 32	Status
+  var status =item[31]?item[31].trim():''
+  // 33	AMC Order Reference No
+  var AMCorderRef=item[32]?item[32].trim():''
+  // 34	Allotment Date
+  var allotDate =item[33]?item[33].trim():''
+  // 35	Allotted NAV
+  var allottedNAV =item[34]?item[34].trim():''
+  // 36	Allotted Amount
+  var allottedAmount =item[35]?item[35].trim():''
+  // 37	Alloted Unit
+  var allotedUnit =item[36]?item[36].trim():''
+  // 38	Fee
+  var fee =item[37]?item[37].trim():''
+  // 39	Withholding Tax
+  var withholdTax =item[38]?item[38].trim():''
+  // 40	VAT
+  var VAT =item[39]?item[39].trim():''
+  // 41	Brokerage fee
+  var brokerageFee =item[40]?item[40].trim():''
+  // 42	Withholding Tax for LTF/RMF
+  var WithholdTaxLTF_RMF =item[41]?item[41].trim():''
+  // 43	AMC Pay Date
+  var AMCpayDate =item[42]?item[42].trim():''
+  // 44	Registrar Transaction Flag
+  var regisTransFlag =item[43]?item[43].trim():''
+  // 45	Sell all unit flag
+  var sellAllUnitFlag =item[44]?item[44].trim():''
+  // 46	Settlement Bank Code
+  var settleBankCode =item[45]?item[45].trim():''
+  // 47	Settlement Bank Account
+  var settleBankAccount =item[46]?item[46].trim():''
+  // 48	Reject Reason
+  var rejectReason =item[47]?item[47].trim():''
+  // 49	CHQ Branch
+  var CHQbranch =item[48]?item[48].trim():''
+  // 50	Tax Invoice No
+  var TaxInvoice =item[49]?item[49].trim():''
+  // 51	AMC Switching Order Reference No
+  var AMCorderRefer =item[50]?item[50].trim():''
+  // 52	IC Code
+  var ICcode =item[51]?item[51].trim():''
+  // 53	Brokerage fee  VAT
+  var brokerFeeVAT =item[52]?item[52].trim():''
+  // 54	Approval Code
+  var approvalCode =item[53]?item[53].trim():''
+  // 55	NAV Date
+  var NAVdate =item[54]?item[54].trim():''
+  // 56 Collateral Account
+  var collateralAccount =item[55]?item[55].trim():''
+  // 57 Credit card issuer
+  var creditCardIssuer =item[56]?item[56].trim():''
+
+// console.log("update_MIT_FC_TransAllotted()");
+
+const sql = require('mssql')
+var queryStr = `
+BEGIN TRANSACTION TranName;
+
+INSERT INTO  MIT_FC_TransAllotted(
+SAreferenceNo,
+transactionDate,
+[transactionDateTxt],
+[accountID],
+[amc],
+[unitholderID],
+[transactionCode],
+[fundCode],
+RiskFlag,
+FxFlag,
+[redemptionType],
+[amount],
+[unit],
+[effectiveDate],
+[paymentType],
+[bankCode],
+[bankAccount],
+chequeNo,
+chequeDate,
+ICLicense,
+branchNo,
+channel,
+forceEntry,
+LTFcondition,
+reasonToSell_LTF_RMF,
+RMFwithholdChoice,
+RMFredeemChoice,
+autoRedeem,
+transactionID,
+status,
+AMCorderRef,
+allotDate,
+allottedNAV,
+allottedAmount,
+allotedUnit,
+fee,
+withholdTax,
+VAT,
+brokerageFee,
+WithholdTaxLTF_RMF,
+AMCpayDate,
+regisTransFlag,
+sellAllUnitFlag,
+settleBankCode,
+settleBankAccount,
+rejectReason,
+CHQbranch,
+TaxInvoice,
+AMCorderRefer,
+ICcode,
+brokerFeeVAT,
+approvalCode,
+NAVdate,
+collateralAccount,
+creditCardIssuer,
+businessDate,
+[CreateBy],
+[CreateDate]
+)
+VALUES(
+@SAreferenceNo,
+@transactionDate,
+@transactionDateTxt,
+@accountID,
+@amc,
+@unitholderID,
+@transactionCode,
+@fundCode,
+@RiskFlag,
+@FxFlag,
+@redemptionType,
+@amount,
+@unit,
+@effectiveDate,
+@paymentType,
+@bankCode,
+@bankAccount,
+@chequeNo,
+@chequeDate,
+@ICLicense,
+@branchNo,
+@channel,
+@forceEntry,
+@LTFcondition,
+@reasonToSell_LTF_RMF,
+@RMFwithholdChoice,
+@RMFredeemChoice,
+@autoRedeem,
+@transactionID,
+@status,
+@AMCorderRef,
+@allotDate,
+@allottedNAV,
+@allottedAmount,
+@allotedUnit,
+@fee,
+@withholdTax,
+@VAT,
+@brokerageFee,
+@WithholdTaxLTF_RMF,
+@AMCpayDate,
+@regisTransFlag,
+@sellAllUnitFlag,
+@settleBankCode,
+@settleBankAccount,
+@rejectReason,
+@CHQbranch,
+@TaxInvoice,
+@AMCorderRefer,
+@ICcode,
+@brokerFeeVAT,
+@approvalCode,
+@NAVdate,
+@collateralAccount,
+@creditCardIssuer,
+@businessDate,
+@ActionBy,
+getDate()
+)
+
+
+COMMIT TRANSACTION TranName;
+`;
+
+return new Promise(function(resolve, reject) {
+
+//Convert data
+fnArray=[];
+fnArray.push(util.txtToDateTimeFormat(transactionDateTxt));
+Promise.all(fnArray)
+.then(data => {
+//Convert result
+transactionDate = data[0]
+
+// Execute db
+const pool1 = new sql.ConnectionPool(config, err => {
+pool1.request()
+// .input("transactionID", sql.VarChar(30), transactionID)
+.input("SAreferenceNo", sql.VarChar(30), SAreferenceNo)
+.input("transactionDate", sql.VarChar(50), transactionDate?transactionDate:null)
+.input("transactionDateTxt", sql.VarChar(50), transactionDateTxt)
+.input("accountID", sql.VarChar(15), accountID)
+.input("amc", sql.VarChar(15), amc)
+.input("unitholderID", sql.VarChar(15), unitholderID)
+.input("transactionCode", sql.VarChar(3), transactionCode)
+.input("fundCode", sql.VarChar(30), fundCode)
+.input("RiskFlag", sql.VarChar(1), RiskFlag)
+.input("FxFlag", sql.VarChar(1), FxFlag)
+.input("redemptionType", sql.VarChar(4), redemptionType)
+.input("amount", sql.VarChar(50), amount?amount:null)
+.input("unit", sql.VarChar(50), unit?unit:null)
+.input("effectiveDate", sql.VarChar(50), effectiveDate?effectiveDate:null)
+.input("paymentType", sql.VarChar(8), paymentType)
+.input("bankCode", sql.VarChar(4), bankCode)
+.input("bankAccount", sql.VarChar(20), bankAccount)
+.input("chequeNo", sql.VarChar(10), chequeNo)
+.input("chequeDate", sql.VarChar(20), chequeDate?chequeDate:null)
+.input("ICLicense", sql.VarChar(10), ICLicense)
+.input("branchNo", sql.VarChar(5), branchNo)
+.input("channel", sql.VarChar(3), channel)
+.input("forceEntry", sql.VarChar(1), forceEntry)
+.input("LTFcondition", sql.VarChar(1), LTFcondition)
+.input("reasonToSell_LTF_RMF", sql.VarChar(1), reasonToSell_LTF_RMF)
+.input("RMFwithholdChoice", sql.VarChar(1), RMFwithholdChoice)
+.input("RMFredeemChoice", sql.VarChar(1), RMFredeemChoice)
+.input("autoRedeem", sql.VarChar(30), autoRedeem)
+.input("transactionID", sql.VarChar(17), transactionID)
+.input("status", sql.VarChar(10), status)
+.input("AMCorderRef", sql.VarChar(30), AMCorderRef)
+.input("allotDate", sql.VarChar(20), allotDate?allotDate:null)
+.input("allottedNAV", sql.VarChar(30), allottedNAV?allottedNAV:null)
+.input("allottedAmount", sql.VarChar(30), allottedAmount?allottedAmount:null)
+.input("allotedUnit", sql.VarChar(30), allotedUnit?allotedUnit:null)
+.input("fee", sql.VarChar(30), fee?fee:null)
+.input("withholdTax", sql.VarChar(30), withholdTax?withholdTax:null)
+.input("VAT", sql.VarChar(30), VAT?VAT:null)
+.input("brokerageFee", sql.VarChar(30), brokerageFee?brokerageFee:null)
+.input("WithholdTaxLTF_RMF", sql.VarChar(30), WithholdTaxLTF_RMF?WithholdTaxLTF_RMF:null)
+.input("AMCpayDate", sql.VarChar(10), AMCpayDate?AMCpayDate:null)
+.input("regisTransFlag", sql.VarChar(1), regisTransFlag)
+.input("sellAllUnitFlag", sql.VarChar(1), sellAllUnitFlag)
+.input("settleBankCode", sql.VarChar(4), settleBankCode)
+.input("settleBankAccount", sql.VarChar(20), settleBankAccount)
+.input("rejectReason", sql.VarChar(50), rejectReason)
+.input("CHQbranch", sql.VarChar(5), CHQbranch)
+.input("TaxInvoice", sql.VarChar(50), TaxInvoice)
+.input("AMCorderRefer", sql.VarChar(30), AMCorderRefer)
+.input("ICcode", sql.VarChar(10), ICcode)
+.input("brokerFeeVAT", sql.VarChar(30), brokerFeeVAT?brokerFeeVAT:null)
+.input("approvalCode", sql.VarChar(20), approvalCode)
+.input("NAVdate", sql.VarChar(20), NAVdate?NAVdate:null)
+.input("collateralAccount", sql.VarChar(20), collateralAccount)
+.input("creditCardIssuer", sql.VarChar(20), creditCardIssuer)
+.input("ActionBy", sql.VarChar(100), ActionBy)
+.input("businessDate", sql.VarChar(20), businessDate)
+.query(queryStr, (err, result) => {
+// console.log(JSON.stringify(result));
+if(err){
+  const err_msg=err;
+  logger.error('Messge:'+'Tran:'+transactionID +'; msg:'+err_msg);
+  resolve({code:'9',message:''+err_msg});
+}else {
+  resolve({code:'0'});
+}
+})
+})
+pool1.on('error', err => {
+logger.error(err);
+reject(err);
+})
+
+})
+
+
+});
+}
 
 function update_MIT_FC_UnitholderBalance(item,ActionBy,businessDate){
 

@@ -53,6 +53,67 @@ exports.getMastert = (req, res, next) =>{
 }
 
 
+exports.getPersonalById = (req, res, next) =>{
+
+  var custCode = req.params.cusCode;
+  var compCode = req.query.compCode
+
+  logger.info('Start getPersonalById();' + custCode +" ;compCode:" + compCode)
+
+  getPersonalById(custCode,compCode).then(data=>{
+    res.status(200).json(data);
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
+}
+
+
+exports.createPersonal = (req, res, next) =>{
+
+  var custCode = req.params.cusCode;
+
+  var personObj = JSON.parse(JSON.stringify(req.body.personObj))
+
+  logger.info(`createPersonal ()custCode: ${custCode}  ;personObj:${personObj} ` )
+
+  res.status(200).json({code:000,msg:'create successful'});
+
+  // getPersonalById(custCode).then(data=>{
+  //   res.status(200).json(data);
+  // },err=>{
+  //     res.status(400).json({
+  //       message: err,
+  //       code:"999",
+  //     });
+  // });
+}
+
+exports.updatePersonal = (req, res, next) =>{
+
+  // var custCode = req.params.cusCode;
+  var personObj = JSON.parse(JSON.stringify(req.body.personObj))
+  var compCode = JSON.parse(JSON.stringify(req.body.compCode))
+  var actionBy = JSON.parse(JSON.stringify(req.body.actionBy))
+
+  logger.info(`updatePersonal ()compCode: ${compCode};actionBy:${actionBy}  ;personObj:${JSON.stringify(personObj)} ` )
+
+  updatePersonal(compCode,actionBy,personObj).then(data=>{
+    res.status(200).json(data);
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
+}
+
+// *******************
+// FUNCTION
+// *******************
+
 function getMaster(compCode,refType,lang) {
   logger.info('getMaster()');
 
@@ -82,6 +143,127 @@ function getMaster(compCode,refType,lang) {
         .input("compCode", sql.VarChar(20), compCode)
         .input("refType", sql.VarChar(20), refType)
         .input("lang", sql.VarChar(20), lang)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+function getPersonalById(custCode,compCode) {
+  logger.info('getMaster()');
+
+  var fncName = "getMaster()";
+  var queryStr = `
+  BEGIN
+
+  select *
+  from MIT_CRM_Personal
+  where compCode=@compCode AND CustCode=@CustCode
+
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("compCode", sql.VarChar(20), compCode)
+        .input("CustCode", sql.Int, custCode)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+function updatePersonal(compCode,actionBy,personObj){
+
+  var fncName = "updatePersonal()";
+  var queryStr = `
+  BEGIN
+
+  UPDATE MIT_CRM_Personal SET
+  idCard=@idCard,
+  FirstName=@FirstName,
+  LastName=@LastName,
+
+  CustomerAlias=@CustomerAlias,
+  Dob=@Dob,
+  Sex=@Sex,
+  State=@State,
+  custType=@custType,
+  Mobile=@Mobile,
+  Telephone=@Telephone,
+  Email=@Email,
+  SocialAccount=@SocialAccount,
+  Interested=@Interested,
+  UserOwner=@UserOwner,
+  Refer=@Refer,
+  Class=@Class,
+  InvestCondition=@InvestCondition,
+  ImportantData=@ImportantData,
+
+  UpdateBy=@UpdateBy,
+  UpdateDate=GETDATE()
+  WHERE compCode=@compCode
+  AND CustCode=@CustCode
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("compCode", sql.VarChar(20), compCode)
+        .input("CustCode", sql.Int, personObj.CustCode)
+
+        .input("idCard", sql.VarChar(50), personObj.idCard)
+        .input("FirstName", sql.NVarChar(200), personObj.FirstName)
+        .input("LastName", sql.NVarChar(200), personObj.LastName)
+        .input("CustomerAlias", sql.NVarChar(200), personObj.CustomerAlias)
+        .input("Dob", sql.VarChar(50), personObj.Dob)
+        .input("Sex", sql.NVarChar(10), personObj.Sex.trim())
+        .input("State", sql.NVarChar(50), personObj.State.trim())
+        .input("custType", sql.NVarChar(50), personObj.custType)
+        .input("Mobile", sql.VarChar(50), personObj.Mobile)
+        .input("Telephone", sql.VarChar(50), personObj.Telephone)
+        .input("Email", sql.NVarChar(100), personObj.Email)
+        .input("SocialAccount", sql.NVarChar(200), personObj.SocialAccount)
+        .input("Interested", sql.NVarChar(200), personObj.Interested)
+        .input("UserOwner", sql.NVarChar(50), personObj.UserOwner)
+        .input("Refer", sql.NVarChar(50), personObj.Refer)
+        .input("Class", sql.NVarChar(20), personObj.Class)
+        .input("InvestCondition", sql.NVarChar(200), personObj.InvestCondition)
+        .input("ImportantData", sql.NVarChar(200), personObj.ImportantData)
+        .input("UpdateBy", sql.NVarChar(50), actionBy)
+
         .query(queryStr, (err, result) => {
           if (err) {
             console.log(fncName + " Quey db. Was err !!!" + err);

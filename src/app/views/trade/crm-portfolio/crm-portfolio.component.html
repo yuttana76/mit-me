@@ -1,0 +1,78 @@
+
+<!-- Start Portfolio content -->
+<div class="div_top10">
+  <h5>Internal </h5>
+
+</div>
+
+<div class="div_top10">
+  <h3>LBDU <small> 100,000.00</small></h3>
+  <div class="col-md-12">
+  <mat-form-field class="col-md-6">
+    <mat-label>Account No <small> 50,000.00</small></mat-label>
+    <input matInput [(ngModel)]="personal.AccountNo" >
+    <!-- <mat-hint align="end">Number 0.0000</mat-hint>  -->
+  </mat-form-field>
+</div>
+
+  <table mat-table [dataSource]="lbdu_dataSource" class="col-md-6">
+    <!-- Position Column -->
+    <ng-container matColumnDef="Code">
+      <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
+      <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
+    </ng-container>
+
+    <!--  Column -->
+    <ng-container matColumnDef="Val">
+      <th mat-header-cell *matHeaderCellDef> Val </th>
+      <td mat-cell *matCellDef="let element">{{element.Val}} </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="lbdu_displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: lbdu_displayedColumns;"></tr>
+  </table>
+
+</div>
+
+<div class="div_top10">
+  <h3>PRIVATE <small> 70,000,000.00</small></h3>
+
+  <table mat-table [dataSource]="private_dataSource" class="col-md-6">
+    <ng-container matColumnDef="Code">
+      <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
+      <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Val">
+      <th mat-header-cell *matHeaderCellDef> Val </th>
+      <td mat-cell *matCellDef="let element"> {{element.Val }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="private_displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: private_displayedColumns;"></tr>
+  </table>
+
+</div>
+
+<div class="div_top10">
+  <h3>BOND <small>13,000,000.00</small></h3>
+
+  <table mat-table [dataSource]="bond_dataSource" class="col-md-6">
+    <ng-container matColumnDef="Code">
+      <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
+      <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
+    </ng-container>
+
+      <ng-container matColumnDef="Val">
+        <th mat-header-cell *matHeaderCellDef> Val </th>
+        <td mat-cell *matCellDef="let element">{{element.Val}} </td>
+      </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="bond_displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: bond_displayedColumns;"></tr>
+  </table>
+
+
+</div>
+<!-- End Portfolio content -->

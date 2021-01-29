@@ -93,6 +93,8 @@ import { CrmActivityComponent } from './crm-activity/crm-activity.component';
 import { CrmActDashboardComponent } from './crm-act-dashboard/crm-act-dashboard.component';
 import { CrmMarketManagerComponent } from './crm-market-manager/crm-market-manager.component';
 import { CrmTaskComponent } from './crm-task/crm-task.component';
+import { CrmPortfolioComponent } from './crm-portfolio/crm-portfolio.component';
+import { CrmTimelineComponent } from './crm-timeline/crm-timeline.component';
 
 
 @NgModule({
@@ -194,6 +196,8 @@ import { CrmTaskComponent } from './crm-task/crm-task.component';
     CrmActDashboardComponent,
     CrmMarketManagerComponent,
     CrmTaskComponent,
+    CrmPortfolioComponent,
+    CrmTimelineComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

@@ -1,29 +1,26 @@
 export class CrmPersonModel {
-  public CompCode: string;
+
+  public compCode: string;
   public CustCode: string;
-  public IdCard: string;
-  public AccountNo: string;
+  public idCard: string;
   public FirstName: string;
   public LastName: string;
   public CustomerAlias: string;
   public Dob: string;
   public Sex: string;
   public State: string;
-  public Type: string;
+  public custType: string;
   public Mobile: string;
   public Telephone: string;
   public Email: string;
   public SocialAccount: string;
-  public Fax: string;
-  public CustomerGroup: string;
   public Interested: string;
-  public SourceOfCustomer: string;
   public UserOwner: string;
   public Refer: string;
   public Class: string;
-  public InvestCondition: string;
+  public InvestCondition;
   public ImportantData: string;
-  public Note: string;
+  // public Note: string;
   public CreateBy: string;
   public CreateDate: string;
   public UpdateBy: string;

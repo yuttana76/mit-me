@@ -39,7 +39,7 @@ export class CrmPersonalService {
     queryParams += `&lang=${LANG}`;
 
     return this.http
-      .get<{ message: string; result: any }>(BACKEND_URL + '/getMastert'+ queryParams)
+      .get<any>(BACKEND_URL + '/getMastert'+ queryParams)
       .pipe( map(fundtData => {
           return fundtData;
         })
@@ -111,55 +111,34 @@ export class CrmPersonalService {
 
     console.log('Welcome getPersonal()>>', CustCode);
 
-    let URL =BACKEND_URL+'person/'
+    let queryParams = `?compCode=${COMP_CODE}`;
+    let URL =BACKEND_URL+'/person/'
 
-    return this.http.get<{result: any }>(URL + CustCode )
-    .pipe(map( fundtData => {
-      return fundtData.result.map(data => {
-        return {
-          // CompCode:data.CompCode,
-          CompCode:'Test xxx',
-          CustCode:data.CustCode,
-          IdCard:data.IdCard,
-          AccountNo:data.AccountNo,
-          FirstName:data.FirstName,
-          LastName:data.LastName,
-          CustomerAlias:data.CustomerAlias,
-          Dob:data.Dob,
-          Sex:data.Sex,
-          State:data.State,
-          Type:data.Type,
-          Mobile:data.Mobile,
-          Telephone:data.Telephone,
-          Email:data.Email,
-          SocialAccount:data.SocialAccount,
-          Fax:data.Fax,
-          CustomerGroup:data.CustomerGroup,
-          Interested:data.Interested,
-          SourceOfCustomer:data.SourceOfCustomer,
-          UserOwner:data.UserOwner,
-          Refer:data.Refer,
-          Class:data.Class,
-          InvestCondition:data.InvestCondition,
-          ImportantData:data.ImportantData,
-          Note:data.Note,
-          CreateBy:data.CreateBy,
-          CreateDate:data.CreateDate,
-          UpdateBy:data.UpdateBy,
-          UpdateDate:data.UpdateDate
-        };
-      });
+    return this.http.get<{result: any }>(URL + CustCode +queryParams)
+    .pipe(map( data => {
+      return data;
     }));
   }
 
   updatePerson(personalModel: CrmPersonModel): Observable<any> {
+    const URL = BACKEND_URL + '/person';
+    let data = {
+      'personObj': personalModel,
+      'compCode': COMP_CODE,
+      'actionBy': 'DEV'
+      };
 
-    let URL =BACKEND_URL+'person/'
-    console.log('Welcome updatePerson()>>', JSON.stringify(personalModel));
+      data= JSON.parse(JSON.stringify(data).replace(/\s/g, ''));
 
-    return this.http
-        .post<{ message: string, data: any }>(URL, personalModel);
-
+      if (personalModel.CustCode && personalModel.CustCode !== null && personalModel.CustCode !== '') {
+        // Update person
+        // console.log("***Update person" ,JSON.stringify(personalModel))
+        return this.http.put<{ message: string, data: any }>(URL + '/' + personalModel.CustCode, data);
+    } else {
+        // New person
+        // console.log("***New person" ,JSON.stringify(personalModel))
+        return this.http.post<{ message: string, data: any }>(URL, data);
+    }
   }
 
 }

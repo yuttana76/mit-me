@@ -18,12 +18,13 @@
     <form [formGroup]="personalForm"   >
 
       <mat-form-field class="col-md-6">
-        <input matInput  formControlName="FirstName" [(ngModel)]="personal.FirstName" placeholder="FirstName" >
+        <input id="FirstName" name="FirstName" matInput  formControlName="FirstName" [(ngModel)]="personal.FirstName" placeholder="FirstName" required >
+        <mat-error *ngIf="personalForm.get('FirstName').invalid" >Please fill First Name.</mat-error>
       </mat-form-field>
 
       <mat-form-field class="col-md-6">
         <mat-label>LastName</mat-label>
-        <input matInput formControlName="LastName" [(ngModel)]="personal.LastName" placeholder="LastName" >
+        <input matInput formControlName="LastName" [(ngModel)]="personal.LastName" placeholder="LastName" required >
       </mat-form-field>
 
       <mat-form-field class="col-md-6">
@@ -43,13 +44,13 @@
       <mat-label>Sex</mat-label>
       <section  class="example-full-width" >
           <mat-radio-group  formControlName="Sex" [(ngModel)]="personal.Sex">
-            <mat-radio-button class="example-margin"  *ngFor="let obj of SexList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+            <mat-radio-button class="example-margin"  *ngFor="let obj of SexList" [value]="obj.code">{{obj.text}}</mat-radio-button>
           </mat-radio-group>
       </section>
 
       <mat-form-field class="col-md-6">
         <mat-label>Mobile</mat-label>
-        <input matInput formControlName="Mobile" [(ngModel)]="personal.Mobile" #Mobile >
+        <input matInput formControlName="Mobile" [(ngModel)]="personal.Mobile" #Mobile required>
         <mat-hint align="end">{{Mobile.value.length}} / 10</mat-hint>
       </mat-form-field>
 
@@ -93,7 +94,7 @@
         <mat-label>Referral</mat-label>
         <mat-select formControlName="Refer" [(ngModel)]="personal.Refer" >
             <mat-option  *ngFor="let obj of ReferList" [value]="obj.code">
-              {{obj.desc}}
+              {{obj.text}}
             </mat-option>
           </mat-select>
       </mat-form-field>
@@ -109,7 +110,7 @@
 
       <mat-label>ประเภทของลูกค้า</mat-label>
       <section class="example-full-width">
-        <mat-radio-group formControlName="Type" [(ngModel)]="personal.Type" >
+        <mat-radio-group formControlName="Type" [(ngModel)]="personal.custType" >
           <mat-radio-button class="example-margin"  *ngFor="let obj of custTypeList" [value]="obj.code">{{obj.text}}</mat-radio-button>
         </mat-radio-group>
       </section>
@@ -127,14 +128,14 @@
         <mat-label>Interested</mat-label>
         <mat-select multiple formControlName="Interested" [(ngModel)]="personal.Interested" >
             <mat-option  *ngFor="let obj of interestList" [value]="obj.code">
-              {{obj.desc}}
+              {{obj.text}}
             </mat-option>
           </mat-select>
         <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
       </mat-form-field>
 
       <div>
-        <mat-form-field class="col-md-6">
+        <!-- <mat-form-field class="col-md-6">
           <mat-label>Source of data</mat-label>
           <mat-select formControlName="SourceOfCustomer" [(ngModel)]="personal.SourceOfCustomer">
               <mat-option  *ngFor="let obj of SourceOfCustomerList" [value]="obj.code">
@@ -142,29 +143,33 @@
               </mat-option>
             </mat-select>
             <mat-hint>Accetpt by</mat-hint>
-        </mat-form-field>
+        </mat-form-field> -->
 
         <!-- UserOwner -->
-        <mat-form-field class="col-md-6">
+        <!-- <mat-form-field class="col-md-6">
           <mat-label>UserOwner
           </mat-label>
           <input matInput  disabled  [(ngModel)]="personal.UserOwner" [ngModelOptions]="{standalone: true}">
           <mat-hint>Marketing</mat-hint>
         </mat-form-field>
+         -->
       </div>
 
       <!-- InvestCondition -->
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="col-md-6" >
         <mat-label>InvestCondition </mat-label>
-        <textarea matInput rows="3" formControlName="InvestCondition" [(ngModel)]="personal.InvestCondition" ></textarea>
+        <textarea matInput rows="3" formControlName="InvestCondition" [(ngModel)]="personal.InvestCondition" rows="5"></textarea>
       </mat-form-field>
+
+      <div>
+        UserOwner {{personal.UserOwner}}
+      </div>
+
 
       <mat-card-actions>
         <a mat-flat-button class="button_card_action" color="primary" (click)="onPersonFormSubmit()"  >SAVE</a>
         <!-- <a  class="button_card_action" mat-flat-button color="primary"  (click)="goBack()"> BACK</a> -->
       <button mat-flat-button class="button_card_action"color="warn" type='reset' *ngIf="!isDisableFields">Reset</button>
-
-
 
       </mat-card-actions>
 
@@ -173,95 +178,16 @@
     </mat-card>
 
   </mat-tab>
-
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon"><i class="fas fa-money-check-alt"></i></mat-icon>
-      Portfolio
+      Portfolio 2
     </ng-template>
 
     <div class="div_top10">
-      <h5>Internal </h5>
-
-      <mat-form-field class="col-md-6">
-        <mat-label>ID card</mat-label>
-        <input matInput  [(ngModel)]="personal.IdCard">
-        <!-- <mat-hint align="end">Number 0.0000</mat-hint>  -->
-      </mat-form-field>
-
-      <mat-form-field class="col-md-6">
-        <mat-label>Account No</mat-label>
-        <input matInput [(ngModel)]="personal.AccountNo" >
-        <!-- <mat-hint align="end">Number 0.0000</mat-hint>  -->
-      </mat-form-field>
-
+      <app-crm-portfolio [personal]="personal" ></app-crm-portfolio>
+      <!-- <app-crm-portfolio [custCode]="personal.CustCode" ></app-crm-portfolio> -->
     </div>
-
-    <div class="div_top10">
-      <h3>LBDU <small> 100,000.00</small></h3>
-
-      <table mat-table [dataSource]="lbdu_dataSource" class="col-md-6">
-        <!-- Position Column -->
-        <ng-container matColumnDef="Code">
-          <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
-          <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
-        </ng-container>
-
-        <!--  Column -->
-        <ng-container matColumnDef="Val">
-          <th mat-header-cell *matHeaderCellDef> Val </th>
-          <td mat-cell *matCellDef="let element">{{element.Val}} </td>
-        </ng-container>
-
-
-        <tr mat-header-row *matHeaderRowDef="lbdu_displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: lbdu_displayedColumns;"></tr>
-      </table>
-
-    </div>
-
-    <div class="div_top10">
-      <h3>PRIVATE <small> 70,000,000.00</small></h3>
-
-      <table mat-table [dataSource]="private_dataSource" class="col-md-6">
-        <ng-container matColumnDef="Code">
-          <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
-          <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="Val">
-          <th mat-header-cell *matHeaderCellDef> Val </th>
-          <td mat-cell *matCellDef="let element"> {{element.Val }} </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="private_displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: private_displayedColumns;"></tr>
-      </table>
-
-
-    </div>
-
-    <div class="div_top10">
-      <h3>BOND <small>13,000,000.00</small></h3>
-
-      <table mat-table [dataSource]="bond_dataSource" class="col-md-6">
-        <ng-container matColumnDef="Code">
-          <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
-          <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
-        </ng-container>
-
-          <ng-container matColumnDef="Val">
-            <th mat-header-cell *matHeaderCellDef> Val </th>
-            <td mat-cell *matCellDef="let element">{{element.Val}} </td>
-          </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="bond_displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: bond_displayedColumns;"></tr>
-      </table>
-
-
-    </div>
-
   </mat-tab>
 
   <mat-tab>
@@ -270,55 +196,10 @@
       Timeline
     </ng-template>
 
-    <mat-expansion-panel class="example-expansion">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          2020 dec 20
-          <br>1h
-        </mat-panel-title>
-        <mat-panel-description>
-          <!-- <mat-icon>date_range</mat-icon> -->
-          hason 2020-12-20 1h / นัดหมาย
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-        bred for hunting.
-    </mat-expansion-panel>
-
-    <mat-expansion-panel class="example-expansion">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          2020 dec 10
-          <br>5d
-        </mat-panel-title>
-        <mat-panel-description>
-          <!-- <mat-icon>date_range</mat-icon> -->
-          by hason 2020-12-10 5d / Order - KFGTECH (50,000)
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-        bred for hunting.
-    </mat-expansion-panel>
-
-
-    <mat-expansion-panel class="example-expansion">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          2020 dec 11
-          <br>6d
-        </mat-panel-title>
-        <mat-panel-description>
-          <!-- <mat-icon>date_range</mat-icon> -->
-          by hason 2020-12-11 6d / Call Report
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-        bred for hunting.
-    </mat-expansion-panel>
-
+    <div class="div_top10">
+      <app-crm-timeline [personal]="personal" ></app-crm-timeline>
+      <!-- <app-crm-portfolio [custCode]="personal.CustCode" ></app-crm-portfolio> -->
+    </div>
 
   </mat-tab>
   <mat-tab>

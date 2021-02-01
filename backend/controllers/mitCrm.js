@@ -149,17 +149,34 @@ function searchPersonal(numPerPage,page,compCode,actionBy,idCard,firstName,lastN
   logger.info(`searchPersonal()  numPerPage:${numPerPage},page:${page},compCode:${compCode},actionBy:${actionBy},idCard:${idCard},firstName:${firstName},mobile:${mobile},CustomerAlias:${CustomerAlias} `);
 
   var fncName = "searchPersonal()";
+
+  if(idCard)
+    idCard='';
+
+  if(firstName)
+    firstName=''
+
+  if(lastName)
+  lastName=''
+
+  if(mobile)
+    mobile=''
+
+  if(CustomerAlias)
+    CustomerAlias=''
+
   var queryStr = `
   BEGIN
 
-
   SELECT * FROM (
     SELECT ROW_NUMBER() OVER(ORDER BY FirstName,LastName) AS NUMBER
-    ,CustCode,FirstName,LastName,CustomerAlias,UserOwner
+    ,CustCode,idCard,FirstName,LastName,CustomerAlias,Mobile,UserOwner
     FROM [MIT_CRM_Personal]
    WHERE  compCode=@compCode
-   --AND (FirstName like'%'+@FirstName+'%' OR LastName like'%'+@LastName)
-    AND CustomerAlias like '%'+ @CustomerAlias +'%'
+    AND  ISNULL(idCard,'')  like '%'+ @idCard +'%'
+    AND (ISNULL(FirstName,'') like'%'+@FirstName+'%' AND ISNULL(LastName,'') like'%'+@LastName +'%')
+    AND ISNULL(Mobile,'') like '%'+ @Mobile +'%'
+    AND ISNULL(CustomerAlias,'') like '%'+ @CustomerAlias +'%'
       ) AS TBL
     WHERE NUMBER BETWEEN ((@page - 1) * @numPerPage + 1) AND (@page * @numPerPage)
     ORDER BY FirstName,LastName
@@ -175,9 +192,12 @@ function searchPersonal(numPerPage,page,compCode,actionBy,idCard,firstName,lastN
         .input("compCode", sql.VarChar(20), compCode)
         .input("numPerPage", sql.Int, numPerPage)
         .input("page", sql.Int, page)
-        .input("CustomerAlias", sql.NVarChar(100), CustomerAlias)
+
+        .input("idCard", sql.NVarChar(50), idCard)
         .input("FirstName", sql.NVarChar(100), firstName)
         .input("LastName", sql.NVarChar(100), lastName)
+        .input("Mobile", sql.NVarChar(50), mobile)
+        .input("CustomerAlias", sql.NVarChar(100), CustomerAlias)
         .query(queryStr, (err, result) => {
           if (err) {
             console.log(fncName + " Quey db. Was err !!!" + err);
@@ -198,7 +218,7 @@ function searchPersonal(numPerPage,page,compCode,actionBy,idCard,firstName,lastN
 }
 
 function getMaster(compCode,refType,lang) {
-  logger.info('getMaster()');
+  // logger.info('getMaster()');
 
   var fncName = "getMaster()";
   var queryStr = `

@@ -102,6 +102,18 @@ app.use(("/api/test"),(req, res, next)=>{
 
   logger.info("/api/test > " +  ip)
 
+
+  var accountId=",M2102117,M2102118";
+  var accountArray=   accountId.split(',')
+
+   for(var i = 0; i < accountArray.length;i++){
+
+     if(accountArray[i]){
+      console.log('Acc>>' + accountArray[i])
+     }
+
+   }
+
   res.status(200).json({
     message: "MIT API test successful!",
 

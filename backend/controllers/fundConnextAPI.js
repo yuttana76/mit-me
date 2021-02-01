@@ -74,6 +74,10 @@ exports.downloadCustomerProfile = (req, res, next) => {
   var businessDate = getCurrentDate();
   // var businessDate = fundConnextBusinessDate();
 
+  if(req.query.businessDate){
+    businessDate = req.query.businessDate
+  }
+
   logger.info('downloadCustomerProfile API; businessDate:' + businessDate )
 
   // Transaction API
@@ -2852,6 +2856,12 @@ exports.uploadCustomerProfile = (req, res, next) => {
 
   var actionBy = 'MPAM_API'
   var businessDate = getCurrentDate();
+
+
+  if(req.query.businessDate){
+    businessDate = req.query.businessDate
+  }
+
 
   logger.info('uploadCustomerProfile API; businessDate:' + businessDate )
 

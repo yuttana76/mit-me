@@ -6,16 +6,7 @@ var logger = require('../config/winston');
 exports.testAPI = (req, res, next) => {
 
 
-  fnArray=[];
-  fnArray.push(update_MFTS_Account('1770300019400','999'));
-  Promise.all(fnArray)
-  .then(data => {
-      res.status(200).json('Test successful');
-  })
-  .catch(error => {
-    logger.error(error.message)
-    res.status(401).json(error.message);
-  });
+  res.status(200).json('Test successful');
 
 }
 
@@ -266,6 +257,8 @@ exports.getFC_CustomerInfo_proc = (custCode) => {
 
     // console.log('FC data>'+JSON.stringify(values))
       custInfo=values[0][0]
+
+      console.log('custInfo >>'+JSON.stringify(custInfo))
 
       if(values[1].length>0)
         custInfo.residence=values[1][0]
@@ -572,63 +565,71 @@ return new Promise(function(resolve, reject) {
       fcCustInfoObj.Sex = '';
   }
 
-  fnArray=[];
-  //Updat customer & suit
+  console.log('approveCustInfoProcess account text (,) >>'+fcCustInfoObj.accountId)
+  var accountArray=   fcCustInfoObj.accountId.split(',') //Support Split for multi acount
+  for(var i = 0; i < accountArray.length;i++){
+    if(accountArray[i]){
 
-  // console.log('approveCustInfoProcess >>'+JSON.stringify(fcCustInfoObj))
-  console.log('approveCustInfoProcess accountId >>'+fcCustInfoObj.accountId)
+      fcCustInfoObj.accountId = accountArray[i];
+      console.log(' Process on Account id >>' + fcCustInfoObj.accountId)
 
-  // fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
-  fnArray.push(update_CustomerInfo_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj,actionBy));
+      //  START *********************************
+      fnArray=[];
+      //Updat customer & suit
+      // fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
+      fnArray.push(update_CustomerInfo_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj,actionBy));
 
-  //  1 : residence
-  //  2 : current
-  //  3 : work
-  if(fcCustInfoObj.residence)
-    // fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
-    fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.residence,1,actionBy));
+      //  1 : residence
+      //  2 : current
+      //  3 : work
+      if(fcCustInfoObj.residence)
+        // fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
+        fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.residence,1,actionBy));
 
-  if(fcCustInfoObj.current){
-    fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.current,2,actionBy));
+      if(fcCustInfoObj.current){
+        fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.current,2,actionBy));
+      }
+
+      if(fcCustInfoObj.work)
+        fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.work,3,actionBy));
+
+      //Update Children
+        for (var i in fcCustInfoObj.children) {
+            if(fcCustInfoObj.children[i])
+              fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
+        }
+
+      //ACCOUNT
+      fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
+
+      //BANK ACCOUNT
+      fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
+
+      fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+
+      // fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
+      fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
+      //Suit by  account
+
+      Promise.all(fnArray)
+      .then(data => {
+
+        exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.accountId,fcCustInfoObj.cardNumber).then(data =>{
+        })
+          update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
+          resolve(data);
+        })
+      })
+      .catch(error => {
+        logger.error(error.message)
+        reject(error)
+      });
+      //  END *********************************
+
+    }
   }
 
-  if(fcCustInfoObj.work)
-    fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.work,3,actionBy));
 
-  //Update Children
-    for (var i in fcCustInfoObj.children) {
-        if(fcCustInfoObj.children[i])
-          fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
-    }
-
-  //ACCOUNT
-  fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
-
-  //BANK ACCOUNT
-  fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
-
-  fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
-
-  // fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
-  fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
-  //Suit by  account
-
-  Promise.all(fnArray)
-  .then(data => {
-
-    exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.accountId,fcCustInfoObj.cardNumber).then(data =>{
-    })
-
-    update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
-      // res.status(200).json(data);
-      resolve(data);
-    })
-    //  res.status(200).json(data[0]);
-  })
-  .catch(error => {
-    logger.error(error.message)
-    reject(error)
-  });
 
 });
 
@@ -4637,11 +4638,51 @@ function getFC_CustomerInfo(cardNumber){
 
   var fncName = 'getFcCustomerInfo() ';
 
-  var queryStr = `SELECT  TOP 1 B.accountId,C.Full_Name AS RM,A.*
+  var queryStr = `
+BEGIN
+--DECLARE @cardNumber  VARCHAR(100) = '5738300000229';
+DECLARE @accountId  VARCHAR(100)
+DECLARE @accountStr  VARCHAR(100)=''
+DECLARE @getAccount CURSOR
+
+
+--Get Account id
+SET @getAccount = CURSOR FOR select accountId from MIT_FC_CUST_ACCOUNT WHERE cardNumber = @cardNumber
+
+OPEN @getAccount
+FETCH NEXT
+FROM @getAccount INTO @accountId
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    PRINT @accountId
+
+    SELECT @accountStr = @accountStr + ','+@accountId
+    PRINT @accountStr
+
+    FETCH NEXT
+    FROM @getAccount INTO @accountId
+END
+
+CLOSE @getAccount
+DEALLOCATE @getAccount
+
+-- get account info
+  SELECT  TOP 1 @accountStr AS accountId,C.Full_Name AS RM,A.*
   FROM [MIT_FC_CUST_INFO] A
   LEFT JOIN  MIT_FC_CUST_ACCOUNT B ON A.cardNumber=B.cardNumber
   LEFT JOIN  [MFTS].[dbo].[VW_MFTS_SaleCode] C ON B.icLicense=C.License_Code
-  WHERE A.cardNumber=@cardNumber `;
+  WHERE A.cardNumber= @cardNumber
+
+END
+
+  `;
+
+  // var queryStr = `
+  // SELECT  TOP 1 B.accountId,C.Full_Name AS RM,A.*
+  // FROM [MIT_FC_CUST_INFO] A
+  // LEFT JOIN  MIT_FC_CUST_ACCOUNT B ON A.cardNumber=B.cardNumber
+  // LEFT JOIN  [MFTS].[dbo].[VW_MFTS_SaleCode] C ON B.icLicense=C.License_Code
+  // WHERE A.cardNumber=@cardNumber `;
 
   const sql = require('mssql')
 

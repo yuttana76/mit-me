@@ -46,55 +46,57 @@ export class CrmPersonalService {
       );
   }
 
+  getPersonalLists(rowPerPage: number, currentPage: number, idCard,firstName,lastName,CustomerAlias,mobile) {
 
-  getPersonalLists(rowPerPage: number, currentPage: number, idCard: String,name: String,mobile:String,aliasName) {
+    const actionBy = 'DEV';
 
-    console.log('Execute getPersonalLists()');
+    console.log('Call getPersonalLists()');
 
-    let URL =BACKEND_URL+'personList?'
+    let URL =BACKEND_URL+'/searchPersonal?'
     let queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
-      queryParams += `&name=${idCard}`;
-      queryParams += `&mobile=${name}`;
-      queryParams += `&email=${mobile}`;
-      queryParams += `&aliasName=${aliasName}`;
+      queryParams += `&idCard=${idCard}`;
+      queryParams += `&firstName=${firstName}`;
+      queryParams += `&lastName=${lastName}`;
+      queryParams += `&mobile=${mobile}`;
+      queryParams += `&CustomerAlias=${CustomerAlias}`;
+      queryParams += `&compCode=${COMP_CODE}`;
+      queryParams += `&actionBy=${actionBy}`;
 
     console.log('*** params:' + URL+queryParams );
 
     this.http.get<{ message: string, result: any }>(URL + queryParams)
     .pipe(map((resultData) => {
-        return resultData.result.map(data => {
-            return {
-              CompCode:data.CompCode,
-              CustCode:data.CustCode,
-              IdCard:data.IdCard,
-              AccountNo:data.AccountNo,
-              FirstName:data.FirstName,
-              LastName:data.LastName,
-              CustomerAlias:data.CustomerAlias,
-              Dob:data.Dob,
-              Sex:data.Sex,
-              State:data.State,
-              Type:data.Type,
-              Mobile:data.Mobile,
-              Telephone:data.Telephone,
-              Email:data.Email,
-              SocialAccount:data.SocialAccount,
-              Fax:data.Fax,
-              CustomerGroup:data.CustomerGroup,
-              Interested:data.Interested,
-              ImportantData:data.ImportantData,
-              SourceOfCustomer:data.SourceOfCustomer,
-              UserOwner:data.UserOwner,
-              Refer:data.Refer,
-              Class:data.Class,
-              InvestCondition:data.InvestCondition,
-              Note:data.Note,
-              CreateBy:data.CreateBy,
-              CreateDate:data.CreateDate,
-              UpdateBy:data.UpdateBy,
-              UpdateDate:data.UpdateDate
-            };
-        });
+
+      return resultData.result.map(data => {
+        console.log('***resultData.ma[]>>' + JSON.stringify(data))
+        return {
+          compCode: data.compCode,
+          CustCode: data.CustCode,
+          idCard: data.idCard,
+          FirstName: data.FirstName,
+          LastName: data.LastName,
+          CustomerAlias: data.CustomerAlias,
+          Dob: data.Dob,
+          Sex: data.Sex,
+          State: data.State,
+          custType: data.custType,
+          Mobile: data.Mobile,
+          Telephone: data.Telephone,
+          Email: data.Email,
+          SocialAccount: data.SocialAccount,
+          Interested: data.Interested,
+          UserOwner: data.UserOwner,
+          Refer: data.Refer,
+          Class: data.Class,
+          InvestCondition: data.InvestCondition,
+          ImportantData: data.ImportantData,
+          CreateBy: data.CreateBy,
+          CreateDate: data.CreateDate,
+          UpdateBy: data.UpdateBy,
+          UpdateDate: data.UpdateDate
+        };
+    });
+
     }))
     .subscribe((transformed) => {
         this.personList = transformed;
@@ -128,7 +130,7 @@ export class CrmPersonalService {
       'actionBy': 'DEV'
       };
 
-      data= JSON.parse(JSON.stringify(data).replace(/\s/g, ''));
+      // data= JSON.parse(JSON.stringify(data).replace(/\s/g, ''));
 
       if (personalModel.CustCode && personalModel.CustCode !== null && personalModel.CustCode !== '') {
         // Update person

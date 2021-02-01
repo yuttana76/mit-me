@@ -1,34 +1,40 @@
-<div>
+<!-- <div>
   <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
-</div>
+</div> -->
 
 <mat-card>
-  <form [formGroup]="searchForm" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading" class="example-form">
+  <!-- <form [formGroup]="searchForm" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading" class="example-form"> -->
+  <form [formGroup]="searchForm" (submit)="onSerachCust()" #custForm="ngForm" class="example-form">
     <mat-card-title>Search Customer Information
         <a mat-button routerLink="/trade/CRM-Personal-Data" routerLinkActive="mat-accent" matTooltip="New customer">
           <i class="fas fa-user-plus fa-2x" ></i>
         </a>
-        
+
     </mat-card-title>
     <mat-card-content>
       <div class="condition-div">
         <mat-form-field class="col-md-6">
-          <input matInput formControlName="custId" placeholder="Card No.">
+          <input matInput formControlName="idCard" placeholder="Card No.">
           <!-- <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error> -->
         </mat-form-field>
 
         <mat-form-field class="col-md-6">
-          <input matInput  placeholder="Name">
+          <input matInput  formControlName="firstName" placeholder="First Name">
           <!-- <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error> -->
         </mat-form-field>
 
         <mat-form-field class="col-md-6">
-          <input matInput placeholder="Alias Name">
+          <input matInput  formControlName="lastName" placeholder="Last Name">
           <!-- <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error> -->
         </mat-form-field>
 
         <mat-form-field class="col-md-6">
-          <input matInput placeholder="Mobile">
+          <input matInput formControlName="CustomerAlias" placeholder="Alias Name">
+          <!-- <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error> -->
+        </mat-form-field>
+
+        <mat-form-field class="col-md-6">
+          <input matInput formControlName="Mobile" placeholder="Mobile">
           <!-- <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error> -->
         </mat-form-field>
 
@@ -52,7 +58,7 @@
 <mat-card >
 
   <table mat-table [dataSource]="cust_dataSource" class='full-width '>
-  
+
     <!-- Position Column -->
     <ng-container matColumnDef="Cust_Code">
       <th mat-header-cell *matHeaderCellDef> ID card /Pass </th>
@@ -62,36 +68,36 @@
     <!-- Name Column -->
     <ng-container matColumnDef="FullName">
       <th mat-header-cell *matHeaderCellDef> Full Name </th>
-      <td mat-cell *matCellDef="let element"><a [routerLink]="['/trade/CRM-Personal-Data']" matTooltip="Edit">{{element.FullName}} </a>
-        
+      <td mat-cell *matCellDef="let element"><a [routerLink]="['/trade/CRM-Personal-Data',element.CustCode,'SEARCH_CUST_SCR']" matTooltip="Edit">{{element.FirstName}} {{element.LastName}} </a>
+
       </td>
     </ng-container>
 
     <!-- Name Column -->
     <ng-container matColumnDef="Aliast">
       <th mat-header-cell *matHeaderCellDef> Aliast Name </th>
-      <td mat-cell *matCellDef="let element">{{element.Aliast}} </td>
+      <td mat-cell *matCellDef="let element">{{element.CustomerAlias}} </td>
     </ng-container>
 
     <!-- Weight Column -->
     <ng-container matColumnDef="RM">
-      <th mat-header-cell *matHeaderCellDef> RM </th>
+      <th mat-header-cell *matHeaderCellDef> Marketing </th>
       <td mat-cell *matCellDef="let element"> {{element.RM}} </td>
     </ng-container>
 
     <!-- Symbol Column -->
-    <ng-container matColumnDef="LastAct">
+    <!-- <ng-container matColumnDef="LastAct">
       <th mat-header-cell *matHeaderCellDef> Last act. </th>
       <td mat-cell *matCellDef="let element"> {{element.LastAct}} </td>
-    </ng-container>
+    </ng-container> -->
 
     <!-- Edit  -->
     <ng-container matColumnDef="Action">
-        <th mat-header-cell *matHeaderCellDef> Action-s </th>
+        <th mat-header-cell *matHeaderCellDef>  </th>
         <td mat-cell *matCellDef="let element">
-          <i class="far fa-edit fa-lg"  [routerLink]="['/trade/CRM-Personal-Data']" matTooltip="Edit"></i>
+          <i class="far fa-edit fa-lg"  [routerLink]="['/trade/CRM-Personal-Data',element.CustCode,'SEARCH_CUST_SCR']" matTooltip="View"></i>
           <i class="far fa-edit fa-lg"  [routerLink]="['/trade/CRM-Activity']" matTooltip="Call report"></i>
-          <!-- <i class="far fa-edit fa-lg"  [routerLink]="['/trade/customerEdit',element.Cust_Code,'SEARCH_CUST_SCR']" matTooltip="Edit"></i> -->
+          <!-- <i class="far fa-edit fa-lg"  [routerLink]="['/trade/customerEdit',element.CustCode,'SEARCH_CUST_SCR']" matTooltip="Edit"></i> -->
           <!-- <i class="fab fa-adn fa-lg" (click)="onApprove(element.Cust_Code)" matTooltip="Call report"></i> -->
         </td>
       </ng-container>
@@ -99,7 +105,7 @@
     <tr mat-header-row *matHeaderRowDef="cust_displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: cust_displayedColumns;"></tr>
   </table>
-  
+
   <mat-paginator [length]="totalRecords"
   [pageSize]="rowsPerPage"
   [pageSizeOptions]="pageSizeOptions" (page)="onChangedPage($event)">

@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { CrmPersonModel } from '../model/crmPersonal.model';
+import { CrmPersonalService } from '../services/crmPerson.service';
 
 @Component({
   selector: 'app-crm-personal-search',
@@ -13,33 +17,55 @@ export class CrmPersonalSearchComponent implements OnInit {
   spinnerLoading = false;
   searchForm: FormGroup;
 
+  crmPersonList: CrmPersonModel[] = [];
+
   currentPage = 1;
   rowsPerPage = 20;
   totalRecords = 10;
   pageSizeOptions = [10, 20, 50, 100];
+  cust_dataSource = new BehaviorSubject([]);
+  private custSub: Subscription;
+  cust_displayedColumns: string[] = ['Cust_Code', 'FullName','Aliast','RM','Action'];
+  // cust_displayedColumns: string[] = ['Cust_Code', 'FullName','Aliast','RM','LastAct','Action'];
 
-  cust_list=[{'Cust_Code':'123', 'FullName':'Mr. xxxx','Aliast':'นาย-A','RM':'HASUN','LastAct':'Open acc.','Action':''}
-   ,{'Cust_Code':'456', 'FullName':'Mr. yyyy','Aliast':'นาย ข','RM':'Tananya','LastAct':'Order .','Action':''}
-   ,{'Cust_Code':'789', 'FullName':'Mr. zzzz','Aliast':'นาย ง','RM':'Rosakorn','LastAct':'Offer bond','Action':''}
-   ,{'Cust_Code':'000', 'FullName':'Mr. None','Aliast':'นาย จ','RM':'Supasiri','LastAct':'Call report','Action':''}
-  
-  ];
-
-  cust_displayedColumns: string[] = ['Cust_Code', 'FullName','Aliast','RM','LastAct','Action'];
-  cust_dataSource = new BehaviorSubject(this.cust_list);
-
-
-  constructor() { }
+  constructor(
+    private crmPersonalService: CrmPersonalService,
+    public route: ActivatedRoute,
+    private toastr: ToastrService,
+  ) { }
 
   ngOnInit() {
     this.searchForm = new FormGroup({
-      custId: new FormControl(null, {
+      CustCode: new FormControl(null, {
         // validators: [Validators.required]
       }),
-      // custType: new FormControl(null, {
-      //   validators: [Validators.required]
-      // }),
+      idCard: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      firstName: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      lastName: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      CustomerAlias: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
+      Mobile: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
     });
+
+    this.custSub = this.crmPersonalService.getPersonalListsListener().subscribe((data: CrmPersonModel[]) => {
+      this.spinnerLoading = false;
+      this.crmPersonList = data;
+  });
+
+
+  }
+
+  ngOnDestroy() {
+    this.custSub.unsubscribe();
   }
 
 
@@ -50,7 +76,23 @@ export class CrmPersonalSearchComponent implements OnInit {
       // console.log('form.invalid() ' + this.form.invalid);
       return true;
     }
-    this.spinnerLoading = true;
+    // this.spinnerLoading = true;
+    const idCard = this.searchForm.get('idCard').value
+    const firstName = this.searchForm.get('firstName').value
+    const lastName = this.searchForm.get('lastName').value
+    const CustomerAlias = this.searchForm.get('CustomerAlias').value
+    const Mobile= this.searchForm.get('Mobile').value
+
+    this.crmPersonalService.getPersonalLists(this.rowsPerPage, 1, idCard,firstName,lastName,CustomerAlias,Mobile);
+
+    this.custSub = this.crmPersonalService.getPersonalListsListener().subscribe((data: CrmPersonModel[]) => {
+          // this.spinnerLoading = false;
+          this.crmPersonList = data;
+
+          this.cust_dataSource.next(this.crmPersonList);
+      });
+
+
   }
 
   onReset(){

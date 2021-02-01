@@ -29,7 +29,7 @@ export const navItems = [
   },
   {
     name: 'CRM-Personal-Data',
-    url: '/trade/CRM-Personal-Data',
+    url: '/trade/CRM-Personal-Data/null/null',
     icon: 'icon-speedometer',
 
   },
@@ -41,13 +41,6 @@ export const navItems = [
 
   },
 
-
-  {
-    name: 'CRM-Personal-Data',
-    url: '/trade/CRM-Personal-Data',
-    icon: 'icon-speedometer',
-
-  },
   {
     name: 'CRM-Activity',
     url: '/trade/CRM-Activity',

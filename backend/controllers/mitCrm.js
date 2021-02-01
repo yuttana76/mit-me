@@ -110,9 +110,92 @@ exports.updatePersonal = (req, res, next) =>{
   });
 }
 
+exports.searchPersonal = (req, res, next) =>{
+
+  var numPerPage = parseInt(req.query.pagesize, 10) || 10;
+  var page = parseInt(req.query.page, 10) || 1;
+  var compCode = req.query.compCode || false;
+  var actionBy = req.query.actionBy || false;
+
+  var idCard = req.query.idCard || false;
+  var firstName = req.query.firstName || false;
+  var lastName = req.query.lastName || false;
+  var mobile = req.query.mobile || false;
+  var CustomerAlias = req.query.CustomerAlias || false;
+
+  console.log('Welcome searchPersonal()')
+
+  searchPersonal(numPerPage,page,compCode,actionBy,idCard,firstName,lastName,mobile,CustomerAlias).then(result=>{
+
+    res.status(200).json({
+      message: "Successfully!",
+      result: result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1]
+    });
+
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
+}
+
 // *******************
 // FUNCTION
 // *******************
+
+
+function searchPersonal(numPerPage,page,compCode,actionBy,idCard,firstName,lastName,mobile,CustomerAlias){
+  logger.info(`searchPersonal()  numPerPage:${numPerPage},page:${page},compCode:${compCode},actionBy:${actionBy},idCard:${idCard},firstName:${firstName},mobile:${mobile},CustomerAlias:${CustomerAlias} `);
+
+  var fncName = "searchPersonal()";
+  var queryStr = `
+  BEGIN
+
+
+  SELECT * FROM (
+    SELECT ROW_NUMBER() OVER(ORDER BY FirstName,LastName) AS NUMBER
+    ,CustCode,FirstName,LastName,CustomerAlias,UserOwner
+    FROM [MIT_CRM_Personal]
+   WHERE  compCode=@compCode
+   --AND (FirstName like'%'+@FirstName+'%' OR LastName like'%'+@LastName)
+    AND CustomerAlias like '%'+ @CustomerAlias +'%'
+      ) AS TBL
+    WHERE NUMBER BETWEEN ((@page - 1) * @numPerPage + 1) AND (@page * @numPerPage)
+    ORDER BY FirstName,LastName
+
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("compCode", sql.VarChar(20), compCode)
+        .input("numPerPage", sql.Int, numPerPage)
+        .input("page", sql.Int, page)
+        .input("CustomerAlias", sql.NVarChar(100), CustomerAlias)
+        .input("FirstName", sql.NVarChar(100), firstName)
+        .input("LastName", sql.NVarChar(100), lastName)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            console.log(" queryStr >>" + queryStr);
+            console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
 
 function getMaster(compCode,refType,lang) {
   logger.info('getMaster()');

@@ -18,7 +18,7 @@ export class CrmPersonModel {
   public UserOwner: string;
   public Refer: string;
   public Class: string;
-  public InvestCondition;
+  public InvestCondition: string;
   public ImportantData: string;
   // public Note: string;
   public CreateBy: string;

@@ -296,7 +296,7 @@ const routes: Routes = [
       },
 
       {
-        path: 'CRM-Personal-Data',
+        path: 'CRM-Personal-Data/:cust_Code/:source',
         component: CrmPersonalDataComponent,
         data: {
           title: 'Welcome CRM Personal Data'

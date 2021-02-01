@@ -8,6 +8,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { forkJoin } from 'rxjs';
 import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 // import { CalendarOptions } from '@fullcalendar/angular'; // useful for typechecking
 
@@ -55,6 +56,7 @@ ReferList
     private router: Router,
     public dialog: MatDialog,
     public route: ActivatedRoute,
+    private toastr: ToastrService,
   ) {
 
    }
@@ -76,12 +78,14 @@ ReferList
         this.formScreen = paramMap.get('source');
       }
 
-      this.custCode='1'
+      // this.custCode='1'
 
       if (paramMap.has('cust_Code')) {
         this.mode = this.MODE_EDIT;
         this.custCode = paramMap.get('cust_Code');
       }
+
+      console.log('Initial cust_Code> ',this.custCode )
 
       //  Initial load master data
       var fnArray=[];
@@ -171,16 +175,24 @@ ReferList
 
       console.log('Save sucessful', data);
 
-      // if ( data.result && data.result.wfRef !== 'undefined') {
-      //   this.openDialog('success', 'Create customer was successful.', 'The refference number is ' +  data.result.wfRef);
-      // } else {
-      //   this.openDialog('danger', 'Create customer was error',  data.message.originalError.info.message + '!  Please contact IT staff.' );
-      // }
+      this.toastr.success("Save complete.", "Complete", {
+        timeOut: 5000,
+        closeButton: true,
+        positionClass: "toast-top-center"
+      });
+
 
     }, error => () => {
         console.log('Save error', error);
+
+        this.toastr.warning(error, "Incomplete", {
+          timeOut: 5000,
+          closeButton: true,
+          positionClass: "toast-top-center"
+        });
+
     }, () => {
-       console.log('Loading complete');
+       console.log('Submit complete');
     });
 
   }

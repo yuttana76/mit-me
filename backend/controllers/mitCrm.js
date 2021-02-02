@@ -117,9 +117,9 @@ exports.searchPersonal = (req, res, next) =>{
   var compCode = req.query.compCode || false;
   var actionBy = req.query.actionBy || false;
 
-  var idCard = req.query.idCard || false;
-  var firstName = req.query.firstName || false;
-  var lastName = req.query.lastName || false;
+  var idCard = req.query.idCard;
+  var firstName = req.query.firstName;
+  var lastName = req.query.lastName;
   var mobile = req.query.mobile || false;
   var CustomerAlias = req.query.CustomerAlias || false;
 
@@ -129,7 +129,9 @@ exports.searchPersonal = (req, res, next) =>{
 
     res.status(200).json({
       message: "Successfully!",
-      result: result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1]
+      records:result.recordsets[0].length,
+      result: result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[0].length
+      // result: result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1]
     });
 
   },err=>{
@@ -138,6 +140,51 @@ exports.searchPersonal = (req, res, next) =>{
         code:"999",
       });
   });
+}
+
+
+exports.portfolio = async (req, res, next) =>{
+  var compCode = req.query.compCode
+  var custCode = req.params.cusCode;
+
+  console.log(`portfolio compCode:${compCode} ; custCode:${custCode}`);
+  // compCode = 'MPAM';
+  // custCode = '1';
+
+  //Get lbdu account id
+  // var  lbdu_accountId='M1901362';
+
+  let lbdu_accountId = await getLBDU_Account(compCode,custCode);
+
+  console.log('***lbdu_accountId>>'+JSON.stringify(lbdu_accountId));
+
+  lbdu_accountId =lbdu_accountId.recordsets[0][0].ext_module_ref
+
+  fnArray=[];
+  fnArray.push(unitholderBalanceLBDUByAccount(lbdu_accountId));
+
+  Promise.all(fnArray)
+  .then(data => {
+    var rs_data = {product:'LBDU',data:data[0].recordsets[0]};
+
+    res.status(200).json(rs_data);
+  })
+  .catch(error => {
+    logger.error('Error FundConnext schedule;' +error.message)
+    res.status(401).json(error.message);
+  });
+
+
+
+  // unitholderBalanceLBDUByAccount(accountId).then(data=>{
+
+  //   res.status(200).json(data);
+  // },err=>{
+  //     res.status(400).json({
+  //       message: err,
+  //       code:"999",
+  //     });
+  // });
 }
 
 // *******************
@@ -150,36 +197,126 @@ function searchPersonal(numPerPage,page,compCode,actionBy,idCard,firstName,lastN
 
   var fncName = "searchPersonal()";
 
-  if(idCard)
-    idCard='';
+  var conditionStr =` WHERE compCode='${compCode}'`;
 
-  if(firstName)
-    firstName=''
+  if(idCard){
+    conditionStr = conditionStr +` AND  idCard like '%${idCard}%' `;
+  }
 
-  if(lastName)
-  lastName=''
+  if(firstName){
+    conditionStr = conditionStr +` AND  FirstName like '%${firstName}%' `;
+  }
 
-  if(mobile)
-    mobile=''
+  if(lastName){
+    conditionStr = conditionStr +` AND  LastName like '%${lastName}%' `;
+  }
 
-  if(CustomerAlias)
-    CustomerAlias=''
+  if(mobile){
+    conditionStr = conditionStr +` AND Mobile like '%${mobile}%'`;
+  }
+
+  if(CustomerAlias){
+    conditionStr = conditionStr +` AND CustomerAlias like '%${CustomerAlias}%'`;
+  }
 
   var queryStr = `
   BEGIN
 
-  SELECT * FROM (
-    SELECT ROW_NUMBER() OVER(ORDER BY FirstName,LastName) AS NUMBER
-    ,CustCode,idCard,FirstName,LastName,CustomerAlias,Mobile,UserOwner
-    FROM [MIT_CRM_Personal]
-   WHERE  compCode=@compCode
-    AND  ISNULL(idCard,'')  like '%'+ @idCard +'%'
-    AND (ISNULL(FirstName,'') like'%'+@FirstName+'%' AND ISNULL(LastName,'') like'%'+@LastName +'%')
-    AND ISNULL(Mobile,'') like '%'+ @Mobile +'%'
-    AND ISNULL(CustomerAlias,'') like '%'+ @CustomerAlias +'%'
-      ) AS TBL
-    WHERE NUMBER BETWEEN ((@page - 1) * @numPerPage + 1) AND (@page * @numPerPage)
-    ORDER BY FirstName,LastName
+      SELECT * FROM (
+          SELECT ROW_NUMBER() OVER(ORDER BY FirstName,LastName) AS NUMBER
+          ,CustCode,idCard,FirstName,LastName,CustomerAlias,Mobile,UserOwner
+          FROM [MIT_CRM_Personal]
+          ${conditionStr}
+
+        ) AS TBL
+      WHERE NUMBER BETWEEN ((@page - 1) * @numPerPage + 1) AND (@page * @numPerPage)
+      ORDER BY FirstName,LastName
+
+    END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("numPerPage", sql.Int, numPerPage)
+        .input("page", sql.Int, page)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      // console.log("ERROR>>" + err);
+      logger.error(err)
+      reject(err);
+    });
+  });
+}
+
+function getLBDU_Account(compCode,custCode) {
+
+  console.log(`getLBDU_Account()>>  compCode:${compCode}   ;custCode:${custCode}  ;`)
+
+  var queryStr = `
+  BEGIN
+    select *
+    from MIT_CRM_Personal_product a
+    where a.compCode= @compCode
+    and custCode= @custCode
+  END
+    `;
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("compCode", sql.NVarChar(20), compCode)
+        .input("custCode", sql.NVarChar(20), custCode)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            reject(err);
+
+          } else {
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+
+function unitholderBalanceLBDUByAccount(accountId) {
+
+  logger.info('unitholderBalanceLBDUByAccount()>' +accountId);
+
+  var fncName = "getMaster()";
+  var queryStr = `
+  BEGIN
+
+  select
+  AA .*
+  from (
+      select A.NAVdate,A.Fund_Code ,A.Available_Amount,A.Available_Unit_Balance,A.Unit_balance,A.Average_Cost,A.NAV
+      from MIT_FC_UnitholderBalance A
+      where A.Account_ID= @accountId
+      and Available_Amount>0 AND Available_Unit_Balance>0  )AA
+  INNER JOIN(
+      select Fund_Code,MAX(CONVERT(DATETIME, NAVdate, 112)) AS NAVdate
+      from MIT_FC_UnitholderBalance
+      where Account_ID= @accountId
+      and Available_Amount>0 AND Available_Unit_Balance>0
+      group by Fund_Code) BB
+  ON AA.Fund_Code=BB.Fund_Code  AND AA.NAVdate= BB.NAVdate
 
   END
     `;
@@ -189,23 +326,16 @@ function searchPersonal(numPerPage,page,compCode,actionBy,idCard,firstName,lastN
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
         .request()
-        .input("compCode", sql.VarChar(20), compCode)
-        .input("numPerPage", sql.Int, numPerPage)
-        .input("page", sql.Int, page)
+        .input("accountId", sql.VarChar(20), accountId)
 
-        .input("idCard", sql.NVarChar(50), idCard)
-        .input("FirstName", sql.NVarChar(100), firstName)
-        .input("LastName", sql.NVarChar(100), lastName)
-        .input("Mobile", sql.NVarChar(50), mobile)
-        .input("CustomerAlias", sql.NVarChar(100), CustomerAlias)
         .query(queryStr, (err, result) => {
           if (err) {
             console.log(fncName + " Quey db. Was err !!!" + err);
             reject(err);
 
           } else {
-            console.log(" queryStr >>" + queryStr);
-            console.log(" Quey RS >>" + JSON.stringify(result));
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
             resolve(result);
           }
         });

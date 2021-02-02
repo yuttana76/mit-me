@@ -86,9 +86,11 @@ export class CrmPersonalSearchComponent implements OnInit {
     this.crmPersonalService.getPersonalLists(this.rowsPerPage, 1, idCard,firstName,lastName,CustomerAlias,Mobile);
 
     this.custSub = this.crmPersonalService.getPersonalListsListener().subscribe((data: CrmPersonModel[]) => {
-          // this.spinnerLoading = false;
-          this.crmPersonList = data;
 
+        console.log('Result->' + JSON.stringify(data));
+
+      // this.spinnerLoading = false;
+          this.crmPersonList = data;
           this.cust_dataSource.next(this.crmPersonList);
       });
 

@@ -19,18 +19,6 @@ export class CrmPersonalService {
 
   constructor(private http: HttpClient , private router: Router) { }
 
-  // getMastert(refType) {
-  //   console.log("*** Service getMastert()>" + refType)
-  //   return this.http
-  //     .get<{ message: string; result: any }>(BACKEND_URL + '/getMastert?refType='+ refType)
-  //     .pipe(map( _data => {
-  //       return _data.result.map(data => {
-  //         console.log("*** RS Service getMastert()>" + JSON.stringify(data))
-  //         return data
-  //       });
-  //     }));
-  // }
-
   getMastert(refType) {
 
     let queryParams = `?compCode=${COMP_CODE}`;
@@ -52,51 +40,67 @@ export class CrmPersonalService {
 
     console.log('Call getPersonalLists()');
 
-    let URL =BACKEND_URL+'/searchPersonal?'
+    let URL =BACKEND_URL+'/searchPersonal'
     let queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
+
+    if(idCard)
       queryParams += `&idCard=${idCard}`;
+
+    if(firstName)
       queryParams += `&firstName=${firstName}`;
+
+    if(lastName)
       queryParams += `&lastName=${lastName}`;
+
+    if(mobile)
       queryParams += `&mobile=${mobile}`;
+
+    if(CustomerAlias)
       queryParams += `&CustomerAlias=${CustomerAlias}`;
+
+    if(COMP_CODE)
       queryParams += `&compCode=${COMP_CODE}`;
+
+    if(actionBy)
       queryParams += `&actionBy=${actionBy}`;
 
-    console.log('*** params:' + URL+queryParams );
-
     this.http.get<{ message: string, result: any }>(URL + queryParams)
-    .pipe(map((resultData) => {
+    .pipe(map((resultData:any) => {
 
-      return resultData.result.map(data => {
-        console.log('***resultData.ma[]>>' + JSON.stringify(data))
-        return {
-          compCode: data.compCode,
-          CustCode: data.CustCode,
-          idCard: data.idCard,
-          FirstName: data.FirstName,
-          LastName: data.LastName,
-          CustomerAlias: data.CustomerAlias,
-          Dob: data.Dob,
-          Sex: data.Sex,
-          State: data.State,
-          custType: data.custType,
-          Mobile: data.Mobile,
-          Telephone: data.Telephone,
-          Email: data.Email,
-          SocialAccount: data.SocialAccount,
-          Interested: data.Interested,
-          UserOwner: data.UserOwner,
-          Refer: data.Refer,
-          Class: data.Class,
-          InvestCondition: data.InvestCondition,
-          ImportantData: data.ImportantData,
-          CreateBy: data.CreateBy,
-          CreateDate: data.CreateDate,
-          UpdateBy: data.UpdateBy,
-          UpdateDate: data.UpdateDate
-        };
-    });
+      // console.log('*** resultData>'+ JSON.stringify(resultData))
+      if(resultData.records === 0){
+        return [];
+      }
 
+        return resultData.result.map((data: any) => {
+          return {
+            compCode: data.compCode,
+            CustCode: data.CustCode,
+            idCard: data.idCard,
+            FirstName: data.FirstName,
+            LastName: data.LastName,
+            CustomerAlias: data.CustomerAlias,
+            Dob: data.Dob,
+            Sex: data.Sex,
+            State: data.State,
+            custType: data.custType,
+            Mobile: data.Mobile,
+            Telephone: data.Telephone,
+            Email: data.Email,
+            SocialAccount: data.SocialAccount,
+            Interested: data.Interested,
+            UserOwner: data.UserOwner,
+            Refer: data.Refer,
+            Class: data.Class,
+            InvestCondition: data.InvestCondition,
+            ImportantData: data.ImportantData,
+            CreateBy: data.CreateBy,
+            CreateDate: data.CreateDate,
+            UpdateBy: data.UpdateBy,
+            UpdateDate: data.UpdateDate
+          };
+      });
+      // }
     }))
     .subscribe((transformed) => {
         this.personList = transformed;
@@ -121,6 +125,22 @@ export class CrmPersonalService {
       return data;
     }));
   }
+
+  // http://localhost:3000/api/mitCrm/portfolio/123
+
+  getPortfolio(CustCode: string) {
+
+    console.log('Welcome getPortfolio()>>', CustCode);
+
+    let queryParams = `?compCode=${COMP_CODE}`;
+    let URL =BACKEND_URL+'/portfolio/'
+
+    return this.http.get<{result: any }>(URL + CustCode +queryParams)
+    .pipe(map( data => {
+      return data;
+    }));
+  }
+
 
   updatePerson(personalModel: CrmPersonModel): Observable<any> {
     const URL = BACKEND_URL + '/person';

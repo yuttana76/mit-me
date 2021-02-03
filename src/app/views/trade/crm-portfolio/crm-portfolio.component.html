@@ -6,11 +6,12 @@
 </div>
 
 <div class="div_top10">
+  <button type="button" class="btn btn-primary"  (click)="getPortfolio()" >Refresh</button>
   <h3>LBDU <small> 100,000.00</small></h3>
   <div class="col-md-12">
   <mat-form-field class="col-md-6">
     <mat-label>Account No <small> 50,000.00</small></mat-label>
-    <input matInput [(ngModel)]="personal.AccountNo" >
+    <input matInput  >
     <!-- <mat-hint align="end">Number 0.0000</mat-hint>  -->
   </mat-form-field>
 </div>
@@ -19,13 +20,22 @@
     <!-- Position Column -->
     <ng-container matColumnDef="Code">
       <th mat-header-cell *matHeaderCellDef width='40%'> Code </th>
-      <td mat-cell *matCellDef="let element"> {{element.Code}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.Fund_Code}} </td>
     </ng-container>
 
     <!--  Column -->
     <ng-container matColumnDef="Val">
-      <th mat-header-cell *matHeaderCellDef> Val </th>
-      <td mat-cell *matCellDef="let element">{{element.Val}} </td>
+      <th mat-header-cell *matHeaderCellDef> MKT. Val </th>
+      <td mat-cell *matCellDef="let element">{{element.Available_Amount | number: '1.0-2' }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="UPL" >
+      <th mat-header-cell *matHeaderCellDef> % U.PL </th>
+      <td mat-cell *matCellDef="let element"  >{{element.UPL | number: '1.2-2' }}%</td>
+
+      <!-- <td mat-cell *matCellDef="let element" class="txt_red">{{element.UPL | number: '1.2-2'  }}%</td>
+      <td mat-cell *matCellDef="let element" class="txt_yellow">{{element.UPL | number: '1.2-2'  }}%</td> -->
+      <!-- <td mat-cell *matCellDef="let element">{{ ((element.Available_Amount -  (element.Unit_balance * element.Average_Cost)) / (element.Unit_balance * element.Average_Cost) ) * 100 | number: '1.2-2' }}%</td> -->
     </ng-container>
 
 

@@ -87,6 +87,8 @@ import { OpenAccountFirstComponent } from './open-account-first/open-account-fir
 // Pipe
 import { LedReqStatusPipeComponent } from './pipe/led-req-status-pipe/led-req-status-pipe.component';
 import { genderTransform } from './pipe/personalPipe';
+import { portfolioUPLPipe } from './pipe/portfolioUPLPipe';
+
 import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-search.component';
 import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
 import { CrmActivityComponent } from './crm-activity/crm-activity.component';
@@ -190,6 +192,7 @@ import { CrmTimelineComponent } from './crm-timeline/crm-timeline.component';
     TestGraphQLComponent,
     OpenAccountFirstComponent,
     genderTransform,
+    portfolioUPLPipe,
     CrmPersonalSearchComponent,
     CrmPersonalDataComponent,
     CrmActivityComponent,

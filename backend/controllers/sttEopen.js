@@ -103,30 +103,41 @@ exports.brokerLogin = (req,res,next)=>{
 
   logger.info("Welcome API brokerLogin/");
 
-    fnArray=[];
-    fnArray.push(timeSync());
-    Promise.all(fnArray)
-    .then(data => {
+  //   fnArray=[];
+  //   fnArray.push(timeSync());
+  //   Promise.all(fnArray)
+  //   .then(data => {
 
-      console.log('***'+ JSON.stringify(data))
+  //     console.log('***Time sync:'+ JSON.stringify(data))
 
-      eOnpeAuth(data[0]).then(result =>{
-        logger.info("result>" + JSON.stringify(result))
-        res.status(200).json({
-          code: '000',
-          msg: JSON.stringify(result),
-        });
-      },err =>{
-        logger.error('ERR AUTH>>'+err);
-        res.status(401).json(err.message);
-      });
+  //     eOnpeAuth(data[0]).then(result =>{
+  //       logger.info("result>" + JSON.stringify(result))
+  //       res.status(200).json({
+  //         code: '000',
+  //         msg: JSON.stringify(result),
+  //       });
+  //     },err =>{
+  //       logger.error('ERR AUTH>>'+err);
+  //       res.status(401).json(err.message);
+  //     });
 
-    })
-  .catch(error => {
-    logger.error('Error FundConnext schedule;' +error.message)
-    res.status(401).json(error.message);
+  //   })
+  // .catch(error => {
+  //   logger.error('Error FundConnext schedule;' +error.message)
+  //   res.status(401).json(error.message);
+  // });
+
+  // *********
+  eOnpeAuth().then(result =>{
+    logger.info("result>" + JSON.stringify(result))
+    res.status(200).json({
+      code: '000',
+      msg: JSON.stringify(result),
+    });
+  },err =>{
+    logger.error('ERR AUTH>>'+err);
+    res.status(401).json(err.message);
   });
-
 
 }
 
@@ -161,13 +172,15 @@ ntpClient.getNetworkTime("1.th.pool.ntp.org", 123, function(err, _date) {
 
     // current hours
     let hours = date_ob.getHours();
+    // let hours = ("0" + (date_ob.getHours() + 1)).slice(-2);
 
     // current minutes
     let minutes = date_ob.getMinutes();
+    // let minutes = ("0" + (date_ob.getMinutes() + 1)).slice(-2);
 
     // current seconds
     let seconds = date_ob.getSeconds();
-
+    // let seconds = ("0" + (date_ob.getSeconds() + 1)).slice(-2);
 
     // YYYYMMDDHHmmss
     let dateFormated = ''
@@ -179,19 +192,22 @@ ntpClient.getNetworkTime("1.th.pool.ntp.org", 123, function(err, _date) {
   });
 }
 
-const eOnpeAuth = (requestTime) => {
+const eOnpeAuth = async () => {
 // function eOnpeAuth(){
-  logger.info('Welcome fnFCAuth() requestTime > ' + requestTime);
 
     // Method 1
     // var moment = require('moment')
     // var requestTime = moment().format('YYYYMMDDHHmmss')
+    const requestTime = await timeSync()
+
+    logger.info('Welcome fnFCAuth() requestTime > ' + requestTime);
+
 
     // signature
     var signerObject = crypto.createSign("RSA-SHA256");
     signerObject.update(requestTime);
     var signature2 = signerObject.sign({key:eOpen.privateKey}, "base64");
-    logger.info(`***signature : ${signature2.toString("base64")}`);
+    // logger.info(`***signature : ${signature2.toString("base64")}`);
 
     //verify String
     // var verifierObject = crypto.createVerify("RSA-SHA256");
@@ -205,6 +221,8 @@ const eOnpeAuth = (requestTime) => {
       requestTime:requestTime,
       signature:signature2
     })
+
+    logger.info(`***body : ${JSON.stringify(body)}`);
 
   return new Promise(function(resolve, reject) {
 

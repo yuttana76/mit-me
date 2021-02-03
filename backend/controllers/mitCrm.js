@@ -162,10 +162,15 @@ exports.portfolio = async (req, res, next) =>{
 
   fnArray=[];
   fnArray.push(unitholderBalanceLBDUByAccount(lbdu_accountId));
+  fnArray.push(unitholderBalanceLBDUByAccount(lbdu_accountId));
 
   Promise.all(fnArray)
   .then(data => {
-    var rs_data = {product:'LBDU',data:data[0].recordsets[0]};
+    var rs_data = {lbdu:data[0].recordsets[0],
+      private:data[1].recordsets[0],
+      bond:''
+    };
+
 
     res.status(200).json(rs_data);
   })
@@ -307,6 +312,7 @@ function unitholderBalanceLBDUByAccount(accountId) {
   AA .*
   from (
       select A.NAVdate,A.Fund_Code ,A.Available_Amount,A.Available_Unit_Balance,A.Unit_balance,A.Average_Cost,A.NAV
+      , (((A.Available_Amount -  (A.Unit_balance * A.Average_Cost)) / (A.Unit_balance * A.Average_Cost) ) * 100) AS UPL
       from MIT_FC_UnitholderBalance A
       where A.Account_ID= @accountId
       and Available_Amount>0 AND Available_Unit_Balance>0  )AA

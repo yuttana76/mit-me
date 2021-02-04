@@ -128,14 +128,13 @@ export class CrmPersonalService {
 
   // http://localhost:3000/api/mitCrm/portfolio/123
 
-  getPortfolio(CustCode: string) {
+  getPortfolio(crmCustCode: string) {
 
-    console.log('Welcome getPortfolio()>>', CustCode);
-
+    // console.log('Welcome getPortfolio()>>', crmCustCode);
     let queryParams = `?compCode=${COMP_CODE}`;
     let URL =BACKEND_URL+'/portfolio/'
 
-    return this.http.get<{result: any }>(URL + CustCode +queryParams)
+    return this.http.get<{result: any }>(URL + crmCustCode +queryParams)
     .pipe(map( data => {
       return data;
     }));

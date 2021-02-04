@@ -145,37 +145,74 @@ exports.searchPersonal = (req, res, next) =>{
 
 exports.portfolio = async (req, res, next) =>{
   var compCode = req.query.compCode
-  var custCode = req.params.cusCode;
+  var crmCustCode = req.params.cusCode;
 
-  console.log(`portfolio compCode:${compCode} ; custCode:${custCode}`);
+  console.log(`portfolio compCode:${compCode} ; custCode:${crmCustCode}`);
   // compCode = 'MPAM';
   // custCode = '1';
 
   //Get lbdu account id
   // var  lbdu_accountId='M1901362';
 
-  let lbdu_accountId = await getLBDU_Account(compCode,custCode);
-
-  console.log('***lbdu_accountId>>'+JSON.stringify(lbdu_accountId));
-
-  lbdu_accountId =lbdu_accountId.recordsets[0][0].ext_module_ref
+  // let lbdu_accountId = await getLBDU_Account(compCode,crmCustCode);
+  // console.log('***lbdu_accountId>>'+JSON.stringify(lbdu_accountId));
+  // lbdu_accountId =lbdu_accountId.recordsets[0][0].ext_module_ref
 
   fnArray=[];
-  fnArray.push(unitholderBalanceLBDUByAccount(lbdu_accountId));
-  fnArray.push(unitholderBalanceLBDUByAccount(lbdu_accountId));
+  fnArray.push(unitholderBalanceLBDU_ByCRMcustCode(compCode,crmCustCode));
+  // fnArray.push(unitholderBalanceLBDU_ByCRMcustCode(compCode,crmCustCode));
+  // fnArray.push(unitholderBalanceLBDUByAccount(lbdu_accountId));
 
   Promise.all(fnArray)
   .then(data => {
-    var rs_data = {lbdu:data[0].recordsets[0],
-      private:data[1].recordsets[0],
-      bond:''
+
+    var rs_data={}
+    //LBDU
+    if(data[0]){
+
+      //REDUCE data
+      let ans =[]
+
+      ans = data[0].recordsets[0].reduce((a, b) => {
+
+        if(!a[b['Account_ID']]) {
+              a[b['Account_ID']] = [];
+            }
+
+            a[b['Account_ID']].push(b);
+
+            return a;
+          }, {});
+
+      // ans = data[0].recordsets[0].reduce((a, b) => {
+      //       if(!a[b['Account_ID']]) {
+      //         a[b['Account_ID']] = [];
+      //       }
+      //       a[b['Account_ID']].push(b);
+      //       return a;
+      //     }, {});
+
+        ans['rowsAffected']= data[0].rowsAffected
+
+        rs_data.lbdu=ans
     };
 
+    //Private fund
+    if(data[1]){
+      // rs_data['private']=data[1].recordsets[0]
+      rs_data.private=data[1]
+    }
+
+    //BOND
+    if(data[2]){
+      // rs_data['bond']=data[2].recordsets[0]
+      rs_data.bond=data[2]
+    }
 
     res.status(200).json(rs_data);
   })
   .catch(error => {
-    logger.error('Error FundConnext schedule;' +error.message)
+    logger.error('Error FundConnext portfolio;' +error.message)
     res.status(401).json(error.message);
   });
 
@@ -299,6 +336,76 @@ function getLBDU_Account(compCode,custCode) {
   });
 }
 
+
+
+function unitholderBalanceLBDU_ByCRMcustCode(compCode,crmCustCode) {
+
+  logger.info(`unitholderBalanceLBDU_ByCRMcustCode() ;compCode:${compCode}   ;CustCode: ${crmCustCode}`);
+
+  var fncName = "getMaster()";
+  var queryStr = `
+  BEGIN
+
+  select
+  AA .*
+  from (
+      select A.Account_ID,A.NAVdate,A.Fund_Code ,A.Available_Amount,A.Available_Unit_Balance,A.Unit_balance,A.Average_Cost,A.NAV
+      , (((A.Available_Amount -  (A.Unit_balance * A.Average_Cost)) / (A.Unit_balance * A.Average_Cost) ) * 100) AS UPL
+      from MIT_FC_UnitholderBalance A
+    --   where A.Account_ID = @accountId
+    --   where A.Account_ID IN('M1300543','M1901362')
+      where A.Account_ID IN(
+          select ext_module_ref
+            from MIT_CRM_Personal_product a
+            where a.compCode=@compCode
+            and custCode= @custCode
+      )
+      and Available_Amount>0 AND Available_Unit_Balance>0  )AA
+  INNER JOIN(
+      select Fund_Code,MAX(CONVERT(DATETIME, NAVdate, 112)) AS NAVdate
+      from MIT_FC_UnitholderBalance
+    --   where Account_ID= @accountId
+    --   where Account_ID IN('M1300543','M1901362')
+      where Account_ID IN(
+          select ext_module_ref
+            from MIT_CRM_Personal_product a
+            where a.compCode=@compCode
+            and custCode= @custCode
+      )
+      and Available_Amount>0 AND Available_Unit_Balance>0
+      group by Fund_Code) BB
+  ON AA.Fund_Code=BB.Fund_Code  AND AA.NAVdate= BB.NAVdate
+  ORDER BY AA.Account_ID,AA.Fund_Code
+
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("compCode", sql.VarChar(20), compCode)
+        .input("custCode", sql.VarChar(20), crmCustCode)
+
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
 
 function unitholderBalanceLBDUByAccount(accountId) {
 

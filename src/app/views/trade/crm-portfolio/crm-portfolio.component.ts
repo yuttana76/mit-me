@@ -63,8 +63,7 @@ bond_dataSource = new BehaviorSubject(this.bond_list);
   }
 
   getPortfolio(){
-    console.log("***getPortfolio()" + this.custCode);
-
+    // console.log("***getPortfolio()" + this.custCode);
     var fnArray=[];
     fnArray.push(this.crmPersonalService.getPortfolio(this.custCode));
 
@@ -72,15 +71,16 @@ bond_dataSource = new BehaviorSubject(this.bond_list);
     //  .subscribe(([call1Response, call2Response]) => {
      .subscribe((dataRs:any) => {
 
-      // console.log( " dataRs>>" +JSON.stringify(dataRs))
-      this.lbdu_list = dataRs[0].lbdu
+      console.log( " getPortfolio>>" +JSON.stringify(dataRs[0].lbdu))
+
+      this.lbdu_list = dataRs[0].lbdu[0]
       // let private_data = dataRs[0].private
       // let bond_data = dataRs[0].bond
 
           // this.lbdu_list = dataRs[0].lbdu;
           this.lbdu_dataSource.next(this.lbdu_list);
 
-      console.log( " *** lbdu_data>>" +JSON.stringify(this.lbdu_list))
+      // console.log( " *** lbdu_data>>" +JSON.stringify(this.lbdu_list))
       // console.log( " *** private_data>>" +JSON.stringify(private_data))
       // console.log( " *** bond_data>>" +JSON.stringify(bond_data))
 

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DatePipe, Location } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CrmPersonModel , MasterData} from '../model/crmPersonal.model';
@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material';
 import { forkJoin } from 'rxjs';
 import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { CrmPortfolioComponent } from '../crm-portfolio/crm-portfolio.component';
 
 // import { CalendarOptions } from '@fullcalendar/angular'; // useful for typechecking
 
@@ -18,6 +19,10 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./crm-personal-data.component.scss']
 })
 export class CrmPersonalDataComponent implements OnInit, OnDestroy {
+
+  // @ViewChild(CrmPortfolioComponent)
+  @ViewChild(CrmPortfolioComponent, {static: false})
+  private crmPortfolioComponent: CrmPortfolioComponent;
 
   personalForm: FormGroup;
   paramId: String = '';
@@ -157,6 +162,17 @@ ReferList
 
   ngOnDestroy() {
     // this.formChangeSub.unsubscribe();
+  }
+
+  profileTabSelected(tab){
+
+    console.log(`***profileTabSelected()>> ${tab.index}`)
+
+    if(tab.index === 1){
+      this.crmPortfolioComponent.getPortfolio();
+
+    }
+
   }
 
   onPersonFormSubmit() {

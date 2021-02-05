@@ -26,8 +26,13 @@ export class CrmPortfolioComponent implements OnInit {
  ];
 */
  lbdu_list=[];
- lbdu_displayedColumns: string[] = ['Code', 'Val','UPL'];
- lbdu_dataSource = new BehaviorSubject(this.lbdu_list);
+ lbdu_cost;
+ lbdu_marketVal;
+ lbdu_unrealized;
+ lbdu_unrealized_perc;
+
+//  lbdu_displayedColumns: string[] = ['Code', 'Val','UPL'];
+//  lbdu_dataSource = new BehaviorSubject(this.lbdu_list);
 
 //  PRIVATE
 
@@ -63,27 +68,21 @@ bond_dataSource = new BehaviorSubject(this.bond_list);
   }
 
   getPortfolio(){
-    // console.log("***getPortfolio()" + this.custCode);
-    var fnArray=[];
+
+    console.log("***getPortfolio()>> custCode:" + this.custCode);
+
+    let fnArray=[];
     fnArray.push(this.crmPersonalService.getPortfolio(this.custCode));
 
     forkJoin(fnArray)
-    //  .subscribe(([call1Response, call2Response]) => {
      .subscribe((dataRs:any) => {
 
-      console.log( " getPortfolio>>" +JSON.stringify(dataRs[0].lbdu))
+      this.lbdu_list = dataRs[0].lbdu.recordset
+      this.lbdu_cost = dataRs[0].lbdu.cost
+      this.lbdu_marketVal = dataRs[0].lbdu.marketVal
 
-      this.lbdu_list = dataRs[0].lbdu[0]
-      // let private_data = dataRs[0].private
-      // let bond_data = dataRs[0].bond
-
-          // this.lbdu_list = dataRs[0].lbdu;
-          this.lbdu_dataSource.next(this.lbdu_list);
-
-      // console.log( " *** lbdu_data>>" +JSON.stringify(this.lbdu_list))
-      // console.log( " *** private_data>>" +JSON.stringify(private_data))
-      // console.log( " *** bond_data>>" +JSON.stringify(bond_data))
-
+      this.lbdu_unrealized = this.lbdu_marketVal -this.lbdu_cost
+      this.lbdu_unrealized_perc = ((this.lbdu_marketVal - this.lbdu_cost)/this.lbdu_cost)*100
      });
 
   }

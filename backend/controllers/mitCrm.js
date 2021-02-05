@@ -170,19 +170,22 @@ exports.portfolio = async (req, res, next) =>{
     //LBDU
     if(data[0]){
 
-      //REDUCE data
-      let ans =[]
+      //Calculate
+      let cost =0
+      cost = data[0].recordsets[0].reduce((a, b) => {
+          cost += b['Unit_balance'] * b['Average_Cost'];
+          // console.log(`*** CAL cost > ${b['Unit_balance']} * ${b['Average_Cost']} = ${cost}`)
 
-      ans = data[0].recordsets[0].reduce((a, b) => {
+          return cost
+        }, {});
 
-        if(!a[b['Account_ID']]) {
-              a[b['Account_ID']] = [];
-            }
+      let marketVal=0
+        marketVal = data[0].recordsets[0].reduce((a, b) => {
+        marketVal += b['Unit_balance'] * b['NAV'];
+        // console.log(`*** CAL cost > ${b['Unit_balance']} * ${b['Average_Cost']} = ${cost}`)
 
-            a[b['Account_ID']].push(b);
-
-            return a;
-          }, {});
+        return marketVal
+      }, {});
 
       // ans = data[0].recordsets[0].reduce((a, b) => {
       //       if(!a[b['Account_ID']]) {
@@ -192,9 +195,10 @@ exports.portfolio = async (req, res, next) =>{
       //       return a;
       //     }, {});
 
-        ans['rowsAffected']= data[0].rowsAffected
+        rs_data.lbdu=data[0]
+        rs_data.lbdu["cost"] = cost;
+        rs_data.lbdu["marketVal"] = marketVal;
 
-        rs_data.lbdu=ans
     };
 
     //Private fund
@@ -210,6 +214,7 @@ exports.portfolio = async (req, res, next) =>{
     }
 
     res.status(200).json(rs_data);
+
   })
   .catch(error => {
     logger.error('Error FundConnext portfolio;' +error.message)
@@ -352,25 +357,23 @@ function unitholderBalanceLBDU_ByCRMcustCode(compCode,crmCustCode) {
       select A.Account_ID,A.NAVdate,A.Fund_Code ,A.Available_Amount,A.Available_Unit_Balance,A.Unit_balance,A.Average_Cost,A.NAV
       , (((A.Available_Amount -  (A.Unit_balance * A.Average_Cost)) / (A.Unit_balance * A.Average_Cost) ) * 100) AS UPL
       from MIT_FC_UnitholderBalance A
-    --   where A.Account_ID = @accountId
-    --   where A.Account_ID IN('M1300543','M1901362')
       where A.Account_ID IN(
           select ext_module_ref
             from MIT_CRM_Personal_product a
             where a.compCode=@compCode
             and custCode= @custCode
+            and [status]='A'
       )
       and Available_Amount>0 AND Available_Unit_Balance>0  )AA
   INNER JOIN(
       select Fund_Code,MAX(CONVERT(DATETIME, NAVdate, 112)) AS NAVdate
       from MIT_FC_UnitholderBalance
-    --   where Account_ID= @accountId
-    --   where Account_ID IN('M1300543','M1901362')
       where Account_ID IN(
           select ext_module_ref
             from MIT_CRM_Personal_product a
             where a.compCode=@compCode
             and custCode= @custCode
+            and [status]='A'
       )
       and Available_Amount>0 AND Available_Unit_Balance>0
       group by Fund_Code) BB

@@ -10,6 +10,12 @@ export const navItems = [
     //   text: 'NEW'
     // }
   },
+
+  {
+    name: 'FCUtility',
+    url: '/trade/FCUtility',
+    icon: 'icon-speedometer',
+},
   // {
   //   name: 'E-Open(DEV)-YYY',
   //   url: '/trade/open-account-first',

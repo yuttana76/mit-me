@@ -5,7 +5,7 @@
 
 <mat-card class="example-full-width" >
 
-<mat-tab-group mat-align-tabs="center">
+<mat-tab-group mat-align-tabs="center"  (selectedTabChange)="profileTabSelected($event)">
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon"><i class="fas fa-id-card"></i></mat-icon>

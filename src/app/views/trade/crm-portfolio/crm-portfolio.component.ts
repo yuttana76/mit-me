@@ -31,30 +31,12 @@ export class CrmPortfolioComponent implements OnInit {
  lbdu_unrealized;
  lbdu_unrealized_perc;
 
-//  lbdu_displayedColumns: string[] = ['Code', 'Val','UPL'];
-//  lbdu_dataSource = new BehaviorSubject(this.lbdu_list);
-
-//  PRIVATE
-
-//  private_list=[{'Code':'PF001', 'Val':'20,000,000'}
-//   ,{'Code':'PF002', 'Val':'50,000,000'}
-//  ];
 
 private_list=[];
-private_displayedColumns: string[] = ['Code', 'Val'];
-private_dataSource = new BehaviorSubject(this.private_list);
-
-//  BOND
-/*
- bond_list=[{'Code':'CHAIYO', 'Val':'1,000,000'}
-  ,{'Code':'SANSIRI', 'Val':'2,000,000'}
-  ,{'Code':'MAGNOLIA', 'Val':'10,000,000'}
- ];
-*/
+private_cost=1000;
 
 bond_list=[];
-bond_displayedColumns: string[] = ['Code', 'Val'];
-bond_dataSource = new BehaviorSubject(this.bond_list);
+bond_cost=2000;
 
   constructor(
     private crmPersonalService: CrmPersonalService,

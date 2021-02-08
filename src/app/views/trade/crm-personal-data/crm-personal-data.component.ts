@@ -3,7 +3,7 @@ import { DatePipe, Location } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CrmPersonModel , MasterData} from '../model/crmPersonal.model';
 import { BehaviorSubject } from 'rxjs';
-import { CrmPersonalService } from '../services/crmPerson.service';
+import { CrmService } from '../services/crmPersonal.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { forkJoin } from 'rxjs';
@@ -30,8 +30,8 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
   isDisableFields = false;
   spinnerLoading = false;
 
-  MODE_CREATE = 'create';
-  MODE_EDIT = 'edit';
+  MODE_CREATE = 'CREATE';
+  MODE_EDIT = 'EDIT';
 
   formScreen = 'N';
   private mode = this.MODE_CREATE;
@@ -47,17 +47,17 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
   consent_dataSource = new BehaviorSubject(this.consent_list);
 
 //List of value
-SexList
-stateList ;
-custTypeList;
-ClassList;
-interestList;
-ReferList
+  SexList
+  stateList ;
+  custTypeList;
+  ClassList;
+  interestList;
+  ReferList
 
   constructor(
     // private _formBuilder: FormBuilder,
     private location: Location,
-    private crmPersonalService: CrmPersonalService,
+    private crmPersonalService: CrmService,
     private router: Router,
     public dialog: MatDialog,
     public route: ActivatedRoute,
@@ -75,22 +75,22 @@ ReferList
   ngAfterViewInit() {
 
     this.spinnerLoading = true;
-
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
 
-      if (paramMap.has('source')) {
-        // console.log('SOURCE>>', paramMap.get('source'));
+
+      if (paramMap.has('source') && paramMap.get('source') !== 'null') {
         this.formScreen = paramMap.get('source');
       }
 
-      // this.custCode='1'
-
-      if (paramMap.has('cust_Code')) {
+      if (paramMap.has('cust_Code')
+      && paramMap.get('cust_Code') !== 'null'
+      && paramMap.get('cust_Code') !== ''
+      ) {
         this.mode = this.MODE_EDIT;
         this.custCode = paramMap.get('cust_Code');
       }
 
-      console.log('Initial cust_Code> ',this.custCode )
+      console.log(`Initial cust_Code> this.custCode:${this.custCode}  ;mode:${this.mode}`)
 
       //  Initial load master data
       var fnArray=[];
@@ -101,7 +101,12 @@ ReferList
       fnArray.push(this.crmPersonalService.getMastert("custRefer"));
       fnArray.push(this.crmPersonalService.getMastert("sex"));
 
-      fnArray.push(this.crmPersonalService.getPersonal(this.custCode)); //
+      if((this.custCode !== 'null') ) {
+
+        console.log(`***Loading personal data> ${this.custCode}` )
+          // fnArray.push(this.crmPersonalService.getPersonal(this.custCode)); //
+      }
+
 
       forkJoin(fnArray)
       //  .subscribe(([call1Response, call2Response]) => {
@@ -114,12 +119,12 @@ ReferList
          this.ReferList=dataRs[4].recordset;
          this.SexList=dataRs[5].recordset;
 
-         console.log( " dataRs[6]>>" +JSON.stringify(dataRs[6].recordset))
-         this.personal=dataRs[6].recordset[0];
+         if(dataRs[6]){
+          // console.log( " dataRs[6]>>" +JSON.stringify(dataRs[6].recordset))
+          this.personal=dataRs[6].recordset[0];
+         }
 
-        //  ["retail","mf","pf"]
-        //  "Interested":"retail,mf,pf",
-
+         if(this.personal.Interested)
          this.personal.Interested =  <any>this.personal.Interested.split(',');
 
        });
@@ -179,10 +184,8 @@ ReferList
 
     if (this.personalForm.invalid) {
       console.log('form.invalid() ' + this.personalForm.invalid);
-
       return true;
     }
-
     console.log('Data is OK !!  ' + this.personalForm.invalid);
 
     //   console.log('AFTER SAVE', JSON.stringify(data));

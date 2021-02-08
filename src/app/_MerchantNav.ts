@@ -15,24 +15,20 @@ export const navItems = [
     name: 'FCUtility',
     url: '/trade/FCUtility',
     icon: 'icon-speedometer',
-},
+ },
+
+//   {
+//     name: 'connextCalendar',
+//     url: '/trade/connextCalendar',
+//     icon: 'icon-speedometer',
+//  },
   // {
   //   name: 'E-Open(DEV)-YYY',
   //   url: '/trade/open-account-first',
   //   icon: 'icon-speedometer',
   // },
 
-  {
-    name: 'CRM-Activity-Dashboard',
-    url: '/trade/CRM-ActDash',
-    // name: 'E-Open(DEV)-YYY',
-    // url: '/trade/open-account-first',
-    // icon: 'icon-speedometer',
-    // badge: {
-    //   variant: 'info',
-    //   text: 'NEW'
-    // }
-  },
+
   {
     name: 'CRM-Personal-Data',
     url: '/trade/CRM-Personal-Data/null/null',
@@ -48,11 +44,23 @@ export const navItems = [
   },
 
   {
-    name: 'CRM-Activity',
-    url: '/trade/CRM-Activity',
+    name: 'CRM-Activity-Dashboard',
+    url: '/trade/CRM-ActDash',
     icon: 'icon-speedometer',
-
+    // name: 'E-Open(DEV)-YYY',
+    // url: '/trade/open-account-first',
+    // icon: 'icon-speedometer',
+    // badge: {
+    //   variant: 'info',
+    //   text: 'NEW'
+    // }
   },
+  // {
+  //   name: 'CRM-Activity',
+  //   url: '/trade/CRM-Activity',
+  //   icon: 'icon-speedometer',
+
+  // },
   {
     name: 'CRM-Task',
     url: '/trade/CRM-Task',

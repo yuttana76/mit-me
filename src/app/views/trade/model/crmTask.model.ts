@@ -1,27 +1,29 @@
 export class CrmTask {
-    public CompCode: string;
-    public CustCode: string;
-  
+
+    public compCode: string;
+    public task_id: string;
     public schType: string;
     public schStartDate: string;
+    public title: string;
     public note: string;
+
     public channel: string;
+
     public prodCate: string;
     public productItem: string;
     public schCloseDate: string;
-    public feedbackRS: string;
-    public feedbackReason: string;
-    public feedbackNote: string;
+    public feedBackRS: string;
+    public feedBackReson: string;
+    public feedBackNote: string;
     public investType: string;
     public investValue: string;
     public investDate: string;
-  
-    public CreateBy: string;
-    public CreateDate: string;
-    public UpdateBy: string;
-    public UpdateDate: string;
+
+    public createBy: string;
+    public createDate: string;
+    public updateBy: string;
+    public updateDate: string;
 
     constructor(){}
-  
+
   }
-  

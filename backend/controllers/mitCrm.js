@@ -70,25 +70,62 @@ exports.getPersonalById = (req, res, next) =>{
   });
 }
 
+exports.getTaskById = (req, res, next) =>{
+
+  var taskId = req.params.taskId;
+  var compCode = req.query.compCode;
+
+  logger.info('Start getTaskById();' + taskId +" ;compCode:" + compCode)
+
+  getTaskById(taskId,compCode).then(data=>{
+    res.status(200).json(data);
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
+}
+
 
 exports.createPersonal = (req, res, next) =>{
 
   var custCode = req.params.cusCode;
 
   var personObj = JSON.parse(JSON.stringify(req.body.personObj))
+  var compCode = JSON.parse(JSON.stringify(req.body.compCode))
+  var actionBy = JSON.parse(JSON.stringify(req.body.actionBy))
 
-  logger.info(`createPersonal ()custCode: ${custCode}  ;personObj:${personObj} ` )
 
-  res.status(200).json({code:000,msg:'create successful'});
+  logger.info(`createPersonal ()compCode: ${compCode};actionBy:${actionBy}  ;personObj:${JSON.stringify(personObj)} ` )
 
-  // getPersonalById(custCode).then(data=>{
-  //   res.status(200).json(data);
-  // },err=>{
-  //     res.status(400).json({
-  //       message: err,
-  //       code:"999",
-  //     });
-  // });
+  createPersonal(compCode,actionBy,personObj).then(data=>{
+    res.status(200).json(data);
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
+}
+
+exports.createTask = (req, res, next) =>{
+
+  var taskObj = JSON.parse(JSON.stringify(req.body.taskObj))
+  var compCode = JSON.parse(JSON.stringify(req.body.taskObj))
+  var actionBy = JSON.parse(JSON.stringify(req.body.taskObj))
+
+
+  logger.info(`createTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
+
+  createTask(compCode,actionBy,taskObj).then(data=>{
+    res.status(200).json(data);
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
 }
 
 exports.updatePersonal = (req, res, next) =>{
@@ -101,6 +138,26 @@ exports.updatePersonal = (req, res, next) =>{
   logger.info(`updatePersonal ()compCode: ${compCode};actionBy:${actionBy}  ;personObj:${JSON.stringify(personObj)} ` )
 
   updatePersonal(compCode,actionBy,personObj).then(data=>{
+    res.status(200).json(data);
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
+}
+
+
+exports.updateTask = (req, res, next) =>{
+
+  // var custCode = req.params.cusCode;
+  var taskObj = JSON.parse(JSON.stringify(req.body.taskObj))
+  var compCode = JSON.parse(JSON.stringify(req.body.taskObj))
+  var actionBy = JSON.parse(JSON.stringify(req.body.taskObj))
+
+  logger.info(`updateTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
+
+  updateTask(compCode,actionBy,taskObj).then(data=>{
     res.status(200).json(data);
   },err=>{
       res.status(400).json({
@@ -512,9 +569,9 @@ function getMaster(compCode,refType,lang) {
 }
 
 function getPersonalById(custCode,compCode) {
-  logger.info('getMaster()');
+  logger.info('getPersonalById()');
 
-  var fncName = "getMaster()";
+  var fncName = "getPersonalById()";
   var queryStr = `
   BEGIN
 
@@ -540,6 +597,43 @@ function getPersonalById(custCode,compCode) {
           } else {
             // console.log(" queryStr >>" + queryStr);
             // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+function getTaskById(task_id,compCode) {
+  logger.info('getTaskById()');
+
+  var fncName = "getTaskById()";
+  var queryStr = `
+  BEGIN
+
+    select *
+    from MIT_CRM_Task
+    where compCode=@compCode
+    AND task_id=@task_id
+
+  END
+    `;
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("compCode", sql.VarChar(20), compCode)
+        .input("task_id", sql.Int, task_id)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
             resolve(result);
           }
         });
@@ -598,8 +692,8 @@ function updatePersonal(compCode,actionBy,personObj){
         .input("LastName", sql.NVarChar(200), personObj.LastName)
         .input("CustomerAlias", sql.NVarChar(200), personObj.CustomerAlias)
         .input("Dob", sql.VarChar(50), personObj.Dob)
-        .input("Sex", sql.NVarChar(10), personObj.Sex.trim())
-        .input("State", sql.NVarChar(50), personObj.State.trim())
+        .input("Sex", sql.NVarChar(10), personObj.Sex)
+        .input("State", sql.NVarChar(50), personObj.State)
         .input("custType", sql.NVarChar(50), personObj.custType)
         .input("Mobile", sql.VarChar(50), personObj.Mobile)
         .input("Telephone", sql.VarChar(50), personObj.Telephone)
@@ -621,6 +715,161 @@ function updatePersonal(compCode,actionBy,personObj){
           } else {
             // console.log(" queryStr >>" + queryStr);
             // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+function updateTask(compCode,actionBy,taskObj){
+
+  var fncName = "updatePersonal()";
+  var queryStr = `
+  BEGIN
+
+    UPDATE MIT_CRM_Personal SET
+      schType=@schType,
+      schStartDate=@schStartDate,
+      title=@title,
+      note=@note,
+      channel=@channel,
+      prodCate=@prodCate,
+      productItem=@productItem,
+      schCloseDate=@schCloseDate,
+      feedBackRS=@feedBackRS,
+      feedBackReson=@feedBackReson,
+      feedBackNote=@feedBackNote,
+      investType=@investType,
+      investValue=@investValue,
+      investDate=@investDate,
+      UpdateBy=@UpdateBy,
+      UpdateDate=GETDATE()
+    WHERE compCode=@compCode
+    AND task_id=@task_id
+
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("compCode", sql.VarChar(20), compCode)
+        .input("task_id", sql.Int, personObj.task_id)
+        .input("schType", sql.VarChar(2), taskObj.schType)
+        .input("schStartDate", sql.VarChar(50), taskObj.schStartDate)
+        .input("title", sql.NVarChar(200), taskObj.title)
+        .input("note", sql.NVarChar(500), taskObj.note)
+        .input("channel", sql.VarChar(2), taskObj.channel)
+        .input("prodCate", sql.NVarChar(50), taskObj.prodCate)
+        .input("productItem", sql.NVarChar(50), taskObj.productItem)
+        .input("schCloseDate", sql.NVarChar(50), taskObj.custschCloseDateType)
+        .input("feedBackRS", sql.VarChar(50), taskObj.feedBackRS)
+        .input("feedBackReson", sql.VarChar(50), taskObj.feedBackReson)
+        .input("feedBackNote", sql.NVarChar(200), taskObj.feedBackNote)
+        .input("investType", sql.NVarChar(50), taskObj.investType)
+        .input("investValue", sql.NVarChar(20), taskObj.investValue)
+        .input("investDate", sql.NVarChar(50), taskObj.UserOwner)
+        .input("UpdateBy", sql.NVarChar(50), actionBy)
+
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+
+
+function createTask(compCode,actionBy,taskObj){
+
+  var fncName = "createTask()";
+  var queryStr = `
+  BEGIN
+    INSERT INTO MIT_CRM_Task (
+          compCode,
+          schType,
+          schStartDate,
+          title,
+          note,
+          channel,
+          prodCate,
+          productItem,
+          schCloseDate,
+          feedBackRS,
+          feedBackReson,
+          feedBackNote,
+          investType,
+          investValue,
+          investDate,
+          CreateBy,
+          CreateDate
+      )VALUES(
+          @compCode,
+          @schType,
+          @schStartDate,
+          @title,
+          @note,
+          @channel,
+          @prodCate,
+          @productItem,
+          @schCloseDate,
+          @feedBackRS,
+          @feedBackReson,
+          @feedBackNote,
+          @investType,
+          @investValue,
+          @investDate,
+          @CreateBy,
+          GETDATE()
+      )
+
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("compCode", sql.VarChar(20), compCode)
+        .input("schType", sql.VarChar(2), taskObj.schType)
+        .input("schStartDate", sql.VarChar(50), taskObj.schStartDate)
+        .input("title", sql.NVarChar(200), taskObj.title)
+        .input("note", sql.NVarChar(500), taskObj.note)
+        .input("channel", sql.VarChar(2), taskObj.channel)
+        .input("prodCate", sql.NVarChar(50), taskObj.prodCate)
+        .input("productItem", sql.NVarChar(50), taskObj.productItem)
+        .input("schCloseDate", sql.NVarChar(50), taskObj.custschCloseDateType)
+        .input("feedBackRS", sql.VarChar(50), taskObj.feedBackRS)
+        .input("feedBackReson", sql.VarChar(50), taskObj.feedBackReson)
+        .input("feedBackNote", sql.NVarChar(200), taskObj.feedBackNote)
+        .input("investType", sql.NVarChar(50), taskObj.investType)
+        .input("investValue", sql.NVarChar(20), taskObj.investValue)
+        .input("investDate", sql.NVarChar(50), taskObj.UserOwner)
+        .input("CreateBy", sql.NVarChar(50), actionBy)
+
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+          } else {
             resolve(result);
           }
         });

@@ -97,6 +97,7 @@ import { CrmMarketManagerComponent } from './crm-market-manager/crm-market-manag
 import { CrmTaskComponent } from './crm-task/crm-task.component';
 import { CrmPortfolioComponent } from './crm-portfolio/crm-portfolio.component';
 import { CrmTimelineComponent } from './crm-timeline/crm-timeline.component';
+import { CrmActCalendarComponent } from './crm-act-calendar/crm-act-calendar.component';
 
 
 @NgModule({
@@ -201,6 +202,7 @@ import { CrmTimelineComponent } from './crm-timeline/crm-timeline.component';
     CrmTaskComponent,
     CrmPortfolioComponent,
     CrmTimelineComponent,
+    CrmActCalendarComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

@@ -6,7 +6,7 @@
   <!-- <form [formGroup]="searchForm" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading" class="example-form"> -->
   <form [formGroup]="searchForm" (submit)="onSerachCust()" #custForm="ngForm" class="example-form">
     <mat-card-title>Search Customer Information
-        <a mat-button routerLink="/trade/CRM-Personal-Data" routerLinkActive="mat-accent" matTooltip="New customer">
+        <a mat-button  [routerLink]="['/trade/CRM-Personal-Data','','SEARCH_CUST_SCR']"  routerLinkActive="mat-accent" matTooltip="New customer">
           <i class="fas fa-user-plus fa-2x" ></i>
         </a>
 

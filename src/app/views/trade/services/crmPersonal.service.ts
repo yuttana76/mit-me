@@ -1,4 +1,4 @@
-import { Injectable } from '../../../../../node_modules/@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject, Observable} from 'rxjs';
 import {forkJoin} from 'rxjs';
@@ -7,13 +7,14 @@ import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 
 import { CrmPersonModel } from '../model/crmPersonal.model';
+import { CrmTask } from '../model/crmTask.model';
 
 const BACKEND_URL = environment.apiURL + '/mitCrm';
 const COMP_CODE='MPAM';
 const LANG='TH';
 
 @Injectable({ providedIn: 'root' })
-export class CrmPersonalService {
+export class CrmService {
   private personList: CrmPersonModel[] = [];
   private personListUpdated = new Subject<CrmPersonModel[]>();
 
@@ -155,6 +156,28 @@ export class CrmPersonalService {
         // Update person
         // console.log("***Update person" ,JSON.stringify(personalModel))
         return this.http.put<{ message: string, data: any }>(URL + '/' + personalModel.CustCode, data);
+    } else {
+        // New person
+        // console.log("***New person" ,JSON.stringify(personalModel))
+        return this.http.post<{ message: string, data: any }>(URL, data);
+    }
+  }
+
+
+  updateTask(obj: CrmTask): Observable<any> {
+    const URL = BACKEND_URL + '/task';
+    let data = {
+      'obj': obj,
+      'compCode': COMP_CODE,
+      'actionBy': 'DEV'
+      };
+
+      // data= JSON.parse(JSON.stringify(data).replace(/\s/g, ''));
+
+      if (obj.task_id && obj.task_id !== null && obj.task_id !== '') {
+        // Update person
+        // console.log("***Update person" ,JSON.stringify(personalModel))
+        return this.http.put<{ message: string, data: any }>(URL + '/' + obj.task_id, data);
     } else {
         // New person
         // console.log("***New person" ,JSON.stringify(personalModel))

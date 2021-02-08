@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject } from 'rxjs';
 import { CrmPersonModel } from '../model/crmPersonal.model';
-import { CrmPersonalService } from '../services/crmPerson.service';
+import { CrmService } from '../services/crmPersonal.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -39,7 +39,7 @@ bond_list=[];
 bond_cost=2000;
 
   constructor(
-    private crmPersonalService: CrmPersonalService,
+    private crmPersonalService: CrmService,
     private toastr: ToastrService,
   ) {
     console.log("***CrmPortfolioComponent()>> constructor custCode:" + this.custCode);

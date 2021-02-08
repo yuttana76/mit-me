@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { CrmPersonModel } from '../model/crmPersonal.model';
-import { CrmPersonalService } from '../services/crmPerson.service';
+import { CrmService } from '../services/crmPersonal.service';
 
 @Component({
   selector: 'app-crm-personal-search',
@@ -29,7 +29,7 @@ export class CrmPersonalSearchComponent implements OnInit {
   // cust_displayedColumns: string[] = ['Cust_Code', 'FullName','Aliast','RM','LastAct','Action'];
 
   constructor(
-    private crmPersonalService: CrmPersonalService,
+    private crmPersonalService: CrmService,
     public route: ActivatedRoute,
     private toastr: ToastrService,
   ) { }

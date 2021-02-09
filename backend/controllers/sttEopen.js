@@ -156,8 +156,7 @@ ntpClient.getNetworkTime("1.th.pool.ntp.org", 123, function(err, _date) {
         return;
     }
 
-    console.log("Current time : ");
-    console.log(_date); // Mon Jul 08 2013 21:31:31 GMT+0200 (Paris, Madrid (heure d’été))
+    // console.log(`Current time : ${_date}` );
 
     let date_ob = new Date(_date);
     // current date
@@ -171,16 +170,16 @@ ntpClient.getNetworkTime("1.th.pool.ntp.org", 123, function(err, _date) {
     let year = date_ob.getFullYear();
 
     // current hours
-    let hours = date_ob.getHours();
-    // let hours = ("0" + (date_ob.getHours() + 1)).slice(-2);
+    // let hours = date_ob.getHours();
+    let hours = ("0" + (date_ob.getHours())).slice(-2);
 
     // current minutes
-    let minutes = date_ob.getMinutes();
-    // let minutes = ("0" + (date_ob.getMinutes() + 1)).slice(-2);
+    // let minutes = date_ob.getMinutes();
+    let minutes = ("0" + (date_ob.getMinutes())).slice(-2);
 
     // current seconds
-    let seconds = date_ob.getSeconds();
-    // let seconds = ("0" + (date_ob.getSeconds() + 1)).slice(-2);
+    // let seconds = date_ob.getSeconds();
+    let seconds = ("0" + (date_ob.getSeconds())).slice(-2);
 
     // YYYYMMDDHHmmss
     let dateFormated = ''
@@ -198,14 +197,18 @@ const eOnpeAuth = async () => {
     // Method 1
     // var moment = require('moment')
     // var requestTime = moment().format('YYYYMMDDHHmmss')
-    const requestTime = await timeSync()
 
-    logger.info('Welcome fnFCAuth() requestTime > ' + requestTime);
+    // Sync time
+    const requestTime = await timeSync()
+    // logger.info('Welcome fnFCAuth() requestTime > ' + requestTime);
 
 
     // signature
     var signerObject = crypto.createSign("RSA-SHA256");
     signerObject.update(requestTime);
+
+    // console.log(`PUB>>`+eOpen.publicKey)
+
     var signature2 = signerObject.sign({key:eOpen.privateKey}, "base64");
     // logger.info(`***signature : ${signature2.toString("base64")}`);
 
@@ -273,10 +276,10 @@ const eOnpeAuth = async () => {
 
 exports.downloadJSON = (req, res, next) =>{
 
-  var cardNapplicationIdumber = req.params.applicationId;
+  var applicationId = req.params.applicationId;
 
 
-  downloadJSON(cardNapplicationIdumber).then(result =>{
+  downloadJSON(applicationId).then(result =>{
 
     logger.info("downloadJSON Result>" + JSON.stringify(result))
 
@@ -294,10 +297,29 @@ exports.downloadJSON = (req, res, next) =>{
 
 }
 
+exports.applications = (req, res, next) =>{
+
+  applications().then(result =>{
+
+    logger.info("applications Result>" + JSON.stringify(result))
+
+  res.status(200).json({
+    code: '000',
+    msg: JSON.stringify(result),
+  });
+
+  },err =>{
+    logger.error('applications Error>>'+err);
+    res.status(401).json(err.message);
+
+  });
+
+}
+
 // function downloadJSON(applicationId){
 const downloadJSON = async (applicationId) => {
 
-  logger.info(`applicationId : ${applicationId}`)
+  logger.info(`downloadJSON() : ${applicationId}`)
 
   const token = await eOnpeAuth()
 
@@ -321,7 +343,7 @@ const downloadJSON = async (applicationId) => {
 
     const request = https.request(options,(res) => {
 
-    console.log(`statusCode: ${res.statusCode}`)
+    console.log(`statusCode: ${JSON.stringify(res.statusCode)}`)
 
     var _chunk="";
     res.setEncoding('utf8');
@@ -348,6 +370,63 @@ const downloadJSON = async (applicationId) => {
 
 }
 
+
+
+// function downloadJSON(applicationId){
+  const applications = async () => {
+
+    logger.info(`applications() `)
+
+    const token = await eOnpeAuth()
+
+    return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      var options = {
+        host: 'oacctest.settrade.com',
+        path: `/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications`,
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          //  "Content-Type": "application/json",
+        },
+      };
+
+      logger.info('***token > ' + token);
+      logger.info('***options > ' + JSON.stringify(options));
+
+
+      const request = https.request(options,(res) => {
+
+      console.log(`statusCode: ${JSON.stringify(res)}`)
+
+      resolve(res);
+
+      // var _chunk="";
+      // res.setEncoding('utf8');
+      // res.on('data', (chunk) => {
+      //   _chunk=_chunk.concat(chunk);
+      // });
+      // res.on('end', () => {
+      //   resolve(_chunk);
+      // });
+
+    });
+
+    request.on('error', (e) => {
+      logger.error('err fnFCAuth>');
+      reject(e);
+    });
+
+    // Write data to request body
+    // logger.info('***FC_API_AUTH > ' + JSON.stringify(FC_API_AUTH));
+    request.write(body);
+    request.end();
+
+    });
+
+  }
 
 // const promiseToDoSomething = () => {
 //   return new Promise(resolve => {

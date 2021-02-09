@@ -11,6 +11,8 @@ router.post("/signVerify",sttEopen.signVerify);
 
 router.post("/broker-login",sttEopen.brokerLogin);
 
+router.get("/applications",sttEopen.applications);
 router.get("/downloadJSON/:applicationId",sttEopen.downloadJSON);
+
 
 module.exports = router;

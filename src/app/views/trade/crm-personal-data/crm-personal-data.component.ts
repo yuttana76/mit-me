@@ -77,7 +77,6 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
     this.spinnerLoading = true;
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
 
-
       if (paramMap.has('source') && paramMap.get('source') !== 'null') {
         this.formScreen = paramMap.get('source');
       }

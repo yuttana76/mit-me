@@ -72,12 +72,13 @@ productList=[
     this.schFormGroup = this._formBuilder.group({
       // firstCtrl: ['', Validators.required]
 
+      title: new FormControl(null, {validators: [Validators.required]}),
+      note: new FormControl(null, {}),
+
       schType: new FormControl(null, {validators: [Validators.required]}),
       // schStatus: new FormControl(null, {validators: [Validators.required]}),
       schStartDate: new FormControl(null, {validators: [Validators.required]}),
 
-      title: new FormControl(null, {validators: [Validators.required]}),
-      note: new FormControl(null, {validators: [Validators.required]}),
 
       channel: new FormControl(null, { }),
       prodCate: new FormControl(null, { }),
@@ -105,15 +106,18 @@ productList=[
         this.formScreen = paramMap.get('source');
       }
 
-      if (paramMap.has('cust_Code')
-      && paramMap.get('cust_Code') !== 'null'
-      && paramMap.get('cust_Code') !== ''
+      if (paramMap.has('taskId')
+      && paramMap.get('taskId') !== 'undefined'
+      && paramMap.get('taskId') !== 'null'
+      && paramMap.get('taskId') !== ''
       ) {
+        console.log('initial values')
         this.mode = this.MODE_EDIT;
         this.taskId = paramMap.get('taskId');
       }
 
-      console.log(`Initial cust_Code> this.custCode:${this.taskId}  ;mode:${this.mode}`)
+      console.log(`has taskId> :${paramMap.has('taskId')}  ;get:${paramMap.get('taskId')}`)
+      console.log(`Initial taskId> :${this.taskId}  ;mode:${this.mode}`)
 
       //  Initial load master data
       var fnArray=[];
@@ -123,9 +127,8 @@ productList=[
       fnArray.push(this.crmPersonalService.getMastert("feedback"));
       fnArray.push(this.crmPersonalService.getMastert("feebackCategory"));
 
-      if((this.taskId !== 'null') ) {
-
-          // fnArray.push(this.crmPersonalService.getPersonal(this.custCode)); //
+      if(this.mode === this.MODE_EDIT ) {
+          fnArray.push(this.crmPersonalService.getTask(this.taskId)); //
       }
 
 
@@ -139,12 +142,20 @@ productList=[
       this.feedbackList=dataRs[3].recordset;
       this.feedbackCategory=dataRs[4].recordset;
 
-        //  if(dataRs[5]){
-        //   this.crmTaskObj=dataRs[5].recordset[0];
-        //  }
+         if(dataRs[5]){
+          this.crmTaskObj=dataRs[5].recordset[0];
 
-        //  if(this.personal.Interested)
-        //  this.personal.Interested =  <any>this.personal.Interested.split(',');
+          console.log(' Task result:'+JSON.stringify(this.crmTaskObj))
+         }
+
+         if(this.crmTaskObj.prodCate)
+         this.crmTaskObj.prodCate =  <any>this.crmTaskObj.prodCate.split(',');
+
+         if(this.crmTaskObj.productItem)
+         this.crmTaskObj.productItem =  <any>this.crmTaskObj.productItem.split(',');
+
+         if(this.crmTaskObj.feedBackReson)
+         this.crmTaskObj.feedBackReson =  <any>this.crmTaskObj.feedBackReson.split(',');
 
        });
 
@@ -161,6 +172,11 @@ productList=[
     console.log('Data is OK !!  ' + this.schFormGroup.invalid);
 
     //   console.log('AFTER SAVE', JSON.stringify(data));
+
+    if(this.crmTaskObj.feedBackRS=='01'){
+      this.crmTaskObj.feedBackReson=null;
+    }
+
     this.crmPersonalService.updateTask(this.crmTaskObj)
     .subscribe((data: any ) => {
 

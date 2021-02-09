@@ -299,7 +299,15 @@ exports.downloadJSON = (req, res, next) =>{
 
 exports.applications = (req, res, next) =>{
 
-  applications().then(result =>{
+  // var status = req.query.status
+  // var startLastUpdatedTime = req.query.startLastUpdatedTime
+  // var endLastUpdatedTime = req.query.endLastUpdatedTime
+
+  let status='SUBMITTED'
+  let startLastUpdatedTime='2021-02-04T00:00:00'
+  let endLastUpdatedTime='2021-02-09T23:59:59'
+
+  applications(status,startLastUpdatedTime,endLastUpdatedTime).then(result =>{
 
     logger.info("applications Result>" + JSON.stringify(result))
 
@@ -373,7 +381,7 @@ const downloadJSON = async (applicationId) => {
 
 
 // function downloadJSON(applicationId){
-  const applications = async () => {
+  const applications = async (status,startLastUpdatedTime,endLastUpdatedTime) => {
 
     logger.info(`applications() `)
 
@@ -383,9 +391,11 @@ const downloadJSON = async (applicationId) => {
 
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
+      var param=`?status=${status}&startLastUpdatedTime=${startLastUpdatedTime}&endLastUpdatedTime=${endLastUpdatedTime}`
+
       var options = {
         host: 'oacctest.settrade.com',
-        path: `/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications`,
+        path: `/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications${param}`,
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,

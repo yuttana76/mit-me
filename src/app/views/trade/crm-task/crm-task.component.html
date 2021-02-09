@@ -5,6 +5,18 @@
 
         <h5>Open (Plan)</h5>
 
+      <mat-form-field class="col-md-6">
+        <input  matInput formControlName="title" [(ngModel)]="crmTaskObj.title" placeholder="Title" required >
+        <mat-error *ngIf="schFormGroup.get('title').invalid" >Please fill Title.</mat-error>
+      </mat-form-field>
+
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Note
+        </mat-label>
+        <textarea matInput formControlName="note" [(ngModel)]="crmTaskObj.note"  placeholder="Note" ></textarea>
+      </mat-form-field>
+
         <mat-form-field class="example-full-width">
             <mat-label>ประเภท Activity </mat-label>
             <mat-select [(ngModel)]="crmTaskObj.schType" formControlName="schType" >
@@ -16,7 +28,7 @@
 
         <mat-form-field >
           <mat-label> Schedule Start Date</mat-label>
-          <input matInput [matDatepicker]="schStartDate"   formControlName="schStartDate"     placeholder="Schedule Start Date " >
+          <input matInput [matDatepicker]="schStartDate"   [(ngModel)]="crmTaskObj.schStartDate" formControlName="schStartDate"     placeholder="Schedule Start Date " >
           <mat-datepicker-toggle matSuffix [for]="schStartDate"></mat-datepicker-toggle>
           <mat-datepicker #schStartDate disabled="false"></mat-datepicker>
           <mat-error *ngIf="schFormGroup.controls['schStartDate'].hasError('required')  &&
@@ -24,16 +36,11 @@
           <!-- <mat-hint align="end">Not more then 100 characters long.</mat-hint> -->
         </mat-form-field>
 
-        <mat-form-field class="example-full-width">
-          <mat-label>Note
-          </mat-label>
-          <textarea matInput formControlName="note"  placeholder="Note" ></textarea>
-        </mat-form-field>
 
         <section class="example-full-width" *ngIf="crmTaskObj.schType=='contactCustAct' " >
         <mat-label>Channel</mat-label>
         <div>
-          <mat-radio-group formControlName="channel"  required >
+          <mat-radio-group formControlName="channel"  [(ngModel)]="crmTaskObj.channel" required >
             <mat-radio-button class="example-margin"  *ngFor="let obj of channelList" [value]="obj.code">{{obj.text}}</mat-radio-button>
           </mat-radio-group>
           <mat-error *ngIf="schFormGroup.controls['channel'].hasError('required')  &&
@@ -53,7 +60,7 @@
 
         <mat-form-field class="example-full-width">
           <mat-label>Product Name</mat-label>
-          <mat-select formControlName="productItem" multiple>
+          <mat-select formControlName="productItem" [(ngModel)]="crmTaskObj.productItem" multiple>
               <mat-option  *ngFor="let obj of productList" [value]="obj.code">
                 {{obj.text}}
               </mat-option>
@@ -86,16 +93,16 @@
         <section class="example-full-width">
           <mat-label>Feedback Result</mat-label>
           <div>
-          <mat-radio-group  [(ngModel)]="crmTaskObj.feedbackRS" formControlName="feedbackRS"  >
+          <mat-radio-group  [(ngModel)]="crmTaskObj.feedBackRS" formControlName="feedbackRS"  >
             <mat-radio-button class="example-margin"  *ngFor="let obj of feedbackList" [value]="obj.code">{{obj.text}}</mat-radio-button>
           </mat-radio-group>
         </div>
         </section>
 
          <!-- Incase not interest ; code=2 -->
-        <mat-form-field class="example-full-width" *ngIf="crmTaskObj.feedbackRS=='02' " >
+        <mat-form-field class="example-full-width" *ngIf="crmTaskObj.feedBackRS=='02' " >
           <mat-label>Reason not interest</mat-label>
-          <mat-select formControlName="feedbackReason" multiple>
+          <mat-select formControlName="feedbackReason" [(ngModel)]="crmTaskObj.feedBackReson"  multiple>
               <mat-option  *ngFor="let obj of feedbackCategory" [value]="obj.code">
                 {{obj.text}}
               </mat-option>
@@ -105,15 +112,15 @@
         <mat-form-field class="example-full-width">
           <mat-label>Feedback Note
           </mat-label>
-          <textarea matInput formControlName="feedbackNote"  placeholder="Feedback Note" ></textarea>
+          <textarea matInput formControlName="feedbackNote" [(ngModel)]="crmTaskObj.feedBackNote" placeholder="Feedback Note" ></textarea>
         </mat-form-field>
 
         <!-- Incase interest to invest; code=1 -->
-        <div *ngIf="crmTaskObj.feedbackRS=='1' ">
+        <div *ngIf="crmTaskObj.feedBackRS=='1' ">
           <section class="example-full-width">
             <mat-label>Invest type</mat-label>
             <div>
-            <mat-radio-group  formControlName="investType"  >
+            <mat-radio-group  formControlName="investType" [(ngModel)]="crmTaskObj.investType"  >
               <mat-radio-button value="amount">Amount</mat-radio-button>
               <mat-radio-button value="unit">Unit</mat-radio-button>
             </mat-radio-group>
@@ -123,13 +130,13 @@
 
           <mat-form-field class="example-full-width">
             <mat-label>Volumn</mat-label>
-            <input type="number" matInput placeholder="0.0000" >
+            <input type="number" matInput [(ngModel)]="crmTaskObj.investValue"  placeholder="0.0000" >
             <mat-hint align="end">Number 0.0000</mat-hint>
           </mat-form-field>
 
           <mat-form-field >
             <mat-label> Invest Date</mat-label>
-            <input matInput [matDatepicker]="investDate"   formControlName="investDate"     placeholder="Schedule invest date " >
+            <input matInput [matDatepicker]="investDate"   [(ngModel)]="crmTaskObj.investDate"   formControlName="investDate"     placeholder="Schedule invest date " >
             <mat-datepicker-toggle matSuffix [for]="investDate"></mat-datepicker-toggle>
             <mat-datepicker #investDate disabled="false"></mat-datepicker>
             <mat-error *ngIf="schFormGroup.controls['investDate'].hasError('required')  &&

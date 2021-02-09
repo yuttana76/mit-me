@@ -127,6 +127,19 @@ export class CrmService {
     }));
   }
 
+  getTask(taskId: string) {
+
+    console.log('Welcome getTask()>>', taskId);
+
+    let queryParams = `?compCode=${COMP_CODE}`;
+    let URL =BACKEND_URL+ `/task/`
+
+    return this.http.get<{result: any }>(URL + taskId +queryParams)
+    .pipe(map( data => {
+      return data;
+    }));
+  }
+
   // http://localhost:3000/api/mitCrm/portfolio/123
 
   getPortfolio(crmCustCode: string) {

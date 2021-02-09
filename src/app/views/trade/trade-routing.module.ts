@@ -331,7 +331,8 @@ const routes: Routes = [
         }
       },
       {
-        path: 'CRM-Task',
+        // path: 'CRM-Task',
+        path: 'CRM-Task/:taskId/:source',
         component: CrmTaskComponent,
         data: {
           title: 'Welcome CRM Task'

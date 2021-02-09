@@ -111,9 +111,9 @@ exports.createPersonal = (req, res, next) =>{
 
 exports.createTask = (req, res, next) =>{
 
-  var taskObj = JSON.parse(JSON.stringify(req.body.taskObj))
-  var compCode = JSON.parse(JSON.stringify(req.body.taskObj))
-  var actionBy = JSON.parse(JSON.stringify(req.body.taskObj))
+  var taskObj = JSON.parse(JSON.stringify(req.body.obj))
+  var compCode = JSON.parse(JSON.stringify(req.body.compCode))
+  var actionBy = JSON.parse(JSON.stringify(req.body.actionBy))
 
 
   logger.info(`createTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
@@ -151,9 +151,9 @@ exports.updatePersonal = (req, res, next) =>{
 exports.updateTask = (req, res, next) =>{
 
   // var custCode = req.params.cusCode;
-  var taskObj = JSON.parse(JSON.stringify(req.body.taskObj))
-  var compCode = JSON.parse(JSON.stringify(req.body.taskObj))
-  var actionBy = JSON.parse(JSON.stringify(req.body.taskObj))
+  var taskObj = JSON.parse(JSON.stringify(req.body.obj))
+  var compCode = JSON.parse(JSON.stringify(req.body.compCode))
+  var actionBy = JSON.parse(JSON.stringify(req.body.actionBy))
 
   logger.info(`updateTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
 
@@ -732,7 +732,7 @@ function updateTask(compCode,actionBy,taskObj){
   var queryStr = `
   BEGIN
 
-    UPDATE MIT_CRM_Personal SET
+    UPDATE MIT_CRM_Task SET
       schType=@schType,
       schStartDate=@schStartDate,
       title=@title,
@@ -761,7 +761,7 @@ function updateTask(compCode,actionBy,taskObj){
       pool1
         .request()
         .input("compCode", sql.VarChar(20), compCode)
-        .input("task_id", sql.Int, personObj.task_id)
+        .input("task_id", sql.Int, taskObj.task_id)
         .input("schType", sql.VarChar(2), taskObj.schType)
         .input("schStartDate", sql.VarChar(50), taskObj.schStartDate)
         .input("title", sql.NVarChar(200), taskObj.title)

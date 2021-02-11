@@ -12,6 +12,9 @@ const https = require('https')
 
 const { validationResult } = require('express-validator');
 
+// const FC_API_URL= mpamConfig.FC_API_URL
+
+
 var eOpen = {
   publicKey: '',
   privateKey: '',
@@ -31,7 +34,6 @@ try{
 const EOPEN_API_URL = process.env.EOPEN_API_URL
 const EOPEN_BROKER_ID = process.env.EOPEN_BROKER_ID
 const EOPEN_PATH = '/api/eopenaccount/v1/'+EOPEN_BROKER_ID+'/broker-login'
-
 
 
 exports.testApi = (req,res,next)=>{
@@ -225,7 +227,7 @@ const eOnpeAuth = async () => {
       signature:signature2
     })
 
-    logger.info(`***body : ${JSON.stringify(body)}`);
+    // logger.info(`***body : ${JSON.stringify(body)}`);
 
   return new Promise(function(resolve, reject) {
 
@@ -239,7 +241,7 @@ const eOnpeAuth = async () => {
       },
     };
 
-    logger.info('***options > ' + JSON.stringify(options));
+    // logger.info('***options > ' + JSON.stringify(options));
 
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
@@ -274,10 +276,31 @@ const eOnpeAuth = async () => {
 // AppID:11002915
 // CID:1309913659936
 
-exports.downloadJSON = (req, res, next) =>{
+exports.downloadFiles = (req, res, next) =>{
 
   var applicationId = req.params.applicationId;
 
+  downloadFiles(applicationId).then(result =>{
+
+    logger.info("downloadFiles Result>" + JSON.stringify(result))
+
+  res.status(200).json({
+    code: '000',
+    data: JSON.stringify(result),
+  });
+
+  },err =>{
+
+    logger.error('downloadJSON Error>>'+err);
+    res.status(401).json(err.message);
+
+  });
+
+}
+
+exports.downloadJSON = (req, res, next) =>{
+
+  var applicationId = req.params.applicationId;
 
   downloadJSON(applicationId).then(result =>{
 
@@ -285,7 +308,7 @@ exports.downloadJSON = (req, res, next) =>{
 
   res.status(200).json({
     code: '000',
-    msg: JSON.stringify(result),
+    data: JSON.stringify(result),
   });
 
   },err =>{
@@ -311,10 +334,7 @@ exports.applications = (req, res, next) =>{
 
     logger.info("applications Result>" + JSON.stringify(result))
 
-  res.status(200).json({
-    code: '000',
-    msg: JSON.stringify(result),
-  });
+    res.status(200).json(result);
 
   },err =>{
     logger.error('applications Error>>'+err);
@@ -324,115 +344,174 @@ exports.applications = (req, res, next) =>{
 
 }
 
-// function downloadJSON(applicationId){
-const downloadJSON = async (applicationId) => {
+//Download file function
+const download = require('download');
+const DOWNLOAD_PATH  = mpamConfig.EOPEN_DOWNLOAD_PATH
+// const EOPEN_API_URL= 'https://oacctest.settrade.com'
 
-  logger.info(`downloadJSON() : ${applicationId}`)
+const downloadFiles = async (applicationId) => {
 
-  const token = await eOnpeAuth()
+  console.log(`Welcome downloadFiles() ${applicationId} `);
+
+  var DOWNLOAD_PATH_FILENAME  = DOWNLOAD_PATH  + applicationId;
+
+  const _token = await eOnpeAuth()
+  const tokenObj = JSON.parse(_token);
 
   return new Promise(function(resolve, reject) {
 
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+      const HTTPS_ENDPOIN =`${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications/${applicationId}/files`;
+      const option = {
+        "Authorization": `Bearer ${tokenObj.token}`,
+      };
 
-    var options = {
-      host: 'oacctest.settrade.com',
-      path: `/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications/${applicationId}`,
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        //  "Content-Type": "application/json",
-      },
-    };
+      // console.log(' option >>' + JSON.stringify(option) );
+      console.log('HTTPS_ENDPOIN >>' + HTTPS_ENDPOIN);
 
-    logger.info('***token > ' + token);
-    logger.info('***options > ' + JSON.stringify(options));
+      download(HTTPS_ENDPOIN,{'headers':option,'rejectUnauthorized': false}).then(data => {
+        try{
 
+          fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
+            if(err) {
+                logger.error(err)
+                reject(err);
+            }
+            resolve({path:DOWNLOAD_PATH_FILENAME});
+          });
 
-    const request = https.request(options,(res) => {
+        }catch(err){
+          reject(err);
+        }
 
-    console.log(`statusCode: ${JSON.stringify(res.statusCode)}`)
-
-    var _chunk="";
-    res.setEncoding('utf8');
-    res.on('data', (chunk) => {
-      _chunk=_chunk.concat(chunk);
-    });
-    res.on('end', () => {
-      resolve(_chunk);
-    });
-
-  });
-
-  request.on('error', (e) => {
-    logger.error('err fnFCAuth>');
-    reject(e);
-  });
-
-  // Write data to request body
-  // logger.info('***FC_API_AUTH > ' + JSON.stringify(FC_API_AUTH));
-  request.write(body);
-  request.end();
+      },err=>{
+        // console.log('A ERR >' + err);
+        logger.error('DOWNLOAD'+err)
+        reject(err);
+      });
 
   });
 
 }
 
+  // const downloadFiles = async (applicationId) => {
+
+  //   logger.info(`downloadFiles() ${applicationId} `)
+
+  //   const _token = await eOnpeAuth()
+  //   const tokenObj = JSON.parse(_token);
+
+  //   // logger.info(`TOKEN>> ${JSON.stringify(tokenObj)}`)
+
+  //   return new Promise(function(resolve, reject) {
+
+  //     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
 
-// function downloadJSON(applicationId){
-  const applications = async (status,startLastUpdatedTime,endLastUpdatedTime) => {
+  //     const request = require('request');
 
-    logger.info(`applications() `)
+  //     // var param=`?status=${status}&startLastUpdatedTime=${startLastUpdatedTime}&endLastUpdatedTime=${endLastUpdatedTime}`
 
-    const token = await eOnpeAuth()
+  //     const HTTPS_ENDPOIN =`${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications/${applicationId}/files`;
+  //     const option = {
+  //       "Authorization": `Bearer ${tokenObj.token}`,
+  //     };
+
+  //     logger.info(`***OPTION>> ${JSON.stringify(option)}`)
+  //     logger.info(`***HTTPS_ENDPOIN>> ${HTTPS_ENDPOIN}`)
+
+  //     request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
+
+  //       if(err) {
+  //         logger.error(err);
+  //         reject(err);
+  //       }else{
+  //         console.log('RESULT RS>>'+JSON.stringify(JSON.parse(body)))
+  //         resolve(JSON.parse(body))
+  //       }
+  //     });
+
+  //   });
+
+  // }
+
+  const downloadJSON = async (applicationId) => {
+
+    logger.info(`downloadJSON() ${applicationId} `)
+
+    const _token = await eOnpeAuth()
+    const tokenObj = JSON.parse(_token);
+
+    // logger.info(`TOKEN>> ${JSON.stringify(tokenObj)}`)
 
     return new Promise(function(resolve, reject) {
 
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
-      var param=`?status=${status}&startLastUpdatedTime=${startLastUpdatedTime}&endLastUpdatedTime=${endLastUpdatedTime}`
+      const EOPEN_API_URL= 'https://oacctest.settrade.com'
+      const request = require('request');
 
-      var options = {
-        host: 'oacctest.settrade.com',
-        path: `/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications${param}`,
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          //  "Content-Type": "application/json",
-        },
+      // var param=`?status=${status}&startLastUpdatedTime=${startLastUpdatedTime}&endLastUpdatedTime=${endLastUpdatedTime}`
+
+      const HTTPS_ENDPOIN =`${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications/${applicationId}`;
+      const option = {
+        "Authorization": `Bearer ${tokenObj.token}`,
       };
 
-      logger.info('***token > ' + token);
-      logger.info('***options > ' + JSON.stringify(options));
+      logger.info(`***OPTION>> ${JSON.stringify(option)}`)
+      logger.info(`***HTTPS_ENDPOIN>> ${HTTPS_ENDPOIN}`)
 
+      request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
 
-      const request = https.request(options,(res) => {
-
-      console.log(`statusCode: ${JSON.stringify(res)}`)
-
-      resolve(res);
-
-      // var _chunk="";
-      // res.setEncoding('utf8');
-      // res.on('data', (chunk) => {
-      //   _chunk=_chunk.concat(chunk);
-      // });
-      // res.on('end', () => {
-      //   resolve(_chunk);
-      // });
+        if(err) {
+          logger.error(err);
+          reject(err);
+        }else{
+          console.log('RESULT RS>>'+JSON.stringify(JSON.parse(body)))
+          resolve(JSON.parse(body))
+        }
+      });
 
     });
 
-    request.on('error', (e) => {
-      logger.error('err fnFCAuth>');
-      reject(e);
-    });
+  }
 
-    // Write data to request body
-    // logger.info('***FC_API_AUTH > ' + JSON.stringify(FC_API_AUTH));
-    request.write(body);
-    request.end();
+  const applications = async (status,startLastUpdatedTime,endLastUpdatedTime) => {
+
+    logger.info(`applications() `)
+
+    const _token = await eOnpeAuth()
+    const tokenObj = JSON.parse(_token);
+
+    // logger.info(`TOKEN>> ${JSON.stringify(tokenObj)}`)
+
+    return new Promise(function(resolve, reject) {
+
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      const EOPEN_API_URL= 'https://oacctest.settrade.com'
+      const request = require('request');
+
+      var param=`?status=${status}&startLastUpdatedTime=${startLastUpdatedTime}&endLastUpdatedTime=${endLastUpdatedTime}`
+
+      const HTTPS_ENDPOIN =`${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications${param}`;
+      const option = {
+        "Authorization": `Bearer ${tokenObj.token}`,
+      };
+
+      logger.info(`***PARAM>> ${param}`)
+      logger.info(`***OPTION>> ${JSON.stringify(option)}`)
+      logger.info(`***HTTPS_ENDPOIN>> ${HTTPS_ENDPOIN}`)
+
+      request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
+
+        if(err) {
+          logger.error(err);
+          reject(err);
+        }else{
+          console.log('RESULT RS>>'+JSON.stringify(body))
+          resolve(body)
+        }
+      });
 
     });
 

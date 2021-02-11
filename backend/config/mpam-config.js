@@ -79,6 +79,8 @@ module.exports = {
   // INVEST_INDIVIDUAL :"/api/customer/individual",
   INVEST_INDIVIDUAL :"/api/customer/individual/v2",
   DOWNLOAD_PATH :'./backend/downloadFiles/fundConnext/',
+
+  EOPEN_DOWNLOAD_PATH :'./backend/downloadFiles/eopen/',
   // FundConnext
   FC_DOWNLOAD_HEADER:"{'headers':propertiesObject,'rejectUnauthorized': false}",
 

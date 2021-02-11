@@ -115,7 +115,6 @@ exports.createTask = (req, res, next) =>{
   var compCode = JSON.parse(JSON.stringify(req.body.compCode))
   var actionBy = JSON.parse(JSON.stringify(req.body.actionBy))
 
-
   logger.info(`createTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
 
   createTask(compCode,actionBy,taskObj).then(data=>{

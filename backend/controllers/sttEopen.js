@@ -352,6 +352,7 @@ const DOWNLOAD_PATH  = mpamConfig.EOPEN_DOWNLOAD_PATH
 const downloadFiles = async (applicationId) => {
 
   console.log(`Welcome downloadFiles() ${applicationId} `);
+  const EOPEN_API_URL= 'https://oacctest.settrade.com'
 
   var DOWNLOAD_PATH_FILENAME  = DOWNLOAD_PATH  + applicationId;
 
@@ -365,12 +366,16 @@ const downloadFiles = async (applicationId) => {
         "Authorization": `Bearer ${tokenObj.token}`,
       };
 
-      // console.log(' option >>' + JSON.stringify(option) );
+      console.log(' option >>' + JSON.stringify(option) );
       console.log('HTTPS_ENDPOIN >>' + HTTPS_ENDPOIN);
 
-      download(HTTPS_ENDPOIN,{'headers':option,'rejectUnauthorized': false}).then(data => {
-        try{
 
+      // // ****** start CALL
+      download(HTTPS_ENDPOIN,{'headers':option,'rejectUnauthorized': false}).then(data => {
+
+        console.log(`data >>> ${data}`)
+
+        try{
           fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
             if(err) {
                 logger.error(err)
@@ -378,16 +383,14 @@ const downloadFiles = async (applicationId) => {
             }
             resolve({path:DOWNLOAD_PATH_FILENAME});
           });
-
         }catch(err){
           reject(err);
         }
-
       },err=>{
-        // console.log('A ERR >' + err);
         logger.error('DOWNLOAD'+err)
         reject(err);
       });
+      // ****** end CALL
 
   });
 

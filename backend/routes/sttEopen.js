@@ -19,7 +19,6 @@ router.get("/applications/:applicationId/files",sttEopen.downloadFiles);
 // 3.3 List Application Id
 router.get("/applications",sttEopen.applications);
 
-
 // 3.2 Download JSON
 // :11009338
 router.get("/applications/:applicationId",sttEopen.downloadJSON);

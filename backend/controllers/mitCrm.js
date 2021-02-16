@@ -74,10 +74,37 @@ exports.getTaskById = (req, res, next) =>{
 
   var taskId = req.params.taskId;
   var compCode = req.query.compCode;
-
   logger.info('Start getTaskById();' + taskId +" ;compCode:" + compCode)
-
   getTaskById(taskId,compCode).then(data=>{
+    res.status(200).json(data);
+  },err=>{
+      res.status(400).json({
+        message: err,
+        code:"999",
+      });
+  });
+}
+
+exports.searchTask = (req, res, next) =>{
+
+  var numPerPage = parseInt(req.query.pagesize, 10) || 10;
+  var page = parseInt(req.query.page, 10) || 1;
+  var compCode = req.query.compCode || false;
+  var actionBy = req.query.actionBy || false;
+
+  var startDate
+  var endDate
+
+  logger.info('Start searchTask(); ;compCode:' + compCode)
+
+  if (req.query.startDate)
+    startDate = req.query.startDate;
+
+  if (req.query.endDate)
+    endDate = req.query.startDate;
+
+
+  searchTask(numPerPage,page,compCode,startDate,endDate).then(data=>{
     res.status(200).json(data);
   },err=>{
       res.status(400).json({
@@ -117,6 +144,11 @@ exports.createTask = (req, res, next) =>{
 
   logger.info(`createTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
 
+    // if (!taskObj.response){
+    //   taskObj.response = taskObj.createBy;
+    // }
+
+
   createTask(compCode,actionBy,taskObj).then(data=>{
     res.status(200).json(data);
   },err=>{
@@ -154,7 +186,14 @@ exports.updateTask = (req, res, next) =>{
   var compCode = JSON.parse(JSON.stringify(req.body.compCode))
   var actionBy = JSON.parse(JSON.stringify(req.body.actionBy))
 
-  logger.info(`updateTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
+
+
+  // if (!taskObj.response){
+  //   taskObj.response = taskObj.UpdateBy;
+  // }
+
+  // logger.info(`updateTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
+
 
   updateTask(compCode,actionBy,taskObj).then(data=>{
     res.status(200).json(data);
@@ -644,6 +683,62 @@ function getTaskById(task_id,compCode) {
   });
 }
 
+
+
+function searchTask(numPerPage,page,compCode,startDate,endDate) {
+  logger.info('searchTask()');
+
+  var fncName = "searchTask()";
+
+  var conditionStr =` WHERE compCode='${compCode}'`;
+
+  if(startDate &&  endDate){
+    conditionStr = conditionStr +` AND  CreateDate  BETWEEN   convert(datetime, ${startDate}, 103) AND convert(datetime, ${endDate}, 103) `;
+  }
+
+
+  var queryStr = `
+
+    BEGIN
+
+      SELECT * FROM (
+          SELECT ROW_NUMBER() OVER(ORDER BY CreateDate) AS NUMBER
+          ,*
+          FROM [MIT_CRM_Task]
+          ${conditionStr}
+
+        ) AS TBL
+      WHERE NUMBER BETWEEN ((@page - 1) * @numPerPage + 1) AND (@page * @numPerPage)
+      ORDER BY CreateDate
+
+    END
+
+    `;
+
+
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("numPerPage", sql.Int, numPerPage)
+        .input("page", sql.Int, page)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
 function updatePersonal(compCode,actionBy,personObj){
 
   var fncName = "updatePersonal()";
@@ -746,6 +841,7 @@ function updateTask(compCode,actionBy,taskObj){
       investType=@investType,
       investValue=@investValue,
       investDate=@investDate,
+      response=@response,
       UpdateBy=@UpdateBy,
       UpdateDate=GETDATE()
     WHERE compCode=@compCode
@@ -775,6 +871,7 @@ function updateTask(compCode,actionBy,taskObj){
         .input("investType", sql.NVarChar(50), taskObj.investType)
         .input("investValue", sql.NVarChar(20), taskObj.investValue)
         .input("investDate", sql.NVarChar(50), taskObj.UserOwner)
+        .input("response", sql.NVarChar(50), taskObj.response)
         .input("UpdateBy", sql.NVarChar(50), actionBy)
 
         .query(queryStr, (err, result) => {
@@ -817,6 +914,7 @@ function createTask(compCode,actionBy,taskObj){
           investType,
           investValue,
           investDate,
+          response,
           CreateBy,
           CreateDate
       )VALUES(
@@ -835,6 +933,7 @@ function createTask(compCode,actionBy,taskObj){
           @investType,
           @investValue,
           @investDate,
+          @response,
           @CreateBy,
           GETDATE()
       )
@@ -862,6 +961,7 @@ function createTask(compCode,actionBy,taskObj){
         .input("investType", sql.NVarChar(50), taskObj.investType)
         .input("investValue", sql.NVarChar(20), taskObj.investValue)
         .input("investDate", sql.NVarChar(50), taskObj.UserOwner)
+        .input("response", sql.NVarChar(50), taskObj.response)
         .input("CreateBy", sql.NVarChar(50), actionBy)
 
         .query(queryStr, (err, result) => {

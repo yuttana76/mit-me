@@ -66,11 +66,11 @@ export class CustomerListComponent implements OnInit, OnDestroy {
   form: FormGroup;
   conditions: CustomerCond;
 
-
   currentPage = 1;
   rowsPerPage = 20;
   totalRecords = 10;
   pageSizeOptions = [10, 20, 50, 100];
+
   constructor(
     public dialog: MatDialog,
     public customerService: CustomerService,

@@ -20,7 +20,6 @@ import { CrmPortfolioComponent } from '../crm-portfolio/crm-portfolio.component'
 })
 export class CrmPersonalDataComponent implements OnInit, OnDestroy {
 
-  // @ViewChild(CrmPortfolioComponent)
   @ViewChild(CrmPortfolioComponent, {static: false})
   private crmPortfolioComponent: CrmPortfolioComponent;
 
@@ -100,12 +99,10 @@ export class CrmPersonalDataComponent implements OnInit, OnDestroy {
       fnArray.push(this.crmPersonalService.getMastert("custRefer"));
       fnArray.push(this.crmPersonalService.getMastert("sex"));
 
-      if((this.custCode !== 'null') ) {
-
-        console.log(`***Loading personal data> ${this.custCode}` )
-          // fnArray.push(this.crmPersonalService.getPersonal(this.custCode)); //
+      // if((this.custCode !== 'null') ) {
+      if((this.mode=this.MODE_EDIT) ) {
+          fnArray.push(this.crmPersonalService.getPersonal(this.custCode)); //
       }
-
 
       forkJoin(fnArray)
       //  .subscribe(([call1Response, call2Response]) => {

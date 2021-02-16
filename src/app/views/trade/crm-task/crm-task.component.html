@@ -19,7 +19,7 @@
 
         <mat-form-field class="example-full-width">
             <mat-label>ประเภท Activity </mat-label>
-            <mat-select [(ngModel)]="crmTaskObj.schType" formControlName="schType" >
+            <mat-select [(ngModel)]="crmTaskObj.schType" formControlName="schType" required>
                 <mat-option  *ngFor="let obj of taskTypeList" [value]="obj.code">
                   {{obj.text}}
                 </mat-option>
@@ -28,7 +28,7 @@
 
         <mat-form-field >
           <mat-label> Schedule Start Date</mat-label>
-          <input matInput [matDatepicker]="schStartDate"   [(ngModel)]="crmTaskObj.schStartDate" formControlName="schStartDate"     placeholder="Schedule Start Date " >
+          <input matInput [matDatepicker]="schStartDate"   [(ngModel)]="crmTaskObj.schStartDate" formControlName="schStartDate"     placeholder="Schedule Start Date " required>
           <mat-datepicker-toggle matSuffix [for]="schStartDate"></mat-datepicker-toggle>
           <mat-datepicker #schStartDate disabled="false"></mat-datepicker>
           <mat-error *ngIf="schFormGroup.controls['schStartDate'].hasError('required')  &&
@@ -47,7 +47,6 @@
           schFormGroup.get('channel').touched">Please choose Contact Channel.</mat-error>
         </div>
         </section>
-
 
         <mat-form-field class="example-full-width">
           <mat-label>Product Group</mat-label>
@@ -146,6 +145,17 @@
         </div>
       </div>
 
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Response</mat-label>
+        <mat-select formControlName="response" [(ngModel)]="crmTaskObj.response"  multiple required>
+            <mat-option  *ngFor="let obj of responseList" [value]="obj.code">
+              {{obj.text}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="schFormGroup.controls['response'].hasError('required')  ||
+          schFormGroup.get('response').touched">Please choose  Response.</mat-error>
+      </mat-form-field>
 
     </mat-card-content>
     <mat-card-actions>

@@ -98,6 +98,7 @@ import { CrmTaskComponent } from './crm-task/crm-task.component';
 import { CrmPortfolioComponent } from './crm-portfolio/crm-portfolio.component';
 import { CrmTimelineComponent } from './crm-timeline/crm-timeline.component';
 import { CrmActCalendarComponent } from './crm-act-calendar/crm-act-calendar.component';
+import { CrmTaskSearchComponent } from './crm-task-search/crm-task-search.component';
 
 
 @NgModule({
@@ -203,6 +204,7 @@ import { CrmActCalendarComponent } from './crm-act-calendar/crm-act-calendar.com
     CrmPortfolioComponent,
     CrmTimelineComponent,
     CrmActCalendarComponent,
+    CrmTaskSearchComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

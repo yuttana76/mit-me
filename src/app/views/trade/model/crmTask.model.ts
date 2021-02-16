@@ -19,10 +19,11 @@ export class CrmTask {
     public investValue: string;
     public investDate: string;
 
-    public createBy: string;
-    public createDate: string;
-    public updateBy: string;
-    public updateDate: string;
+    public response: string;
+    public CreateBy: string;
+    public CreateDate: string;
+    public UpdateBy: string;
+    public UpdateDate: string;
 
     constructor(){}
 

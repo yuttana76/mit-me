@@ -31,33 +31,55 @@ export class CrmTaskComponent implements OnInit {
   feedbackList
   feedbackCategory
 
-productList=[
-  {
-    code:'000',
-    text:'ไม่ระบุ',
-  },
-  {
-    code:'1',
-    text:'Chaiyo',
-  },
-  {
-    code:'2',
-    text:'JMT',
-  },
-  {
-    code:'3',
-    text:'PTT-w3',
-  },
-  {
-    code:'4',
-    text:'THAI',
-  },
-  {
-    code:'5',
-    text:'PTTGC',
-  },
-]
+  productList=[
+    {
+      code:'000',
+      text:'ไม่ระบุ',
+    },
+    {
+      code:'1',
+      text:'Chaiyo',
+    },
+    {
+      code:'2',
+      text:'JMT',
+    },
+    {
+      code:'3',
+      text:'PTT-w3',
+    },
+    {
+      code:'4',
+      text:'THAI',
+    },
+    {
+      code:'5',
+      text:'PTTGC',
+    },
+  ]
 
+  responseList=[
+    {
+      code:'0',
+      text:'โปรดระบุ',
+    },
+    {
+      code:'1',
+      text:'Mr.xxx',
+    },
+    {
+      code:'2',
+      text:'Mr.yyy',
+    },
+    {
+      code:'3',
+      text:'Mr.zzz',
+    },
+    {
+      code:'DEV',
+      text:'DEV',
+    },
+  ]
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -91,7 +113,7 @@ productList=[
       investType: new FormControl(null, { }),
       investValue: new FormControl(null, { }),
       investDate: new FormControl(null, { }),
-
+      response: new FormControl(null, {validators: [Validators.required]}),
 
     });
   }
@@ -115,6 +137,10 @@ productList=[
         this.mode = this.MODE_EDIT;
         this.taskId = paramMap.get('taskId');
       }
+
+
+      this.mode = this.MODE_EDIT;
+      this.taskId = '2';
 
       console.log(`has taskId> :${paramMap.has('taskId')}  ;get:${paramMap.get('taskId')}`)
       console.log(`Initial taskId> :${this.taskId}  ;mode:${this.mode}`)
@@ -156,6 +182,9 @@ productList=[
 
          if(this.crmTaskObj.feedBackReson)
          this.crmTaskObj.feedBackReson =  <any>this.crmTaskObj.feedBackReson.split(',');
+
+         if(this.crmTaskObj.response)
+         this.crmTaskObj.response =  <any>this.crmTaskObj.response.split(',');
 
        });
 

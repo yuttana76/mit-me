@@ -15,8 +15,13 @@ const LANG='TH';
 
 @Injectable({ providedIn: 'root' })
 export class CrmService {
+
   private personList: CrmPersonModel[] = [];
   private personListUpdated = new Subject<CrmPersonModel[]>();
+
+  private taskList: CrmTask[] = [];
+  private taskListUpdated = new Subject<CrmTask[]>();
+
 
   constructor(private http: HttpClient , private router: Router) { }
 
@@ -125,6 +130,79 @@ export class CrmService {
     .pipe(map( data => {
       return data;
     }));
+  }
+
+
+
+  getTaskLists(rowPerPage: number, currentPage: number, task_id,custCode,response,schType,schStartDate,schEndDate) {
+
+    const actionBy = 'DEV';
+
+    console.log('Call getTaskLists()');
+
+    let URL =BACKEND_URL+'/searchTask'
+    let queryParams = `?pagesize=${rowPerPage}&page=${currentPage}`;
+
+    if(COMP_CODE)
+      queryParams += `&compCode=${COMP_CODE}`;
+
+    if(actionBy)
+      queryParams += `&actionBy=${actionBy}`;
+
+    if(task_id)
+      queryParams += `&task_id=${task_id}`;
+
+    if(custCode)
+      queryParams += `&custCode=${custCode}`;
+
+    if(response)
+      queryParams += `&w_response=${response}`;
+
+    if(schType)
+      queryParams += `&schType=${schType}`;
+
+    if(schStartDate)
+      queryParams += `&startDate=${schStartDate}`;
+
+    if(schEndDate)
+      queryParams += `&endDate=${schEndDate}`;
+
+
+
+    this.http.get<{ message: string, result: any }>(URL + queryParams)
+    .pipe(map((resultData:any) => {
+
+      if(resultData.recordset.length === 0){
+        return [];
+      }
+
+        return resultData.recordset.map((data: any) => {
+
+          return {
+            compCode: data.compCode,
+            custCode: data.custCode,
+            task_id: data.task_id,
+            schType: data.schType,
+            response: data.response,
+            title: data.title,
+            feedBackRS: data.feedBackRS,
+            feedBackReson: data.feedBackReson,
+            schCloseDate: data.schCloseDate,
+            CreateDate: data.CreateDate,
+            UpdateDate: data.UpdateDate,
+
+          };
+      });
+      // }
+    }))
+    .subscribe((transformed) => {
+        this.taskList = transformed;
+        this.taskListUpdated.next([...this.taskList]);
+    });
+  }
+
+  getTaskListsListener() {
+    return this.taskListUpdated.asObservable();
   }
 
   getTask(taskId: string) {

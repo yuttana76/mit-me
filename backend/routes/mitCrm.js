@@ -14,7 +14,6 @@ router.get("/searchPersonal", mitCrmController.searchPersonal);
 router.get("/portfolio/:cusCode", mitCrmController.portfolio);
 
 router.get("/searchTask/", mitCrmController.searchTask);
-
 router.get("/task/:taskId", mitCrmController.getTaskById);
 router.post("/task", mitCrmController.createTask);
 router.put("/task/:cusCode", mitCrmController.updateTask);

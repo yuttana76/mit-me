@@ -87,6 +87,7 @@ export class CrmTaskComponent implements OnInit {
     public route: ActivatedRoute,
     private crmPersonalService: CrmService,
     private toastr: ToastrService,
+    public datepipe: DatePipe
   ) { }
 
   ngOnInit() {
@@ -140,9 +141,9 @@ export class CrmTaskComponent implements OnInit {
 
 
       this.mode = this.MODE_EDIT;
-      this.taskId = '2';
+      // this.taskId = '2';
 
-      console.log(`has taskId> :${paramMap.has('taskId')}  ;get:${paramMap.get('taskId')}`)
+      // console.log(`has taskId> :${paramMap.has('taskId')}  ;get:${paramMap.get('taskId')}`)
       console.log(`Initial taskId> :${this.taskId}  ;mode:${this.mode}`)
 
       //  Initial load master data
@@ -170,8 +171,7 @@ export class CrmTaskComponent implements OnInit {
 
          if(dataRs[5]){
           this.crmTaskObj=dataRs[5].recordset[0];
-
-          console.log(' Task result:'+JSON.stringify(this.crmTaskObj))
+          // console.log(' Task result:'+JSON.stringify(this.crmTaskObj))
          }
 
          if(this.crmTaskObj.prodCate)
@@ -193,7 +193,6 @@ export class CrmTaskComponent implements OnInit {
 
   onSubmit(){
 
-
     if (this.schFormGroup.invalid) {
       console.log('form.invalid() ' + this.schFormGroup.invalid);
       return true;
@@ -205,6 +204,10 @@ export class CrmTaskComponent implements OnInit {
     if(this.crmTaskObj.feedBackRS=='01'){
       this.crmTaskObj.feedBackReson=null;
     }
+
+    // if(this.crmTaskObj.schCloseDate) {
+    //   this.crmTaskObj.schCloseDate = this.datepipe.transform(this.crmTaskObj.schCloseDate, 'dd/MM/yyyy');
+    // }
 
     this.crmPersonalService.updateTask(this.crmTaskObj)
     .subscribe((data: any ) => {

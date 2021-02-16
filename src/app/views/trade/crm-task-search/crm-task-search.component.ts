@@ -1,8 +1,10 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, forkJoin, Subscription } from 'rxjs';
 import { CrmTask } from '../model/crmTask.model';
+import { CrmService } from '../services/crmPersonal.service';
 
 @Component({
   selector: 'app-crm-task-search',
@@ -19,11 +21,15 @@ export class CrmTaskSearchComponent implements OnInit {
   totalRecords = 10;
   pageSizeOptions = [10, 20, 50, 100];
   dataSource = new BehaviorSubject([]);
-
   private taskSub: Subscription;
   displayedColumns: string[] = ['ID','PERSON','TYPE', 'RESPONSE','Title','Feedback','ACT'];
 
-  constructor() { }
+  taskTypeList
+
+  constructor(
+    private crmPersonalService: CrmService,
+    public datepipe: DatePipe
+  ) { }
 
   ngOnInit() {
     this.searchForm = new FormGroup({
@@ -42,21 +48,63 @@ export class CrmTaskSearchComponent implements OnInit {
       schStartDate: new FormControl(null, {
         // validators: [Validators.required]
       }),
-
+      schEndDate: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
     });
 
-    // this.taskSub = this.crmPersonalService.getPersonalListsListener().subscribe((data: CrmTask[]) => {
-    //   this.spinnerLoading = false;
-    //   this.crmTaskList = data;
-    // });
+    this.taskSub = this.crmPersonalService.getTaskListsListener().subscribe((data: CrmTask[]) => {
+      this.spinnerLoading = false;
+      this.crmTaskList = data;
+    });
 
   }
 
   ngAfterViewInit() {
 
+    var fnArray=[];
+    fnArray.push(this.crmPersonalService.getMastert("taskType"));
+
+    forkJoin(fnArray)
+       .subscribe((dataRs:any) => {
+        this.taskTypeList=dataRs[0].recordset;
+
+       });
+
   }
 
   onSerach(){
+
+    // console.log('onSerachCust ! ');
+    if (this.searchForm.invalid) {
+      // console.log('form.invalid() ' + this.form.invalid);
+      return true;
+    }
+    // this.spinnerLoading = true;
+    const task_id = this.searchForm.get('task_id').value
+    const custCode = this.searchForm.get('custCode').value
+    const response = this.searchForm.get('response').value
+    const schType = this.searchForm.get('schType').value
+
+    let schStartDate = this.searchForm.get('schStartDate').value
+    let schEndDate = this.searchForm.get('schEndDate').value
+
+    if (schStartDate) {
+      schStartDate = this.datepipe.transform(schStartDate, 'dd/MM/yyyy');
+    }
+
+    if (schEndDate) {
+      schEndDate = this.datepipe.transform(schEndDate, 'dd/MM/yyyy');
+    }
+
+    this.crmPersonalService.getTaskLists(this.rowsPerPage, 1, task_id,custCode,response,schType,schStartDate,schEndDate);
+
+    this.taskSub = this.crmPersonalService.getTaskListsListener().subscribe((data: CrmTask[]) => {
+        // console.log('Result->' + JSON.stringify(data));
+      // this.spinnerLoading = false;
+          this.crmTaskList = data;
+          this.dataSource.next(this.crmTaskList);
+      });
 
   }
 

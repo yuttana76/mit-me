@@ -1,9 +1,9 @@
 <form [formGroup]="schFormGroup">
 <mat-card class="col-md-6">
-    <mat-card-header>Welcome Task</mat-card-header>
+    <mat-card-header>Task {{crmTaskObj.task_id}}</mat-card-header>
     <mat-card-content>
 
-        <h5>Open (Plan)</h5>
+        <!-- <h5>Open (Plan)</h5> -->
 
       <mat-form-field class="col-md-6">
         <input  matInput formControlName="title" [(ngModel)]="crmTaskObj.title" placeholder="Title" required >

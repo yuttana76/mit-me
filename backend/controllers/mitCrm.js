@@ -92,19 +92,33 @@ exports.searchTask = (req, res, next) =>{
   var compCode = req.query.compCode || false;
   var actionBy = req.query.actionBy || false;
 
-  var startDate
-  var endDate
+  var task_id = req.query.task_id || false;
+  var custCode = req.query.custCode || false;
+  var w_response = req.query.w_response || false;
+  var schType = req.query.schType || false;
+  var startDate = req.query.startDate || false;
+  var endDate = req.query.endDate || false;
 
-  logger.info('Start searchTask(); ;compCode:' + compCode)
+  logger.info( ` *** Start searchTask();
+    ;numPerPage: ${numPerPage}
+    ;page: ${page}
+    ;compCode: ${compCode}
+    ;actionBy: ${actionBy}
+    ;task_id: ${task_id}
+    ;custCode: ${custCode}
+    ;response: ${w_response}
+    ;schType: ${schType}
+    ;startDate: ${startDate}
+    ;endDate: ${endDate}
+  `);
 
-  if (req.query.startDate)
-    startDate = req.query.startDate;
+  // if (req.query.startDate)
+  //   startDate = req.query.startDate;
 
-  if (req.query.endDate)
-    endDate = req.query.startDate;
+  // if (req.query.endDate)
+  //   endDate = req.query.startDate;
 
-
-  searchTask(numPerPage,page,compCode,startDate,endDate).then(data=>{
+  searchTask(numPerPage,page,compCode,actionBy,task_id,custCode,w_response,schType,startDate,endDate).then(data=>{
     res.status(200).json(data);
   },err=>{
       res.status(400).json({
@@ -192,7 +206,7 @@ exports.updateTask = (req, res, next) =>{
   //   taskObj.response = taskObj.UpdateBy;
   // }
 
-  // logger.info(`updateTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
+  logger.info(`updateTask ()compCode: ${compCode};actionBy:${actionBy}  ;taskObj:${JSON.stringify(taskObj)} ` )
 
 
   updateTask(compCode,actionBy,taskObj).then(data=>{
@@ -683,33 +697,49 @@ function getTaskById(task_id,compCode) {
   });
 }
 
-
-
-function searchTask(numPerPage,page,compCode,startDate,endDate) {
+function searchTask(numPerPage,page,compCode,actionBy,task_id,custCode,response,schType,startDate,endDate) {
   logger.info('searchTask()');
-
+``
   var fncName = "searchTask()";
 
   var conditionStr =` WHERE compCode='${compCode}'`;
 
-  if(startDate &&  endDate){
-    conditionStr = conditionStr +` AND  CreateDate  BETWEEN   convert(datetime, ${startDate}, 103) AND convert(datetime, ${endDate}, 103) `;
+  if (task_id){
+    conditionStr = conditionStr +` AND task_id=${task_id}`;
   }
 
+  if (custCode){
+    conditionStr = conditionStr +` AND custCode=${custCode}`;
+  }
+
+  if (response){
+    conditionStr = conditionStr +` AND response='${response}'`;
+  }
+
+  if (schType){
+    conditionStr = conditionStr +` AND schType='${schType}'`;
+  }
+
+  if(startDate &&  endDate){
+    conditionStr = conditionStr +` AND  convert(datetime, CreateDate, 103) BETWEEN convert(datetime, '${startDate}', 103) AND convert(datetime, '${endDate}', 103) `;
+  }
+
+  logger.info(`conditionStr>> ${conditionStr}`)
 
   var queryStr = `
-
     BEGIN
 
-      SELECT * FROM (
-          SELECT ROW_NUMBER() OVER(ORDER BY CreateDate) AS NUMBER
-          ,*
-          FROM [MIT_CRM_Task]
-          ${conditionStr}
 
-        ) AS TBL
-      WHERE NUMBER BETWEEN ((@page - 1) * @numPerPage + 1) AND (@page * @numPerPage)
-      ORDER BY CreateDate
+    SELECT * FROM (
+      SELECT ROW_NUMBER() OVER(ORDER BY CreateDate) AS NUMBER
+      ,*
+      FROM [MIT_CRM_Task]
+      ${conditionStr}
+
+    ) AS TBL
+  WHERE NUMBER BETWEEN ((@page - 1) * @numPerPage + 1) AND (@page * @numPerPage)
+  ORDER BY CreateDate
+
 
     END
 
@@ -864,7 +894,7 @@ function updateTask(compCode,actionBy,taskObj){
         .input("channel", sql.VarChar(2), taskObj.channel)
         .input("prodCate", sql.NVarChar(50), taskObj.prodCate)
         .input("productItem", sql.NVarChar(50), taskObj.productItem)
-        .input("schCloseDate", sql.NVarChar(50), taskObj.custschCloseDateType)
+        .input("schCloseDate", sql.NVarChar(50), taskObj.schCloseDate)
         .input("feedBackRS", sql.VarChar(50), taskObj.feedBackRS)
         .input("feedBackReson", sql.VarChar(50), taskObj.feedBackReson)
         .input("feedBackNote", sql.NVarChar(200), taskObj.feedBackNote)

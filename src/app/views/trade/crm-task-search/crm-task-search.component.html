@@ -6,7 +6,7 @@
   <!-- <form [formGroup]="searchForm" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading" class="example-form"> -->
   <form [formGroup]="searchForm" (submit)="onSerach()" #custForm="ngForm" class="example-form">
     <mat-card-title>Search Customer Information
-        <a mat-button  [routerLink]="['/trade/CRM-Task','','SEARCH_TASK']"  routerLinkActive="mat-accent" matTooltip="New Task">
+        <a mat-button  [routerLink]="['/trade/CRM-Task','-','SEARCH_TASK']"  routerLinkActive="mat-accent" matTooltip="New Task">
           <i class="fas fa-user-plus fa-2x" ></i>
         </a>
 
@@ -19,28 +19,41 @@
           <!-- <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error> -->
         </mat-form-field>
 
-        <!-- <mat-form-field class="col-md-6">
-          <input matInput  formControlName="firstName" placeholder="First Name">
+        <mat-form-field class="col-md-6">
+          <input matInput  formControlName="custCode" placeholder="Customer">
         </mat-form-field>
 
         <mat-form-field class="col-md-6">
-          <input matInput  formControlName="lastName" placeholder="Last Name">
+          <input matInput  formControlName="response" placeholder="Response">
         </mat-form-field>
 
-        <mat-form-field class="col-md-6">
-          <input matInput formControlName="CustomerAlias" placeholder="Alias Name">
-        </mat-form-field>
-
-        <mat-form-field class="col-md-6">
-          <input matInput formControlName="Mobile" placeholder="Mobile">
-        </mat-form-field> -->
-
-        <!-- <mat-form-field>
-          <mat-select  formControlName="custType"  placeholder="Type of Unitholder">
-            <mat-option value="option">Option</mat-option>
+        <mat-form-field class="example-full-width">
+          <!-- <input matInput formControlName="schType" placeholder="Type"> -->
+          <mat-label>ประเภท Activity </mat-label>
+          <mat-select formControlName="schType" required>
+            <mat-option  *ngFor="let obj of taskTypeList" [value]="obj.code">
+              {{obj.text}}
+            </mat-option>
           </mat-select>
-          <mat-error *ngIf="form.get('custType').invalid">Please enter a condition.</mat-error>
-        </mat-form-field> -->
+
+        </mat-form-field>
+
+        <mat-form-field >
+          <mat-label> From Date</mat-label>
+          <input matInput [matDatepicker]="schStartDate"    formControlName="schStartDate"     placeholder="Schedule Start Date " >
+          <mat-datepicker-toggle matSuffix [for]="schStartDate"></mat-datepicker-toggle>
+          <mat-datepicker #schStartDate disabled="false"></mat-datepicker>
+
+        </mat-form-field>
+
+        <mat-form-field >
+          <mat-label> To Date</mat-label>
+          <input matInput [matDatepicker]="schEndDate"   formControlName="schEndDate"     placeholder="Schedule End Date " >
+          <mat-datepicker-toggle matSuffix [for]="schEndDate"></mat-datepicker-toggle>
+          <mat-datepicker #schEndDate disabled="false"></mat-datepicker>
+
+        </mat-form-field>
+
       </div>
 
     </mat-card-content>
@@ -59,29 +72,28 @@
     <ng-container matColumnDef="ID">
       <th mat-header-cell *matHeaderCellDef> Task Id.</th>
       <td mat-cell *matCellDef="let element">
-        <!-- {{element.Cust_Code}}  -->
+        {{element.task_id}}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="PERSON">
       <th mat-header-cell *matHeaderCellDef> PERSON </th>
       <td mat-cell *matCellDef="let element"><a [routerLink]="['/trade/CRM-Task',element.task_id,'SEARCH_TASK']" matTooltip="Edit">
-        <!-- {{element.CustomerAlias}}  -->
+        {{element.custCode}}
       </a></td>
     </ng-container>
 
     <ng-container matColumnDef="TYPE">
       <th mat-header-cell *matHeaderCellDef> TYPE </th>
-      <td mat-cell *matCellDef="let element"> </td>
-      <!-- <td mat-cell *matCellDef="let element">
-        {{element.CustomerAlias}}
-      </td> -->
+      <td mat-cell *matCellDef="let element">
+        {{element.schType}}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="RESPONSE">
       <th mat-header-cell *matHeaderCellDef> RESPONSE </th>
       <td mat-cell *matCellDef="let element">
-        <!-- {{element.RM}}  -->
+        {{element.response}}
       </td>
     </ng-container>
 
@@ -89,7 +101,7 @@
     <ng-container matColumnDef="Title">
       <th mat-header-cell *matHeaderCellDef> Title </th>
       <td mat-cell *matCellDef="let element">
-        <!-- {{element.title}}  -->
+        {{element.title}}
       </td>
     </ng-container>
 
@@ -97,7 +109,7 @@
     <ng-container matColumnDef="Feedback">
       <th mat-header-cell *matHeaderCellDef> Feedback </th>
       <td mat-cell *matCellDef="let element">
-        <!-- {{element.title}}  -->
+        {{element.feedBackRS}}
       </td>
     </ng-container>
 

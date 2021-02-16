@@ -16,9 +16,7 @@ export class CrmPersonalSearchComponent implements OnInit {
 
   spinnerLoading = false;
   searchForm: FormGroup;
-
   crmPersonList: CrmPersonModel[] = [];
-
   currentPage = 1;
   rowsPerPage = 20;
   totalRecords = 10;
@@ -26,7 +24,6 @@ export class CrmPersonalSearchComponent implements OnInit {
   cust_dataSource = new BehaviorSubject([]);
   private custSub: Subscription;
   cust_displayedColumns: string[] = ['Cust_Code', 'FullName','Aliast','RM','Action'];
-  // cust_displayedColumns: string[] = ['Cust_Code', 'FullName','Aliast','RM','LastAct','Action'];
 
   constructor(
     private crmPersonalService: CrmService,
@@ -35,6 +32,7 @@ export class CrmPersonalSearchComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     this.searchForm = new FormGroup({
       CustCode: new FormControl(null, {
         // validators: [Validators.required]

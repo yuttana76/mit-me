@@ -35,6 +35,7 @@ import { CrmActivityComponent } from './crm-activity/crm-activity.component';
 import { CrmActDashboardComponent } from './crm-act-dashboard/crm-act-dashboard.component';
 import { CrmMarketManagerComponent } from './crm-market-manager/crm-market-manager.component';
 import { CrmTaskComponent } from './crm-task/crm-task.component';
+import { CrmTaskSearchComponent } from './crm-task-search/crm-task-search.component';
 
 const routes: Routes = [
 
@@ -336,6 +337,14 @@ const routes: Routes = [
         component: CrmTaskComponent,
         data: {
           title: 'Welcome CRM Task'
+        }
+      },
+      {
+        // path: 'CRM-Task',
+        path: 'CRM-Task-Search',
+        component: CrmTaskSearchComponent,
+        data: {
+          title: 'Welcome CRM Task Search'
         }
       },
 

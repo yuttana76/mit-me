@@ -67,6 +67,12 @@ export const navItems = [
     icon: 'icon-speedometer',
 
   },
+  {
+    name: 'CRM-Task-Search(x)',
+    url: '/trade/CRM-Task-Search',
+    icon: 'icon-speedometer',
+
+  },
 
   {
     name: 'CRM-Market-Manager',

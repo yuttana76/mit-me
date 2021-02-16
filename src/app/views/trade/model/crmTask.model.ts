@@ -1,6 +1,7 @@
 export class CrmTask {
 
     public compCode: string;
+    public custCode: string;
     public task_id: string;
     public schType: string;
     public schStartDate: string;

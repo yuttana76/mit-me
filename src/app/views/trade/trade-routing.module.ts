@@ -36,6 +36,8 @@ import { CrmActDashboardComponent } from './crm-act-dashboard/crm-act-dashboard.
 import { CrmMarketManagerComponent } from './crm-market-manager/crm-market-manager.component';
 import { CrmTaskComponent } from './crm-task/crm-task.component';
 import { CrmTaskSearchComponent } from './crm-task-search/crm-task-search.component';
+import { SttOpenSearchAppComponent } from './stt-open-search-app/stt-open-search-app.component';
+import { SttOpenDetailComponent } from './stt-open-detail/stt-open-detail.component';
 
 const routes: Routes = [
 
@@ -347,7 +349,22 @@ const routes: Routes = [
           title: 'Welcome CRM Task Search'
         }
       },
-
+      {
+        // path: 'CRM-Task',
+        path: 'STT-Eopen-Search',
+        component: SttOpenSearchAppComponent,
+        data: {
+          title: 'Welcome STT E-Open search'
+        }
+      },
+      {
+        // path: 'CRM-Task',
+        path: 'STT-Eopen-Detail/:appId/:source',
+        component: SttOpenDetailComponent,
+        data: {
+          title: 'Welcome STT E-Open detail'
+        }
+      },
     ]
   },
 ];

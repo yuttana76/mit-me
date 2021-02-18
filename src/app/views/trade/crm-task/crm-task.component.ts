@@ -140,9 +140,6 @@ export class CrmTaskComponent implements OnInit {
       }
 
 
-      this.mode = this.MODE_EDIT;
-      // this.taskId = '2';
-
       // console.log(`has taskId> :${paramMap.has('taskId')}  ;get:${paramMap.get('taskId')}`)
       console.log(`Initial taskId> :${this.taskId}  ;mode:${this.mode}`)
 

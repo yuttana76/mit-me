@@ -322,24 +322,33 @@ exports.downloadJSON = (req, res, next) =>{
 
 exports.applications = (req, res, next) =>{
 
-  // var status = req.query.status
-  // var startLastUpdatedTime = req.query.startLastUpdatedTime
-  // var endLastUpdatedTime = req.query.endLastUpdatedTime
+  var status = req.query.status
+  var startLastUpdatedTime = req.query.startLastUpdatedTime +'T00:00:00'
+  var endLastUpdatedTime = req.query.endLastUpdatedTime+'T23:59:59';
 
-  let status='SUBMITTED'
-  let startLastUpdatedTime='2021-02-04T00:00:00'
-  let endLastUpdatedTime='2021-02-09T23:59:59'
+  logger.info(`*** status:${status}  ;startLastUpdatedTime:${startLastUpdatedTime}  ;endLastUpdatedTime:${endLastUpdatedTime}`)
+
+
+  // let status='SUBMITTED'
+  // let startLastUpdatedTime='2021-02-01T00:00:00'
+  // let endLastUpdatedTime='2021-02-20T23:59:59'
 
   applications(status,startLastUpdatedTime,endLastUpdatedTime).then(result =>{
 
     logger.info("applications Result>" + JSON.stringify(result))
 
-    res.status(200).json(result);
+    if (result === null || result===''){
+      res.status(204).json("Not Found");
+    }else{
+      res.status(200).json(JSON.parse(result));
+
+    }
+
+
 
   },err =>{
     logger.error('applications Error>>'+err);
     res.status(401).json(err.message);
-
   });
 
 }

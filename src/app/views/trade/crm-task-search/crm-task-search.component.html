@@ -9,7 +9,6 @@
         <a mat-button  [routerLink]="['/trade/CRM-Task','-','SEARCH_TASK']"  routerLinkActive="mat-accent" matTooltip="New Task">
           <i class="fas fa-user-plus fa-2x" ></i>
         </a>
-
     </mat-card-title>
     <mat-card-content>
       <div class="condition-div">
@@ -30,7 +29,7 @@
         <mat-form-field class="example-full-width">
           <!-- <input matInput formControlName="schType" placeholder="Type"> -->
           <mat-label>ประเภท Activity </mat-label>
-          <mat-select formControlName="schType" required>
+          <mat-select formControlName="schType" >
             <mat-option  *ngFor="let obj of taskTypeList" [value]="obj.code">
               {{obj.text}}
             </mat-option>

@@ -11,7 +11,6 @@ router.post("/signVerify",sttEopen.signVerify);
 
 router.post("/broker-login",sttEopen.brokerLogin);
 
-
 // 3.1 Download Files
 // :11009338
 router.get("/applications/:applicationId/files",sttEopen.downloadFiles);

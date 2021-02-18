@@ -16,6 +16,7 @@ export class CrmTaskSearchComponent implements OnInit {
   spinnerLoading = false;
   searchForm: FormGroup;
   crmTaskList: CrmTask[] = [];
+
   currentPage = 1;
   rowsPerPage = 20;
   totalRecords = 10;
@@ -105,7 +106,6 @@ export class CrmTaskSearchComponent implements OnInit {
           this.crmTaskList = data;
           this.dataSource.next(this.crmTaskList);
       });
-
   }
 
   onReset(){

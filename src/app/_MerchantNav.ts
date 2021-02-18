@@ -28,7 +28,21 @@ export const navItems = [
   //   icon: 'icon-speedometer',
   // },
 
+  // E-Open
+  {
+    name: 'STT-Eopen-Search',
+    url: '/trade/STT-Eopen-Search',
+    icon: 'icon-speedometer',
 
+  },
+  {
+    name: 'STT-Eopen-Detail',
+    url: '/trade/STT-Eopen-Detail/null/null',
+    icon: 'icon-speedometer',
+
+  },
+
+// CRM
   {
     name: 'CRM-Personal-Data',
     url: '/trade/CRM-Personal-Data/null/null',

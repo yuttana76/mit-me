@@ -2715,7 +2715,7 @@ exports.UnitholderBalanceAPI = (req, res, next) =>{
   //   return res.status(422).json({ errors: errors.array() });
   // }
 
-  logger.info("Welcome to API /downloadUnitholderBalanceAPI/");
+  logger.info("Welcome to API /downloadUnitholderBalanceAPI/ >>" + req.body.businessDate);
 
   var businessDate
   if(!req.body.businessDate){

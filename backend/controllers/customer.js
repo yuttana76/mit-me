@@ -571,7 +571,7 @@ return new Promise(function(resolve, reject) {
     if(accountArray[i]){
 
       fcCustInfoObj.accountId = accountArray[i];
-      console.log(' Process on Account id >>' + fcCustInfoObj.accountId)
+      console.log(' Process on Account id >>' + fcCustInfoObj.accountId + '  ; i=' + i);
 
       //  START *********************************
       fnArray=[];
@@ -594,9 +594,9 @@ return new Promise(function(resolve, reject) {
         fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.work,3,actionBy));
 
       //Update Children
-        for (var i in fcCustInfoObj.children) {
-            if(fcCustInfoObj.children[i])
-              fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
+        for (var j in fcCustInfoObj.children) {
+            if(fcCustInfoObj.children[j])
+              fnArray.push(update_Children(fcCustInfoObj.children[j],actionBy));
         }
 
       //ACCOUNT
@@ -607,12 +607,13 @@ return new Promise(function(resolve, reject) {
 
       fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
 
-      // fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
       fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
       //Suit by  account
 
       Promise.all(fnArray)
       .then(data => {
+
+        logger.info(`***Start cloneCustomerAddrSameAsFlag() ${fcCustInfoObj.accountId}`);
 
         exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.accountId,fcCustInfoObj.cardNumber).then(data =>{
         })
@@ -1724,6 +1725,8 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
 
   logger.info("update_CustomerInfo_ByAccountId()" + AccountId);
 
+  try {
+
   // Convert Refer code 6 charactors
   var referalPerson = ""
   var referalPersonFull = ""
@@ -2640,9 +2643,22 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
   END
   `;
 
+}
+catch (e) {
+  console.log("entering catch block");
+  console.log(e);
+  console.log("leaving catch block");
+}
+finally {
+  console.log(" (finally)entering and leaving the finally block");
+}
+
   const sql = require('mssql')
 
   return new Promise(function(resolve, reject) {
+
+    logger.info('***Start Execute Query ')
+
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request()
       // .input("Cust_Code", sql.VarChar(20), custObj.cardNumber)
@@ -3569,7 +3585,7 @@ function update_Children(childrenObj,actionBy){
 
 function update_SuitInDB(cardNumber,actionBy){
 
-  console.log("update_AccountInDB()" + cardNumber);
+  console.log("update_SuitInDB()" + cardNumber);
   const sql = require('mssql')
 
   var queryStr = `
@@ -3634,7 +3650,7 @@ function update_SuitInDB(cardNumber,actionBy){
 
 function update_CustAccountInDB(cardNumber,actionBy){
 
-  logger.info("update_AccountInDB()" + cardNumber);
+  logger.info("update_CustAccountInDB()" + cardNumber);
   const sql = require('mssql')
 
   var queryStr = `
@@ -3868,14 +3884,13 @@ END
 
 function update_MFTS_Suit_ByAccountId(cardNumber,actionBy){
 
-  console.log("update_MFTS_Suit()" + cardNumber);
+  console.log("update_MFTS_Suit_ByAccountId()" + cardNumber);
   const sql = require('mssql')
 
   var queryStr = `
 BEGIN
   --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
   SET XACT_ABORT ON
-
 
   BEGIN TRANSACTION update_MFTS_Suit;
 
@@ -3955,13 +3970,16 @@ END
   `;
 
   return new Promise(function(resolve, reject) {
+
+    console.log("Execute Query update_MFTS_Suit_ByAccountId()" + cardNumber);
+
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request()
       .input("cardNumber", sql.VarChar(20), cardNumber)
       .input("actionBy", sql.VarChar(50), actionBy)
       .query(queryStr, (err, result) => {
 
-        // console.log(JSON.stringify(result));
+        console.log('***update_MFTS_Suit_ByAccountId(Result) >> ');
           if(err){
             const err_msg=err;
             logger.error('Messge:'+err_msg);
@@ -3970,13 +3988,20 @@ END
             resolve({code:'0'});
           }
       })
+
+
     })
+
     pool1.on('error', err => {
       console.log('err 2 ->' +err);
       logger.error(err);
       reject(err);
     })
-  });
+
+  }
+  );
+
+
 }
 
 
@@ -4828,7 +4853,7 @@ function validStr(val, defaultVal = "") {
 
 exports.cloneCustomerAddrSameAsFlag = (accountId,cardNumber)=>{
 
-  // logger.info('cloneCustomerAddrSameAsFlag()' +  cardNumber);
+  logger.info('cloneCustomerAddrSameAsFlag()' +  cardNumber);
 
   return new Promise(function(resolve, reject) {
     try{

@@ -22,19 +22,62 @@ exports.UnitholderBalance = (req, res, next) => {
   // let crmCustCode='M1901362';
   const custCode = req.query.custCode
 
+  lbdu_data
+  private_data
+  bond_data
+
   fnArray=[];
   fnArray.push(unitholderBalanceLBDU_BycustCode(custCode));
   Promise.all(fnArray)
   .then(data => {
 
-    logger.info('Result:' + JSON.stringify(data));
+
+
+      //LBDU
+      if(data[0]){
+
+        //Calculate
+        let cost =0
+        cost = data[0].recordsets[0].reduce((a, b) => {
+            cost += b['Unit_balance'] * b['Average_Cost'];
+            // console.log(`*** CAL cost > ${b['Unit_balance']} * ${b['Average_Cost']} = ${cost}`)
+            return cost
+          }, {});
+
+        let marketVal=0
+          marketVal = data[0].recordsets[0].reduce((a, b) => {
+          marketVal += b['Unit_balance'] * b['NAV'];
+          // console.log(`*** CAL cost > ${b['Unit_balance']} * ${b['Average_Cost']} = ${cost}`)
+
+          return marketVal
+        }, {});
+
+        // ans = data[0].recordsets[0].reduce((a, b) => {
+        //       if(!a[b['Account_ID']]) {
+        //         a[b['Account_ID']] = [];
+        //       }
+        //       a[b['Account_ID']].push(b);
+        //       return a;
+        //     }, {});
+
+          rs_data.lbdu=data[0]
+          rs_data.lbdu["cost"] = cost;
+          rs_data.lbdu["marketVal"] = marketVal;
+
+      };
+
+    return_data={'lbdu':lbdu_data,
+    'private':private_data,
+    'bond':bond_data
+    }
+
 
     // Return
-    res.status(200).json({code:'000',message:'sucessful',data:JSON.stringify(data)});
+    res.status(200).json({code:'000',message:'sucessful',data:JSON.stringify(return_data)});
   })
   .catch(error => {
     logger.error('UnitholderBalance: ' +error.message)
-    res.status(401).json({code:'001',message:'error',data:JSON.stringify(error.message)});
+    res.status(401).json({code:'001',message:error.message });
   });
 
 }

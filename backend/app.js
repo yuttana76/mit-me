@@ -60,6 +60,7 @@ const smsRoutes = require('./routes/sms');
 const surveyRoutes = require('./routes/survey');
 const graphQLRoutes = require('./routes/graphQL');
 const slackRoutes = require('./routes/slack');
+const miWealthRoutes = require('./routes/miWealth');
 
 var logger = require("./config/winston");
 
@@ -211,6 +212,8 @@ app.use("/api/survey",surveyRoutes);
 
 app.use("/api/graphQL",graphQLRoutes);
 app.use("/api/slack",slackRoutes);
+
+app.use("/api/mi",miWealthRoutes);
 
 
 app.use((req, res, next) => {

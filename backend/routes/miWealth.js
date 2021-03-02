@@ -8,8 +8,12 @@ const miWealthController = require('../controllers/miWealth')
 
 // 1. Authentication
 
-// Schedule
-router.get("/UnitholderBalance/",tokenAuth,miWealthController.UnitholderBalance);
-router.get("/AllottedTransactions/",tokenAuth,miWealthController.AllottedTransactions);
+// Master
+// router.get("/UnitholderBalance/",tokenAuth,miWealthController.UnitholderBalance);
+
+// MI functions
+router.get("/PortDetailByAgents/",tokenAuth,miWealthController.getPortDetailByAgents);
+router.get("/PortDetailByPort/",tokenAuth,miWealthController.getPortDetailByPort);
+router.get("/Commission/",tokenAuth,miWealthController.getCommission);
 
 module.exports = router;

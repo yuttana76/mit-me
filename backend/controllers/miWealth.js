@@ -48,6 +48,10 @@ let outstandingModel = {
 
 // *************** MODEL
 
+exports.hellomi = (req, res, next) => {
+  res.status(200).json(`Hello mi ${req.connection.remoteAddress}` );
+}
+
 // exports.UnitholderBalance = (req, res, next) => {
 
 //   // let compCode ='MPAM';

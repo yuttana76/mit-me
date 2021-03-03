@@ -12,6 +12,8 @@ const miWealthController = require('../controllers/miWealth')
 // router.get("/UnitholderBalance/",tokenAuth,miWealthController.UnitholderBalance);
 
 // MI functions
+router.get("/hellomi/",miWealthController.hellomi);
+
 router.get("/PortDetailByAgents/",tokenAuth,miWealthController.getPortDetailByAgents);
 router.get("/PortDetailByPort/",tokenAuth,miWealthController.getPortDetailByPort);
 router.get("/Commission/",tokenAuth,miWealthController.getCommission);

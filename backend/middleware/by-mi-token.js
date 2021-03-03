@@ -23,7 +23,7 @@ module.exports = (req,res,next)=>{
     if(token ==='026606671'){
 
       // log
-      mitLog.saveMITlog('SYSTEM','CALL API', `token=${token} ;url= ${req.originalUrl} ;ip=${req.connection.remoteAddress} ` ,'','',function(){});
+      mitLog.saveMITlog('SYSTEM','MI_API', `token=${token} ;url= ${req.originalUrl} ;ip=${req.connection.remoteAddress} ` ,'','',function(){});
 
       next();
     }else{

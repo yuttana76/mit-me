@@ -68,6 +68,43 @@ exports.scheduleDownload = (req, res, next) => {
   });
 }
 
+// On development
+exports.apiAuditor = (req, res, next) => {
+
+  var userCode = 'MPAM_SCH'
+  // var businessDate = fundConnextBusinessDate();
+  // if(req.query.businessDate){
+  //   businessDate = req.query.businessDate
+  // }
+
+  logger.info('*** scheduleDownload() businessDate >'+  businessDate);
+
+  // Transaction API
+  fnArray=[];
+  // fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
+  fnArray.push(NAV_auditor(businessDate));
+
+  Promise.all(fnArray)
+  .then(data => {
+    logger.info('Finish Execute FundConnext schedule;' + JSON.stringify(data) )
+
+    //Save log
+    // mitLog.saveMITlog(userCode,'FC_API_SCH_NAV', `NAV date ${businessDate}|FundConnext Download: ${data[0].DownloadRecord} |MFTS fund update: ${data[0].FundRecord}` ,'','',function(){});
+
+    // Return
+    res.status(200).json('API Schedule successful. ' + JSON.stringify(data));
+  })
+  .catch(error => {
+    logger.error('Error FundConnext schedule;' +error.message)
+    res.status(401).json(error.message);
+  });
+}
+
+exports.NAV_auditor=(businessDate)=>{
+  //MFTS fund compare  NAV fund api
+
+}
+
 exports.downloadCustomerProfile = (req, res, next) => {
 
   var userCode = 'MPAM_API'

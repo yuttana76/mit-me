@@ -9,6 +9,7 @@ const { route } = require('./customer');
 
 // Schedule
 router.get("/scheduleDownload/",fundConnextAPIController.scheduleDownload);
+router.get("/apiAuditor/",fundConnextAPIController.apiAuditor); // // On development
 
 // customer/individual/ API
 router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);

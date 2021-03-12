@@ -15,136 +15,202 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 var config_BULK = mpamConfig.dbParameters_BULK;
 var config = mpamConfig.dbParameters;
 const sql = require("mssql");
+const { throwError } = require('rxjs');
+const { reject } = require('async');
+const { json } = require('body-parser');
 
-// *************** MODEL
+const PRODUCT_MF ='MF'
+const PRODUCT_BOND ='BOND'
+const PRODUCT_PF ='PF'
 
-
-let customerModel = {
-  "customer_name":"xxx-yyy",
-  portfolios:[]
-}
-
-let portModel = {
-  "product": "PF",
-  "current_value": 4206333,
-  "capital_value": 8031200,
-  "balance": -3824867,
-  "balance_percent": -47.625099611515,
-  "as_of_date": "2021-03-01",
-  "portfolio_code": "P53001",
-  "outstanding_list":[]
-}
-
-
-let outstandingModel = {
-  "instrument": "L44",
-  "percent": 10,
-  "price": 10,
-  "current_value": 10,
-  "capital_value": 10,
-  "balance": 10,
-  "balance_percent": 10
-  }
-
-// *************** MODEL
+const PF_API_URL ='http://192.168.10.45'
 
 exports.hellomi = (req, res, next) => {
-  res.status(200).json(`Hello mi ${req.connection.remoteAddress}` );
+
+  logger.info( ` hellomi ;originalUrl= ${req.originalUrl} ;remoteAddress=${req.connection.remoteAddress} `);
+
+  agentCode='089569'
+  as_of_date='2021-03-01'
+
+  funcPF_PortDetailByAgent(agentCode,as_of_date).then(obj=>{
+    logger.info(` RETURN data >> ${JSON.stringify(obj)}`)
+
+    res.status(200).json(obj);
+  },err=>{
+    logger.error(err)
+    res.status(401).json(err);
+  });
+
+
+
 }
 
-// exports.UnitholderBalance = (req, res, next) => {
 
-//   // let compCode ='MPAM';
-//   // let crmCustCode='M1901362';
-//   const custCode = req.query.custCode
+exports.getPortDetailByAgents_V2 = (req, res, next) => {
+  logger.info('Welcome getPortDetailByAgents_V2');
 
-//   fnArray=[];
-//   fnArray.push(unitholderBalanceLBDU_BycustCode(custCode));
-//   Promise.all(fnArray)
-//   .then(data => {
+  var compCode = 'MPAM'
+    let agent_list = req.query.agent_list;
+    let as_of_date = req.query.as_of_date;
 
-//     var rs_data={}
+    agentArray = agent_list.split(',')
+    processLicenseArray(compCode,agentArray,as_of_date).then((_data)=>{
 
-//       //LBDU
-//       if(data[0]){
+      // logger.info(` RT data>${JSON.stringify(_data)}`)
+      console.log('Done!');
+      res.status(200).json(_data[0]);
+    })
 
-//         //Calculate
-//         let cost =0
-//         cost = data[0].recordsets[0].reduce((a, b) => {
-//             cost += b['Unit_balance'] * b['Average_Cost'];
-//             // console.log(`*** CAL cost > ${b['Unit_balance']} * ${b['Average_Cost']} = ${cost}`)
-//             return cost
-//           }, {});
-
-//         let marketVal=0
-//           marketVal = data[0].recordsets[0].reduce((a, b) => {
-//           marketVal += b['Unit_balance'] * b['NAV'];
-//           // console.log(`*** CAL cost > ${b['Unit_balance']} * ${b['Average_Cost']} = ${cost}`)
-
-//           return marketVal
-//         }, {});
-
-//         // ans = data[0].recordsets[0].reduce((a, b) => {
-//         //       if(!a[b['Account_ID']]) {
-//         //         a[b['Account_ID']] = [];
-//         //       }
-//         //       a[b['Account_ID']].push(b);
-//         //       return a;
-//         //     }, {});
-
-//           rs_data.outstanding_list=data[0].recordsets[0]
-//           // rs_data.lbdu["cost"] = cost;
-//           // rs_data.lbdu["marketVal"] = marketVal;
-
-//       };
-
-//       //Private fund
-//       if(data[1]){
-//         // rs_data['private']=data[1].recordsets[0]
-//         rs_data.private=data[1]
-//       }
-
-//       //BOND
-//       if(data[2]){
-//         // rs_data['bond']=data[2].recordsets[0]
-//         rs_data.bond=data[2]
-//       }
+}
 
 
+async function processLicenseArray(compCode,lic_array,as_of_date) {
 
-//     // Return
-//     res.status(200).json(rs_data);
-//     // res.status(200).json({code:'000',message:'sucessful',data:rs_data});
-//   })
-//   .catch(error => {
-//     logger.error('UnitholderBalance: ' +error.message)
-//     res.status(401).json({code:'001',message:error.message });
-//   });
+  processLiceseArray_RS=[]
+  for (const lic_code of lic_array) {
+    processLiceseArray_RS.push(await getPortfolio(compCode,lic_code,as_of_date));
+  }
 
-// }
+  return processLiceseArray_RS
+}
+
+// const MaskData = require(maskdata);
+
+ function getPortfolio(compCode,lic_code,as_of_date) {
+  agentData={
+    agent_code:lic_code
+  };
+  return new Promise( function(resolve, reject) {
+
+        customers=[];
+              lic_funcArray=[];
+              lic_funcArray.push(funMF_Get_MF_BOND_AccountByLicense_Query(compCode,lic_code,as_of_date));
+              lic_funcArray.push(funcPF_PortDetailByAgent(lic_code,as_of_date));
+
+                Promise.all(lic_funcArray)
+                .then(cust_data =>  {
+
+                  // Masking id MF
+                  MF_port=[]
+                  cust_data[0] = cust_data[0].reduce((a, b) =>  {
+                      _id = b['id_cust'];
+                      var first4 = _id.substring(0, 3);
+                      var last5 = _id.substring(_id.length - 5);
+                      mask = _id.substring(4, _id.length - 5).replace(/\d/g,"*");
+                      _id_mask =first4 + mask + last5
+                      b['id_cust'] = _id_mask
+
+                      MF_port.push(b)
+                      return b
+                    }, {});
+
+                    // Masking id PF
+                    PF_port=[]
+                    cust_data[1] = cust_data[1].reduce((a, b) =>  {
+                      _id = b['id_cust'];
+                      var first4 = _id.substring(0, 3);
+                      var last5 = _id.substring(_id.length - 5);
+                      mask = _id.substring(4, _id.length - 5).replace(/\d/g,"*");
+                      _id_mask =first4 + mask + last5
+                      b['id_cust'] = _id_mask
+                      PF_port.push(b)
+                      return b
+                    }, {});
+
+                    cust_data[0] = MF_port
+                    cust_data[1] = PF_port
+
+                  // Calculate
+                  result = cust_data[0].reduce((a, b) =>  {
+
+                        let customer ={};
+                        // customer.customer_code = _id_mask//b['id']
+                        customer.customer_code = b['id_cust']
+                        customer.customer_name = b['fullName']
+                        customer.as_of_date = as_of_date
+                        customer.portfolio_code = b['acc']
+                        customer.product = b['product']
+
+                        if(customer.product === PRODUCT_MF){
+                          customer.current_value = b['mf_sum_current_value']
+                          customer.capital_value = b['mf_sum_capital_value']
+                          customer.balance=(customer.current_value - customer.capital_value )
+                          customer.balance_percent=((customer.current_value - customer.capital_value )/customer.capital_value)*100
+
+                        }else if(customer.product === PRODUCT_BOND){
+                          customer.amount = b['bond_sum_amount']
+
+                        }
+                        else if(customer.product === PRODUCT_PF){
+
+                        }
+                        customers.push(customer)
+
+                        return customers
+                      }, {});
+
+                    // Merge (MF,BOND) & PF
+                      if(cust_data[1]){
+                        cust_data[1].forEach(function(pf_port) {
+
+                          //Rename
+                          str = JSON.stringify(pf_port);
+                          str = str.replace(/\"id_cust\":/g, "\"customer_code\":");
+                          pf_port = JSON.parse(str);
+
+                          customers.push(pf_port)
+                      });
+                    }
+
+                    // Grouping
+                    result = customers.reduce(function (r, a) {
+
+                      r[a.customer_code] = r[a.customer_code] || [];
+                      r[a.customer_code].push(a);
+
+                        return r;
+                    }, Object.create(null));
+
+
+                    agentData.customers = result
+                    resolve(agentData)
+
+                })
+                .catch(err=>{
+
+                  reject(err)
+                });
+
+  });
+
+}
+
 
 exports.getPortDetailByAgents = (req, res, next) => {
-
+  logger.info('Welcome getPortDetailByAgents');
   try{
-    logger.info('Welcome getPortDetailByAgents');
 
-    const agent_list = req.query.agent_list;
-    const as_of_date = req.query.as_of_date;
+    var compCode = 'MPAM'
+    let agent_list = req.query.agent_list;
+    let as_of_date = req.query.as_of_date;
 
-    agentCustomerList =[];
+    logger.info(`*** ${compCode} ,${agent_list}, ${as_of_date}  `)
 
+        fnArray=[];
+        fnArray.push(funMF_GetAccountByLicenseList(compCode,agent_list,as_of_date));
+        Promise.all(fnArray)
+        .then(data => {
 
-    // #1
-    customerModel.customer_name='Yuttana';
-    customerModel.portfolios.push(portModel);
-    agentCustomerList.push(customerModel);
+          // Do something here
+          // logger.info( `DATA-> ${JSON.stringify(data)}`)
 
-    // #2
-    customerModel.customer_name='Mr. xxxx';
-    // customerModel.portfolios.push(portModel);
-    agentCustomerList.push(customerModel);
+          res.status(200).json(data);
 
-    res.status(200).json(agentCustomerList);
+        }).catch(function(err) {
+          logger.error(`xxx ${err}`)
+
+          // res.status(500).json(`Was error on ${err} `);
+        });
 
   } catch (error) {
     logger.error(JSON.stringify(error))
@@ -153,74 +219,61 @@ exports.getPortDetailByAgents = (req, res, next) => {
 
 }
 
-
 exports.getPortDetailByPort = (req, res, next) => {
 
+logger.info('Welocme getPortDetailByPort()')
   try {
+    var compCode = 'MPAM'
     let portfolio_code = req.query.portfolio_code;
     let as_of_date = req.query.as_of_date;
     let product = req.query.product;
 
-    var compCode = 'MPAM'
-    product = 'MF'
-     portfolio_code='M1901362'
-     as_of_date='2021-02-06'
+        //MF
+        if(product === PRODUCT_MF){
 
-portdata={
-  "product": product,
-"as_of_date": as_of_date,
-"portfolio_code": portfolio_code,
-}
+          fnArray=[];
+          fnArray.push(funcMF_PortDetailByPortObject(compCode,portfolio_code,as_of_date));
+          Promise.all(fnArray)
+          .then(data => {
+            res.status(200).json(data[0]);
+          }).catch(function(err) {
+            res.status(500).json(`Was error on ${product}`);
+          })
+          ;
 
+        }else if (product === PRODUCT_BOND) {
 
-  //LBDU
-  fnArray=[];
-  fnArray.push(funcPortDetailByPort(compCode,portfolio_code,as_of_date));
-  Promise.all(fnArray)
-  .then(data => {
+          fnArray=[];
+          fnArray.push(funcBOND_PortDetailByPortObject(compCode,portfolio_code,as_of_date));
+          Promise.all(fnArray)
+          .then(data => {
+            res.status(200).json(data[0]);
+          })
+          .catch(function(err) {
+            res.status(500).json(`Was error on ${product}`);
+          })
+          ;
 
-    logger.info(JSON.stringify(data[0]))
+        }else if (product === PRODUCT_PF) {
 
-      // has data
-      sum_current_value=0;
-      sum_capital_value=0;
+          fnArray=[];
+          fnArray.push(funcPF_PortDetailByPort(portfolio_code,as_of_date));
+          Promise.all(fnArray)
+          .then(data => {
 
-      if(data[0]){
+            res.status(200).json(data[0]);
 
-        // portdata.outstanding_list.push(data[0])
-        //Calculate
+          })
+          .catch(function(err) {
+            res.status(500).json(`Was error on ${product}`);
+          })
+          ;
+        }
 
-        sum_current_value = data[0].reduce((a, b) => {
-            sum_current_value +=b['current_value']
-            return sum_current_value
-          }, {});
-
-        sum_capital_value = data[0].reduce((a, b) => {
-            sum_capital_value +=b['capital_value'];
-            return sum_capital_value
-          }, {});
-
-          portdata.current_value=sum_current_value;
-          portdata.capital_value=sum_capital_value;
-          portdata.balance=sum_current_value-sum_capital_value;
-          portdata.balance_percent= ((sum_current_value-sum_capital_value) /sum_capital_value)*100 ;
-
-          portdata.outstanding_list = data[0]
-
-
-          // rs_data.outstanding_list=data[0].recordsets[0]
-          // rs_data.lbdu["cost"] = cost;
-          // rs_data.lbdu["marketVal"] = marketVal;
-
-      };
-
-    res.status(200).json(portdata);
-  });
-
-  } catch (error) {
-    logger.error(JSON.stringify(error))
-    res.status(500).json(error);
-  }
+    } catch (error) {
+      logger.error(JSON.stringify(error))
+      res.status(500).json('Was error');
+    }
 }
 
 
@@ -233,74 +286,573 @@ exports.getCommission = (req, res, next) => {
   res.status(200).json('API Commission. ' + JSON.stringify(data));
 }
 
-
-// **********************************************************
-// function unitholderBalanceLBDU_BycustCode(CustCode) {
-
-//   logger.info(`unitholderBalanceLBDU_BycustCode()   ;CustCode: ${CustCode}`);
-
-//   var fncName = "getMaster()";
-//   var queryStr = `
-//   BEGIN
-
-//   select
-//   AA .*
-//   from (
-//       select A.Account_ID,A.NAVdate,A.Fund_Code ,A.Available_Amount,A.Available_Unit_Balance,A.Unit_balance,A.Average_Cost,A.NAV
-//       , (((A.Available_Amount -  (A.Unit_balance * A.Average_Cost)) / (A.Unit_balance * A.Average_Cost) ) * 100) AS UPL
-//       from MIT_FC_UnitholderBalance A
-//       where A.Account_ID =@custCode
-//       and Available_Amount>0 AND Available_Unit_Balance>0  )AA
-//   INNER JOIN(
-//       select Fund_Code,MAX(CONVERT(DATETIME, NAVdate, 112)) AS NAVdate
-//       from MIT_FC_UnitholderBalance
-//       where Account_ID =@custCode
-//       and Available_Amount>0 AND Available_Unit_Balance>0
-//       group by Fund_Code) BB
-//   ON AA.Fund_Code=BB.Fund_Code  AND AA.NAVdate= BB.NAVdate
-//   ORDER BY AA.Account_ID,AA.Fund_Code
-
-//   END
-//     `;
-
-//   // const sql = require("mssql");
-//   return new Promise(function(resolve, reject) {
-//     const pool1 = new sql.ConnectionPool(config, err => {
-//       pool1
-//         .request()
-//         // .input("compCode", sql.VarChar(20), compCode)
-//         .input("custCode", sql.VarChar(20), CustCode)
-
-//         .query(queryStr, (err, result) => {
-//           if (err) {
-//             console.log(fncName + " Quey db. Was err !!!" + err);
-//             reject(err);
-
-//           } else {
-//             // console.log(" queryStr >>" + queryStr);
-//             // console.log(" Quey RS >>" + JSON.stringify(result));
-//             resolve(result);
-//           }
-//         });
-//     });
-//     pool1.on("error", err => {
-//       console.log("ERROR>>" + err);
-//       reject(err);
-//     });
-//   });
-// }
-
 // **********************************************************
 
-function funcPortDetailByPort(compCode,custCode,as_of_date) {
+async  function funMF_GetAccountByLicenseList(compCode,agent_list,as_of_date){
 
-  logger.info(`funcPortDetailByPort()   ;CustCode: ${custCode} ;as_of_date:${as_of_date} `);
+  logger.info(`Welcome funMF_GetAccountByLicenseObject_v2()`)
 
-  var fncName = "getMaster()";
+  var arr = agent_list.split(",");
+  let data=[]
+  for(var i=0;i<arr.length;i++) {
+    data.push(await funMF_GetAccountByLicenseObject(compCode,arr[i],as_of_date))
+  }
+
+//  Portfolio
+  data = await func_MFPort(compCode,data,as_of_date);
+
+  // data = await func_BONDPort(compCode,data,as_of_date);
+
+
+  logger.info( `DONE !! `)
+  return data;
+
+}
+
+async function func_BONDPort(compCode,data,as_of_date){
+
+  return new Promise(async function(resolve, reject) {
+      try{
+
+        for(var i in data)
+        {
+          if (data[i].customers.length>0){
+
+            lic_obj = data[i].customers;
+            for(var j in lic_obj){
+
+              // lic_obj[j].portfolio = []; // initial port
+              logger.info(`***BOND account(XNO) > ${lic_obj[j].XNO}`)
+
+
+                // fnMF_Array=[];
+                // fnMF_Array.push(funcMF_PortDetailByPortObject(compCode,lic_obj[j].customer_code,as_of_date));// MF
+
+                // await Promise.all(fnMF_Array)
+                // .then( _port_data => {
+
+                //   logger.info(` ****(port_data) *** ${JSON.stringify(_port_data)} `)
+
+                //   accountObj_MF={
+                //     "product": "MF",
+                //     "as_of_date": as_of_date,
+                //   }
+
+                //   sum_current_value=0;
+                //   sum_capital_value=0;
+
+                //   if(_port_data[0].length>0){
+
+                //     //Calculate sum current value
+                //     sum_current_value = _port_data[0].reduce((a, b) => {
+                //       sum_current_value +=b['current_value']
+                //       return sum_current_value
+                //     }, {});
+
+                //   // //Calculate sum capital value
+                //     sum_capital_value = _port_data[0].reduce((a, b) => {
+                //       sum_capital_value +=b['capital_value'];
+                //       return sum_capital_value
+                //     }, {});
+
+                //     accountObj_MF.portfolio_code = _port_data[0][0].Account_ID
+                //     accountObj_MF.current_value=sum_current_value;
+                //     accountObj_MF.capital_value=sum_capital_value;
+                //     accountObj_MF.balance=sum_current_value-sum_capital_value;
+                //     accountObj_MF.balance_percent= ((sum_current_value-sum_capital_value) /sum_capital_value)*100 ;
+
+                //     accountObj_MF.outstanding_list=_port_data[0]
+                //   }
+
+                //   if(_port_data[1].length > 0){
+                //     accountObj_MF.transaction_list= _port_data[1]
+                //   }
+
+                //   lic_obj[j].portfolio.push(accountObj_MF)
+
+                // })
+                // .catch(err=>{
+                //   reject(err)
+                // });
+
+            }
+
+            data[i].customers = lic_obj
+          }
+        }
+
+      } catch (err) {
+        logger.error(err)
+        reject(err)
+      }
+
+  resolve(data)
+  });
+
+}
+
+
+async function func_MFPort(compCode,data,as_of_date){
+
+  return new Promise(async function(resolve, reject) {
+      try{
+
+        for(var i in data)
+        {
+          console.log(` license >> ${JSON.stringify(data[i].license)}`);
+          if (data[i].customers.length>0){
+
+            lic_obj = data[i].customers;
+            for(var j in lic_obj){
+
+              lic_obj[j].portfolio = [];
+
+                fnMF_Array=[];
+                fnMF_Array.push(funcMF_PortDetailByPortObject(compCode,lic_obj[j].customer_code,as_of_date));// MF
+
+                await Promise.all(fnMF_Array)
+                .then( _port_data => {
+
+                  accountObj_MF={
+                    "product": "MF",
+                    "as_of_date": as_of_date,
+                  }
+
+                  sum_current_value=0;
+                  sum_capital_value=0;
+
+                  if(_port_data[0].length>0){
+
+                    //Calculate sum current value
+                    sum_current_value = _port_data[0].reduce((a, b) => {
+                      sum_current_value +=b['current_value']
+                      return sum_current_value
+                    }, {});
+
+                  // //Calculate sum capital value
+                    sum_capital_value = _port_data[0].reduce((a, b) => {
+                      sum_capital_value +=b['capital_value'];
+                      return sum_capital_value
+                    }, {});
+
+                    accountObj_MF.portfolio_code = _port_data[0][0].Account_ID
+                    accountObj_MF.current_value=sum_current_value;
+                    accountObj_MF.capital_value=sum_capital_value;
+                    accountObj_MF.balance=sum_current_value-sum_capital_value;
+                    accountObj_MF.balance_percent= ((sum_current_value-sum_capital_value) /sum_capital_value)*100 ;
+
+                    accountObj_MF.outstanding_list=_port_data[0]
+                  }
+
+                  if(_port_data[1].length > 0){
+                    accountObj_MF.transaction_list= _port_data[1]
+                  }
+
+                  lic_obj[j].portfolio.push(accountObj_MF)
+
+                })
+                .catch(err=>{
+                  reject(err)
+                });
+            }
+
+            data[i].customers = lic_obj
+          }
+        }
+
+      } catch (err) {
+        logger.error(err)
+        reject(err)
+      }
+  resolve(data)
+  });
+
+}
+
+
+async function funMF_GetAccountByLicenseObject_2(compCode,agent_code,as_of_date){
+
+  logger.info(`funMF_GetAccountByLicenseObject ${agent_code}`)
+
+  let agentData={'license':agent_code,
+  customers:[]};
+
+  let customers=[]
+
+  return new Promise(function(resolve, reject) {
+      try{
+       resolve(0)
+      } catch (err) {
+        reject(err)
+      }
+    });
+}
+
+async function funMF_GetAccountByLicenseObject(compCode,agent_code,as_of_date){
+
+  logger.info(`funMF_GetAccountByLicenseObject ${agent_code}`)
+
+  let agentData={'license':agent_code,
+  customers:[]};
+
+  let customers=[]
+
+  return new Promise(function(resolve, reject) {
+      try{
+        // fnMF_Array
+              lic_Array=[];
+              lic_Array.push(funMF_GetAccountByLicenseQuery(compCode,agent_code,as_of_date));
+                Promise.all(lic_Array)
+                .then(cust_data => {
+                      //Calculate sum current value
+                  logger.info(` GET CUST >> ${JSON.stringify(cust_data)}`)
+
+                      cust_data[0].reduce((a, b) => {
+
+                        // return sum_current_value
+                        let customer ={};
+                        customer.customer_name = b['fullName']
+                        customer.customer_code = b['Cust_Code']
+
+                        customers.push(customer)
+
+                      }, {});
+
+
+                    agentData.customers = customers
+                    resolve(agentData)
+
+                })
+                .catch(err=>{
+
+                  reject(err)
+                });
+
+      } catch (err) {
+        reject(err)
+      }
+    });
+
+}
+
+
+function funcMF_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
+  logger.info(`funcMF_PortDetailByPortObject()_XXXX compCode=${compCode} ;portfolio_code=${portfolio_code} ;as_of_date=${as_of_date}`)
+
+   portdata={
+      "product": PRODUCT_MF,
+      "as_of_date": as_of_date,
+      "portfolio_code": portfolio_code,
+    }
+
+  return new Promise(function(resolve, reject) {
+    // fnMF_Array
+    fnMF_Array=[];
+    fnMF_Array.push(funcMF_PortDetailByPort_Query(compCode,portfolio_code,as_of_date));
+    fnMF_Array.push(funcMF_TransactionPort_Query(portfolio_code));
+        Promise.all(fnMF_Array)
+        .then(data => {
+
+            sum_current_value=0;
+            sum_capital_value=0;
+
+            if(data[0]){
+
+              //Calculate sum current value
+              sum_current_value = data[0].reduce((a, b) => {
+                  sum_current_value +=b['current_value']
+                  return sum_current_value
+                }, {});
+
+              //Calculate sum capital value
+              sum_capital_value = data[0].reduce((a, b) => {
+                  sum_capital_value +=b['capital_value'];
+                  return sum_capital_value
+                }, {});
+
+                // Assign value
+                if(data[0][0])
+                  portdata.portfolio_code = data[0][0].Account_ID
+
+                portdata.current_value=sum_current_value;
+                portdata.capital_value=sum_capital_value;
+                portdata.balance=sum_current_value-sum_capital_value;
+                portdata.balance_percent= ((sum_current_value-sum_capital_value) /sum_capital_value)*100 ;
+                portdata.outstanding_list = data[0]
+
+            };
+
+            if(data[1]){
+              portdata.transaction_list=data[1];
+            }else{
+              portdata.transaction_list=[];
+            }
+
+        resolve(portdata);
+      }).catch(err=>{
+        reject(err)
+      });
+
+  });
+
+}
+
+
+function funcBOND_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
+
+  portdata={
+    "product": PRODUCT_BOND,
+    "as_of_date": as_of_date,
+
+  }
+
+  return new Promise(function(resolve, reject) {
+      try{
+
+      fnBOND_Array=[];
+      fnBOND_Array.push(funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date));
+      Promise.all(fnBOND_Array)
+      .then(data => {
+
+        logger.info(`BOND data>> ${JSON.stringify(data)}` )
+
+        if(data[0].length<=0 ){
+          reject(0)
+        }
+
+        //Calculate sum current value
+        sum_amound=0;
+        sum_amound = data[0].reduce((a, b) => {
+          sum_amound +=b['Amount']
+          return sum_amound
+        }, {});
+
+        // portdata.customer_name = data[0][0].fullName
+        if(data[0][0] >0)
+          portdata.portfolio_code = data[0][0].portfolio_code
+
+        portdata.Amount = sum_amound
+        portdata.outstanding_list = data[0]
+
+        logger.info(`BOND RESOLVE >> ${JSON.stringify(portdata)}` )
+
+        resolve(portdata)
+
+      })
+      .catch(function(err) {
+        logger.error(err.message); // some coding error in handling happened
+        reject(err)
+      });
+
+    }catch(err){
+      logger.error(`ERROR on funcBOND_PortDetailByPortObject() ${err}`)
+    }
+
+  });
+
+}
+
+
+function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_date) {
+
+  logger.info(`funMF_Get_MF_BOND_AccountByLicense_Query()  ;CustCode: ${compCode} ;license_code:${license_code} ;as_of_date:${as_of_date} `);
+
+  var fncName = "funMF_Get_MF_BOND_AccountByLicense_Query()";
+  var queryStr = `
+
+  BEGIN
+  --DECLARE @license_code VARCHAR(20) ='039583'
+
+  DECLARE @tempTable TABLE
+  (id_cust VARCHAR(20)
+  ,fullName  VARCHAR(100)
+  ,product VARCHAR(20)
+  ,acc VARCHAR(20)
+  ,mf_sum_current_value [numeric](18, 2)
+  ,mf_sum_capital_value [numeric](18, 2)
+  ,bond_sum_amount [numeric](18, 2)
+  )
+
+  DECLARE @customerCursor as CURSOR;
+  DECLARE @mfCursor as CURSOR;
+
+  DECLARE @id VARCHAR(20);
+  DECLARE @fullName VARCHAR(100);
+  DECLARE @product VARCHAR(20);
+  DECLARE @acc VARCHAR(20);
+  -- Portfolio
+
+  DECLARE @mf_sum_current_value [numeric](18, 2)=0
+  DECLARE @mf_sum_capital_value [numeric](18, 2)=0
+
+  DECLARE @bond_sum_amount [numeric](18, 2)=0
+
+      -- BOND get cust by license
+      SET @customerCursor = CURSOR FOR
+      select  b.CustID as acc, ISNULL(b.IDcardNo,'-') as id_cust
+      ,b.FName +' ' +   REPLACE(b.LName, SUBSTRING(b.LName, LEN(b.LName)-3,LEN(b.LName)), '***') as fullName
+      , 'BOND' as product
+      from ITB_RM_Freelance a
+      LEFT join ITB_Customers b on (b.FreelanceID=a.ID  OR b.RMID = a.ID )and  b.[Status]='A '
+      where a.Code =@license_code and a.[status]='A'
+      UNION
+      -- LBDU get cust by license
+      select  a.Cust_Code as acc, ISNULL(a.IT_PID_No,'-') as id_cust
+      , a.First_Name_T +' ' +   REPLACE(a.Last_Name_T, SUBSTRING(a.Last_Name_T, LEN(a.Last_Name_T)-3,LEN(a.Last_Name_T)), '***') as full_name
+      ,'MF'as product
+      from Account_Info a
+      where IT_SAcode = @license_code
+      OR  a.MktId IN(select  Id
+                      FROM VW_MFTS_SaleCode
+                      WHERE License_Code =@license_code
+                      )
+      order by id_cust,acc
+
+      OPEN @customerCursor;
+      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product
+      WHILE @@FETCH_STATUS = 0
+      BEGIN
+
+      if @product='MF'BEGIN
+          select @mf_sum_current_value = ISNULL(SUM( a.Unit_balance * a.NAV ),0) --AS sum_current_value
+          ,@mf_sum_capital_value = ISNULL(SUM(a.Unit_balance * a.Average_Cost ),0)  --AS sum_capital_value
+          from MIT_FC_UnitholderBalance A
+          where A.Account_ID =@acc
+          and Available_Amount>0
+          AND Available_Unit_Balance>0
+          and  CONVERT(DATETIME, businessDate) =
+              (select   distinct top 1 businessDate
+              from MIT_FC_UnitholderBalance
+              where Account_ID = @acc
+              and  CONVERT(DATETIME, businessDate) <= CONVERT(DATETIME, GETDATE())
+              order by  businessDate desc )
+          IF @@ROWCOUNT=0
+          BEGIN
+              SELECT @mf_sum_current_value=0,@mf_sum_capital_value=0
+          END
+
+          -- print @id + ' ' +@fullName +' '+  @product+' '+@acc +' '+ CONVERT(varchar(20), @mf_sum_current_value) +' '+ CONVERT(varchar(20), @mf_sum_capital_value )
+
+        -- Insert temp table
+        INSERT INTO @tempTable (id_cust,fullName,product,acc,mf_sum_current_value,mf_sum_capital_value)
+        VALUES  (@id,@fullName,@product,@acc,@mf_sum_current_value,@mf_sum_capital_value)
+
+      END
+
+      if @product='BOND'BEGIN
+
+          SELECT @bond_sum_amount = SUM(ISNULL(b.Amount,0))
+          FROM ITB_Customers a
+          LEFT join  ITB_CustInstruments b ON b.CustCode  = a.custId and b.[Status]='A'
+          LEFT join ITB_Instrument c ON  c.InstrumentID= b.InstrumentCode and c.[Status]='A'
+          LEFT join ITB_Company d ON d.ID=c.IssuerID and d.[status]='A'
+          where a.custId = @acc
+          and  a.Status = 'A'
+           IF @@ROWCOUNT=0
+          BEGIN
+              SELECT @bond_sum_amount=0
+          END
+
+          -- print @id + ' ' +@fullName +' '+  @product+' '+@acc   + ' ' +@bond_InstrumentDesc   + ' '+ @bond_OrderDate + ' '+ CONVERT(varchar(20), @bond_amount )
+          -- Insert temp table
+        INSERT INTO @tempTable (id_cust,fullName,product,acc,bond_sum_amount)
+        VALUES  (@id,@fullName,@product,@acc,@bond_sum_amount)
+
+      END
+
+
+      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product
+      END
+      CLOSE @customerCursor;
+      DEALLOCATE @customerCursor;
+
+      select * from @tempTable
+
+  END
+
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("license_code", sql.VarChar(20), license_code)
+        // .input("as_of_date", sql.VarChar(20), as_of_date)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            logger.error(`err`)
+            reject(err);
+
+          } else {
+            // logger.info(`data -> ${JSON.stringify(result)}`)
+            resolve(result.recordset);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+
+function funMF_GetAccountByLicenseQuery(compCode,license_code,as_of_date) {
+
+  logger.info(`funMF_GetAccountByLicenseQuery()  ;CustCode: ${compCode} ;license_code:${license_code} ;as_of_date:${as_of_date} `);
+
+  var fncName = "funMF_GetAccountByLicenseQuery()";
   var queryStr = `
   BEGIN
 
-  select A.Account_ID
+  select distinct AAA.License_Code,AA.Cust_Code,AA.First_Name_T + ' ' + AA.Last_Name_T AS fullName,AA.IT_PID_No AS XNO
+  from VW_MFTS_SaleCode AAA
+  left join Account_Info AA on AA.MktId=AAA.Id
+  where AAA.License_Code=@license_code
+  order by fullName
+
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("license_code", sql.VarChar(20), license_code)
+        // .input("as_of_date", sql.VarChar(20), as_of_date)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            logger.error(`err`)
+            reject(err);
+
+          } else {
+            // logger.info(`data -> ${JSON.stringify(result)}`)
+            resolve(result.recordset);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+function funcMF_PortDetailByPort_Query(compCode,custCode,as_of_date) {
+
+  logger.info(`funcMF_PortDetailByPort_Query()  ;CustCode: ${custCode} ;as_of_date:${as_of_date} `);
+
+  var fncName = "funcMF_PortDetailByPort_Query()";
+  var queryStr = `
+  BEGIN
+
+  /*
+  @as_of_date = yyyyMMdd
+  */
+
+  select A.Account_ID as portfolio_code
   ,A.Fund_Code as instrument
   ,A.NAV as price
   ,a.Unit_balance * a.NAV as current_value
@@ -327,8 +879,57 @@ function funcPortDetailByPort(compCode,custCode,as_of_date) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
         .request()
-        // .input("compCode", sql.VarChar(20), compCode)
         .input("custCode", sql.VarChar(20), custCode)
+        .input("as_of_date", sql.VarChar(20), as_of_date)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Query error !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result.recordset);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+
+function funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date) {
+
+  logger.info(`funcBOND_PortDetailByPort_query()   ;portfolio_code: ${portfolio_code} ;as_of_date:${as_of_date} `);
+
+  var fncName = "funcBOND_PortDetailByPort_query()";
+  var queryStr = `
+  BEGIN
+
+    SELECT  a.CustID AS portfolio_code
+    ,b.InstrumentCode as instrument
+    ,b.Amount
+    ,convert(varchar, b.OrderDate, 23) as OrderDate
+    ,d.code +'-'+c.InstrumentTypeCode AS InstrumentDesc
+    FROM ITB_Customers a
+    LEFT join  ITB_CustInstruments b ON b.CustCode  = a.custId and b.[Status]='A'
+    LEFT join ITB_Instrument c ON  c.InstrumentID= b.InstrumentCode and c.[Status]='A'
+    LEFT join ITB_Company d ON d.ID=c.IssuerID and d.[status]='A'
+    where CustCode = @CustCode
+    and  a.Status = 'A'
+
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("custCode", sql.VarChar(20), portfolio_code)
         .input("as_of_date", sql.VarChar(20), as_of_date)
 
         .query(queryStr, (err, result) => {
@@ -347,5 +948,162 @@ function funcPortDetailByPort(compCode,custCode,as_of_date) {
       console.log("ERROR>>" + err);
       reject(err);
     });
+  });
+}
+
+
+
+function funcMF_TransactionPort_Query(custCode) {
+
+  logger.info(`funcMF_TransactionPort_Query()   ;CustCode: ${custCode} `);
+
+  var fncName = "funcTransactionPort()";
+  var queryStr = `
+
+BEGIN
+
+    DECLARE @tranasctionTable TABLE(transactionID VARCHAR(20),fundCode  VARCHAR(30) ,transactionDate VARCHAR(40) , status VARCHAR(10) ,amount [numeric](18, 2),unit [numeric](18, 4))
+
+    DECLARE @TransactionCursor as CURSOR;
+
+    DECLARE @transactionID VARCHAR(20)
+    DECLARE @transactionDate VARCHAR(20)
+    DECLARE @fundCode VARCHAR(20)
+    DECLARE @transactionCode VARCHAR(20)
+    DECLARE @status VARCHAR(20) = 'WAITING'
+    DECLARE @amount [numeric](18, 2)=0
+    DECLARE @unit  [numeric](18, 4)=0
+
+
+    SET @TransactionCursor = CURSOR FOR
+    select  distinct a.transactionID,convert(varchar, a.transactionDate, 23) ,a.fundCode, a.transactionCode,a.amount ,a.unit
+    from MIT_FC_TransAllotted A
+    where accountID =@custCode
+    order BY transactionID desc ,a.fundCode
+
+    OPEN @TransactionCursor;
+    FETCH NEXT FROM @TransactionCursor INTO @transactionID,@transactionDate,@fundCode, @transactionCode,@amount,@unit
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+
+      select @status = [status]
+      from MIT_FC_TransAllotted
+      where transactionID = @transactionID
+      and [status]='ALLOTTED'
+      IF @@ROWCOUNT=0  BEGIN
+         select @status = 'WAITING'
+      END
+      ELSE BEGIN
+         select @status = 'ALLOTTED'
+      END
+
+      INSERT INTO @tranasctionTable
+      VALUES  (@transactionID,@fundCode,@transactionDate,@status,@amount,@unit)
+
+     FETCH NEXT FROM @TransactionCursor INTO @transactionID,@transactionDate,@fundCode, @transactionCode,@amount,@unit
+    END
+    CLOSE @TransactionCursor;
+    DEALLOCATE @TransactionCursor;
+
+     SELECT *  FROM @tranasctionTable
+
+  END
+    `;
+
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request()
+        .input("custCode", sql.VarChar(20), custCode)
+
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+
+          } else {
+            // console.log(" queryStr >>" + queryStr);
+            // console.log(" Quey RS >>" + JSON.stringify(result));
+            resolve(result.recordset);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+}
+
+
+function funcPF_PortDetailByAgent(agentCode,as_of_date){
+
+  console.log("Welcome funcPF_PortDetailByAgent()"+ agentCode,as_of_date);
+
+  return new Promise(function(resolve, reject) {
+
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+    /**
+   * HTTPS REQUEST (START)
+   */
+        const request = require('request');
+        const HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByAgents?agent_list=${agentCode}&as_of_date=${as_of_date}`;
+        const option = {
+          'X-Auth-Token':'***',
+        };
+        logger.info(`Start CALL API`)
+        request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
+          if(err) {
+            logger.error(err);
+            reject(err);
+          }else{
+              resolve(JSON.parse(body))
+          }
+        });
+      /**
+       * HTTPS REQUEST (END)
+       */
+
+  });
+}
+
+
+
+function funcPF_PortDetailByPort(portfolio_code,as_of_date){
+
+  logger.info(`Welcome funcPF_PortDetailByPort() ${portfolio_code} ${as_of_date}`);
+
+  return new Promise(function(resolve, reject) {
+
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+    /**
+   * HTTPS REQUEST (START)
+   */
+  // getPortDetailByPort?portfolio_code=MGM200070&as_of_date=2021-03-01&product=PF
+
+        const request = require('request');
+
+        const HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByPort?portfolio_code=${portfolio_code}&as_of_date=${as_of_date}`;
+        // const HTTPS_ENDPOIN =`http://192.168.10.45/getPortDetailByPort?portfolio_code=MGM200070&as_of_date=2021-03-01&product=PF`;
+        const option = {
+          'X-Auth-Token':'***',
+        };
+
+        logger.info(`Start CALL API`)
+        request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
+          if(err) {
+            logger.error(err);
+            reject(err);
+          }else{
+              resolve(JSON.parse(body))
+          }
+        });
+      /**
+       * HTTPS REQUEST (END)
+       */
+
   });
 }

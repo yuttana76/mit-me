@@ -258,8 +258,6 @@ exports.getFC_CustomerInfo_proc = (custCode) => {
     // console.log('FC data>'+JSON.stringify(values))
       custInfo=values[0][0]
 
-      console.log('custInfo >>'+JSON.stringify(custInfo))
-
       if(values[1].length>0)
         custInfo.residence=values[1][0]
 
@@ -1754,8 +1752,8 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
       }
     }
 
-    console.log('***acceptBy_splited>' ,JSON.stringify(acceptBy_splited))
-    console.log('***IT_SAcode_external>' ,JSON.stringify(IT_SAcode_external))
+    // console.log('***acceptBy_splited>' ,JSON.stringify(acceptBy_splited))
+    // console.log('***IT_SAcode_external>' ,JSON.stringify(IT_SAcode_external))
     // referalPerson = custObj.referalPerson.substr(0, 6);
   }
 

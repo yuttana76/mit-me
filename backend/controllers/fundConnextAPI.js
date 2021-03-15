@@ -2944,7 +2944,7 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
                   var logMsg= ''.concat(CustomerData.thFirstName,'|',CustomerData.thLastName
                   ,'|',CustomerData.enFirstName,'|',CustomerData.enLastName
                   ,'|',CustomerData.referalPerson
-                  ,'|',CustomerData.mobileNumber,'|',CustomerData.email,'|',CustomerData.accountId,'|',CustomerData.RM)
+                  ,'|',CustomerData.mobileNumber,'|',CustomerData.email,'|',CustomerData.accountId,'|',CustomerData.RM )
 
                   var  currentDate =new Date();
                   var _applicationDate = new Date();
@@ -2963,6 +2963,7 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
                   // To calculate the no. of days between two dates
                   var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
                   logMsg = logMsg+''.concat('|',CustomerData.applicationDate, '(',Difference_In_Days,')')
+                  logMsg = logMsg+''.concat('|',CustomerData.RM_License_Code,'|',CustomerData.RM_EMAIL)
 
                   mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',logMsg ,'','',function(){});
                   resolve(CustomerData);
@@ -3054,6 +3055,8 @@ tr:nth-child(even) {
  <th>Mobile</th>
  <th>Email</th>
 `
+
+  // MAIL to IT
     repData[0].forEach(function(item){
 
       var _splitData = item.msg.split("|")
@@ -3093,6 +3096,33 @@ tr:nth-child(even) {
       body:HTML_HEADER + mailBody + HTML_FOOTER
     }
     mail.sendMailIT(mailObj);
+
+
+    // Mail to RM
+
+    repData[0].forEach(function(item){
+
+      var _splitData = item.msg.split("|")
+      _splitData[11]+ '</td>' //Marketing Email
+      var mailBody_RM = '<DIV>'
+      + '<BR> Account ' +_splitData[7] // Account
+      + '<BR> Thai Name' +_splitData[0]+' ' + _splitData[1]  // Thai name
+      + '<BR> End Name' +_splitData[2]+' ' + _splitData[3]  // Eng nam
+      + '</DIV>'
+
+       let mailOptions_RM = {
+        from: 'it@merchantasset.co.th',
+        to: _splitData[11],
+        subject: `FundConnext Account  ${_splitData[0]}  ${_splitData[1]}  Approved`,
+        html:  `${mailBody_RM}`
+      };
+
+      // logger.info(`MAIL TO RM>> ${JSON.stringify(mailOptions_RM)}`)
+      mail.sendMailToRespondor(mailOptions_RM);
+
+    })
+
+
     res.status(200).json('reportSCHMitlog successful.');
   })
   .catch(error => {

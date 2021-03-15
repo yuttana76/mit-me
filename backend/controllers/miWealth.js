@@ -57,8 +57,8 @@ exports.getPortDetailByAgents_V2 = (req, res, next) => {
     processLicenseArray(compCode,agentArray,as_of_date).then((_data)=>{
 
       // logger.info(` RT data>${JSON.stringify(_data)}`)
-      console.log('Done!');
-      res.status(200).json(_data[0]);
+      console.log('All Done!');
+      res.status(200).json(_data);
     })
 
 }
@@ -66,8 +66,11 @@ exports.getPortDetailByAgents_V2 = (req, res, next) => {
 
 async function processLicenseArray(compCode,lic_array,as_of_date) {
 
-  processLiceseArray_RS=[]
+  let processLiceseArray_RS=[]
+
   for (const lic_code of lic_array) {
+    // _agent_data = await getPortfolio(compCode,lic_code,as_of_date)
+    // logger.info( `Agent data>> ${JSON.stringify(_agent_data)}`)
     processLiceseArray_RS.push(await getPortfolio(compCode,lic_code,as_of_date));
   }
 
@@ -77,15 +80,19 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
 // const MaskData = require(maskdata);
 
  function getPortfolio(compCode,lic_code,as_of_date) {
+
   agentData={
-    agent_code:lic_code
+    agent_code:lic_code,
   };
+
+  let PF_as_of_date = as_of_date;
+
   return new Promise( function(resolve, reject) {
 
         customers=[];
               lic_funcArray=[];
               lic_funcArray.push(funMF_Get_MF_BOND_AccountByLicense_Query(compCode,lic_code,as_of_date));
-              lic_funcArray.push(funcPF_PortDetailByAgent(lic_code,as_of_date));
+              lic_funcArray.push(funcPF_PortDetailByAgent(lic_code,PF_as_of_date));
 
                 Promise.all(lic_funcArray)
                 .then(cust_data =>  {
@@ -97,7 +104,7 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
                       var first4 = _id.substring(0, 3);
                       var last5 = _id.substring(_id.length - 5);
                       mask = _id.substring(4, _id.length - 5).replace(/\d/g,"*");
-                      _id_mask =first4 + mask + last5
+                      _id_mask =first4 + mask + last5+first4
                       b['id_cust'] = _id_mask
 
                       MF_port.push(b)
@@ -106,16 +113,20 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
 
                     // Masking id PF
                     PF_port=[]
-                    cust_data[1] = cust_data[1].reduce((a, b) =>  {
-                      _id = b['id_cust'];
-                      var first4 = _id.substring(0, 3);
-                      var last5 = _id.substring(_id.length - 5);
-                      mask = _id.substring(4, _id.length - 5).replace(/\d/g,"*");
-                      _id_mask =first4 + mask + last5
-                      b['id_cust'] = _id_mask
-                      PF_port.push(b)
-                      return b
-                    }, {});
+                    // logger.info(` Masking id PF >>${JSON.stringify(cust_data[1])}`)
+                    if(cust_data[1]){
+                      cust_data[1] = cust_data[1].reduce((a, b) =>  {
+                        _id = b['id_cust'];
+                        var first4 = _id.substring(0, 3);
+                        var last5 = _id.substring(_id.length - 5);
+                        mask = _id.substring(4, _id.length - 5).replace(/\d/g,"*");
+                        _id_mask =first4 + mask + last5+first4
+                        b['id_cust'] = _id_mask
+                        PF_port.push(b)
+                        return b
+                      }, {});
+
+                    }
 
                     cust_data[0] = MF_port
                     cust_data[1] = PF_port
@@ -138,7 +149,7 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
                           customer.balance_percent=((customer.current_value - customer.capital_value )/customer.capital_value)*100
 
                         }else if(customer.product === PRODUCT_BOND){
-                          customer.amount = b['bond_sum_amount']
+                          customer.balance = b['bond_sum_amount']
 
                         }
                         else if(customer.product === PRODUCT_PF){
@@ -161,18 +172,22 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
                           customers.push(pf_port)
                       });
                     }
+                    agentData.customers = customers
 
-                    // Grouping
-                    result = customers.reduce(function (r, a) {
+                    // // Grouping type 1
+                    // result = customers.reduce(function (r, a) {
+                    //   r[a.customer_code] = r[a.customer_code] || [];
+                    //   r[a.customer_code].push(a);
+                    //     return r;
+                    // }, Object.create(null));
+                    // agentData.customers = result
 
-                      r[a.customer_code] = r[a.customer_code] || [];
-                      r[a.customer_code].push(a);
+                    // // Grouping type 2
+                    hash = customers.reduce((p,c) => (p[c.customer_code] ? p[c.customer_code].push(c) : p[c.customer_code] = [c],p) ,{}),
+                    newData = Object.keys(hash).map(k => ({customer_code: k,as_of_date:hash[k][0].as_of_date ,portfolios: hash[k]}));
 
-                        return r;
-                    }, Object.create(null));
+                   agentData.customers = newData
 
-
-                    agentData.customers = result
                     resolve(agentData)
 
                 })
@@ -614,7 +629,7 @@ function funcBOND_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
       Promise.all(fnBOND_Array)
       .then(data => {
 
-        logger.info(`BOND data>> ${JSON.stringify(data)}` )
+        // logger.info(`BOND data>> ${JSON.stringify(data)}` )
 
         if(data[0].length<=0 ){
           reject(0)
@@ -623,7 +638,7 @@ function funcBOND_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
         //Calculate sum current value
         sum_amound=0;
         sum_amound = data[0].reduce((a, b) => {
-          sum_amound +=b['Amount']
+          sum_amound +=b['balance']
           return sum_amound
         }, {});
 
@@ -631,10 +646,10 @@ function funcBOND_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
         if(data[0][0] >0)
           portdata.portfolio_code = data[0][0].portfolio_code
 
-        portdata.Amount = sum_amound
+        portdata.balance = sum_amound
         portdata.outstanding_list = data[0]
 
-        logger.info(`BOND RESOLVE >> ${JSON.stringify(portdata)}` )
+        // logger.info(`BOND RESOLVE >> ${JSON.stringify(portdata)}` )
 
         resolve(portdata)
 
@@ -694,7 +709,9 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
       , 'BOND' as product
       from ITB_RM_Freelance a
       LEFT join ITB_Customers b on (b.FreelanceID=a.ID  OR b.RMID = a.ID )and  b.[Status]='A '
-      where a.Code =@license_code and a.[status]='A'
+      where a.Code =@license_code
+      and a.[status]='A'
+      and b.IDcardNo is not null
       UNION
       -- LBDU get cust by license
       select  a.Cust_Code as acc, ISNULL(a.IT_PID_No,'-') as id_cust
@@ -702,7 +719,9 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
       ,'MF'as product
       from Account_Info a
       where IT_SAcode = @license_code
-      OR  a.MktId IN(select  Id
+      and a.IT_PID_No is not null
+      and a.IT_PID_No != ''
+      and a.MktId IN(select  Id
                       FROM VW_MFTS_SaleCode
                       WHERE License_Code =@license_code
                       )
@@ -853,8 +872,11 @@ function funcMF_PortDetailByPort_Query(compCode,custCode,as_of_date) {
   */
 
   select A.Account_ID as portfolio_code
+  ,A.AMC_Code as AMC
   ,A.Fund_Code as instrument
-  ,A.NAV as price
+  ,A.Average_Cost as price
+  ,A.NAV as NAV
+  ,convert(varchar, convert(datetime ,A.NAVdate), 23)  as NAVdate
   ,a.Unit_balance * a.NAV as current_value
   ,a.Unit_balance * a.Average_Cost as capital_value
   ,(A.Available_Amount -  (A.Unit_balance * A.Average_Cost))  as balance
@@ -911,7 +933,7 @@ function funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date) {
 
     SELECT  a.CustID AS portfolio_code
     ,b.InstrumentCode as instrument
-    ,b.Amount
+    ,b.Amount as balance
     ,convert(varchar, b.OrderDate, 23) as OrderDate
     ,d.code +'-'+c.InstrumentTypeCode AS InstrumentDesc
     FROM ITB_Customers a
@@ -1039,7 +1061,7 @@ BEGIN
 
 function funcPF_PortDetailByAgent(agentCode,as_of_date){
 
-  console.log("Welcome funcPF_PortDetailByAgent()"+ agentCode,as_of_date);
+  logger.info(`Welcome funcPF_PortDetailByAgent() >${agentCode}  >${as_of_date}`)
 
   return new Promise(function(resolve, reject) {
 

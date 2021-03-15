@@ -4690,7 +4690,7 @@ CLOSE @getAccount
 DEALLOCATE @getAccount
 
 -- get account info
-  SELECT  TOP 1 @accountStr AS accountId,C.Full_Name AS RM,A.*
+  SELECT  TOP 1 @accountStr AS accountId,C.Id AS RM_ID,C.License_Code AS RM_License_Code,C.EMAIL AS RM_EMAIL,C.Full_Name AS RM,A.*
   FROM [MIT_FC_CUST_INFO] A
   LEFT JOIN  MIT_FC_CUST_ACCOUNT B ON A.cardNumber=B.cardNumber
   LEFT JOIN  [MFTS].[dbo].[VW_MFTS_SaleCode] C ON B.icLicense=C.License_Code

@@ -9,9 +9,16 @@ const miWealthController = require('../controllers/miWealth')
 // 1. Authentication
 router.get("/hellomi/",miWealthController.hellomi);
 
-router.get("/getPortDetailByAgents/",mi_tokenAuth,miWealthController.getPortDetailByAgents_V2); // Doing
+router.get("/getPortDetailByAgents/"
+,[check('agent_list').exists()]
+,[check('as_of_date').isLength({ min: 10,max:10 }).withMessage('Request parameters')]
+,mi_tokenAuth,miWealthController.getPortDetailByAgents_V2); // Doing
 
-router.get("/getPortDetailByPort/",mi_tokenAuth,miWealthController.getPortDetailByPort);
+router.get("/getPortDetailByPort/"
+,[check('product').isLength({ min: 1 }).withMessage('Request parameters')]
+,[check('portfolio_code').isLength({ min: 1 }).withMessage('Request parameters')]
+,[check('as_of_date').isLength({ min: 10,max:10 }).withMessage('Request parameters')]
+,mi_tokenAuth,miWealthController.getPortDetailByPort);
 
 router.get("/getCommission/",mi_tokenAuth,miWealthController.getCommission);
 

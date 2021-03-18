@@ -46,7 +46,6 @@ router.get("/downloadInfo/",[
     .isLength({ min: 1 }).withMessage('businessDate must have value '),
 ], fundConnextAPIController.downloadInfo);
 
-
 // router.post("/uploadMITNAVdb/",[
 //   check('fileType')
 //     .exists().withMessage('must have param fileType')
@@ -103,6 +102,15 @@ router.post("/downloadUnitholderBalanceAPI",[check('businessDate')
 .isLength({ min: 1 }).withMessage('must have businessDate value')
 ],fundConnextAPIController.UnitholderBalanceAPI);
 
+
+// ********* Download UnitholderBalance (developing)
+router.post("/downloadFundProfilAPI",[check('businessDate')
+.isLength({ min: 1 }).withMessage('must have businessDate value')
+],fundConnextAPIController.FundProfileAPI);
+
+router.post("/fundProfileAutoUpdate"
+// ,[check('businessDate').isLength({ min: 1 }).withMessage('must have businessDate value')]
+,fundConnextAPIController.fundProfileAutoUpdateAPI);
 
 
 // ********* Download AllottedTransactions

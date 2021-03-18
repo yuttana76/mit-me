@@ -536,7 +536,12 @@ return new Promise(function(resolve, reject) {
       fcCustInfoObj.Title_Name_T = 'อื่นๆ';
   }
 
-  fcCustInfoObj.IT_SentRepByEmail='Y'
+  if(fcCustInfoObj.email && fcCustInfoObj.email.split('@').length>0){
+    fcCustInfoObj.IT_SentRepByEmail='Y'
+  }else{
+    fcCustInfoObj.IT_SentRepByEmail='N'
+  }
+
   fcCustInfoObj.IT_FundConnext='Y'
 
 // Card_Type

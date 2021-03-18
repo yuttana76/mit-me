@@ -29,19 +29,27 @@ exports.hellomi = (req, res, next) => {
 
   logger.info( ` hellomi ;originalUrl= ${req.originalUrl} ;remoteAddress=${req.connection.remoteAddress} `);
 
-  agentCode='089569'
-  as_of_date='2021-03-01'
 
-  funcPF_PortDetailByAgent(agentCode,as_of_date).then(obj=>{
-    logger.info(` RETURN data >> ${JSON.stringify(obj)}`)
+  function getLastWeek() {
+    var today = new Date();
+    var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+    return lastWeek;
+  }
 
-    res.status(200).json(obj);
-  },err=>{
-    logger.error(err)
-    res.status(401).json(err);
-  });
+  var lastWeek = getLastWeek();
+  var lastWeekMonth = lastWeek.getMonth() + 1;
+  var lastWeekDay = lastWeek.getDate();
+  var lastWeekYear = lastWeek.getFullYear();
+
+  var lastWeekDisplay = lastWeekMonth + "/" + lastWeekDay + "/" + lastWeekYear;
+  var lastWeekDisplayPadded = ("00" + lastWeekMonth.toString()).slice(-2) + "/" + ("00" + lastWeekDay.toString()).slice(-2) + "/" + ("0000" + lastWeekYear.toString()).slice(-4);
+
+  console.log(lastWeek);
+  console.log(lastWeekDisplay);
+  console.log(lastWeekDisplayPadded);
 
 
+  res.status(200).json({message:'Hello MI.'});
 
 }
 
@@ -49,13 +57,18 @@ exports.hellomi = (req, res, next) => {
 exports.getPortDetailByAgents_V2 = (req, res, next) => {
   logger.info('Welcome getPortDetailByAgents_V2');
 
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    logger.error('API validate params ' + JSON.stringify({ errors: errors.array() }));
+    return res.status(422).json({ errors: 'Request parameters.' });
+  }
+
   var compCode = 'MPAM'
     let agent_list = req.query.agent_list;
     let as_of_date = req.query.as_of_date;
 
     agentArray = agent_list.split(',')
     processLicenseArray(compCode,agentArray,as_of_date).then((_data)=>{
-
       // logger.info(` RT data>${JSON.stringify(_data)}`)
       console.log('All Done!');
       res.status(200).json(_data);
@@ -97,14 +110,25 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
                 Promise.all(lic_funcArray)
                 .then(cust_data =>  {
 
+
                   // Masking id MF
                   MF_port=[]
                   cust_data[0] = cust_data[0].reduce((a, b) =>  {
                       _id = b['id_cust'];
-                      var first4 = _id.substring(0, 3);
-                      var last5 = _id.substring(_id.length - 5);
-                      mask = _id.substring(4, _id.length - 5).replace(/\d/g,"*");
-                      _id_mask =first4 + mask + last5+first4
+
+                      // Mask & concat
+                      // var first4 = _id.substring(0, 3);
+                      // var last5 = _id.substring(_id.length - 5);
+                      // mask = _id.substring(4, _id.length - 5).replace(/\d/g,"*");
+                      // _id_mask =first4 + mask + last5+first4
+                      // b['id_cust'] = _id_mask
+
+                      // Concat id
+                      var set1 = _id.substring(0, 3);
+                      var set2 = _id.substring(3,6);
+                      var set3 = _id.substring(6,9)
+                      var set4 = _id.substring(9,13)
+                      _id_mask =set2 + set4 + set3+set1+set3
                       b['id_cust'] = _id_mask
 
                       MF_port.push(b)
@@ -113,23 +137,44 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
 
                     // Masking id PF
                     PF_port=[]
-                    // logger.info(` Masking id PF >>${JSON.stringify(cust_data[1])}`)
                     if(cust_data[1]){
                       cust_data[1] = cust_data[1].reduce((a, b) =>  {
+
                         _id = b['id_cust'];
-                        var first4 = _id.substring(0, 3);
-                        var last5 = _id.substring(_id.length - 5);
-                        mask = _id.substring(4, _id.length - 5).replace(/\d/g,"*");
-                        _id_mask =first4 + mask + last5+first4
+
+                        // Concat id
+                        var set1 = _id.substring(0, 3);
+                        var set2 = _id.substring(3,6);
+                        var set3 = _id.substring(6,9)
+                        var set4 = _id.substring(9,13)
+                        _id_mask =set2 + set4 + set3+set1+set3
                         b['id_cust'] = _id_mask
+
                         PF_port.push(b)
                         return b
                       }, {});
-
                     }
 
+                    //PF  mapping & adjust JSON structure
+                    newPF_port=[];
+                    try {
+
+                      Object.keys(PF_port).forEach(function (key) {
+                        PF_port[key].portfolio.forEach(function (a) {
+                          let A = a
+                          A.id_cust=PF_port[key].id_cust
+                          A.customer_name=PF_port[key].customer_name
+                          delete A.outstanding_list
+                          newPF_port.push(A)
+                        });
+                      });
+                    }catch(err){
+                      logger.error(`PF mapping & adjust JSON structure Error> ${JSON.stringify(err)}`)
+                    }
+
+
                     cust_data[0] = MF_port
-                    cust_data[1] = PF_port
+                    cust_data[1] = newPF_port
 
                   // Calculate
                   result = cust_data[0].reduce((a, b) =>  {
@@ -149,7 +194,7 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
                           customer.balance_percent=((customer.current_value - customer.capital_value )/customer.capital_value)*100
 
                         }else if(customer.product === PRODUCT_BOND){
-                          customer.balance = b['bond_sum_amount']
+                          customer.current_value = b['bond_sum_amount']
 
                         }
                         else if(customer.product === PRODUCT_PF){
@@ -163,7 +208,6 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
                     // Merge (MF,BOND) & PF
                       if(cust_data[1]){
                         cust_data[1].forEach(function(pf_port) {
-
                           //Rename
                           str = JSON.stringify(pf_port);
                           str = str.replace(/\"id_cust\":/g, "\"customer_code\":");
@@ -174,17 +218,19 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
                     }
                     agentData.customers = customers
 
-                    // // Grouping type 1
-                    // result = customers.reduce(function (r, a) {
-                    //   r[a.customer_code] = r[a.customer_code] || [];
-                    //   r[a.customer_code].push(a);
-                    //     return r;
-                    // }, Object.create(null));
-                    // agentData.customers = result
-
                     // // Grouping type 2
                     hash = customers.reduce((p,c) => (p[c.customer_code] ? p[c.customer_code].push(c) : p[c.customer_code] = [c],p) ,{}),
-                    newData = Object.keys(hash).map(k => ({customer_code: k,as_of_date:hash[k][0].as_of_date ,portfolios: hash[k]}));
+                    newData = Object.keys(hash).map(k => ({customer_code: k,as_of_date:hash[k][0].as_of_date ,customer_name:hash[k][0].customer_name,portfolios: hash[k]}));
+
+                    // Modify all json data(MF,BOND,PF)
+                    agentData.customers = newData.forEach(function (a) {
+                      a.portfolios.forEach(function(b){
+                        bb = b;
+                        delete bb.customer_code
+                        delete bb.customer_name
+                        return bb
+                      })
+                    });
 
                    agentData.customers = newData
 
@@ -235,8 +281,14 @@ exports.getPortDetailByAgents = (req, res, next) => {
 }
 
 exports.getPortDetailByPort = (req, res, next) => {
-
 logger.info('Welocme getPortDetailByPort()')
+
+const errors = validationResult(req);
+if (!errors.isEmpty()) {
+  logger.error('API validate params ' + JSON.stringify({ errors: errors.array() }));
+  return res.status(422).json({ errors: 'Request parameters.' });
+}
+
   try {
     var compCode = 'MPAM'
     let portfolio_code = req.query.portfolio_code;
@@ -276,7 +328,8 @@ logger.info('Welocme getPortDetailByPort()')
           Promise.all(fnArray)
           .then(data => {
 
-            res.status(200).json(data[0]);
+            var _pf = data[0];
+            res.status(200).json(_pf[0]);
 
           })
           .catch(function(err) {
@@ -568,27 +621,33 @@ function funcMF_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
         Promise.all(fnMF_Array)
         .then(data => {
 
+
             sum_current_value=0;
             sum_capital_value=0;
 
             if(data[0]){
 
+              let portfolio_code =''
               //Calculate sum current value
               sum_current_value = data[0].reduce((a, b) => {
+
+                  portfolio_code = b.portfolio_code
                   sum_current_value +=b['current_value']
+                  sum_capital_value +=b['capital_value'];
+
                   return sum_current_value
                 }, {});
 
               //Calculate sum capital value
-              sum_capital_value = data[0].reduce((a, b) => {
-                  sum_capital_value +=b['capital_value'];
-                  return sum_capital_value
-                }, {});
+              // sum_capital_value = data[0].reduce((a, b) => {
+              //     sum_capital_value +=b['capital_value'];
+              //     return sum_capital_value
+              //   }, {});
 
                 // Assign value
-                if(data[0][0])
-                  portdata.portfolio_code = data[0][0].Account_ID
-
+                // if(data[0][0])
+                // portdata.portfolio_code = data[0][0].Account_ID
+                portdata.portfolio_code = portfolio_code;
                 portdata.current_value=sum_current_value;
                 portdata.capital_value=sum_capital_value;
                 portdata.balance=sum_current_value-sum_capital_value;
@@ -636,15 +695,17 @@ function funcBOND_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
         }
 
         //Calculate sum current value
+        var _portfolio_code
         sum_amound=0;
         sum_amound = data[0].reduce((a, b) => {
           sum_amound +=b['balance']
+          _portfolio_code=b.portfolio_code
           return sum_amound
         }, {});
 
         // portdata.customer_name = data[0][0].fullName
-        if(data[0][0] >0)
-          portdata.portfolio_code = data[0][0].portfolio_code
+
+        portdata.portfolio_code = portfolio_code
 
         portdata.balance = sum_amound
         portdata.outstanding_list = data[0]
@@ -718,13 +779,13 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
       , a.First_Name_T +' ' +   REPLACE(a.Last_Name_T, SUBSTRING(a.Last_Name_T, LEN(a.Last_Name_T)-3,LEN(a.Last_Name_T)), '***') as full_name
       ,'MF'as product
       from Account_Info a
-      where IT_SAcode = @license_code
-      and a.IT_PID_No is not null
+      where  a.IT_PID_No is not null
       and a.IT_PID_No != ''
-      and a.MktId IN(select  Id
+      AND (IT_SAcode = @license_code
+            OR a.MktId IN(select  Id
                       FROM VW_MFTS_SaleCode
                       WHERE License_Code =@license_code
-                      )
+                      ))
       order by id_cust,acc
 
       OPEN @customerCursor;
@@ -872,11 +933,12 @@ function funcMF_PortDetailByPort_Query(compCode,custCode,as_of_date) {
   */
 
   select A.Account_ID as portfolio_code
-  ,A.AMC_Code as AMC
+  ,A.AMC_Code as amc
   ,A.Fund_Code as instrument
+  ,a.Unit_balance as unit
   ,A.Average_Cost as price
-  ,A.NAV as NAV
-  ,convert(varchar, convert(datetime ,A.NAVdate), 23)  as NAVdate
+  ,A.NAV as nav
+  ,convert(varchar, convert(datetime ,A.NAVdate), 23)  as nav_date
   ,a.Unit_balance * a.NAV as current_value
   ,a.Unit_balance * a.Average_Cost as capital_value
   ,(A.Available_Amount -  (A.Unit_balance * A.Average_Cost))  as balance
@@ -934,8 +996,8 @@ function funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date) {
     SELECT  a.CustID AS portfolio_code
     ,b.InstrumentCode as instrument
     ,b.Amount as balance
-    ,convert(varchar, b.OrderDate, 23) as OrderDate
-    ,d.code +'-'+c.InstrumentTypeCode AS InstrumentDesc
+    ,convert(varchar, b.OrderDate, 23) as order_date
+    ,d.code +'-'+c.InstrumentTypeCode AS instrument_desc
     FROM ITB_Customers a
     LEFT join  ITB_CustInstruments b ON b.CustCode  = a.custId and b.[Status]='A'
     LEFT join ITB_Instrument c ON  c.InstrumentID= b.InstrumentCode and c.[Status]='A'
@@ -984,7 +1046,7 @@ function funcMF_TransactionPort_Query(custCode) {
 
 BEGIN
 
-    DECLARE @tranasctionTable TABLE(transactionID VARCHAR(20),fundCode  VARCHAR(30) ,transactionDate VARCHAR(40) , status VARCHAR(10) ,amount [numeric](18, 2),unit [numeric](18, 4))
+    DECLARE @tranasctionTable TABLE(transactionID VARCHAR(20),fundCode  VARCHAR(30) ,transactionCode VARCHAR(10),transactionDate VARCHAR(40) , status VARCHAR(10) ,amount [numeric](18, 2),unit [numeric](18, 4))
 
     DECLARE @TransactionCursor as CURSOR;
 
@@ -1020,7 +1082,7 @@ BEGIN
       END
 
       INSERT INTO @tranasctionTable
-      VALUES  (@transactionID,@fundCode,@transactionDate,@status,@amount,@unit)
+      VALUES  (@transactionID,@fundCode,@transactionCode,@transactionDate,@status,@amount,@unit)
 
      FETCH NEXT FROM @TransactionCursor INTO @transactionID,@transactionDate,@fundCode, @transactionCode,@amount,@unit
     END
@@ -1081,7 +1143,12 @@ function funcPF_PortDetailByAgent(agentCode,as_of_date){
             logger.error(err);
             reject(err);
           }else{
-              resolve(JSON.parse(body))
+              try{
+                resolve(JSON.parse(body))
+              }catch(err){
+                resolve()
+              }
+
           }
         });
       /**
@@ -1108,7 +1175,7 @@ function funcPF_PortDetailByPort(portfolio_code,as_of_date){
 
         const request = require('request');
 
-        const HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByPort?portfolio_code=${portfolio_code}&as_of_date=${as_of_date}`;
+        const HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByPort?portfolio_code=${portfolio_code}&as_of_date=${as_of_date}&product=PF`;
         // const HTTPS_ENDPOIN =`http://192.168.10.45/getPortDetailByPort?portfolio_code=MGM200070&as_of_date=2021-03-01&product=PF`;
         const option = {
           'X-Auth-Token':'***',
@@ -1120,6 +1187,7 @@ function funcPF_PortDetailByPort(portfolio_code,as_of_date){
             logger.error(err);
             reject(err);
           }else{
+
               resolve(JSON.parse(body))
           }
         });

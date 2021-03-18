@@ -2742,18 +2742,8 @@ exports.downloadAllottedAPI = (req, res, next) =>{
 }
 
 
-
-
 exports.UnitholderBalanceAPI = (req, res, next) =>{
-
-  // logger.info("Validate  API /downloadAllottedAPI/");
-  // const errors = validationResult(req);
-  // if (!errors.isEmpty()) {
-  //   return res.status(422).json({ errors: errors.array() });
-  // }
-
   logger.info("Welcome to API /downloadUnitholderBalanceAPI/ >>" + req.body.businessDate);
-
   var businessDate
   if(!req.body.businessDate){
     businessDate = fundConnextBusinessDate();
@@ -2762,7 +2752,40 @@ exports.UnitholderBalanceAPI = (req, res, next) =>{
   }
 
   UnitholderBalanceAPIProc(businessDate).then(dwRs=>{
-  // downloadAllotedAPIproc(businessDate).then(dwRs=>{
+    res.status(200).json({message: dwRs});
+  },err=>{
+    res.status(422).json(err);
+  });
+}
+
+
+exports.FundProfileAPI = (req, res, next) =>{
+  logger.info("Welcome to API /FundProfileAPI/ >>" + req.body.businessDate);
+  var businessDate
+  if(!req.body.businessDate){
+    businessDate = fundConnextBusinessDate();
+  } else{
+    businessDate = req.body.businessDate
+  }
+
+  FundProfileAPIProc(businessDate).then(dwRs=>{
+    res.status(200).json({message: dwRs});
+  },err=>{
+    res.status(422).json(err);
+  });
+}
+
+
+exports.fundProfileAutoUpdateAPI = (req, res, next) =>{
+  logger.info("Welcome to API /fundProfileAutoUpdateAPI/ >>" + req.body.businessDate);
+  // var businessDate
+  // if(!req.body.businessDate){
+  //   businessDate = fundConnextBusinessDate();
+  // } else{
+  //   businessDate = req.body.businessDate
+  // }
+
+  fundProfileAutoUpdate().then(dwRs=>{
     res.status(200).json({message: dwRs});
   },err=>{
     res.status(422).json(err);
@@ -2822,6 +2845,32 @@ function UnitholderBalanceAPIProc(businessDate,userCode){
             // });
 
             fcUnitholderBalance_ToDB_BULK(fileName,userCode,businessDate).then(_RS=>{
+              resolve(_RS)
+            },err=>{
+              reject(err);
+            });
+
+
+          },err=>{
+            reject(err);
+          });
+      },err=>{
+        reject(err);
+      });
+  });
+}
+
+
+function FundProfileAPIProc(businessDate,userCode){
+  logger.info('FundProfileAPIProc(); businessDate:' + businessDate )
+  return new Promise(function(resolve, reject) {
+    const fileType = 'FundProfile.zip';
+      // STEP 1: CALL API download
+      fnGetDownloadAPI(businessDate,fileType).then(data=>{
+          // //STEP 2: Upzip downloaded file.
+          unZipFile(data.path).then(fileName=>{
+
+            fcFundProfile_ToDB_BULK(fileName,userCode,businessDate).then(_RS=>{
               resolve(_RS)
             },err=>{
               reject(err);
@@ -3477,24 +3526,21 @@ END
 }
 
 
-
 // *****************************************************
-// createDate format  yyyymmdd(20191030)
 function delMIT_FC_Unitholder(businessDate){
-  // logger.info('delMIT_FC_Unitholder-' + businessDate);
   return new Promise(function(resolve, reject) {
     try{
 
-var queryStr = `
+  var queryStr = `
 
-BEGIN
+  BEGIN
 
-  DECLARE @businessDate VARCHAR(20) ='${businessDate}';
+    DECLARE @businessDate VARCHAR(20) ='${businessDate}';
 
-  DELETE  from MIT_FC_UnitholderBalance  where businessDate = @businessDate
+    DELETE  from MIT_FC_UnitholderBalance  where businessDate = @businessDate
 
-END
-`;
+  END
+  `;
   const sql = require('mssql')
 
   const pool1 = new sql.ConnectionPool(config, err => {
@@ -3523,6 +3569,46 @@ END
   });
 }
 
+
+function delMIT_FC_Profile(businessDate){
+  return new Promise(function(resolve, reject) {
+    try{
+      var queryStr = `
+      BEGIN
+        DECLARE @businessDate VARCHAR(20) ='${businessDate}';
+
+        SELECT  * from MIT_FC_Profile_HIS WHERE businessDate = @businessDate
+        IF @@ROWCOUNT =0
+        BEGIN
+          INSERT INTO MIT_FC_Profile_HIS
+          SELECT  * from MIT_FC_Profile WHERE businessDate = @businessDate
+        END
+
+        DELETE  from MIT_FC_Profile  where businessDate = @businessDate
+      END
+      `;
+          const sql = require('mssql')
+          const pool1 = new sql.ConnectionPool(config, err => {
+            pool1.request() // or: new sql.Request(pool1)
+            .query(queryStr, (err, result) => {
+                if(err){
+                  logger.error('SQL Error >' +err);
+                  reject(err);
+                }else {
+                  resolve(result.recordsets)
+                }
+            })
+          })
+          pool1.on('error', err => {
+            logger.error('POOL Error >'+err);
+            reject(err);
+          })
+  }catch(e){
+    logger.error('CATCH >' + e);
+    reject(e);
+  }
+  });
+}
 
 
 // *****************************************************
@@ -5108,6 +5194,250 @@ function fcUnitholderBalance_ToDB_BULK(fileName,userCode,businessDate){
     }
   });
 }
+function fcFundProfile_ToDB_BULK(fileName,userCode,businessDate){
+
+  logger.info('Function fcFundProfile_ToDB_BULK() //'+fileName + ' ;businessDate=' + businessDate);
+
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+  const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
+
+  return new Promise( function(resolve, reject) {
+
+      //Read file
+      try{
+
+      fs.readFile(DOWNLOAD_DIR +"/"+ fileName, function(err, data) {
+
+        if(err) {
+          logger.error(err);
+          reject(err);
+        }
+
+
+        // Delete all data
+        delMIT_FC_Profile(businessDate).then(()=>{
+
+            //Table config
+            const sql = require('mssql');
+            const pool1 = new sql.ConnectionPool(config_BULK, err => {
+
+            const table = new sql.Table('MIT_FC_Profile');
+            table.create = true;
+
+            table.columns.add('Fund_Code', sql.VarChar(30), {nullable: true});
+            table.columns.add('AMC_CODE', sql.VarChar(15),{nullable: true});
+            table.columns.add('Fund_Name_TH', sql.NVarChar(200),{nullable: true});
+            table.columns.add('Fund_Name_EN', sql.VarChar(200),{nullable: true});
+            table.columns.add('Fund_Policy', sql.Char(1), { nullable: true });
+            table.columns.add('Tax_Type', sql.Char(5), { nullable: true });
+            table.columns.add('FIF_Flag', sql.Char(1), { nullable: true });
+            table.columns.add('Dividend_Flag', sql.Char(1), { nullable: true });
+            table.columns.add('Registration_date', sql.VarChar(10), { nullable: true });
+            table.columns.add('Fund_Risk_Level', sql.SmallInt, { nullable: true });
+
+            table.columns.add('FX_Risk_Flag', sql.Char(1), { nullable: true });
+            table.columns.add('FATCA_allow_Flag', sql.Char(1), { nullable: true });
+            table.columns.add('buy_cut_off_time', sql.VarChar(4), { nullable: true });
+            table.columns.add('fst_lowbuy_val', sql.Numeric(18,2), { nullable: true });
+            table.columns.add('nxt_lowbuy_val', sql.Numeric(18,2), { nullable: true });
+            table.columns.add('sell_cut_off_time', sql.VarChar(4), { nullable: true });
+            table.columns.add('lowsell_val', sql.Numeric(18,2), { nullable: true });
+            table.columns.add('lowsell_unit', sql.Numeric(18,4), { nullable: true });
+            table.columns.add('lowbal_val', sql.Numeric(18,2), { nullable: true });
+            table.columns.add('lowbal_unit', sql.Numeric(18,4), { nullable: true });
+
+            table.columns.add('sell_settlement_day', sql.SmallInt, { nullable: true });
+            table.columns.add('switch_out_flag', sql.Char(1), { nullable: true });
+            table.columns.add('switch_in_flag', sql.Char(1), { nullable: true });
+            table.columns.add('Fund_Class', sql.VarChar(30), { nullable: true });
+            table.columns.add('buy_period_flag', sql.Char(1), { nullable: true });
+            table.columns.add('sell_period_flag', sql.Char(1), { nullable: true });
+            table.columns.add('switchin_periold_flag', sql.Char(1), { nullable: true });
+            table.columns.add('switchout_periold_flag', sql.Char(1), { nullable: true });
+            table.columns.add('buy_pre_order_day', sql.SmallInt, { nullable: true });
+            table.columns.add('sell_pre_order_day', sql.SmallInt, { nullable: true });
+            table.columns.add('switch_pre_order_day', sql.SmallInt, { nullable: true });
+
+            table.columns.add('Auto_redeem_fund', sql.VarChar(300), { nullable: true });
+            table.columns.add('Beg_IPO_Date', sql.VarChar(10), { nullable: true });
+            table.columns.add('End_IPO_Date', sql.VarChar(10), { nullable: true });
+            table.columns.add('Plain_Complex_Fund', sql.Char(1), { nullable: true });
+            table.columns.add('Derivatives_Flag', sql.Char(1), { nullable: true });
+            table.columns.add('lag_allocation_day', sql.SmallInt, { nullable: true });
+            table.columns.add('settlement_holiday_flag', sql.Char(1), { nullable: true });
+            table.columns.add('Health_Insurrance', sql.Char(1), { nullable: true });
+
+            table.columns.add('Previous_Fund_Code', sql.VarChar(300), { nullable: true });
+            table.columns.add('Investor_Alert', sql.VarChar(300), { nullable: true });
+            table.columns.add('ISIN', sql.VarChar(300), { nullable: true });
+            table.columns.add('lowbal_condition', sql.Char(1), { nullable: true });
+
+            table.columns.add('businessDate', sql.VarChar(10), { nullable: true });
+            table.columns.add('createBy', sql.VarChar(50), { nullable: true });
+            table.columns.add('createDate', sql.SmallDateTime, { nullable: true });
+
+            var array = data.toString().split("\n");
+            array.shift(); //removes the first array element
+
+            // logger.info('**DATA->' + JSON.stringify(array))
+
+            var _row =0;
+              for(i in array) {
+
+                var item = array[i].split("|") ;
+
+                Fund_Code = item[0]?item[0].trim():null
+                AMC_CODE = item[1]?item[1].trim():null
+                Fund_Name_TH = item[2]?item[2].trim():null
+                Fund_Name_EN = item[3]?item[3].trim():null
+                Fund_Policy = item[4]?item[4].trim():null
+                Tax_Type = item[5]?item[5].trim():null
+                FIF_Flag = item[6]?item[6].trim():null
+                Dividend_Flag = item[7]?item[7].trim():null
+                Registration_date= item[8]?item[8].trim():null
+                Fund_Risk_Level= item[9]?item[9].trim():null //10
+
+                FX_Risk_Flag= item[10]?item[10].trim():null
+                FATCA_allow_Flag= item[11]?item[11].trim():null
+                buy_cut_off_time= item[12]?item[12].trim():null
+                fst_lowbuy_val= item[13]?item[13].trim():null
+                nxt_lowbuy_val= item[14]?item[14].trim():null
+                sell_cut_off_time= item[15]?item[15].trim():null
+                lowsell_val= item[16]?item[16].trim():null
+                lowsell_unit= item[17]?item[17].trim():null
+                lowbal_val= item[18]?item[18].trim():null
+                lowbal_unit= item[19]?item[19].trim():null
+
+                sell_settlement_day= item[20]?item[20].trim():null //20
+                switch_out_flag= item[22]?item[22].trim():null
+                switch_in_flag= item[23]?item[23].trim():null
+                Fund_Class= item[24]?item[24].trim():null
+                buy_period_flag= item[25]?item[25].trim():null
+                sell_period_flag= item[26]?item[26].trim():null
+                switchin_periold_flag= item[27]?item[27].trim():null
+                switchout_periold_flag= item[28]?item[28].trim():null
+                buy_pre_order_day= item[29]?item[29].trim():null
+                sell_pre_order_day= item[30]?item[30].trim():null
+                switch_pre_order_day= item[31]?item[31].trim():null
+
+                Auto_redeem_fund= item[32]?item[32].trim():null
+                Beg_IPO_Date= item[33]?item[33].trim():null
+                End_IPO_Date= item[34]?item[34].trim():null
+                Plain_Complex_Fund= item[35]?item[35].trim():null
+                Derivatives_Flag= item[36]?item[36].trim():null
+                lag_allocation_day= item[37]?item[37].trim():null
+                settlement_holiday_flag= item[38]?item[38].trim():null
+                Health_Insurrance= item[39]?item[39].trim():null
+
+                Previous_Fund_Code =item[40]?item[40].trim():null
+                Investor_Alert=item[41]?item[41].trim():null
+                ISIN=item[42]?item[42].trim():null
+                lowbal_condition=item[43]?item[43].trim():null
+
+
+                  if(item[0]){
+                    table.rows.add(
+                      Fund_Code,
+                      AMC_CODE,
+                      Fund_Name_TH,
+                      Fund_Name_EN,
+                      Fund_Policy,
+                      Tax_Type,
+                      FIF_Flag,
+                      Dividend_Flag,
+                      Registration_date,
+                      Fund_Risk_Level,
+
+                      FX_Risk_Flag,
+                      FATCA_allow_Flag,
+                      buy_cut_off_time,
+                      fst_lowbuy_val,
+                      nxt_lowbuy_val,
+                      sell_cut_off_time,
+                      lowsell_val,
+                      lowsell_unit,
+                      lowbal_val,
+                      lowbal_unit,
+
+                      sell_settlement_day,
+                      switch_out_flag,
+                      switch_in_flag,
+                      Fund_Class,
+                      buy_period_flag,
+                      sell_period_flag,
+                      switchin_periold_flag,
+                      switchout_periold_flag,
+                      buy_pre_order_day,
+                      sell_pre_order_day,
+                      switch_pre_order_day,
+
+                      Auto_redeem_fund,
+                      Beg_IPO_Date,
+                      End_IPO_Date,
+                      Plain_Complex_Fund,
+                      Derivatives_Flag,
+                      lag_allocation_day,
+                      settlement_holiday_flag,
+                      Health_Insurrance,
+
+                      Previous_Fund_Code,
+                      Investor_Alert,
+                      ISIN,
+                      lowbal_condition,
+
+                      businessDate,
+                      userCode,
+                      new Date);
+                  }
+                  _row++;
+              }
+
+              // ***************** EXECUTE insert Bulk data to  MIT_LED table
+              const request = new sql.Request(pool1)
+              request.bulk(table, (err, result) => {
+                  // ... error checks
+                  // console.log('ERROR BULK>>' + err);
+                if(err){
+                  console.log(err);
+                  logger.error(JSON.stringify(err));
+                  reject(err);
+                }
+
+                if(result){
+                  var today = new Date();
+                  var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2); //Current date
+                  msg={msg:'Insert MIT_FC_Profile DB. successful.',records:_row,'businessDate': yyyymmddDate}
+
+                  // logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
+                  //Move to backup folder
+                  fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
+                    if (err) {
+                      reject(err);
+                    };
+                    resolve(msg);
+                  });
+
+                }
+              });
+              // ***************** Execute insert Bulk data to  MIT_LED table
+            });//sql.ConnectionPool
+
+
+      },err=>{
+        console.log('Error delMIT_FC_NAV()>' + err )
+        // reject(err);
+        // res.status(422).json({error: err});
+      });
+
+
+      });//fs.readFile
+
+    }catch(e){
+      logger.error(e);
+      reject(e);
+    }
+  });
+}
 
 function fcNAV_ToDB(fileName,businessDate,userCode){
   logger.info('Function fcNAV_ToDB() //'+fileName);
@@ -5610,4 +5940,91 @@ let seconds = today.getSeconds();
   returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
 
   return returnDate_yyyymmddDate + ` ${hours}:${minutes}:${seconds}`
+}
+
+
+
+
+
+function fundProfileAutoUpdate(){
+
+  return new Promise(function(resolve, reject) {
+    try{
+      var queryStr = `
+      BEGIN
+
+      DECLARE @userCode VARCHAR(20) ='MIT_SYS';
+
+      DECLARE @newFund as CURSOR;
+      DECLARE @Fund_Code VARCHAR(20);
+      DECLARE @msg VARCHAR(200);
+
+      print '**Start'
+          SET @newFund = CURSOR FOR
+          select a.Fund_Code
+          from MFTS_Fund a
+          where a.End_Date_Flag != 1
+          AND(a.Thai_Name IS NULL OR a.Thai_Name='')
+
+            OPEN @newFund;
+            FETCH NEXT FROM @newFund INTO @Fund_Code
+            WHILE @@FETCH_STATUS = 0
+            BEGIN
+
+                  UPDATE fund
+                  SET
+                          fund.Thai_Name = x.Fund_Name_TH,
+                          fund.Eng_Name = x.Fund_Name_EN ,
+                          fund.Start_Date = CAST(x.Beg_IPO_Date as date) ,
+                          fund.Cutoff_Buy = SUBSTRING(buy_cut_off_time,1,2) +':'+SUBSTRING(buy_cut_off_time,3,4),
+                          fund.Cutoff_Sell = SUBSTRING(sell_cut_off_time,1,2) +':'+SUBSTRING(sell_cut_off_time,3,4) ,
+                          fund.FundRisk = x.Fund_Risk_Level,
+                          fund.Modify_By = @userCode,
+                          fund.Modify_Date = GETDATE()
+                  FROM MFTS_Fund fund
+                  INNER JOIN
+                  MIT_FC_Profile x
+                  ON x.Fund_Code = fund.Fund_Code
+                  where x.Fund_Code= @Fund_Code
+
+                  if @@ROWCOUNT>0 BEGIN
+
+                      SELECT @msg = 'System update fund code (' +@Fund_Code + ') ;Please verify.'
+                      INSERT INTO MIT_LOG (loginName,logDateTime,module,log_msg)
+                      VALUES('MIT_SYS',GETDATE(),'MIT_FUND_AUDIT',@msg)
+
+                  END
+
+             FETCH NEXT FROM @newFund INTO @Fund_Code
+            END
+
+            CLOSE @newFund;
+            DEALLOCATE @newFund;
+
+          SELECT * FROM MIT_LOG WHERE module='MIT_FUND_AUDIT'
+            AND CONVERT(varchar,LogDateTime,112)  = CONVERT(varchar,GETDATE(),112)
+
+      END
+      `;
+          const sql = require('mssql')
+          const pool1 = new sql.ConnectionPool(config, err => {
+            pool1.request() // or: new sql.Request(pool1)
+            .query(queryStr, (err, result) => {
+                if(err){
+                  logger.error('SQL Error >' +err);
+                  reject(err);
+                }else {
+                  resolve(result.recordsets)
+                }
+            })
+          })
+          pool1.on('error', err => {
+            logger.error('POOL Error >'+err);
+            reject(err);
+          })
+  }catch(e){
+    logger.error('CATCH >' + e);
+    reject(e);
+  }
+  });
 }

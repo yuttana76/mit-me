@@ -29,24 +29,44 @@ exports.hellomi = (req, res, next) => {
 
   logger.info( ` hellomi ;originalUrl= ${req.originalUrl} ;remoteAddress=${req.connection.remoteAddress} `);
 
-
   function getLastWeek() {
-    var today = new Date();
+    // var today = new Date();
+    var today = new Date(2021,3,19);
     var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
     return lastWeek;
   }
 
   var lastWeek = getLastWeek();
-  var lastWeekMonth = lastWeek.getMonth() + 1;
-  var lastWeekDay = lastWeek.getDate();
-  var lastWeekYear = lastWeek.getFullYear();
+  // var lastWeekMonth = lastWeek.getMonth() + 1;
+  // var lastWeekDay = lastWeek.getDate();
+  // var lastWeekYear = lastWeek.getFullYear();
 
-  var lastWeekDisplay = lastWeekMonth + "/" + lastWeekDay + "/" + lastWeekYear;
-  var lastWeekDisplayPadded = ("00" + lastWeekMonth.toString()).slice(-2) + "/" + ("00" + lastWeekDay.toString()).slice(-2) + "/" + ("0000" + lastWeekYear.toString()).slice(-4);
+  // var lastWeekDisplay = lastWeekMonth + "/" + lastWeekDay + "/" + lastWeekYear;
+  // var lastWeekDisplayPadded = ("00" + lastWeekMonth.toString()).slice(-2) + "/" + ("00" + lastWeekDay.toString()).slice(-2) + "/" + ("0000" + lastWeekYear.toString()).slice(-4);
 
-  console.log(lastWeek);
-  console.log(lastWeekDisplay);
-  console.log(lastWeekDisplayPadded);
+  // console.log(lastWeek);
+  // console.log(lastWeekDisplay);
+  // console.log(lastWeekDisplayPadded);
+
+  // var curr = new Date; // get current date
+
+  // var today = new Date(2021,3,19);
+  var today = new Date();
+  var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+
+  var curr = lastWeek;
+  console.log(`Last week ${curr} `)
+
+var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+var last = first + 6; // last day is the first day + 6
+var fri = first + 5; // last day is the first day + 6
+
+// var firstday = new Date(curr.setDate(first));
+// var lastday = new Date(curr.setDate(last));
+var friDay = new Date(curr.setDate(fri));
+
+
+console.log(`Now ${curr} *** last friday= ${friDay}`)
 
 
   res.status(200).json({message:'Hello MI.'});

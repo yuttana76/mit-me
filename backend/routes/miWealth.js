@@ -15,7 +15,7 @@ router.get("/getPortDetailByAgents/"
 ,mi_tokenAuth,miWealthController.getPortDetailByAgents_V2); // Doing
 
 router.get("/getPortDetailByPort/"
-,[check('product').isLength({ min: 1 }).withMessage('Request parameters')]
+,[check('product').exists()]
 ,[check('portfolio_code').isLength({ min: 1 }).withMessage('Request parameters')]
 ,[check('as_of_date').isLength({ min: 10,max:10 }).withMessage('Request parameters')]
 ,mi_tokenAuth,miWealthController.getPortDetailByPort);

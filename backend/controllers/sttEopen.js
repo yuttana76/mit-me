@@ -26,17 +26,6 @@ try{
     privateKey: fs.readFileSync(process.env.EOPEN_PRIVATE_KEY),
   };
 
-var eOpen = {
-  publicKey: '',
-  privateKey: '',
-};
-
-try{
-  eOpen = {
-    publicKey: fs.readFileSync(process.env.EOPEN_PUBLIC_KEY),
-    privateKey: fs.readFileSync(process.env.EOPEN_PRIVATE_KEY),
-  };
-
 }catch{
   logger.error("Not found EOPEN_PUBLIC_KEY & EOPEN_PRIVATE_KEY")
 

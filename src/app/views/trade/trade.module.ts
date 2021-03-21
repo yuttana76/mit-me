@@ -87,6 +87,21 @@ import { OpenAccountFirstComponent } from './open-account-first/open-account-fir
 // Pipe
 import { LedReqStatusPipeComponent } from './pipe/led-req-status-pipe/led-req-status-pipe.component';
 import { genderTransform } from './pipe/personalPipe';
+import { portfolioUPLPipe } from './pipe/portfolioUPLPipe';
+
+import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-search.component';
+import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
+import { CrmActivityComponent } from './crm-activity/crm-activity.component';
+import { CrmActDashboardComponent } from './crm-act-dashboard/crm-act-dashboard.component';
+import { CrmMarketManagerComponent } from './crm-market-manager/crm-market-manager.component';
+import { CrmTaskComponent } from './crm-task/crm-task.component';
+import { CrmPortfolioComponent } from './crm-portfolio/crm-portfolio.component';
+import { CrmTimelineComponent } from './crm-timeline/crm-timeline.component';
+import { CrmActCalendarComponent } from './crm-act-calendar/crm-act-calendar.component';
+import { CrmTaskSearchComponent } from './crm-task-search/crm-task-search.component';
+import { SttOpenSearchAppComponent } from './stt-open-search-app/stt-open-search-app.component';
+import { SttOpenDetailComponent } from './stt-open-detail/stt-open-detail.component';
+
 
 @NgModule({
   imports: [
@@ -109,10 +124,12 @@ import { genderTransform } from './pipe/personalPipe';
     }),
     BsDropdownModule.forRoot(),
     NgxFloatButtonModule,
+
   ],
   declarations: [
     SummaryRepComponent,
     CustomerDetailComponent,
+
     CustomerListComponent,
     SaleDialogComponent,
     ResultDialogComponent,
@@ -179,6 +196,19 @@ import { genderTransform } from './pipe/personalPipe';
     TestGraphQLComponent,
     OpenAccountFirstComponent,
     genderTransform,
+    portfolioUPLPipe,
+    CrmPersonalSearchComponent,
+    CrmPersonalDataComponent,
+    CrmActivityComponent,
+    CrmActDashboardComponent,
+    CrmMarketManagerComponent,
+    CrmTaskComponent,
+    CrmPortfolioComponent,
+    CrmTimelineComponent,
+    CrmActCalendarComponent,
+    CrmTaskSearchComponent,
+    SttOpenSearchAppComponent,
+    SttOpenDetailComponent,
   ],
   providers: [DatePipe],
   entryComponents: [

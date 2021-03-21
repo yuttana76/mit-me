@@ -43,6 +43,7 @@ export class WipCustomerService {
   getWipCustomer(id: string) {
     return this.http.get<{result: any }>(BACKEND_URL + id )
     .pipe(map( fundtData => {
+      
       return fundtData.result.map(data => {
         return {
             Cust_Code: data.Cust_Code,

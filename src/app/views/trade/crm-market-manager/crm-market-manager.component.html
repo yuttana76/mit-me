@@ -1,0 +1,366 @@
+<mat-tab-group>
+    <mat-tab label="Profile">
+        <div class="card">
+        <form class="example-form">
+
+              <mat-form-field class="col-md-6">
+                <!-- <mat-label>FirstName</mat-label> -->
+                <input matInput placeholder="Fullname" value="">
+              </mat-form-field>
+
+              <mat-form-field class="col-md-6">
+                <mat-label>license</mat-label>
+                <input matInput placeholder="license" value="">
+              </mat-form-field>
+
+
+              <mat-form-field class="col-md-6">
+                <mat-label>Mobile</mat-label>
+                <input matInput #Mobile placeholder="เบอร์มือถือ">
+                <mat-hint align="end">{{Mobile.value.length}} / 10</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field class="col-md-6">
+                <mat-label>Telephone
+                </mat-label>
+                <input matInput placeholder="Telephone">
+              </mat-form-field>
+
+              <!-- Email -->
+              <mat-form-field class="col-md-6">
+                <mat-label>Email</mat-label>
+                <input type="email" matInput
+                      placeholder="Ex. pat@example.com">
+                <mat-hint>Errors appear instantly!</mat-hint>
+              </mat-form-field>
+
+          </form>
+    </div>
+    </mat-tab>
+
+    <!-- ***************************** Performance -->
+    <mat-tab label="Performance">
+        <div class="animated fadeIn">
+
+            <div class="row">
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-header">
+                      Performance
+                    </div>
+
+                    <div class="card-body">
+
+                      <!-- <div class="row">
+                        <h4>By product</h4>
+                        <mat-select class="col-sm-4">
+                          <mat-option  *ngFor="let obj of productList" [value]="obj.code">
+                            {{obj.desc}}
+                          </mat-option>
+                        </mat-select>
+                      </div> -->
+
+
+                      <div class="row">
+                        <h5>Target AUM</h5>
+                        <button mat-button color="primary">Adjust</button>
+                      </div>
+
+                      <div class="row">
+                            <div class="col-sm-4">
+                              <div class="callout callout-info">
+                                <strong class="h5">LBDU</strong>
+                                <br>
+                                <strong >  1,000,000</strong>
+                                <br>
+                                <p>  400,000</p>
+                                <br>
+                                <small>  -600,000</small>
+                                <br>
+                                <small class="text-muted">on 2021-02-01</small>
+                              </div>
+                            </div>
+                            <!--/.col-->
+                            <div class="col-sm-4">
+                              <div class="callout callout-danger">
+                                <strong class="h5">PF</strong>
+                                <br>
+                                <strong class="h4">  10,000,000</strong>
+                                <br>
+                                <strong class="h4">  1,000,000</strong>
+                                <br>
+                                <strong class="h4">  -9,000,000</strong>
+                                <br>
+                                <small class="text-muted">on 2021-02-01</small>
+
+                              </div>
+                            </div><!--/.col-->
+                            <div class="col-sm-4">
+                              <div class="callout callout-info">
+                                <strong class="h5">BOND</strong>
+                                <br>
+                                <strong class="h4">  -</strong>
+                                <br>
+                                <strong class="h4">  -</strong>
+                                <br>
+                                <strong class="h4">  -</strong>
+                                <br>
+                                <small class="text-muted">on 2021-02-01</small>
+                              </div>
+                            </div><!--/.col-->
+                      </div><!--/.row-->
+                      <hr class="mt-0">
+
+                      <div class="row">
+                        <h5>Traget FEE</h5>
+
+                        <button mat-button color="primary">Adjust</button>
+                      </div>
+
+                      <div class="row">
+                            <div class="col-sm-4">
+                              <div class="callout callout-info">
+                                <strong class="h5">LBDU</strong>
+                                <br>
+                                <strong class="h4">  500,000</strong>
+                                <br>
+                                <strong class="h4">  400,000</strong>
+                                <br>
+                                <strong class="h4">  -100,000</strong>
+                                <br>
+                                <small class="text-muted">on 2021-02-01</small>
+                              </div>
+                            </div>
+                            <!--/.col-->
+                            <div class="col-sm-4">
+                              <div class="callout callout-danger">
+                                <strong class="h5">PF</strong>
+                                <br>
+                                <strong class="h4">  100,000</strong>
+                                <br>
+                                <strong class="h4">  40,000</strong>
+                                <br>
+                                <strong class="h4">  -60,000</strong>
+                                <br>
+                                <small class="text-muted">on 2021-02-01</small>
+                              </div>
+                            </div><!--/.col-->
+                            <div class="col-sm-4">
+                              <div class="callout callout-info">
+                                <strong class="h5">BOND</strong>
+                                <br>
+                                <strong class="h4">  -</strong>
+                                <br>
+                                <strong class="h4">  -</strong>
+                                <br>
+                                <strong class="h4">  -</strong>
+                                <br>
+                                <small class="text-muted">on 2021-02-01</small>
+                              </div>
+                            </div><!--/.col-->
+                      </div><!--/.row-->
+                      <hr class="mt-0">
+
+
+
+                      <div class="row">
+                        <h3>Number customer</h3>
+
+                      </div>
+                      <hr class="mt-0">
+                      <!-- <div class="card">
+                        <div class="card-header">
+                          Line Chart
+                          <div class="card-header-actions">
+                            <a href="http://www.chartjs.org">
+                              <small class="text-muted">docs</small>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <div class="chart-wrapper">
+                            <canvas baseChart class="chart"
+                            [datasets]="lineChartData"
+                            [labels]="lineChartLabels"
+                            [options]="lineChartOptions"
+                            [colors]="lineChartColours"
+                            [legend]="lineChartLegend"
+                            [chartType]="lineChartType"
+                            (chartHover)="chartHovered($event)"
+                            (chartClick)="chartClicked($event)"></canvas>
+                          </div>
+                        </div>
+                      </div> -->
+
+
+                      <h3>Team</h3>
+                          <table class="table table-responsive-sm table-hover table-outline mb-0">
+                        <thead class="thead-light">
+                          <tr>
+                            <th class="text-center"></th>
+                            <th></th>
+                            <th>AUM</th>
+                            <th>Activity</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td class="text-center">
+                              <div class="avatar">
+                                <img src="assets/img/avatars/1.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+                                <span class="avatar-status badge-success"></span>
+                              </div>
+                            </td>
+                            <td>
+                              <div>Rosakorn</div>
+                              <div class="small text-muted">
+                                <span>PW</span> | Registered: Jan 1, 2015
+                              </div>
+                            </td>
+                            <td>
+                              <div class="clearfix">
+                                <div class="float-left">
+                                  <strong>50%</strong>
+                                </div>
+                                <div class="float-right">
+                                  <small class="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
+                                </div>
+                              </div>
+                              <div class="progress progress-xs">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="small text-muted">Last login</div>
+                              <strong>10 sec ago</strong>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="text-center">
+                              <div class="avatar">
+                                <img src="assets/img/avatars/2.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+                                <span class="avatar-status badge-danger"></span>
+                              </div>
+                            </td>
+                            <td>
+                              <div>Supasiri</div>
+                              <div class="small text-muted">
+
+                                <span>PW</span> | Registered: Jan 1, 2015
+                              </div>
+                            </td>
+                            <td>
+                              <div class="clearfix">
+                                <div class="float-left">
+                                  <strong>10%</strong>
+                                </div>
+                                <div class="float-right">
+                                  <small class="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
+                                </div>
+                              </div>
+                              <div class="progress progress-xs">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="small text-muted">Last login</div>
+                              <strong>5 minutes ago</strong>
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td class="text-center">
+                              <div class="avatar">
+                                <img src="assets/img/avatars/6.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+                                <span class="avatar-status badge-danger"></span>
+                              </div>
+                            </td>
+                            <td>
+                              <div>Hasun</div>
+                              <div class="small text-muted">
+                                <span>PW2</span> | Registered: Jan 1, 2015
+                              </div>
+                            </td>
+                            <td>
+                              <div class="clearfix">
+                                <div class="float-left">
+                                  <strong>43%</strong>
+                                </div>
+                                <div class="float-right">
+                                  <small class="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
+                                </div>
+                              </div>
+                              <div class="progress progress-xs">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 43%" aria-valuenow="43" aria-valuemin="0" aria-valuemax="100"></div>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="small text-muted">Last login</div>
+                              <strong>Yesterday</strong>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div><!--/.col-->
+              </div><!--/.row-->
+        </div>
+    </mat-tab>
+
+    <!-- ******************************** Activities -->
+
+    <mat-tab label="Activities">
+        <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon"><i class="fas fa-history"></i></mat-icon>
+            Activity
+          </ng-template>
+
+         <mat-expansion-panel class="example-expansion">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                2020 dec 20
+                <br>1h
+              </mat-panel-title>
+              <mat-panel-description>
+                hason 2020-12-20 1h / นัดหมาย
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+              The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
+              A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
+              bred for hunting.
+          </mat-expansion-panel>
+
+          <mat-expansion-panel class="example-expansion">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                2020 dec 10
+                <br>5d
+              </mat-panel-title>
+              <mat-panel-description>
+                by hason 2020-12-10 5d / Order - KFGTECH (50,000)
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+              The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
+              A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
+              bred for hunting.
+          </mat-expansion-panel>
+
+          <mat-expansion-panel class="example-expansion">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                2020 dec 11
+                <br>6d
+              </mat-panel-title>
+              <mat-panel-description>
+                by hason 2020-12-11 6d / Call Report
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+              The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
+              A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
+              bred for hunting.
+          </mat-expansion-panel>
+
+    </mat-tab>
+  </mat-tab-group>

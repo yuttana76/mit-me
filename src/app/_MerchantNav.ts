@@ -10,14 +10,89 @@ export const navItems = [
     //   text: 'NEW'
     // }
   },
+
   {
-    name: 'E-Open(DEV)',
-    url: '/trade/open-account-first',
+    name: 'FCUtility',
+    url: '/trade/FCUtility',
     icon: 'icon-speedometer',
+ },
+
+//   {
+//     name: 'connextCalendar',
+//     url: '/trade/connextCalendar',
+//     icon: 'icon-speedometer',
+//  },
+  // {
+  //   name: 'E-Open(DEV)-YYY',
+  //   url: '/trade/open-account-first',
+  //   icon: 'icon-speedometer',
+  // },
+
+  // E-Open
+  {
+    name: 'STT-Eopen-Search',
+    url: '/trade/STT-Eopen-Search',
+    icon: 'icon-speedometer',
+
+  },
+  {
+    name: 'STT-Eopen-Detail',
+    url: '/trade/STT-Eopen-Detail/null/null',
+    icon: 'icon-speedometer',
+
+  },
+
+// CRM
+  {
+    name: 'CRM-Personal-Data',
+    url: '/trade/CRM-Personal-Data/null/null',
+    icon: 'icon-speedometer',
+
+  },
+
+  {
+    name: 'CRM-Personal-Search',
+    url: '/trade/CRM-Personal-Search',
+    icon: 'icon-speedometer',
+
+  },
+
+  {
+    name: 'CRM-Activity-Dashboard',
+    url: '/trade/CRM-ActDash',
+    icon: 'icon-speedometer',
+    // name: 'E-Open(DEV)-YYY',
+    // url: '/trade/open-account-first',
+    // icon: 'icon-speedometer',
     // badge: {
     //   variant: 'info',
     //   text: 'NEW'
     // }
+  },
+  // {
+  //   name: 'CRM-Activity',
+  //   url: '/trade/CRM-Activity',
+  //   icon: 'icon-speedometer',
+
+  // },
+  {
+    name: 'CRM-Task',
+    url: '/trade/CRM-Task/null/null',
+    icon: 'icon-speedometer',
+
+  },
+  {
+    name: 'CRM-Task-Search(x)',
+    url: '/trade/CRM-Task-Search',
+    icon: 'icon-speedometer',
+
+  },
+
+  {
+    name: 'CRM-Market-Manager',
+    url: '/trade/CRM-Market-Manager',
+    icon: 'icon-speedometer',
+
   },
   {
     name: 'Anoucement',

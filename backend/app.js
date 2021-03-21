@@ -61,6 +61,7 @@ const surveyRoutes = require('./routes/survey');
 const graphQLRoutes = require('./routes/graphQL');
 const slackRoutes = require('./routes/slack');
 const miWealthRoutes = require('./routes/miWealth');
+const mitCrmRoutes = require('./routes/mitCrm');
 
 var logger = require("./config/winston");
 
@@ -96,29 +97,60 @@ app.use((req, res, next) => {
 
 app.use(("/api/test"),(req, res, next)=>{
 
-  var ip = req.headers['x-forwarded-for'] ||
-     req.connection.remoteAddress ||
-     req.socket.remoteAddress ||
-     (req.connection.socket ? req.connection.socket.remoteAddress : null);
+//   let arr = [{
+//     "booktitle": "Leading",
+//     "bookid": "56353",
+//     "bookauthor": "Sir Alex Ferguson"
+// }, {
+//     "booktitle": "How Google Works",
+//     "bookid": "73638",
+//     "bookauthor": "Eric Smith"
+// }, {
+//     "booktitle": "The Merchant of Venice",
+//     "bookid": "37364",
+//     "bookauthor": "William Shakespeare"
+// }];
 
-  logger.info("/api/test > " +  ip)
+// let ans=Object.keys(arr[0]).map((key) => {
+//     let o={};
+//     o[key]=arr.map((x) => x[key]);
+//     return o;
+// });
+  let obj = [
+    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"KFCASH-A"},
+    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"KFDIVRMF"},
+    {"Account_ID":"M1300543","NAVdate":"20210202","Fund_Code":"KFGTECHRMF"},
+    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"UOBID"},
+    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"UOBLTF"},
+    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"UOBSD"},
+    {"Account_ID":"M1901362","NAVdate":"20210202","Fund_Code":"KCHANGERMF"},
+    {"Account_ID":"M1901362","NAVdate":"20210202","Fund_Code":"KFGTECHRMF"},
+    {"Account_ID":"M1901362","NAVdate":"20210203","Fund_Code":"KKP SET50 ESG-SSFX"},
+    {"Account_ID":"M1901362","NAVdate":"20210203","Fund_Code":"LHMM-A"}
+]
+
+// var bookId   = [];
+// obj.filter(function(data){
+//     console.log(`>>>${JSON.stringify(data)}`)
+//    if(data.Account_ID){
+//       bookId.push({"Account_ID":data.Account_ID});
+//    }
+// })
+
+let ans=Object.keys(obj[0]).map((key) => {
+  console.log(`key:${key}: `)
+    let o={};
+    o
+
+    o["data"]=obj.map((x) => {
+      return x
+    }  );
 
 
-  var accountId=",M2102117,M2102118";
-  var accountArray=   accountId.split(',')
+    return o;
+});
 
-   for(var i = 0; i < accountArray.length;i++){
-
-     if(accountArray[i]){
-      console.log('Acc>>' + accountArray[i])
-     }
-
-   }
-
-  res.status(200).json({
-    message: "MIT API test successful!",
-
-  });
+  res.status(200).json(ans);
 
 })
 
@@ -215,6 +247,7 @@ app.use("/api/slack",slackRoutes);
 
 app.use("/api/mi",miWealthRoutes);
 
+app.use("/api/mitCrm",mitCrmRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "angular", "index.html"));

@@ -32,11 +32,10 @@ export class CustomerService {
       queryParams += `&cust_id=${conditionObj.custId}`;
     }
 
-    console.log('Execute getCustomers()' + BACKEND_URL+queryParams );
-
+    // console.log('Execute getCustomers()' + BACKEND_URL+queryParams );
     this.http.get<{ message: string, result: any }>(BACKEND_URL + queryParams)
     .pipe(map((resultData) => {
-        return resultData.result.map(data => {
+        return resultData.result.map((data:any) => {
             return {
               Cust_Code: data.Cust_Code,
               Card_Type: data.Card_Type,

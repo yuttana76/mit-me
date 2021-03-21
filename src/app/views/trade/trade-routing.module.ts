@@ -29,6 +29,15 @@ import { SetWelcomeComponent } from './set-welcome/set-welcome.component';
 import { SurveySearchComponent } from './survey-search/survey-search.component';
 import { FCUtilityComponent } from './fcutility/fcutility.component';
 import { OpenAccountFirstComponent } from './open-account-first/open-account-first.component';
+import { CrmPersonalDataComponent } from './crm-personal-data/crm-personal-data.component';
+import { CrmPersonalSearchComponent } from './crm-personal-search/crm-personal-search.component';
+import { CrmActivityComponent } from './crm-activity/crm-activity.component';
+import { CrmActDashboardComponent } from './crm-act-dashboard/crm-act-dashboard.component';
+import { CrmMarketManagerComponent } from './crm-market-manager/crm-market-manager.component';
+import { CrmTaskComponent } from './crm-task/crm-task.component';
+import { CrmTaskSearchComponent } from './crm-task-search/crm-task-search.component';
+import { SttOpenSearchAppComponent } from './stt-open-search-app/stt-open-search-app.component';
+import { SttOpenDetailComponent } from './stt-open-detail/stt-open-detail.component';
 
 const routes: Routes = [
 
@@ -289,6 +298,73 @@ const routes: Routes = [
         }
       },
 
+      {
+        path: 'CRM-Personal-Data/:cust_Code/:source',
+        component: CrmPersonalDataComponent,
+        data: {
+          title: 'Welcome CRM Personal Data'
+        }
+      },
+      {
+        path: 'CRM-Personal-Search',
+        component: CrmPersonalSearchComponent,
+        data: {
+          title: 'Welcome CRM Personal Search'
+        }
+      },
+      {
+        path: 'CRM-Activity',
+        component: CrmActivityComponent,
+        data: {
+          title: 'Welcome CRM Activity'
+        }
+      },
+      {
+        path: 'CRM-ActDash',
+        component: CrmActDashboardComponent,
+        data: {
+          title: 'Welcome CRM Activity Dashboard'
+        }
+      },
+      {
+        path: 'CRM-Market-Manager',
+        component: CrmMarketManagerComponent,
+        data: {
+          title: 'Welcome CRM Marketing Manage'
+        }
+      },
+      {
+        // path: 'CRM-Task',
+        path: 'CRM-Task/:taskId/:source',
+        component: CrmTaskComponent,
+        data: {
+          title: 'Welcome CRM Task'
+        }
+      },
+      {
+        // path: 'CRM-Task',
+        path: 'CRM-Task-Search',
+        component: CrmTaskSearchComponent,
+        data: {
+          title: 'Welcome CRM Task Search'
+        }
+      },
+      {
+        // path: 'CRM-Task',
+        path: 'STT-Eopen-Search',
+        component: SttOpenSearchAppComponent,
+        data: {
+          title: 'Welcome STT E-Open search'
+        }
+      },
+      {
+        // path: 'CRM-Task',
+        path: 'STT-Eopen-Detail/:appId/:source',
+        component: SttOpenDetailComponent,
+        data: {
+          title: 'Welcome STT E-Open detail'
+        }
+      },
     ]
   },
 ];

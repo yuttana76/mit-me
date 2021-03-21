@@ -1,0 +1,86 @@
+
+<!-- Start Portfolio content -->
+<div class="div_top10">
+  <h5>LBDU <small> {{lbdu_cost | number: '1.0-2' }}</small></h5>
+  <button type="button" class="btn btn-primary"  (click)="getPortfolio()" >Refresh</button>
+
+<!-- TOTAL LBDU -->
+<mat-expansion-panel hideToggle >
+  <mat-expansion-panel-header>
+    <mat-panel-title >
+      Total %Unrealized P/L
+    </mat-panel-title>
+    <mat-panel-description width='100%'>
+      <div class="mktVal">
+      <p *ngIf="lbdu_unrealized_perc > 0 "  class="txt_green port_number">{{lbdu_unrealized_perc | number: '1.2-2' }}%</p>
+      <p *ngIf="lbdu_unrealized_perc < 0 "  class="txt_red port_number">{{lbdu_unrealized_perc | number: '1.2-2' }}%</p>
+      <p *ngIf="lbdu_unrealized_perc == 0 " class="txt_yellow port_number" >{{lbdu_unrealized_perc | number: '1.2-2' }}%</p>
+      </div>
+    </mat-panel-description>
+  </mat-expansion-panel-header >
+  <div >
+    <div>
+    Cost&nbsp;&nbsp;&nbsp;<p class="port_number">{{lbdu_cost | number: '1.0-2' }}</p>
+    </div>
+    <div>
+      Market Value &nbsp;&nbsp;&nbsp;<p class="port_number">{{lbdu_marketVal | number: '1.0-2' }}</p>
+    </div>
+
+    <div>
+      Unrealized P/L&nbsp;&nbsp;&nbsp;
+      <p *ngIf="lbdu_unrealized > 0 "  class="txt_green port_number">{{lbdu_unrealized | number: '1.2-2' }}</p>
+      <p *ngIf="lbdu_unrealized < 0 "  class="txt_red port_number">{{lbdu_unrealized | number: '1.2-2' }}</p>
+      <p *ngIf="lbdu_unrealized == 0 " class="txt_yellow port_number" >{{lbdu_unrealized | number: '1.2-2' }}</p>
+    </div>
+
+    <div>
+    %Unrealized P/L&nbsp;&nbsp;&nbsp;
+    <p *ngIf="lbdu_unrealized_perc > 0 "  class="txt_green port_number">{{lbdu_unrealized_perc | number: '1.2-2' }}</p>
+    <p *ngIf="lbdu_unrealized_perc < 0 "  class="txt_red port_number">{{lbdu_unrealized_perc | number: '1.2-2' }}</p>
+    <p *ngIf="lbdu_unrealized_perc == 0 " class="txt_yellow port_number" >{{lbdu_unrealized_perc | number: '1.2-2' }}</p>
+    </div>
+  </div>
+</mat-expansion-panel>
+
+<!-- LBDU list -->
+<div *ngFor="let obj of lbdu_list">
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title width='20%'>
+        {{obj.Fund_Code}}
+      </mat-panel-title>
+      <mat-panel-description width='100%'>
+        <div class="mktVal">{{obj.Available_Amount | number: '1.2-2' }}</div>
+        <div class="mktVal">
+          <p *ngIf="obj.UPL > 0 "  class="txt_green">{{obj.UPL | number: '1.2-2' }}%</p>
+          <p *ngIf="obj.UPL < 0 "  class="txt_red">{{obj.UPL | number: '1.2-2' }}%</p>
+          <p *ngIf="obj.UPL == 0 " class="txt_yellow" >{{obj.UPL | number: '1.2-2' }}%</p>
+        </div>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="port_lbdu_detail">
+      <p>NAV (as of {{obj.NAVdate}} )   &nbsp;&nbsp;{{obj.NAV}}
+        <p>Average Cost   &nbsp;&nbsp;{{obj.Average_Cost}}
+          <div>
+            Unrealized P/L&nbsp;&nbsp;
+            <p *ngIf="obj.UPL > 0 "  class="txt_green port_number">{{obj.Available_Amount - (obj.Unit_balance * obj.Average_Cost) | number: '1.2-2' }}</p>
+            <p *ngIf="obj.UPL < 0 "  class="txt_red port_number">{{obj.Available_Amount - (obj.Unit_balance * obj.Average_Cost) | number: '1.2-2' }}</p>
+            <p *ngIf="obj.UPL == 0 " class="txt_yellow port_number" >{{obj.Available_Amount - (obj.Unit_balance * obj.Average_Cost) | number: '1.2-2' }}</p>
+          </div>
+    </div>
+    </mat-expansion-panel>
+  </div>
+
+</div>
+
+<div class="div_top10">
+  <!-- <h3>PRIVATE <small> {{private_cost | number: '1.0-2' }}</small></h3> -->
+  <h5>PRIVATE <small> xx,xxx.00</small></h5>
+</div>
+
+<div class="div_top10">
+  <!-- <h3>BOND <small> {{bond_cost | number: '1.0-2' }}</small></h3> -->
+  <h5>BOND <small> xx,xxx.00</small></h5>
+
+</div>
+<!-- End Portfolio content -->

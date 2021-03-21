@@ -1,0 +1,498 @@
+
+<mat-horizontal-stepper labelPosition="bottom" #stepper class="col-md-6">
+  <mat-step [stepControl]="firstFormGroup">
+    <form [formGroup]="firstFormGroup">
+      <ng-template matStepLabel>Fill data</ng-template>
+
+      <!-- <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
+      </mat-form-field> -->
+
+      <mat-form-field class="example-full-width">
+        <mat-label>ประเภท Activity ({{activityObj.actType}})</mat-label>
+        <mat-select [(ngModel)]="activityObj.actType" formControlName="actType" (selectionChange) ="activityChange($event)">
+            <mat-option  *ngFor="let obj of actTypeList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
+      </mat-form-field>
+
+      <!--
+  CALL REPORT
+  contactCustAct={contactChannel:'',dateTime:'',prod:'',contactResult:'',nextTime:'',note:''}
+-->
+<form class="example-form" autocomplete="off" novalidate [formGroup]="callreportForm" (ngSubmit)="callReportSubmited(callreportForm.value)"  *ngIf="activityObj.actType=='callReport' ">
+
+  <mat-card class="cust-container" >
+    <h2>Call Report</h2>
+  
+  <div class ='contact_class'>
+  <mat-form-field class="example-full-width">
+    <mat-label> Date</mat-label>
+    <input matInput [matDatepicker]="reportDate"   formControlName="reportDate"     placeholder="Date of Birth" >
+    <mat-datepicker-toggle matSuffix [for]="reportDate"></mat-datepicker-toggle>
+    <mat-datepicker #reportDate disabled="false"></mat-datepicker>
+
+    <mat-error *ngIf="callreportForm.controls['reportDate'].hasError('required')  &&
+    callreportForm.get('reportDate').touched">Please choose Contact Date.</mat-error>
+    <!-- <mat-hint align="end">Not more then 100 characters long.</mat-hint> -->
+  </mat-form-field>
+
+   <!-- note -->
+   <mat-form-field class="example-full-width">
+    <mat-label>Note
+    </mat-label>
+    <textarea matInput  formControlName="note" placeholder="Note" rows="5"></textarea>
+  </mat-form-field>
+</div>
+</mat-card>
+</form>
+
+<!--
+  CONTACT
+  contactCustAct={contactChannel:'',dateTime:'',prod:'',contactResult:'',nextTime:'',note:''}
+-->
+<form class="example-form" autocomplete="off" novalidate [formGroup]="contactForm" (ngSubmit)="contactSubmited(contactForm.value)"  *ngIf="activityObj.actType=='contactCustAct' ">
+  <mat-card class="cust-container" >
+    <h2>Contact Customer</h2>
+   <div class ='contact_class'>
+     
+    <mat-label>Contact Channel</mat-label>
+    <section class="example-full-width">
+      <mat-radio-group formControlName="contactChannel"  required>
+        <mat-radio-button class="example-margin"  *ngFor="let obj of contactChannelList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+      </mat-radio-group>
+      <mat-error *ngIf="contactForm.controls['contactChannel'].hasError('required')  &&
+      contactForm.get('contactChannel').touched">Please choose Contact Channel.</mat-error>
+    </section>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Contact Date</mat-label>
+      <input matInput [matDatepicker]="contactDate"   formControlName="contactDate"     placeholder="Date of Birth" >
+      <mat-datepicker-toggle matSuffix [for]="contactDate"></mat-datepicker-toggle>
+      <mat-datepicker #contactDate disabled="false"></mat-datepicker>
+
+      <mat-error *ngIf="contactForm.controls['contactDate'].hasError('required')  &&
+      contactForm.get('contactDate').touched">Please choose Contact Date.</mat-error>
+      <!-- <mat-hint align="end">Not more then 100 characters long.</mat-hint> -->
+    </mat-form-field>
+
+      <section class="example-full-width">
+        <mat-label>Product Group</mat-label>
+        <mat-radio-group formControlName="prodCat" >
+          <mat-radio-button class="example-margin"  *ngFor="let obj of prodGroupList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+        </mat-radio-group>
+
+        <mat-error *ngIf="contactForm.controls['prodCat'].hasError('required')  &&
+        contactForm.get('prodCat').touched">Please choose Product Group.</mat-error>
+      </section>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Product Name</mat-label>
+        <mat-select formControlName="product" >
+            <mat-option  *ngFor="let obj of ProductList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+
+    <!-- <section class="example-full-width">
+      <mat-label>Contact Result</mat-label>
+      <mat-radio-group formControlName="contactResult" >
+        <mat-radio-button class="example-margin"  *ngFor="let obj of contactResult" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+      </mat-radio-group>
+      <mat-error *ngIf="contactForm.controls['contactResult'].hasError('required')  &&
+        contactForm.get('contactResult').touched">Please choose Contact Result.</mat-error>
+    </section> -->
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Next Deal Date</mat-label>
+      <input matInput
+      formControlName="nextTime"  [matDatepicker]="nextDate"   placeholder="DOB"
+        [readonly]="true" >
+      <mat-datepicker-toggle matSuffix [for]="nextDate"></mat-datepicker-toggle>
+      <mat-datepicker #nextDate disabled="false"></mat-datepicker>
+      <!-- <mat-error *ngIf="form.get('nextDate').invalid ">Please correct date expire date</mat-error> -->
+      <mat-hint align="end">กรณีมีการนัดหมายเพื่อติดต่อครั้งต่อไป.</mat-hint>
+    </mat-form-field>
+
+    <!-- InvestCondition -->
+    <mat-form-field class="example-full-width">
+      <textarea matInput formControlName="note" placeholder="Note" ></textarea>
+    </mat-form-field>
+    </div>
+  <mat-card-actions>
+    <button mat-button  [disabled]="!contactForm.valid" >SAVE</button>
+    <button mat-button type='reset' >Clear</button>
+  </mat-card-actions>
+</mat-card>
+</form>
+  <!--
+    CONTACT
+  -->
+
+<!--
+  meetCustAct{meetDate:dd/mm/yyyy hh:mm,locate:xxxxnote:xxxx,note:xxxx,createBy:xxxx,createDate:yyyy}
+   -->
+  <form class="example-form" autocomplete="off" novalidate [formGroup]="meetCusForm" (ngSubmit)="meetCusFormSubmited(meetCusForm.value)"
+  *ngIf="activityObj.actType=='meetCustAct' ">
+
+  <mat-card class="cust-container" >
+   <div class ='contact_class'>
+    <h2>Meet Customer</h2>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Meet Date</mat-label>
+      <input matInput [matDatepicker]="meetDate"  formControlName="meetDate"  placeholder="Meet Date"  >
+      <mat-datepicker-toggle matSuffix [for]="meetDate"></mat-datepicker-toggle>
+      <mat-datepicker #meetDate disabled="false"></mat-datepicker>
+      <!-- <mat-error *ngIf="form.get('contactDate').invalid ">Please correct date expire date</mat-error> -->
+
+      <mat-error *ngIf="meetCusForm.controls['meetDate'].hasError('required')  &&
+      meetCusForm .get('meetDate').touched">Please choose Meet Date.</mat-error>
+
+    </mat-form-field>
+
+    <!-- Locate -->
+    <!-- <mat-form-field class="example-full-width">
+      <mat-label>Locate
+      </mat-label>
+      <textarea matInput formControlName="locate"  placeholder="Locate"></textarea>
+    </mat-form-field> -->
+
+    <!-- note -->
+    <mat-form-field class="example-full-width">
+      <mat-label>Note
+      </mat-label>
+      <textarea matInput formControlName="note"  placeholder="Note"></textarea>
+    </mat-form-field>
+    </div>
+
+    <mat-card-actions>
+      <button mat-button  [disabled]="!meetCusForm.valid" >SAVE</button>
+      <button mat-button type='reset' >Clear</button>
+    </mat-card-actions>
+
+</mat-card>
+
+</form>
+  <!--
+    meetCustAct
+  -->
+
+
+<!--
+  *********************  Appointment
+  appointmentAct={subject:xxxx,startTime:dd/mm/yyyy hh:mm,endTime:dd/mm/yyyy hh:mm, Note:xxxx,allDay:Y/N,}
+   -->
+    <form class="example-form" autocomplete="off" novalidate [formGroup]="appointmentForm" (ngSubmit)="appointmentFormSubmited(appointmentForm.value)"
+    *ngIf="activityObj.actType=='appointmentAct' ">
+
+    <mat-card class="cust-container" >
+     <div class ='contact_class'>
+      <h2>Appointment</h2>
+<!-- 
+      <mat-form-field class="example-full-width">
+        <input matInput formControlName="subject"  placeholder="Subject" >
+      </mat-form-field> -->
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Appointment From</mat-label>
+        <input matInput [matDatepicker]="startTime" formControlName="startTime"
+          placeholder="From"
+          [readonly]="true" >
+        <mat-datepicker-toggle matSuffix [for]="startTime"></mat-datepicker-toggle>
+        <mat-datepicker #startTime disabled="false"></mat-datepicker>
+      </mat-form-field>
+
+      <section class="example-section">
+        <mat-checkbox class="example-margin" formControlName="allDay" >All day</mat-checkbox>
+      </section>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>To Date</mat-label>
+        <input matInput [matDatepicker]="endTime" formControlName="endTime"
+          placeholder="Contact Date"
+          [readonly]="true" >
+        <mat-datepicker-toggle matSuffix [for]="endTime"></mat-datepicker-toggle>
+        <mat-datepicker #endTime disabled="false"></mat-datepicker>
+      </mat-form-field>
+
+      <!-- note -->
+      <mat-form-field class="example-full-width">
+        <mat-label>Note
+        </mat-label>
+        <textarea matInput  formControlName="note" placeholder="Note" rows="5"></textarea>
+      </mat-form-field>
+      </div>
+
+  </mat-card>
+  </form>
+    <!--
+      Appointment
+    -->
+
+   <!--
+  *********************  OFFER
+   Offer{product:xxxx,offerResult:xxxx,volumn:yyyy,amount:xxxx,note:xxxx,offerDate}
+   -->
+   <form class="example-form" autocomplete="off" novalidate [formGroup]="offerForm" (ngSubmit)="offerFormSubmited(offerForm.value)"
+    *ngIf="activityObj.actType=='offerAct'" >
+
+     <mat-card class="cust-container" >
+     <div class ='contact_class'>
+      <h2>Offer</h2>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Product</mat-label>
+        <mat-select formControlName="product">
+            <mat-option  *ngFor="let obj of ProductList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+
+      <section class="example-full-width">
+        <mat-label>Offer Result</mat-label>
+        <mat-radio-group  formControlName="offerResult"  >
+          <mat-radio-button class="example-margin"  *ngFor="let obj of offerResults" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+        </mat-radio-group>
+      </section>
+
+      <mat-form-field class="example-full-width">
+        <input matInput type="number" formControlName="amount" placeholder="Amount" value="0">
+      </mat-form-field>
+
+
+      <mat-form-field class="example-full-width">
+        <input matInput type="number" formControlName="volumn" placeholder="Volumn" value="0">
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Offer Date</mat-label>
+        <input matInput [matDatepicker]="offerDate"
+          placeholder="Offer Date 2"
+          [readonly]="true" >
+        <mat-datepicker-toggle matSuffix [for]="offerDate"></mat-datepicker-toggle>
+        <mat-datepicker #offerDate disabled="false"></mat-datepicker>
+      </mat-form-field>
+
+      <!-- note -->
+      <mat-form-field class="example-full-width">
+        <mat-label>Note
+        </mat-label>
+        <textarea matInput  placeholder="Note"></textarea>
+      </mat-form-field>
+      </div>
+
+  </mat-card>
+  </form>
+    <!--
+      OFFER
+    -->
+
+  <!--
+  *********************  Order
+   Offer{product:xxxx,volumn:yyyy,amount:xxxx,note:xxxx,orderDate}
+   -->
+   <!-- <form class="example-form" autocomplete="off" novalidate [formGroup]="orderForm" (ngSubmit)="orderFormSubmited(orderForm.value)"
+   *ngIf="activityObj.actType=='orderAct'" >
+
+    <mat-card class="cust-container" >
+     <div class ='contact_class'>
+      <h2>Order</h2>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Product</mat-label>
+        <mat-select formControlName="product">
+            <mat-option  *ngFor="let obj of ProductList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <input matInput formControlName="amount" type="number" placeholder="Amount" value="0">
+      </mat-form-field>
+
+
+      <mat-form-field class="example-full-width">
+        <input matInput formControlName="volumn" type="number" placeholder="Volumn" value="0">
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Order Date</mat-label>
+        <input matInput [matDatepicker]="orderDate" formControlName="orderDate"
+          placeholder="Order Date 2"
+          [readonly]="true" >
+        <mat-datepicker-toggle matSuffix [for]="orderDate"></mat-datepicker-toggle>
+        <mat-datepicker #orderDate disabled="false"></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Note
+        </mat-label>
+        <textarea matInput formControlName="note" placeholder="Note"></textarea>
+      </mat-form-field>
+      </div>
+
+      <mat-card-actions>
+        <button mat-button  [disabled]="!offerForm.valid" >SAVE</button>
+        <button mat-button type='reset' >Clear</button>
+      </mat-card-actions>
+
+  </mat-card>
+  </form>
+   -->
+    <!--
+      Order
+    -->
+
+  <!--
+  *********************  Complain
+   complainAct{compType:xxxx,desc:xxxx,status:Open,assignTo:xxxx,assignDate:dd/mm/yyy hh:mm,note:xxxx}
+   -->
+   <form class="example-form" autocomplete="off" novalidate [formGroup]="complainForm" (ngSubmit)="complainFormSubmited(complainForm.value)"
+   *ngIf="activityObj.actType=='complainAct'" >
+
+    <mat-card class="cust-container" >
+     <div class ='contact_class'>
+      <h2>Complain</h2>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="compType">
+            <mat-option  *ngFor="let obj of compTypeList" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+        <!-- <mat-error *ngIf="form.get('status').invalid">Please choose status.</mat-error> -->
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <textarea matInput formControlName="note" placeholder="Note" rows="5"></textarea>
+      </mat-form-field>
+
+      <!-- <mat-form-field class="example-full-width">
+        <mat-label>status</mat-label>
+        <mat-select formControlName="status">
+            <mat-option  *ngFor="let obj of compStatus" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field> -->
+
+      </div>
+
+  </mat-card>
+  </form>
+    <!--
+      Complain
+    -->
+
+    <div>
+      <button mat-button matStepperNext>Next</button>
+    </div>
+
+    </form>
+  </mat-step>
+
+  <!--
+      *********************** SAVE
+    -->
+  <mat-step [stepControl]="feedbackForm" optional>
+    <form [formGroup]="feedbackForm">
+      <ng-template matStepLabel>Save</ng-template>
+      <h5>Feedback</h5>
+     
+      <mat-form-field class="example-full-width">
+        <mat-label>Feedback</mat-label>
+        <mat-select formControlName="feedback" >
+            <mat-option  *ngFor="let obj of Feedback" [value]="obj.code">
+              {{obj.desc}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <input type="email" matInput
+               placeholder="Other feedback">
+      </mat-form-field>
+
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+        <button mat-button >SAVE</button>
+
+      </div>
+    </form>
+  </mat-step>
+  
+</mat-horizontal-stepper>
+<!-- 
+<form class="example-form" [formGroup]="activityForm" >
+
+<mat-card class="cust-container" >
+
+  <mat-card-title>CRM Activity</mat-card-title>
+  <mat-form-field class="example-full-width">
+    <mat-label>ประเภท Activity ({{activityObj.actType}})</mat-label>
+    <mat-select [(ngModel)]="activityObj.actType" formControlName="actType" (selectionChange) ="activityChange($event)">
+        <mat-option  *ngFor="let obj of actTypeList" [value]="obj.code">
+          {{obj.desc}}
+        </mat-option>
+      </mat-select>
+  </mat-form-field>
+
+  <mat-label> Status</mat-label>
+    <section class="example-full-width">
+      <mat-radio-group formControlName="actStatus"  required>
+        <mat-radio-button class="example-margin"  *ngFor="let obj of actStatusList" [value]="obj.code">{{obj.desc}}</mat-radio-button>
+      </mat-radio-group>
+    </section> 
+
+
+  <mat-form-field class="example-full-width">
+      <mat-label>Reminding Date</mat-label>
+      <input matInput [matDatepicker]="remindDateTime"   formControlName="remindDateTime"     placeholder="Date of Birth" >
+      <mat-datepicker-toggle matSuffix [for]="remindDateTime"></mat-datepicker-toggle>
+      <mat-datepicker #remindDateTime disabled="false"></mat-datepicker>
+    </mat-form-field>
+
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Description </mat-label>
+      <textarea matInput formControlName="description" placeholder="Description" ></textarea>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Feedback</mat-label>
+      <mat-select formControlName="feedback" >
+          <mat-option  *ngFor="let obj of Feedback" [value]="obj.code">
+            {{obj.desc}}
+          </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width" disable="true">
+      <input matInput  formControlName="feedbackOth" placeholder="FeedbackOth" >
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Assign To</mat-label>
+      <mat-select formControlName="assignTo">
+          <mat-option  *ngFor="let obj of assignTo" [value]="obj.code">
+            {{obj.desc}}
+          </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+  <mat-card-actions>
+    <button mat-button (click)="goBack()">Back</button>
+  </mat-card-actions>
+
+  </mat-card>
+</form> -->
+

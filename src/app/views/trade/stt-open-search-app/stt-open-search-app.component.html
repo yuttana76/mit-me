@@ -1,0 +1,112 @@
+<!-- <div>
+  <mat-spinner *ngIf="spinnerLoading"></mat-spinner>
+</div> -->
+
+<mat-card>
+  <!-- <form [formGroup]="searchForm" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading" class="example-form"> -->
+  <form [formGroup]="searchForm" (submit)="onSerach()" #custForm="ngForm" class="example-form">
+    <mat-card-title>Search Customer Information
+        <a mat-button  [routerLink]="['/trade/STT-Eopen-Detail','','SEARCH_FORM']"  routerLinkActive="mat-accent" matTooltip="New Task">
+          <i class="fas fa-user-plus fa-2x" ></i>
+        </a>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="condition-div">
+
+        <mat-form-field class="example-full-width">
+          <!-- <input matInput formControlName="schType" placeholder="Type"> -->
+          <mat-label>Status </mat-label>
+          <mat-select formControlName="status" >
+            <mat-option  *ngFor="let obj of statusList" [value]="obj.code">
+              {{obj.text}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label> From Date</mat-label>
+          <input matInput [matDatepicker]="startLastUpdatedTime"    formControlName="startLastUpdatedTime" placeholder="Start Date " >
+          <mat-datepicker-toggle matSuffix [for]="startLastUpdatedTime"></mat-datepicker-toggle>
+          <mat-datepicker #startLastUpdatedTime disabled="false"></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label> To Date</mat-label>
+          <input matInput [matDatepicker]="endLastUpdatedTime"   formControlName="endLastUpdatedTime" placeholder=" End Date " >
+          <mat-datepicker-toggle matSuffix [for]="endLastUpdatedTime"></mat-datepicker-toggle>
+          <mat-datepicker #endLastUpdatedTime disabled="false"></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button  [disabled]="searchForm.invalid" mat-stroked-button color="primary" type='submit'>Search</button>&nbsp;
+      <button mat-stroked-button color="warn" type='reset' (click)="onReset()" >Reset</button>
+
+    </mat-card-actions>
+  </form>
+</mat-card>
+
+<mat-card >
+
+  <table mat-table [dataSource]="dataSource" class='full-width '>
+
+    <ng-container matColumnDef="ID">
+      <th mat-header-cell *matHeaderCellDef> App ID.</th>
+      <td mat-cell *matCellDef="let element">
+        {{element.applicationId}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="CustInfo">
+      <th mat-header-cell *matHeaderCellDef> Cust name / Cust info</th>
+      <td mat-cell *matCellDef="let element"><a [routerLink]="['/trade/STT-Eopen-Detail',element.applicationId,'SEARCH_FORM']" matTooltip="View">
+        <!-- {{element.firstName}} {{element.lastName}} -->
+        <!-- {{element.telNo}} {{element.lastName}} -->
+        <!-- {{element.cid}} -->
+      </a></td>
+    </ng-container>
+
+    <ng-container matColumnDef="Status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element">
+        <!-- {{element.status}} -->
+        <!-- {{element.statusDetail}} -->
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Verify">
+      <th mat-header-cell *matHeaderCellDef> Verify(NDID) </th>
+      <td mat-cell *matCellDef="let element">
+        <!-- {{element.ndidStatus}} -->
+      </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="ActionDate">
+      <th mat-header-cell *matHeaderCellDef> Create/Update/Submit Date </th>
+      <td mat-cell *matCellDef="let element">
+        <!-- {{element.createdTime}} -->
+        <!-- {{element.lastUpdatedTime}} -->
+        <!-- {{element.submittedTime}} -->
+      </td>
+    </ng-container>
+
+    <!-- Edit  -->
+    <ng-container matColumnDef="ACT">
+        <th mat-header-cell *matHeaderCellDef>  </th>
+        <td mat-cell *matCellDef="let element">
+          <i class="far fa-edit fa-lg"  [routerLink]="['/trade/STT-Eopen-Detail',element.applicationId,'SEARCH_FORM']" matTooltip="View"></i>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator [length]="totalRecords"
+  [pageSize]="rowsPerPage"
+  [pageSizeOptions]="pageSizeOptions" (page)="onChangedPage($event)">
+</mat-paginator>
+
+</mat-card>

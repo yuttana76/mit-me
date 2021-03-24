@@ -1,4 +1,5 @@
 import { NgModule } from "@angular/core";
+
 import {
   MatFormFieldModule,
   MatButtonModule,
@@ -26,7 +27,7 @@ import {
   MatSliderModule,
   MatStepperModule,
   MatButtonToggleModule,
-  MatSlideToggleModule,
+  MatSlideToggleModule
 
 } from '@angular/material';
 

@@ -36,7 +36,7 @@ exports.hellomi = (req, res, next) => {
     return lastWeek;
   }
 
-  var lastWeek = getLastWeek();
+  // var lastWeek = getLastWeek();
   // var lastWeekMonth = lastWeek.getMonth() + 1;
   // var lastWeekDay = lastWeek.getDate();
   // var lastWeekYear = lastWeek.getFullYear();
@@ -50,23 +50,14 @@ exports.hellomi = (req, res, next) => {
 
   // var curr = new Date; // get current date
 
-  // var today = new Date(2021,3,19);
-  var today = new Date();
+  var today = new Date(2021,2,16);
   var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+  var date_last_week = lastWeek;
+  var first = date_last_week.getDate() - date_last_week.getDay(); // First day is the day of the month - the day of the week
+  var fri = first + 5; // last day is the first day + 6
+  var friDay = new Date(date_last_week.setDate(fri));
 
-  var curr = lastWeek;
-  console.log(`Last week ${curr} `)
-
-var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-var last = first + 6; // last day is the first day + 6
-var fri = first + 5; // last day is the first day + 6
-
-// var firstday = new Date(curr.setDate(first));
-// var lastday = new Date(curr.setDate(last));
-var friDay = new Date(curr.setDate(fri));
-
-
-console.log(`Now ${curr} *** last friday= ${friDay}`)
+console.log(`Now ${today} *** last friday= ${friDay}`)
 
 
   res.status(200).json({message:'Hello MI.'});
@@ -112,13 +103,43 @@ async function processLicenseArray(compCode,lic_array,as_of_date) {
 
 // const MaskData = require(maskdata);
 
+function PFlastFriday(_date){
+  var friDay = null
+  try{
+
+    // Split new date
+    _dateArray=_date.split('-')
+    _date = _dateArray[2]
+    _month = _dateArray[1]-1
+    _year = _dateArray[0]
+
+
+    var today = new Date(_year,_month,_date);
+    var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+    var date_last_week = lastWeek;
+    var first = date_last_week.getDate() - date_last_week.getDay(); // First day is the day of the month - the day of the week
+    var fri = first + 5; // last day is the first day + 6
+
+    friDay_Date = new Date(date_last_week.setDate(fri));
+
+    friDay =friDay_Date.getFullYear()+'-'+(friDay_Date.getMonth()+1)+'-'+friDay_Date.getDate()
+
+  }catch(err){
+    logger.error(`${err}`)
+  }
+
+  return friDay
+
+}
+
  function getPortfolio(compCode,lic_code,as_of_date) {
 
   agentData={
     agent_code:lic_code,
   };
 
-  let PF_as_of_date = as_of_date;
+
+  let PF_as_of_date = PFlastFriday(as_of_date);
 
   return new Promise( function(resolve, reject) {
 
@@ -343,8 +364,10 @@ if (!errors.isEmpty()) {
 
         }else if (product === PRODUCT_PF) {
 
+          let PF_as_of_date = PFlastFriday(as_of_date);
+
           fnArray=[];
-          fnArray.push(funcPF_PortDetailByPort(portfolio_code,as_of_date));
+          fnArray.push(funcPF_PortDetailByPort(portfolio_code,PF_as_of_date));
           Promise.all(fnArray)
           .then(data => {
 
@@ -637,7 +660,7 @@ function funcMF_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
     // fnMF_Array
     fnMF_Array=[];
     fnMF_Array.push(funcMF_PortDetailByPort_Query(compCode,portfolio_code,as_of_date));
-    fnMF_Array.push(funcMF_TransactionPort_Query(portfolio_code));
+    fnMF_Array.push(funcMF_TransactionPort_Query(portfolio_code,as_of_date));
         Promise.all(fnMF_Array)
         .then(data => {
 
@@ -1015,7 +1038,7 @@ function funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date) {
 
     SELECT  a.CustID AS portfolio_code
     ,b.InstrumentCode as instrument
-    ,b.Amount as balance
+    ,b.Amount as current_value
     ,convert(varchar, b.OrderDate, 23) as order_date
     ,d.code +'-'+c.InstrumentTypeCode AS instrument_desc
     FROM ITB_Customers a
@@ -1057,9 +1080,9 @@ function funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date) {
 
 
 
-function funcMF_TransactionPort_Query(custCode) {
+function funcMF_TransactionPort_Query(custCode,as_of_date) {
 
-  logger.info(`funcMF_TransactionPort_Query()   ;CustCode: ${custCode} `);
+  logger.info(`funcMF_TransactionPort_Query()   ;CustCode: ${custCode}  ;as_of_date=${as_of_date}`);
 
   var fncName = "funcTransactionPort()";
   var queryStr = `
@@ -1083,6 +1106,7 @@ BEGIN
     select  distinct a.transactionID,convert(varchar, a.transactionDate, 23) ,a.fundCode, a.transactionCode,a.amount ,a.unit
     from MIT_FC_TransAllotted A
     where accountID =@custCode
+    and MONTH(a.transactionDate)=MONTH(CAST(@as_of_date as date))
     order BY transactionID desc ,a.fundCode
 
     OPEN @TransactionCursor;
@@ -1120,6 +1144,7 @@ BEGIN
       pool1
         .request()
         .input("custCode", sql.VarChar(20), custCode)
+        .input("as_of_date", sql.VarChar(20), custCode)
 
         .query(queryStr, (err, result) => {
           if (err) {

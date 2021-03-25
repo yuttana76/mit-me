@@ -36,34 +36,25 @@ exports.hellomi = (req, res, next) => {
     return lastWeek;
   }
 
-  // var lastWeek = getLastWeek();
-  // var lastWeekMonth = lastWeek.getMonth() + 1;
-  // var lastWeekDay = lastWeek.getDate();
-  // var lastWeekYear = lastWeek.getFullYear();
-
-  // var lastWeekDisplay = lastWeekMonth + "/" + lastWeekDay + "/" + lastWeekYear;
-  // var lastWeekDisplayPadded = ("00" + lastWeekMonth.toString()).slice(-2) + "/" + ("00" + lastWeekDay.toString()).slice(-2) + "/" + ("0000" + lastWeekYear.toString()).slice(-4);
-
-  // console.log(lastWeek);
-  // console.log(lastWeekDisplay);
-  // console.log(lastWeekDisplayPadded);
-
-  // var curr = new Date; // get current date
-
-  var today = new Date(2021,2,16);
-  var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-  var date_last_week = lastWeek;
-  var first = date_last_week.getDate() - date_last_week.getDay(); // First day is the day of the month - the day of the week
-  var fri = first + 5; // last day is the first day + 6
-  var friDay = new Date(date_last_week.setDate(fri));
-
-console.log(`Now ${today} *** last friday= ${friDay}`)
+  var as_of_date  = '2021-03-01'
+  // _dateArray = as_of_date.split("-")
+  // var today = new Date(_dateArray[0],parseInt(_dateArray[1])-1,_dateArray[2]);
+  // var _day = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+  // console.log(`lastWeek>> ${_day} `)
 
 
-  res.status(200).json({message:'Hello MI.'});
+  res.status(200).json({message:'Hello MI.' + fcDayDec(as_of_date,2)});
 
 }
 
+function fcDayDec(_date,numDay){
+  // var as_of_date  = '2021-03-01'
+  _dateArray = _date.split("-")
+
+  var today = new Date(_dateArray[0],parseInt(_dateArray[1])-1,_dateArray[2]);
+  var _day = new Date(today.getFullYear(), today.getMonth(), today.getDate() - numDay);
+  return _day
+}
 
 exports.getPortDetailByAgents_V2 = (req, res, next) => {
   logger.info('Welcome getPortDetailByAgents_V2');
@@ -137,7 +128,6 @@ function PFlastFriday(_date){
   agentData={
     agent_code:lic_code,
   };
-
 
   let PF_as_of_date = PFlastFriday(as_of_date);
 
@@ -364,13 +354,15 @@ if (!errors.isEmpty()) {
 
         }else if (product === PRODUCT_PF) {
 
-          let PF_as_of_date = PFlastFriday(as_of_date);
+          // let as_of_date = PFlastFriday(as_of_date);
+          // let as_of_date = PFlastFriday(as_of_date);
 
           fnArray=[];
-          fnArray.push(funcPF_PortDetailByPort(portfolio_code,PF_as_of_date));
+          fnArray.push(funcPF_PortDetailByPort(portfolio_code,as_of_date));
           Promise.all(fnArray)
           .then(data => {
 
+            // logger.info(`PF>> ${JSON.stringify(data)}`)
             var _pf = data[0];
             res.status(200).json(_pf[0]);
 
@@ -1079,7 +1071,6 @@ function funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date) {
 }
 
 
-
 function funcMF_TransactionPort_Query(custCode,as_of_date) {
 
   logger.info(`funcMF_TransactionPort_Query()   ;CustCode: ${custCode}  ;as_of_date=${as_of_date}`);
@@ -1089,7 +1080,7 @@ function funcMF_TransactionPort_Query(custCode,as_of_date) {
 
 BEGIN
 
-    DECLARE @tranasctionTable TABLE(transactionID VARCHAR(20),fundCode  VARCHAR(30) ,transactionCode VARCHAR(10),transactionDate VARCHAR(40) , status VARCHAR(10) ,amount [numeric](18, 2),unit [numeric](18, 4))
+    DECLARE @tranasctionTable TABLE(transaction_id VARCHAR(20),fund_code  VARCHAR(30) ,transaction_code VARCHAR(10),transaction_date VARCHAR(40) , status VARCHAR(10) ,amount [numeric](18, 2),unit [numeric](18, 4))
 
     DECLARE @TransactionCursor as CURSOR;
 
@@ -1144,7 +1135,7 @@ BEGIN
       pool1
         .request()
         .input("custCode", sql.VarChar(20), custCode)
-        .input("as_of_date", sql.VarChar(20), custCode)
+        .input("as_of_date", sql.VarChar(20), as_of_date)
 
         .query(queryStr, (err, result) => {
           if (err) {
@@ -1170,7 +1161,9 @@ function funcPF_PortDetailByAgent(agentCode,as_of_date){
 
   logger.info(`Welcome funcPF_PortDetailByAgent() >${agentCode}  >${as_of_date}`)
 
-  return new Promise(function(resolve, reject) {
+  return new Promise( function(resolve, reject) {
+
+    try{
 
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
@@ -1178,7 +1171,7 @@ function funcPF_PortDetailByAgent(agentCode,as_of_date){
    * HTTPS REQUEST (START)
    */
         const request = require('request');
-        const HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByAgents?agent_list=${agentCode}&as_of_date=${as_of_date}`;
+        var HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByAgents?agent_list=${agentCode}&as_of_date=${as_of_date}`;
         const option = {
           'X-Auth-Token':'***',
         };
@@ -1188,17 +1181,57 @@ function funcPF_PortDetailByAgent(agentCode,as_of_date){
             logger.error(err);
             reject(err);
           }else{
-              try{
-                resolve(JSON.parse(body))
-              }catch(err){
-                resolve()
-              }
+
+            var pfObj = JSON.parse(body)
+
+            logger.info(`PF 1 >> ${JSON.stringify(JSON.parse(body))}`)
+
+          if(pfObj.length<1){
+
+            // Call PF API #2 (decresement date -1)
+            try{
+              var request_2 = require('request');
+              let pf_cnt =1
+
+                // Decrese  date
+                var newDate = fcDayDec(as_of_date,1)
+                new_as_of_date  = newDate.getFullYear()+'-'+(newDate.getMonth()+1) + '-'+newDate.getDate()
+
+                  HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByAgents?agent_list=${agentCode}&as_of_date=${new_as_of_date}`;
+                 request_2({ url: HTTPS_ENDPOIN, headers: option }, function (err2, response2, body2) {
+
+                  var pfObj2 = JSON.parse(body2);
+                  if (pfObj2.length > 1) {
+                    resolve(pfObj2);
+                  }else{
+                    resolve();
+                  }
+
+                });
+            }catch(err){
+              logger.error(err)
+              reject()
+            }
+
+          }else{
+            try{
+              resolve(JSON.parse(body))
+            }catch(err){
+
+            }
+          }
+
 
           }
         });
       /**
        * HTTPS REQUEST (END)
        */
+
+     }catch(err){
+        logger.error(err)
+        reject()
+    }
 
   });
 }
@@ -1221,10 +1254,13 @@ function funcPF_PortDetailByPort(portfolio_code,as_of_date){
         const request = require('request');
 
         const HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByPort?portfolio_code=${portfolio_code}&as_of_date=${as_of_date}&product=PF`;
-        // const HTTPS_ENDPOIN =`http://192.168.10.45/getPortDetailByPort?portfolio_code=MGM200070&as_of_date=2021-03-01&product=PF`;
+    // const HTTPS_ENDPOIN =`http://192.168.10.45/getPortDetailByPort?portfolio_code=${portfolio_code}&as_of_date=${as_of_date}&product=PF`;
+    // const HTTPS_ENDPOIN =`http://192.168.10.45/getPortDetailByPort?portfolio_code=PFIF180137&as_of_date=2021-03-01&product=PF`;
         const option = {
           'X-Auth-Token':'***',
         };
+
+        // logger.info(`HTTPS_ENDPOIN>> ${HTTPS_ENDPOIN}`)
 
         logger.info(`Start CALL API`)
         request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
@@ -1233,7 +1269,15 @@ function funcPF_PortDetailByPort(portfolio_code,as_of_date){
             reject(err);
           }else{
 
-              resolve(JSON.parse(body))
+            // logger.info(`response 1 >> ${JSON.stringify(JSON.parse(response))}`)
+
+              try{
+                resolve(JSON.parse(body))
+              }catch(err){
+                resolve()
+              }
+
+
           }
         });
       /**

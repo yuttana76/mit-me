@@ -1,0 +1,20 @@
+## Reference link
+https://hub.docker.com/_/microsoft-mssql-server
+
+## Tutorial link
+https://www.michalbialecki.com/2020/04/23/set-up-a-sql-server-in-a-docker-container/
+
+
+##How to
+initail image
+>docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=myPass123" -p 1433:1433 --name devDb -d mcr.microsoft.com/mssql/server:2017-latest
+
+>docker --help  
+>docker ps
+>docker start devDb
+>docker stop devDb
+>docker commit devDb
+
+
+Remove image
+>docker rm devDb

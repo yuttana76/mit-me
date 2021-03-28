@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 // import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 // import { MasterDataService } from '../services/masterData.service';
 import { LEDService } from '../services/led.service';
 import { MitLedInspCust } from '../model/mitLedInspCust.model';

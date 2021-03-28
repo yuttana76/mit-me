@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LEDService } from '../services/led.service';
 import { forkJoin } from 'rxjs';
-import { MatDatepickerInputEvent, MatDialogRef, MatDialog } from '@angular/material';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import {formatDate} from '@angular/common';
 
 @Component({

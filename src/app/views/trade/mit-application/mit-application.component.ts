@@ -6,7 +6,7 @@ import { ApplicationService } from '../services/application.service';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { ToastrService } from 'ngx-toastr';
 import { ApplicationDialogComponent } from '../dialog/application-dialog/application-dialog.component';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-mit-application',

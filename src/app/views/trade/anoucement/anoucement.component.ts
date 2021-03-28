@@ -5,7 +5,7 @@ import { Anoucement } from '../model/anoucement.model';
 import { AnoucementService } from '../services/anoucement.service';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { AnoucementDialogComponent } from '../dialog/anoucement-dialog/anoucement-dialog.component';
 

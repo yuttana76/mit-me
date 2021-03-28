@@ -4,7 +4,9 @@ import { CustomerService } from '../services/customer.service';
 import { AuthService } from '../../services/auth.service';
 import { Customer } from '../model/customer.model';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { PageEvent, MatTableDataSource, MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { CustomerCond } from '../model/customerCond.model';
 
 import { Pipe, PipeTransform } from '@angular/core';

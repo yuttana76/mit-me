@@ -4,7 +4,7 @@ import { CustAddrFormService } from './cust-addr.service';
 import { MasterDataService } from '../services/masterData.service';
 import { ToastrService } from 'ngx-toastr';
 import { AddrCustModel } from '../model/addrCust.model';
-import { MatSelectChange } from '@angular/material';
+import { MatSelectChange } from '@angular/material/select';
 import { Country } from '../model/ref_country';
 import { Provinces } from '../model/ref_provinces.model';
 import { Amphurs } from '../model/ref_amphurs.model';

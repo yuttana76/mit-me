@@ -4,7 +4,7 @@ import { UserLevel } from '../model/userLevel.model';
 import { UserService } from '../services/user.service';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { ToastrService } from 'ngx-toastr';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { UserLevelDialogComponent } from '../dialog/user-level-dialog/user-level-dialog.component';
 import { UserLevelFormService } from './userLevel.service';
 

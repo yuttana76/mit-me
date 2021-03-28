@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AddAuthorityFormService } from './addAuthorityForm.service';
 import { Application } from '../../model/application.model';
 import { ApplicationService } from '../../services/application.service';

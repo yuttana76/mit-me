@@ -56,7 +56,7 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 
 import { RecaptchaModule } from 'angular-google-recaptcha';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
-import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 // import { GraphQLModule } from './graphql.module';
 
 

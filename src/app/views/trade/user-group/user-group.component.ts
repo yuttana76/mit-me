@@ -3,7 +3,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { UserLevel } from '../model/userLevel.model';
 import { UserService } from '../services/user.service';
 import { ToastrService } from 'ngx-toastr';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserGroup } from '../model/userGroup.model';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { UserGroupDialogComponent } from '../dialog/user-group-dialog/user-group-dialog.component';

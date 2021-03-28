@@ -2,7 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { SuitFormService } from "./suit.service";
 
 import { ToastrService } from "ngx-toastr";
-import { MatDialog, MatRadioChange, MatDialogRef } from "@angular/material";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatRadioChange } from "@angular/material/radio";
 import { ActivatedRoute, ParamMap } from "@angular/router";
 import { SuiteService } from "../services/suit.service";
 import { FormGroup, FormControl, Validators, FormBuilder } from "@angular/forms";

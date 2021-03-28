@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WorkFlowTrans } from '../../model/workFlowTrans.model';
 import { WorkFlowService } from '../../services/workFlow.service';
 import { AuthService } from '../../../services/auth.service';

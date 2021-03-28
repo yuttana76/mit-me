@@ -105,31 +105,6 @@ exports.brokerLogin = (req,res,next)=>{
 
   logger.info("Welcome API brokerLogin/");
 
-  //   fnArray=[];
-  //   fnArray.push(timeSync());
-  //   Promise.all(fnArray)
-  //   .then(data => {
-
-  //     console.log('***Time sync:'+ JSON.stringify(data))
-
-  //     eOnpeAuth(data[0]).then(result =>{
-  //       logger.info("result>" + JSON.stringify(result))
-  //       res.status(200).json({
-  //         code: '000',
-  //         msg: JSON.stringify(result),
-  //       });
-  //     },err =>{
-  //       logger.error('ERR AUTH>>'+err);
-  //       res.status(401).json(err.message);
-  //     });
-
-  //   })
-  // .catch(error => {
-  //   logger.error('Error FundConnext schedule;' +error.message)
-  //   res.status(401).json(error.message);
-  // });
-
-  // *********
   eOnpeAuth().then(result =>{
     logger.info("result>" + JSON.stringify(result))
     res.status(200).json({
@@ -231,8 +206,10 @@ const eOnpeAuth = async () => {
 
   return new Promise(function(resolve, reject) {
 
+    // EOPEN_API_URL
+
     var options = {
-      host: 'oacctest.settrade.com',
+      host: EOPEN_API_URL,
       path:'/api/eopenaccount/v1/'+EOPEN_BROKER_ID+'/broker-login',
       method: "POST",
       headers: {
@@ -241,7 +218,7 @@ const eOnpeAuth = async () => {
       },
     };
 
-    // logger.info('***options > ' + JSON.stringify(options));
+    logger.info('***auth options > ' + JSON.stringify(options));
 
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
@@ -308,7 +285,7 @@ exports.downloadJSON = (req, res, next) =>{
 
   res.status(200).json({
     code: '000',
-    data: JSON.stringify(result),
+    data: JSON.parse(result),
   });
 
   },err =>{
@@ -322,29 +299,35 @@ exports.downloadJSON = (req, res, next) =>{
 
 exports.applications = (req, res, next) =>{
 
-  var status = req.query.status
-  var startLastUpdatedTime = req.query.startLastUpdatedTime +'T00:00:00'
-  var endLastUpdatedTime = req.query.endLastUpdatedTime+'T23:59:59';
+  // var status = req.query.status
+  // var startLastUpdatedTime = req.query.startLastUpdatedTime +'T00:00:00'
+  // var endLastUpdatedTime = req.query.endLastUpdatedTime+'T23:59:59';
+  // var actionBy = req.query.actionBy
+
+  // let status='SUBMITTED'
+  let status=''
+  let startLastUpdatedTime='2021-03-01T00:00:00'
+  let endLastUpdatedTime='2021-03-30T23:59:59'
+  let actionBy='MIT-SYS'
 
   logger.info(`*** status:${status}  ;startLastUpdatedTime:${startLastUpdatedTime}  ;endLastUpdatedTime:${endLastUpdatedTime}`)
 
-
-  // let status='SUBMITTED'
-  // let startLastUpdatedTime='2021-02-01T00:00:00'
-  // let endLastUpdatedTime='2021-02-20T23:59:59'
-
-  applications(status,startLastUpdatedTime,endLastUpdatedTime).then(result =>{
+  applications(status,startLastUpdatedTime,endLastUpdatedTime).then(appData =>{
 
     logger.info("applications Result>" + JSON.stringify(result))
 
-    if (result === null || result===''){
+    //*** To DB
+    fnArray=[];
+    fnArray.push(sttAccToDB(appData,actionBy));
+    Promise.all(fnArray)
+    .then(data => {
+      // Return updte result
+      res.status(200).json(JSON.parse(data));
+    })
+    .catch(error => {
+      logger.error(error.message)
       res.status(204).json("Not Found");
-    }else{
-      res.status(200).json(JSON.parse(result));
-
-    }
-
-
+    });
 
   },err =>{
     logger.error('applications Error>>'+err);
@@ -361,7 +344,7 @@ const DOWNLOAD_PATH  = mpamConfig.EOPEN_DOWNLOAD_PATH
 const downloadFiles = async (applicationId) => {
 
   console.log(`Welcome downloadFiles() ${applicationId} `);
-  const EOPEN_API_URL= 'https://oacctest.settrade.com'
+  // const EOPEN_API_URL= 'https://oacctest.settrade.com'
 
   var DOWNLOAD_PATH_FILENAME  = DOWNLOAD_PATH  + applicationId;
 
@@ -370,7 +353,7 @@ const downloadFiles = async (applicationId) => {
 
   return new Promise(function(resolve, reject) {
 
-      const HTTPS_ENDPOIN =`${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications/${applicationId}/files`;
+      const HTTPS_ENDPOIN =`https://${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications/${applicationId}/files`;
       const option = {
         "Authorization": `Bearer ${tokenObj.token}`,
       };
@@ -459,12 +442,12 @@ const downloadFiles = async (applicationId) => {
 
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
-      const EOPEN_API_URL= 'https://oacctest.settrade.com'
+      // const EOPEN_API_URL= 'https://oacctest.settrade.com'
       const request = require('request');
 
       // var param=`?status=${status}&startLastUpdatedTime=${startLastUpdatedTime}&endLastUpdatedTime=${endLastUpdatedTime}`
 
-      const HTTPS_ENDPOIN =`${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications/${applicationId}`;
+      const HTTPS_ENDPOIN =`https://${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications/${applicationId}`;
       const option = {
         "Authorization": `Bearer ${tokenObj.token}`,
       };
@@ -478,8 +461,14 @@ const downloadFiles = async (applicationId) => {
           logger.error(err);
           reject(err);
         }else{
-          console.log('RESULT RS>>'+JSON.stringify(JSON.parse(body)))
-          resolve(JSON.parse(body))
+
+          if(body){
+            console.log('RESULT 2 RS>>'+JSON.stringify(JSON.parse(body)))
+            resolve(JSON.stringify(JSON.parse(body)))
+          }else{
+            resolve()
+          }
+
         }
       });
 
@@ -500,19 +489,20 @@ const downloadFiles = async (applicationId) => {
 
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
-      const EOPEN_API_URL= 'https://oacctest.settrade.com'
+      // const EOPEN_API_URL= 'https://oacctest.settrade.com'
+
       const request = require('request');
 
       var param=`?status=${status}&startLastUpdatedTime=${startLastUpdatedTime}&endLastUpdatedTime=${endLastUpdatedTime}`
 
-      const HTTPS_ENDPOIN =`${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications${param}`;
+      const HTTPS_ENDPOIN =`https://${EOPEN_API_URL}/api/eopenaccount/v1/${EOPEN_BROKER_ID}/applications${param}`;
       const option = {
         "Authorization": `Bearer ${tokenObj.token}`,
       };
 
-      logger.info(`***PARAM>> ${param}`)
-      logger.info(`***OPTION>> ${JSON.stringify(option)}`)
-      logger.info(`***HTTPS_ENDPOIN>> ${HTTPS_ENDPOIN}`)
+      // logger.info(`***PARAM>> ${param}`)
+      // logger.info(`***OPTION>> ${JSON.stringify(option)}`)
+      // logger.info(`***HTTPS_ENDPOIN>> ${HTTPS_ENDPOIN}`)
 
       request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
 
@@ -548,3 +538,74 @@ const downloadFiles = async (applicationId) => {
 // watchOverSomeoneWatchingSomeoneDoingSomething().then(res => {
 //   console.log(res)
 // })
+
+
+function sttAccToDB(accObj,actionBy){
+
+  console.log("update_MFTS_Account()" + cardNumber);
+
+  var queryStr = `
+  BEGIN TRANSACTION TranName;
+
+  UPDATE MIT_stt_Acc_app_list SET
+      [status]=@status,
+      [types]=@types,
+      [verificationType]=@verificationType,
+      [ndidStatus]=@ndidStatus,
+      [jsonData]=@jsonData,
+      [UpdateBy]=@actionBy
+      [UpdateDate]=getDate()
+      WHERE applicationId =@applicationId
+  IF @@ROWCOUNT=0
+    BEGIN
+        INSERT INTO MIT_stt_Acc_app_list(
+            applicationId,
+            status,
+            types,
+            verificationType,
+            ndidStatus,
+            jsonData,
+            CreateBy,
+            CreateDate
+            )values(
+          @applicationId
+          ,@status
+          ,@types
+          ,@verificationType
+          ,@ndidStatus
+          ,@jsonData
+          ,@actionBy
+          ,getDate()
+        )
+    END
+
+COMMIT TRANSACTION TranName;
+  `;
+
+  const sql = require('mssql')
+
+  return new Promise(function(resolve, reject) {
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+
+      // .input("ProvinceName", sql.NVarChar(100), addrObj.province)
+      .query(queryStr, (err, result) => {
+        // console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      logger.error(err);
+      reject(err);
+    })
+  });
+}

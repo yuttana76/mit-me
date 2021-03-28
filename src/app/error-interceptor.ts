@@ -7,7 +7,7 @@ import {
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { CustomErrorComponent } from './views/error/customError.component';
 import { ToastrService } from 'ngx-toastr';
 

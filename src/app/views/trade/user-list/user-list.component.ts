@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { Department } from '../model/department.model';
 import { DepartmentService } from '../services/department.service';
 import { UserCond } from '../model/userCond.model';
-import { PageEvent } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 import { UserListFormService } from './userListForm.service';
 import { User } from '../model/user.model';
 import { UserService } from '../services/user.service';

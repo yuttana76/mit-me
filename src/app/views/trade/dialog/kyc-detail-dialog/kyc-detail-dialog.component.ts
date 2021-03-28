@@ -1,5 +1,5 @@
 import { Component, OnInit, Optional, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CddService } from '../../services/cdd.service';
 import { ChildService } from '../../services/child.service';
 import { CDDModel } from '../../model/cdd.model';

@@ -5,7 +5,9 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { KycSurveyList } from '../model/kycSurveyList';
-import { PageEvent, MatTableDataSource, MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { DatePipe } from '@angular/common';
 
 import {dateDBFormatPipe} from '../pipe/dateFormatPipe';

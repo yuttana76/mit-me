@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MitLedInspCust } from '../../model/mitLedInspCust.model';
 import { ToastrService } from 'ngx-toastr';
 import { MasterDataService } from '../../services/masterData.service';

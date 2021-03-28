@@ -5,7 +5,7 @@ import { NDIDService } from '../services/ndid.service';
 import { ToastrService } from 'ngx-toastr';
 import { ndidProxy } from '../model/ndidProxy.model';
 import { ndidIdp } from '../model/ndidIdp.model';
-import { MatRadioChange } from '@angular/material';
+import { MatRadioChange } from '@angular/material/radio';
 import { ndidService } from '../model/ndidService.model';
 import { ndidAS } from '../model/ndidAS.model';
 import { ndidVeriReqDataRS } from '../model/ndidVeriReqData.model';

@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 
 import { CrmActivity } from '../model/crmActivity.model';
 import { CrmContactCustAct } from '../model/crmContactCustAct.model';
-import { MatSelectChange } from '@angular/material';
+import { MatSelectChange } from '@angular/material/select';
 
 
 @Component({

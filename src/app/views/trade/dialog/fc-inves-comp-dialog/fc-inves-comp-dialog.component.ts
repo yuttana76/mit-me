@@ -1,5 +1,5 @@
 import { Component, OnInit, Optional, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CustomerService } from '../../services/customer.service';
 import { Customer } from '../../model/customer.model';
 import { fcIndCustomer } from '../../model/fcIndCustomer.model';

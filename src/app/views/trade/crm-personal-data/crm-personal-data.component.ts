@@ -5,7 +5,7 @@ import { CrmPersonModel , MasterData} from '../model/crmPersonal.model';
 import { BehaviorSubject } from 'rxjs';
 import { CrmService } from '../services/crmPersonal.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
 import { ToastrService } from 'ngx-toastr';

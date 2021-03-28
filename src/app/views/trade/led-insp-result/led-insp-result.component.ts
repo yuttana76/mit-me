@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { PageEvent, MatTableDataSource } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { MitLedInspCust } from '../model/mitLedInspCust.model';
 
 @Component({

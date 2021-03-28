@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { PageEvent } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 import { BehaviorSubject, forkJoin, Subscription } from 'rxjs';
 import { CrmTask } from '../model/crmTask.model';
 import { CrmService } from '../services/crmPersonal.service';

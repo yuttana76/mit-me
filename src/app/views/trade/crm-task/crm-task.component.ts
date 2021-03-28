@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DatePipe, Location } from '@angular/common';
-import { MatSelectChange } from '@angular/material';
+import { MatSelectChange } from '@angular/material/select';
 import { CrmTask } from '../model/crmTask.model';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CrmService } from '../services/crmPersonal.service';

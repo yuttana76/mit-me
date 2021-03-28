@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, Inject, Optional } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { SuiteService } from '../../services/suit.service';
 

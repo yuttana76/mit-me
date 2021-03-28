@@ -11,7 +11,7 @@ import { AuthorityService } from '../services/authority.service';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { AddAuthorityDialogComponent } from '../dialog/add-authority-dialog/add-authority-dialog.component';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 
 
 @Pipe({name: 'authorityFlagPipe'})

@@ -1184,7 +1184,7 @@ function funcPF_PortDetailByAgent(agentCode,as_of_date){
 
             var pfObj = JSON.parse(body)
 
-            logger.info(`PF 1 >> ${JSON.stringify(JSON.parse(body))}`)
+            // logger.info(`PF 1 >> ${JSON.stringify(JSON.parse(body))}`)
 
           if(pfObj.length<1){
 

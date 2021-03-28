@@ -17,7 +17,7 @@ import { FCincomeSource } from '../model/fcIncomeSource.model';
 import { ShareDataService } from '../services/shareData.service';
 import { FCcountry } from '../model/fcContry.model';
 import { PersonModel } from '../model/person.model';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { PersonalInfoComponent } from '../personal-info/personal-info.component';
 import { ChildrenDialogComponent } from '../dialog/children-dialog/children-dialog.component';
 import { BehaviorSubject } from 'rxjs';

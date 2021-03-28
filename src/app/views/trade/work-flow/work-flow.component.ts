@@ -3,7 +3,7 @@ import { WorkFlowTrans } from '../model/workFlowTrans.model';
 import { WorkFlowService } from '../services/workFlow.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { WorkFlowActDialogComponent } from '../dialog/work-flow-act-dialog/work-flow-act-dialog.component';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ResultDialogComponent } from '../dialog/result-dialog/result-dialog.component';
 import { Router } from '@angular/router';

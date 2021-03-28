@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Optional } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SuiteService } from '../../services/suit.service';
 import { ToastrService } from 'ngx-toastr';
 import { SurveySearchActionDialogService } from './surveySearchActionDialog.service';

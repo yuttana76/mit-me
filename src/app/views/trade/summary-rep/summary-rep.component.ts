@@ -18,7 +18,7 @@ import { ReportGeneral } from '../model/reportGeneral.model';
 import * as moment from 'moment';
 import { ShareDataService } from '../services/shareData.service';
 import { ToastrService } from 'ngx-toastr';
-import { MatSelectChange } from '@angular/material';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-summary-rep',

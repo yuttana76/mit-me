@@ -4,7 +4,7 @@ import { RegisterModel } from '../model/sitRegister.model';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogService } from '../dialog/confirmation-dialog/confirmation-dialog.service';
 import { StreamingService } from '../services/streaming.service';
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-set-regis2',

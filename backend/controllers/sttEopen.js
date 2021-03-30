@@ -12,6 +12,8 @@ const https = require('https')
 
 const { validationResult } = require('express-validator');
 
+var config = mpamConfig.dbParameters;
+
 // const FC_API_URL= mpamConfig.FC_API_URL
 
 
@@ -38,17 +40,11 @@ const EOPEN_PATH = '/api/eopenaccount/v1/'+EOPEN_BROKER_ID+'/broker-login'
 
 exports.testApi = (req,res,next)=>{
 
-  timeSync().then(result =>{
+  var pdf = require("pdf-creator-node");
 
-    logger.info("testApi>" + JSON.stringify(result))
-    res.status(200).json({
-      code: '000',
-      msg: JSON.stringify(result),
-    });
-  },err =>{
-    logger.error('ERR testApi>>'+err);
-    res.status(401).json(err.message);
-  });
+  res.status(200).json('success');
+
+
 }
 
 exports.signVerify = (req,res,next)=>{
@@ -277,16 +273,33 @@ exports.downloadFiles = (req, res, next) =>{
 
 exports.downloadJSON = (req, res, next) =>{
 
+  let actionBy='MIT-SYS'
+
   var applicationId = req.params.applicationId;
 
-  downloadJSON(applicationId).then(result =>{
+  downloadJSON(applicationId).then(jsonData =>{
 
-    logger.info("downloadJSON Result>" + JSON.stringify(result))
+    if(jsonData){
 
-  res.status(200).json({
-    code: '000',
-    data: JSON.parse(result),
-  });
+      objData = JSON.parse(jsonData);
+      sttAccDataToDB(objData,actionBy).then({
+
+      });
+
+      logger.info(`Finish E-Open JSON download `)
+      res.status(200).json(objData);
+
+    }else{
+          logger.info(`Not found data with>> ${JSON.stringify(jsonData)}`)
+          res.status(200).json(jsonData);
+    }
+
+    // logger.info("downloadJSON Result>" + JSON.stringify(result))
+
+  // res.status(200).json({
+  //   code: '000',
+  //   data: JSON.parse(result),
+  // });
 
   },err =>{
 
@@ -314,30 +327,31 @@ exports.applications = (req, res, next) =>{
 
   applications(status,startLastUpdatedTime,endLastUpdatedTime).then(appData =>{
 
-    logger.info("applications Result>" + JSON.stringify(result))
+    objData = JSON.parse(appData);
 
-    //*** To DB
-    fnArray=[];
-    fnArray.push(sttAccToDB(appData,actionBy));
-    Promise.all(fnArray)
-    .then(data => {
-      // Return updte result
-      res.status(200).json(JSON.parse(data));
-    })
-    .catch(error => {
-      logger.error(error.message)
-      res.status(204).json("Not Found");
-    });
+    if(objData && objData.length>0){
+      objData.forEach(function(obj) {
+        sttAccToDB(obj,actionBy).then({
+        });
+
+      });
+      logger.info(`Finish E-Open download `)
+      res.status(200).json(objData);
+
+    }else{
+          logger.info(`Not found data with>> ${JSON.stringify(objData)}`)
+          res.status(200).json(objData);
+    }
 
   },err =>{
     logger.error('applications Error>>'+err);
     res.status(401).json(err.message);
   });
-
 }
 
 //Download file function
 const download = require('download');
+const { json } = require('body-parser');
 const DOWNLOAD_PATH  = mpamConfig.EOPEN_DOWNLOAD_PATH
 // const EOPEN_API_URL= 'https://oacctest.settrade.com'
 
@@ -452,8 +466,8 @@ const downloadFiles = async (applicationId) => {
         "Authorization": `Bearer ${tokenObj.token}`,
       };
 
-      logger.info(`***OPTION>> ${JSON.stringify(option)}`)
-      logger.info(`***HTTPS_ENDPOIN>> ${HTTPS_ENDPOIN}`)
+      // logger.info(`***OPTION>> ${JSON.stringify(option)}`)
+      // logger.info(`***HTTPS_ENDPOIN>> ${HTTPS_ENDPOIN}`)
 
       request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
 
@@ -463,7 +477,7 @@ const downloadFiles = async (applicationId) => {
         }else{
 
           if(body){
-            console.log('RESULT 2 RS>>'+JSON.stringify(JSON.parse(body)))
+            // console.log('RESULT 2 RS>>'+JSON.stringify(JSON.parse(body)))
             resolve(JSON.stringify(JSON.parse(body)))
           }else{
             resolve()
@@ -510,7 +524,7 @@ const downloadFiles = async (applicationId) => {
           logger.error(err);
           reject(err);
         }else{
-          console.log('RESULT RS>>'+JSON.stringify(body))
+          // console.log('RESULT RS>>'+JSON.stringify(body))
           resolve(body)
         }
       });
@@ -542,7 +556,17 @@ const downloadFiles = async (applicationId) => {
 
 function sttAccToDB(accObj,actionBy){
 
-  console.log("update_MFTS_Account()" + cardNumber);
+  console.log("sttAccToDB()" + JSON.stringify(accObj));
+
+  let firstName=''
+  let lastName=''
+  let telNo=''
+
+  if(accObj.user){
+    firstName=accObj.user.firstName
+    lastName=accObj.user.lastName
+    telNo=accObj.user.telNo
+  }
 
   var queryStr = `
   BEGIN TRANSACTION TranName;
@@ -553,9 +577,15 @@ function sttAccToDB(accObj,actionBy){
       [verificationType]=@verificationType,
       [ndidStatus]=@ndidStatus,
       [jsonData]=@jsonData,
-      [UpdateBy]=@actionBy
+      firstName=@firstName,
+      lastName=@lastName,
+      telNo=@telNo,
+      accCreatedTime=@accCreatedTime,
+      accLastUpdatedTime=@accLastUpdatedTime,
+      [UpdateBy]=@actionBy,
       [UpdateDate]=getDate()
       WHERE applicationId =@applicationId
+      AND status =@status
   IF @@ROWCOUNT=0
     BEGIN
         INSERT INTO MIT_stt_Acc_app_list(
@@ -565,6 +595,11 @@ function sttAccToDB(accObj,actionBy){
             verificationType,
             ndidStatus,
             jsonData,
+            firstName,
+            lastName,
+            telNo,
+            accCreatedTime,
+            accLastUpdatedTime,
             CreateBy,
             CreateDate
             )values(
@@ -574,6 +609,11 @@ function sttAccToDB(accObj,actionBy){
           ,@verificationType
           ,@ndidStatus
           ,@jsonData
+          ,@firstName
+          ,@lastName
+          ,@telNo
+          ,@accCreatedTime
+          ,@accLastUpdatedTime
           ,@actionBy
           ,getDate()
         )
@@ -588,10 +628,132 @@ COMMIT TRANSACTION TranName;
 
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1.request()
-      .input("cardNumber", sql.VarChar(20), cardNumber)
       .input("actionBy", sql.VarChar(50), actionBy)
+      .input("applicationId", sql.VarChar(20), accObj.applicationId)
+      .input("status", sql.VarChar(30), accObj.status)
+      .input("types", sql.VarChar(30), accObj.types)
+      .input("verificationType", sql.VarChar(10), accObj.verificationType)
+      .input("ndidStatus", sql.VarChar(20), accObj.ndidStatus)
+      .input("jsonData", sql.NVarChar('max'), JSON.stringify(accObj))
+      .input("firstName", sql.NVarChar(50), firstName)
+      .input("lastName", sql.NVarChar(50),lastName)
+      .input("telNo", sql.VarChar(30), telNo)
 
-      // .input("ProvinceName", sql.NVarChar(100), addrObj.province)
+      .input("accCreatedTime", sql.VarChar(30),accObj.createdTime)
+      .input("accLastUpdatedTime", sql.VarChar(30), accObj.lastUpdatedTime)
+
+      .query(queryStr, (err, result) => {
+        // console.log(JSON.stringify(result));
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      logger.error(err);
+      reject(err);
+    })
+  });
+}
+
+function sttAccDataToDB(accObj,actionBy){
+
+  console.log("sttAccToDB()" + JSON.stringify(accObj));
+
+  let firstName=''
+  let lastName=''
+  let telNo=''
+
+  if(accObj.user){
+    firstName=accObj.data.thFirstName
+    lastName=accObj.data.thLastName
+    telNo=accObj.data.mobileNumber
+  }
+
+  var queryStr = `
+  BEGIN TRANSACTION TranName;
+
+  UPDATE MIT_stt_Acc_app_data SET
+      [status]=@status,
+      [types]=@types,
+      [verificationType]=@verificationType,
+      [ndidStatus]=@ndidStatus,
+      [jsonData]=@jsonData,
+      firstName=@firstName,
+      lastName=@lastName,
+      telNo=@telNo,
+      accCreatedTime=@accCreatedTime,
+      accLastUpdatedTime=@accLastUpdatedTime,
+      submittedTime=@submittedTime,
+
+      [UpdateBy]=@actionBy,
+      [UpdateDate]=getDate()
+      WHERE applicationId =@applicationId
+      AND status =@status
+  IF @@ROWCOUNT=0
+    BEGIN
+        INSERT INTO MIT_stt_Acc_app_data(
+            applicationId,
+            status,
+            types,
+            verificationType,
+            ndidStatus,
+            jsonData,
+            firstName,
+            lastName,
+            telNo,
+            accCreatedTime,
+            accLastUpdatedTime,
+            submittedTime,
+            CreateBy,
+            CreateDate
+            )values(
+          @applicationId
+          ,@status
+          ,@types
+          ,@verificationType
+          ,@ndidStatus
+          ,@jsonData
+          ,@firstName
+          ,@lastName
+          ,@telNo
+          ,@accCreatedTime
+          ,@accLastUpdatedTime
+          ,@submittedTime
+          ,@actionBy
+          ,getDate()
+        )
+    END
+
+COMMIT TRANSACTION TranName;
+  `;
+
+  const sql = require('mssql')
+
+  return new Promise(function(resolve, reject) {
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .input("applicationId", sql.VarChar(20), accObj.applicationId)
+      .input("status", sql.VarChar(30), accObj.status)
+      .input("types", sql.VarChar(30), accObj.types)
+      .input("verificationType", sql.VarChar(10), accObj.verificationType)
+      .input("ndidStatus", sql.VarChar(20), accObj.ndidStatus)
+      .input("jsonData", sql.NVarChar('max'), JSON.stringify(accObj))
+
+      .input("firstName", sql.NVarChar(50), firstName)
+      .input("lastName", sql.NVarChar(50),lastName)
+      .input("telNo", sql.VarChar(30), telNo)
+
+      .input("accCreatedTime", sql.VarChar(30),accObj.createdTime)
+      .input("accLastUpdatedTime", sql.VarChar(30), accObj.lastUpdatedTime)
+      .input("submittedTime", sql.VarChar(30), accObj.submittedTime)
+
       .query(queryStr, (err, result) => {
         // console.log(JSON.stringify(result));
           if(err){

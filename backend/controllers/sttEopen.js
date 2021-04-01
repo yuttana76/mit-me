@@ -9,12 +9,19 @@ var prop = require("../config/backend-property");
 const crypto = require('crypto');
 const fs = require('fs');
 const https = require('https')
+var mitLog = require('./mitLog');
+const mail = require('./mail');
+
 
 const { validationResult } = require('express-validator');
 
 var config = mpamConfig.dbParameters;
 
 // const FC_API_URL= mpamConfig.FC_API_URL
+
+let ejs = require("ejs");
+let pdf = require("html-pdf");
+let path = require("path");
 
 
 var eOpen = {
@@ -38,13 +45,85 @@ const EOPEN_BROKER_ID = process.env.EOPEN_BROKER_ID
 const EOPEN_PATH = '/api/eopenaccount/v1/'+EOPEN_BROKER_ID+'/broker-login'
 
 
+let students = [
+  {name: "Joy",
+   email: "joy@example.com",
+   city: "New York",
+   country: "USA"},
+  {name: "John",
+   email: "John@example.com",
+   city: "San Francisco",
+   country: "USA"},
+  {name: "Clark",
+   email: "Clark@example.com",
+   city: "Seattle",
+   country: "USA"},
+  {name: "Watson",
+   email: "Watson@example.com",
+   city: "Boston",
+   country: "USA"},
+  {name: "Tony",
+   email: "Tony@example.com",
+   city: "Los Angels",
+   country: "USA"
+}];
+
 exports.testApi = (req,res,next)=>{
 
-  var pdf = require("pdf-creator-node");
+  // submittedTime="2021-03-31T10:17:04.342";
+  var submitDate = new Date("2021-03-31T17:34:04.342");
+  var currDate = new Date();
+logger.info(`submittedTime=${submitDate}   ;DATE=${currDate}`)
 
-  res.status(200).json('success');
+const milliseconds = Math.abs(currDate - submitDate);
+const hours = milliseconds / 36e5;
+
+logger.info(hours);
+
+res.status(200).json(hours);
+
+  // fundConnextFormPDF(fundData).then(data=>{
+  //   res.status(200).json(JSON.stringify(data));
+  // })
+
+}
 
 
+// https://stackabuse.com/generating-pdf-files-in-node-js-with-pdfkit/
+    const fundConnextFormPDF =(obj)=>{
+
+// logger.info(`Fund data>> ${JSON.stringify(obj)}`)
+
+      return new Promise(function(resolve, reject) {
+
+        ejs.renderFile(path.join(__dirname, './ejs-template/', "report-template.ejs"), {fund: obj}, (err, data) => {
+          if (err) {
+                logger.error(`Renderfile ${err}`)
+                reject(err)
+          } else {
+              let options = {
+                  "height": "11.25in",
+                  "width": "8.5in",
+                  "header": {
+                      "height": "20mm"
+                  },
+                  "footer": {
+                      "height": "20mm",
+                  },
+              };
+              pdf.create(data, options).toFile("fundConnxt-generate.pdf", function (err, data) {
+                  if (err) {
+                    logger.error(`Create file ${err}`)
+                      reject(err)
+                  } else {
+                      // res.send("File created successfully");
+                      resolve("File created successfully");
+                  }
+              });
+          }
+        });
+
+    });
 }
 
 exports.signVerify = (req,res,next)=>{
@@ -214,13 +293,13 @@ const eOnpeAuth = async () => {
       },
     };
 
-    logger.info('***auth options > ' + JSON.stringify(options));
+    // logger.info('***auth options > ' + JSON.stringify(options));
 
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 
   // Call STT
   const request = https.request(options,(res) => {
-    logger.info(`statusCode: ${res.statusCode}`)
+    // logger.info(`statusCode: ${res.statusCode}`)
     if(res.statusCode==='400'){
       reject(res.statusCode);
     }
@@ -255,7 +334,7 @@ exports.downloadFiles = (req, res, next) =>{
 
   downloadFiles(applicationId).then(result =>{
 
-    logger.info("downloadFiles Result>" + JSON.stringify(result))
+    // logger.info("downloadFiles Result>" + JSON.stringify(result))
 
   res.status(200).json({
     code: '000',
@@ -294,13 +373,6 @@ exports.downloadJSON = (req, res, next) =>{
           res.status(200).json(jsonData);
     }
 
-    // logger.info("downloadJSON Result>" + JSON.stringify(result))
-
-  // res.status(200).json({
-  //   code: '000',
-  //   data: JSON.parse(result),
-  // });
-
   },err =>{
 
     logger.error('downloadJSON Error>>'+err);
@@ -313,34 +385,82 @@ exports.downloadJSON = (req, res, next) =>{
 exports.applications = (req, res, next) =>{
 
   // var status = req.query.status
-  // var startLastUpdatedTime = req.query.startLastUpdatedTime +'T00:00:00'
-  // var endLastUpdatedTime = req.query.endLastUpdatedTime+'T23:59:59';
+  var startdate = req.query.startdate //yyyy-mm-dd
+  var enddate = req.query.enddate //yyyy-mm-dd
   // var actionBy = req.query.actionBy
 
   // let status='SUBMITTED'
   let status=''
-  let startLastUpdatedTime='2021-03-01T00:00:00'
-  let endLastUpdatedTime='2021-03-30T23:59:59'
+  // let startLastUpdatedTime= startdate +'T00:00:00';
+  // let endLastUpdatedTime=enddate +'T23:59:59';
+
+  let startLastUpdatedTime= '2021-03-31T00:00:00'
+  let endLastUpdatedTime='2021-04-01T23:59:59'
   let actionBy='MIT-SYS'
 
   logger.info(`*** status:${status}  ;startLastUpdatedTime:${startLastUpdatedTime}  ;endLastUpdatedTime:${endLastUpdatedTime}`)
 
   applications(status,startLastUpdatedTime,endLastUpdatedTime).then(appData =>{
 
-    objData = JSON.parse(appData);
 
-    if(objData && objData.length>0){
-      objData.forEach(function(obj) {
-        sttAccToDB(obj,actionBy).then({
+    if(appData){
+
+      objData = JSON.parse(appData);
+      if(objData && objData.length>0){
+        objData.forEach(function(obj) {
+
+          sttAccToDB(obj,actionBy).then({
+          });
+
+          // var submittedTime   = obj.submittedTime
+          var submitDate = new Date(obj.submittedTime);
+          var currDate = new Date();
+
+
+        const milliseconds = Math.abs(currDate - submitDate);
+        const hours = milliseconds / 36e5;
+
+        logger.info(`submittedTime=${submitDate}   ;DATE=${currDate}`)
+        logger.info(`hours=${hours} `)
+
+          if(obj.status==='SUBMITTED' && hours < 25){
+
+            //GET JSON data
+            downloadJSON(obj.applicationId).then(jsonData =>{
+
+              if(jsonData){
+
+                objInfo=JSON.parse(jsonData)
+                otherInfo = objInfo.data.otherInfo;
+
+                _ReferralCodeArray =  otherInfo.filter(it => it.questionId === 'ReferralCode');
+                _ReferralCodeObj=_ReferralCodeArray[0].answer;
+                // logger.info(` ***_ReferralCode RS>> ${JSON.stringify(_ReferralCodeObj[0].label)}` )
+
+                _ReferralNameArray =  otherInfo.filter(it => it.questionId === 'ReferralName');
+                _ReferralNameObj=_ReferralNameArray[0].answer;
+                // logger.info(` ***_ReferralName RS>> ${JSON.stringify(_ReferralNameObj[0].label)}` )
+
+              data=` ${objInfo.applicationId}|${objInfo.submittedTime}|${objInfo.data.thFirstName}  ${objInfo.data.thLastName}|${_ReferralCodeObj[0].label}|${_ReferralNameObj[0].label}|              `
+              mitLog.saveMITlog(objInfo.applicationId,'STT_EOPEN_SUBMITTED',data,req.ip,req.originalUrl,function(){});
+
+              }
+
+
+            });
+          }
+
         });
-
-      });
-      logger.info(`Finish E-Open download `)
-      res.status(200).json(objData);
+        logger.info(`Finish E-Open download `)
+        res.status(200).json(objData);
+      }else{
+        logger.info(`Not found data with>> ${JSON.stringify(objData)}`)
+        res.status(200).json(objData);
+      }
 
     }else{
-          logger.info(`Not found data with>> ${JSON.stringify(objData)}`)
-          res.status(200).json(objData);
+      logger.info(`Not found data with>> ${JSON.stringify(appData)}`)
+      res.status(200).json(appData);
     }
 
   },err =>{
@@ -372,8 +492,8 @@ const downloadFiles = async (applicationId) => {
         "Authorization": `Bearer ${tokenObj.token}`,
       };
 
-      console.log(' option >>' + JSON.stringify(option) );
-      console.log('HTTPS_ENDPOIN >>' + HTTPS_ENDPOIN);
+      // console.log(' option >>' + JSON.stringify(option) );
+      // console.log('HTTPS_ENDPOIN >>' + HTTPS_ENDPOIN);
 
 
       // // ****** start CALL
@@ -582,6 +702,7 @@ function sttAccToDB(accObj,actionBy){
       telNo=@telNo,
       accCreatedTime=@accCreatedTime,
       accLastUpdatedTime=@accLastUpdatedTime,
+      accSubmittedTime=@accSubmittedTime,
       [UpdateBy]=@actionBy,
       [UpdateDate]=getDate()
       WHERE applicationId =@applicationId
@@ -600,6 +721,7 @@ function sttAccToDB(accObj,actionBy){
             telNo,
             accCreatedTime,
             accLastUpdatedTime,
+            accSubmittedTime,
             CreateBy,
             CreateDate
             )values(
@@ -614,6 +736,7 @@ function sttAccToDB(accObj,actionBy){
           ,@telNo
           ,@accCreatedTime
           ,@accLastUpdatedTime
+          ,@accSubmittedTime
           ,@actionBy
           ,getDate()
         )
@@ -641,6 +764,7 @@ COMMIT TRANSACTION TranName;
 
       .input("accCreatedTime", sql.VarChar(30),accObj.createdTime)
       .input("accLastUpdatedTime", sql.VarChar(30), accObj.lastUpdatedTime)
+      .input("accSubmittedTime", sql.VarChar(30), accObj.submittedTime)
 
       .query(queryStr, (err, result) => {
         // console.log(JSON.stringify(result));
@@ -770,4 +894,145 @@ COMMIT TRANSACTION TranName;
       reject(err);
     })
   });
+}
+
+
+exports.reportSCHMitlog = (req, res, next) => {
+  var businessDate = getCurrentDate();
+  logger.info('reportSCHMitlog API; businessDate:' + businessDate )
+  const REPORT_SUBJECT =`E-Open submited On  ${businessDate} `
+  const HTML_HEADER=`
+  <head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+  `;
+
+  const HTML_FOOTER=`
+  </body>
+</html>
+  `;
+
+  const MaskData = require('maskdata');
+  const maskCardOptions = {
+    maskWith: "X",
+    unmaskedStartDigits: 4,
+    unmaskedEndDigits: 3
+  };
+
+
+  fnArray=[];
+  fnArray.push(exports.reportSCHMitlogPROC(businessDate,'STT_EOPEN_SUBMITTED'));
+
+  Promise.all(fnArray)
+  .then(repData => {
+
+    // Report process result by Mail
+    var mailBody='<h1>E-Open submited On' + businessDate + '</h1>'
+    mailBody += '<h3>Application submied ('+repData[0].length+') </h3>'
+
+
+ // *** Customer profile
+ mailBody +=`<TABLE>
+ <th>applicationId</th>
+ <th>submitted Time</th>
+ <th>Applicate Name</th>
+ <th>Referral Code</th>
+ <th>Referral Name</th>
+`
+
+  // MAIL to IT
+    repData[0].forEach(function(item){
+
+      var _splitData = item.msg.split("|")
+      // logger.info('Report before split>>' + JSON.stringify(_splitData))
+      // const dataAfterMasking = MaskData.maskCard(_splitData[0], maskCardOptions);
+
+      mailBody += '<tr>'
+      + '<td>' +_splitData[0]+ '</td>'
+      + '<td>' +_splitData[1]+ '</td>'
+      + '<td>' +_splitData[2]+ '</td>'
+      + '<td>' +_splitData[3]+ '</td>'
+      + '<td>' +_splitData[4]+ '</td>'
+      +'</tr>'
+    })
+    mailBody +='</TABLE>'
+
+    // *** Send mail
+    var mailObj={
+      subject:REPORT_SUBJECT,
+      body:HTML_HEADER + mailBody + HTML_FOOTER,
+      to:'yuttana@merchantasset.co.th'
+    }
+    mail.sendMailIT(mailObj);
+
+    res.status(200).json('reportSCHMitlog successful.');
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+}
+
+
+
+exports.reportSCHMitlogPROC = ((_date,keyword) => {
+
+  // logger.info('reportSCHMitlogPROC()' + _date + ' ;keyword:' + keyword);
+
+  return new Promise((resolve, reject) => {
+
+    const sql = require('mssql')
+
+    var queryStr = `
+    SELECT distinct(log_msg) AS msg
+    FROM MIT_LOG
+    WHERE [module]= @module
+    AND CONVERT(varchar,LogDateTime,112)  = CONVERT(varchar,@LogDateTime,112)
+    `
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request() // or: new sql.Request(pool1)
+      .input("module", sql.VarChar(50), keyword)
+      .input("LogDateTime", sql.VarChar(50), _date)
+      .query(queryStr, (err, result) => {
+          if(err){
+            logger.error(err);
+            reject(err);
+          }else {
+            resolve(result.recordset);
+          }
+      })
+    })
+    pool1.on('error', err => {
+      logger.error(err);
+      resolve(err);
+    })
+  });
+});
+
+
+function getCurrentDate(){
+  var today = new Date();
+  var returnDate_yyyymmddDate;
+
+  today.setDate(today.getDate());
+  returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+
+  return returnDate_yyyymmddDate
 }

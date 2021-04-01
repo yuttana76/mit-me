@@ -9,6 +9,9 @@ const sttEopen = require('../controllers/sttEopen');
 router.get("/testApi",sttEopen.testApi);
 router.post("/signVerify",sttEopen.signVerify);
 
+router.get("/reportSchedult",sttEopen.reportSCHMitlog);
+
+
 router.post("/broker-login",sttEopen.brokerLogin);
 
 // 3.1 Download Files

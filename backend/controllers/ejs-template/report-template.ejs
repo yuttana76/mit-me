@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+
+
+  .newPage{
+    size: 21cm 29.7cm;
+    margin: 2mm 10mm 27mm 16mm;
+    border-style: solid;
+  border-width: 1.5px;
+    /* change the margins as you want them to be. */
+   }
+
+   .logo{
+   color:#0033cc;
+   }
+   .alignLeft{
+   }
+   .alignRight{
+   }
+   .blueBG{
+   	background-color:DodgerBlue;
+    color:white;
+    margin:0;
+   }
+
+    table{
+    	width:100%
+    }
+
+    .title{
+    	display:inline-block;
+
+    }
+
+        </style>
+
+    </head>
+    <body>
+      <div class = 'newPage'>
+      <table >
+      	<tr>
+          <td><p class='logo alignLeft'>FundConnext</p></td>
+          <td><p class='alignRight'> วันที่ Date </p></td>
+        </tr>
+        </table>
+
+
+          <p class='blueBG'>
+          1. ข้อมูลส่วนบุคคลสำหรับประกอบการเปิดบัญชีกองทุนรวม Personal Information - For Mutual Fund Account
+          </p>
+
+          <div class="row grid-container id_type">
+          <div class="grid-item">
+          ประเภทบัตร*ID Type</div>
+
+          <div class="grid-item ">
+          <input type="checkbox" id="idcard" name="idcard" value="idcard">
+  		  <label for="idcard"> บัตรประชาชน ID Card</label><br>
+
+  <input type="checkbox" id="govid" name="govid" value="govid">
+  		  <label for="govid"> บัตรข้าราชการ / รัฐวิสาหกิจ Government ID / State Enterprise ID</label><br>
+
+  		  <div>
+          <input type="checkbox" id="driver" name="driver" value="driver">
+  		  <label for="driver">ใบขับขี่ Driver License</label><br>
+          <div>เลขที่ No. .........................</div>
+          <div>วันหมดอายุ(ค.ศ.) Expiry Date: (ฺA.D.)..................</div>
+          <div>บัตรตลอดชีพ Not Expired
+          <input type="checkbox" id="driver" name="driver" value="driver">
+          </div>
+          </div>
+
+
+<input type="checkbox" id="forien" name="forien" value="forien">
+  		  <label for="forien">บัตรคนต่างด้าว Alien Registration Card</label><br>
+
+
+<input type="checkbox" id="passport" name="passport" value="passport">
+  		  <label for="passport">พาสปอร์ต Passport </label>
+          <div>ประเทศที่ออก Issuing Country...............</div>
+          <div>เลขที่ No...............</div>
+          <div>วันหมดอายุ(ค.ศ.) Expiry Date: (ฺA.D.)...............</div>
+          </div>
+          </div>
+
+
+      <div class="row grid-container Gender">
+        <div>เพศ Gender*</div>
+        <div>
+            <input type="checkbox" id="male" name="male" value="male">
+            <label for="male">ชาย Male</label><br>
+
+            <input type="checkbox" id="female" name="female" value="female">
+            <label for="female">หญิง Female</label><br>
+        </div>
+      </div>
+
+ 	  <div class="row grid-container title ">
+        <div>คำนำหน้า Title*</div>
+        <div >
+            <input  type="checkbox" id="mr" name="mr" value="mr">
+            <label  for="mr">นาย Mr.</label><br>
+
+            <input  type="checkbox" id="mrs" name="mrs" value="mrs">
+            <label  for="mrs">นาง Mrs.</label><br>
+
+            <input  type="checkbox" id="miss" name="miss" value="miss">
+            <label  for="miss">นางสาว Miss</label><br>
+
+            <input  type="checkbox" id="oth" name="oth" value="oth">
+            <label  for="oth">อื่นๆ Other .................</label><br>
+        </div>
+
+
+      </div>
+
+     </div>
+    </body>
+</html>

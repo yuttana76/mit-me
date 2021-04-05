@@ -3,8 +3,9 @@ import {CommonModule, DatePipe} from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { TradeRoutingModule } from './trade-routing.module';
 // import { ChartsModule } from 'ng2-charts/ng2-charts';
+import { ChartsModule } from 'ng2-charts';
 
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+// import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 import { SummaryRepComponent } from './summary-rep/summary-rep.component';
 import { AngularMaterialModule } from '../../angular-material.module';
@@ -13,7 +14,7 @@ import { CustomerDetailComponent } from './customerDetail/customerDetail.compone
 import { CustomerListComponent, GroupCodeStrPipe, CustomerFullnamePipe } from './customer-list/customer-list.component';
 import { SaleDialogComponent } from './dialog/sale-dialog/sale-dialog.component';
 
-import { AlertModule } from 'ngx-bootstrap/alert';
+// import { AlertModule } from 'ngx-bootstrap/alert';
 import { ResultDialogComponent } from './dialog/result-dialog/result-dialog.component';
 import { WorkFlowComponent, WfStatusPipe } from './work-flow/work-flow.component';
 import { WorkFlowActDialogComponent } from './dialog/work-flow-act-dialog/work-flow-act-dialog.component';
@@ -49,7 +50,7 @@ import { SuitChartComponent } from './suit-chart/suit-chart.component';
 import { PersonalInfoComponent } from './personal-info/personal-info.component';
 import { ChildrenDialogComponent } from './dialog/children-dialog/children-dialog.component';
 
-import { TabsModule } from 'ngx-bootstrap/tabs';
+// import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SuitResultTableComponent } from './suit-result-table/suit-result-table.component';
 import { LedInspDashComponent } from './led-insp-dash/led-insp-dash.component';
 import { LedInspDetailComponent } from './led-insp-detail/led-insp-detail.component';
@@ -77,7 +78,7 @@ import { dateDBFormatPipe } from './pipe/dateFormatPipe';
 import { KycDetailDialogComponent } from './dialog/kyc-detail-dialog/kyc-detail-dialog.component';
 import { SurveySearchActionDialogComponent } from './dialog/surveySearch-action-dialog/surveySearch-action-dialog.component';
 
-import { NgxFloatButtonModule } from 'ngx-float-button';
+// import { NgxFloatButtonModule } from 'ngx-float-button';
 import { BankAccountDialogComponent } from './dialog/bank-account-dialog/bank-account-dialog.component';
 import { FCUtilityComponent } from './fcutility/fcutility.component';
 import { FcInvesCompDialogComponent } from './dialog/fc-inves-comp-dialog/fc-inves-comp-dialog.component';
@@ -110,20 +111,20 @@ import { SttOpenDetailComponent } from './stt-open-detail/stt-open-detail.compon
     AngularMaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    AlertModule.forRoot(),
+    // AlertModule.forRoot(),
     NgbModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    // ChartsModule,
-    TabsModule.forRoot(),
+    ChartsModule,
+    // TabsModule.forRoot(),
     ReactiveFormsModule,
     RecaptchaModule.forRoot({
         siteKey: '6LeupK8UAAAAAECl56nM-7H1Q1L_q1kF6rEN-yxy',
     }),
-    BsDropdownModule.forRoot(),
-    NgxFloatButtonModule,
+    // BsDropdownModule.forRoot(),
+    // NgxFloatButtonModule,
 
   ],
   declarations: [

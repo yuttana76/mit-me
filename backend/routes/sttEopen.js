@@ -14,16 +14,14 @@ router.get("/reportSchedult",sttEopen.reportSCHMitlog);
 
 router.post("/broker-login",sttEopen.brokerLogin);
 
-// 3.1 Download Files
-// :11009338
-router.get("/applications/:applicationId/files",sttEopen.downloadFiles);
 
-// 3.3 List Application Id
+// 3.3 List Applications
 router.get("/applications",sttEopen.applications);
 
 // 3.2 Download JSON
-// :11009338
 router.get("/downloadJSON/:applicationId",sttEopen.downloadJSON);
 
+// 3.1 Download Files
+router.get("/applications/:applicationId/files",sttEopen.downloadFiles);
 
 module.exports = router;

@@ -382,20 +382,23 @@ exports.downloadJSON = (req, res, next) =>{
 
 }
 
+/*
+status: (blank is get all status)
+- CREATED - SUBMITTED - NEED_MODIFICATION - REJECTED - APPROVED
+ */
 exports.applications = (req, res, next) =>{
 
   // var status = req.query.status
   var startdate = req.query.startdate //yyyy-mm-dd
   var enddate = req.query.enddate //yyyy-mm-dd
-  // var actionBy = req.query.actionBy
 
   // let status='SUBMITTED'
   let status=''
-  // let startLastUpdatedTime= startdate +'T00:00:00';
-  // let endLastUpdatedTime=enddate +'T23:59:59';
+  let startLastUpdatedTime= startdate +'T00:00:00';
+  let endLastUpdatedTime=enddate +'T23:59:59';
 
-  let startLastUpdatedTime= '2021-03-31T00:00:00'
-  let endLastUpdatedTime='2021-04-01T23:59:59'
+  // let startLastUpdatedTime= '2021-03-31T00:00:00'
+  // let endLastUpdatedTime='2021-04-01T23:59:59'
   let actionBy='MIT-SYS'
 
   logger.info(`*** status:${status}  ;startLastUpdatedTime:${startLastUpdatedTime}  ;endLastUpdatedTime:${endLastUpdatedTime}`)
@@ -416,7 +419,7 @@ exports.applications = (req, res, next) =>{
           var submitDate = new Date(obj.submittedTime);
           var currDate = new Date();
 
-
+        // Calculate to be hours
         const milliseconds = Math.abs(currDate - submitDate);
         const hours = milliseconds / 36e5;
 

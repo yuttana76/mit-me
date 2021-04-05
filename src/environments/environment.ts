@@ -5,8 +5,8 @@
 
 export const environment = {
   production: false,
-  // apiURL: 'http://localhost:3000/api' // Development office
-  apiURL: 'http://203.151.63.132:3000/api' // Development mac
+  apiURL: 'http://localhost:3000/api' // Development office
+  // apiURL: 'http://203.151.63.132:3000/api' // Development mac
   // apiURL: 'https://192.168.10.58/api' // Development
   // apiURL: 'https://mpamapi.merchantasset.co.th/api' // PROD nginx
 };

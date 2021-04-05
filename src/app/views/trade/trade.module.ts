@@ -3,9 +3,8 @@ import {CommonModule, DatePipe} from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { TradeRoutingModule } from './trade-routing.module';
 // import { ChartsModule } from 'ng2-charts/ng2-charts';
-import { ChartsModule } from 'ng2-charts';
 
-// import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 import { SummaryRepComponent } from './summary-rep/summary-rep.component';
 import { AngularMaterialModule } from '../../angular-material.module';
@@ -117,7 +116,7 @@ import { SttOpenDetailComponent } from './stt-open-detail/stt-open-detail.compon
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    ChartsModule,
+    // ChartsModule,
     // TabsModule.forRoot(),
     ReactiveFormsModule,
     RecaptchaModule.forRoot({

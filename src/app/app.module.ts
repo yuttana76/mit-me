@@ -83,7 +83,6 @@ import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/materi
     // ChartsModule,
     HttpClientModule,
     FormsModule,
-
     HttpClientModule,
     AngularMaterialModule,
     TradeModule,

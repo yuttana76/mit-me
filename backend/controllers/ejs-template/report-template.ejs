@@ -15,24 +15,26 @@
    .logo{
    color:#0033cc;
    }
-   .alignLeft{
-   }
-   .alignRight{
-   }
+
    .blueBG{
    	background-color:DodgerBlue;
     color:white;
     margin:0;
    }
 
+   .blueText{
+   	color:DodgerBlue;
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+   }
+
     table{
     	width:100%
     }
 
-    .title{
-    	display:inline-block;
 
-    }
 
         </style>
 
@@ -46,12 +48,11 @@
         </tr>
         </table>
 
-
           <p class='blueBG'>
           1. ข้อมูลส่วนบุคคลสำหรับประกอบการเปิดบัญชีกองทุนรวม Personal Information - For Mutual Fund Account
           </p>
 
-          <div class="row grid-container id_type">
+          <div class="row ID_TYPE ">
           <div class="grid-item">
           ประเภทบัตร*ID Type</div>
 
@@ -59,7 +60,7 @@
           <input type="checkbox" id="idcard" name="idcard" value="idcard">
   		  <label for="idcard"> บัตรประชาชน ID Card</label><br>
 
-  <input type="checkbox" id="govid" name="govid" value="govid">
+  		  <input type="checkbox" id="govid" name="govid" value="govid">
   		  <label for="govid"> บัตรข้าราชการ / รัฐวิสาหกิจ Government ID / State Enterprise ID</label><br>
 
   		  <div>
@@ -83,7 +84,7 @@
           <div>เลขที่ No...............</div>
           <div>วันหมดอายุ(ค.ศ.) Expiry Date: (ฺA.D.)...............</div>
           </div>
-          </div>
+          </div>  <!--ID_TYPE-->
 
 
       <div class="row grid-container Gender">
@@ -99,7 +100,7 @@
 
  	  <div class="row grid-container title ">
         <div>คำนำหน้า Title*</div>
-        <div >
+        <div>
             <input  type="checkbox" id="mr" name="mr" value="mr">
             <label  for="mr">นาย Mr.</label><br>
 
@@ -112,10 +113,483 @@
             <input  type="checkbox" id="oth" name="oth" value="oth">
             <label  for="oth">อื่นๆ Other .................</label><br>
         </div>
-
-
       </div>
 
-     </div>
+      <div class="row">
+        <div>ชื่อ - นามสกุล (ภาษาไทย)* .................. </div>
+        <div>มือถือ Mobile* .................</div>
+      </div>
+
+      <div class="row">
+        <div>Name - Surname (English)* .................. </div>
+        <div>อีเมล์E-mail .................</div>
+      </div>
+
+      <div class="row">
+        <div>วันเดือนปีเกิด (ค.ศ.) Date of Birth (ฺA.D.)* .................. </div>
+        <div>สัญชาติ Nationality* .................</div>
+      </div>
+
+	  <div class="row grid-container title ">
+        <div>คสถานภาพ Marital Status*</div>
+        <div>
+            <input  type="checkbox" id="mr" name="mr" value="mr">
+            <label  for="mr">โสด Single</label><br>
+
+            <input  type="checkbox" id="mrs" name="mrs" value="mrs">
+            <label  for="mrs">สมรส Married</label><br>
+
+            <input  type="checkbox" id="miss" name="miss" value="miss">
+            <label  for="miss">หย่า Divorced</label><br>
+
+            <input  type="checkbox" id="oth" name="oth" value="oth">
+            <label  for="oth">หม้าย Widowed</label><br>
+        </div>
+      </div>
+
+      <!--SPOUSE-->
+      <div class="blueText">ข้อมูลคู่สมรส (ถ้ามี) Spouse Information (if any)</div>
+
+      <!--SP ID Type-->
+       <div class="row ID_TYPE ">
+          <div class="grid-item">
+          ประเภทบัตร*ID Type</div>
+
+          <div class="grid-item ">
+          <input type="checkbox" id="idcard" name="idcard" value="idcard">
+  		  <label for="idcard"> บัตรประชาชน ID Card</label><br>
+
+  		  <input type="checkbox" id="govid" name="govid" value="govid">
+  		  <label for="govid"> บัตรข้าราชการ / รัฐวิสาหกิจ Government ID / State Enterprise ID</label><br>
+
+  		  <div>
+          <input type="checkbox" id="driver" name="driver" value="driver">
+  		  <label for="driver">ใบขับขี่ Driver License</label><br>
+          <div>เลขที่ No. .........................</div>
+          <div>วันหมดอายุ(ค.ศ.) Expiry Date: (ฺA.D.)..................</div>
+          <div>บัตรตลอดชีพ Not Expired
+          <input type="checkbox" id="driver" name="driver" value="driver">
+          </div>
+          </div>
+
+<input type="checkbox" id="forien" name="forien" value="forien">
+  		  <label for="forien">บัตรคนต่างด้าว Alien Registration Card</label><br>
+
+
+<input type="checkbox" id="passport" name="passport" value="passport">
+  		  <label for="passport">พาสปอร์ต Passport </label>
+          <div>ประเทศที่ออก Issuing Country...............</div>
+          <div>เลขที่ No...............</div>
+          <div>วันหมดอายุ(ค.ศ.) Expiry Date: (ฺA.D.)...............</div>
+          </div>
+          </div>  <!--ID_TYPE-->
+
+          <!--SP title-->
+ <div class="row grid-container title ">
+        <div>คำนำหน้า Title*</div>
+        <div>
+            <input  type="checkbox" id="mr" name="mr" value="mr">
+            <label  for="mr">นาย Mr.</label><br>
+
+            <input  type="checkbox" id="mrs" name="mrs" value="mrs">
+            <label  for="mrs">นาง Mrs.</label><br>
+
+            <input  type="checkbox" id="miss" name="miss" value="miss">
+            <label  for="miss">นางสาว Miss</label><br>
+
+            <input  type="checkbox" id="oth" name="oth" value="oth">
+            <label  for="oth">อื่นๆ Other .................</label><br>
+        </div>
+      </div>
+
+ 		<!--SP Name-->
+      <div class="row">
+        <div>ชื่อ - นามสกุล Name - Surname* .................. </div>
+        <div>โทรศัพท์Telephone .................</div>
+      </div>
+
+      <!--CHILDREN-->
+<div class="blueText">จำนวนบุตรหรือบุตรบุญธรรมที่ยังไม่บรรลุนิติภาวะ (อายุไม่ถึง 20 ปีและ ยังไม่ได้สมรส)</div>
+<div class="blueText">Number of children who is under 20 and not married</div>
+
+ <!--CHILDREN ID Type-->
+       <div class="row ID_TYPE ">
+          <div class="grid-item">
+          ประเภทบัตร*ID Type</div>
+
+          <div class="grid-item ">
+          <input type="checkbox" id="idcard" name="idcard" value="idcard">
+  		  <label for="idcard"> บัตรประชาชน ID Card</label><br>
+
+  			<input type="checkbox" id="forien" name="forien" value="forien">
+  		  <label for="forien">บัตรคนต่างด้าว Alien Registration Card</label><br>
+
+  		  <div>
+
+          <div>เลขที่ No. .........................</div>
+          <div>วันหมดอายุ(ค.ศ.) Expiry Date: (ฺA.D.)..................</div>
+          <div>บัตรตลอดชีพ Not Expired
+          <input type="checkbox" id="driver" name="driver" value="driver">
+          </div>
+          </div>
+
+<input type="checkbox" id="passport" name="passport" value="passport">
+  		  <label for="passport">พาสปอร์ต Passport </label>
+          <div>ประเทศที่ออก Issuing Country...............</div>
+          <div>เลขที่ No...............</div>
+          <div>วันหมดอายุ(ค.ศ.) Expiry Date: (ฺA.D.)...............</div>
+          </div>
+          </div>  <!--ID_TYPE-->
+
+          <!--CHILDREN title-->
+ <div class="row grid-container title ">
+        <div>คำนำหน้า Title*</div>
+        <div>
+            <input  type="checkbox" id="mr" name="mr" value="mr">
+            <label  for="mr">เด็กชาย / นาย Mr.</label><br>
+
+            <input  type="checkbox" id="mrs" name="mrs" value="mrs">
+            <label  for="mrs">เด็กหญิง / นางสาว Miss</label><br>
+
+        </div>
+      </div>
+
+ 		<!--CHILDREN Name-->
+      <div class="row">
+        <div>ชื่อ - นามสกุล Name - Surname* .................. </div>
+      </div>
+
+      <div class="row">
+        <div>วันเดือนปีเกิด (ค.ศ.) Date of Birth (ฺA.D.) .................. </div>
+      </div>
+
+     </div> <!-- class = 'newPage'-->
+
+<!--Page 2-->
+<div class = 'newPage'>
+
+<p class='blueBG'>2. ที่อยู่ Address</p>
+
+<div class="blueText">ที่อยู่ตามทะเบียนบ้าน / ที่อยู่ในประเทศเจ้าของสัญชาติ Residence Registration Address / Address in home country*</div>
+
+<div>เลขที่ Address No.....................หมู่ที่ Moo No ....................อาคาร/หมู่บ้าน Building/Mooban.........
+</div>
+<div>ชั้น Floor.......
+ซอย Soi ....................
+ถนน Road ......................</div>
+<div>ตำบล Sub-district/Tambon .................. อำเภอ District/Amphur ..............</div>
+<div>จังหวัด Province ...............
+รหัสไปรษณีย์Postal Code .............
+ประเทศ Country ...............</div>
+<div>โทรศัพท์Telephone .................. </div>
+
+<div class="blueText">ที่อยู่ที่ทำงาน Workplace Address*</div>
+<input type="checkbox" id="work_as_reg" name="forien" value="forien">
+  		  <label for="work_as_reg">ตามทะเบียนบ้าน Same as Residence Registration Address</label><br>
+
+<input type="checkbox" id="work_as_oth" name="forien" value="forien">
+  		  <label for="work_as_oth">อื่นๆ (โปรดระบุ) Other (Please specify)</label><br>
+
+
+<div class="blueText">ที่อยู่ปัจจุบัน Current Address*</div>
+<input type="checkbox" id="curr_as_reg" name="forien" value="forien">
+  		  <label for="work_as_reg">ตามทะเบียนบ้าน Same as Residence Registration Address</label><br>
+
+<input type="checkbox" id="curr_as_work" name="forien" value="forien">
+  		  <label for="work_as_oth">ตามที่ทำงาน Same as Workplace Address</label><br>
+
+
+<input type="checkbox" id="curr_as_oth" name="forien" value="forien">
+  		  <label for="work_as_oth">อื่นๆ (โปรดระบุ) Other (Please specify)</label><br>
+
+<p class='blueBG'>3. ข้อมูลเพิ่มเติม Background</p>
+<div id='occupation'>
+
+<div class="blueText">อาชีพ Occupation*</div>
+  <div>
+  <input type="checkbox" >
+  เกษตรกร Agriculturist
+  </div>
+  <div>
+  <input type="checkbox" >
+  พระภิกษุ/ นักบวช Buddhist Monk / Priest
+  </div>
+  <div>
+  <input type="checkbox" >
+  เจ้าของกิจการ / ธุรกิจส่วนตัว Business Owner
+  </div>
+  <div>
+  <input type="checkbox" >
+  เจ้าของกิจการ / ธุรกิจส่วนตัว Business Owner
+  </div>
+  <div>
+  <input type="checkbox" >
+  พนักงานบริษัท Corporate Employee
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  แพทย์/ พยาบาล Doctor / Nurse
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  กิจการครอบครัว Family Business
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  ข้าราชการ Government Employee
+  </div>
+
+ <div>
+  <input type="checkbox" >
+  แม่บ้าน / พ่อบ้าน Housewife
+  </div>
+
+ <div>
+  <input type="checkbox" >
+  นักลงทุน Investor
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  นักการเมือง Politician
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  เกษียณอายุ Retirement
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  อาชีพอิสระ Self-Employed
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  พนักงานรัฐวิสาหกิจ State Enterprise Employee
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  นักเรียน / นักศึกษา Student
+  </div>
+
+ <div>
+  <input type="checkbox" >
+  ครู/ อาจารย์ Teacher
+  </div>
+
+ <div>
+  <input type="checkbox" >
+  อื่นๆ (โปรดระบุ) Other (Please specify)
+  </div>
+
+</div> <!--occupation-->
+
+<div id='businessType*'>
+	<div class="blueText">ประเภทธุรกิจ Business Type*</div>
+
+    <div>
+    <input type="checkbox" >
+    ค้าของเก่า / วัตถุโบราณ Antique Trading
+    </div>
+    <div>
+    <input type="checkbox" >
+    อาวุธยุทธภัณฑ์ Armament
+    </div>
+    <div>
+    <input type="checkbox" >
+    คาสิโน / การพนัน Casino / Gambling
+    </div>
+     <div>
+    <input type="checkbox" >
+    สหกรณ์/ มูลนิธิ/ สมาคม / สโมสร / วัด / มัสยิด Co-operative /
+Foundation / Association / Club / Temple / Mosque
+    </div>
+	<div>
+    <input type="checkbox" >
+    โอนและรับโอนเงินทั้งภายในและต่างประเทศ
+Domestic or International Money Transfer
+    </div>
+    <div>
+    <input type="checkbox" >
+    สถานบริการตามกฎหมายว่าด้วยสถานบริการ Entertainment Business
+    </div>
+    <div>
+    <input type="checkbox" >
+    การเงิน / ธนาคาร Financial Service / Banking
+    </div>
+    <div>
+    <input type="checkbox" >
+    แลกเปลี่ยนเงินตราต่างประเทศ Foreign Currency Exchange
+    </div>
+    <div>
+    <input type="checkbox" >
+    โรงแรม / ภัตตาคาร Hotel / Restaurant
+    </div>
+    <div>
+    <input type="checkbox" >
+    ประกันภัย / ประกันชีวิต Insurance / Assurance
+    </div>
+    <div>
+    <input type="checkbox" >
+    ค้าอัญมณี/ ทอง Jewelry / Gold Trading
+    </div>
+    <div>
+    <input type="checkbox" >
+    อสังหาริมทรัพย์ Property / Real Estate
+    </div>
+    <div>
+    <input type="checkbox" >
+    นายหน้าจัดหางาน Recruitment Agency
+    </div>
+    <div>
+    <input type="checkbox" >
+    ธุรกิจนำเที่ยว / บริษัททัวร์ Travel Industry / Travel Agency
+    </div>
+    <div>
+    <input type="checkbox" >
+    มหาวิทยาลัย / โรงเรียน / สถานศึกษา
+University / School / Education Center
+    </div>
+    <div>
+    <input type="checkbox" >
+    อื่นๆ (โปรดระบุ) Other (Please specify)............
+    </div>
+
+</div>   <!--Business Type*-->
+
+<div id="source_country">
+	<div class="blueText">แหล่งที่มาของรายได้จากประเทศ Source of Income's Country*</div>
+	<div>
+    <input type="checkbox" >
+    ประเทศไทย Thailand
+    </div>
+    <div>
+    <input type="checkbox" >
+    อื่นๆ (โปรดระบุ) Other (Please specify) ................
+    </div>
+
+</div>
+
+<div id="source">
+<div class="blueText">แหล่งที่มาของรายได้Source of Income*</div>
+<div>(เลือกได้มากกว่า 1 ข้อ You can select more than 1 item)</div>
+	<div>
+    <input type="checkbox" >
+    เงินเดือน Salary
+    </div>
+    <div>
+    <input type="checkbox" >
+    เงินออม Savings
+    </div>
+    <div>
+    <input type="checkbox" >
+    เงินเกษียณ Retirement Fund
+    </div>
+    <div>
+    <input type="checkbox" >
+    มรดก Inheritance
+    </div>
+    <div>
+    <input type="checkbox" >
+    การลงทุน Investment
+    </div>
+    <div>
+    <input type="checkbox" >
+    ประกอบธุรกิจ Own Business
+    </div>
+    <div>
+    <input type="checkbox" >
+    อื่นๆ (โปรดระบุ) Other (Please specify).................
+    </div>
+</div>
+
+<div id="income">
+<div class="blueText">รายได้ต่อเดือน (บาท) Monthly Income (Baht)*</div>
+	<div>
+    <input type="checkbox" >
+    < 15,000
+    </div>
+	<div>
+    <input type="checkbox" >
+    15,001 - 30,000
+    </div>
+    <div>
+    <input type="checkbox" >
+    30,001 - 50,000
+    </div>
+    <div>
+    <input type="checkbox" >
+    50,001 - 100,000
+    </div>
+    <div>
+    <input type="checkbox" >
+    100,001 - 500,000
+    </div>
+    <div>
+    <input type="checkbox" >
+    500,001 - 1,000,000
+    </div>
+	<div>
+    <input type="checkbox" >
+    > 1,000,000
+    </div>
+
+</div>
+
+<div id="income">
+<div class="blueText">ท่านเคยมีประวัติการกระทำผิดกฏหมายฟอกเงินหรือไม่*<br>
+Do you have any money laundering infringement record?</div>
+<div>
+    <input type="checkbox" >
+    ใช่Yes
+    </div>
+	<div>
+    <input type="checkbox" >
+    ไม่ใช่No
+    </div>
+</div>
+
+
+<div id="income">
+<div class="blueText">ท่านเป็นนักการเมืองหรือเกี่ยวข้องกับนักการเมือง หรือบุคคลที่มีสถานภาพทางการเมืองหรือไม่*<br>Are you a politician or connected to any Political person?</div>
+<div>
+    <input type="checkbox" >
+    ใช่Yes
+    </div>
+	<div>
+    <input type="checkbox" >
+    ไม่ใช่No
+    </div>
+</div>
+
+
+<div id="income">
+<div class="blueText">ท่านเคยถูกปฏิเสธการรับทำธุรกรรมทางการเงินจากสถาบันทางการเงินอื่นหรือไม่*<br>
+Have you ever been denied to process transaction from other financial institutions?</div>
+<div>
+    <input type="checkbox" >
+    ใช่Yes
+    </div>
+	<div>
+    <input type="checkbox" >
+    ไม่ใช่No
+    </div>
+</div>
+
+<div id="applicaint_sign">
+<p>................................</p>
+<p>(................................)</p>
+<p>ผู้ขอเปิดบัญชีApplicant Signature</p>
+</div>
+
+</div> <!-- class = 'newPage' <!--Page 2-->
+<div>ผู้แนะนำลูกค้า Referral ......................</div>
+<div>ผู้รับเปิดบัญชีAccepted By ........................</div>
+
     </body>
 </html>

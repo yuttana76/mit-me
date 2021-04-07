@@ -70,21 +70,18 @@ let students = [
 
 exports.testApi = (req,res,next)=>{
 
-  // submittedTime="2021-03-31T10:17:04.342";
-  var submitDate = new Date("2021-03-31T17:34:04.342");
-  var currDate = new Date();
-logger.info(`submittedTime=${submitDate}   ;DATE=${currDate}`)
+//   var submitDate = new Date("2021-03-31T17:34:04.342");
+//   var currDate = new Date();
+// logger.info(`submittedTime=${submitDate}   ;DATE=${currDate}`)
 
-const milliseconds = Math.abs(currDate - submitDate);
-const hours = milliseconds / 36e5;
+// const milliseconds = Math.abs(currDate - submitDate);
+// const hours = milliseconds / 36e5;
+// logger.info(hours);
+// res.status(200).json(hours);
 
-logger.info(hours);
-
-res.status(200).json(hours);
-
-  // fundConnextFormPDF(fundData).then(data=>{
-  //   res.status(200).json(JSON.stringify(data));
-  // })
+  fundConnextFormPDF().then(data=>{
+    res.status(200).json(JSON.stringify(data));
+  })
 
 }
 

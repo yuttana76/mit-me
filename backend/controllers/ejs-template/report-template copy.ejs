@@ -605,137 +605,292 @@ body {
     occ = obj.data.data.financialInfo[i]
     if( occ.questionId=='occupationId' && occ.answer.length>0){
       %>
-      <input type="checkbox"  checked>
+
+      <input type="checkbox"  check>
       <%=occ.answer[0].label %>
-  <%
+      </div>
+
+      <%
     }
   }
   %>
 
+
+<!--
+  <div>
+  <input type="checkbox" >
+  เกษตรกร Agriculturist
+  </div>
+  <div>
+  <input type="checkbox" >
+  พระภิกษุ/ นักบวช Buddhist Monk / Priest
+  </div>
+  <div>
+  <input type="checkbox" >
+  เจ้าของกิจการ / ธุรกิจส่วนตัว Business Owner
+  </div>
+  <div>
+  <input type="checkbox" >
+  เจ้าของกิจการ / ธุรกิจส่วนตัว Business Owner
+  </div>
+  <div>
+  <input type="checkbox" >
+  พนักงานบริษัท Corporate Employee
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  แพทย์/ พยาบาล Doctor / Nurse
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  กิจการครอบครัว Family Business
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  ข้าราชการ Government Employee
+  </div>
+
+ <div>
+  <input type="checkbox" >
+  แม่บ้าน / พ่อบ้าน Housewife
+  </div>
+
+ <div>
+  <input type="checkbox" >
+  นักลงทุน Investor
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  นักการเมือง Politician
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  เกษียณอายุ Retirement
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  อาชีพอิสระ Self-Employed
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  พนักงานรัฐวิสาหกิจ State Enterprise Employee
+  </div>
+
+  <div>
+  <input type="checkbox" >
+  นักเรียน / นักศึกษา Student
+  </div>
+
+ <div>
+  <input type="checkbox" >
+  ครู/ อาจารย์ Teacher
+  </div>
+
+ <div>
+  <input type="checkbox" >
+  อื่นๆ (โปรดระบุ) Other (Please specify)
+  </div>
+-->
 </div> <!--occupation-->
 
 <div id='businessType*'>
 	<div class="blueText">ประเภทธุรกิจ Business Type*</div>
-  <%
-  for (i in obj.data.data.financialInfo) {
-    occ = obj.data.data.financialInfo[i]
-    if( occ.questionId=='businessTypeId' && occ.answer.length>0){
-      %>
-      <input type="checkbox"  checked>
-      <%=occ.answer[0].label %>
-  <%
-    }
-  }
-  %>
+
+    <div>
+    <input type="checkbox" >
+    ค้าของเก่า / วัตถุโบราณ Antique Trading
+    </div>
+    <div>
+    <input type="checkbox" >
+    อาวุธยุทธภัณฑ์ Armament
+    </div>
+    <div>
+    <input type="checkbox" >
+    คาสิโน / การพนัน Casino / Gambling
+    </div>
+     <div>
+    <input type="checkbox" >
+    สหกรณ์/ มูลนิธิ/ สมาคม / สโมสร / วัด / มัสยิด Co-operative /
+Foundation / Association / Club / Temple / Mosque
+    </div>
+	<div>
+    <input type="checkbox" >
+    โอนและรับโอนเงินทั้งภายในและต่างประเทศ
+Domestic or International Money Transfer
+    </div>
+    <div>
+    <input type="checkbox" >
+    สถานบริการตามกฎหมายว่าด้วยสถานบริการ Entertainment Business
+    </div>
+    <div>
+    <input type="checkbox" >
+    การเงิน / ธนาคาร Financial Service / Banking
+    </div>
+    <div>
+    <input type="checkbox" >
+    แลกเปลี่ยนเงินตราต่างประเทศ Foreign Currency Exchange
+    </div>
+    <div>
+    <input type="checkbox" >
+    โรงแรม / ภัตตาคาร Hotel / Restaurant
+    </div>
+    <div>
+    <input type="checkbox" >
+    ประกันภัย / ประกันชีวิต Insurance / Assurance
+    </div>
+    <div>
+    <input type="checkbox" >
+    ค้าอัญมณี/ ทอง Jewelry / Gold Trading
+    </div>
+    <div>
+    <input type="checkbox" >
+    อสังหาริมทรัพย์ Property / Real Estate
+    </div>
+    <div>
+    <input type="checkbox" >
+    นายหน้าจัดหางาน Recruitment Agency
+    </div>
+    <div>
+    <input type="checkbox" >
+    ธุรกิจนำเที่ยว / บริษัททัวร์ Travel Industry / Travel Agency
+    </div>
+    <div>
+    <input type="checkbox" >
+    มหาวิทยาลัย / โรงเรียน / สถานศึกษา
+University / School / Education Center
+    </div>
+    <div>
+    <input type="checkbox" >
+    อื่นๆ (โปรดระบุ) Other (Please specify)............
+    </div>
 
 </div>   <!--Business Type*-->
 
 <div id="source_country">
 	<div class="blueText">แหล่งที่มาของรายได้จากประเทศ Source of Income's Country*</div>
 	<div>
-
-    <%
-    for (i in obj.data.data.financialInfo) {
-      occ = obj.data.data.financialInfo[i]
-      if( occ.questionId=='incomeSourceCountry' && occ.answer.length>0){
-        %>
-        <input type="checkbox"  checked>
-        <%=occ.answer[0].label %>
-    <%
-      }
-    }
-    %>
+    <input type="checkbox" >
+    ประเทศไทย Thailand
+    </div>
+    <div>
+    <input type="checkbox" >
+    อื่นๆ (โปรดระบุ) Other (Please specify) ................
+    </div>
 
 </div>
 
 <div id="source">
 <div class="blueText">แหล่งที่มาของรายได้Source of Income*</div>
 <div>(เลือกได้มากกว่า 1 ข้อ You can select more than 1 item)</div>
-
-<%
-for (i in obj.data.data.financialInfo) {
-  occ = obj.data.data.financialInfo[i]
-  if( occ.questionId=='incomeSource' && occ.answer.length>0){
-    %>
-    <input type="checkbox"  checked>
-    <%=occ.answer[0].label %>
-<%
-  }
-}
-%>
+	<div>
+    <input type="checkbox" >
+    เงินเดือน Salary
+    </div>
+    <div>
+    <input type="checkbox" >
+    เงินออม Savings
+    </div>
+    <div>
+    <input type="checkbox" >
+    เงินเกษียณ Retirement Fund
+    </div>
+    <div>
+    <input type="checkbox" >
+    มรดก Inheritance
+    </div>
+    <div>
+    <input type="checkbox" >
+    การลงทุน Investment
+    </div>
+    <div>
+    <input type="checkbox" >
+    ประกอบธุรกิจ Own Business
+    </div>
+    <div>
+    <input type="checkbox" >
+    อื่นๆ (โปรดระบุ) Other (Please specify).................
+    </div>
+</div>
 
 <div id="income">
 <div class="blueText">รายได้ต่อเดือน (บาท) Monthly Income (Baht)*</div>
-<%
-for (i in obj.data.data.financialInfo) {
-  occ = obj.data.data.financialInfo[i]
-  if( occ.questionId=='monthlyIncomeLevel' && occ.answer.length>0){
-    %>
-    <input type="checkbox"  checked>
-    <%=occ.answer[0].label %>
-<%
-  }
-}
-%>
+	<div>
+    <input type="checkbox" >
+    < 15,000
+    </div>
+	<div>
+    <input type="checkbox" >
+    15,001 - 30,000
+    </div>
+    <div>
+    <input type="checkbox" >
+    30,001 - 50,000
+    </div>
+    <div>
+    <input type="checkbox" >
+    50,001 - 100,000
+    </div>
+    <div>
+    <input type="checkbox" >
+    100,001 - 500,000
+    </div>
+    <div>
+    <input type="checkbox" >
+    500,001 - 1,000,000
+    </div>
+	<div>
+    <input type="checkbox" >
+    > 1,000,000
+    </div>
 
 </div>
 
 <div id="income">
 <div class="blueText">ท่านเคยมีประวัติการกระทำผิดกฏหมายฟอกเงินหรือไม่*<br>
 Do you have any money laundering infringement record?</div>
-<%
-for (i in obj.data.data.declarationInfo) {
-  declare = obj.data.data.declarationInfo[i]
-  if( declare.questionId=='committedMoneyLaundering' && declare.answer.length>0){
-    %>
-    <input type="checkbox"  checked>
-    <%=declare.answer[0].label %>
-<%
-  }
-}
-%>
+<div>
+    <input type="checkbox" >
+    ใช่Yes
+    </div>
+	<div>
+    <input type="checkbox" >
+    ไม่ใช่No
+    </div>
 </div>
-
 
 
 <div id="income">
 <div class="blueText">ท่านเป็นนักการเมืองหรือเกี่ยวข้องกับนักการเมือง หรือบุคคลที่มีสถานภาพทางการเมืองหรือไม่*<br>Are you a politician or connected to any Political person?</div>
-<%
-for (i in obj.data.data.declarationInfo) {
-  declare = obj.data.data.declarationInfo[i]
-  if( declare.questionId=='politicalRelatedPerson' && declare.answer.length>0){
-    %>
-    <input type="checkbox"  checked>
-    <%=declare.answer[0].label %>
-<%
-  }
-}
-%>
-
+<div>
+    <input type="checkbox" >
+    ใช่Yes
+    </div>
+	<div>
+    <input type="checkbox" >
+    ไม่ใช่No
+    </div>
 </div>
 
 
 <div id="income">
 <div class="blueText">ท่านเคยถูกปฏิเสธการรับทำธุรกรรมทางการเงินจากสถาบันทางการเงินอื่นหรือไม่*<br>
 Have you ever been denied to process transaction from other financial institutions?</div>
-
-<%
-for (i in obj.data.data.declarationInfo) {
-  declare = obj.data.data.declarationInfo[i]
-  if( declare.questionId=='rejectFinancialTransaction' && declare.answer.length>0){
-    %>
-    <input type="checkbox"  checked>
-    <%=declare.answer[0].label %>
-<%
-  }
-}
-%>
+<div>
+    <input type="checkbox" >
+    ใช่Yes
+    </div>
+	<div>
+    <input type="checkbox" >
+    ไม่ใช่No
+    </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-
 
 <div id="applicaint_sign">
 <p>................................</p>
@@ -744,7 +899,6 @@ for (i in obj.data.data.declarationInfo) {
 </div>
 
 </div> <!-- class = 'newPage' <!--Page 2-->
-
 <div>ผู้แนะนำลูกค้า Referral ......................</div>
 <div>ผู้รับเปิดบัญชีAccepted By ........................</div>
 
@@ -755,86 +909,42 @@ for (i in obj.data.data.declarationInfo) {
     </p>
 
     <p class='blueBG'>ที่อยู่สำหรับจัดส่งเอกสาร Mailing Address*</p>
-
-    <%
-    console.log(" *** mailingAddressSameAsFlag>>" + obj.data.data.mailingAddressSameAsFlag.key)
-
-    if(obj.data.data.mailingAddressSameAsFlag.key ==="Contact"){
-        console.log("True")
-    }else{
-      console.log("False")
-    }
-
-    if(obj.data.data.mailingAddressSameAsFlag.key === "Email"){
-  %>
-    <div><input type="checkbox" checked>ส่งทางอีเมล์ E-mail</div>
+    <div><input type="checkbox" >ส่งทางอีเมล์ E-mail</div>
     <div><input type="checkbox" >ตามทะเบียนบ้าน Same as Residence Registration Address</div>
     <div><input type="checkbox" >ตามที่อยู่ปัจจุบัน Same as Current Address</div>
     <div><input type="checkbox" >ตามที่อยู่ที่ทำงาน Same as Workplace Address</div>
     <div><input type="checkbox" >อื่นๆ (โปรดระบุ) Other (Please specify)..............</div>
 
-  <%
-    }else if(obj.data.data.mailingAddressSameAsFlag.key === "Residence"){
-  %>
-    <div><input type="checkbox" >ส่งทางอีเมล์ E-mail</div>
-    <div><input type="checkbox" checked>ตามทะเบียนบ้าน Same as Residence Registration Address</div>
-    <div><input type="checkbox" >ตามที่อยู่ปัจจุบัน Same as Current Address</div>
-    <div><input type="checkbox" >ตามที่อยู่ที่ทำงาน Same as Workplace Address</div>
-    <div><input type="checkbox" >อื่นๆ (โปรดระบุ) Other (Please specify)..............</div>
+  <div >
+      <div>เลขที่ Address No .........
+      หมู่ที่ Moo No. .........
+      อาคาร/หมู่บ้าน Building/Mooban ..........
+    </div>
 
-  <% }else if(obj.data.data.contactAddressSameAsFlag.key === "Work"){ %>
-    <div><input type="checkbox" >ส่งทางอีเมล์ E-mail</div>
-    <div><input type="checkbox" >ตามทะเบียนบ้าน Same as Residence Registration Address</div>
-    <div><input type="checkbox" >ตามที่อยู่ปัจจุบัน Same as Current Address</div>
-    <div><input type="checkbox" checked>ตามที่อยู่ที่ทำงาน Same as Workplace Address</div>
-    <div><input type="checkbox" >อื่นๆ (โปรดระบุ) Other (Please specify)..............</div>
-
-  <% }else if(obj.data.data.contactAddressSameAsFlag.key === "Contact"){ %>
-    <div><input type="checkbox" >ส่งทางอีเมล์ E-mail</div>
-    <div><input type="checkbox" >ตามทะเบียนบ้าน Same as Residence Registration Address</div>
-    <div><input type="checkbox" checked>ตามที่อยู่ปัจจุบัน Same as Current Address</div>
-    <div><input type="checkbox" >ตามที่อยู่ที่ทำงาน Same as Workplace Address</div>
-    <div><input type="checkbox" >อื่นๆ (โปรดระบุ) Other (Please specify)..............</div>
-
-  <% }else{%>
-      <div><input type="checkbox" >ส่งทางอีเมล์ E-mail</div>
-      <div><input type="checkbox" >ตามทะเบียนบ้าน Same as Residence Registration Address</div>
-      <div><input type="checkbox" >ตามที่อยู่ปัจจุบัน Same as Current Address</div>
-      <div><input type="checkbox" >ตามที่อยู่ที่ทำงาน Same as Workplace Address</div>
-      <div><input type="checkbox" checked>อื่นๆ (โปรดระบุ) Other (Please specify)..............</div>
-  <%}%>
-
-  <br>
-  <div>เลขที่ Address No...<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.no:'....' %></small>...หมู่ที่ Moo No ..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.moo:'...' %></small>..อาคาร/หมู่บ้าน Building/Mooban..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.villageType.displayName:'...' %></small>..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.building:'...' %></small>..
+    <div>      ชั้น Floor .........
+      ซอย Soi ....................
+      ถนน Road ....................
+    </div>
+    <div>
+      ตำบล Sub-district/Tambon
+      อำเภอ District/Amphur
+    </div>
+    <div>
+      จังหวัด Province
+      รหัสไปรษณีย์Postal Code
+      ประเทศ Country
+    </div>
+      โทรศัพท์Telephone
   </div>
-  <div>ชั้น Floor..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.floor:'...' %></small>..
-  ซอย Soi ...<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.soi:'...' %></small>...
-  ถนน Road ..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.road:'...' %></small>..</div>
-  <div>ตำบล Sub-district/Tambon ..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.subDistrict:'...' %></small>.. อำเภอ District/Amphur ..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.district:'...' %></small>..</div>
-  <div>จังหวัด Province ..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.province:'...' %> </small>..
-  รหัสไปรษณีย์Postal Code ..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.postalCode:'...' %></small>..
-  ประเทศ Country ..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.country:'...' %></small>..</div>
-  <div>โทรศัพท์Telephone ..<small class='txtFill'><%=obj.data.data.mailing? obj.data.data.mailing.phoneNumber:'...' %></small>.. </div>
 
   <p class='blueBG'>วัตถุประสงค์การลงทุน Investment Objective*</p>
-  <br>(เลือกได้มากกว่า 1 ข้อ You can select more than 1 item)
-
-    <%
-    for (i in obj.data.data.declarationInfo) {
-
-      declare = obj.data.data.declarationInfo[i]
-
-      if( declare.questionId=='investmentObjective' ){
-
-        for (j in declare.answer){
-          ans = declare.answer[j]
-          %>
-          <br><input type="checkbox"  checked>&nbsp;<%=ans.label %>
-    <%
-      } // j
-      } // if
-    } // i
-    %>
+  <p>(เลือกได้มากกว่า 1 ข้อ You can select more than 1 item)</p>
+  <div><input type="checkbox" >เพื่อการลงทุนระยะสั้น Short-term Investment</div>
+  <div><input type="checkbox" >เพื่อเก็บออม For Savings</div>
+  <div><input type="checkbox" >เพื่อการลงทุนระยะยาว Long-term Investment</div>
+  <div><input type="checkbox" >เพื่อสิทธิประโยชน์ทางภาษีFor Tax Benefits</div>
+  <div><input type="checkbox" >เพื่อการเกษียณ Retirement Investment</div>
+  <div><input type="checkbox" >อื่นๆ (โปรดระบุ) Other (Please specify)..............</div>
 
   <p class='blueBG'> บัญชีธนาคารสำหรับหักเงินเพื่อการซื้อหน่วยลงทุน Bank Account for Subscription*</p>
 
@@ -878,30 +988,30 @@ for (i in obj.data.data.declarationInfo) {
   <p class='blueBG'>บัญชีธนาคารสำหรับการขายหน่วยลงทุนและรับเงินปันผล Bank Account for Redemption Proceeds and Dividend*</p>
   <div><input type="checkbox" >ตามบัญชีธนาคารสำหรับการซื้อหน่วยลงทุน Same as Bank Account for Subscription</div>
   <div><input type="checkbox" >อื่นๆ (โปรดระบุ) Other (Please specify)</div>
-
-
   <table >
-    <tr>
     <th>ลำดับ <br>No.</th>
     <th>บัญชีหลัก <br>Main Bank Account</th>
     <th>ธนาคาร <br>Bank</th>
     <th>สาขา <br>Branch</th>
     <th>เลขบัญชี <br>Account No.</th>
     <th>ชื่อบัญชี <br>Account Name</th>
-    </tr>
-    <%
-      if( obj.data.data.otherAccountInfo.redemptionBankAccounts) {
-    %>
+
     <tr>
-      <td>1</td>
+      <td></td>
       <td><input type="checkbox" ></td>
-      <td><%= obj.data.data.otherAccountInfo.redemptionBankAccounts.bankCode %></td>
-      <td><%= obj.data.data.otherAccountInfo.redemptionBankAccounts.bankBranchCode %></td>
-      <td><%= obj.data.data.otherAccountInfo.redemptionBankAccounts.bankAccountNo %></td>
+      <td></td>
+      <td></td>
+      <td></td>
       <td></td>
     </tr>
-
-    <%}%>
+    <tr>
+      <td></td>
+      <td><input type="checkbox" ></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
   </table>
 
   <div>

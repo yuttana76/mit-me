@@ -147,6 +147,7 @@ exports.txtToDateTimeFormat = (str)=>{
 }
 
 
+
 exports.regisToMail = (req,res,next)=>{
   console.log("Welcome API regisToMail/");
 
@@ -162,6 +163,14 @@ exports.regisToMail = (req,res,next)=>{
   },err=>{
     res.status(401).json(err);
   });
+}
+
+exports.maskFullName=(fullname) =>{
+
+  var last = fullname.substring((fullname.length/2), fullname.length);
+  maskdata = fullname.replace(last, "*****");
+
+  return maskdata
 }
 
 function regisToMail(name,surName,phone,email,lineId,description){

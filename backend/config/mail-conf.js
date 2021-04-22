@@ -1,6 +1,6 @@
 
   exports.mail_form ='wealthservice@merchantasset.co.th';
-  exports.mail_wealthservice ='wealthservice@merchantasset.co.th,yuttana@merchantasset.co.th';
+  exports.mail_wealthservice ='wealthservice@merchantasset.co.th';
   exports.mail_developer ='yuttana76@gmail.com';
   exports.mail_it ='it@merchantasset.co.th';
 

@@ -97,60 +97,16 @@ app.use((req, res, next) => {
 
 app.use(("/api/test"),(req, res, next)=>{
 
-//   let arr = [{
-//     "booktitle": "Leading",
-//     "bookid": "56353",
-//     "bookauthor": "Sir Alex Ferguson"
-// }, {
-//     "booktitle": "How Google Works",
-//     "bookid": "73638",
-//     "bookauthor": "Eric Smith"
-// }, {
-//     "booktitle": "The Merchant of Venice",
-//     "bookid": "37364",
-//     "bookauthor": "William Shakespeare"
-// }];
+  var fullname = 'yuttana khumnual123';
 
-// let ans=Object.keys(arr[0]).map((key) => {
-//     let o={};
-//     o[key]=arr.map((x) => x[key]);
-//     return o;
-// });
-  let obj = [
-    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"KFCASH-A"},
-    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"KFDIVRMF"},
-    {"Account_ID":"M1300543","NAVdate":"20210202","Fund_Code":"KFGTECHRMF"},
-    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"UOBID"},
-    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"UOBLTF"},
-    {"Account_ID":"M1300543","NAVdate":"20210203","Fund_Code":"UOBSD"},
-    {"Account_ID":"M1901362","NAVdate":"20210202","Fund_Code":"KCHANGERMF"},
-    {"Account_ID":"M1901362","NAVdate":"20210202","Fund_Code":"KFGTECHRMF"},
-    {"Account_ID":"M1901362","NAVdate":"20210203","Fund_Code":"KKP SET50 ESG-SSFX"},
-    {"Account_ID":"M1901362","NAVdate":"20210203","Fund_Code":"LHMM-A"}
-]
+// var first = fullname.substring(0, (fullname.length/2));
+var last = fullname.substring((fullname.length/2), fullname.length);
+// var last5 = cardnumber.substring(cardnumber.length - 5);
 
-// var bookId   = [];
-// obj.filter(function(data){
-//     console.log(`>>>${JSON.stringify(data)}`)
-//    if(data.Account_ID){
-//       bookId.push({"Account_ID":data.Account_ID});
-//    }
-// })
+mask = fullname.replace(last, "*****");
+// data_Masked= first + mask
 
-let ans=Object.keys(obj[0]).map((key) => {
-  console.log(`key:${key}: `)
-    let o={};
-    o
-
-    o["data"]=obj.map((x) => {
-      return x
-    }  );
-
-
-    return o;
-});
-
-  res.status(200).json(ans);
+  res.status(200).json(`;data_Masked: ${mask}`);
 
 })
 

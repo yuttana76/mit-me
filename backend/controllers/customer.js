@@ -1750,11 +1750,20 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
     var acceptBy_splited = custObj.acceptBy.split("-");
 
     if(acceptBy_splited.length>1){
+
+      // cast 123456-xxxxxx
       IT_SAcode_external=acceptBy_splited[0];
 
+      // Check in cast 123456-1
       if (Number(acceptBy_splited[1][0])) {
         IT_SAcode_external = IT_SAcode_external+"-"+acceptBy_splited[1][0]
       }
+
+      //Check if sssss-123456
+      if (Number(acceptBy_splited[1])) {
+        IT_SAcode_external = acceptBy_splited[1]
+      }
+      
     }
 
     // console.log('***acceptBy_splited>' ,JSON.stringify(acceptBy_splited))

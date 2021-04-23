@@ -205,6 +205,8 @@ exports.mailByWealth = (req,res,next)=>{
   var username = req.body.username;
   var toEmail = req.body.toEmail;
 
+  logger.info("Welcome API mailByWealth/" + fullname);
+
   fullname_masked = utility.maskFullName(fullname);
 
   // res.status(401).json(err.message);

@@ -1,3 +1,4 @@
+// $ng build --configuration staging
 export const environment = {
   production: false,
   // apiURL: 'http://115.31.144.110/api'

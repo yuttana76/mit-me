@@ -1,24 +1,52 @@
 // https://www.npmjs.com/package/maskdata#mask-the-exact-substring-from-throughout-the-string
-const MaskData = require('maskdata');
 
-const maskCardOptions = {
-  // Character to mask the data. Default value is 'X'
-  maskWith: "X",
+const logger = require('../config/winston');
+// const { NAV_auditor } = require('./fundConnextAPI');
 
-  // Should be positive Integer
-  // If the starting 'n' digits needs to be unmasked
-  // Default value is 4
-  unmaskedStartDigits: 4,
 
-  //Should be positive Integer
-  //If the ending 'n' digits needs to be unmasked
-  // Default value is 1.
-  unmaskedEndDigits: 3
-};
+function fundConnextBusinessDate(){
+  var today = new Date();
+  var returnDate_yyyymmddDate;
 
-const cardNumber = "3560100350330";
+  if(today.getDay() == 1 ){
+    today.setDate(today.getDate()-3);
+    returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+  }else{
+    today.setDate(today.getDate()-1);
+    returnDate_yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2);
+  }
 
-const cardAfterMasking = MaskData.maskCard(cardNumber, maskCardOptions);
+  console.log('fundConnextBusinessDate()'+returnDate_yyyymmddDate);
+  return returnDate_yyyymmddDate
+}
 
-console.log(cardAfterMasking)
 
+exports.validateFC_API_download =(req, res,businessDate)=>{
+
+  try{
+
+    if(!businessDate){
+
+      if(req && req.body && req.body.businessDate){
+        businessDate = req.body.businessDate
+      } else{
+        businessDate = fundConnextBusinessDate();
+      }
+
+    }
+
+    logger.info( `Welcome validateFC_API_download ${businessDate}` )
+
+    // validate NAV
+    // Validate ALLOTTEDTRANSACTIONS
+    // Validate UNITHOLDERBALANCE
+    return true;
+
+  }catch(e){
+    logger.error(e.message);
+  }
+
+}
+
+
+exports.validateFC_API_download('xxx')

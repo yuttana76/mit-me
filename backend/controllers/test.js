@@ -38,8 +38,14 @@ exports.validateFC_API_download =(req, res,businessDate)=>{
     logger.info( `Welcome validateFC_API_download ${businessDate}` )
 
     // validate NAV
-    // Validate ALLOTTEDTRANSACTIONS
+    // Validate ALLOTTEDTRANSACTIONS   2817
+    // 4095 fcAlloted_ToDB
+    // 4147 fcAlloted_ToDB_BULK (developing)
+    // 3533 bakMIT_FC_TransAllotted
+
     // Validate UNITHOLDERBALANCE
+    // 4642 fcUnitholderBalance_ToDB_BULK
+
     return true;
 
   }catch(e){

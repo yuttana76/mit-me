@@ -27,12 +27,14 @@ const DOWNLOAD_PATH  = mpamConfig.DOWNLOAD_PATH
 const INVEST_PROFILE_PATH = mpamConfig.INVEST_PROFILE_PATH
 const INVEST_INDIVIDUAL = mpamConfig.INVEST_INDIVIDUAL
 const FC_API_MODULE ='FC API';
+const MAIL_SYSTEM_SA = 'yuttana@merchantasset.co.th';
 
 // Database configuration
 var config_BULK = mpamConfig.dbParameters_BULK;
 var config = mpamConfig.dbParameters;
 
 const sql = require("mssql");
+const { reject } = require('async');
 
 exports.scheduleDownload = (req, res, next) => {
 
@@ -2737,7 +2739,8 @@ exports.downloadAllottedAPI = (req, res, next) =>{
   downloadAllotedAPIproc(businessDate).then(dwRs=>{
     res.status(200).json({message: dwRs});
   },err=>{
-    res.status(422).json(err);
+    logger.error(JSON.stringify(err))
+    res.status(422).json({'msg':err.msg});
   });
 }
 
@@ -2805,44 +2808,67 @@ exports.allotedFile = (req, res, next) =>{
   });
 }
 
+
 function downloadAllotedAPIproc(businessDate,userCode){
   logger.info('downloadAllotedAPIproc(); businessDate:' + businessDate )
+
   return new Promise(function(resolve, reject) {
-    const fileType = 'AllottedTransactions.zip';
+
+      const fileType = 'AllottedTransactions.zip';
       // STEP 1: CALL API download
       fnGetDownloadAPI(businessDate,fileType).then(data=>{
           // //STEP 2: Upzip downloaded file.
           unZipFile(data.path).then(fileName=>{
-          //   //STEP 3: Insert to DB.(MIT_FC_NAV)
-            fcAlloted_ToDB(fileName,userCode,businessDate).then(allottedToDB_RS=>{
-              resolve(allottedToDB_RS)
-            },err=>{
-              reject(err);
-            });
+
+          //   //STEP 3(New): Insert to DB.(BULK)
+          fcAlloted_ToDB_BULK(fileName,userCode,businessDate).then(allottedToDB_RS=>{
+            resolve(allottedToDB_RS)
           },err=>{
             reject(err);
+          });
+
+          //   //STEP 3: Insert to DB.
+            // fcAlloted_ToDB(fileName,userCode,businessDate).then(allottedToDB_RS=>{
+            //   resolve(allottedToDB_RS)
+            // },err=>{
+            //   reject(err);
+            // });
+
+          },err=>{
+            reject(err);
+
           });
       },err=>{
         reject(err);
       });
+
+  }).catch(function(err){
+
+    logger.error(`downloadAllotedAPIproc(1) > ${JSON.stringify(err)} `)
+
+    // TODO mail to admin was error
+    let mailOptions_RM = {
+      from: 'it@merchantasset.co.th',
+      to: MAIL_SYSTEM_SA,
+      subject: `downloadAllottedAPI error  businessDate: ${businessDate} ;on ${new Date()}`,
+      body:  `<div>${JSON.stringify(err.msg)} </div>`
+    };
+    mail.sendMailToRespondor(mailOptions_RM);
+
+    throw err
   });
 }
 
 
 function UnitholderBalanceAPIProc(businessDate,userCode){
   logger.info('UnitholderBalanceAPIProc(); businessDate:' + businessDate )
+
   return new Promise(function(resolve, reject) {
     const fileType = 'UnitholderBalance.zip';
       // STEP 1: CALL API download
       fnGetDownloadAPI(businessDate,fileType).then(data=>{
           // //STEP 2: Upzip downloaded file.
           unZipFile(data.path).then(fileName=>{
-          //   //STEP 3: Insert to DB.(MIT_FC_NAV)
-            // fcUnitholderBalance_ToDB(fileName,userCode,businessDate).then(_RS=>{
-            //   resolve(_RS)
-            // },err=>{
-            //   reject(err);
-            // });
 
             fcUnitholderBalance_ToDB_BULK(fileName,userCode,businessDate).then(_RS=>{
               resolve(_RS)
@@ -2857,7 +2883,23 @@ function UnitholderBalanceAPIProc(businessDate,userCode){
       },err=>{
         reject(err);
       });
+  }).
+  catch(function(err){
+
+    logger.error(`UnitholderBalanceAPIProc(1) > ${JSON.stringify(err)} `)
+
+    // TODO mail to admin was error
+    let mailOptions_RM = {
+      from: 'it@merchantasset.co.th',
+      to: MAIL_SYSTEM_SA,
+      subject: `UnitholderBalanceAPI error  businessDate: ${businessDate} ;on ${new Date()}`,
+      body:  `<DIV>${JSON.stringify(err.msg)} </DIV>`
+    };
+    mail.sendMailToRespondor(mailOptions_RM);
+
+    throw err
   });
+
 }
 
 
@@ -3163,7 +3205,7 @@ tr:nth-child(even) {
         from: 'it@merchantasset.co.th',
         to: _splitData[11],
         subject: `FundConnext Account  ${_splitData[0]}  ${_splitData[1]}  Approved`,
-        html:  `${mailBody_RM}`
+        body:  `${mailBody_RM}`
       };
 
       // logger.info(`MAIL TO RM>> ${JSON.stringify(mailOptions_RM)}`)
@@ -3245,7 +3287,6 @@ function downloadNavAPIproc(businessDate,userCode){
 
             },err=>{
               reject(err);
-              // res.status(422).json({error: err});
             });
 
             //Update to
@@ -3258,6 +3299,21 @@ function downloadNavAPIproc(businessDate,userCode){
         reject(err);
       });
 
+  }).
+  catch(function(err){
+
+    logger.error(`downloadNavAPIproc(1) > ${JSON.stringify(err)} `)
+
+    // TODO mail to admin was error
+    let mailOptions_RM = {
+      from: 'it@merchantasset.co.th',
+      to: MAIL_SYSTEM_SA,
+      subject: `downloadNavAPI error  businessDate: ${businessDate} ;on ${new Date()}`,
+      body:  `<DIV>${JSON.stringify(err.msg)} </DIV>`
+    };
+    mail.sendMailToRespondor(mailOptions_RM);
+
+    throw err
   });
 
 }
@@ -4142,9 +4198,8 @@ function fcUnitholderBalance_ToDB(fileName,userCode,businessDate){
 }
 
 
-
 //developing
-function fcAlloted_ToDB_BULK(fileName,userCode,businessDate){
+function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
 
   logger.info('Function fcAlloted_ToDB_BULK() //'+fileName + ' ;businessDate=' + businessDate);
 
@@ -4173,270 +4228,168 @@ function fcAlloted_ToDB_BULK(fileName,userCode,businessDate){
 
             const table = new sql.Table('MIT_FC_TransAllotted');
             table.create = true;
-
-            // [SAreferenceNo] [varchar](30) NULL,
+            // #1
             table.columns.add('SAreferenceNo', sql.VarChar(30), { nullable: true });
-            // [transactionDate] [datetime] NULL,
             table.columns.add('transactionDate', sql.DateTime, { nullable: true });
-            // [transactionDateTxt] [varchar](30) NULL,
             table.columns.add('transactionDateTxt', sql.VarChar(30), { nullable: true });
-            // [accountID] [varchar](15) NULL,
             table.columns.add('accountID', sql.VarChar(15), { nullable: true });
-            // [amc] [varchar](15) NULL,
             table.columns.add('amc', sql.VarChar(15), { nullable: true });
-            // [unitholderID] [varchar](15) NULL,
             table.columns.add('unitholderID', sql.VarChar(15), { nullable: true });
-            // [transactionCode] [varchar](3) NULL,
             table.columns.add('transactionCode', sql.VarChar(3), { nullable: true });
-            // [fundCode] [varchar](30) NULL,
             table.columns.add('fundCode', sql.VarChar(30), { nullable: true });
-            // [RiskFlag] [varchar](1) NULL,
             table.columns.add('RiskFlag', sql.VarChar(1), { nullable: true });
-            // [FxFlag] [varchar](1) NULL,
             table.columns.add('FxFlag', sql.VarChar(1), { nullable: true });
-            // [redemptionType] [varchar](4) NULL,
+              // #10
             table.columns.add('redemptionType', sql.VarChar(4), { nullable: true });
-            // [amount] [numeric](18, 2) NULL,
             table.columns.add('amount', sql.Numeric(18,2), { nullable: true });
-            // [unit] [numeric](18, 4) NULL,
             table.columns.add('unit', sql.Numeric(18,4), { nullable: true });
-            // [effectiveDate] [datetime] NULL,
             table.columns.add('effectiveDate', sql.DateTime, { nullable: true });
-            // [paymentType] [varchar](8) NULL,
             table.columns.add('paymentType', sql.VarChar(8), { nullable: true });
-            // [bankCode] [varchar](4) NULL,
             table.columns.add('bankCode', sql.VarChar(4), { nullable: true });
-            // [bankAccount] [varchar](20) NULL,
             table.columns.add('bankAccount', sql.VarChar(20), { nullable: true });
-            // [chequeNo] [varchar](10) NULL,
             table.columns.add('chequeNo', sql.VarChar(10), { nullable: true });
-            // [chequeDate] [datetime] NULL,
             table.columns.add('chequeDate', sql.DateTime, { nullable: true });
-            // [ICLicense] [varchar](10) NULL,
             table.columns.add('ICLicense', sql.VarChar(10), { nullable: true });
-            // [branchNo] [varchar](5) NULL,
+              // #20
             table.columns.add('branchNo', sql.VarChar(5), { nullable: true });
-            // [channel] [varchar](3) NULL,
             table.columns.add('channel', sql.VarChar(3), { nullable: true });
-            // [forceEntry] [varchar](1) NULL,
             table.columns.add('forceEntry', sql.VarChar(1), { nullable: true });
-            // [LTFcondition] [varchar](1) NULL,
             table.columns.add('LTFcondition', sql.VarChar(1), { nullable: true });
-            // [reasonToSell_LTF_RMF] [varchar](1) NULL,
             table.columns.add('reasonToSell_LTF_RMF', sql.VarChar(1), { nullable: true });
-            // [RMFwithholdChoice] [varchar](1) NULL,
             table.columns.add('RMFwithholdChoice', sql.VarChar(1), { nullable: true });
-            // [RMFredeemChoice] [varchar](1) NULL,
             table.columns.add('RMFredeemChoice', sql.VarChar(1), { nullable: true });
-            // [autoRedeem] [varchar](30) NULL,
             table.columns.add('autoRedeem', sql.VarChar(30), { nullable: true });
-            // [transactionID] [varchar](17) NULL,
             table.columns.add('transactionID', sql.VarChar(17), { nullable: true });
-            // [status] [varchar](10) NULL,
             table.columns.add('status', sql.VarChar(10), { nullable: true });
-            // [AMCorderRef] [varchar](30) NULL,
+            // #30
             table.columns.add('AMCorderRef', sql.VarChar(30), { nullable: true });
-            // [allotDate] [datetime] NULL,
             table.columns.add('allotDate', sql.DateTime, { nullable: true });
-            // [allottedNAV] [numeric](18, 4) NULL,
             table.columns.add('allottedNAV', sql.Numeric(18,4), { nullable: true });
-            // [allottedAmount] [numeric](18, 2) NULL,
             table.columns.add('allottedAmount', sql.Numeric(18,2), { nullable: true });
-            // [allotedUnit] [numeric](18, 4) NULL,
             table.columns.add('allotedUnit', sql.Numeric(18,4), { nullable: true });
-            // [fee] [numeric](18, 2) NULL,
             table.columns.add('fee', sql.Numeric(18,2), { nullable: true });
-            // [withholdTax] [numeric](18, 2) NULL,
             table.columns.add('withholdTax', sql.Numeric(18,2), { nullable: true });
-            // [VAT] [numeric](18, 2) NULL,
             table.columns.add('VAT', sql.Numeric(18,2), { nullable: true });
-            // [brokerageFee] [numeric](18, 2) NULL,
             table.columns.add('brokerageFee', sql.Numeric(18,2), { nullable: true });
-            // [WithholdTaxLTF_RMF] [numeric](18, 2) NULL,
             table.columns.add('WithholdTaxLTF_RMF', sql.Numeric(18,2), { nullable: true });
-            // [AMCpayDate] [datetime] NULL,
+            // #40
             table.columns.add('AMCpayDate', sql.DateTime, { nullable: true });
-            // [regisTransFlag] [varchar](1) NULL,
             table.columns.add('regisTransFlag', sql.VarChar(1), { nullable: true });
-            // [sellAllUnitFlag] [varchar](1) NULL,
             table.columns.add('sellAllUnitFlag', sql.VarChar(1), { nullable: true });
-            // [settleBankCode] [varchar](4) NULL,
             table.columns.add('settleBankCode', sql.VarChar(4), { nullable: true });
-            // [settleBankAccount] [varchar](20) NULL,
             table.columns.add('settleBankAccount', sql.VarChar(20), { nullable: true });
-            // [rejectReason] [varchar](50) NULL,
             table.columns.add('rejectReason', sql.VarChar(50), { nullable: true });
-            // [CHQbranch] [varchar](5) NULL,
             table.columns.add('CHQbranch', sql.VarChar(5), { nullable: true });
-            // [TaxInvoice] [varchar](50) NULL,
             table.columns.add('TaxInvoice', sql.VarChar(50), { nullable: true });
-            // [AMCorderRefer] [varchar](30) NULL,
             table.columns.add('AMCorderRefer', sql.VarChar(30), { nullable: true });
-            // [ICcode] [varchar](10) NULL,
             table.columns.add('ICcode', sql.VarChar(10), { nullable: true });
-            // [brokerFeeVAT] [numeric](18, 2) NULL,
+            // #50
             table.columns.add('brokerFeeVAT', sql.Numeric(18,2), { nullable: true });
-            // [approvalCode] [varchar](20) NULL,
             table.columns.add('approvalCode', sql.VarChar(20), { nullable: true });
-            // [NAVdate] [datetime] NULL,
             table.columns.add('NAVdate', sql.DateTime, { nullable: true });
-            // [collateralAccount] [varchar](20) NULL,
             table.columns.add('collateralAccount', sql.VarChar(20), { nullable: true });
-            // [creditCardIssuer] [varchar](20) NULL,
             table.columns.add('creditCardIssuer', sql.VarChar(20), { nullable: true });
             table.columns.add('businessDate', sql.VarChar(20), { nullable: true });
             table.columns.add('CreateBy', sql.VarChar(100), { nullable: true });
-            // [IT_CheckStatus] [char](10) NULL,
-            // table.columns.add('IT_CheckStatus', sql.VarChar(10), { nullable: true });
-            // [IT_CheckDT] [char](20) NULL
-            // table.columns.add('IT_CheckDT', sql.VarChar(20), { nullable: true });
-
+            // #57
             var array = data.toString().split("\n");
+
+            // logger.info('**DATA >>' + JSON.stringify(array[0]))
+            item_header = array[0].split('|');
+            _num_data = item_header[2];
+
             array.shift(); //removes the first array element
-
-            // logger.info('**DATA->' + JSON.stringify(array))
-
-            var _row =0;
               for(i in array) {
 
                 var item = array[i].split("|") ;
 
-                  // 1	SA Order Reference No
-                  var SAreferenceNo = item[0]?item[0].trim():''
-                  // 2	Transaction Date-Time(YYYYMMDDHHMMSS)
-                  var transactionDateTxt = item[1]?item[1].trim():''
-                  var transactionDate = '';
+                  // #1
+                  var SAreferenceNo = item[0]?item[0].trim():'' // 1	SA Order Reference No
+                  var transactionDateTxt = item[1]?item[1].trim():''  // 2	Transaction Date-Time(YYYYMMDDHHMMSS)
+                  var transactionDate = new Date(item[1]?item[1].trim():null);
 
-                  // 3	Account ID
-                  var accountID = item[2]?item[2].trim():''
-                  // 4	AMC Code
-                  var amc = item[3]?item[3].trim():''
-                  // 5	Unitholder ID
-                  var unitholderID = item[4]?item[4].trim():''
+                  var accountID = item[2]?item[2].trim():'' // 3	Account ID
+                  var amc = item[3]?item[3].trim():'' // 4	AMC Code
+                  var unitholderID = item[4]?item[4].trim():''  // 5	Unitholder ID
                   // 6	Filler
-                  // 7	Transaction Code
-                  var transactionCode = item[6]?item[6].trim():''
-                  // 8	Fund Code
-                  var fundCode =item[7]?item[7].trim():''
-                  // 9	Override RisK Profile Flag
-                  var RiskFlag =item[8]?item[8].trim():''
-                  // 10	Override FX Risk Flag
-                  var FxFlag =item[9]?item[9].trim():''
-                  // 11	Redemption Type
-                  var redemptionType=item[10]?item[10].trim():''
-                  // 12	Amount
-                  var amount =item[11]?item[11].trim():''
-                  // 13	Unit
-                  var unit =item[12]?item[12].trim():''
-                  // 14	Effective Date
-                  var effectiveDate =item[13]?item[13].trim():''
+                  var transactionCode = item[6]?item[6].trim():'' // 7	Transaction Code
+                  var fundCode =item[7]?item[7].trim():'' // 8	Fund Code
+                  var RiskFlag =item[8]?item[8].trim():'' // 9	Override RisK Profile Flag
+                  var FxFlag =item[9]?item[9].trim():'' // 10	Override FX Risk Flag
+                  // #10
+                  var redemptionType=item[10]?item[10].trim():''  // 11	Redemption Type
+                  var amount =item[11]?item[11].trim():'' // 12	Amount
+                  var unit =item[12]?item[12].trim():'' // 13	Unit
+                  var effectiveDate =new Date(item[13]?item[13].trim():null); //item[13]?item[13].trim():''  // 14	Effective Date
                   // 15	Filler
                   // 16	Filler
-                  // 17	Payment Type
-                  var paymentType =item[16]?item[16].trim():''
-                  // 18	Bank Code
-                  var bankCode =item[17]?item[17].trim():''
-                  // 19	Bank Account / Credit Card Number
-                  var bankAccount =item[18]?item[18].trim():''
-                  // 20	Cheque No
-                  var chequeNo =item[19]?item[19].trim():''
-                  // 21	Cheque Date
-                  var chequeDate =item[20]?item[20].trim():''
-                  // 22	IC License
-                  var ICLicense =item[21]?item[21].trim():''
-                  // 23	Branch No
-                  var branchNo =item[22]?item[22].trim():''
-                  // 24	Channel
-                  var channel =item[23]?item[23].trim():''
-                  // 25	Force Entry
-                  var forceEntry =item[24]?item[24].trim():''
-                  // 26	LTF Condition
-                  var LTFcondition =item[25]?item[25].trim():''
-                  // 27	Reason to sell LTF/RMF
-                  var reasonToSell_LTF_RMF =item[26]?item[26].trim():''
-                  // 28	RMF Capital gain withholding tax choice
-                  var RMFwithholdChoice =item[27]?item[27].trim():''
-                  // 29	RMF Capital amount redeem choice
-                  var RMFredeemChoice =item[28]?item[28].trim():''
-                  // 30	Auto redeem fund code
-                  var autoRedeem =item[29]?item[29].trim():''
-                  // 31	Transaction ID
-                  var transactionID =item[30]?item[30].trim():''
-                  // 32	Status
-                  var status =item[31]?item[31].trim():''
-                  // 33	AMC Order Reference No
-                  var AMCorderRef=item[32]?item[32].trim():''
-                  // 34	Allotment Date
-                  var allotDate =item[33]?item[33].trim():''
-                  // 35	Allotted NAV
-                  var allottedNAV =item[34]?item[34].trim():''
-                  // 36	Allotted Amount
-                  var allottedAmount =item[35]?item[35].trim():''
-                  // 37	Alloted Unit
-                  var allotedUnit =item[36]?item[36].trim():''
-                  // 38	Fee
-                  var fee =item[37]?item[37].trim():''
-                  // 39	Withholding Tax
-                  var withholdTax =item[38]?item[38].trim():''
-                  // 40	VAT
-                  var VAT =item[39]?item[39].trim():''
-                  // 41	Brokerage fee
-                  var brokerageFee =item[40]?item[40].trim():''
-                  // 42	Withholding Tax for LTF/RMF
-                  var WithholdTaxLTF_RMF =item[41]?item[41].trim():''
-                  // 43	AMC Pay Date
-                  var AMCpayDate =item[42]?item[42].trim():''
-                  // 44	Registrar Transaction Flag
-                  var regisTransFlag =item[43]?item[43].trim():''
-                  // 45	Sell all unit flag
-                  var sellAllUnitFlag =item[44]?item[44].trim():''
-                  // 46	Settlement Bank Code
-                  var settleBankCode =item[45]?item[45].trim():''
-                  // 47	Settlement Bank Account
-                  var settleBankAccount =item[46]?item[46].trim():''
-                  // 48	Reject Reason
-                  var rejectReason =item[47]?item[47].trim():''
-                  // 49	CHQ Branch
-                  var CHQbranch =item[48]?item[48].trim():''
-                  // 50	Tax Invoice No
-                  var TaxInvoice =item[49]?item[49].trim():''
-                  // 51	AMC Switching Order Reference No
-                  var AMCorderRefer =item[50]?item[50].trim():''
-                  // 52	IC Code
-                  var ICcode =item[51]?item[51].trim():''
-                  // 53	Brokerage fee  VAT
-                  var brokerFeeVAT =item[52]?item[52].trim():''
-                  // 54	Approval Code
-                  var approvalCode =item[53]?item[53].trim():''
-                  // 55	NAV Date
-                  var NAVdate =item[54]?item[54].trim():''
-                  // 56 Collateral Account
-                  var collateralAccount =item[55]?item[55].trim():''
-                  // 57 Credit card issuer
-                  var creditCardIssuer =item[56]?item[56].trim():''
+                  var paymentType =item[16]?item[16].trim():''  // 17	Payment Type
+                  var bankCode =item[17]?item[17].trim():'' // 18	Bank Code
+                  var bankAccount =item[18]?item[18].trim():''  // 19	Bank Account / Credit Card Number
+                  var chequeNo =item[19]?item[19].trim():'' // 20	Cheque No
+                  var chequeDate = new Date(item[20]?item[20].trim():null);//item[20]?item[20].trim():'' // 21	Cheque Date
+                  var ICLicense =item[21]?item[21].trim():''  // 22	IC License
+                  // #20
+                  var branchNo =item[22]?item[22].trim():'' // 23	Branch No
+                  var channel =item[23]?item[23].trim():''  // 24	Channel
+                  var forceEntry =item[24]?item[24].trim():'' // 25	Force Entry
+                  var LTFcondition =item[25]?item[25].trim():'' // 26	LTF Condition
+                  var reasonToSell_LTF_RMF =item[26]?item[26].trim():'' // 27	Reason to sell LTF/RMF
+                  var RMFwithholdChoice =item[27]?item[27].trim():'' // 28	RMF Capital gain withholding tax choice
+                  var RMFredeemChoice =item[28]?item[28].trim():''  // 29	RMF Capital amount redeem choice
+                  var autoRedeem =item[29]?item[29].trim():'' // 30	Auto redeem fund code
+                  var transactionID =item[30]?item[30].trim():'' // 31	Transaction ID
+                  var status =item[31]?item[31].trim():'' // 32	Status
+                  // #30
+                  var AMCorderRef=item[32]?item[32].trim():'' // 33	AMC Order Reference No
+                  var allotDate = new Date(item[33]?item[33].trim():null); //item[33]?item[33].trim():''  // 34	Allotment Date
+                  var allottedNAV =item[34]?item[34].trim():''  // 35	Allotted NAV
+                  var allottedAmount =item[35]?item[35].trim():'' // 36	Allotted Amount
+                  var allotedUnit =item[36]?item[36].trim():''  // 37	Alloted Unit
+                  var fee =item[37]?item[37].trim():''  // 38	Fee
+                  var withholdTax =item[38]?item[38].trim():''// 39	Withholding Tax
+                  var VAT =item[39]?item[39].trim():''  // 40	VAT
+                  var brokerageFee =item[40]?item[40].trim():'' // 41	Brokerage fee
+                  var WithholdTaxLTF_RMF =item[41]?item[41].trim():'' // 42	Withholding Tax for LTF/RMF
+                  // #40
+                  var AMCpayDate = new Date(item[42]?item[42].trim():null); //item[42]?item[42].trim():'' // 43	AMC Pay Date
+                  var regisTransFlag =item[43]?item[43].trim():'' // 44	Registrar Transaction Flag
+                  var sellAllUnitFlag =item[44]?item[44].trim():''  // 45	Sell all unit flag
+                  var settleBankCode =item[45]?item[45].trim():'' // 46	Settlement Bank Code
+                  var settleBankAccount =item[46]?item[46].trim():''  // 47	Settlement Bank Account
+                  var rejectReason =item[47]?item[47].trim():'' // 48	Reject Reason
+                  var CHQbranch =item[48]?item[48].trim():''  // 49	CHQ Branch
+                  var TaxInvoice =item[49]?item[49].trim():'' // 50	Tax Invoice No
+                  var AMCorderRefer =item[50]?item[50].trim():''  // 51	AMC Switching Order Reference No
+                  var ICcode =item[51]?item[51].trim():'' // 52	IC Code
+                  // #50
+                  var brokerFeeVAT =item[52]?item[52].trim():'' // 53	Brokerage fee  VAT
+                  var approvalCode =item[53]?item[53].trim():'' // 54	Approval Code
+                  var NAVdate =new Date(item[54]?item[54].trim():null); //item[54]?item[54].trim():''  // 55	NAV Date
+                  var collateralAccount =item[55]?item[55].trim():''  // 56 Collateral Account
+                  var creditCardIssuer =item[56]?item[56].trim():'' // 57 Credit card issuer
 
-                  if(item[0]){
                     table.rows.add(
-                      SAreferenceNo,
+                      SAreferenceNo,// #1
                       transactionDate,
-                      [transactionDateTxt],
-                      [accountID],
-                      [amc],
-                      [unitholderID],
-                      [transactionCode],
-                      [fundCode],
+                      transactionDateTxt,
+                      accountID,
+                      amc,
+                      unitholderID,
+                      transactionCode,
+                      fundCode,
                       RiskFlag,
-                      FxFlag,
-                      [redemptionType],
-                      [amount],
-                      [unit],
-                      [effectiveDate],
-                      [paymentType],
-                      [bankCode],
-                      [bankAccount],
+                      FxFlag, // #10
+                      redemptionType,
+                      amount,
+                      unit,
+                      effectiveDate,
+                      paymentType,
+                      bankCode,
+                      bankAccount,
                       chequeNo,
                       chequeDate,
-                      ICLicense,
+                      ICLicense, // #20
                       branchNo,
                       channel,
                       forceEntry,
@@ -4446,7 +4399,7 @@ function fcAlloted_ToDB_BULK(fileName,userCode,businessDate){
                       RMFredeemChoice,
                       autoRedeem,
                       transactionID,
-                      status,
+                      status, // #30
                       AMCorderRef,
                       allotDate,
                       allottedNAV,
@@ -4456,7 +4409,7 @@ function fcAlloted_ToDB_BULK(fileName,userCode,businessDate){
                       withholdTax,
                       VAT,
                       brokerageFee,
-                      WithholdTaxLTF_RMF,
+                      WithholdTaxLTF_RMF, // #40
                       AMCpayDate,
                       regisTransFlag,
                       sellAllUnitFlag,
@@ -4466,41 +4419,47 @@ function fcAlloted_ToDB_BULK(fileName,userCode,businessDate){
                       CHQbranch,
                       TaxInvoice,
                       AMCorderRefer,
-                      ICcode,
+                      ICcode, // #50
                       brokerFeeVAT,
                       approvalCode,
                       NAVdate,
                       collateralAccount,
                       creditCardIssuer,
                       businessDate,
-                      [CreateBy],
+                      actionBy  // #57
                     );
-                      // ,new Date);
-                  }
-                  _row++;
+
               }
 
               // ***************** EXECUTE insert Bulk data to  MIT_LED table
               const request = new sql.Request(pool1)
               request.bulk(table, (err, result) => {
                 if(err){
-                  console.log(err);
-                  logger.error(JSON.stringify(err));
+                  logger.error('BULK error>>' + JSON.stringify(err.message));
                   reject(err);
                 }
 
                 if(result){
-                  var today = new Date();
-                  var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2); //Current date
-                  msg={msg:'Insert TransAllotted DB(Bulk). successful.',records:_row,'businessDate': yyyymmddDate}
 
-                  //Move to backup folder
-                  fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
-                    if (err) {
-                      reject(err);
-                    };
-                    resolve(msg);
-                  });
+                  _num_data =50;
+
+                  // Checking number download and upload was correct
+                  if(Number(_num_data) === Number(result.rowsAffected)){
+
+                    msg={msg:'Insert TransAllotted DB(Bulk). successful.',records:result.rowsAffected,'businessDate': businessDate}
+
+                    //Move to backup folder
+                    fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
+                      if (err) {
+                        reject(err);
+                      };
+                      resolve(msg);
+                    });
+
+                  }else{
+                    msg ={msg:`Number transactions upload not complete !!  download= ${_num_data}  ;Upload=${result.rowsAffected} `};
+                    reject(msg);
+                  }
 
                 }
               });
@@ -4509,15 +4468,15 @@ function fcAlloted_ToDB_BULK(fileName,userCode,businessDate){
 
 
       },err=>{
-        logger.error('Error delMIT_FC_NAV()>' + err )
-        //TODO  loging and alert (mail) to respondor
+        // logger.error('Error bakMIT_FC_TransAllotted()>' + err.message )
+        reject( {msg:`Error on  bakMIT_FC_TransAllotted() ${businessDate} , ${err.message}`, } );
 
       });
 
       });//fs.readFile
 
     }catch(e){
-      logger.error(e);
+      // logger.error(e);
       reject(e);
     }
   });
@@ -5118,6 +5077,11 @@ function fcUnitholderBalance_ToDB_BULK(fileName,userCode,businessDate){
             table.columns.add('createDate', sql.SmallDateTime, { nullable: true });
 
             var array = data.toString().split("\n");
+
+            item_header = array[0].split('|');
+            logger.info(`item_header >> ${item_header}`)
+            _num_data = item_header[2];
+
             array.shift(); //removes the first array element
 
             // logger.info('**DATA->' + JSON.stringify(array))
@@ -5167,20 +5131,17 @@ function fcUnitholderBalance_ToDB_BULK(fileName,userCode,businessDate){
               // ***************** EXECUTE insert Bulk data to  MIT_LED table
               const request = new sql.Request(pool1)
               request.bulk(table, (err, result) => {
-                  // ... error checks
-                  // console.log('ERROR BULK>>' + err);
                 if(err){
-                  console.log(err);
-                  logger.error(JSON.stringify(err));
+                  logger.error(JSON.stringify(err.message));
                   reject(err);
                 }
 
-                if(result){
-                  var today = new Date();
-                  var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2); //Current date
-                  msg={msg:'Insert UnitholderBalance” DB. successful.',records:_row,'businessDate': yyyymmddDate}
+                if(Number(_num_data) === Number(result.rowsAffected)){
+                  // var today = new Date();
+                  // var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2); //Current date
 
-                  // logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
+                  msg={msg:'Insert UnitholderBalance” DB. successful.',records:_row,'businessDate': businessDate}
+
                   //Move to backup folder
                   fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
                     if (err) {
@@ -5189,15 +5150,20 @@ function fcUnitholderBalance_ToDB_BULK(fileName,userCode,businessDate){
                     resolve(msg);
                   });
 
+                }else{
+                  msg ={msg:`Number UnitholderBalance  upload not complete!!  download= ${_num_data}  ;Upload=${result.rowsAffected} `};
+                  reject(msg);
                 }
+
+
               });
               // ***************** Execute insert Bulk data to  MIT_LED table
             });//sql.ConnectionPool
 
 
       },err=>{
-        console.log('Error delMIT_FC_NAV()>' + err )
-        // reject(err);
+        // console.log('Error delMIT_FC_NAV()>' + err )
+        reject(err);
         // res.status(422).json({error: err});
       });
 
@@ -5503,14 +5469,16 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
             table.columns.add('createDate', sql.SmallDateTime, { nullable: true });
 
             var array = data.toString().split("\n");
+
+            item_header = array[0].split('|');
+            _num_data = item_header[2];
+
             array.shift(); //removes the first array element
 
             var _row =0;
               for(i in array) {
 
                 var item = array[i].split("|") ;
-
-                // console.log("item >> "+item);
 
                 AMCCode_Str = String(item[0]).trim();
                 FundCode_Str = String(item[1]).trim();
@@ -5524,9 +5492,6 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
                   SACode_str= item[9]?item[9]:'';
                   TotalUnit_int= item[10]?item[10].trim():'';
                   TotalAUM_int=item[11]?item[11].trim():'';
-
-                  if (FundCode_Str==='KT-JAPAN-A')
-                    logger.info('***item >> '+item);
 
                   if(item[0]){
                     table.rows.add(AMCCode_Str
@@ -5559,12 +5524,13 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
                   reject(err);
                 }
 
-                if(result){
-                  var today = new Date();
-                  var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2); //Current date
-                  msg={msg:'Insert NAV DB. successful.',records:_row,'businessDate': yyyymmddDate}
+                if(Number(_num_data) === Number(result.rowsAffected)){
 
-                  logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
+                  // var today = new Date();
+                  // var yyyymmddDate = today.getFullYear()+''+("0" + (today.getMonth() + 1)).slice(-2)+''+("0" + today.getDate()).slice(-2); //Current date
+                  msg={msg:'Insert NAV DB. successful.',records:_row,'businessDate': businessDate}
+                  // logger.info('Function fcNAV_ToDB() //'+JSON.stringify(msg));
+
                   //Move to backup folder
                   fs.rename(DOWNLOAD_DIR +"/"+ fileName, DOWNLOAD_DIR_BACKUP+"/"+fileName,  (err) => {
                     if (err) {
@@ -5573,7 +5539,11 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
                     resolve(msg);
                   });
 
+                }else{
+                  msg ={msg:`Number NAV upload not complete!!  download= ${_num_data}  ;Upload=${result.rowsAffected} `};
+                  reject(msg);
                 }
+
               });
               // ***************** Execute insert Bulk data to  MIT_LED table
             });//sql.ConnectionPool
@@ -5581,7 +5551,7 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
 
       },err=>{
         console.log('Error delMIT_FC_NAV()>' + err )
-        // reject(err);
+        reject(err);
         // res.status(422).json({error: err});
       });
 

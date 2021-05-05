@@ -2878,9 +2878,11 @@ function UnitholderBalanceAPIProc(businessDate,userCode){
 
 
           },err=>{
-            reject(err);
+            logger.error(err.message)
+            reject(err.message);
           });
       },err=>{
+        logger.error(err.message)
         reject(err);
       });
   }).
@@ -3588,6 +3590,7 @@ END
 // createDate format  yyyymmdd(20191030)
 function bakMIT_FC_TransAllotted(businessDate){
   logger.info('bakMIT_FC_TransAllotted-' + businessDate);
+
   return new Promise(function(resolve, reject) {
     try{
 
@@ -3600,7 +3603,7 @@ BEGIN
   INSERT INTO MIT_FC_TransAllotted_BAK
   SELECT * FROM MIT_FC_TransAllotted WHERE businessDate = @businessDate
 
-  DELETE  from MIT_FC_TransAllotted  where businessDate = @businessDate
+  --DELETE  from MIT_FC_TransAllotted  where businessDate = @businessDate
 
 END
 `;
@@ -4219,8 +4222,8 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
           reject(err);
         }
 
-        // Delete NAV same day
-        bakMIT_FC_TransAllotted(businessDate).then(()=>{
+        // Backup NAV same day
+        // bakMIT_FC_TransAllotted(businessDate).then(()=>{
 
             //Table config
             const sql = require('mssql');
@@ -4295,8 +4298,8 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
             var array = data.toString().split("\n");
 
             // logger.info('**DATA >>' + JSON.stringify(array[0]))
-            item_header = array[0].split('|');
-            _num_data = item_header[2];
+            var item_header = array[0].split('|');
+            var _num_data = item_header[2];
 
             array.shift(); //removes the first array element
               for(i in array) {
@@ -4441,8 +4444,6 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
 
                 if(result){
 
-                  _num_data =50;
-
                   // Checking number download and upload was correct
                   if(Number(_num_data) === Number(result.rowsAffected)){
 
@@ -4467,11 +4468,9 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
             });//sql.ConnectionPool
 
 
-      },err=>{
-        // logger.error('Error bakMIT_FC_TransAllotted()>' + err.message )
-        reject( {msg:`Error on  bakMIT_FC_TransAllotted() ${businessDate} , ${err.message}`, } );
-
-      });
+      // },err=>{
+      //   reject( {msg:`Error on  bakMIT_FC_TransAllotted() ${businessDate} , ${err.message}`, } );
+      // });
 
       });//fs.readFile
 
@@ -5078,9 +5077,8 @@ function fcUnitholderBalance_ToDB_BULK(fileName,userCode,businessDate){
 
             var array = data.toString().split("\n");
 
-            item_header = array[0].split('|');
-            logger.info(`item_header >> ${item_header}`)
-            _num_data = item_header[2];
+            var item_header = array[0].split('|');
+            var _num_data = item_header[2];
 
             array.shift(); //removes the first array element
 
@@ -5470,8 +5468,8 @@ function fcNAV_ToDB(fileName,businessDate,userCode){
 
             var array = data.toString().split("\n");
 
-            item_header = array[0].split('|');
-            _num_data = item_header[2];
+            var item_header = array[0].split('|');
+            var _num_data = item_header[2];
 
             array.shift(); //removes the first array element
 
@@ -5937,8 +5935,6 @@ let seconds = today.getSeconds();
 
 
 
-
-
 function fundProfileAutoUpdate(){
 
   return new Promise(function(resolve, reject) {
@@ -6023,3 +6019,138 @@ function fundProfileAutoUpdate(){
 
 }
 
+exports.validateFC_API_download =(req, res)=>{
+
+  exports.validateFC_API_downloadPROC().then(rs=>{
+    logger.info(JSON.stringify(rs))
+    res.status(200).json(rs);
+
+  },err=>{
+    res.status(422).json(err);
+
+  });
+
+
+}
+
+exports.validateFC_API_downloadPROC = (req, res)=>{
+
+
+
+  var nav_num_data
+
+  return new Promise( function(resolve, reject) {
+
+    if(req && req.body && req.body.businessDate){
+      businessDate = req.body.businessDate
+    } else{
+      businessDate = fundConnextBusinessDate();
+    }
+
+    logger.info( `Welcome validateFC_API_download ${businessDate}` )
+
+    // validate NAV
+    // 20210428_MPAM_NAV.txt
+
+    // Validate ALLOTTEDTRANSACTIONS
+    // 20210428_MPAM_ALLOTTEDTRANSACTIONS.txt
+
+    // Validate UNITHOLDERBALANCE
+    // 20210428_MPAM_UNITHOLDERBALANCE.txt
+
+     // Transaction API
+      fnArray=[];
+      fnArray.push(getFCdownload_file(`${businessDate}_MPAM_NAV.txt`));
+      fnArray.push(getFCdownload_file(`${businessDate}_MPAM_ALLOTTEDTRANSACTIONS.txt`));
+      fnArray.push(getFCdownload_file(`${businessDate}_MPAM_UNITHOLDERBALANCE.txt`));
+      fnArray.push(getFCdownload_db(`${businessDate}`));
+      Promise.all(fnArray)
+      .then(data => {
+        logger.info('file nav =' + JSON.stringify(data[0]) )
+        logger.info('file tran=' + JSON.stringify(data[1]) )
+        logger.info('file unit=' + JSON.stringify(data[2]) )
+
+        logger.info('db =' + JSON.stringify(data[3][0]) )
+
+        resolve(JSON.stringify(data))
+      })
+      .catch(error => {
+        logger.error('Error :' +error.message)
+      });
+
+  })
+}
+
+
+function getFCdownload_file(fileName) {
+  const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
+  var n_num_data
+
+  return new Promise(resolve => {
+    fs.readFile(DOWNLOAD_DIR_BACKUP +"/"+ fileName, function(err, data) {
+      if(err) {
+        logger.error(err.message);
+        reject(err.message);
+
+      }else{
+        var array = data.toString().split("\n");
+        var item_header = array[0].split('|');
+        n_num_data = item_header[2];
+        resolve(`{cnt:${n_num_data}`)
+      }
+
+    });
+
+  });
+}
+
+
+function getFCdownload_db(businessDate){
+
+  return new Promise(function(resolve, reject) {
+    try{
+      var queryStr = `
+      BEGIN
+
+      select count(*) as nav_cnt
+      from MIT_FC_NAV
+      where businessDate = @businessDate
+
+      select aa.cnt as tran_cnt from (
+        select top 1 left(convert(varchar, a.CreateDate, 20),16) as createDate_txt, count(*) as cnt
+        from MIT_FC_TransAllotted a
+        where businessDate = @businessDate
+        group by left(convert(varchar, a.CreateDate, 20),16)
+        order  by createDate_txt desc
+      ) as aa
+
+      select count(*) as unit_cnt
+      from MIT_FC_UnitholderBalance  b
+      where businessDate = @businessDate
+
+      END
+      `;
+          const sql = require('mssql')
+          const pool1 = new sql.ConnectionPool(config, err => {
+            pool1.request() // or: new sql.Request(pool1)
+            .input("businessDate", sql.VarChar(20), businessDate)
+            .query(queryStr, (err, result) => {
+                if(err){
+                  logger.error('SQL Error >' +err);
+                  reject(err);
+                }else {
+                  resolve(result.recordset)
+                }
+            })
+          })
+          pool1.on('error', err => {
+            logger.error('POOL Error >'+err);
+            reject(err);
+          })
+  }catch(e){
+    logger.error('CATCH >' + e);
+    reject(e);
+  }
+  });
+
+}

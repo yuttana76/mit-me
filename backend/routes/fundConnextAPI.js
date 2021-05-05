@@ -79,31 +79,32 @@ router.get("/downloadInfo/",[
 
 
 // ********* Download NAV V2
-//Download NAV & Sync DB.
+//Download NAV & Sync DB. (Active)
 router.post("/downloadNavAPI/v2/",[check('businessDate')
     // .isLength({ min: 1 }).withMessage('must have businessDate value')
   ],fundConnextAPIController.downloadNavAPI_V2);
 
+
+// Inactive
 router.post("/downloadNavSchedule/",[selfAuth
     ,  check('schStatus')
       .isLength({ min: 1 }).withMessage('must have schStatus value')
   ],fundConnextAPIController.downloadNavSchedule);
 
-// ********* Download V2
 
-// ********* Download AllottedTransactions
+// ********* Download AllottedTransactions (Active)
 router.post("/downloadAllottedAPI",[check('businessDate')
     .isLength({ min: 1 }).withMessage('must have businessDate value')
   ],fundConnextAPIController.downloadAllottedAPI);
 
 
-// ********* Download UnitholderBalance
+// ********* Download UnitholderBalance (Active)
 router.post("/downloadUnitholderBalanceAPI",[check('businessDate')
 .isLength({ min: 1 }).withMessage('must have businessDate value')
 ],fundConnextAPIController.UnitholderBalanceAPI);
 
 
-// ********* Download UnitholderBalance (developing)
+// ********* Download FundProfile (developing)
 router.post("/downloadFundProfilAPI",[check('businessDate')
 .isLength({ min: 1 }).withMessage('must have businessDate value')
 ],fundConnextAPIController.FundProfileAPI);
@@ -113,7 +114,7 @@ router.post("/fundProfileAutoUpdate"
 ,fundConnextAPIController.fundProfileAutoUpdateAPI);
 
 
-// ********* Download AllottedTransactions
+// ********* Download
 
 router.post("/exportExcel/",[
   check('fileType')
@@ -127,9 +128,10 @@ router.post("/exportExcel/",[
     .isLength({ min: 1 }).withMessage('extract must have value '),
 ], fundConnextAPIController.exportExcel);
 
+// Testing & Developing
 
 router.post("/testUpdateSuit/",fundConnextAPIController.updateSuitAPI);
 
-
+router.post("/validateFC_API_download/",fundConnextAPIController.validateFC_API_download);
 
 module.exports = router;

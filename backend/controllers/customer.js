@@ -1763,7 +1763,7 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
       if (Number(acceptBy_splited[1])) {
         IT_SAcode_external = acceptBy_splited[1]
       }
-      
+
     }
 
     // console.log('***acceptBy_splited>' ,JSON.stringify(acceptBy_splited))
@@ -2677,7 +2677,7 @@ finally {
       .input("Cust_Code", sql.VarChar(20), AccountId)
       .input("Group_code", sql.VarChar(20), custObj.Group_code)
       .input("Card_Type", sql.VarChar(10), custObj.Card_Type)
-      .input("Title_Name_T", sql.NVarChar(10), custObj.Title_Name_T)
+      .input("Title_Name_T", sql.NVarChar(50), custObj.Title_Name_T)
       .input("First_Name_T", sql.NVarChar(100), custObj.thFirstName)
       .input("Last_Name_T", sql.NVarChar(100), custObj.thLastName)
       .input("Title_Name_E", sql.NVarChar(100), custObj.title)

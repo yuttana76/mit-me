@@ -1,7 +1,10 @@
 // https://www.npmjs.com/package/maskdata#mask-the-exact-substring-from-throughout-the-string
 
+const e = require('express');
 const logger = require('../config/winston');
 // const { NAV_auditor } = require('./fundConnextAPI');
+const fs = require('fs');
+const path = require('path');
 
 
 function fundConnextBusinessDate(){
@@ -23,6 +26,8 @@ function fundConnextBusinessDate(){
 
 exports.validateFC_API_download =(req, res,businessDate)=>{
 
+  const DOWNLOAD_DIR_BACKUP = path.resolve('./backend/downloadFiles/fundConnextBackup/');
+
   try{
 
     if(!businessDate){
@@ -37,20 +42,36 @@ exports.validateFC_API_download =(req, res,businessDate)=>{
 
     logger.info( `Welcome validateFC_API_download ${businessDate}` )
 
-    // validate NAV
-    // 3260 downloadNavAPIproc
-    // 3303
-    // 5414 fcNAV_ToDB
+// validate NAV
+// 20210428_MPAM_NAV.txt
 
-    // Validate ALLOTTEDTRANSACTIONS   2817
-    // 2811 downloadAllotedAPIproc
-    // 4095 fcAlloted_ToDB
-    // 4176 fcAlloted_ToDB_BULK (developing)
-    // 5520
+    try{
+      fileName = `${businessDate}_MPAM_NAV.txt`
+      fs.readFile(DOWNLOAD_DIR_BACKUP +"/"+ fileName, function(err, data) {
+        if(err) {
+          logger.error(err.message);
+        }else{
+          var array = data.toString().split("\n");
+
+          item_header = array[0].split('|');
+          logger.info('**DATA item_header>>' + JSON.stringify(item_header))
+          _num_data = item_header[2];
+        }
+      });
+
+
+    }catch(e){
+      // logger.error(e);
+      reject(e);
+    }
+
+
+
+    // Validate ALLOTTEDTRANSACTIONS
+    // 20210428_MPAM_ALLOTTEDTRANSACTIONS.txt
 
     // Validate UNITHOLDERBALANCE
-    // 2862 UnitholderBalanceAPIProc
-    // 5006 fcUnitholderBalance_ToDB_BULK
+    // 20210428_MPAM_UNITHOLDERBALANCE.txt
 
     return true;
 
@@ -61,4 +82,4 @@ exports.validateFC_API_download =(req, res,businessDate)=>{
 }
 
 
-exports.validateFC_API_download('xxx')
+exports.validateFC_API_download('20210428')

@@ -1097,7 +1097,9 @@ BEGIN
     select  distinct a.transactionID,convert(varchar, a.transactionDate, 23) ,a.fundCode, a.transactionCode,a.amount ,a.unit
     from MIT_FC_TransAllotted A
     where accountID =@custCode
-    and MONTH(a.transactionDate)=MONTH(CAST(@as_of_date as date))
+    --and MONTH(a.transactionDate)=MONTH(CAST(@as_of_date as date))
+    and  a.transactionDate >= Dateadd(Month, Datediff(Month, 0, DATEADD(m, -6,CAST(@as_of_date as date))), 0)
+
     order BY transactionID desc ,a.fundCode
 
     OPEN @TransactionCursor;

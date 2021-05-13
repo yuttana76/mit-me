@@ -4298,8 +4298,10 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
             var array = data.toString().split("\n");
 
             // logger.info('**DATA >>' + JSON.stringify(array[0]))
+
             var item_header = array[0].split('|');
             var _num_data = item_header[2];
+            logger.info(`item_header>>${item_header}`)
 
             array.shift(); //removes the first array element
               for(i in array) {

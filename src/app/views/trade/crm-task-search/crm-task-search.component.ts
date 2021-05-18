@@ -37,6 +37,9 @@ export class CrmTaskSearchComponent implements OnInit {
       task_id: new FormControl(null, {
         // validators: [Validators.required]
       }),
+      task_title: new FormControl(null, {
+        // validators: [Validators.required]
+      }),
       custCode: new FormControl(null, {
         // validators: [Validators.required]
       }),
@@ -83,6 +86,7 @@ export class CrmTaskSearchComponent implements OnInit {
     }
     // this.spinnerLoading = true;
     const task_id = this.searchForm.get('task_id').value
+    const task_title = this.searchForm.get('task_title').value
     const custCode = this.searchForm.get('custCode').value
     const response = this.searchForm.get('response').value
     const schType = this.searchForm.get('schType').value
@@ -98,7 +102,7 @@ export class CrmTaskSearchComponent implements OnInit {
       schEndDate = this.datepipe.transform(schEndDate, 'dd/MM/yyyy');
     }
 
-    this.crmPersonalService.getTaskLists(this.rowsPerPage, 1, task_id,custCode,response,schType,schStartDate,schEndDate);
+    this.crmPersonalService.getTaskLists(this.rowsPerPage, 1, task_id,task_title,custCode,response,schType,schStartDate,schEndDate);
 
     this.taskSub = this.crmPersonalService.getTaskListsListener().subscribe((data: CrmTask[]) => {
         // console.log('Result->' + JSON.stringify(data));

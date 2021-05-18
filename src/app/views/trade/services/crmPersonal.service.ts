@@ -134,7 +134,7 @@ export class CrmService {
 
 
 
-  getTaskLists(rowPerPage: number, currentPage: number, task_id,custCode,response,schType,schStartDate,schEndDate) {
+  getTaskLists(rowPerPage: number, currentPage: number, task_id,task_title,custCode,response,schType,schStartDate,schEndDate) {
 
     const actionBy = 'DEV';
 
@@ -151,6 +151,9 @@ export class CrmService {
 
     if(task_id)
       queryParams += `&task_id=${task_id}`;
+
+    if(task_title)
+      queryParams += `&task_title=${task_title}`;
 
     if(custCode)
       queryParams += `&custCode=${custCode}`;

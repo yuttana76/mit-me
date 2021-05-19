@@ -18,6 +18,7 @@ export class CrmTaskComponent implements OnInit {
   schFormGroup: FormGroup;
   crmTaskObj: CrmTask = new CrmTask();
   private taskId: string;
+  private CustCode: string;
 
   spinnerLoading = false;
   MODE_CREATE = 'CREATE';
@@ -129,10 +130,16 @@ export class CrmTaskComponent implements OnInit {
         this.formScreen = paramMap.get('source');
       }
 
+      if (paramMap.has('CustCode') && paramMap.get('CustCode') !== 'null') {
+        this.CustCode = paramMap.get('CustCode');
+        console.log(` Task CustCode: ${this.CustCode}`)
+      }
+
       if (paramMap.has('taskId')
       && paramMap.get('taskId') !== 'undefined'
       && paramMap.get('taskId') !== 'null'
       && paramMap.get('taskId') !== ''
+      && paramMap.get('taskId') !== '-'
       ) {
         console.log('initial values')
         this.mode = this.MODE_EDIT;

@@ -203,7 +203,6 @@ function PFlastFriday(_date){
                       logger.error(`PF mapping & adjust JSON structure Error> ${JSON.stringify(err)}`)
                     }
 
-
                     cust_data[0] = MF_port
                     cust_data[1] = newPF_port
 
@@ -214,6 +213,7 @@ function PFlastFriday(_date){
                         // customer.customer_code = _id_mask//b['id']
                         customer.customer_code = b['id_cust']
                         customer.customer_name = b['fullName']
+                        customer.referral = b['referral']
                         customer.as_of_date = as_of_date
                         customer.portfolio_code = b['acc']
                         customer.product = b['product']
@@ -272,11 +272,8 @@ function PFlastFriday(_date){
 
                   reject(err)
                 });
-
   });
-
 }
-
 
 exports.getPortDetailByAgents = (req, res, next) => {
   logger.info('Welcome getPortDetailByAgents');
@@ -782,6 +779,7 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
   ,mf_sum_current_value [numeric](18, 2)
   ,mf_sum_capital_value [numeric](18, 2)
   ,bond_sum_amount [numeric](18, 2)
+  ,referral VARCHAR(50)
   )
 
   DECLARE @customerCursor as CURSOR;
@@ -791,6 +789,7 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
   DECLARE @fullName VARCHAR(100);
   DECLARE @product VARCHAR(20);
   DECLARE @acc VARCHAR(20);
+  DECLARE @referral VARCHAR(100);
   -- Portfolio
 
   DECLARE @mf_sum_current_value [numeric](18, 2)=0
@@ -803,6 +802,7 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
       select  b.CustID as acc, ISNULL(b.IDcardNo,'-') as id_cust
       ,b.FName +' ' +   REPLACE(b.LName, SUBSTRING(b.LName, LEN(b.LName)-3,LEN(b.LName)), '***') as fullName
       , 'BOND' as product
+      ,'' as referral
       from ITB_RM_Freelance a
       LEFT join ITB_Customers b on (b.FreelanceID=a.ID  OR b.RMID = a.ID )and  b.[Status]='A '
       where a.Code =@license_code
@@ -813,6 +813,7 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
       select  a.Cust_Code as acc, ISNULL(a.IT_PID_No,'-') as id_cust
       , a.First_Name_T +' ' +   REPLACE(a.Last_Name_T, SUBSTRING(a.Last_Name_T, LEN(a.Last_Name_T)-3,LEN(a.Last_Name_T)), '***') as full_name
       ,'MF'as product
+      ,ISNULL(a.IT_Referral,'') as referral
       from Account_Info a
       where  a.IT_PID_No is not null
       and a.IT_PID_No != ''
@@ -824,7 +825,7 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
       order by id_cust,acc
 
       OPEN @customerCursor;
-      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product
+      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product,@referral
       WHILE @@FETCH_STATUS = 0
       BEGIN
 
@@ -849,8 +850,8 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
           -- print @id + ' ' +@fullName +' '+  @product+' '+@acc +' '+ CONVERT(varchar(20), @mf_sum_current_value) +' '+ CONVERT(varchar(20), @mf_sum_capital_value )
 
         -- Insert temp table
-        INSERT INTO @tempTable (id_cust,fullName,product,acc,mf_sum_current_value,mf_sum_capital_value)
-        VALUES  (@id,@fullName,@product,@acc,@mf_sum_current_value,@mf_sum_capital_value)
+        INSERT INTO @tempTable (id_cust,fullName,product,acc,mf_sum_current_value,mf_sum_capital_value,referral)
+        VALUES  (@id,@fullName,@product,@acc,@mf_sum_current_value,@mf_sum_capital_value,@referral)
 
       END
 
@@ -870,13 +871,13 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
 
           -- print @id + ' ' +@fullName +' '+  @product+' '+@acc   + ' ' +@bond_InstrumentDesc   + ' '+ @bond_OrderDate + ' '+ CONVERT(varchar(20), @bond_amount )
           -- Insert temp table
-        INSERT INTO @tempTable (id_cust,fullName,product,acc,bond_sum_amount)
-        VALUES  (@id,@fullName,@product,@acc,@bond_sum_amount)
+        INSERT INTO @tempTable (id_cust,fullName,product,acc,bond_sum_amount,referral)
+        VALUES  (@id,@fullName,@product,@acc,@bond_sum_amount,@referral)
 
       END
 
 
-      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product
+      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product,@referral
       END
       CLOSE @customerCursor;
       DEALLOCATE @customerCursor;
@@ -1032,9 +1033,15 @@ function funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date) {
     ,b.InstrumentCode as instrument
     ,b.Amount as current_value
     ,convert(varchar, b.OrderDate, 23) as order_date
+    ,c.InterestRate as InterestRate
+    ,convert(varchar, c.MatureDate, 23) as MatureDate
     ,d.code +'-'+c.InstrumentTypeCode AS instrument_desc
+    -- +'; Payment cycle:' +c.PaymentCycle
+    -- + '; Payment period:'+c.PaymentPeriod
+    -- + ' ;InstrumentLife:'+c.InstrumentLife
+    -- + ' ;FirstPaymentDate:'+c.FirstPaymentDate AS instrument_desc
     FROM ITB_Customers a
-    LEFT join  ITB_CustInstruments b ON b.CustCode  = a.custId and b.[Status]='A'
+    LEFT join  ITB_CustInstruments b ON b.CustCode  = a.custId and b.[Status]='A' and  CONVERT(DATETIME, b.OrderDate) <= CONVERT(DATETIME, @as_of_date)
     LEFT join ITB_Instrument c ON  c.InstrumentID= b.InstrumentCode and c.[Status]='A'
     LEFT join ITB_Company d ON d.ID=c.IssuerID and d.[status]='A'
     where CustCode = @CustCode

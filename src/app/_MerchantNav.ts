@@ -77,7 +77,7 @@ export const navItems = [
   // },
   {
     name: 'CRM-Task',
-    url: '/trade/CRM-Task/null/null',
+    url: '/trade/CRM-Task/null/null/null',
     icon: 'icon-speedometer',
 
   },

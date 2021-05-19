@@ -41,7 +41,7 @@ exports.getMastert = (req, res, next) =>{
   var refType = req.query.refType
   var lang = req.query.lang
 
-  logger.info('Start getMastert;' + refType )
+  logger.info(`Start getMastert; ${refType}; ${compCode}; ${lang}`)
   getMaster(compCode,refType,lang).then(data=>{
     res.status(200).json(data);
   },err=>{
@@ -93,6 +93,7 @@ exports.searchTask = (req, res, next) =>{
   var actionBy = req.query.actionBy || false;
 
   var task_id = req.query.task_id || false;
+  var task_title = req.query.task_title || false;
   var custCode = req.query.custCode || false;
   var w_response = req.query.w_response || false;
   var schType = req.query.schType || false;
@@ -118,7 +119,7 @@ exports.searchTask = (req, res, next) =>{
   // if (req.query.endDate)
   //   endDate = req.query.startDate;
 
-  searchTask(numPerPage,page,compCode,actionBy,task_id,custCode,w_response,schType,startDate,endDate).then(data=>{
+  searchTask(numPerPage,page,compCode,actionBy,task_id,task_title,custCode,w_response,schType,startDate,endDate).then(data=>{
     res.status(200).json(data);
   },err=>{
       res.status(400).json({
@@ -140,7 +141,7 @@ exports.createPersonal = (req, res, next) =>{
 
   logger.info(`createPersonal ()compCode: ${compCode};actionBy:${actionBy}  ;personObj:${JSON.stringify(personObj)} ` )
 
-  createPersonal(compCode,actionBy,personObj).then(data=>{
+  updatePersonal(compCode,actionBy,personObj).then(data=>{
     res.status(200).json(data);
   },err=>{
       res.status(400).json({
@@ -163,7 +164,7 @@ exports.createTask = (req, res, next) =>{
     // }
 
 
-  createTask(compCode,actionBy,taskObj).then(data=>{
+  updateTask(compCode,actionBy,taskObj).then(data=>{
     res.status(200).json(data);
   },err=>{
       res.status(400).json({
@@ -697,7 +698,7 @@ function getTaskById(task_id,compCode) {
   });
 }
 
-function searchTask(numPerPage,page,compCode,actionBy,task_id,custCode,response,schType,startDate,endDate) {
+function searchTask(numPerPage,page,compCode,actionBy,task_id,task_title,custCode,response,schType,startDate,endDate) {
   logger.info('searchTask()');
 ``
   var fncName = "searchTask()";
@@ -706,6 +707,10 @@ function searchTask(numPerPage,page,compCode,actionBy,task_id,custCode,response,
 
   if (task_id){
     conditionStr = conditionStr +` AND task_id=${task_id}`;
+  }
+
+  if (task_title){
+    conditionStr = conditionStr +` AND title like '%${task_title}%' `;
   }
 
   if (custCode){
@@ -775,31 +780,78 @@ function updatePersonal(compCode,actionBy,personObj){
   var queryStr = `
   BEGIN
 
-  UPDATE MIT_CRM_Personal SET
-  idCard=@idCard,
-  FirstName=@FirstName,
-  LastName=@LastName,
+    UPDATE MIT_CRM_Personal SET
+    idCard=@idCard,
+    FirstName=@FirstName,
+    LastName=@LastName,
+    CustomerAlias=@CustomerAlias,
+    Dob=@Dob,
+    Sex=@Sex,
+    State=@State,
+    custType=@custType,
+    Mobile=@Mobile,
+    Telephone=@Telephone,
+    Email=@Email,
+    SocialAccount=@SocialAccount,
+    Interested=@Interested,
+    UserOwner=@UserOwner,
+    Refer=@Refer,
+    Class=@Class,
+    InvestCondition=@InvestCondition,
+    --ImportantData=@ImportantData,
+    UpdateBy=@actionBy,
+    UpdateDate=GETDATE()
+    WHERE compCode=@compCode
+    AND CustCode=@CustCode
 
-  CustomerAlias=@CustomerAlias,
-  Dob=@Dob,
-  Sex=@Sex,
-  State=@State,
-  custType=@custType,
-  Mobile=@Mobile,
-  Telephone=@Telephone,
-  Email=@Email,
-  SocialAccount=@SocialAccount,
-  Interested=@Interested,
-  UserOwner=@UserOwner,
-  Refer=@Refer,
-  Class=@Class,
-  InvestCondition=@InvestCondition,
-  ImportantData=@ImportantData,
+    IF @@ROWCOUNT =0
+    BEGIN
+      INSERT INTO  MIT_CRM_Personal(
+        compCode,
+        FirstName,
+        LastName,
+        CustomerAlias,
+        Dob,
+        Sex,
+        State,
+        custType,
+        Mobile,
+        Telephone,
+        Email,
+        SocialAccount,
+        Interested,
+        UserOwner,
+        Refer,
+        Class,
+        InvestCondition,
+        --ImportantData,
+        CreateBy,
+        CreateDate
+    )
+    VALUES(
+        @compCode,
+        @FirstName,
+        @LastName,
+        @CustomerAlias,
+        @Dob,
+        @Sex,
+        @State,
+        @custType,
+        @Mobile,
+        @Telephone,
+        @Email,
+        @SocialAccount,
+        @Interested,
+        @UserOwner,
+        @Refer,
+        @Class,
+        @InvestCondition,
+        --@ImportantData,
+        @actionBy,
+        getDate()
+    )
 
-  UpdateBy=@UpdateBy,
-  UpdateDate=GETDATE()
-  WHERE compCode=@compCode
-  AND CustCode=@CustCode
+    END
   END
     `;
 
@@ -811,25 +863,25 @@ function updatePersonal(compCode,actionBy,personObj){
         .input("compCode", sql.VarChar(20), compCode)
         .input("CustCode", sql.Int, personObj.CustCode)
 
-        .input("idCard", sql.VarChar(50), personObj.idCard)
-        .input("FirstName", sql.NVarChar(200), personObj.FirstName)
-        .input("LastName", sql.NVarChar(200), personObj.LastName)
-        .input("CustomerAlias", sql.NVarChar(200), personObj.CustomerAlias)
-        .input("Dob", sql.VarChar(50), personObj.Dob)
-        .input("Sex", sql.NVarChar(10), personObj.Sex)
-        .input("State", sql.NVarChar(50), personObj.State)
-        .input("custType", sql.NVarChar(50), personObj.custType)
-        .input("Mobile", sql.VarChar(50), personObj.Mobile)
-        .input("Telephone", sql.VarChar(50), personObj.Telephone)
-        .input("Email", sql.NVarChar(100), personObj.Email)
-        .input("SocialAccount", sql.NVarChar(200), personObj.SocialAccount)
-        .input("Interested", sql.NVarChar(200), personObj.Interested)
-        .input("UserOwner", sql.NVarChar(50), personObj.UserOwner)
-        .input("Refer", sql.NVarChar(50), personObj.Refer)
-        .input("Class", sql.NVarChar(20), personObj.Class)
-        .input("InvestCondition", sql.NVarChar(200), personObj.InvestCondition)
-        .input("ImportantData", sql.NVarChar(200), personObj.ImportantData)
-        .input("UpdateBy", sql.NVarChar(50), actionBy)
+        .input("idCard", sql.VarChar(50), personObj.idCard?personObj.idCard:'')
+        .input("FirstName", sql.NVarChar(200), personObj.FirstName?personObj.FirstName:'')
+        .input("LastName", sql.NVarChar(200), personObj.LastName?personObj.LastName:'')
+        .input("CustomerAlias", sql.NVarChar(200), personObj.CustomerAlias?personObj.CustomerAlias:'')
+        .input("Dob", sql.VarChar(50), personObj.Dob?personObj.Dob:null)
+        .input("Sex", sql.NVarChar(10), personObj.Sex?personObj.Sex:'')
+        .input("State", sql.NVarChar(50), personObj.State?personObj.State:'')
+        .input("custType", sql.NVarChar(50), personObj.custType?personObj.custType:'')
+        .input("Mobile", sql.VarChar(50), personObj.Mobile?personObj.Mobile:'')
+        .input("Telephone", sql.VarChar(50), personObj.Telephone?personObj.Telephone:'')
+        .input("Email", sql.NVarChar(100), personObj.Email?personObj.Email:'')
+        .input("SocialAccount", sql.NVarChar(200), personObj.SocialAccount?personObj.SocialAccount:'')
+        .input("Interested", sql.NVarChar(200), personObj.Interested?personObj.Interested:'')
+        .input("UserOwner", sql.NVarChar(50), personObj.UserOwner?personObj.UserOwner:'')
+        .input("Refer", sql.NVarChar(50), personObj.Refer?personObj.Refer:'')
+        .input("Class", sql.NVarChar(20), personObj.Class?personObj.Class:'')
+        .input("InvestCondition", sql.NVarChar(200), personObj.InvestCondition?personObj.InvestCondition:'')
+        // .input("ImportantData", sql.NVarChar(200), personObj.ImportantData?personObj.ImportantData:'')
+        .input("actionBy", sql.NVarChar(50), actionBy)
 
         .query(queryStr, (err, result) => {
           if (err) {
@@ -872,10 +924,54 @@ function updateTask(compCode,actionBy,taskObj){
       investValue=@investValue,
       investDate=@investDate,
       response=@response,
-      UpdateBy=@UpdateBy,
+      UpdateBy=@actionBy,
       UpdateDate=GETDATE()
     WHERE compCode=@compCode
     AND task_id=@task_id
+
+    IF @@ROWCOUNT =0
+    BEGIN
+
+      INSERT INTO MIT_CRM_Task (
+                  compCode,
+                  schType,
+                  schStartDate,
+                  title,
+                  note,
+                  channel,
+                  prodCate,
+                  productItem,
+                  schCloseDate,
+                  feedBackRS,
+                  feedBackReson,
+                  feedBackNote,
+                  investType,
+                  investValue,
+                  investDate,
+                  response,
+                  CreateBy,
+                  CreateDate
+              )VALUES(
+                  @compCode,
+                  @schType,
+                  @schStartDate,
+                  @title,
+                  @note,
+                  @channel,
+                  @prodCate,
+                  @productItem,
+                  @schCloseDate,
+                  @feedBackRS,
+                  @feedBackReson,
+                  @feedBackNote,
+                  @investType,
+                  @investValue,
+                  @investDate,
+                  @response,
+                  @actionBy,
+                  GETDATE()
+              )
+    END
 
   END
     `;
@@ -902,7 +998,7 @@ function updateTask(compCode,actionBy,taskObj){
         .input("investValue", sql.NVarChar(20), taskObj.investValue)
         .input("investDate", sql.NVarChar(50), taskObj.UserOwner)
         .input("response", sql.NVarChar(50), taskObj.response)
-        .input("UpdateBy", sql.NVarChar(50), actionBy)
+        .input("actionBy", sql.NVarChar(50), actionBy)
 
         .query(queryStr, (err, result) => {
           if (err) {
@@ -923,89 +1019,89 @@ function updateTask(compCode,actionBy,taskObj){
 
 
 
-function createTask(compCode,actionBy,taskObj){
+// function createTask(compCode,actionBy,taskObj){
 
-  var fncName = "createTask()";
-  var queryStr = `
-  BEGIN
-    INSERT INTO MIT_CRM_Task (
-          compCode,
-          schType,
-          schStartDate,
-          title,
-          note,
-          channel,
-          prodCate,
-          productItem,
-          schCloseDate,
-          feedBackRS,
-          feedBackReson,
-          feedBackNote,
-          investType,
-          investValue,
-          investDate,
-          response,
-          CreateBy,
-          CreateDate
-      )VALUES(
-          @compCode,
-          @schType,
-          @schStartDate,
-          @title,
-          @note,
-          @channel,
-          @prodCate,
-          @productItem,
-          @schCloseDate,
-          @feedBackRS,
-          @feedBackReson,
-          @feedBackNote,
-          @investType,
-          @investValue,
-          @investDate,
-          @response,
-          @CreateBy,
-          GETDATE()
-      )
+//   var fncName = "createTask()";
+//   var queryStr = `
+//   BEGIN
+//     INSERT INTO MIT_CRM_Task (
+//           compCode,
+//           schType,
+//           schStartDate,
+//           title,
+//           note,
+//           channel,
+//           prodCate,
+//           productItem,
+//           schCloseDate,
+//           feedBackRS,
+//           feedBackReson,
+//           feedBackNote,
+//           investType,
+//           investValue,
+//           investDate,
+//           response,
+//           CreateBy,
+//           CreateDate
+//       )VALUES(
+//           @compCode,
+//           @schType,
+//           @schStartDate,
+//           @title,
+//           @note,
+//           @channel,
+//           @prodCate,
+//           @productItem,
+//           @schCloseDate,
+//           @feedBackRS,
+//           @feedBackReson,
+//           @feedBackNote,
+//           @investType,
+//           @investValue,
+//           @investDate,
+//           @response,
+//           @CreateBy,
+//           GETDATE()
+//       )
 
-  END
-    `;
+//   END
+//     `;
 
-  // const sql = require("mssql");
-  return new Promise(function(resolve, reject) {
-    const pool1 = new sql.ConnectionPool(config, err => {
-      pool1
-        .request()
-        .input("compCode", sql.VarChar(20), compCode)
-        .input("schType", sql.VarChar(2), taskObj.schType)
-        .input("schStartDate", sql.VarChar(50), taskObj.schStartDate)
-        .input("title", sql.NVarChar(200), taskObj.title)
-        .input("note", sql.NVarChar(500), taskObj.note)
-        .input("channel", sql.VarChar(2), taskObj.channel)
-        .input("prodCate", sql.NVarChar(50), taskObj.prodCate)
-        .input("productItem", sql.NVarChar(50), taskObj.productItem)
-        .input("schCloseDate", sql.NVarChar(50), taskObj.custschCloseDateType)
-        .input("feedBackRS", sql.VarChar(50), taskObj.feedBackRS)
-        .input("feedBackReson", sql.VarChar(50), taskObj.feedBackReson)
-        .input("feedBackNote", sql.NVarChar(200), taskObj.feedBackNote)
-        .input("investType", sql.NVarChar(50), taskObj.investType)
-        .input("investValue", sql.NVarChar(20), taskObj.investValue)
-        .input("investDate", sql.NVarChar(50), taskObj.UserOwner)
-        .input("response", sql.NVarChar(50), taskObj.response)
-        .input("CreateBy", sql.NVarChar(50), actionBy)
+//   // const sql = require("mssql");
+//   return new Promise(function(resolve, reject) {
+//     const pool1 = new sql.ConnectionPool(config, err => {
+//       pool1
+//         .request()
+//         .input("compCode", sql.VarChar(20), compCode)
+//         .input("schType", sql.VarChar(2), taskObj.schType)
+//         .input("schStartDate", sql.VarChar(50), taskObj.schStartDate)
+//         .input("title", sql.NVarChar(200), taskObj.title)
+//         .input("note", sql.NVarChar(500), taskObj.note)
+//         .input("channel", sql.VarChar(2), taskObj.channel)
+//         .input("prodCate", sql.NVarChar(50), taskObj.prodCate)
+//         .input("productItem", sql.NVarChar(50), taskObj.productItem)
+//         .input("schCloseDate", sql.NVarChar(50), taskObj.custschCloseDateType)
+//         .input("feedBackRS", sql.VarChar(50), taskObj.feedBackRS)
+//         .input("feedBackReson", sql.VarChar(50), taskObj.feedBackReson)
+//         .input("feedBackNote", sql.NVarChar(200), taskObj.feedBackNote)
+//         .input("investType", sql.NVarChar(50), taskObj.investType)
+//         .input("investValue", sql.NVarChar(20), taskObj.investValue)
+//         .input("investDate", sql.NVarChar(50), taskObj.UserOwner)
+//         .input("response", sql.NVarChar(50), taskObj.response)
+//         .input("CreateBy", sql.NVarChar(50), actionBy)
 
-        .query(queryStr, (err, result) => {
-          if (err) {
-            console.log(fncName + " Quey db. Was err !!!" + err);
-            reject(err);
-          } else {
-            resolve(result);
-          }
-        });
-    });
-    pool1.on("error", err => {
-      console.log("ERROR>>" + err);
-      reject(err);
-    });
-  });
-}
+//         .query(queryStr, (err, result) => {
+//           if (err) {
+//             console.log(fncName + " Quey db. Was err !!!" + err);
+//             reject(err);
+//           } else {
+//             resolve(result);
+//           }
+//         });
+//     });
+//     pool1.on("error", err => {
+//       console.log("ERROR>>" + err);
+//       reject(err);
+//     });
+//   });
+// }

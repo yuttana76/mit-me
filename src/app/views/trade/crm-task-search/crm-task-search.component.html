@@ -6,7 +6,7 @@
   <!-- <form [formGroup]="searchForm" (submit)="onSerachCust()" #custForm="ngForm" *ngIf="!spinnerLoading" class="example-form"> -->
   <form [formGroup]="searchForm" (submit)="onSerach()" #custForm="ngForm" class="example-form">
     <mat-card-title>Search Customer Information
-        <a mat-button  [routerLink]="['/trade/CRM-Task','-','SEARCH_TASK']"  routerLinkActive="mat-accent" matTooltip="New Task">
+        <a mat-button  [routerLink]="['/trade/CRM-Task',null,'SEARCH_TASK',null]"  routerLinkActive="mat-accent" matTooltip="New Task">
           <i class="fas fa-user-plus fa-2x" ></i>
         </a>
     </mat-card-title>
@@ -15,6 +15,11 @@
 
         <mat-form-field class="col-md-6">
           <input matInput formControlName="task_id" placeholder="Task Id.">
+          <!-- <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error> -->
+        </mat-form-field>
+
+        <mat-form-field class="col-md-6">
+          <input matInput formControlName="task_title" placeholder="Title">
           <!-- <mat-error *ngIf="form.get('custId').invalid">Please enter a condition.</mat-error> -->
         </mat-form-field>
 
@@ -116,7 +121,7 @@
     <ng-container matColumnDef="ACT">
         <th mat-header-cell *matHeaderCellDef>  </th>
         <td mat-cell *matCellDef="let element">
-          <i class="far fa-edit fa-lg"  [routerLink]="['/trade/CRM-Task',element.task_id,'SEARCH_TASK']" matTooltip="View Detail"></i>
+          <i class="far fa-edit fa-lg"  [routerLink]="['/trade/CRM-Task',element.task_id,'SEARCH_TASK',element.custCode]" matTooltip="View Detail"></i>
           <!-- <i class="far fa-edit fa-lg"  [routerLink]="['/trade/CRM-Activity']" matTooltip="Call report"></i> -->
           <!-- <i class="far fa-edit fa-lg"  [routerLink]="['/trade/customerEdit',element.CustCode,'SEARCH_CUST_SCR']" matTooltip="Edit"></i> -->
           <!-- <i class="fab fa-adn fa-lg" (click)="onApprove(element.Cust_Code)" matTooltip="Call report"></i> -->

@@ -662,13 +662,19 @@ function funcMF_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
               let portfolio_code =''
               //Calculate sum current value
               sum_current_value = data[0].reduce((a, b) => {
-
                   portfolio_code = b.portfolio_code
                   sum_current_value +=b['current_value']
                   sum_capital_value +=b['capital_value'];
 
                   return sum_current_value
                 }, {});
+
+                // Calculate percent invest
+                data[0].reduce((a, b) => {
+                  var percent_ =  (b['capital_value']/sum_capital_value)*100
+                  b['percent'] = parseFloat(percent_).toFixed(2);  ;
+                }, {});
+
 
               //Calculate sum capital value
               // sum_capital_value = data[0].reduce((a, b) => {
@@ -684,7 +690,8 @@ function funcMF_PortDetailByPortObject(compCode,portfolio_code,as_of_date){
                 portdata.capital_value=sum_capital_value;
                 portdata.balance=sum_current_value-sum_capital_value;
                 portdata.balance_percent= ((sum_current_value-sum_capital_value) /sum_capital_value)*100 ;
-                portdata.outstanding_list = data[0]
+
+                portdata.outstanding_list = data[0] //DEV
 
             };
 
@@ -1105,7 +1112,7 @@ BEGIN
     from MIT_FC_TransAllotted A
     where accountID =@custCode
     --and MONTH(a.transactionDate)=MONTH(CAST(@as_of_date as date))
-    and  a.transactionDate >= Dateadd(Month, Datediff(Month, 0, DATEADD(m, -6,CAST(@as_of_date as date))), 0)
+    and  a.transactionDate >= Dateadd(Month, Datediff(Month, 0, DATEADD(m,-12,CAST(@as_of_date as date))), 0)
 
     order BY transactionID desc ,a.fundCode
 

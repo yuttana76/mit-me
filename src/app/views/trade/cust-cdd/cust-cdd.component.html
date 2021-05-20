@@ -242,13 +242,13 @@
               <div class="row">
                   <a *ngIf="!cddFormGroup.disabled" id="btn_add_child"  mat-flat-button color="accent" (click)="addChildren()" class ="act_button"> เพิ่มบุตร  Add children ...  </a>
               </div>
-              <tabset >
+              <!-- <tabset > -->
                 <tab heading= "บุตร Child {{i+1}}" id="tab{{i}}" *ngFor="let obj of cddData.children;let i = index">
                     <i  *ngIf="!cddFormGroup.disabled" id="btn_remove_child" class="far fa-2x fa-times-circle" (click)="removeChild(i)"  matTooltip="ลบ Remove...{{i+1}}"></i>
 
                     <app-personal-info #Child [personModel]="obj" [adult]="false"  ></app-personal-info>
                 </tab>
-              </tabset>
+              <!-- </tabset> -->
           </section>
 
 

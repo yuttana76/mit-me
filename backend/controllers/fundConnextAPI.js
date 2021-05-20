@@ -28,6 +28,7 @@ const INVEST_PROFILE_PATH = mpamConfig.INVEST_PROFILE_PATH
 const INVEST_INDIVIDUAL = mpamConfig.INVEST_INDIVIDUAL
 const FC_API_MODULE ='FC API';
 const MAIL_SYSTEM_SA = 'yuttana@merchantasset.co.th';
+const FUNDPROFILE_RESPONDOR_EMAIL = mpamConfig.FUNDPROFILE_RESPONDOR_EMAIL
 
 // Database configuration
 var config_BULK = mpamConfig.dbParameters_BULK;
@@ -53,6 +54,7 @@ exports.scheduleDownload = (req, res, next) => {
   fnArray.push(downloadNavAPIproc(businessDate,userCode));
   fnArray.push(downloadAllotedAPIproc(businessDate,userCode));
   fnArray.push(UnitholderBalanceAPIProc(businessDate,userCode));
+  fnArray.push(FundProfileAPIProc(businessDate,userCode));
 
   Promise.all(fnArray)
   .then(data => {
@@ -2771,7 +2773,7 @@ exports.FundProfileAPI = (req, res, next) =>{
     businessDate = req.body.businessDate
   }
 
-  FundProfileAPIProc(businessDate).then(dwRs=>{
+  FundProfileAPIProc(businessDate,actionBy).then(dwRs=>{
     res.status(200).json({message: dwRs});
   },err=>{
     res.status(422).json(err);
@@ -2998,6 +3000,7 @@ exports.uploadCustomerProfile = (req, res, next) => {
   // Transaction API
   fnArray=[];
   fnArray.push(exports.uploadCustomerProfilePROC(businessDate,actionBy));
+  fnArray.push(fundProfileAutoUpdate(actionBy));
 
   Promise.all(fnArray)
   .then(data => {
@@ -3081,6 +3084,7 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
 
 
 exports.reportSCHMitlog = (req, res, next) => {
+
   var businessDate = getCurrentDate();
   logger.info('reportSCHMitlog API; businessDate:' + businessDate )
   const REPORT_SUBJECT =`FundConnext  Download On  ${businessDate} `
@@ -3123,9 +3127,10 @@ tr:nth-child(even) {
   fnArray=[];
   fnArray.push(exports.reportSCHMitlogPROC(businessDate,'FC_API_SCH_CUST_INFO'));
   fnArray.push(exports.reportSCHMitlogPROC(businessDate,'FC_API_SCH_NAV'));
+  fnArray.push(exports.reportSCHMitlogPROC(businessDate,'MIT_FUND_AUDIT'));
 
   Promise.all(fnArray)
-  .then(repData => {
+  .then(async repData => {
 
     // Report process result by Mail
     var mailBody='<h1>FundConnext Download Report On' + businessDate + '</h1>'
@@ -3153,8 +3158,6 @@ tr:nth-child(even) {
     repData[0].forEach(function(item){
 
       var _splitData = item.msg.split("|")
-      // logger.info('Report before split>>' + JSON.stringify(_splitData))
-
       const dataAfterMasking = MaskData.maskCard(_splitData[0], maskCardOptions);
 
       mailBody += '<tr>'
@@ -3188,11 +3191,10 @@ tr:nth-child(even) {
       subject:REPORT_SUBJECT,
       body:HTML_HEADER + mailBody + HTML_FOOTER
     }
+    //On develop
     mail.sendMailIT(mailObj);
 
-
     // Mail to RM
-
     repData[0].forEach(function(item){
 
       var _splitData = item.msg.split("|")
@@ -3215,7 +3217,28 @@ tr:nth-child(even) {
 
     })
 
+    // #Fund profile
+    // Mail to operation and who response to see fund profile
+    if(repData[2] && repData[2].length>0){
 
+      var fund_mailBody = '<html><body><UL>';
+      await new Promise(resolve => {
+            repData[2].forEach(function(item){
+                    fund_mailBody = fund_mailBody +`<li> ${item.msg} </li>`
+            });
+            resolve();
+      });
+      fund_mailBody = fund_mailBody +'</UL></body></html>'
+
+      let mailOptions_resp = {
+        from: 'it@merchantasset.co.th',
+        to: FUNDPROFILE_RESPONDOR_EMAIL,
+        subject: `Fund profile  updated on ${businessDate}`,
+        body:  `${fund_mailBody}`
+      };
+      mail.sendMailToRespondor(mailOptions_resp);
+
+    }
     res.status(200).json('reportSCHMitlog successful.');
   })
   .catch(error => {
@@ -5937,14 +5960,14 @@ let seconds = today.getSeconds();
 
 
 
-function fundProfileAutoUpdate(){
+function fundProfileAutoUpdate(actionBy){
 
   return new Promise(function(resolve, reject) {
     try{
       var queryStr = `
       BEGIN
 
-      DECLARE @userCode VARCHAR(20) ='MIT_SYS';
+      --DECLARE @userCode VARCHAR(20) ='MIT_SYS';
 
       DECLARE @newFund as CURSOR;
       DECLARE @Fund_Code VARCHAR(20);
@@ -5980,7 +6003,7 @@ function fundProfileAutoUpdate(){
 
                   if @@ROWCOUNT>0 BEGIN
 
-                      SELECT @msg = 'System update fund code (' +@Fund_Code + ') ;Please verify.'
+                      SELECT @msg = 'New Fund code (' +@Fund_Code + ') ;Please verify.'
                       INSERT INTO MIT_LOG (loginName,logDateTime,module,log_msg)
                       VALUES('MIT_SYS',GETDATE(),'MIT_FUND_AUDIT',@msg)
 
@@ -6000,6 +6023,7 @@ function fundProfileAutoUpdate(){
           const sql = require('mssql')
           const pool1 = new sql.ConnectionPool(config, err => {
             pool1.request() // or: new sql.Request(pool1)
+            .input("userCode", sql.VarChar(20), actionBy)
             .query(queryStr, (err, result) => {
                 if(err){
                   logger.error('SQL Error >' +err);

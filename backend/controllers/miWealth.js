@@ -1040,13 +1040,9 @@ function funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date) {
     ,b.InstrumentCode as instrument
     ,b.Amount as current_value
     ,convert(varchar, b.OrderDate, 23) as order_date
-    ,c.InterestRate as InterestRate
-    ,convert(varchar, c.MatureDate, 23) as MatureDate
+    ,c.InterestRate as interest_rate
+    ,convert(varchar, c.MatureDate, 23) as mature_date
     ,d.code +'-'+c.InstrumentTypeCode AS instrument_desc
-    -- +'; Payment cycle:' +c.PaymentCycle
-    -- + '; Payment period:'+c.PaymentPeriod
-    -- + ' ;InstrumentLife:'+c.InstrumentLife
-    -- + ' ;FirstPaymentDate:'+c.FirstPaymentDate AS instrument_desc
     FROM ITB_Customers a
     LEFT join  ITB_CustInstruments b ON b.CustCode  = a.custId and b.[Status]='A' and  CONVERT(DATETIME, b.OrderDate) <= CONVERT(DATETIME, @as_of_date)
     LEFT join ITB_Instrument c ON  c.InstrumentID= b.InstrumentCode and c.[Status]='A'

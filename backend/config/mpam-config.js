@@ -32,6 +32,7 @@ const {
   SMS_USER,
   SMS_PASSWORD,
   SMS_SENDER,
+  FUNDPROFILE_RESPONDOR_EMAIL,
   // cert_passphrase,
 } = process.env;
 
@@ -56,6 +57,7 @@ assert( MAIL_USER, "MAIL_USER configuration is required." );
 assert( MAIL_PASSWORD, "MAIL_PASSWORD configuration is required." );
 
 assert( SMS_URL, "SMS_URL configuration is required." );
+// assert( FUNDPROFILE_RESPONDOR_EMAIL, "FUNDPROFILE_RESPONDOR_EMAIL configuration is required." );
 // assert( cert_passphrase, "Certificate passphrase is required." );
 // assert( SMS_USER, "SMS_USER configuration is required." );
 // assert( SMS_PASSWORD, "SMS_PASSWORD configuration is required." );
@@ -151,6 +153,8 @@ module.exports = {
   SMS_USER:SMS_USER,
   SMS_PASSWORD:SMS_PASSWORD,
   SMS_SENDER:SMS_SENDER,
+
+  FUNDPROFILE_RESPONDOR_EMAIL:FUNDPROFILE_RESPONDOR_EMAIL? FUNDPROFILE_RESPONDOR_EMAIL:'yuttana76@gmail.com',
 }
 
 console.log('FC_API_URL:' + FC_API_URL)

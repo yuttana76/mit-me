@@ -23,9 +23,16 @@ const FC_API_AUTH=mpamConfig.FC_API_AUTH
 
 const FC_AUTH_PATH = mpamConfig.AUTH_PATH
 const FC_DOWNLOAD_PATH = mpamConfig.API_DOWNLOAD_PATH
+const FC_DOWNLOAD_PATH_V4 = mpamConfig.API_DOWNLOAD_PATH_V4
+
 const DOWNLOAD_PATH  = mpamConfig.DOWNLOAD_PATH
+
 const INVEST_PROFILE_PATH = mpamConfig.INVEST_PROFILE_PATH
+
+const INVEST_PROFILE_PATH_V4 = mpamConfig.INVEST_PROFILE_PATH_V4
+
 const INVEST_INDIVIDUAL = mpamConfig.INVEST_INDIVIDUAL
+const INVEST_INDIVIDUAL_V4 = mpamConfig.INVEST_INDIVIDUAL_V4
 const FC_API_MODULE ='FC API';
 const MAIL_SYSTEM_SA = 'yuttana@merchantasset.co.th';
 const FUNDPROFILE_RESPONDOR_EMAIL = mpamConfig.FUNDPROFILE_RESPONDOR_EMAIL
@@ -137,6 +144,34 @@ exports.downloadCustomerProfile = (req, res, next) => {
   });
 }
 
+exports.downloadCustomerProfile_v4 = (req, res, next) => {
+
+  var userCode = 'MPAM_API'
+  var businessDate = getCurrentDate();
+  // var businessDate = fundConnextBusinessDate();
+
+  if(req.query.businessDate){
+    businessDate = req.query.businessDate
+  }
+
+  logger.info('downloadCustomerProfile_v4 API; businessDate:' + businessDate )
+
+  // Transaction API
+  fnArray=[];
+  fnArray.push(customerProfileProc_v4(businessDate,userCode));
+
+  Promise.all(fnArray)
+  .then(data => {
+      // Report process result by Mail
+
+      res.status(200).json('downloadCustomerProfile API successful. ');
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+}
+
 
 exports.getIndCust = (req, res, next) =>{
   var actionBy = req.params.actionBy || 'SYSTEM';
@@ -160,6 +195,38 @@ exports.getIndCust = (req, res, next) =>{
 
       // 2. Save to MIT_FC_XXX
       getIndCustDEVProc(obj,actionBy).then(result=>{
+        res.status(200).json(result);
+      },err=>{
+        res.status(401).json(err);
+      });
+
+    },err=>{
+      res.status(401).json(err);
+    });
+}
+
+exports.getIndCust_V4 = (req, res, next) =>{
+  var actionBy = req.params.actionBy || 'SYSTEM';
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  var cardNumber = req.params.cardNumber;
+  logger.info("Welcome API /GetIndCust/"+ cardNumber);
+
+  // 1. Call API
+    fnGetIndCust_V4(cardNumber).then(obj=>{
+
+      if(obj.errMsg){
+        res.status(200).json(obj.errMsg);
+      }
+
+      console.log("GetIndCust>>" + JSON.stringify(obj))
+
+      // 2. Save to MIT_FC_XXX
+      getIndCustDEVProc_v4(obj,actionBy).then(result=>{
         res.status(200).json(result);
       },err=>{
         res.status(401).json(err);
@@ -367,6 +434,64 @@ function getIndCustDEVProc(custInfoObj,actionBy){
           reject(err);
         })
     }
+
+      resolve({code:0})
+  });
+}
+/**
+- GET (developing)
+* Single form (developing)
+ */
+function getIndCustDEVProc_v4(custInfoObj,actionBy){
+
+  console.log("Welcome getIndCustDEVProc_v4()" );
+  console.log("custInfoObj --> " + JSON.stringify(custInfoObj));
+
+  return new Promise(function(resolve, reject) {
+
+    // 1 MIT_FC_CUST_INFO
+    saveMIT_FC_CUST_INFO_v4(custInfoObj,actionBy).then((result)=>{
+      logger.info("saveMIT_FC_CUST_INFO_v4() successful")
+    },err=>{
+      logger.error("ERROR saveMIT_FC_CUST_INFO_v4() :" + err)
+      reject(err);
+    })
+
+    // // 2 MIT_FC_CUST_ADDR
+    // saveMIT_FC_CUST_ADDR(custInfoObj,actionBy).then(result=>{
+    //   logger.info("saveMIT_FC_CUST_ADDR() successful")
+    // },err=>{
+    //   logger.error("saveMIT_FC_CUST_ADDR() error:" + err)
+    //   reject(err);
+    // })
+
+    // // 3	MIT_FC_CUST_CHILDREN
+    // saveMIT_FC_CUST_CHILDREN(custInfoObj,actionBy).then(result=>{
+    //   logger.info("saveMIT_FC_CUST_CHILDREN() successful")
+    // },err=>{
+    //   logger.error("saveMIT_FC_CUST_CHILDREN() error:" + err)
+    //   reject(err);
+    // })
+
+    // // 4	MIT_FC_CUST_ACCOUNT
+    // saveMIT_FC_CUST_ACCOUNT(custInfoObj,actionBy).then(result=>{
+    //   logger.info("saveMIT_FC_CUST_ACCOUNT() successful")
+    // },err=>{
+    //   logger.error("saveMIT_FC_CUST_ACCOUNT() error:" + err)
+    //   reject(err);
+    // })
+
+    // // 5	MIT_FC_CUST_BANK
+    // // 6	MIT_FC_CUST_SUIT
+    // if(custInfoObj.suitability){
+    //   saveMIT_FC_CUST_SUIT_Detail(custInfoObj.cardNumber,custInfoObj,actionBy).then((result)=>{
+    //     logger.info("saveMIT_FC_CUST_SUIT_Detail() successful")
+
+    //     },err=>{
+    //       logger.error("saveMIT_FC_CUST_SUIT_Detail() error:" + err)
+    //       reject(err);
+    //     })
+    // }
 
       resolve({code:0})
   });
@@ -665,6 +790,74 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
   }catch(e){
     logger.error(e);
   }
+
+  });
+
+}
+
+/**
+ * Single form (developing)
+ */
+function saveMIT_FC_CUST_INFO_v4(custInfoObj,actionBy) {
+
+  logger.info( '***custInfoObj.acceptedBy->');
+
+  if(custInfoObj.cardExpiryDate ==='N/A')
+    custInfoObj.cardExpiryDate=''
+
+  var fncName = "saveMIT_FC_CUST_INFO()";
+  var queryStr = `
+  BEGIN
+
+    UPDATE MIT_FC_CUST_INFO_SingleF
+    SET
+
+    ,UpdateBy=@CreateBy
+    ,UpdateDate=getdate()
+    WHERE cardNumber=@cardNumber
+
+    IF @@ROWCOUNT =0
+    BEGIN
+        INSERT INTO MIT_FC_CUST_INFO_SingleF (
+
+          ,CreateBy
+          ,CreateDate)
+        VALUES(
+
+          ,@CreateBy
+          ,getdate())
+    END
+
+  END
+    `;
+  // const sql = require("  ");
+  return new Promise(function(resolve, reject) {
+
+    resolve("");
+    // try{
+    //   const pool1 = new sql.ConnectionPool(config, err => {
+    //     pool1
+    //       .request() // or: new sql.Request(pool1)
+    //       .input("cardNumber", sql.VarChar(20), custInfoObj.cardNumber)
+
+    //       .input("CreateBy", sql.VarChar(50), actionBy)
+    //       .query(queryStr, (err, result) => {
+    //         if (err) {
+    //           console.log(fncName + " Quey db. Was err !!!" + err);
+    //           reject(err);
+    //         } else {
+    //           resolve(result);
+    //         }
+
+    //       });
+    //     });
+    //     pool1.on("error", err => {
+    //       console.log("ERROR>>" + err);
+    //       reject(err);
+    //     });
+    // }catch(e){
+    //   logger.error(e);
+    // }
 
   });
 
@@ -1299,6 +1492,51 @@ function fnGetIndCust(cardNumber){
 
           const request = require('request');
           const HTTPS_ENDPOIN =`https://${FC_API_URL}${INVEST_PROFILE_PATH}?cardNumber=${cardNumber}`;
+          const option = {
+            'X-Auth-Token':resultObj.access_token,
+          };
+
+          request({url:HTTPS_ENDPOIN, headers:option}, function(err, response, body) {
+
+            if(err) {
+              logger.error(err);
+              reject(err);
+            }else{
+              resolve(JSON.parse(body))
+            }
+          });
+        /**
+         * HTTPS REQUEST (END)
+         */
+      },err =>{
+        console.log('ERR AUTH>>'+err);
+        reject(err);
+      });
+  });
+}
+
+/**
+ * Single form (developing)
+ * @param {*} cardNumber
+ * @returns
+ */
+function fnGetIndCust_V4(cardNumber){
+  console.log("Welcome fnGetIndCust_V4()"+ cardNumber);
+
+  return new Promise(function(resolve, reject) {
+
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
+
+      /**
+     * HTTPS REQUEST (START)
+     */
+    fnFCAuth().then(result =>{
+      resultObj =JSON.parse(result);
+
+        logger.info("API token >>" + JSON.stringify(resultObj));
+
+          const request = require('request');
+          const HTTPS_ENDPOIN =`https://${FC_API_URL}${INVEST_PROFILE_PATH_V4}?cardNumber=${cardNumber}`;
           const option = {
             'X-Auth-Token':resultObj.access_token,
           };
@@ -2980,7 +3218,51 @@ function customerProfileProc(businessDate,actionBy){
       },err=>{
         reject(err);
       });
+  });
+}
 
+/**
+ * For download API CustomerProfile”
+ * Single form (developing)
+ */
+function customerProfileProc_v4(businessDate,actionBy){
+
+  logger.info('customerProfileProc_v4(); businessDate:' + businessDate )
+  const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+
+  return new Promise(function(resolve, reject) {
+    const fileType = 'CustomerProfile.zip';
+      // STEP 1: CALL API download
+      fnGetDownloadAPI_V4(businessDate,fileType).then(data=>{
+          //STEP 2: Upzip downloaded file.
+          unZipFile(data.path).then(fileName=>{
+            MPAM_INDIVIDUAL_FILE=businessDate+"_MPAM_INDIVIDUAL.json"
+            util.readJSONfile(DOWNLOAD_DIR,MPAM_INDIVIDUAL_FILE).then(data=>{
+              // Implement here
+              data.forEach(function(item){
+
+              // 2. Save to MIT_FC_XXX
+              getIndCustDEVProc_v4(item,actionBy).then(result=>{
+
+                },err=>{
+                  reject(err)
+                });
+              });
+
+              resolve(data.length);
+
+            },err=>{
+              reject(err);
+            })
+          },err=>{
+            reject(err);
+          });
+
+          // resolve();
+
+      },err=>{
+        reject(err);
+      });
   });
 }
 
@@ -5795,9 +6077,62 @@ function fnGetDownloadAPI(businessDate,fileType){
     fnFCAuth().then(result =>{
       resultObj =JSON.parse(result);
 
-      logger.info("***TOKEN>>"+resultObj.access_token);
+      // logger.info("***TOKEN>>"+resultObj.access_token);
 
       const HTTPS_ENDPOIN =`https://${FC_API_URL}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
+      const propertiesObject = {
+        "x-auth-token":resultObj.access_token,
+        "Content-Type": "application/json"
+      };
+
+      // console.log(' propertiesObject >>' + JSON.stringify(propertiesObject) );
+      console.log('HTTPS_ENDPOIN >>' + HTTPS_ENDPOIN);
+
+      download(HTTPS_ENDPOIN,{'headers':propertiesObject,'rejectUnauthorized': false}).then(data => {
+        try{
+
+          fs.writeFile(DOWNLOAD_PATH_FILENAME, data, function(err) {
+            if(err) {
+                logger.error(err)
+                reject(err);
+            }
+            resolve({path:DOWNLOAD_PATH_FILENAME});
+          });
+
+        }catch(err){
+          reject(err);
+        }
+
+      },err=>{
+        // console.log('A ERR >' + err);
+        logger.error('DOWNLOAD'+err)
+        reject(err);
+      });
+
+    },err =>{
+      // console.log('ERR AUTH>>'+err);
+      logger.error('AUTH:'+err)
+      reject(err);
+    });
+
+  });
+
+}
+
+// GET
+function fnGetDownloadAPI_V4(businessDate,fileType){
+
+  console.log(`Welcome fnGetDownloadAPI() ${businessDate} - ${fileType}`);
+
+  var DOWNLOAD_PATH_FILENAME  = DOWNLOAD_PATH  + businessDate+'-'+fileType;
+  return new Promise(function(resolve, reject) {
+
+    fnFCAuth().then(result =>{
+      resultObj =JSON.parse(result);
+
+      // logger.info("***TOKEN>>"+resultObj.access_token);
+
+      const HTTPS_ENDPOIN =`https://${FC_API_URL}${FC_DOWNLOAD_PATH_V4}${businessDate}/${fileType}`;
       const propertiesObject = {
         "x-auth-token":resultObj.access_token,
         "Content-Type": "application/json"

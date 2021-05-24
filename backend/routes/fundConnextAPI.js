@@ -19,8 +19,13 @@ router.post("/customer/individual", fundConnextAPIController.createCustomerIndiv
 router.put("/customer/individual", fundConnextAPIController.updateCustomerIndividual);
 router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);//Partrial
 
+// Get customer V4 Single form
+router.get("/customer/individual/v4/:cardNumber", fundConnextAPIController.getIndCust_V4);
+
 // Step 1 Download FC data (T+0 min)
 router.get("/downloadCustomerProfile",fundConnextAPIController.downloadCustomerProfile);
+
+router.get("/downloadCustomerProfile_v4",fundConnextAPIController.downloadCustomerProfile_v4); // Single form
 
 // Step 2 Upload data to MFTS(Approve) (T+5 min)
 // 2.1 uploadCustomerProfilePROC

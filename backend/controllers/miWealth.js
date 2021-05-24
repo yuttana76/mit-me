@@ -169,6 +169,9 @@ function PFlastFriday(_date){
                     // Masking id PF
                     PF_port=[]
                     if(cust_data[1]){
+
+
+
                       cust_data[1] = cust_data[1].reduce((a, b) =>  {
 
                         _id = b['id_cust'];
@@ -181,6 +184,10 @@ function PFlastFriday(_date){
                         _id_mask =set2 + set4 + set3+set1+set3
                         b['id_cust'] = _id_mask
 
+                        // Object.keys(b).forEach(function (b1) {
+                        //   logger.info('b1 >>' + JSON.stringify(b1) + ' ;values>>' + b1['referral'])
+                        // });
+
                         PF_port.push(b)
                         return b
                       }, {});
@@ -191,10 +198,15 @@ function PFlastFriday(_date){
                     try {
 
                       Object.keys(PF_port).forEach(function (key) {
+
+                        // Move referral key into portfollio key
+                        var _referral = PF_port[key].referral? PF_port[key].referral:'';
+
                         PF_port[key].portfolio.forEach(function (a) {
                           let A = a
                           A.id_cust=PF_port[key].id_cust
                           A.customer_name=PF_port[key].customer_name
+                          A['referral'] = _referral // Move referral key into portfollio key
                           delete A.outstanding_list
                           newPF_port.push(A)
                         });

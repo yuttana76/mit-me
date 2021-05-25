@@ -19,8 +19,6 @@ router.post("/customer/individual", fundConnextAPIController.createCustomerIndiv
 router.put("/customer/individual", fundConnextAPIController.updateCustomerIndividual);
 router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);//Partrial
 
-// Get customer V4 Single form
-router.get("/customer/individual/v4/:cardNumber", fundConnextAPIController.getIndCust_V4);
 
 // Step 1 Download FC data (T+0 min)
 router.get("/downloadCustomerProfile",fundConnextAPIController.downloadCustomerProfile);
@@ -142,5 +140,8 @@ router.post("/exportExcel/",[
 router.post("/testUpdateSuit/",fundConnextAPIController.updateSuitAPI);
 
 router.post("/validateFC_API_download/",fundConnextAPIController.validateFC_API_download);
+
+// Get customer V4 Single form
+router.get("/customer/individual/v4/:cardNumber", fundConnextAPIController.getIndCust_V4);
 
 module.exports = router;

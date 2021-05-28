@@ -201,12 +201,18 @@ function PFlastFriday(_date){
 
                         // Move referral key into portfollio key
                         var _referral = PF_port[key].referral? PF_port[key].referral:'';
+                        var _accept_by = PF_port[key].referral? PF_port[key].accept_by:'';
+                        var _rm = PF_port[key].referral? PF_port[key].rm:'';
+                        var _team = PF_port[key].referral? PF_port[key].team:'';
 
                         PF_port[key].portfolio.forEach(function (a) {
                           let A = a
                           A.id_cust=PF_port[key].id_cust
                           A.customer_name=PF_port[key].customer_name
                           A['referral'] = _referral // Move referral key into portfollio key
+                          A['accept_by'] = _accept_by // Move referral key into portfollio key
+                          A['rm'] = _rm // Move referral key into portfollio key
+                          A['team'] = _team // Move referral key into portfollio key
                           delete A.outstanding_list
                           newPF_port.push(A)
                         });
@@ -226,6 +232,9 @@ function PFlastFriday(_date){
                         customer.customer_code = b['id_cust']
                         customer.customer_name = b['fullName']
                         customer.referral = b['referral']
+                        customer.accept_by = b['accept_by']
+                        customer.rm = b['rm']
+                        customer.team = b['team']
                         customer.as_of_date = as_of_date
                         customer.portfolio_code = b['acc']
                         customer.product = b['product']
@@ -799,6 +808,9 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
   ,mf_sum_capital_value [numeric](18, 2)
   ,bond_sum_amount [numeric](18, 2)
   ,referral VARCHAR(50)
+  ,accept_by VARCHAR(50)
+  ,rm VARCHAR(50)
+  ,team VARCHAR(50)
   )
 
   DECLARE @customerCursor as CURSOR;
@@ -809,6 +821,9 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
   DECLARE @product VARCHAR(20);
   DECLARE @acc VARCHAR(20);
   DECLARE @referral VARCHAR(100);
+  DECLARE @accept_by VARCHAR(100);
+  DECLARE @rm VARCHAR(100);
+  DECLARE @team VARCHAR(100);
   -- Portfolio
 
   DECLARE @mf_sum_current_value [numeric](18, 2)=0
@@ -822,6 +837,9 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
       ,b.FName +' ' +   REPLACE(b.LName, SUBSTRING(b.LName, LEN(b.LName)-3,LEN(b.LName)), '***') as fullName
       , 'BOND' as product
       ,'' as referral
+      ,'' as accept_by
+      ,'' as rm
+      ,'' as team
       from ITB_RM_Freelance a
       LEFT join ITB_Customers b on (b.FreelanceID=a.ID  OR b.RMID = a.ID )and  b.[Status]='A '
       where a.Code =@license_code
@@ -833,8 +851,14 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
       , a.First_Name_T +' ' +   REPLACE(a.Last_Name_T, SUBSTRING(a.Last_Name_T, LEN(a.Last_Name_T)-3,LEN(a.Last_Name_T)), '***') as full_name
       ,'MF'as product
       ,ISNULL(a.IT_Referral,'') as referral
+      ,ISNULL(b.acceptBy,'') as accept_by
+      ,c.Full_Name as rm
+      ,'' as team
       from Account_Info a
+      left  join VW_MFTS_SaleCode c on  c.id = a.MktId
+      ,MIT_FC_CUST_INFO b
       where  a.IT_PID_No is not null
+      and a.IT_PID_No = b.cardNumber
       and a.IT_PID_No != ''
       AND (IT_SAcode = @license_code
             OR a.MktId IN(select  Id
@@ -844,7 +868,7 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
       order by id_cust,acc
 
       OPEN @customerCursor;
-      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product,@referral
+      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product,@referral,@accept_by,@rm,@team
       WHILE @@FETCH_STATUS = 0
       BEGIN
 
@@ -869,8 +893,8 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
           -- print @id + ' ' +@fullName +' '+  @product+' '+@acc +' '+ CONVERT(varchar(20), @mf_sum_current_value) +' '+ CONVERT(varchar(20), @mf_sum_capital_value )
 
         -- Insert temp table
-        INSERT INTO @tempTable (id_cust,fullName,product,acc,mf_sum_current_value,mf_sum_capital_value,referral)
-        VALUES  (@id,@fullName,@product,@acc,@mf_sum_current_value,@mf_sum_capital_value,@referral)
+        INSERT INTO @tempTable (id_cust,fullName,product,acc,mf_sum_current_value,mf_sum_capital_value,referral,accept_by,rm,team)
+        VALUES  (@id,@fullName,@product,@acc,@mf_sum_current_value,@mf_sum_capital_value,@referral,@accept_by,@rm,@team)
 
       END
 
@@ -890,13 +914,12 @@ function funMF_Get_MF_BOND_AccountByLicense_Query(compCode,license_code,as_of_da
 
           -- print @id + ' ' +@fullName +' '+  @product+' '+@acc   + ' ' +@bond_InstrumentDesc   + ' '+ @bond_OrderDate + ' '+ CONVERT(varchar(20), @bond_amount )
           -- Insert temp table
-        INSERT INTO @tempTable (id_cust,fullName,product,acc,bond_sum_amount,referral)
-        VALUES  (@id,@fullName,@product,@acc,@bond_sum_amount,@referral)
+        INSERT INTO @tempTable (id_cust,fullName,product,acc,bond_sum_amount,referral,accept_by,rm,team)
+        VALUES  (@id,@fullName,@product,@acc,@bond_sum_amount,@referral,@accept_by,@rm,@team)
 
       END
 
-
-      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product,@referral
+      FETCH NEXT FROM @customerCursor INTO @acc,@id,@fullName,@product,@referral,@accept_by,@rm,@team
       END
       CLOSE @customerCursor;
       DEALLOCATE @customerCursor;

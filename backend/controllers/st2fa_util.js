@@ -7,12 +7,12 @@
 
 const crypto = require('crypto');
 
-
-const password = 'merchantasset.co.th';
-const ENC_KEY = crypto.scryptSync(password, 'salt', 32);
+// const ENC_KEY = 'fuqle9uEenj5LPJanThWPNdSfwzmT6zP';//PROD
+const ENC_KEY = 'OMPFz43sldYVYHc5u8CRfB3HIYffKlVd';//QA
 
 exports.encrypt = ((val) => {
   let iv = crypto.randomBytes(8).toString('hex')
+  // let iv = "1234567812345678"
 
   let cipher = crypto.createCipheriv('aes-256-cbc', ENC_KEY, iv);
   let encrypted = cipher.update(val, 'utf8', 'base64');

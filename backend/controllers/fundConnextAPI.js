@@ -475,7 +475,6 @@ function saveIndCustProc_v4(custInfoObj,actionBy){
         })
       }
 
-
     // 4	MIT_FC_CUST_ACCOUNT
     if(custInfoObj.accounts){
       saveMIT_FC_CUST_ACCOUNT_V4(custInfoObj,actionBy).then(result=>{
@@ -1083,7 +1082,7 @@ function saveMIT_FC_CUST_SPOUSE_V4(custInfoObj,actionBy) {
   var queryStr = `
   BEGIN
 
-    UPDATE MIT_FC_CUST_SPOUSE
+    UPDATE MIT_FC_CUST_SPOUSE_SF
     SET
     thFirstName=@thFirstName
     ,thLastName=@thLastName
@@ -1095,7 +1094,7 @@ function saveMIT_FC_CUST_SPOUSE_V4(custInfoObj,actionBy) {
 
     IF @@ROWCOUNT =0
     BEGIN
-        INSERT INTO MIT_FC_CUST_SPOUSE (
+        INSERT INTO MIT_FC_CUST_SPOUSE_SF (
           cardNumber
           ,thFirstName
           ,thLastName
@@ -1208,112 +1207,48 @@ function saveMIT_FC_CUST_ACCOUNT_V4(obj,actionBy) {
 
   return new Promise(function(resolve, reject) {
 
-    obj.accounts.forEach(function(account) {
+      obj.accounts.forEach(function(account) {
 
-      // Account
-      saveMIT_FC_CUST_ACCOUNT_Detail_V4(obj.cardNumber,account,actionBy).then((result=>{
-        logger.info(`Save accounts ${account.accountId}complete`);
-      }));
+        // Account
+        saveMIT_FC_CUST_ACCOUNT_Detail_V4(obj.cardNumber,account,actionBy).then((result=>{
+          logger.info(`Save accounts ${account.accountId}complete`);
+        }));
 
-      //BANK SUB
-      if(account.subscriptionBankAccounts){
-        logger.info('***Has subscriptionBankAccounts')
+        //BANK SUB
+        if(account.subscriptionBankAccounts){
+          logger.info('***Has subscriptionBankAccounts')
 
-        account.subscriptionBankAccounts.forEach(function(bankObj) {
-          saveMIT_FC_CUST_BANK_SF_V4(account.accountId,'sub',bankObj,actionBy).then((result=>{
-            logger.info(`Save accounts ${account.accountId}complete`);
+          account.subscriptionBankAccounts.forEach(function(bankObj) {
+            saveMIT_FC_CUST_BANK_SF_V4(account.accountId,'sub',bankObj,actionBy).then((result=>{
+              logger.info(`Save accounts ${account.accountId}complete`);
+            }));
+          });
+        }
+
+        //BANK RED
+        if(account.redemptionBankAccounts){
+          logger.info('***Has redemptionBankAccounts')
+
+          account.redemptionBankAccounts.forEach(function(bankObj) {
+            saveMIT_FC_CUST_BANK_SF_V4(account.accountId,'red',bankObj,actionBy).then((result=>{
+              logger.info(`Save accounts ${account.accountId}complete`);
+            }));
+          });
+        }
+
+        //Mail to send document
+        // Addr_Seq =9 : mailing address each account
+        if(account.mailing){
+          saveMIT_FC_CUST_ADDR_Detail_V4(account.cardNumber,account.accountId,account.mailing,9,actionBy).then((result=>{
+            logger.info(" Save Work address complete");
           }));
-        });
-      }
+        }
+      });
 
-      //BANK RED
-      if(account.redemptionBankAccounts){
-        logger.info('***Has redemptionBankAccounts')
-
-        account.redemptionBankAccounts.forEach(function(bankObj) {
-          saveMIT_FC_CUST_BANK_SF_V4(account.accountId,'red',bankObj,actionBy).then((result=>{
-            logger.info(`Save accounts ${account.accountId}complete`);
-          }));
-        });
-      }
-
-      //Mail to send document
-      if(account.mailing){
-        logger.info('***Has mailing')
-
-        logger.info(`*** work >> ${JSON.stringify(obj.work)}`)
-    saveMIT_FC_CUST_ADDR_Detail_V4(account.cardNumber,account.accountId,account.mailing,9,actionBy).then((result=>{
-      logger.info(" Save Work address complete");
-    }));
-
-      }
-
-
-  });
-
-
-
-
-      // for(var i = 0; i < obj.accounts.length;i++){
-
-      //   // subscriptionBankAccounts
-      //   if(obj.accounts[i].subscriptionBankAccounts && obj.accounts[i].subscriptionBankAccounts.length >0){
-      //     for(var j = 0; j < obj.accounts[i].subscriptionBankAccounts.length;j++){
-      //       saveMIT_FC_CUST_BANK_Detail(obj.cardNumber,obj.accounts[i].accountId,'sub',obj.accounts[i].subscriptionBankAccounts[j],actionBy)
-      //     }
-
-      //   }
-      //   // redemptionBankAccounts
-      //   if(obj.accounts[i].redemptionBankAccounts && obj.accounts[i].redemptionBankAccounts.length >0){
-      //     for(var j = 0; j < obj.accounts[i].redemptionBankAccounts.length;j++){
-      //       saveMIT_FC_CUST_BANK_Detail(obj.cardNumber,obj.accounts[i].accountId,'red',obj.accounts[i].redemptionBankAccounts[j],actionBy)
-      //     }
-
-      //   }
-
-      //   saveMIT_FC_CUST_ACCOUNT_Detail(obj.cardNumber,obj.accounts[i],actionBy).then((result=>{
-      //     logger.info(`Save accounts ${i} complete`);
-      //   }));
-
-      //   // 4:mail addr.
-      //   // let addrObj = obj.residence;
-      //   if(obj.accounts[i].mailing){
-      //     saveMIT_FC_CUST_ADDR_Detail(obj.cardNumber,obj.accounts[i].mailing,4,actionBy).then((result=>{
-      //       logger.info(" Save Resident complete");
-      //     }));
-      //   }
-      // }
-
-      resolve({code:0});
+    resolve({code:0});
 
   });
 }
-
-
-// function saveMIT_FC_CUST_BANK(cardNumber,obj,actionBy) {
-//   logger.info('saveMIT_FC_CUST_BANK()'+cardNumber);
-
-//   return new Promise(function(resolve, reject) {
-
-//     if(obj.accounts){
-//       for(var i = 0; i < obj.accounts.length;i++){
-
-//         logger.info(`Save accounts ${i}  ${obj.accounts[i].accountId}`);
-
-//         saveMIT_FC_CUST_ACCOUNT_Detail(obj.cardNumber,obj.accounts[i],actionBy).then((result=>{
-//           logger.info(`Save accounts ${i} complete`);
-//         }));
-
-//       }
-//       resolve({code:0});
-
-//     }else{
-//       resolve({code:1,message:"Not found children"});
-//     }
-
-//   });
-// }
-
 
 
 function saveMIT_FC_CUST_ACCOUNT_Detail(cardNumber,obj,actionBy) {

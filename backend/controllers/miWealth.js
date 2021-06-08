@@ -141,7 +141,6 @@ function PFlastFriday(_date){
                 Promise.all(lic_funcArray)
                 .then(cust_data =>  {
 
-
                   // Masking id MF
                   MF_port=[]
                   cust_data[0] = cust_data[0].reduce((a, b) =>  {
@@ -201,9 +200,9 @@ function PFlastFriday(_date){
 
                         // Move referral key into portfollio key
                         var _referral = PF_port[key].referral? PF_port[key].referral:'';
-                        var _accept_by = PF_port[key].referral? PF_port[key].accept_by:'';
-                        var _rm = PF_port[key].referral? PF_port[key].rm:'';
-                        var _team = PF_port[key].referral? PF_port[key].team:'';
+                        var _accept_by = PF_port[key].accept_by? PF_port[key].accept_by:'';
+                        var _rm = PF_port[key].rm? PF_port[key].rm:'';
+                        var _team = PF_port[key].team? PF_port[key].team:'';
 
                         PF_port[key].portfolio.forEach(function (a) {
                           let A = a
@@ -1218,7 +1217,12 @@ function funcPF_PortDetailByAgent(agentCode,as_of_date){
    * HTTPS REQUEST (START)
    */
         const request = require('request');
+
+        // var HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByAgents?agent_list=${agentCode}&as_of_date=${as_of_date}`;
         var HTTPS_ENDPOIN =`${PF_API_URL}/getPortDetailByAgents?agent_list=${agentCode}&as_of_date=${as_of_date}`;
+        //http://192.168.10.45/getPortDetailByAgents?agent_list=039583&as_of_date=2021-03-01
+
+
         const option = {
           'X-Auth-Token':'***',
         };

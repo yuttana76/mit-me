@@ -22,7 +22,6 @@ router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndP
 
 // Step 1 Download FC data (T+0 min)
 router.get("/downloadCustomerProfile",fundConnextAPIController.downloadCustomerProfile);
-
 router.get("/downloadCustomerProfile_v4",fundConnextAPIController.downloadCustomerProfile_v4); // Single form
 
 // Step 2 Upload data to MFTS(Approve) (T+5 min)

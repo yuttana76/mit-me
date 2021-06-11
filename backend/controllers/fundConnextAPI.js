@@ -4613,14 +4613,14 @@ function delMIT_FC_Profile(businessDate){
       BEGIN
         DECLARE @businessDate VARCHAR(20) ='${businessDate}';
 
-        SELECT  * from MIT_FC_Profile_HIS WHERE businessDate = @businessDate
+        SELECT  * from MIT_FC_Fund_Profile_HIS WHERE businessDate = @businessDate
         IF @@ROWCOUNT =0
         BEGIN
-          INSERT INTO MIT_FC_Profile_HIS
-          SELECT  * from MIT_FC_Profile WHERE businessDate = @businessDate
+          INSERT INTO MIT_FC_Fund_Profile_HIS
+          SELECT  * from MIT_FC_Fund_Profile WHERE businessDate = @businessDate
         END
 
-        DELETE  from MIT_FC_Profile  where businessDate = @businessDate
+        DELETE  from MIT_FC_Fund_Profile_HIS  where businessDate = @businessDate
       END
       `;
           const sql = require('mssql')

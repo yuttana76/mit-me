@@ -6146,7 +6146,7 @@ function fcFundProfile_ToDB_BULK(fileName,userCode,businessDate){
             const sql = require('mssql');
             const pool1 = new sql.ConnectionPool(config_BULK, err => {
 
-            const table = new sql.Table('MIT_FC_Profile');
+            const table = new sql.Table('MIT_FC_Fund_Profile');
             table.create = true;
 
             table.columns.add('Fund_Code', sql.VarChar(30), {nullable: true});

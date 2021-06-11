@@ -5161,7 +5161,7 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
             table.create = true;
             // #1
             table.columns.add('SAreferenceNo', sql.VarChar(30), { nullable: true });
-            table.columns.add('transactionDate', sql.DateTime, { nullable: true });
+            table.columns.add('transactionDate', sql.VarChar(30), { nullable: true });
             table.columns.add('transactionDateTxt', sql.VarChar(30), { nullable: true });
             table.columns.add('accountID', sql.VarChar(15), { nullable: true });
             table.columns.add('amc', sql.VarChar(15), { nullable: true });
@@ -5174,12 +5174,12 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
             table.columns.add('redemptionType', sql.VarChar(4), { nullable: true });
             table.columns.add('amount', sql.Numeric(18,2), { nullable: true });
             table.columns.add('unit', sql.Numeric(18,4), { nullable: true });
-            table.columns.add('effectiveDate', sql.DateTime, { nullable: true });
+            table.columns.add('effectiveDate', sql.VarChar(30), { nullable: true });
             table.columns.add('paymentType', sql.VarChar(8), { nullable: true });
             table.columns.add('bankCode', sql.VarChar(4), { nullable: true });
             table.columns.add('bankAccount', sql.VarChar(20), { nullable: true });
             table.columns.add('chequeNo', sql.VarChar(10), { nullable: true });
-            table.columns.add('chequeDate', sql.DateTime, { nullable: true });
+            table.columns.add('chequeDate', sql.VarChar(30), { nullable: true });
             table.columns.add('ICLicense', sql.VarChar(10), { nullable: true });
               // #20
             table.columns.add('branchNo', sql.VarChar(5), { nullable: true });
@@ -5194,7 +5194,7 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
             table.columns.add('status', sql.VarChar(10), { nullable: true });
             // #30
             table.columns.add('AMCorderRef', sql.VarChar(30), { nullable: true });
-            table.columns.add('allotDate', sql.DateTime, { nullable: true });
+            table.columns.add('allotDate', sql.VarChar(30), { nullable: true });
             table.columns.add('allottedNAV', sql.Numeric(18,4), { nullable: true });
             table.columns.add('allottedAmount', sql.Numeric(18,2), { nullable: true });
             table.columns.add('allotedUnit', sql.Numeric(18,4), { nullable: true });
@@ -5204,7 +5204,7 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
             table.columns.add('brokerageFee', sql.Numeric(18,2), { nullable: true });
             table.columns.add('WithholdTaxLTF_RMF', sql.Numeric(18,2), { nullable: true });
             // #40
-            table.columns.add('AMCpayDate', sql.DateTime, { nullable: true });
+            table.columns.add('AMCpayDate', sql.VarChar(30), { nullable: true });
             table.columns.add('regisTransFlag', sql.VarChar(1), { nullable: true });
             table.columns.add('sellAllUnitFlag', sql.VarChar(1), { nullable: true });
             table.columns.add('settleBankCode', sql.VarChar(4), { nullable: true });
@@ -5217,7 +5217,7 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
             // #50
             table.columns.add('brokerFeeVAT', sql.Numeric(18,2), { nullable: true });
             table.columns.add('approvalCode', sql.VarChar(20), { nullable: true });
-            table.columns.add('NAVdate', sql.DateTime, { nullable: true });
+            table.columns.add('NAVdate', sql.VarChar(30), { nullable: true });
             table.columns.add('collateralAccount', sql.VarChar(20), { nullable: true });
             table.columns.add('creditCardIssuer', sql.VarChar(20), { nullable: true });
             table.columns.add('businessDate', sql.VarChar(20), { nullable: true });
@@ -5229,6 +5229,8 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
 
             var item_header = array[0].split('|');
             var _num_data = item_header[2];
+
+            _num_data=0
             logger.info(`item_header>>${item_header}`)
 
             array.shift(); //removes the first array element
@@ -5239,7 +5241,18 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
                   // #1
                   var SAreferenceNo = item[0]?item[0].trim():'' // 1	SA Order Reference No
                   var transactionDateTxt = item[1]?item[1].trim():''  // 2	Transaction Date-Time(YYYYMMDDHHMMSS)
-                  var transactionDate = new Date(item[1]?item[1].trim():null);
+                  // var transactionDate = new Date(item[1]?item[1].trim():null);
+                  var transactionDate = null;
+
+                  if(transactionDateTxt){
+                    var _yyyy= transactionDateTxt.substring(0, 4);
+                    var _mm = transactionDateTxt.substring(4, 6);
+                    var _dd = transactionDateTxt.substring(6, 8);
+                    var _hh = transactionDateTxt.substring(8, 10);
+                    var _min = transactionDateTxt.substring(10, 12);
+                    var _ss = transactionDateTxt.substring(12, 14);
+                    transactionDate = _yyyy+'/'+_mm+'/'+_dd+' '+_hh+':'+_min+':'+_ss;
+                  }
 
                   var accountID = item[2]?item[2].trim():'' // 3	Account ID
                   var amc = item[3]?item[3].trim():'' // 4	AMC Code
@@ -5253,14 +5266,14 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
                   var redemptionType=item[10]?item[10].trim():''  // 11	Redemption Type
                   var amount =item[11]?item[11].trim():'' // 12	Amount
                   var unit =item[12]?item[12].trim():'' // 13	Unit
-                  var effectiveDate =new Date(item[13]?item[13].trim():null); //item[13]?item[13].trim():''  // 14	Effective Date
+                  var effectiveDate =item[13]?item[13].trim():null
                   // 15	Filler
                   // 16	Filler
                   var paymentType =item[16]?item[16].trim():''  // 17	Payment Type
                   var bankCode =item[17]?item[17].trim():'' // 18	Bank Code
                   var bankAccount =item[18]?item[18].trim():''  // 19	Bank Account / Credit Card Number
                   var chequeNo =item[19]?item[19].trim():'' // 20	Cheque No
-                  var chequeDate = new Date(item[20]?item[20].trim():null);//item[20]?item[20].trim():'' // 21	Cheque Date
+                  var chequeDate = item[20]?item[20].trim():null
                   var ICLicense =item[21]?item[21].trim():''  // 22	IC License
                   // #20
                   var branchNo =item[22]?item[22].trim():'' // 23	Branch No
@@ -5275,7 +5288,7 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
                   var status =item[31]?item[31].trim():'' // 32	Status
                   // #30
                   var AMCorderRef=item[32]?item[32].trim():'' // 33	AMC Order Reference No
-                  var allotDate = new Date(item[33]?item[33].trim():null); //item[33]?item[33].trim():''  // 34	Allotment Date
+                  var allotDate = item[33]?item[33].trim():null
                   var allottedNAV =item[34]?item[34].trim():''  // 35	Allotted NAV
                   var allottedAmount =item[35]?item[35].trim():'' // 36	Allotted Amount
                   var allotedUnit =item[36]?item[36].trim():''  // 37	Alloted Unit
@@ -5285,7 +5298,7 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
                   var brokerageFee =item[40]?item[40].trim():'' // 41	Brokerage fee
                   var WithholdTaxLTF_RMF =item[41]?item[41].trim():'' // 42	Withholding Tax for LTF/RMF
                   // #40
-                  var AMCpayDate = new Date(item[42]?item[42].trim():null); //item[42]?item[42].trim():'' // 43	AMC Pay Date
+                  var AMCpayDate = item[42]?item[42].trim():null
                   var regisTransFlag =item[43]?item[43].trim():'' // 44	Registrar Transaction Flag
                   var sellAllUnitFlag =item[44]?item[44].trim():''  // 45	Sell all unit flag
                   var settleBankCode =item[45]?item[45].trim():'' // 46	Settlement Bank Code
@@ -5298,7 +5311,7 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
                   // #50
                   var brokerFeeVAT =item[52]?item[52].trim():'' // 53	Brokerage fee  VAT
                   var approvalCode =item[53]?item[53].trim():'' // 54	Approval Code
-                  var NAVdate =new Date(item[54]?item[54].trim():null); //item[54]?item[54].trim():''  // 55	NAV Date
+                  var NAVdate =item[54]?item[54].trim():null
                   var collateralAccount =item[55]?item[55].trim():''  // 56 Collateral Account
                   var creditCardIssuer =item[56]?item[56].trim():'' // 57 Credit card issuer
 
@@ -5388,7 +5401,7 @@ function fcAlloted_ToDB_BULK(fileName,actionBy,businessDate){
                     });
 
                   }else{
-                    msg ={msg:`Number transactions upload not complete !!  download= ${_num_data}  ;Upload=${result.rowsAffected} `};
+                    msg ={msg:`Download Allotted Transactions Fail(number download & upload not match) !!  FC API download= ${_num_data}  ;Upload=${result.rowsAffected} `};
                     reject(msg);
                   }
 

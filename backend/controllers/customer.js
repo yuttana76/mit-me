@@ -286,49 +286,54 @@ exports.getFC_CustomerInfo_proc = (custCode) => {
 
   });
 
+}
+
+exports.getFC_CustomerInfo_proc_v4 = (custCode) => {
+
+  logger.info('Start getFC_CustomerInfo_proc()' + custCode)
+
+  return new Promise(function(resolve, reject) {
+
+    fnArray=[];
+  fnArray.push(getFC_CustomerInfo_v4(custCode));
+  // fnArray.push(getFC_Address(custCode,1));
+  // fnArray.push(getFC_Address(custCode,2));
+  // fnArray.push(getFC_Address(custCode,3));
+  // fnArray.push(getFC_Children(custCode));
+
+  Promise.all(fnArray).then(values => {
+
+    // console.log('FC data>'+JSON.stringify(values))
+      custInfo=values[0][0]
+
+      // if(values[1].length>0)
+      //   custInfo.residence=values[1][0]
+
+      // // custInfo.current=[]
+      // if(values[2].length>0)
+      //   custInfo.current=values[2][0]
+
+      // // custInfo.work=[]
+      // if(values[3].length>0)
+      //   custInfo.work=values[3][0]
+
+      // if(values[4].length >0)
+      //   custInfo.children=values[4]
+
+        resolve(custInfo)
+
+  })
+  .catch(error => {
+    logger.error(error.message)
+    // res.status(401).json(error.message);
+    reject(error)
+  });
+
+  });
 
 }
 
-// exports.getFC_CustomerInfo = (req, res, next) => {
 
-//   logger.info('Start getFC_CustomerInfo()')
-
-//   var custCode = req.params.cusCode;
-//   fnArray=[];
-//   fnArray.push(getFC_CustomerInfo(custCode));
-//   fnArray.push(getFC_Address(custCode,1));
-//   fnArray.push(getFC_Address(custCode,2));
-//   fnArray.push(getFC_Address(custCode,3));
-//   fnArray.push(getFC_Children(custCode));
-
-//   Promise.all(fnArray).then(values => {
-
-//     // console.log('FC data>'+JSON.stringify(values))
-//       custInfo=values[0][0]
-
-//       if(values[1].length>0)
-//         custInfo.residence=values[1][0]
-
-//       // custInfo.current=[]
-//       if(values[2].length>0)
-//         custInfo.current=values[2][0]
-
-//       // custInfo.work=[]
-//       if(values[3].length>0)
-//         custInfo.work=values[3][0]
-
-//       if(values[4].length >0)
-//         custInfo.children=values[4]
-
-//       res.status(200).json({
-//       result: custInfo
-//     });
-//   })
-//   .catch(error => {
-//     logger.error(error.message)
-//     res.status(401).json(error.message);
-//   });
-// }
 
 
 const getORG_Children = (cardNumber) => {
@@ -4711,6 +4716,83 @@ DEALLOCATE @getAccount
   WHERE A.cardNumber= @cardNumber
 
 END
+
+  `;
+
+  // var queryStr = `
+  // SELECT  TOP 1 B.accountId,C.Full_Name AS RM,A.*
+  // FROM [MIT_FC_CUST_INFO] A
+  // LEFT JOIN  MIT_FC_CUST_ACCOUNT B ON A.cardNumber=B.cardNumber
+  // LEFT JOIN  [MFTS].[dbo].[VW_MFTS_SaleCode] C ON B.icLicense=C.License_Code
+  // WHERE A.cardNumber=@cardNumber `;
+
+  const sql = require('mssql')
+
+  return new Promise(function(resolve, reject) {
+
+  const pool1 = new sql.ConnectionPool(config, err => {
+    pool1.request() // or: new sql.Request(pool1)
+    .input("cardNumber", sql.VarChar(20), cardNumber)
+    .query(queryStr, (err, result) => {
+        if(err){
+          logger.error(err);
+          reject(fncName + err);
+        }else {
+
+          resolve(result.recordset);
+        }
+    })
+  })
+
+  pool1.on('error', err => {
+    logger.error(err);
+  })
+
+
+  });
+}
+
+function getFC_CustomerInfo_v4(cardNumber){
+
+  var fncName = 'getFC_CustomerInfo_v4() ';
+
+  var queryStr = `
+
+  BEGIN
+  --DECLARE @cardNumber  VARCHAR(100) = '3560100350330';
+  DECLARE @accountId  VARCHAR(100)
+  DECLARE @accountStr  VARCHAR(100)=''
+  DECLARE @getAccount CURSOR
+
+
+  --Get Account id
+  SET @getAccount = CURSOR FOR select accountId from MIT_FC_CUST_ACCOUNT_SF WHERE cardNumber = @cardNumber
+
+  OPEN @getAccount
+  FETCH NEXT
+  FROM @getAccount INTO @accountId
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+      PRINT @accountId
+
+      SELECT @accountStr = @accountStr + ','+@accountId
+      PRINT @accountStr
+
+      FETCH NEXT
+      FROM @getAccount INTO @accountId
+  END
+
+  CLOSE @getAccount
+  DEALLOCATE @getAccount
+
+  -- get account info
+    SELECT  TOP 1 @accountStr AS accountId,C.Id AS RM_ID,C.License_Code AS RM_License_Code,C.EMAIL AS RM_EMAIL,C.Full_Name AS RM,A.*
+    FROM [MIT_FC_CUST_INFO_SF] A
+    LEFT JOIN  MIT_FC_CUST_ACCOUNT_SF B ON A.cardNumber=B.cardNumber
+    LEFT JOIN  [MFTS].[dbo].[VW_MFTS_SaleCode] C ON B.icLicense=C.License_Code
+    WHERE A.cardNumber= @cardNumber
+
+  END
 
   `;
 

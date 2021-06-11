@@ -487,15 +487,16 @@ function saveIndCustProc_v4(custInfoObj,actionBy){
 
 
     // // 6	MIT_FC_CUST_SUIT
-    // if(custInfoObj.suitability){
-    //   saveMIT_FC_CUST_SUIT_Detail(custInfoObj.cardNumber,custInfoObj,actionBy).then((result)=>{
-    //     logger.info("saveMIT_FC_CUST_SUIT_Detail() successful")
+    if(custInfoObj.suitabilityForm){
 
-    //     },err=>{
-    //       logger.error("saveMIT_FC_CUST_SUIT_Detail() error:" + err)
-    //       reject(err);
-    //     })
-    // }
+      saveMIT_FC_CUST_SUIT_Detail_V4(custInfoObj.cardNumber,custInfoObj,actionBy).then((result)=>{
+        logger.info("saveMIT_FC_CUST_SUIT_Detail() successful")
+
+        },err=>{
+          logger.error("saveMIT_FC_CUST_SUIT_Detail() error:" + err)
+          reject(err);
+        })
+    }
 
       resolve({code:0})
   });
@@ -2019,8 +2020,8 @@ function saveMIT_FC_CUST_SUIT_Detail(cardNumber,obj,actionBy) {
         ,suitNo10=@suitNo10
         ,suitNo11=@suitNo11
         ,suitNo12=@suitNo12
-    ,CreateBy=@CreateBy
-    ,CreateDate=getdate()
+    ,UpdateBy=@CreateBy
+    ,UpdateDate=getdate()
     WHERE cardNumber=@cardNumber
 
     IF @@ROWCOUNT =0
@@ -2097,6 +2098,106 @@ function saveMIT_FC_CUST_SUIT_Detail(cardNumber,obj,actionBy) {
 
 }
 
+
+function saveMIT_FC_CUST_SUIT_Detail_V4(cardNumber,obj,actionBy) {
+
+  logger.info('saveMIT_FC_CUST_SUIT_Detail_V4()'+obj.cardNumber);
+
+  var fncName = "saveMIT_FC_CUST_SUIT_Detail()";
+  var queryStr = `
+  BEGIN
+
+    UPDATE MIT_FC_CUST_SUIT_SF
+    SET
+      suitNo1=@suitNo1
+       ,suitNo2=@suitNo2
+        ,suitNo3=@suitNo3
+        ,suitNo4=@suitNo4
+        ,suitNo5=@suitNo5
+        ,suitNo6=@suitNo6
+        ,suitNo7=@suitNo7
+        ,suitNo8=@suitNo8
+        ,suitNo9=@suitNo9
+        ,suitNo10=@suitNo10
+        ,suitNo11=@suitNo11
+        ,suitNo12=@suitNo12
+    ,UpdateBy=@CreateBy
+    ,UpdateDate=getdate()
+    WHERE cardNumber=@cardNumber
+
+    IF @@ROWCOUNT =0
+    BEGIN
+        INSERT INTO MIT_FC_CUST_SUIT_SF (
+          cardNumber
+          ,suitNo1
+        ,suitNo2
+        ,suitNo3
+        ,suitNo4
+        ,suitNo5
+        ,suitNo6
+        ,suitNo7
+        ,suitNo8
+        ,suitNo9
+        ,suitNo10
+        ,suitNo11
+        ,suitNo12
+          ,CreateBy
+          ,CreateDate)
+        VALUES(
+           @cardNumber
+           ,@suitNo1
+           ,@suitNo2
+          ,@suitNo3
+          ,@suitNo4
+          ,@suitNo5
+          ,@suitNo6
+          ,@suitNo7
+          ,@suitNo8
+          ,@suitNo9
+          ,@suitNo10
+          ,@suitNo11
+          ,@suitNo12
+          ,@CreateBy
+          ,getdate())
+    END
+
+  END
+    `;
+  // const sql = require("mssql");
+  return new Promise(function(resolve, reject) {
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1
+        .request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .input("suitNo1", sql.VarChar(1), obj.suitabilityForm.suitNo1)
+        .input("suitNo2", sql.VarChar(1), obj.suitabilityForm.suitNo2)
+        .input("suitNo3", sql.VarChar(1), obj.suitabilityForm.suitNo3)
+        .input("suitNo4", sql.VarChar(10), obj.suitabilityForm.suitNo4)
+        .input("suitNo5", sql.VarChar(1), obj.suitabilityForm.suitNo5)
+        .input("suitNo6", sql.VarChar(1), obj.suitabilityForm.suitNo6)
+        .input("suitNo7", sql.VarChar(1), obj.suitabilityForm.suitNo7)
+        .input("suitNo8", sql.VarChar(1), obj.suitabilityForm.suitNo8)
+        .input("suitNo9", sql.VarChar(1), obj.suitabilityForm.suitNo9)
+        .input("suitNo10", sql.VarChar(1), obj.suitabilityForm.suitNo10)
+        .input("suitNo11", sql.VarChar(1), obj.suitabilityForm.suitNo11)
+        .input("suitNo12", sql.VarChar(1), obj.suitabilityForm.suitNo12)
+        .input("CreateBy", sql.VarChar(50), actionBy)
+        .query(queryStr, (err, result) => {
+          if (err) {
+            console.log(fncName + " Quey db. Was err !!!" + err);
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+    });
+    pool1.on("error", err => {
+      console.log("ERROR>>" + err);
+      reject(err);
+    });
+  });
+
+}
 // GET
 function fnGetIndCust(cardNumber){
   console.log("Welcome fnGetIndCust()"+ cardNumber);
@@ -3920,6 +4021,35 @@ exports.uploadCustomerProfile = (req, res, next) => {
   });
 }
 
+exports.uploadCustomerProfile_v4 = (req, res, next) => {
+
+  var actionBy = 'MPAM_API'
+  var businessDate = getCurrentDate();
+
+  if(req.query.businessDate){
+    businessDate = req.query.businessDate
+  }
+
+  logger.info('uploadCustomerProfile API; businessDate:' + businessDate )
+
+  // Transaction API
+  fnArray=[];
+  fnArray.push(exports.uploadCustomerProfilePROC_v4(businessDate,actionBy));
+  // fnArray.push(fundProfileAutoUpdate(actionBy));
+
+  Promise.all(fnArray)
+  .then(data => {
+
+    // Report process result by Mail
+    res.status(200).json('uploadCustomerProfile API successful.');
+
+  })
+  .catch(error => {
+    logger.error(error.message)
+    res.status(401).json(error.message);
+  });
+}
+
 exports.uploadCustomerProfilePROC = ((businessDate,actionBy) => {
 logger.info('uploadCustomerProfilePROC()' + businessDate);
 
@@ -3937,6 +4067,73 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
 
               // 3.get data MIT_FX_XXX
               customer.getFC_CustomerInfo_proc(item.cardNumber).then(CustomerData=>{
+
+                // // Approve
+                CustomerData = JSON.parse(JSON.stringify(CustomerData));
+                customer.approveCustInfoProcess(CustomerData).then(result2=>{
+
+                  var logMsg= ''.concat(CustomerData.thFirstName,'|',CustomerData.thLastName
+                  ,'|',CustomerData.enFirstName,'|',CustomerData.enLastName
+                  ,'|',CustomerData.referalPerson
+                  ,'|',CustomerData.mobileNumber,'|',CustomerData.email,'|',CustomerData.accountId,'|',CustomerData.RM )
+
+                  var  currentDate =new Date();
+                  var _applicationDate = new Date();
+                  if(CustomerData.applicationDate){
+                    // console.log(`***ApplicationDate:${CustomerData.applicationDate}`)
+                    var _splitDate = CustomerData.applicationDate.split("-")
+                    _applicationDate.setFullYear(_splitDate[0])
+                    _applicationDate.setMonth(_splitDate[1]-1)
+                    _applicationDate.setDate(_splitDate[2])
+
+                  }
+
+                  // To calculate the time difference of two dates
+                  var Difference_In_Time = currentDate.getTime() - _applicationDate.getTime();
+
+                  // To calculate the no. of days between two dates
+                  var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+                  logMsg = logMsg+''.concat('|',CustomerData.applicationDate, '(',Difference_In_Days,')')
+                  logMsg = logMsg+''.concat('|',CustomerData.RM_License_Code,'|',CustomerData.RM_EMAIL)
+
+                  mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',logMsg ,'','',function(){});
+                  resolve(CustomerData);
+
+                })
+              },err=>{
+                reject(err)
+              });
+
+        });
+      },err=>{
+        logger.error( err)
+        reject(err);
+      })
+
+    },err=>{
+      reject(err);
+    });
+
+  });
+});
+
+exports.uploadCustomerProfilePROC_v4 = ((businessDate,actionBy) => {
+logger.info('uploadCustomerProfilePROC_v4()' + businessDate);
+
+const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
+const filePath= DOWNLOAD_DIR.concat('/',businessDate,'-','CustomerProfile.zip');
+const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
+
+  return new Promise(function(resolve, reject) {
+
+    unZipFile(filePath).then(fileName=>{
+      util.readJSONfile(DOWNLOAD_DIR,MPAM_INDIVIDUAL_FILE).then(data=>{
+
+        // Implement here
+        data.forEach(function(item){
+
+              // 3.get data MIT_FX_XXX
+              customer.getFC_CustomerInfo_proc_v4(item.cardNumber).then(CustomerData=>{
 
                 // // Approve
                 CustomerData = JSON.parse(JSON.stringify(CustomerData));
@@ -6938,13 +7135,11 @@ function fundProfileAutoUpdate(actionBy){
       var queryStr = `
       BEGIN
 
-      --DECLARE @userCode VARCHAR(20) ='MIT_SYS';
-
+     --DECLARE @userCode VARCHAR(20) ='MIT_SYS';
       DECLARE @newFund as CURSOR;
       DECLARE @Fund_Code VARCHAR(20);
       DECLARE @msg VARCHAR(200);
 
-      print '**Start'
           SET @newFund = CURSOR FOR
           select a.Fund_Code
           from MFTS_Fund a
@@ -6956,20 +7151,18 @@ function fundProfileAutoUpdate(actionBy){
             WHILE @@FETCH_STATUS = 0
             BEGIN
 
-                  UPDATE fund
+                  UPDATE MFTS_Fund
                   SET
-                          fund.Thai_Name = x.Fund_Name_TH,
-                          fund.Eng_Name = x.Fund_Name_EN ,
-                          fund.Start_Date = CAST(x.Beg_IPO_Date as date) ,
-                          fund.Cutoff_Buy = SUBSTRING(buy_cut_off_time,1,2) +':'+SUBSTRING(buy_cut_off_time,3,4),
-                          fund.Cutoff_Sell = SUBSTRING(sell_cut_off_time,1,2) +':'+SUBSTRING(sell_cut_off_time,3,4) ,
-                          fund.FundRisk = x.Fund_Risk_Level,
-                          fund.Modify_By = @userCode,
-                          fund.Modify_Date = GETDATE()
+                          Thai_Name = x.Fund_Name_TH,
+                          Eng_Name = x.Fund_Name_EN ,
+                          Start_Date = CAST(x.Beg_IPO_Date as date) ,
+                          Cutoff_Buy = SUBSTRING(x.buy_cut_off_time,1,2) +':'+SUBSTRING(buy_cut_off_time,3,4),
+                          Cutoff_Sell = SUBSTRING(sell_cut_off_time,1,2) +':'+SUBSTRING(sell_cut_off_time,3,4) ,
+                          FundRisk = x.Fund_Risk_Level,
+                          Modify_By = @userCode,
+                          Modify_Date = GETDATE()
                   FROM MFTS_Fund fund
-                  INNER JOIN
-                  MIT_FC_Profile x
-                  ON x.Fund_Code = fund.Fund_Code
+                  INNER JOIN MIT_FC_Fund_Profile x ON x.Fund_Code = fund.Fund_Code
                   where x.Fund_Code= @Fund_Code
 
                   if @@ROWCOUNT>0 BEGIN

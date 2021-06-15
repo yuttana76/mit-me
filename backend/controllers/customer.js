@@ -288,6 +288,10 @@ exports.getFC_CustomerInfo_proc = (custCode) => {
 
 }
 
+/**
+ * Get Customer profile v4(single form)
+ *
+ */
 exports.getFC_CustomerInfo_proc_v4 = (custCode) => {
 
   logger.info('Start getFC_CustomerInfo_proc()' + custCode)

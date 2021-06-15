@@ -15,6 +15,7 @@ var slackTools = require('./tools/slack');
 const { JsonFormatter } = require('tslint/lib/formatters');
 const customer = require('./customer');
 const mail = require('./mail');
+const readline = require('readline');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0" //this is insecure
 //FundConnext configuration
@@ -204,6 +205,7 @@ exports.getIndCust = (req, res, next) =>{
       res.status(401).json(err);
     });
 }
+
 
 exports.getIndCust_V4 = (req, res, next) =>{
   var actionBy = req.params.actionBy || 'SYSTEM';
@@ -2199,7 +2201,7 @@ function saveMIT_FC_CUST_SUIT_Detail_V4(cardNumber,obj,actionBy) {
 
 }
 // GET
-function fnGetIndCust(cardNumber){
+ function fnGetIndCust(cardNumber){
   console.log("Welcome fnGetIndCust()"+ cardNumber);
 
   return new Promise(function(resolve, reject) {

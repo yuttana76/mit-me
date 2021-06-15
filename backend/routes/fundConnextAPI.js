@@ -14,7 +14,7 @@ router.get("/apiAuditor/",fundConnextAPIController.apiAuditor); // // On develop
 // customer/individual/ API
 router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);
 
-router.get("/customer/individual-DEV/:cardNumber", fundConnextAPIController.getIndCustDEV);
+// router.get("/customer/individual-DEV/:cardNumber", fundConnextAPIController.getIndCustDEV);
 router.post("/customer/individual", fundConnextAPIController.createCustomerIndividual);
 router.put("/customer/individual", fundConnextAPIController.updateCustomerIndividual);
 router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndPartial);//Partrial
@@ -28,6 +28,7 @@ router.get("/downloadCustomerProfile_v4",fundConnextAPIController.downloadCustom
 // 2.1 uploadCustomerProfilePROC
 // 2.2 fundProfileAutoUpdateAPI
 router.get("/uploadCustomerProfile",fundConnextAPIController.uploadCustomerProfile);
+router.get("/uploadCustomerProfile_v4",fundConnextAPIController.uploadCustomerProfile_v4);
 
 // Step 3 Report to staff (T+10 min)
 router.get("/reportSchedult",fundConnextAPIController.reportSCHMitlog);

@@ -3737,6 +3737,8 @@ exports.FundProfileAPI = (req, res, next) =>{
     businessDate = req.body.businessDate
   }
 
+  var actionBy = 'MPAM_DIRECT'
+
   FundProfileAPIProc(businessDate,actionBy).then(dwRs=>{
     res.status(200).json({message: dwRs});
   },err=>{
@@ -3754,7 +3756,8 @@ exports.fundProfileAutoUpdateAPI = (req, res, next) =>{
   //   businessDate = req.body.businessDate
   // }
 
-  fundProfileAutoUpdate().then(dwRs=>{
+  var actionBy = 'MPAM_DIRECT'
+  fundProfileAutoUpdate(actionBy).then(dwRs=>{
     res.status(200).json({message: dwRs});
   },err=>{
     res.status(422).json(err);
@@ -4188,6 +4191,8 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
 
 
 exports.reportSCHMitlog = (req, res, next) => {
+
+  logger.info(`** FUNDPROFILE_RESPONDOR_EMAIL> ${FUNDPROFILE_RESPONDOR_EMAIL}`)
 
   var businessDate = getCurrentDate();
   logger.info('reportSCHMitlog API; businessDate:' + businessDate )
@@ -4819,7 +4824,7 @@ function delMIT_FC_Profile(businessDate){
           SELECT  * from MIT_FC_Fund_Profile WHERE businessDate = @businessDate
         END
 
-        DELETE  from MIT_FC_Fund_Profile_HIS  where businessDate = @businessDate
+        DELETE  from MIT_FC_Fund_Profile  where businessDate = @businessDate
       END
       `;
           const sql = require('mssql')
@@ -7131,6 +7136,7 @@ let seconds = today.getSeconds();
 
 
 function fundProfileAutoUpdate(actionBy){
+  logger.info(` fundProfileAutoUpdate > ${actionBy}`)
 
   return new Promise(function(resolve, reject) {
     try{

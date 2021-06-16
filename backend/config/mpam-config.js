@@ -6,7 +6,8 @@ const dotenv = require( "dotenv" );
 dotenv.config();
 
 // capture the environment variables the application needs
-const {
+var {
+  production,
   FC_API_URL,
   FC_API_USER,
   FC_API_PASSWORD,
@@ -160,8 +161,9 @@ module.exports = {
   SMS_PASSWORD:SMS_PASSWORD,
   SMS_SENDER:SMS_SENDER,
 
-  FUNDPROFILE_RESPONDOR_EMAIL:FUNDPROFILE_RESPONDOR_EMAIL? FUNDPROFILE_RESPONDOR_EMAIL:'yuttana76@gmail.com',
+  FUNDPROFILE_RESPONDOR_EMAIL: production? 'op@merchantasset.co.th':'yuttana76@gmail.com',
 }
 
+console.log('production:' + production)
 console.log('FC_API_URL:' + FC_API_URL)
 console.log('SQL_SERVER:' + SQL_SERVER)

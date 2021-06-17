@@ -1276,8 +1276,8 @@ function saveMIT_FC_CUST_ACCOUNT_Detail(cardNumber,obj,actionBy) {
     ,approvedDate=@approvedDate
     ,mailingAddressSameAsFlag=@mailingAddressSameAsFlag
     ,openOmnibusFormFlag=@openOmnibusFormFlag
-    ,CreateBy=@CreateBy
-    ,CreateDate=getdate()
+    ,UpdateBy=@CreateBy
+    ,UpdateDate=getdate()
     WHERE cardNumber=@cardNumber AND accountId=@accountId
 
    IF @@ROWCOUNT =0

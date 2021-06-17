@@ -22,13 +22,13 @@ router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndP
 
 // Step 1 Download FC data (T+0 min)
 router.get("/downloadCustomerProfile",fundConnextAPIController.downloadCustomerProfile);
-router.get("/downloadCustomerProfile_v4",fundConnextAPIController.downloadCustomerProfile_v4); // Single form
+router.get("/downloadCustomerProfile_v4",fundConnextAPIController.downloadCustomerProfile_v4); // Single form (need recheck)
 
 // Step 2 Upload data to MFTS(Approve) (T+5 min)
 // 2.1 uploadCustomerProfilePROC
 // 2.2 fundProfileAutoUpdateAPI
 router.get("/uploadCustomerProfile",fundConnextAPIController.uploadCustomerProfile);
-router.get("/uploadCustomerProfile_v4",fundConnextAPIController.uploadCustomerProfile_v4);
+router.get("/uploadCustomerProfile_v4",fundConnextAPIController.uploadCustomerProfile_v4); // Developing
 
 // Step 3 Report to staff (T+10 min)
 router.get("/reportSchedult",fundConnextAPIController.reportSCHMitlog);

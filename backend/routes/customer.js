@@ -20,4 +20,5 @@ router.post("/approveCustInfo", customerController.approveCustInfo);
 // router.get("/cddInfo/:cusCode",  customerController.getCDDinfo);
 // router.post("/cddInfo", customerController.saveCDDInfo);
 
+router.get("/fcCusInfo/v4/:cusCode", customerController.getFC_CustomerInfo_v4);
 module.exports = router;

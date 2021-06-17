@@ -447,7 +447,7 @@ function getIndCustDEVProc(custInfoObj,actionBy){
 function saveIndCustProc_v4(custInfoObj,actionBy){
 
   console.log("Welcome saveIndCustProc_v4()" );
-  console.log("custInfoObj --> " + JSON.stringify(custInfoObj));
+  // console.log("custInfoObj --> " + JSON.stringify(custInfoObj));
 
   return new Promise(function(resolve, reject) {
 
@@ -470,9 +470,9 @@ function saveIndCustProc_v4(custInfoObj,actionBy){
     // 3 MIT_FC_CUST_SPOUSE
       if(custInfoObj.spouse){
         saveMIT_FC_CUST_SPOUSE_V4(custInfoObj.spouse,actionBy).then(result=>{
-          logger.info("saveMIT_FC_CUST_SPOUSE() successful")
+          logger.info("saveMIT_FC_CUST_SPOUSE_V4() successful")
         },err=>{
-          logger.error("saveMIT_FC_CUST_SPOUSE() error:" + err)
+          logger.error("saveMIT_FC_CUST_SPOUSE_V4() error:" + err)
           reject(err);
         })
       }
@@ -4123,6 +4123,7 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
 });
 
 exports.uploadCustomerProfilePROC_v4 = ((businessDate,actionBy) => {
+
 logger.info('uploadCustomerProfilePROC_v4()' + businessDate);
 
 const DOWNLOAD_DIR = path.resolve('./backend/downloadFiles/fundConnext/');
@@ -4140,38 +4141,42 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
               // 3.get data MIT_FX_XXX
               customer.getFC_CustomerInfo_proc_v4(item.cardNumber).then(CustomerData=>{
 
-                // // Approve
+                // // Approve & Save
                 CustomerData = JSON.parse(JSON.stringify(CustomerData));
-                customer.approveCustInfoProcess(CustomerData).then(result2=>{
 
-                  var logMsg= ''.concat(CustomerData.thFirstName,'|',CustomerData.thLastName
-                  ,'|',CustomerData.enFirstName,'|',CustomerData.enLastName
-                  ,'|',CustomerData.referalPerson
-                  ,'|',CustomerData.mobileNumber,'|',CustomerData.email,'|',CustomerData.accountId,'|',CustomerData.RM )
+                // customer.approveCustInfoProcess(CustomerData).then(result2=>{
 
-                  var  currentDate =new Date();
-                  var _applicationDate = new Date();
-                  if(CustomerData.applicationDate){
-                    // console.log(`***ApplicationDate:${CustomerData.applicationDate}`)
-                    var _splitDate = CustomerData.applicationDate.split("-")
-                    _applicationDate.setFullYear(_splitDate[0])
-                    _applicationDate.setMonth(_splitDate[1]-1)
-                    _applicationDate.setDate(_splitDate[2])
+                //   var logMsg= ''.concat(CustomerData.thFirstName,'|',CustomerData.thLastName
+                //   ,'|',CustomerData.enFirstName,'|',CustomerData.enLastName
+                //   ,'|',CustomerData.referalPerson
+                //   ,'|',CustomerData.mobileNumber,'|',CustomerData.email,'|',CustomerData.accountId,'|',CustomerData.RM )
 
-                  }
+                //   var  currentDate =new Date();
+                //   var _applicationDate = new Date();
+                //   if(CustomerData.applicationDate){
+                //     // console.log(`***ApplicationDate:${CustomerData.applicationDate}`)
+                //     var _splitDate = CustomerData.applicationDate.split("-")
+                //     _applicationDate.setFullYear(_splitDate[0])
+                //     _applicationDate.setMonth(_splitDate[1]-1)
+                //     _applicationDate.setDate(_splitDate[2])
 
-                  // To calculate the time difference of two dates
-                  var Difference_In_Time = currentDate.getTime() - _applicationDate.getTime();
+                //   }
 
-                  // To calculate the no. of days between two dates
-                  var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-                  logMsg = logMsg+''.concat('|',CustomerData.applicationDate, '(',Difference_In_Days,')')
-                  logMsg = logMsg+''.concat('|',CustomerData.RM_License_Code,'|',CustomerData.RM_EMAIL)
+                //   // To calculate the time difference of two dates
+                //   var Difference_In_Time = currentDate.getTime() - _applicationDate.getTime();
 
-                  mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',logMsg ,'','',function(){});
+                //   // To calculate the no. of days between two dates
+                //   var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+                //   logMsg = logMsg+''.concat('|',CustomerData.applicationDate, '(',Difference_In_Days,')')
+                //   logMsg = logMsg+''.concat('|',CustomerData.RM_License_Code,'|',CustomerData.RM_EMAIL)
+
+                //   mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',logMsg ,'','',function(){});
+                //   resolve(CustomerData);
+
+                // })
+
                   resolve(CustomerData);
 
-                })
               },err=>{
                 reject(err)
               });
@@ -6972,7 +6977,7 @@ function fnGetDownloadAPI_V4(businessDate,fileType){
 
       // logger.info("***TOKEN>>"+resultObj.access_token);
 
-      const HTTPS_ENDPOIN =`https://${FC_API_URL}${FC_DOWNLOAD_PATH_V4}${businessDate}/${fileType}`;
+      const HTTPS_ENDPOIN =`https://${FC_API_URL}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
       const propertiesObject = {
         "x-auth-token":resultObj.access_token,
         "Content-Type": "application/json"

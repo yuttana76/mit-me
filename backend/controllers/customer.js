@@ -240,6 +240,23 @@ exports.getFC_CustomerInfo = (req, res, next) => {
 
 }
 
+exports.getFC_CustomerInfo_v4 = (req, res, next) => {
+
+  var custCode = req.params.cusCode;
+
+  exports.getFC_CustomerInfo_proc_v4(custCode).then(custInfo=>{
+
+      res.status(200).json({
+      result: custInfo
+    });
+
+  },err=>{
+    res.status(401).json(err.message);
+  })
+
+}
+
+
 exports.getFC_CustomerInfo_proc = (custCode) => {
 
   logger.info('Start getFC_CustomerInfo_proc()' + custCode)
@@ -294,32 +311,31 @@ exports.getFC_CustomerInfo_proc = (custCode) => {
  */
 exports.getFC_CustomerInfo_proc_v4 = (custCode) => {
 
-  logger.info('Start getFC_CustomerInfo_proc()' + custCode)
+  logger.info('Start getFC_CustomerInfo_proc_v4()' + custCode)
 
   return new Promise(function(resolve, reject) {
 
     fnArray=[];
   fnArray.push(getFC_CustomerInfo_v4(custCode));
-  // fnArray.push(getFC_Address(custCode,1));
-  // fnArray.push(getFC_Address(custCode,2));
-  // fnArray.push(getFC_Address(custCode,3));
-  // fnArray.push(getFC_Children(custCode));
+  fnArray.push(getFC_Address_v4(custCode,1));//identificationDocument
+  fnArray.push(getFC_Address_v4(custCode,2));//current
+  fnArray.push(getFC_Address_v4(custCode,3));//work
 
   Promise.all(fnArray).then(values => {
 
     // console.log('FC data>'+JSON.stringify(values))
       custInfo=values[0][0]
 
-      // if(values[1].length>0)
-      //   custInfo.residence=values[1][0]
+      if(values[1].length>0)
+        custInfo.identificationDocument=values[1][0]
 
       // // custInfo.current=[]
-      // if(values[2].length>0)
-      //   custInfo.current=values[2][0]
+      if(values[2].length>0)
+        custInfo.current=values[2][0]
 
       // // custInfo.work=[]
-      // if(values[3].length>0)
-      //   custInfo.work=values[3][0]
+      if(values[3].length>0)
+        custInfo.work=values[3][0]
 
       // if(values[4].length >0)
       //   custInfo.children=values[4]
@@ -375,18 +391,6 @@ const getFC_Children = (cardNumber) => {
       var fncName = 'getFC_Children() ';
 
       const sql = require('mssql')
-      // var queryStr = `
-      // SELECT
-      //   [childCardNumber] AS cardNumber,
-      //   [identificationCardType] AS cardType,
-      //   [passportCountry] AS passportCountry,
-      //   [idCardExpiryDate] AS cardExpDate,
-      //   [title] AS title,
-      //   [thFirstName] AS firstName,
-      //   [thLastName] AS lastName,
-      //   [birthDate] AS dob
-      // FROM [MIT_FC_CUST_CHILDREN]
-      // WHERE cardNumber=@cardNumber  `;
 
       var queryStr = `
       SELECT
@@ -412,7 +416,6 @@ const getFC_Children = (cardNumber) => {
       })
   });
 };
-
 
 const getORG_Address = (cardNumber,seq) => {
   return new Promise((resolve, reject) => {
@@ -458,6 +461,45 @@ const getORG_Address = (cardNumber,seq) => {
 
 
 const getFC_Address = (cardNumber,seq) => {
+  return new Promise((resolve, reject) => {
+      var fncName = 'getFC_Address() ';
+
+      const sql = require('mssql')
+      var queryStr = `
+      SELECT
+      ISNULL(' '+A.[no],'') +' '+ISNULL(' '+A.building,'')+ISNULL(' ชั้น ' + a.[floor],'') +' '+ ISNULL(' ซ.'+a.soi, '')
+      +ISNULL(' ถ.'+ a.road,'')
+      +ISNULL(' หมู่'+A.moo,'')
+      +ISNULL(' '+A.subDistrict,'')
+      +ISNULL(' '+A.district,'')
+      +ISNULL(' '+A.province,'')
+      +ISNULL(' '+A.postalCode,'') AS printTxt
+      ,A.*
+      FROM [MIT_FC_CUST_ADDR] A
+      WHERE A.cardNumber=@cardNumber AND A.Addr_Seq=@Addr_Seq
+      `;
+
+      const pool1 = new sql.ConnectionPool(config, err => {
+        pool1.request() // or: new sql.Request(pool1)
+        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .input("Addr_Seq", sql.VarChar(20), seq)
+        .query(queryStr, (err, result) => {
+            if(err){
+              logger.error(err);
+              reject(fncName + err);
+            }else {
+              resolve(result.recordset);
+            }
+        })
+      })
+      pool1.on('error', err => {
+        logger.error(err);
+        resolve(err);
+      })
+  });
+};
+
+const getFC_Address_v4 = (cardNumber,seq) => {
   return new Promise((resolve, reject) => {
       var fncName = 'getFC_Address() ';
 

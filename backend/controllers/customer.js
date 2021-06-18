@@ -514,7 +514,7 @@ const getFC_Address_v4 = (cardNumber,seq) => {
       +ISNULL(' '+A.province,'')
       +ISNULL(' '+A.postalCode,'') AS printTxt
       ,A.*
-      FROM [MIT_FC_CUST_ADDR] A
+      FROM [MIT_FC_CUST_ADDR_SF] A
       WHERE A.cardNumber=@cardNumber AND A.Addr_Seq=@Addr_Seq
       `;
 
@@ -680,130 +680,142 @@ return new Promise(function(resolve, reject) {
         reject(error)
       });
       //  END *********************************
-
     }
   }
-
-
-
 });
-
 }
 
-/*
-exports.approveCustInfo = (req, res, next) => {
 
-  logger.info("approveCustInfo()");
+exports.approveCustInfoProcess_v4 = (fcCustInfoObj) => {
 
-  // var mftsCustInfoObj = JSON.parse(req.body.mftsCustInfo)
-  var fcCustInfoObj = JSON.parse(req.body.fcCustInfo)
-  var actionBy='MIT';
-  // var actionBy = req.body.actionBy;
+  return new Promise(function(resolve, reject) {
 
-// VALIDATE data
+    var actionBy='MIT';
 
-// CONVERT data.
-  fcCustInfoObj.Group_code='1';
+  // VALIDATE data
 
-  switch (fcCustInfoObj.title) {
-    case 'MR':
-      fcCustInfoObj.Title_Name_T = 'นาย';
-      break;
-    case 'MRS':
-      fcCustInfoObj.Title_Name_T = 'นาง';
-      break;
-    case 'MISS':
-      fcCustInfoObj.Title_Name_T = 'นางสาว';
-      break;
-    case 'OTHER':
-      fcCustInfoObj.Title_Name_T = fcCustInfoObj.titleOther;
-      break;
-    default:
-      fcCustInfoObj.Title_Name_T = 'อื่นๆ';
-  }
+  // CONVERT data.
+    fcCustInfoObj.Group_code='1';
 
-  fcCustInfoObj.IT_SentRepByEmail='Y'
-
-  fcCustInfoObj.IT_FundConnext='Y'
-
-// Card_Type
-  switch (fcCustInfoObj.identificationCardType) {
-    case 'CITIZEN_CARD':
-      fcCustInfoObj.Card_Type = 'C';
-      break;
-    case 'PASSPORT':
-      fcCustInfoObj.Card_Type = 'P';
-      break;
-    default:
-      fcCustInfoObj.Card_Type = '';
-  }
-
-// GENDER
-  switch (fcCustInfoObj.gender) {
-    case 'Male':
-      fcCustInfoObj.Sex = 'M';
-      break;
-    case 'Female':
-      fcCustInfoObj.Sex = 'F';
-      break;
-    default:
-      fcCustInfoObj.Sex = '';
-  }
-
-  fnArray=[];
-  //Updat customer & suit
-
-  fnArray.push(update_CustomerInfo(fcCustInfoObj,actionBy));
-
-
-  //  1 : residence
-  //  2 : current
-  //  3 : work
-  if(fcCustInfoObj.residence)
-    fnArray.push(update_Address(fcCustInfoObj.residence,1,actionBy));
-
-  if(fcCustInfoObj.current)
-    fnArray.push(update_Address(fcCustInfoObj.current,2,actionBy));
-
-  if(fcCustInfoObj.work)
-    fnArray.push(update_Address(fcCustInfoObj.work,3,actionBy));
-
-  //Update Children
-    for (var i in fcCustInfoObj.children) {
-        if(fcCustInfoObj.children[i])
-          fnArray.push(update_Children(fcCustInfoObj.children[i],actionBy));
+    switch (fcCustInfoObj.title) {
+      case 'MR':
+        fcCustInfoObj.Title_Name_T = 'นาย';
+        break;
+      case 'MRS':
+        fcCustInfoObj.Title_Name_T = 'นาง';
+        break;
+      case 'MISS':
+        fcCustInfoObj.Title_Name_T = 'นางสาว';
+        break;
+      case 'OTHER':
+        fcCustInfoObj.Title_Name_T = fcCustInfoObj.titleOther;
+        break;
+      default:
+        fcCustInfoObj.Title_Name_T = 'อื่นๆ';
     }
 
-  //ACCOUNT
-  fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
+    if(fcCustInfoObj.email && fcCustInfoObj.email.split('@').length>0){
+      fcCustInfoObj.IT_SentRepByEmail='Y'
+    }else{
+      fcCustInfoObj.IT_SentRepByEmail='N'
+    }
 
-  //BANK ACCOUNT
-  fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
+    fcCustInfoObj.IT_FundConnext='Y'
 
-  fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+  // Card_Type
+    switch (fcCustInfoObj.identificationCardType) {
+      case 'CITIZEN_CARD':
+        fcCustInfoObj.Card_Type = 'C';
+        break;
+      case 'PASSPORT':
+        fcCustInfoObj.Card_Type = 'P';
+        break;
+      default:
+        fcCustInfoObj.Card_Type = '';
+    }
 
-  fnArray.push(update_MFTS_Suit(fcCustInfoObj.cardNumber,actionBy));
-  //Suit by  account
+  // GENDER
+    switch (fcCustInfoObj.gender) {
+      case 'Male':
+        fcCustInfoObj.Sex = 'M';
+        break;
+      case 'Female':
+        fcCustInfoObj.Sex = 'F';
+        break;
+      default:
+        fcCustInfoObj.Sex = '';
+    }
 
-  Promise.all(fnArray)
-  .then(data => {
+    console.log('approveCustInfoProcess account text (,) >>'+fcCustInfoObj.accountId)
+    var accountArray=   fcCustInfoObj.accountId.split(',') //Support Split for multi acount
+    for(var i = 0; i < accountArray.length;i++){
+      if(accountArray[i]){
 
-    exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.cardNumber).then(data =>{
-    })
+        fcCustInfoObj.accountId = accountArray[i];
+        console.log(' Process on Account id >>' + fcCustInfoObj.accountId + '  ; i=' + i);
 
-    update_MFTS_Suit_Detail(fcCustInfoObj.cardNumber,actionBy).then(data =>{
-      res.status(200).json(data);
-    })
-    //  res.status(200).json(data[0]);
-  })
-  .catch(error => {
-    logger.error(error.message)
-    res.status(401).json(error.message);
+        //  START *********************************
+        fnArray=[];
+        //Updat customer & suit
+        fnArray.push(update_CustomerInfo_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj,actionBy));
+
+        /* Account_Address
+          1 : identificationDocument
+          2 : current
+          3 : work
+          */
+        if(fcCustInfoObj.identificationDocument)
+          fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.identificationDocument,1,actionBy));
+
+        if(fcCustInfoObj.current){
+          fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.current,2,actionBy));
+        }
+
+        if(fcCustInfoObj.work)
+          fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.work,3,actionBy));
+
+        /*
+        Update & Insert MIT_CUST_ACCOUNT
+        */
+        fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
+
+        /*
+        Update & Insert MIT_CUST_BANK
+        */
+        fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
+
+        /*
+        Update & Insert MIT_CUST_SUIT
+        */
+        fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+
+        /*
+        Update & Insert MFTS_Suit
+        */
+        fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
+        //Suit by  account
+
+        Promise.all(fnArray)
+        .then(data => {
+
+          exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.accountId,fcCustInfoObj.cardNumber).then(data =>{
+          })
+
+          resolve(data);
+
+        })
+        .catch(error => {
+          logger.error(error.message)
+          reject(error)
+        });
+        //  END *********************************
+      }
+    }
   });
-}
-*/
+  }
 
-function update_CustomerInfo(custObj,actionBy){
+
+  function update_CustomerInfo(custObj,actionBy){
 
   logger.info("update_CustomerInfo()" + custObj.cardNumber);
 

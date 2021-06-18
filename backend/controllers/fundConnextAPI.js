@@ -4138,42 +4138,44 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
         // Implement here
         data.forEach(function(item){
 
+          logger.info(`***Process ON ID: ${item.cardNumber}`)
               // 3.get data MIT_FX_XXX
               customer.getFC_CustomerInfo_proc_v4(item.cardNumber).then(CustomerData=>{
 
                 // // Approve & Save
                 CustomerData = JSON.parse(JSON.stringify(CustomerData));
 
-                // customer.approveCustInfoProcess(CustomerData).then(result2=>{
+                logger.info(`BF update>> ${JSON.stringify(CustomerData)}`)
+                customer.approveCustInfoProcess_v4(CustomerData).then(result2=>{
 
-                //   var logMsg= ''.concat(CustomerData.thFirstName,'|',CustomerData.thLastName
-                //   ,'|',CustomerData.enFirstName,'|',CustomerData.enLastName
-                //   ,'|',CustomerData.referalPerson
-                //   ,'|',CustomerData.mobileNumber,'|',CustomerData.email,'|',CustomerData.accountId,'|',CustomerData.RM )
+                  var logMsg= ''.concat(CustomerData.thFirstName,'|',CustomerData.thLastName
+                  ,'|',CustomerData.enFirstName,'|',CustomerData.enLastName
+                  ,'|',CustomerData.referalPerson
+                  ,'|',CustomerData.mobileNumber,'|',CustomerData.email,'|',CustomerData.accountId,'|',CustomerData.RM )
 
-                //   var  currentDate =new Date();
-                //   var _applicationDate = new Date();
-                //   if(CustomerData.applicationDate){
-                //     // console.log(`***ApplicationDate:${CustomerData.applicationDate}`)
-                //     var _splitDate = CustomerData.applicationDate.split("-")
-                //     _applicationDate.setFullYear(_splitDate[0])
-                //     _applicationDate.setMonth(_splitDate[1]-1)
-                //     _applicationDate.setDate(_splitDate[2])
+                  var  currentDate =new Date();
+                  var _applicationDate = new Date();
+                  if(CustomerData.applicationDate){
+                    // console.log(`***ApplicationDate:${CustomerData.applicationDate}`)
+                    var _splitDate = CustomerData.applicationDate.split("-")
+                    _applicationDate.setFullYear(_splitDate[0])
+                    _applicationDate.setMonth(_splitDate[1]-1)
+                    _applicationDate.setDate(_splitDate[2])
 
-                //   }
+                  }
 
-                //   // To calculate the time difference of two dates
-                //   var Difference_In_Time = currentDate.getTime() - _applicationDate.getTime();
+                  // To calculate the time difference of two dates
+                  var Difference_In_Time = currentDate.getTime() - _applicationDate.getTime();
 
-                //   // To calculate the no. of days between two dates
-                //   var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-                //   logMsg = logMsg+''.concat('|',CustomerData.applicationDate, '(',Difference_In_Days,')')
-                //   logMsg = logMsg+''.concat('|',CustomerData.RM_License_Code,'|',CustomerData.RM_EMAIL)
+                  // To calculate the no. of days between two dates
+                  var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+                  logMsg = logMsg+''.concat('|',CustomerData.applicationDate, '(',Difference_In_Days,')')
+                  logMsg = logMsg+''.concat('|',CustomerData.RM_License_Code,'|',CustomerData.RM_EMAIL)
 
-                //   mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',logMsg ,'','',function(){});
-                //   resolve(CustomerData);
+                  mitLog.saveMITlog(actionBy,'FC_API_SCH_CUST_INFO',logMsg ,'','',function(){});
+                  resolve(CustomerData);
 
-                // })
+                })
 
                   resolve(CustomerData);
 

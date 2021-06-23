@@ -687,6 +687,9 @@ return new Promise(function(resolve, reject) {
 
 
 exports.approveCustInfoProcess_v4 = (fcCustInfoObj) => {
+  logger.info(`Welcome  approveCustInfoProcess_v4 `)
+
+  logger.info(`***>> ${JSON.stringify(fcCustInfoObj)}`)
 
   return new Promise(function(resolve, reject) {
 
@@ -734,18 +737,6 @@ exports.approveCustInfoProcess_v4 = (fcCustInfoObj) => {
         fcCustInfoObj.Card_Type = '';
     }
 
-  // GENDER
-    switch (fcCustInfoObj.gender) {
-      case 'Male':
-        fcCustInfoObj.Sex = 'M';
-        break;
-      case 'Female':
-        fcCustInfoObj.Sex = 'F';
-        break;
-      default:
-        fcCustInfoObj.Sex = '';
-    }
-
     console.log('approveCustInfoProcess account text (,) >>'+fcCustInfoObj.accountId)
     var accountArray=   fcCustInfoObj.accountId.split(',') //Support Split for multi acount
     for(var i = 0; i < accountArray.length;i++){
@@ -757,49 +748,50 @@ exports.approveCustInfoProcess_v4 = (fcCustInfoObj) => {
         //  START *********************************
         fnArray=[];
         //Updat customer & suit
-        fnArray.push(update_CustomerInfo_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj,actionBy));
+        fnArray.push(update_CustomerInfo_ByAccountId_v4(fcCustInfoObj.accountId,fcCustInfoObj,actionBy));
 
         /* Account_Address
           1 : identificationDocument
           2 : current
           3 : work
           */
-        if(fcCustInfoObj.identificationDocument)
-          fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.identificationDocument,1,actionBy));
 
-        if(fcCustInfoObj.current){
-          fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.current,2,actionBy));
-        }
+        // if(fcCustInfoObj.identificationDocument)
+        //   fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.identificationDocument,1,actionBy));
 
-        if(fcCustInfoObj.work)
-          fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.work,3,actionBy));
+        // if(fcCustInfoObj.current){
+        //   fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.current,2,actionBy));
+        // }
+
+        // if(fcCustInfoObj.work)
+        //   fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.work,3,actionBy));
 
         /*
         Update & Insert MIT_CUST_ACCOUNT
         */
-        fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
+        // fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
 
         /*
         Update & Insert MIT_CUST_BANK
         */
-        fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
+        // fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
 
         /*
         Update & Insert MIT_CUST_SUIT
         */
-        fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+        // fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
 
         /*
         Update & Insert MFTS_Suit
         */
-        fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
+        // fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
         //Suit by  account
 
         Promise.all(fnArray)
         .then(data => {
 
-          exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.accountId,fcCustInfoObj.cardNumber).then(data =>{
-          })
+          // exports.cloneCustomerAddrSameAsFlag(fcCustInfoObj.accountId,fcCustInfoObj.cardNumber).then(data =>{
+          // })
 
           resolve(data);
 
@@ -887,12 +879,12 @@ exports.approveCustInfoProcess_v4 = (fcCustInfoObj) => {
     custObj.canAcceptFxRisk = '0'
   }
 
-  // openFundConnextFormFlag
-  if(custObj.openFundConnextFormFlag ==true){
-    custObj.openFundConnextFormFlag = '1'
-  }else if(custObj.openFundConnextFormFlag ==false){
-    custObj.openFundConnextFormFlag = '0'
-  }
+  // // openFundConnextFormFlag
+  // if(custObj.openFundConnextFormFlag =='Y'){
+  //   custObj.openFundConnextFormFlag = '1'
+  // }else {
+  //   custObj.openFundConnextFormFlag = '0'
+  // }
 
   // vulnerableFlag
   if(custObj.vulnerableFlag ==true){
@@ -1829,9 +1821,6 @@ function update_CustomerInfo_ByAccountId(AccountId,custObj,actionBy){
 
     }
 
-    // console.log('***acceptBy_splited>' ,JSON.stringify(acceptBy_splited))
-    // console.log('***IT_SAcode_external>' ,JSON.stringify(IT_SAcode_external))
-    // referalPerson = custObj.referalPerson.substr(0, 6);
   }
 
 
@@ -2830,6 +2819,918 @@ finally {
   });
 }
 
+
+function update_CustomerInfo_ByAccountId_v4(AccountId,custObj,actionBy){
+
+  logger.info("update_CustomerInfo_ByAccountId_v4()" + AccountId);
+
+  try {
+
+  // Convert Refer code 6 charactors
+  var IT_SAcode_external =""
+
+
+  // IT_SAcode_external
+  if(custObj.acceptBy){
+
+    custObj.acceptBy = custObj.acceptBy.replace(/\s/g, '');// remove sapce
+
+    var acceptBy_splited = custObj.acceptBy.split("-");
+
+    if(acceptBy_splited.length>1){
+
+      // cast 123456-xxxxxx
+      IT_SAcode_external=acceptBy_splited[0];
+
+      // Check in cast 123456-1
+      if (Number(acceptBy_splited[1][0])) {
+        IT_SAcode_external = IT_SAcode_external+"-"+acceptBy_splited[1][0]
+      }
+
+      //Check if sssss-123456
+      if (Number(acceptBy_splited[1])) {
+        IT_SAcode_external = acceptBy_splited[1]
+      }
+
+    }
+  }
+
+  // referralPerson
+  referalPersonFull = custObj.referralPerson
+  referalPerson = custObj.referralPerson
+
+
+  // Convert Date split 10 charactors
+    if(custObj.birthDate){
+      custObj.birthDate = String(custObj.birthDate).substr(0, 10);
+    }
+
+  if(custObj.SPidCardExpiryDate){
+    custObj.SPidCardExpiryDate = String(custObj.SPidCardExpiryDate).substr(0, 10);
+  }
+
+  if(custObj.cddDate)
+    custObj.cddDate = String(custObj.cddDate).substr(0, 10);
+
+  if(custObj.applicationDate)
+    custObj.applicationDate = String(custObj.applicationDate).substr(0, 10);
+
+  if(custObj.suitabilityEvaluationDate)
+    custObj.suitabilityEvaluationDate = String(custObj.suitabilityEvaluationDate).substr(0, 10);
+
+  if(custObj.fatcaDeclarationDate)
+    custObj.fatcaDeclarationDate = String(custObj.fatcaDeclarationDate).substr(0, 10);
+
+
+  // canAcceptDerivativeInvestment
+  if(custObj.canAcceptDerivativeInvestment ==true){
+    custObj.canAcceptDerivativeInvestment = '1'
+  }else if(custObj.canAcceptDerivativeInvestment ==false){
+    custObj.canAcceptDerivativeInvestment = '0'
+  }
+
+  // canAcceptFxRisk
+  if(custObj.canAcceptFxRisk ==true){
+    custObj.canAcceptFxRisk = '1'
+  }else if(custObj.canAcceptFxRisk ==false){
+    custObj.canAcceptFxRisk = '0'
+  }
+
+  // openFundConnextFormFlag
+  // if(custObj.openFundConnextFormFlag ==true){
+  //   custObj.openFundConnextFormFlag = '1'
+  // }else if(custObj.openFundConnextFormFlag ==false){
+  //   custObj.openFundConnextFormFlag = '0'
+  // }
+
+  // vulnerableFlag
+  if(custObj.vulnerableFlag ==true){
+    custObj.vulnerableFlag = '1'
+  }else if(custObj.vulnerableFlag ==false){
+    custObj.vulnerableFlag = '0'
+  }
+
+  // ndidFlag
+  if(custObj.ndidFlag ==true){
+    custObj.ndidFlag = '1'
+  }else if(custObj.ndidFlag ==false){
+    custObj.ndidFlag = '0'
+  }
+
+  // fatca
+  if(custObj.fatca ==true){
+    custObj.fatca = '1'
+  }else if(custObj.fatca ==false){
+    custObj.fatca = '0'
+  }
+
+  var queryStr = `
+  BEGIN
+  --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+  SET XACT_ABORT ON
+
+  BEGIN TRANSACTION update_CustomerInfo;
+
+    DECLARE  @Nation_Code VARCHAR(10);
+    DECLARE  @MktId VARCHAR(20)='0';
+    DECLARE  @IT_SAcode VARCHAR(20)='';
+
+    DECLARE  @actionByInt int =999;
+    DECLARE  @OLD_DATA  NVARCHAR(100);
+
+    SELECT  TOP 1 @Title_Name_E = [Title_Name]
+    FROM [MFTS].[dbo].[REF_Title_Englishs]
+    where Title_Name like '%'+@Title_Name_E+'%'
+
+    SELECT @Nation_Code=Nation_Code
+    FROM REF_Nations
+    WHERE SET_Code= @Nation_SET_Code
+
+    --MktId & IT_SAcode
+    -- SELECT @MktId=ISNULL(b.Id,'0'),@IT_SAcode = ISNULL(icLicense,'')
+    SELECT @MktId=ISNULL(b.Id,'0')
+    FROM MIT_FC_CUST_ACCOUNT a
+    left join MFTS_SalesCode b on b.License_Code=a.icLicense
+    WHERE cardNumber=@cardNumber
+
+    IF @IT_SAcode_external  <>''
+    BEGIN
+      SELECT @IT_SAcode = @IT_SAcode_external
+    END;
+
+    --#BACKUP DATA
+    --Card_Type
+    SELECT @OLD_DATA = Card_Type FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @Card_Type AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'Card_Type',@OLD_DATA,@Card_Type,GETDATE(),@actionByInt);
+    END;
+
+    -- -- First_Name_T
+    SELECT @OLD_DATA = First_Name_T FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @First_Name_T AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'First_Name_T',@Old_data,@First_Name_T,GETDATE(),@actionByInt);
+    END;
+
+    -- Last_Name_T
+    SELECT @OLD_DATA = Last_Name_T FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @Last_Name_T AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'Last_Name_T',@Old_data,@Last_Name_T,GETDATE(),@actionByInt);
+    END;
+
+    -- Title_Name_E
+    SELECT @OLD_DATA = Title_Name_E FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @Title_Name_E AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'Title_Name_E',@Old_data,@Title_Name_E,GETDATE(),@actionByInt);
+    END;
+
+    -- First_Name_E
+    SELECT @OLD_DATA = First_Name_E FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @First_Name_E AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'First_Name_E',@Old_data,@First_Name_E,GETDATE(),@actionByInt);
+    END;
+
+    -- Last_Name_E
+    SELECT @OLD_DATA = Last_Name_E FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @Last_Name_E AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'Last_Name_E',@Old_data,@Last_Name_E,GETDATE(),@actionByInt);
+    END;
+
+    -- -- Birth_Day
+    IF EXISTS(SELECT Birth_Day FROM Account_Info WHERE Cust_Code =@Cust_Code)
+    BEGIN
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(Birth_Day,''), 23) FROM Account_Info WHERE Cust_Code =@Cust_Code
+      IF CONVERT(DATE, @OLD_DATA) <> CONVERT(DATE, @Birth_Day) AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'Birth_Day',@Old_data,@Birth_Day,GETDATE(),@actionByInt);
+      END;
+    END;
+
+    -- -- Nation_Code
+    SELECT @OLD_DATA = Nation_Code FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @Nation_Code AND @@ROWCOUNT>0
+    BEGIN
+         INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+         VALUES (@Cust_Code,'Nation_Code',@Old_data,@Nation_Code,GETDATE(),@actionByInt);
+    END;
+
+    -- Email
+    SELECT @OLD_DATA = Email FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @Email AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'Email',@Old_data,@Email,GETDATE(),@actionByInt);
+    END;
+
+    --MktId
+    SELECT @OLD_DATA = MktId FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @MktId AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'MktId',@Old_data,@MktId,GETDATE(),@actionByInt);
+    END;
+
+    --IT_SAcode
+    SELECT @OLD_DATA = IT_SAcode FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @IT_SAcode AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'IT_SAcode',@Old_data,@IT_SAcode,GETDATE(),@actionByInt);
+    END;
+
+    --Tax_No
+    SELECT @OLD_DATA = Tax_No FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @IT_PID_No AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'Tax_No',@Old_data,@IT_PID_No,GETDATE(),@actionByInt);
+    END;
+
+    -- Mobile
+    SELECT @OLD_DATA = Mobile FROM Account_Info WHERE Cust_Code =@Cust_Code
+    IF @OLD_DATA <> @Mobile AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'Mobile',@Old_data,@Mobile,GETDATE(),@actionByInt);
+    END;
+
+    -- #MIT_ACCOUNT_INFO_EXT
+    --occupationId = @occupationId
+    SELECT @OLD_DATA = occupationId FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @occupationId AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'occupationId',@Old_data,@occupationId,GETDATE(),@actionByInt);
+    END;
+
+        -- ,occupationOther=@occupationOther
+    SELECT @OLD_DATA = occupationOther FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @occupationOther AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'occupationOther',@Old_data,@occupationOther,GETDATE(),@actionByInt);
+    END;
+
+        -- ,businessTypeId=@businessTypeId
+    SELECT @OLD_DATA = businessTypeId FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @businessTypeId AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'businessTypeId',@Old_data,@businessTypeId,GETDATE(),@actionByInt);
+    END;
+
+        -- ,businessTypeOther=@businessTypeOther
+    SELECT @OLD_DATA = businessTypeOther FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @businessTypeOther AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'businessTypeOther',@Old_data,@businessTypeOther,GETDATE(),@actionByInt);
+    END;
+
+        -- ,monthlyIncomeLevel=@monthlyIncomeLevel
+    SELECT @OLD_DATA = monthlyIncomeLevel FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @monthlyIncomeLevel AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'monthlyIncomeLevel',@Old_data,@monthlyIncomeLevel,GETDATE(),@actionByInt);
+    END;
+
+        -- ,incomeSource=@incomeSource
+    SELECT @OLD_DATA = incomeSource FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @incomeSource AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'incomeSource',@Old_data,@incomeSource,GETDATE(),@actionByInt);
+    END;
+
+        -- ,incomeSourceOther=@incomeSourceOther
+    SELECT @OLD_DATA = incomeSourceOther FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @incomeSourceOther AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'incomeSourceOther',@Old_data,@incomeSourceOther,GETDATE(),@actionByInt);
+    END;
+
+        -- ,companyName=@companyName
+    SELECT @OLD_DATA = companyName FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @companyName AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'companyName',@Old_data,@companyName,GETDATE(),@actionByInt);
+    END;
+
+        -- ,passportCountry=@passportCountry
+    SELECT @OLD_DATA = passportCountry FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @passportCountry AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'passportCountry',@Old_data,@passportCountry,GETDATE(),@actionByInt);
+    END;
+
+        -- ,titleOther=@titleOther
+    SELECT @OLD_DATA = titleOther FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @titleOther AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'titleOther',@Old_data,@titleOther,GETDATE(),@actionByInt);
+    END;
+
+    -- -- -- ,cardExpiryDate=@cardExpiryDate
+    IF EXISTS(SELECT cardExpiryDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
+    BEGIN
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(cardExpiryDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF CONVERT(DATE, @OLD_DATA) <> CONVERT(DATE, @cardExpiryDate) AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'cardExpiryDate',@Old_data,@cardExpiryDate,GETDATE(),@actionByInt);
+      END;
+    END;
+
+
+    -- ,maritalStatus=@maritalStatus
+    SELECT @OLD_DATA = maritalStatus FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @maritalStatus AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'maritalStatus',@Old_data,@maritalStatus,GETDATE(),@actionByInt);
+    END;
+
+
+    --     -- ,SPthFirstName=@SPthFirstName
+    SELECT @OLD_DATA = SPthFirstName FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @SPthFirstName AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'SPthFirstName',@Old_data,@SPthFirstName,GETDATE(),@actionByInt);
+    END;
+
+        -- ,SPthLastName=@SPthLastName
+    SELECT @OLD_DATA = SPthLastName FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @SPthLastName AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'SPthLastName',@Old_data,@SPthLastName,GETDATE(),@actionByInt);
+    END;
+
+
+        -- ,cddScore=@cddScore
+    SELECT @OLD_DATA = cddScore FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @cddScore AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'cddScore',@Old_data,@cddScore,GETDATE(),@actionByInt);
+    END;
+
+    -- -- ,cddDate=@cddDate
+    IF EXISTS(SELECT cddDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
+    BEGIN
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(cddDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF @OLD_DATA <> @cddDate AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'cddDate',@Old_data,@cddDate,GETDATE(),@actionByInt);
+      END;
+    END;
+
+
+    -- ,canAcceptDerivativeInvestment=@canAcceptDerivativeInvestment
+    SELECT @OLD_DATA = canAcceptDerivativeInvestment FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @canAcceptDerivativeInvestment AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'canAcceptDerivativeInvestment',@Old_data,@canAcceptDerivativeInvestment,GETDATE(),@actionByInt);
+    END;
+
+    -- ,canAcceptFxRisk=@canAcceptFxRisk
+    SELECT @OLD_DATA = canAcceptFxRisk FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @canAcceptFxRisk AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'canAcceptFxRisk',@Old_data,@canAcceptFxRisk,GETDATE(),@actionByInt);
+    END;
+
+    -- ,accompanyingDocument=@accompanyingDocument
+    SELECT @OLD_DATA = accompanyingDocument FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @accompanyingDocument AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'accompanyingDocument',@Old_data,@accompanyingDocument,GETDATE(),@actionByInt);
+    END;
+
+    -- ,referralPerson=@referralPerson
+    SELECT @OLD_DATA = referalPerson FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @referalPerson AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'referralPerson
+        ',@Old_data,@referalPerson,GETDATE(),@actionByInt);
+    END;
+
+    -- -- ,applicationDate=@applicationDate
+    IF EXISTS(SELECT applicationDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
+    BEGIN
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(applicationDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF @OLD_DATA <> @applicationDate AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'applicationDate',@Old_data,@applicationDate,GETDATE(),@actionByInt);
+      END;
+    END;
+
+
+    -- ,incomeSourceCountry=@incomeSourceCountry
+    SELECT @OLD_DATA = incomeSourceCountry FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @incomeSourceCountry AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'incomeSourceCountry',@Old_data,@incomeSourceCountry,GETDATE(),@actionByInt);
+    END;
+
+    -- ,acceptBy=@acceptBy
+    SELECT @OLD_DATA = acceptBy FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @acceptBy AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'acceptBy',@Old_data,@acceptBy,GETDATE(),@actionByInt);
+    END;
+
+    -- ,openFundConnextFormFlag=@openFundConnextFormFlag
+    SELECT @OLD_DATA = openFundConnextFormFlag FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @openFundConnextFormFlag AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'openFundConnextFormFlag',@Old_data,@openFundConnextFormFlag,GETDATE(),@actionByInt);
+    END;
+
+    -- ,approved=@approved
+    SELECT @OLD_DATA = approved FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @approved AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'approved',@Old_data,@approved,GETDATE(),@actionByInt);
+    END;
+
+    -- ,vulnerableFlag=@vulnerableFlag
+    SELECT @OLD_DATA = vulnerableFlag FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @vulnerableFlag AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'vulnerableFlag',@Old_data,@vulnerableFlag,GETDATE(),@actionByInt);
+    END;
+
+        -- ,vulnerableDetail=@vulnerableDetail
+    SELECT @OLD_DATA = vulnerableDetail FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @vulnerableDetail AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'vulnerableDetail',@Old_data,@vulnerableDetail,GETDATE(),@actionByInt);
+    END;
+
+    -- ,ndidFlag=@ndidFlag
+    SELECT @OLD_DATA = ndidFlag FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @ndidFlag AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'ndidFlag',@Old_data,@ndidFlag,GETDATE(),@actionByInt);
+    END;
+
+    --     -- ,ndidRequestId=@ndidRequestId
+    SELECT @OLD_DATA = ndidRequestId FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @ndidRequestId AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'ndidRequestId',@Old_data,@ndidRequestId,GETDATE(),@actionByInt);
+    END;
+
+    --     -- ,suitabilityRiskLevel=@suitabilityRiskLevel
+    SELECT @OLD_DATA = suitabilityRiskLevel FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @suitabilityRiskLevel AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'suitabilityRiskLevel',@Old_data,@suitabilityRiskLevel,GETDATE(),@actionByInt);
+    END;
+
+    -- -- ,suitabilityEvaluationDate=@suitabilityEvaluationDate
+    IF EXISTS(SELECT suitabilityEvaluationDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
+    BEGIN
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(suitabilityEvaluationDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF @OLD_DATA <> @suitabilityEvaluationDate AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'suitabilityEvaluationDate',@Old_data,@suitabilityEvaluationDate,GETDATE(),@actionByInt);
+      END;
+    END;
+
+    -- -- ,fatca=@fatca
+    SELECT @OLD_DATA = fatca FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @fatca AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'fatca',@Old_data,@fatca,GETDATE(),@actionByInt);
+    END;
+
+    --     -- ,fatcaDeclarationDate=@fatcaDeclarationDate
+    IF EXISTS(SELECT fatcaDeclarationDate FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code)
+    BEGIN
+      SELECT @OLD_DATA =  convert(varchar, ISNULL(fatcaDeclarationDate,''), 23) FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+      IF @OLD_DATA <> @fatcaDeclarationDate AND @@ROWCOUNT>0
+      BEGIN
+          INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+          VALUES (@Cust_Code,'fatcaDeclarationDate',@Old_data,@fatcaDeclarationDate,GETDATE(),@actionByInt);
+      END;
+    END;
+
+
+    -- -- ,currentAddressSameAsFlag=@currentAddressSameAsFlag
+    SELECT @OLD_DATA = currentAddressSameAsFlag FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
+    IF @OLD_DATA <> @currentAddressSameAsFlag AND @@ROWCOUNT>0
+    BEGIN
+        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
+        VALUES (@Cust_Code,'currentAddressSameAsFlag',@Old_data,@currentAddressSameAsFlag,GETDATE(),@actionByInt);
+    END;
+
+    --#BACKUP DATA
+
+    --Begin Execute
+    Update Account_Info SET
+    Card_Type=@Card_Type
+    ,Group_code=@Group_code
+    ,Title_Name_T=@Title_Name_T
+    ,First_Name_T=@First_Name_T
+    ,Last_Name_T=@Last_Name_T
+    ,Title_Name_E=@Title_Name_E
+    ,First_Name_E=@First_Name_E
+    ,Last_Name_E=@Last_Name_E
+    ,Birth_Day=@Birth_Day
+    ,Nation_Code=@Nation_Code
+    ,Email=@Email
+    ,MktId=@MktId
+    ,Mobile=@Mobile
+    ,Tax_No=@IT_PID_No
+    ,IT_SAcode=@IT_SAcode
+    ,IT_Referral=@IT_Referral
+    ,IT_SentRepByEmail=@IT_SentRepByEmail
+    ,IT_PID_No=@IT_PID_No
+    ,IT_PID_ExpiryDate=@IT_PID_ExpiryDate
+    ,Modify_By = @actionBy
+    ,Modify_Date=GETDATE()
+    WHERE Cust_Code=@Cust_Code
+
+    IF @@ROWCOUNT=0
+    BEGIN
+        INSERT INTO Account_Info(Cust_Code
+          ,Card_Type
+          ,Group_code
+          ,Title_Name_T
+          ,First_Name_T
+          ,Last_Name_T
+          ,Title_Name_E
+          ,First_Name_E
+          ,Last_Name_E
+          ,Birth_Day
+          ,Nation_Code
+          ,Email
+          ,MktId
+          ,Mobile
+          ,Tax_No
+          ,IT_SAcode
+          ,IT_Referral
+          ,IT_SentRepByEmail
+          ,IT_PID_No
+          ,IT_PID_ExpiryDate
+          ,IT_FundConnext
+          ,IT_FundConnextDT
+          ,Create_By
+          ,Create_Date
+      ) VALUES(@Cust_Code
+          ,@Card_Type
+          ,@Group_code
+          ,@Title_Name_T
+          ,@First_Name_T
+          ,@Last_Name_T
+          ,@Title_Name_E
+          ,@First_Name_E
+          ,@Last_Name_E
+          ,@Birth_Day
+          ,@Nation_Code
+          ,@Email
+          ,@MktId
+          ,@Mobile
+          ,@IT_PID_No
+          ,@IT_SAcode
+          ,@IT_Referral
+          ,@IT_SentRepByEmail
+          ,@IT_PID_No
+          ,@IT_PID_ExpiryDate
+          ,@IT_FundConnext
+          ,GETDATE()
+          ,@actionBy
+          ,GETDATE()
+      )
+    END
+
+
+    -- Extension
+    UPDATE MIT_ACCOUNT_INFO_EXT_SF
+    SET
+    identificationCardType=@identificationCardType
+    ,passportCountry=@passportCountry
+    ,cardExpiryDate=@cardExpiryDate
+    ,accompanyingDocument=@accompanyingDocument
+    ,title=@title
+    ,titleOther=@titleOther
+    ,enFirstName=@enFirstName
+    ,enLastName=@enLastName
+    ,thFirstName=@thFirstName
+    ,thLastName=@thLastName
+    ,birthDate=@birthDate
+    ,nationality=@nationality
+    ,mobileNumber=@mobileNumber
+    ,email=@email
+    ,phone=@phone
+    ,fax=@fax
+    ,maritalStatus=@maritalStatus
+    ,occupationId=@occupationId
+    ,occupationOther=@occupationOther
+    ,businessTypeId=@businessTypeId
+    ,businessTypeOther=@businessTypeOther
+    ,monthlyIncomeLevel=@monthlyIncomeLevel
+    ,assetValue=@assetValue
+    ,incomeSource=@incomeSource
+    ,incomeSourceOther=@incomeSourceOther
+    ,currentAddressSameAsFlag=@currentAddressSameAsFlag
+    ,companyName=@companyName
+    ,workPosition=@workPosition
+    ,relatedPoliticalPerson=@relatedPoliticalPerson
+    ,politicalRelatedPersonPosition=@politicalRelatedPersonPosition
+    ,canAcceptFxRisk=@canAcceptFxRisk
+    ,canAcceptDerivativeInvestment=@canAcceptDerivativeInvestment
+    ,suitabilityRiskLevel=@suitabilityRiskLevel
+    ,suitabilityEvaluationDate=@suitabilityEvaluationDate
+    ,fatca=@fatca
+    ,fatcaDeclarationDate=@fatcaDeclarationDate
+    ,cddScore=@cddScore
+    ,cddDate=@cddDate
+    ,referralPerson=@referralPerson
+    ,applicationDate=@applicationDate
+    ,incomeSourceCountry=@incomeSourceCountry
+    ,acceptBy=@acceptBy
+    ,openFundConnextFormFlag=@openFundConnextFormFlag
+    ,approved=@approved
+    ,vulnerableFlag=@vulnerableFlag
+    ,vulnerableDetail=@vulnerableDetail
+    ,ndidFlag=@ndidFlag
+    ,ndidRequestId=@ndidRequestId
+    ,openChannel=@openChannel
+    ,investorClass=@investorClass
+    ,UpdateBy=@actionBy
+    ,UpdateDate=getdate()
+    WHERE cardNumber=@cardNumber
+
+    IF @@ROWCOUNT =0
+    BEGIN
+        INSERT INTO MIT_ACCOUNT_INFO_EXT_SF (
+          identificationCardType
+          ,passportCountry
+          ,cardNumber
+          ,cardExpiryDate
+          ,accompanyingDocument
+          ,title
+          ,titleOther
+          ,enFirstName
+          ,enLastName
+          ,thFirstName
+          ,thLastName
+          ,birthDate
+          ,nationality
+          ,mobileNumber
+          ,email
+          ,phone
+          ,fax
+          ,maritalStatus
+          ,occupationId
+          ,occupationOther
+          ,businessTypeId
+          ,businessTypeOther
+          ,monthlyIncomeLevel
+          ,assetValue
+          ,incomeSource
+          ,incomeSourceOther
+          ,currentAddressSameAsFlag
+          ,companyName
+          ,workPosition
+          ,relatedPoliticalPerson
+          ,politicalRelatedPersonPosition
+          ,canAcceptFxRisk
+          ,canAcceptDerivativeInvestment
+          ,suitabilityRiskLevel
+          ,suitabilityEvaluationDate
+          ,fatca
+          ,fatcaDeclarationDate
+          ,cddScore
+          ,cddDate
+          ,referralPerson
+          ,applicationDate
+          ,incomeSourceCountry
+          ,acceptBy
+          ,openFundConnextFormFlag
+          ,approved
+          ,vulnerableFlag
+          ,vulnerableDetail
+          ,ndidFlag
+          ,ndidRequestId
+          ,openChannel
+          ,investorClass
+          ,CreateBy
+          ,CreateDate)
+        VALUES(
+          @identificationCardType
+          ,@passportCountry
+          ,@cardNumber
+          ,@cardExpiryDate
+          ,@accompanyingDocument
+          ,@title
+          ,@titleOther
+          ,@enFirstName
+          ,@enLastName
+          ,@thFirstName
+          ,@thLastName
+          ,@birthDate
+          ,@nationality
+          ,@mobileNumber
+          ,@email
+          ,@phone
+          ,@fax
+          ,@maritalStatus
+          ,@occupationId
+          ,@occupationOther
+          ,@businessTypeId
+          ,@businessTypeOther
+          ,@monthlyIncomeLevel
+          ,@assetValue
+          ,@incomeSource
+          ,@incomeSourceOther
+          ,@currentAddressSameAsFlag
+          ,@companyName
+          ,@workPosition
+          ,@relatedPoliticalPerson
+          ,@politicalRelatedPersonPosition
+          ,@canAcceptFxRisk
+          ,@canAcceptDerivativeInvestment
+          ,@suitabilityRiskLevel
+          ,@suitabilityEvaluationDate
+          ,@fatca
+          ,@fatcaDeclarationDate
+          ,@cddScore
+          ,@cddDate
+          ,@referralPerson
+          ,@applicationDate
+          ,@incomeSourceCountry
+          ,@acceptBy
+          ,@openFundConnextFormFlag
+          ,@approved
+          ,@vulnerableFlag
+          ,@vulnerableDetail
+          ,@ndidFlag
+          ,@ndidRequestId
+          ,@openChannel
+          ,@investorClass
+          ,@actionBy
+          ,getdate())
+    END
+
+      COMMIT TRANSACTION update_CustomerInfo;
+  END
+  `;
+
+}
+catch (e) {
+  console.log("entering catch block");
+  console.log(e);
+  console.log("leaving catch block");
+}
+finally {
+  console.log(" (finally)entering and leaving the finally block");
+}
+
+  const sql = require('mssql')
+
+  return new Promise(function(resolve, reject) {
+
+    logger.info('***Start Execute Query ')
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      // .input("Cust_Code", sql.VarChar(20), custObj.cardNumber)
+      .input("Cust_Code", sql.VarChar(20), AccountId)
+      .input("Group_code", sql.VarChar(20), custObj.Group_code)
+      .input("Card_Type", sql.VarChar(10), custObj.Card_Type)
+      .input("Title_Name_T", sql.NVarChar(50), custObj.Title_Name_T)
+      .input("First_Name_T", sql.NVarChar(100), custObj.thFirstName)
+      .input("Last_Name_T", sql.NVarChar(100), custObj.thLastName)
+      .input("Title_Name_E", sql.NVarChar(100), custObj.title)
+      .input("First_Name_E", sql.NVarChar(100), custObj.enFirstName)
+      .input("Last_Name_E", sql.NVarChar(100), custObj.enLastName)
+      .input("Birth_Day", sql.NVarChar(100), custObj.birthDate) // Date
+      .input("Nation_SET_Code", sql.NVarChar(100), custObj.nationality)
+      .input("Email", sql.NVarChar(100), custObj.email)
+      .input("Mobile", sql.VarChar(50), custObj.mobileNumber)
+      // .input("Sex", sql.VarChar(10), custObj.Sex)
+
+      // .input("IT_SAcode", sql.NVarChar(20), '') //license
+      .input("IT_SAcode_external", sql.NVarChar(20), IT_SAcode_external) //IT_SAcode_external
+      .input("IT_Referral", sql.NVarChar(100), custObj.referralPerson) //
+      .input("IT_SentRepByEmail", sql.NVarChar(20), custObj.IT_SentRepByEmail)
+      .input("IT_PID_No", sql.NVarChar(20), custObj.cardNumber)
+      .input("IT_PID_ExpiryDate", sql.NVarChar(50), custObj.cardExpiryDate) // Date
+      .input("IT_FundConnext", sql.NVarChar(20), custObj.IT_FundConnext)
+
+      .input("cardNumber", sql.VarChar(13), custObj.cardNumber)
+      .input("identificationCardType", sql.VarChar(15), custObj.identificationCardType)
+      .input("passportCountry", sql.VarChar(2), custObj.passportCountry)
+      .input("cardExpiryDate", sql.VarChar(10), custObj.cardExpiryDate || null)
+      .input("accompanyingDocument", sql.VarChar(15), custObj.accompanyingDocument)
+      .input("title", sql.VarChar(15), custObj.title)
+      .input("titleOther", sql.NVarChar(50), custObj.titleOther)
+      .input("enFirstName", sql.VarChar(100), custObj.enFirstName)
+      .input("enLastName", sql.VarChar(100), custObj.enLastName)
+      .input("thFirstName", sql.NVarChar(100), custObj.thFirstName)
+      .input("thLastName", sql.NVarChar(100), custObj.thLastName)
+      .input("birthDate", sql.VarChar(10), custObj.birthDate || null)
+      .input("nationality", sql.VarChar(2), custObj.nationality)
+      .input("mobileNumber", sql.VarChar(10), custObj.mobileNumber)
+      .input("email", sql.NVarChar(100), custObj.email)
+      .input("phone", sql.VarChar(20), custObj.phone)
+      .input("fax", sql.VarChar(20), custObj.fax)
+      .input("maritalStatus", sql.VarChar(10), custObj.maritalStatus)
+      .input("occupationId", sql.VarChar(3), custObj.occupationId)
+      .input("occupationOther", sql.NVarChar(100), custObj.occupationOther)
+      .input("businessTypeId", sql.VarChar(3), custObj.businessTypeId)
+      .input("businessTypeOther", sql.NVarChar(100), custObj.businessTypeOther)
+      .input("monthlyIncomeLevel", sql.VarChar(100), custObj.monthlyIncomeLevel)
+      .input("assetValue", sql.VarChar(100), custObj.assetValue)
+      .input("incomeSource", sql.VarChar(100), custObj.incomeSource)
+      .input("incomeSourceOther", sql.NVarChar(100), custObj.assetValue)
+      .input("currentAddressSameAsFlag", sql.VarChar(10), custObj.currentAddressSameAsFlag)
+      .input("companyName", sql.NVarChar(100), custObj.companyName)
+      .input("workPosition", sql.NVarChar(50), custObj.workPosition)
+      .input("relatedPoliticalPerson", sql.VarChar(10), custObj.relatedPoliticalPerson)
+      .input("politicalRelatedPersonPosition", sql.NVarChar(50), custObj.politicalRelatedPersonPosition)
+      .input("canAcceptFxRisk", sql.VarChar(10), custObj.canAcceptFxRisk)
+      .input("canAcceptDerivativeInvestment", sql.VarChar(10), custObj.canAcceptDerivativeInvestment)
+      .input("suitabilityRiskLevel", sql.VarChar(1), custObj.suitabilityRiskLevel)
+      .input("suitabilityEvaluationDate", sql.VarChar(10), custObj.suitabilityEvaluationDate)
+      .input("fatca", sql.VarChar(10), custObj.fatca)
+      .input("fatcaDeclarationDate", sql.VarChar(10), custObj.fatcaDeclarationDate)
+      .input("cddScore", sql.VarChar(1), custObj.cddScore)
+      .input("cddDate", sql.VarChar(10), custObj.cddDate)
+      .input("referralPerson", sql.NVarChar(100), custObj.referralPerson)
+      .input("applicationDate", sql.VarChar(10), custObj.applicationDate)
+      .input("incomeSourceCountry", sql.VarChar(2), custObj.incomeSourceCountry)
+      .input("acceptBy", sql.NVarChar(100), custObj.acceptedBy)
+      .input("openFundConnextFormFlag", sql.VarChar(1), custObj.openFundConnextFormFlag)
+      .input("approved", sql.VarChar(10), custObj.approved)
+      .input("vulnerableFlag", sql.VarChar(10), custObj.vulnerableFlag)
+      .input("vulnerableDetail", sql.NVarChar(100), custObj.vulnerableDetail)
+      .input("ndidFlag", sql.VarChar(10), custObj.ndidFlag)
+      .input("ndidRequestId", sql.VarChar(100), custObj.ndidRequestId)
+      .input("openChannel", sql.VarChar(1), custObj.openChannel)
+      .input("investorClass", sql.VarChar(1), custObj.investorClass)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+      logger.info(JSON.stringify(result))
+
+          if(err){
+            logger.error(' Account Info Error SQL:'+err);
+            const err_msg=err;
+            logger.error(' Account Info Error SQL:'+err_msg);
+
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+    })
+    pool1.on('error', err => {
+      logger.error(err);
+      logger.error(` Error message is >> ${err.message}`);
+      reject(err);
+    })
+  });
+}
 
 function update_MFTS_Account(cardNumber,actionBy){
 

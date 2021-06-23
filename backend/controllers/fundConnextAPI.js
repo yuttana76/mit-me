@@ -4145,7 +4145,7 @@ const  MPAM_INDIVIDUAL_FILE = businessDate+"_MPAM_INDIVIDUAL.json"
                 // // Approve & Save
                 CustomerData = JSON.parse(JSON.stringify(CustomerData));
 
-                logger.info(`BF update>> ${JSON.stringify(CustomerData)}`)
+                // logger.info(`BF update>> ${JSON.stringify(CustomerData)}`)
                 customer.approveCustInfoProcess_v4(CustomerData).then(result2=>{
 
                   var logMsg= ''.concat(CustomerData.thFirstName,'|',CustomerData.thLastName

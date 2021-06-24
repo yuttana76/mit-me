@@ -3756,7 +3756,8 @@ exports.fundProfileAutoUpdateAPI = (req, res, next) =>{
   //   businessDate = req.body.businessDate
   // }
 
-  var actionBy = 'MPAM_DIRECT'
+  var actionBy = 'MPAM_DIRECT';
+
   fundProfileAutoUpdate(actionBy).then(dwRs=>{
     res.status(200).json({message: dwRs});
   },err=>{
@@ -7150,7 +7151,7 @@ function fundProfileAutoUpdate(actionBy){
       var queryStr = `
       BEGIN
 
-     --DECLARE @userCode VARCHAR(20) ='MIT_SYS';
+     --DECLARE @userCode VARCHAR(20) ='MPAM_API';
       DECLARE @newFund as CURSOR;
       DECLARE @Fund_Code VARCHAR(20);
       DECLARE @msg VARCHAR(200);
@@ -7158,35 +7159,109 @@ function fundProfileAutoUpdate(actionBy){
           SET @newFund = CURSOR FOR
           select a.Fund_Code
           from MFTS_Fund a
-          where a.End_Date_Flag != 1
-          AND(a.Thai_Name IS NULL OR a.Thai_Name='')
+          where  1=1
+          AND ( a.End_Date_Flag != 1 OR a.End_Date_Flag is null)
+          AND(a.Thai_Name IS NULL OR a.Thai_Name='' OR a.Thai_Name='')
 
             OPEN @newFund;
             FETCH NEXT FROM @newFund INTO @Fund_Code
             WHILE @@FETCH_STATUS = 0
             BEGIN
 
-                  UPDATE MFTS_Fund
-                  SET
-                          Thai_Name = x.Fund_Name_TH,
-                          Eng_Name = x.Fund_Name_EN ,
-                          Start_Date = CAST(x.Beg_IPO_Date as date) ,
-                          Cutoff_Buy = SUBSTRING(x.buy_cut_off_time,1,2) +':'+SUBSTRING(buy_cut_off_time,3,4),
-                          Cutoff_Sell = SUBSTRING(sell_cut_off_time,1,2) +':'+SUBSTRING(sell_cut_off_time,3,4) ,
-                          FundRisk = x.Fund_Risk_Level,
-                          Modify_By = @userCode,
-                          Modify_Date = GETDATE()
-                  FROM MFTS_Fund fund
-                  INNER JOIN MIT_FC_Fund_Profile x ON x.Fund_Code = fund.Fund_Code
-                  where x.Fund_Code= @Fund_Code
+                SELECT @Fund_Name_TH=Fund_Name_TH
+                ,@Fund_Name_EN=Fund_Name_EN
+                ,@Registration_date=Registration_date
+                ,@buy_cut_off_time=buy_cut_off_time
+                ,@sell_cut_off_time=sell_cut_off_time
+                ,@Fund_Risk_Level=Fund_Risk_Level
+                ,@FundPolicy=Fund_Policy
+                ,@TaxType=Tax_Type
+                ,@FIFFlag=FIF_Flag
+                FROM MIT_FC_Fund_Profile WHERE  Fund_Code = @Fund_Code
 
-                  if @@ROWCOUNT>0 BEGIN
+                IF @FundPolicy='F' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='FIXED'
+                END
+                ELSE IF @FundPolicy='O' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='Commodity'
+                END
+                ELSE IF @FundPolicy='M' AND @TaxType='RMF' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='RMF-MIXED'
+                END
+                ELSE IF @FundPolicy='F' AND  @FIFFlag ='Y'
+                BEGIN
+                    SELECT @FundPolicy='FIF-FIXED'
+                END
+                ELSE IF @FundPolicy='M' AND  @FIFFlag ='Y'
+                BEGIN
+                    SELECT @FundPolicy='FIF-MIXED'
+                END
+                ELSE IF @FundPolicy='F' AND @TaxType='RMF' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='RMF-MIXED'
+                END
+                ELSE IF  @TaxType='LTF' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='LTF'
+                END
+                ELSE IF  @TaxType='SSF' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='SSF'
+                END
+                ELSE IF  @FundPolicy='O' AND @FIFFlag ='Y'
+                BEGIN
+                    SELECT @FundPolicy='FIF-OTH'
+                END
+                ELSE IF  @FundPolicy='M' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='MIXED'
+                END
+                ELSE IF  @FundPolicy='O' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='PROP'
+                END
+                ELSE IF  @FundPolicy='E' AND @FIFFlag ='Y'
+                BEGIN
+                    SELECT @FundPolicy='FIF-EQ'
+                END
+                ELSE IF @FundPolicy='O' AND @TaxType='RMF' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='RMF-OTH'
+                END
+                ELSE IF  @FundPolicy='E' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='M-EQ'
+                END
+                ELSE IF  @TaxType='SSFX' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='SSFX'
+                END
+                ELSE IF @FundPolicy='E' AND @TaxType='RMF' AND @FIFFlag ='N'
+                BEGIN
+                    SELECT @FundPolicy='RMF-EQ'
+                END
 
-                      SELECT @msg = 'New Fund code (' +@Fund_Code + ') ;Please verify.'
-                      INSERT INTO MIT_LOG (loginName,logDateTime,module,log_msg)
-                      VALUES('MIT_SYS',GETDATE(),'MIT_FUND_AUDIT',@msg)
+                UPDATE MFTS_Fund
+                SET
+                  Thai_Name = @Fund_Name_TH,
+                  Eng_Name = @Fund_Name_EN ,
+                  Start_Date = ISNULL(CAST(@Registration_date as date) ,NULL) ,
+                  Cutoff_Buy = SUBSTRING(@buy_cut_off_time,1,2) +':'+SUBSTRING(@buy_cut_off_time,3,4),
+                  Cutoff_Sell = SUBSTRING(@sell_cut_off_time,1,2) +':'+SUBSTRING(@sell_cut_off_time,3,4) ,
+                  FundRisk = @Fund_Risk_Level,
+                  FGroup_Code=@FundPolicy,
+                  Modify_By = @userCode,
+                  Modify_Date = GETDATE()
+                where Fund_Code= @Fund_Code
 
-                  END
+                if @@ROWCOUNT>0 BEGIN
+                    SELECT @msg = 'New Fund code (' +@Fund_Code + ') ;Please verify.'
+                    INSERT INTO MIT_LOG (loginName,logDateTime,module,log_msg)
+                    VALUES('MIT_SYS',GETDATE(),'MIT_FUND_AUDIT',@msg)
+                END
 
              FETCH NEXT FROM @newFund INTO @Fund_Code
             END

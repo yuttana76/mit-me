@@ -3635,10 +3635,10 @@ finally {
       pool1.request()
       // .input("Cust_Code", sql.VarChar(20), custObj.cardNumber)
       .input("Cust_Code", sql.VarChar(20), AccountId)
-      .input("Group_code", sql.VarChar(20), custObj.Group_code)
-      .input("Card_Type", sql.VarChar(10), custObj.Card_Type)
-      .input("Title_Name_T", sql.NVarChar(50), custObj.Title_Name_T)
-      .input("First_Name_T", sql.NVarChar(100), custObj.thFirstName)
+      .input("Group_code", sql.VarChar(20), custObj.Group_code?custObj.Group_code:'')
+      .input("Card_Type", sql.VarChar(10), custObj.Card_Type?custObj.Card_Type:'')
+      .input("Title_Name_T", sql.NVarChar(50), custObj.Title_Name_T?custObj.Title_Name_T:'')
+      .input("First_Name_T", sql.NVarChar(100), custObj.thFirstName?custObj.thFirstName:'')
       .input("Last_Name_T", sql.NVarChar(100), custObj.thLastName)
       .input("Title_Name_E", sql.NVarChar(100), custObj.title)
       .input("First_Name_E", sql.NVarChar(100), custObj.enFirstName)
@@ -3672,8 +3672,9 @@ finally {
       .input("nationality", sql.VarChar(2), custObj.nationality)
       .input("mobileNumber", sql.VarChar(10), custObj.mobileNumber)
       .input("email", sql.NVarChar(100), custObj.email)
-      .input("phone", sql.VarChar(20), custObj.phone)
-      .input("fax", sql.VarChar(20), custObj.fax)
+      // .input("phone", sql.VarChar(20), custObj.phone)
+      // .input("phone", sql.VarChar(20), '123')
+      // .input("fax", sql.VarChar(20), custObj.fax)
       .input("maritalStatus", sql.VarChar(10), custObj.maritalStatus)
       .input("occupationId", sql.VarChar(3), custObj.occupationId)
       .input("occupationOther", sql.NVarChar(100), custObj.occupationOther)
@@ -3711,7 +3712,8 @@ finally {
       .input("actionBy", sql.VarChar(50), actionBy)
       .query(queryStr, (err, result) => {
 
-      logger.info(JSON.stringify(result))
+      logger.info(`result >> ${JSON.stringify(result)}`)
+      logger.info(`err >> ${JSON.stringify(err.message)}`)
 
           if(err){
             logger.error(' Account Info Error SQL:'+err);

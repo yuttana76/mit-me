@@ -53,37 +53,6 @@ router.get("/downloadInfo/",[
     .isLength({ min: 1 }).withMessage('businessDate must have value '),
 ], fundConnextAPIController.downloadInfo);
 
-// router.post("/uploadMITNAVdb/",[
-//   check('fileType')
-//     .exists().withMessage('must have param fileType')
-//     .isLength({ min: 1 }).withMessage('fileType must have value '),
-//   check('fileName')
-//     .exists().withMessage('must have param fileName')
-//     .isLength({ min: 1 }).withMessage('fileName must have value '),
-// ], fundConnextAPIController.uploadMITNAV_db);
-
-
-// ********* Download V1
-/** STEP 1
- * parameter
-* /downloadFileNavAPI?businessDate=20191031
- **/
-// router.get("/downloadFileNavAPI/",[
-//   check('businessDate')
-//     .exists().withMessage('must have Param businessDate')
-//     .isLength({ min: 1 }).withMessage('businessDate must have value '),
-// ], fundConnextAPIController.downloadFileNavAPI);
-
-
-/** STEP2
- * parameter
- * createDate: format  yyyymmdd(20191030)
- */
-// router.post("/navSync/",[selfAuth
-// ,  check('createDate')
-//   .isLength({ min: 1 }).withMessage('must have createDate value')
-// ],fundConnextAPIController.navSync);
-
 
 // ********* Download NAV V2
 //Download NAV & Sync DB. (Active)

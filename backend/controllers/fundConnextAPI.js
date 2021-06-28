@@ -1222,7 +1222,7 @@ function saveMIT_FC_CUST_ACCOUNT_V4(obj,actionBy) {
           logger.info('***Has subscriptionBankAccounts')
 
           account.subscriptionBankAccounts.forEach(function(bankObj) {
-            saveMIT_FC_CUST_BANK_SF_V4(account.accountId,'sub',bankObj,actionBy).then((result=>{
+              saveMIT_FC_CUST_BANK_Detail(obj.cardNumber,account.accountId,'sub',bankObj,actionBy).then((result=>{
               logger.info(`Save accounts ${account.accountId}complete`);
             }));
           });
@@ -1233,7 +1233,7 @@ function saveMIT_FC_CUST_ACCOUNT_V4(obj,actionBy) {
           logger.info('***Has redemptionBankAccounts')
 
           account.redemptionBankAccounts.forEach(function(bankObj) {
-            saveMIT_FC_CUST_BANK_SF_V4(account.accountId,'red',bankObj,actionBy).then((result=>{
+              saveMIT_FC_CUST_BANK_Detail(obj.cardNumber,account.accountId,'red',bankObj,actionBy).then((result=>{
               logger.info(`Save accounts ${account.accountId}complete`);
             }));
           });
@@ -1436,80 +1436,6 @@ function saveMIT_FC_CUST_ACCOUNT_Detail_V4(cardNumber,obj,actionBy) {
   });
 }
 
-function saveMIT_FC_CUST_BANK_SF_V4(accountId,accType,obj,actionBy) {
-
-  logger.info(">>>" + JSON.stringify(obj))
-  var fncName = "saveMIT_FC_CUST_BANK_SF_V4()";
-  var queryStr = `
-  BEGIN
-    UPDATE MIT_FC_CUST_BANK_SF
-    SET
-    accountId=@accountId
-    ,accType=@accType
-    ,bankCode=@bankCode
-    ,bankBranchCode=@bankBranchCode
-    ,bankAccountNo=@bankAccountNo
-    ,[default]=@default
-    ,finnetCustomerNo=@finnetCustomerNo
-    ,UpdateBy=@actionBy
-    ,UpdateDate=getdate()
-    WHERE accountId=@accountId AND accType=@accType AND bankAccountNo=@bankAccountNo
-
-   IF @@ROWCOUNT =0
-    BEGIN
-        INSERT INTO MIT_FC_CUST_BANK_SF (
-          accountId
-          ,accType
-          ,bankCode
-          ,bankBranchCode
-          ,bankAccountNo
-          ,[default]
-          ,finnetCustomerNo
-          ,CreateBy
-          ,CreateDate)
-      VALUES(
-        @accountId
-        ,@accType
-        ,@bankCode
-        ,@bankBranchCode
-        ,@bankAccountNo
-        ,@default
-        ,@finnetCustomerNo
-        ,@actionBy
-        ,getdate())
-    END
-  END
-
-    `;
-  // const sql = require("mssql");
-  return new Promise(function(resolve, reject) {
-    const pool1 = new sql.ConnectionPool(config, err => {
-      pool1
-        .request() // or: new sql.Request(pool1)
-        .input("accountId", sql.VarChar(15), accountId)
-        .input("accType", sql.VarChar(10), accType)
-        .input("bankCode", sql.VarChar(4), obj.bankCode)
-        .input("bankBranchCode", sql.VarChar(5), obj.bankBranchCode)
-        .input("bankAccountNo", sql.VarChar(20), obj.bankAccountNo)
-        .input("default", sql.VarChar(10), obj.default)
-        .input("finnetCustomerNo", sql.VarChar(30), obj.finnetCustomerNo)
-        .input("actionBy", sql.VarChar(50), actionBy)
-        .query(queryStr, (err, result) => {
-          if (err) {
-            console.log(fncName + " Quey db. Was err !!!" + err);
-            reject(err);
-
-          } else {
-            resolve(result);
-          }
-        });
-    });
-    pool1.on("error", err => {
-      console.log("ERROR>>" + err);
-      reject(err);
-    });
-  });
-}
 
 function saveMIT_FC_CUST_CHILDREN(obj,actionBy) {
   logger.info('saveMIT_FC_CUST_CHILDREN()'+obj.cardNumber);
@@ -1754,7 +1680,7 @@ function saveMIT_FC_CUST_ADDR_V4(obj,actionBy) {
 
     // 1:identificationDocument
       if(obj.identificationDocument){
-        logger.info(`*** identificationDocument >> ${JSON.stringify(obj.identificationDocument)}`)
+        // logger.info(`*** identificationDocument >> ${JSON.stringify(obj.identificationDocument)}`)
         saveMIT_FC_CUST_ADDR_Detail_V4(obj.cardNumber,"1",obj.identificationDocument,1,actionBy).then((result=>{
           logger.info(" Save identificationDocument address complete");
         }));
@@ -1873,7 +1799,8 @@ function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
         .input("CreateBy", sql.VarChar(50), actionBy)
         .query(queryStr, (err, result) => {
           if (err) {
-            console.log(fncName + " Quey db. Was err !!!" + err);
+            console.log(fncName + " Quey db. Was err !!!" + err.message);
+            logger.error( err.message);
             reject(err);
 
           } else {
@@ -1889,9 +1816,7 @@ function saveMIT_FC_CUST_ADDR_Detail(cardNumber,obj,seq,actionBy) {
 
     });
   });
-
 }
-
 
 
 function  saveMIT_FC_CUST_ADDR_Detail_V4(cardNumber,accountId,obj,seq,actionBy) {
@@ -2109,7 +2034,7 @@ function saveMIT_FC_CUST_SUIT_Detail_V4(cardNumber,obj,actionBy) {
   var queryStr = `
   BEGIN
 
-    UPDATE MIT_FC_CUST_SUIT_SF
+    UPDATE MIT_FC_CUST_SUIT
     SET
       suitNo1=@suitNo1
        ,suitNo2=@suitNo2
@@ -2129,7 +2054,7 @@ function saveMIT_FC_CUST_SUIT_Detail_V4(cardNumber,obj,actionBy) {
 
     IF @@ROWCOUNT =0
     BEGIN
-        INSERT INTO MIT_FC_CUST_SUIT_SF (
+        INSERT INTO MIT_FC_CUST_SUIT (
           cardNumber
           ,suitNo1
         ,suitNo2
@@ -3962,10 +3887,12 @@ function customerProfileProc_v4(businessDate,actionBy){
 
   return new Promise(function(resolve, reject) {
     const fileType = 'CustomerProfile.zip';
+
       // STEP 1: CALL API download
       fnGetDownloadAPI_V4(businessDate,fileType).then(data=>{
-          //STEP 2: Upzip downloaded file.
+      //     //STEP 2: Upzip downloaded file.
           unZipFile(data.path).then(fileName=>{
+
             MPAM_INDIVIDUAL_FILE=businessDate+"_MPAM_INDIVIDUAL.json"
             util.readJSONfile(DOWNLOAD_DIR,MPAM_INDIVIDUAL_FILE).then(data=>{
               // Implement here
@@ -3984,15 +3911,14 @@ function customerProfileProc_v4(businessDate,actionBy){
             },err=>{
               reject(err);
             })
+
           },err=>{
             reject(err);
           });
-
-          // resolve();
-
       },err=>{
         reject(err);
       });
+
   });
 }
 

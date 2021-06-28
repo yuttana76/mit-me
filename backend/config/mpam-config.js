@@ -162,6 +162,8 @@ module.exports = {
   SMS_SENDER:SMS_SENDER,
 
   FUNDPROFILE_RESPONDOR_EMAIL: production? 'op@merchantasset.co.th':'yuttana76@gmail.com',
+  PRODUCTION: production,
+  SQL_SERVER:SQL_SERVER,
 }
 
 console.log('production:' + production)

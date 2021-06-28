@@ -689,7 +689,7 @@ return new Promise(function(resolve, reject) {
 exports.approveCustInfoProcess_v4 = (fcCustInfoObj) => {
   logger.info(`Welcome  approveCustInfoProcess_v4 `)
 
-  logger.info(`***>> ${JSON.stringify(fcCustInfoObj)}`)
+  // logger.info(`***>> ${JSON.stringify(fcCustInfoObj)}`)
 
   return new Promise(function(resolve, reject) {
 
@@ -756,35 +756,35 @@ exports.approveCustInfoProcess_v4 = (fcCustInfoObj) => {
           3 : work
           */
 
-        // if(fcCustInfoObj.identificationDocument)
-        //   fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.identificationDocument,1,actionBy));
+        if(fcCustInfoObj.identificationDocument)
+          fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.identificationDocument,1,actionBy));
 
-        // if(fcCustInfoObj.current){
-        //   fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.current,2,actionBy));
-        // }
+        if(fcCustInfoObj.current){
+          fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.current,2,actionBy));
+        }
 
-        // if(fcCustInfoObj.work)
-        //   fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.work,3,actionBy));
+        if(fcCustInfoObj.work)
+          fnArray.push(update_Address_ByAccountId(fcCustInfoObj.accountId,fcCustInfoObj.work,3,actionBy));
 
         /*
         Update & Insert MIT_CUST_ACCOUNT
         */
-        // fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
+        fnArray.push(update_CustAccountInDB(fcCustInfoObj.cardNumber,actionBy));
 
         /*
         Update & Insert MIT_CUST_BANK
         */
-        // fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
+        fnArray.push(update_CustBankInDB(fcCustInfoObj.cardNumber,actionBy));
 
         /*
         Update & Insert MIT_CUST_SUIT
         */
-        // fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
+        fnArray.push(update_SuitInDB(fcCustInfoObj.cardNumber,actionBy));
 
         /*
         Update & Insert MFTS_Suit
         */
-        // fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
+        fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
         //Suit by  account
 
         Promise.all(fnArray)
@@ -2896,12 +2896,6 @@ function update_CustomerInfo_ByAccountId_v4(AccountId,custObj,actionBy){
     custObj.canAcceptFxRisk = '0'
   }
 
-  // openFundConnextFormFlag
-  // if(custObj.openFundConnextFormFlag ==true){
-  //   custObj.openFundConnextFormFlag = '1'
-  // }else if(custObj.openFundConnextFormFlag ==false){
-  //   custObj.openFundConnextFormFlag = '0'
-  // }
 
   // vulnerableFlag
   if(custObj.vulnerableFlag ==true){
@@ -3168,23 +3162,6 @@ function update_CustomerInfo_ByAccountId_v4(AccountId,custObj,actionBy){
     END;
 
 
-    --     -- ,SPthFirstName=@SPthFirstName
-    SELECT @OLD_DATA = SPthFirstName FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
-    IF @OLD_DATA <> @SPthFirstName AND @@ROWCOUNT>0
-    BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'SPthFirstName',@Old_data,@SPthFirstName,GETDATE(),@actionByInt);
-    END;
-
-        -- ,SPthLastName=@SPthLastName
-    SELECT @OLD_DATA = SPthLastName FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
-    IF @OLD_DATA <> @SPthLastName AND @@ROWCOUNT>0
-    BEGIN
-        INSERT INTO IT_Cust_Change_Log (Ref_No,Change_Type,OldData,NewData,Change_DateTime,Change_By)
-        VALUES (@Cust_Code,'SPthLastName',@Old_data,@SPthLastName,GETDATE(),@actionByInt);
-    END;
-
-
         -- ,cddScore=@cddScore
     SELECT @OLD_DATA = cddScore FROM MIT_ACCOUNT_INFO_EXT WHERE cardNumber =@Cust_Code
     IF @OLD_DATA <> @cddScore AND @@ROWCOUNT>0
@@ -3442,6 +3419,7 @@ function update_CustomerInfo_ByAccountId_v4(AccountId,custObj,actionBy){
     END
 
 
+
     -- Extension
     UPDATE MIT_ACCOUNT_INFO_EXT_SF
     SET
@@ -3483,7 +3461,7 @@ function update_CustomerInfo_ByAccountId_v4(AccountId,custObj,actionBy){
     ,fatcaDeclarationDate=@fatcaDeclarationDate
     ,cddScore=@cddScore
     ,cddDate=@cddDate
-    ,referralPerson=@referralPerson
+    ,referralPerson=@referalPerson
     ,applicationDate=@applicationDate
     ,incomeSourceCountry=@incomeSourceCountry
     ,acceptBy=@acceptBy
@@ -3595,7 +3573,7 @@ function update_CustomerInfo_ByAccountId_v4(AccountId,custObj,actionBy){
           ,@fatcaDeclarationDate
           ,@cddScore
           ,@cddDate
-          ,@referralPerson
+          ,@referalPerson
           ,@applicationDate
           ,@incomeSourceCountry
           ,@acceptBy
@@ -3639,14 +3617,14 @@ finally {
       .input("Card_Type", sql.VarChar(10), custObj.Card_Type?custObj.Card_Type:'')
       .input("Title_Name_T", sql.NVarChar(50), custObj.Title_Name_T?custObj.Title_Name_T:'')
       .input("First_Name_T", sql.NVarChar(100), custObj.thFirstName?custObj.thFirstName:'')
-      .input("Last_Name_T", sql.NVarChar(100), custObj.thLastName)
-      .input("Title_Name_E", sql.NVarChar(100), custObj.title)
-      .input("First_Name_E", sql.NVarChar(100), custObj.enFirstName)
-      .input("Last_Name_E", sql.NVarChar(100), custObj.enLastName)
-      .input("Birth_Day", sql.NVarChar(100), custObj.birthDate) // Date
-      .input("Nation_SET_Code", sql.NVarChar(100), custObj.nationality)
-      .input("Email", sql.NVarChar(100), custObj.email)
-      .input("Mobile", sql.VarChar(50), custObj.mobileNumber)
+      .input("Last_Name_T", sql.NVarChar(100), custObj.thLastName?custObj.thLastName:'')
+      .input("Title_Name_E", sql.NVarChar(100), custObj.title?custObj.title:'')
+      .input("First_Name_E", sql.NVarChar(100), custObj.enFirstName?custObj.enFirstName:'')
+      .input("Last_Name_E", sql.NVarChar(100), custObj.enLastName?custObj.enLastName:'')
+      .input("Birth_Day", sql.NVarChar(100), custObj.birthDate?custObj.birthDate:'') // Date
+      .input("Nation_SET_Code", sql.NVarChar(100), custObj.nationality?custObj.nationality:'')
+      .input("Email", sql.NVarChar(100), custObj.email?custObj.email:'')
+      .input("Mobile", sql.VarChar(50), custObj.mobileNumber?custObj.mobileNumber:'')
       // .input("Sex", sql.VarChar(10), custObj.Sex)
 
       // .input("IT_SAcode", sql.NVarChar(20), '') //license
@@ -3657,6 +3635,44 @@ finally {
       .input("IT_PID_ExpiryDate", sql.NVarChar(50), custObj.cardExpiryDate) // Date
       .input("IT_FundConnext", sql.NVarChar(20), custObj.IT_FundConnext)
 
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .input("currentAddressSameAsFlag", sql.VarChar(10), custObj.currentAddressSameAsFlag?custObj.currentAddressSameAsFlag:'')
+      .input("fatcaDeclarationDate", sql.VarChar(10), custObj.fatcaDeclarationDate)
+      .input("fatca", sql.VarChar(10), custObj.fatca)
+      .input("suitabilityEvaluationDate", sql.VarChar(10), custObj.suitabilityEvaluationDate)
+      .input("suitabilityRiskLevel", sql.VarChar(1), custObj.suitabilityRiskLevel?custObj.suitabilityRiskLevel:'')
+      .input("ndidRequestId", sql.VarChar(100), custObj.ndidRequestId)
+      .input("ndidFlag", sql.VarChar(10), custObj.ndidFlag)
+      .input("vulnerableDetail", sql.NVarChar(100), custObj.vulnerableDetail)
+      .input("vulnerableFlag", sql.VarChar(10), custObj.vulnerableFlag)
+      .input("approved", sql.VarChar(10), custObj.approved)
+      .input("openFundConnextFormFlag", sql.VarChar(1), custObj.openFundConnextFormFlag)
+
+      .input("cddScore", sql.VarChar(1), custObj.cddScore)
+      .input("cddDate", sql.VarChar(10), custObj.cddDate)
+      .input("referalPerson", sql.NVarChar(100), custObj.referralPerson)
+      .input("applicationDate", sql.VarChar(10), custObj.applicationDate)
+      .input("incomeSourceCountry", sql.VarChar(2), custObj.incomeSourceCountry)
+      .input("acceptBy", sql.NVarChar(100), custObj.acceptedBy)
+      .input("canAcceptFxRisk", sql.VarChar(10), custObj.canAcceptFxRisk)
+      .input("canAcceptDerivativeInvestment", sql.VarChar(10), custObj.canAcceptDerivativeInvestment)
+      .input("maritalStatus", sql.VarChar(10), custObj.maritalStatus)
+      .input("companyName", sql.NVarChar(100), custObj.companyName)
+
+      .input("workPosition", sql.NVarChar(50), custObj.workPosition)
+      .input("relatedPoliticalPerson", sql.VarChar(10), custObj.relatedPoliticalPerson)
+      .input("politicalRelatedPersonPosition", sql.NVarChar(50), custObj.politicalRelatedPersonPosition)
+
+      .input("occupationId", sql.VarChar(3), custObj.occupationId)
+      .input("occupationOther", sql.NVarChar(100), custObj.occupationOther)
+      .input("businessTypeId", sql.VarChar(3), custObj.businessTypeId)
+      .input("businessTypeOther", sql.NVarChar(100), custObj.businessTypeOther)
+      .input("monthlyIncomeLevel", sql.VarChar(100), custObj.monthlyIncomeLevel)
+      .input("assetValue", sql.VarChar(100), custObj.assetValue)
+      .input("incomeSource", sql.VarChar(100), custObj.incomeSource)
+      .input("incomeSourceOther", sql.NVarChar(100), custObj.assetValue?custObj.assetValue:'')
+
+      // step 1
       .input("cardNumber", sql.VarChar(13), custObj.cardNumber)
       .input("identificationCardType", sql.VarChar(15), custObj.identificationCardType)
       .input("passportCountry", sql.VarChar(2), custObj.passportCountry)
@@ -3671,56 +3687,22 @@ finally {
       .input("birthDate", sql.VarChar(10), custObj.birthDate || null)
       .input("nationality", sql.VarChar(2), custObj.nationality)
       .input("mobileNumber", sql.VarChar(10), custObj.mobileNumber)
-      .input("email", sql.NVarChar(100), custObj.email)
-      // .input("phone", sql.VarChar(20), custObj.phone)
-      // .input("phone", sql.VarChar(20), '123')
-      // .input("fax", sql.VarChar(20), custObj.fax)
-      .input("maritalStatus", sql.VarChar(10), custObj.maritalStatus)
-      .input("occupationId", sql.VarChar(3), custObj.occupationId)
-      .input("occupationOther", sql.NVarChar(100), custObj.occupationOther)
-      .input("businessTypeId", sql.VarChar(3), custObj.businessTypeId)
-      .input("businessTypeOther", sql.NVarChar(100), custObj.businessTypeOther)
-      .input("monthlyIncomeLevel", sql.VarChar(100), custObj.monthlyIncomeLevel)
-      .input("assetValue", sql.VarChar(100), custObj.assetValue)
-      .input("incomeSource", sql.VarChar(100), custObj.incomeSource)
-      .input("incomeSourceOther", sql.NVarChar(100), custObj.assetValue)
-      .input("currentAddressSameAsFlag", sql.VarChar(10), custObj.currentAddressSameAsFlag)
-      .input("companyName", sql.NVarChar(100), custObj.companyName)
-      .input("workPosition", sql.NVarChar(50), custObj.workPosition)
-      .input("relatedPoliticalPerson", sql.VarChar(10), custObj.relatedPoliticalPerson)
-      .input("politicalRelatedPersonPosition", sql.NVarChar(50), custObj.politicalRelatedPersonPosition)
-      .input("canAcceptFxRisk", sql.VarChar(10), custObj.canAcceptFxRisk)
-      .input("canAcceptDerivativeInvestment", sql.VarChar(10), custObj.canAcceptDerivativeInvestment)
-      .input("suitabilityRiskLevel", sql.VarChar(1), custObj.suitabilityRiskLevel)
-      .input("suitabilityEvaluationDate", sql.VarChar(10), custObj.suitabilityEvaluationDate)
-      .input("fatca", sql.VarChar(10), custObj.fatca)
-      .input("fatcaDeclarationDate", sql.VarChar(10), custObj.fatcaDeclarationDate)
-      .input("cddScore", sql.VarChar(1), custObj.cddScore)
-      .input("cddDate", sql.VarChar(10), custObj.cddDate)
-      .input("referralPerson", sql.NVarChar(100), custObj.referralPerson)
-      .input("applicationDate", sql.VarChar(10), custObj.applicationDate)
-      .input("incomeSourceCountry", sql.VarChar(2), custObj.incomeSourceCountry)
-      .input("acceptBy", sql.NVarChar(100), custObj.acceptedBy)
-      .input("openFundConnextFormFlag", sql.VarChar(1), custObj.openFundConnextFormFlag)
-      .input("approved", sql.VarChar(10), custObj.approved)
-      .input("vulnerableFlag", sql.VarChar(10), custObj.vulnerableFlag)
-      .input("vulnerableDetail", sql.NVarChar(100), custObj.vulnerableDetail)
-      .input("ndidFlag", sql.VarChar(10), custObj.ndidFlag)
-      .input("ndidRequestId", sql.VarChar(100), custObj.ndidRequestId)
+
+      .input("phone", sql.VarChar(20), custObj.phone)
+      .input("fax", sql.VarChar(20), custObj.fax)
+
+      // Step 2
+
       .input("openChannel", sql.VarChar(1), custObj.openChannel)
       .input("investorClass", sql.VarChar(1), custObj.investorClass)
-      .input("actionBy", sql.VarChar(50), actionBy)
+
       .query(queryStr, (err, result) => {
 
       logger.info(`result >> ${JSON.stringify(result)}`)
-      logger.info(`err >> ${JSON.stringify(err.message)}`)
 
           if(err){
             logger.error(' Account Info Error SQL:'+err);
-            const err_msg=err;
-            logger.error(' Account Info Error SQL:'+err_msg);
-
-            resolve({code:'9',message:''+err_msg});
+            resolve({code:'9',message:''+err});
           }else {
             resolve({code:'0'});
           }
@@ -4137,7 +4119,8 @@ function update_Address(addrObj,seq,actionBy){
 
 
 function update_Address_ByAccountId(accountId,addrObj,seq,actionBy){
-  // console.log("update_Address()");
+
+  console.log("update_Address_ByAccountId()" +accountId + " ;seq>"+seq + " >>" + JSON.stringify(addrObj));
 
   if(addrObj.soi && addrObj.soi !='' )
     addrObj.soi =  'ซ.'+addrObj.soi;

@@ -102,18 +102,18 @@ app.use(("/api/test"),(req, res, next)=>{
   const mpamConfig = require('./config/mpam-config');
   var fullname = 'yuttana khumnual123';
 
-// var first = fullname.substring(0, (fullname.length/2));
-var last = fullname.substring((fullname.length/2), fullname.length);
-// var last5 = cardnumber.substring(cardnumber.length - 5);
+  // var first = fullname.substring(0, (fullname.length/2));
+  var last = fullname.substring((fullname.length/2), fullname.length);
+  // var last5 = cardnumber.substring(cardnumber.length - 5);
 
-mask = fullname.replace(last, "*****");
+  mask = fullname.replace(last, "*****");
 
-// console.log('production:' + production)
-// console.log('FC_API_URL:' + FC_API_URL)
-// console.log('SQL_SERVER:' + SQL_SERVER)
-// data_Masked= first + mask
+  // data_Masked= first + mask
+  var rtn= `;data_Masked: ${mask} ;PROD: ${mpamConfig.PRODUCTION} ; SQL:${mpamConfig.SQL_SERVER}`
 
-  res.status(200).json(`;data_Masked: ${mask} ;PROD: ${mpamConfig.PRODUCTION} ; SQL:${mpamConfig.SQL_SERVER}`);
+  logger.info(rtn)
+
+  res.status(200).json(rtn);
 
 })
 

@@ -164,7 +164,6 @@ exports.downloadCustomerProfile_v4 = (req, res, next) => {
   Promise.all(fnArray)
   .then(data => {
       // Report process result by Mail
-
       res.status(200).json('downloadCustomerProfile API successful. ');
   })
   .catch(error => {
@@ -205,7 +204,6 @@ exports.getIndCust = (req, res, next) =>{
       res.status(401).json(err);
     });
 }
-
 
 exports.getIndCust_V4 = (req, res, next) =>{
   var actionBy = req.params.actionBy || 'SYSTEM';

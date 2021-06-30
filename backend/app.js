@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require("path");
-
+const { networkInterfaces } = require('os');
 const connexRoutes = require('./routes/connex');
 const fundRoutes = require('./routes/fund');
 const userRoutes = require('./routes/user');
@@ -101,15 +101,33 @@ app.use(("/api/test"),(req, res, next)=>{
 
   const mpamConfig = require('./config/mpam-config');
   var fullname = 'yuttana khumnual123';
-
-  // var first = fullname.substring(0, (fullname.length/2));
   var last = fullname.substring((fullname.length/2), fullname.length);
-  // var last5 = cardnumber.substring(cardnumber.length - 5);
 
   mask = fullname.replace(last, "*****");
 
+  // *********************************************************************
+  const nets = networkInterfaces();
+  const results = Object.create(null); // Or just '{}', an empty object
+  var ipList =[];
+  for (const name of Object.keys(nets)) {
+      for (const net of nets[name]) {
+          // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+          if (net.family === 'IPv4' && !net.internal) {
+              if (!results[name]) {
+                  results[name] = [];
+                  logger.info('')
+              }
+              // results[name].push(net.address);
+              logger.info(net.address)
+              ipList.push(net.address)
+
+          }
+      }
+  }
+// *********************************************************************
+
   // data_Masked= first + mask
-  var rtn= `;data_Masked: ${mask} ;PROD: ${mpamConfig.PRODUCTION} ; SQL:${mpamConfig.SQL_SERVER}`
+  var rtn= `;data_Masked: ${mask} ; IP: ${ipList}`
 
   logger.info(rtn)
 

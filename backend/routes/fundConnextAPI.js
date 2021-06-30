@@ -12,7 +12,8 @@ router.get("/scheduleDownload/",fundConnextAPIController.scheduleDownload);
 router.get("/apiAuditor/",fundConnextAPIController.apiAuditor); // // On development
 
 // customer/individual/ API
-router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);
+// router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust);
+router.get("/customer/individual/:cardNumber", fundConnextAPIController.getIndCust_V4); // V4 Singleform
 
 // router.get("/customer/individual-DEV/:cardNumber", fundConnextAPIController.getIndCustDEV);
 router.post("/customer/individual", fundConnextAPIController.createCustomerIndividual);
@@ -22,13 +23,18 @@ router.patch("/customer/individual", fundConnextAPIController.updateCustomerIndP
 
 // Step 1 Download FC data (T+0 min)
 router.get("/downloadCustomerProfile",fundConnextAPIController.downloadCustomerProfile);
-router.get("/downloadCustomerProfile_v4",fundConnextAPIController.downloadCustomerProfile_v4); // Single form (need recheck)
+
 
 // Step 2 Upload data to MFTS(Approve) (T+5 min)
 // 2.1 uploadCustomerProfilePROC
 // 2.2 fundProfileAutoUpdateAPI
 router.get("/uploadCustomerProfile",fundConnextAPIController.uploadCustomerProfile);
+
+// ************** API v4 Single Form
+router.get("/downloadCustomerProfile_v4",fundConnextAPIController.downloadCustomerProfile_v4); // Single form (need recheck)
 router.get("/uploadCustomerProfile_v4",fundConnextAPIController.uploadCustomerProfile_v4); // Developing
+// ************** API v4 Single Form
+
 
 // Step 3 Report to staff (T+10 min)
 router.get("/reportSchedult",fundConnextAPIController.reportSCHMitlog);
@@ -89,9 +95,7 @@ router.post("/fundProfileAutoUpdate"
 // ,[check('businessDate').isLength({ min: 1 }).withMessage('must have businessDate value')]
 ,fundConnextAPIController.fundProfileAutoUpdateAPI);
 
-
 // ********* Download
-
 router.post("/exportExcel/",[
   check('fileType')
     .exists().withMessage('must have param fileType')

@@ -1031,6 +1031,7 @@ function funcMF_PortDetailByPort_Query(compCode,custCode,as_of_date) {
         where Account_ID = @custCode
         and  CONVERT(DATETIME, businessDate) <= CONVERT(DATETIME, @as_of_date)
         order by  businessDate desc )
+      order by amc,instrument
 
   END
     `;
@@ -1083,6 +1084,7 @@ function funcBOND_PortDetailByPort_query(compCode,portfolio_code,as_of_date) {
     LEFT join ITB_Company d ON d.ID=c.IssuerID and d.[status]='A'
     where CustCode = @CustCode
     and  a.Status = 'A'
+    order  by order_date
 
   END
     `;
@@ -1143,7 +1145,6 @@ BEGIN
     where accountID =@custCode
     --and MONTH(a.transactionDate)=MONTH(CAST(@as_of_date as date))
     and  a.transactionDate >= Dateadd(Month, Datediff(Month, 0, DATEADD(m,-12,CAST(@as_of_date as date))), 0)
-
     order BY transactionID desc ,a.fundCode
 
     OPEN @TransactionCursor;

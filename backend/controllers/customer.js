@@ -552,9 +552,20 @@ exports.approveCustInfo = (req, res, next) => {
 
   var obj = JSON.parse(req.body.fcCustInfo)
 
+  logger.info('*** Call approveCustInfo()' + req.body.fcCustInfo)
+
   exports.approveCustInfoProcess(obj).then(result=>{
-    // logger.info('approveCustInfo Finish >'+ JSON.stringify(result))
+  // exports.approveCustInfoProcess_v4(obj).then(result=>{   // Single form V4
+
+    logger.info('approveCustInfo >'+ JSON.stringify(result))
+
+    if(result.length>1)
+      result = result[0]
+
+    logger.info('Step 2 >'+ JSON.stringify(result))
+
     res.status(200).json(result);
+
   })
 
 }

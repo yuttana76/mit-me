@@ -7080,6 +7080,17 @@ function fundProfileAutoUpdate(actionBy){
       DECLARE @Fund_Code VARCHAR(20);
       DECLARE @msg VARCHAR(200);
 
+
+      DECLARE @Fund_Name_TH VARCHAR(200);
+      DECLARE @Fund_Name_EN VARCHAR(200);
+      DECLARE @Registration_date VARCHAR(10);
+      DECLARE @buy_cut_off_time VARCHAR(10);
+      DECLARE @sell_cut_off_time VARCHAR(10);
+      DECLARE @Fund_Risk_Level VARCHAR(10);
+      DECLARE @FundPolicy VARCHAR(5);
+      DECLARE @TaxType VARCHAR(5);
+      DECLARE @FIFFlag VARCHAR(1);
+
           SET @newFund = CURSOR FOR
           select a.Fund_Code
           from MFTS_Fund a

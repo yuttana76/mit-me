@@ -4177,13 +4177,6 @@ tr:nth-child(even) {
     var mailBody='<h1>FundConnext Download Report On' + businessDate + '</h1>'
     mailBody += '<h3>Customer Profile Download ('+repData[0].length+') </h3>'
 
-    // *** Customer profile
-  //   mailBody +=`<TABLE>
-  //   <th>Code</th>
-  //   <th>Name</th>
-  //   <th>Reference</th>
-  //   <th>Application Date</th>
-  // `
 
  // *** Customer profile
  mailBody +=`<TABLE>
@@ -4273,7 +4266,7 @@ tr:nth-child(even) {
 
       let mailOptions_resp = {
         from: 'it@merchantasset.co.th',
-        to: FUNDPROFILE_RESPONDOR_EMAIL,
+        to: FUNDPROFILE_RESPONDOR_EMAIL+',it@merchantasset.co.th',
         subject: `Fund profile  updated on ${businessDate}`,
         body:  `${fund_mailBody}`
       };

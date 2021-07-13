@@ -72,7 +72,8 @@ exports.getPortDetailByAgents_V2 = (req, res, next) => {
     agentArray = agent_list.split(',')
     processLicenseArray(compCode,agentArray,as_of_date).then((_data)=>{
       // logger.info(` RT data>${JSON.stringify(_data)}`)
-      console.log('All Done!');
+      // console.log('All Done!');
+      logger.info('All Done!');
       res.status(200).json(_data);
     })
 

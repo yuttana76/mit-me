@@ -44,6 +44,7 @@ var config = mpamConfig.dbParameters;
 
 const sql = require("mssql");
 const { reject } = require('async');
+const { json } = require('express');
 
 exports.scheduleDownload = (req, res, next) => {
 
@@ -120,8 +121,8 @@ exports.NAV_auditor=(businessDate)=>{
 exports.downloadCustomerProfile = (req, res, next) => {
 
   var userCode = 'MPAM_API'
-  var businessDate = getCurrentDate();
-  // var businessDate = fundConnextBusinessDate();
+  // var businessDate = getCurrentDate();
+  var businessDate = fundConnextBusinessDate();
 
   if(req.query.businessDate){
     businessDate = req.query.businessDate
@@ -222,8 +223,6 @@ exports.getIndCust_V4 = (req, res, next) =>{
       if(obj.errMsg){
         res.status(200).json(obj.errMsg);
       }
-
-      console.log("GetIndCust>>" + JSON.stringify(obj))
 
       // 2. Save to MIT_FC_XXX
       saveIndCustProc_v4(obj,actionBy).then(result=>{
@@ -451,49 +450,55 @@ function saveIndCustProc_v4(custInfoObj,actionBy){
 
     // 1 MIT_FC_CUST_INFO
     saveMIT_FC_CUST_INFO_v4(custInfoObj,actionBy).then((result)=>{
-      logger.info("saveMIT_FC_CUST_INFO_v4() successful")
+      logger.info(`saveMIT_FC_CUST_INFO_v4() successful for ${custInfoObj.cardNumber} `)
+
     },err=>{
-      logger.error("ERROR saveMIT_FC_CUST_INFO_v4() :" + err)
+      logger.error(`ERROR saveMIT_FC_CUST_INFO_v4() for ${custInfoObj.cardNumber} :  ${JSON.stringify(err)}`)
       reject(err);
+
     })
 
-    // 2 MIT_FC_CUST_ADDR
+    // // 2 MIT_FC_CUST_ADDR
     saveMIT_FC_CUST_ADDR_V4(custInfoObj,actionBy).then(result=>{
       logger.info("saveMIT_FC_CUST_ADDR() successful")
+
     },err=>{
       logger.error("saveMIT_FC_CUST_ADDR() error:" + err)
       reject(err);
+
     })
 
     // 3 MIT_FC_CUST_SPOUSE
-      if(custInfoObj.spouse){
-        saveMIT_FC_CUST_SPOUSE_V4(custInfoObj.spouse,actionBy).then(result=>{
-          logger.info("saveMIT_FC_CUST_SPOUSE_V4() successful")
+      if(custInfoObj.hasOwnProperty('spouse')){
+
+        saveMIT_FC_CUST_SPOUSE_V4(custInfoObj,actionBy).then(result=>{
+          logger.info(`saveMIT_FC_CUST_SPOUSE_V4() successful ${custInfoObj.cardNumber}`)
         },err=>{
           logger.error("saveMIT_FC_CUST_SPOUSE_V4() error:" + err)
           reject(err);
         })
+
       }
 
     // 4	MIT_FC_CUST_ACCOUNT
-    if(custInfoObj.accounts){
+    if(custInfoObj.hasOwnProperty('accounts')){
       saveMIT_FC_CUST_ACCOUNT_V4(custInfoObj,actionBy).then(result=>{
-        logger.info("saveMIT_FC_CUST_ACCOUNT() successful")
+        logger.info(`saveMIT_FC_CUST_ACCOUNT_V4() successful ${custInfoObj.cardNumber}`)
       },err=>{
-        logger.error("saveMIT_FC_CUST_ACCOUNT() error:" + err)
+        logger.error("saveMIT_FC_CUST_ACCOUNT_V4() error:" + err)
         reject(err);
       })
     }
 
 
-    // // 6	MIT_FC_CUST_SUIT
-    if(custInfoObj.suitabilityForm){
+    // // // 6	MIT_FC_CUST_SUIT
+    // if(custInfoObj.suitabilityForm){
+    if(custInfoObj.hasOwnProperty('suitabilityForm')){
 
-      saveMIT_FC_CUST_SUIT_Detail_V4(custInfoObj.cardNumber,custInfoObj,actionBy).then((result)=>{
-        logger.info("saveMIT_FC_CUST_SUIT_Detail() successful")
-
+      saveMIT_FC_CUST_SUIT_Detail_V4(custInfoObj,actionBy).then((result)=>{
+        logger.info(`saveMIT_FC_CUST_SUIT_Detail_V4() ${custInfoObj.cardNumber} successful`)
         },err=>{
-          logger.error("saveMIT_FC_CUST_SUIT_Detail() error:" + err)
+          logger.error("saveMIT_FC_CUST_SUIT_Detail_V4() error:" + err)
           reject(err);
         })
     }
@@ -805,7 +810,7 @@ function saveMIT_FC_CUST_INFO(custInfoObj,actionBy) {
  */
 function saveMIT_FC_CUST_INFO_v4(custInfoObj,actionBy) {
 
-  logger.info( 'saveMIT_FC_CUST_INFO_v4');
+  logger.info( `saveMIT_FC_CUST_INFO_v4 ${custInfoObj.cardNumber} ;${custInfoObj.ndidFlag}; ${custInfoObj.ndidRequestId} `);
 
   if(custInfoObj.cardExpiryDate ==='N/A')
       custInfoObj.cardExpiryDate=null
@@ -1073,7 +1078,7 @@ function saveMIT_FC_CUST_INFO_v4(custInfoObj,actionBy) {
 
 function saveMIT_FC_CUST_SPOUSE_V4(custInfoObj,actionBy) {
 
-  logger.info( 'saveMIT_FC_CUST_SPOUSE_V4');
+  logger.info( `saveMIT_FC_CUST_SPOUSE_V4()>  ${custInfoObj.cardNumber} `);
 
   if(custInfoObj.cardExpiryDate ==='N/A')
       custInfoObj.cardExpiryDate=null
@@ -1125,10 +1130,10 @@ function saveMIT_FC_CUST_SPOUSE_V4(custInfoObj,actionBy) {
         pool1
           .request() // or: new sql.Request(pool1)
           .input("cardNumber", sql.VarChar(13), custInfoObj.cardNumber)
-          .input("thFirstName", sql.VarChar(100), custInfoObj.thFirstName)
-          .input("thLastName", sql.VarChar(100), custInfoObj.thLastName)
-          .input("enFirstName", sql.VarChar(100), custInfoObj.enFirstName)
-          .input("enLastName", sql.VarChar(100), custInfoObj.enLastName)
+          .input("thFirstName", sql.NVarChar(100), custInfoObj.spouse.thFirstName)
+          .input("thLastName", sql.NVarChar(100), custInfoObj.spouse.thLastName)
+          .input("enFirstName", sql.VarChar(100), custInfoObj.spouse.enFirstName)
+          .input("enLastName", sql.VarChar(100), custInfoObj.spouse.enLastName)
           .input("actionBy", sql.VarChar(50), actionBy)
           .query(queryStr, (err, result) => {
             if (err) {
@@ -1204,7 +1209,7 @@ function saveMIT_FC_CUST_ACCOUNT(obj,actionBy) {
 }
 
 function saveMIT_FC_CUST_ACCOUNT_V4(obj,actionBy) {
-  logger.info('saveMIT_FC_CUST_ACCOUNT()'+obj.cardNumber);
+  logger.info('saveMIT_FC_CUST_ACCOUNT_V4()'+obj.cardNumber);
 
   return new Promise(function(resolve, reject) {
 
@@ -1212,38 +1217,40 @@ function saveMIT_FC_CUST_ACCOUNT_V4(obj,actionBy) {
 
         // Account
         saveMIT_FC_CUST_ACCOUNT_Detail_V4(obj.cardNumber,account,actionBy).then((result=>{
-          logger.info(`Save accounts ${account.accountId}complete`);
-        }));
+          logger.info(`Save accounts ${account.accountId} complete`);
+        },err=>{
+          logger.error( `Save accounts ${account.accountId} was`  + JSON.stringify(err));
+        })
+        )
+        ;
 
-        //BANK SUB
-        if(account.subscriptionBankAccounts){
-          logger.info('***Has subscriptionBankAccounts')
-
+        // //BANK SUB
+        if(account.hasOwnProperty('subscriptionBankAccounts')){
           account.subscriptionBankAccounts.forEach(function(bankObj) {
               saveMIT_FC_CUST_BANK_Detail(obj.cardNumber,account.accountId,'sub',bankObj,actionBy).then((result=>{
-              logger.info(`Save accounts ${account.accountId}complete`);
+              logger.info(`Save bank sub ${account.accountId} complete`);
             }));
           });
         }
 
-        //BANK RED
-        if(account.redemptionBankAccounts){
-          logger.info('***Has redemptionBankAccounts')
+        // //BANK RED
+        if(account.hasOwnProperty('redemptionBankAccounts')){
 
           account.redemptionBankAccounts.forEach(function(bankObj) {
               saveMIT_FC_CUST_BANK_Detail(obj.cardNumber,account.accountId,'red',bankObj,actionBy).then((result=>{
-              logger.info(`Save accounts ${account.accountId}complete`);
+              logger.info(`Save bank red ${account.accountId} complete`);
             }));
           });
         }
 
         //Mail to send document
         // Addr_Seq =9 : mailing address each account
-        if(account.mailing){
-          saveMIT_FC_CUST_ADDR_Detail_V4(account.cardNumber,account.accountId,account.mailing,9,actionBy).then((result=>{
-            logger.info(" Save Work address complete");
-          }));
-        }
+        // if(account.mailing){
+        //   saveMIT_FC_CUST_ADDR_Detail_V4(account.cardNumber,account.accountId,account.mailing,9,actionBy).then((result=>{
+        //     logger.info(" Save Work address complete");
+        //   }));
+        // }
+
       });
 
     resolve({code:0});
@@ -1561,8 +1568,8 @@ function saveMIT_FC_CUST_BANK_Detail(cardNumber,accountId,accType,obj,actionBy) 
       ,bankAccountNo=@bankAccountNo
       ,[default]=@default
       ,finnetCustomerNo=@finnetCustomerNo
-      ,CreateBy=@CreateBy
-      ,CreateDate=getdate()
+      ,UpdateBy=@CreateBy
+      ,UpdateDate=getdate()
       WHERE cardNumber=@cardNumber AND bankAccountNo=@bankAccountNo AND accType=@accType AND accountId=@accountId
 
       IF @@ROWCOUNT =0
@@ -1686,7 +1693,7 @@ function saveMIT_FC_CUST_ADDR_V4(obj,actionBy) {
 
       // 2:Current
       if(obj.current){
-        logger.info(`*** current >> ${JSON.stringify(obj.current)}`)
+        // logger.info(`*** current >> ${JSON.stringify(obj.current)}`)
         saveMIT_FC_CUST_ADDR_Detail_V4(obj.cardNumber,"1",obj.current,2,actionBy).then((result=>{
           logger.info(" Save Current address complete");
         }));
@@ -1694,7 +1701,7 @@ function saveMIT_FC_CUST_ADDR_V4(obj,actionBy) {
 
       // 3:Work
       if(obj.work){
-        logger.info(`*** work >> ${JSON.stringify(obj.work)}`)
+        // logger.info(`*** work >> ${JSON.stringify(obj.work)}`)
         saveMIT_FC_CUST_ADDR_Detail_V4(obj.cardNumber,"1",obj.work,3,actionBy).then((result=>{
           logger.info(" Save Work address complete");
         }));
@@ -2024,7 +2031,7 @@ function saveMIT_FC_CUST_SUIT_Detail(cardNumber,obj,actionBy) {
 }
 
 
-function saveMIT_FC_CUST_SUIT_Detail_V4(cardNumber,obj,actionBy) {
+function saveMIT_FC_CUST_SUIT_Detail_V4(obj,actionBy) {
 
   logger.info('saveMIT_FC_CUST_SUIT_Detail_V4()'+obj.cardNumber);
 
@@ -2093,11 +2100,11 @@ function saveMIT_FC_CUST_SUIT_Detail_V4(cardNumber,obj,actionBy) {
     const pool1 = new sql.ConnectionPool(config, err => {
       pool1
         .request() // or: new sql.Request(pool1)
-        .input("cardNumber", sql.VarChar(20), cardNumber)
+        .input("cardNumber", sql.VarChar(20), obj.cardNumber)
         .input("suitNo1", sql.VarChar(1), obj.suitabilityForm.suitNo1)
         .input("suitNo2", sql.VarChar(1), obj.suitabilityForm.suitNo2)
         .input("suitNo3", sql.VarChar(1), obj.suitabilityForm.suitNo3)
-        .input("suitNo4", sql.VarChar(10), obj.suitabilityForm.suitNo4)
+        .input("suitNo4", sql.VarChar(10), JSON.stringify(obj.suitabilityForm.suitNo4) )
         .input("suitNo5", sql.VarChar(1), obj.suitabilityForm.suitNo5)
         .input("suitNo6", sql.VarChar(1), obj.suitabilityForm.suitNo6)
         .input("suitNo7", sql.VarChar(1), obj.suitabilityForm.suitNo7)
@@ -6896,7 +6903,6 @@ function fnGetDownloadAPI_V4(businessDate,fileType){
       resultObj =JSON.parse(result);
 
       // logger.info("***TOKEN>>"+resultObj.access_token);
-
       const HTTPS_ENDPOIN =`https://${FC_API_URL}${FC_DOWNLOAD_PATH}${businessDate}/${fileType}`;
       const propertiesObject = {
         "x-auth-token":resultObj.access_token,

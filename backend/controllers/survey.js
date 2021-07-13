@@ -90,6 +90,9 @@ exports.surveySuitByMailToken = (req, res, next) =>{
   let _target = req.body.target || 'test';
   let _url='';
 
+
+  console.log(` surveySuitByMailToken ${mpamConfig.production}`)
+
   if (_target =='prod'){
     _url = 'http://mit.wealth-merchant.com:3000/suitSurvey?has='
   }else{
@@ -1178,7 +1181,8 @@ function getCustomerInfo(Cust_Code) {
   logger.info('getCustomerInfo()' + Cust_Code);
 
   var fncName = "getCustomerData";
-  var queryStr = ` BEGIN
+  var queryStr = `
+  BEGIN
 
   select Cust_Code
   ,a.First_Name_T +' ' + a.Last_Name_T AS fullName
@@ -1187,16 +1191,15 @@ function getCustomerInfo(Cust_Code) {
   from MIT_CUSTOMER_INFO a
   where cust_code= @Cust_Code
 
-
   if @@rowcount = 0
   BEGIN
 
-  SELECT Cust_Code
-  ,[Title_Name_T] + ' ' +  [First_Name_T] + ' ' + [Last_Name_T] AS fullName
-  ,[Title_Name_E] + ' ' +  [First_Name_E] + ' ' + [Last_Name_E] AS fullName_Eng
-  ,Email
-  FROM [Account_Info]
-  WHERE Cust_Code= @Cust_Code
+    SELECT Cust_Code
+    ,[Title_Name_T] + ' ' +  [First_Name_T] + ' ' + [Last_Name_T] AS fullName
+    ,[Title_Name_E] + ' ' +  [First_Name_E] + ' ' + [Last_Name_E] AS fullName_Eng
+    ,Email
+    FROM [Account_Info]
+    WHERE Cust_Code= @Cust_Code
 
   END
 

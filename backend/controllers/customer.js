@@ -11,6 +11,9 @@ exports.testAPI = (req, res, next) => {
 }
 
 exports.searchCustomers = (req, res, next) => {
+
+  logger.info('Step 1')
+
   var fncName = "searchCustomers";
 
   var numPerPage = parseInt(req.query.pagesize, 10) || 10;
@@ -34,16 +37,28 @@ exports.searchCustomers = (req, res, next) => {
   ORDER BY Cust_Code
 
   IF @@ROWCOUNT=0 BEGIN
-  SELECT * FROM (
-      SELECT ROW_NUMBER() OVER(ORDER BY cardNumber) AS NUMBER
-      ,cardNumber AS Cust_Code,' (New) ' + title AS Title_Name_T,thFirstName AS First_Name_T ,thLastName AS Last_Name_T ,'1' AS Group_Code,birthDate AS Birth_Day
-      FROM [MIT_FC_CUST_INFO] WHERE cardNumber =@Cust_Code
+    SELECT * FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY cardNumber) AS NUMBER
+        ,cardNumber AS Cust_Code,' (New) ' + title AS Title_Name_T,thFirstName AS First_Name_T ,thLastName AS Last_Name_T ,'1' AS Group_Code,birthDate AS Birth_Day
+        FROM [MIT_FC_CUST_INFO] WHERE cardNumber =@Cust_Code
 
-    ) AS TBL
-  WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
-  ORDER BY Cust_Code
-
+      ) AS TBL
+    WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+    ORDER BY Cust_Code
   END
+
+  IF @@ROWCOUNT=0 BEGIN
+    SELECT * FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY cardNumber) AS NUMBER
+        ,cardNumber AS Cust_Code,' (New) ' + title AS Title_Name_T,thFirstName AS First_Name_T ,thLastName AS Last_Name_T ,'1' AS Group_Code,birthDate AS Birth_Day
+        FROM [MIT_FC_CUST_INFO_SF] WHERE cardNumber =@Cust_Code
+
+      ) AS TBL
+    WHERE NUMBER BETWEEN ((${page} - 1) * ${numPerPage} + 1) AND (${page} * ${numPerPage})
+    ORDER BY Cust_Code
+  END
+
+
 END
     `;
 
@@ -77,10 +92,9 @@ END
           });
         } else {
 
-          // console.log('Query result>>' + JSON.stringify(result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1]))
           res.status(200).json({
             message: fncName + "Quey db. successfully!",
-            result: result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1]
+            result: result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1].length !=0? result.recordsets[1]:result.recordsets[2]
           });
         }
       });
@@ -228,7 +242,8 @@ exports.getFC_CustomerInfo = (req, res, next) => {
 
   var custCode = req.params.cusCode;
 
-  exports.getFC_CustomerInfo_proc(custCode).then(custInfo=>{
+  // exports.getFC_CustomerInfo_proc(custCode).then(custInfo=>{
+  exports.getFC_CustomerInfo_proc_v4(custCode).then(custInfo=>{
 
       res.status(200).json({
       result: custInfo
@@ -554,10 +569,10 @@ exports.approveCustInfo = (req, res, next) => {
 
   logger.info('*** Call approveCustInfo()' + req.body.fcCustInfo)
 
-  exports.approveCustInfoProcess(obj).then(result=>{
-  // exports.approveCustInfoProcess_v4(obj).then(result=>{   // Single form V4
+  // exports.approveCustInfoProcess(obj).then(result=>{
+  exports.approveCustInfoProcess_v4(obj).then(result=>{   // Single form V4
 
-    logger.info('approveCustInfo >'+ JSON.stringify(result))
+    // logger.info('approveCustInfo >'+ JSON.stringify(result))
 
     if(result.length>1)
       result = result[0]

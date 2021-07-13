@@ -32,10 +32,10 @@ export class CustomerService {
       queryParams += `&cust_id=${conditionObj.custId}`;
     }
 
-    // console.log('Execute getCustomers()' + BACKEND_URL+queryParams );
+    console.log('Execute getCustomers()' + BACKEND_URL + queryParams );
     this.http.get<{ message: string, result: any }>(BACKEND_URL + queryParams)
     .pipe(map((resultData) => {
-        return resultData.result.map((data:any) => {
+        return resultData.result.map((data: any) => {
             return {
               Cust_Code: data.Cust_Code,
               Card_Type: data.Card_Type,
@@ -126,10 +126,10 @@ export class CustomerService {
 
   getInvestorComparision(id: string): Observable<any> {
 
-    let observableBatch = [];
+    var observableBatch = [];
 
-    observableBatch.push(this.http.get<{result: any }>(BACKEND_URL+'orgCusInfo/' + id ));
-    observableBatch.push(this.http.get<{result: any }>(BACKEND_URL+'fcCusInfo/' + id ));
+    observableBatch.push(this.http.get<{result: any }>(BACKEND_URL + 'orgCusInfo/' + id ));
+    observableBatch.push(this.http.get<{result: any }>(BACKEND_URL + 'fcCusInfo/' + id ));
 
       return forkJoin(observableBatch);
   }

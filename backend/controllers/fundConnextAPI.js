@@ -215,7 +215,7 @@ exports.getIndCust_V4 = (req, res, next) =>{
   }
 
   var cardNumber = req.params.cardNumber;
-  logger.info("Welcome API /GetIndCust/"+ cardNumber);
+  logger.info("Welcome API /getIndCust_V4/"+ cardNumber);
 
   // 1. Call API
     fnGetIndCust_V4(cardNumber).then(obj=>{

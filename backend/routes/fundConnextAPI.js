@@ -31,8 +31,8 @@ router.get("/downloadCustomerProfile",fundConnextAPIController.downloadCustomerP
 router.get("/uploadCustomerProfile",fundConnextAPIController.uploadCustomerProfile);
 
 // ************** API v4 Single Form
-router.get("/downloadCustomerProfile_v4",fundConnextAPIController.downloadCustomerProfile_v4); // Single form (need recheck)
-router.get("/uploadCustomerProfile_v4",fundConnextAPIController.uploadCustomerProfile_v4); // Developing
+router.get("/downloadCustomerProfile_v4",fundConnextAPIController.downloadCustomerProfile_v4); // Single form
+router.get("/uploadCustomerProfile_v4",fundConnextAPIController.uploadCustomerProfile_v4); // Single form
 // ************** API v4 Single Form
 
 

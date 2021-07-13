@@ -24,7 +24,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "start:server": "nodemon ./backend/server.js",
+    "start:server": "node ./backend/server.js",
+    "start:dev": "nodemon ./backend/server.js",
     "postinstall": "ngcc"
   },
   "private": true,

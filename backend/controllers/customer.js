@@ -795,7 +795,7 @@ exports.approveCustInfoProcess_v4 = (fcCustInfoObj) => {
         /*
         Update & Insert MFTS_Suit
         */
-        fnArray.push(update_MFTS_Suit_ByAccountId(fcCustInfoObj.cardNumber,actionBy));
+        fnArray.push(update_MFTS_Suit_ByAccountId_v4(fcCustInfoObj.cardNumber,actionBy));
         //Suit by  account
 
         Promise.all(fnArray)
@@ -4972,10 +4972,133 @@ END
 
   }
   );
-
-
 }
 
+
+
+function update_MFTS_Suit_ByAccountId_v4(cardNumber,actionBy){
+
+  console.log("update_MFTS_Suit_ByAccountId()" + cardNumber);
+  const sql = require('mssql')
+
+  var queryStr = `
+  BEGIN
+
+  --declare @cardNumber VARCHAR(100)= '3430200159411'
+  --declare @actionBy VARCHAR(100)= 'MPAM_API';
+
+    --SQL Server automatically rolls back the current transaction. By default XACT_ABORT is OFF
+    SET XACT_ABORT ON
+
+    BEGIN TRANSACTION update_MFTS_Suit;
+
+    -- Code here
+    DECLARE @AccountCursor as CURSOR;
+    DECLARE @Account_No as VARCHAR(20);
+    DECLARE @suitabilityRiskLevel as VARCHAR(1);
+    DECLARE @suitabilityEvaluationDate as date
+    DECLARE @Risk_Profile as VARCHAR(100);
+    DECLARE @Risk_Description as VARCHAR(500);
+    DECLARE @RowCount as INT;
+    DECLARE @Series_Id as INT;
+
+    select @suitabilityRiskLevel=A.suitabilityRiskLevel
+            ,@suitabilityEvaluationDate=A.suitabilityEvaluationDate
+            ,@Risk_Profile=B.Risk_Profile
+            ,@Risk_Description=B.Description
+    from MIT_FC_CUST_INFO_SF  A
+    left join MFTS_Suit_Risk B  ON A.suitabilityRiskLevel =B.Risk_Level
+    where cardNumber=@cardNumber
+
+    SET @AccountCursor = CURSOR FOR
+    select accountId
+    FROM MIT_FC_CUST_ACCOUNT_SF where cardNumber= @cardNumber;
+
+    --Insert /Update  MFTS_Suit by @accountId
+    OPEN @AccountCursor;
+    FETCH NEXT FROM @AccountCursor INTO @Account_No;
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+
+      select  @RowCount = COUNT(*)
+      from MFTS_Suit
+      WHERE Account_No=@Account_No
+      AND CAST(Document_Date AS DATE) >= CAST(@suitabilityEvaluationDate AS DATE)  AND Active_Flag='A'
+
+     IF @RowCount =0
+     BEGIN
+
+        SElECT @Series_Id =  Id FROM [MFTS_Suit_Series] WHERE  Active_Flag='A'
+
+        UPDATE MFTS_Suit
+        SET Active_Flag='I'
+        WHERE Account_No=@Account_No
+
+        INSERT INTO  MFTS_Suit (
+            Series_Id
+            ,Account_No
+            ,Document_Date
+            ,Risk_Level
+            ,Risk_Level_Desc
+            ,Active_Flag
+            ,[Create_By]
+            ,[Create_Date]
+            )
+        VALUES(
+            @Series_Id
+            ,@Account_No
+            ,@suitabilityEvaluationDate
+            ,@Risk_Profile
+            ,@Risk_Description
+            ,'A'
+            ,@actionBy
+            ,getDate()
+            )
+    END;
+
+    FETCH NEXT FROM @AccountCursor INTO @Account_No;
+    END
+
+    CLOSE @AccountCursor;
+    DEALLOCATE @AccountCursor;
+
+    COMMIT TRANSACTION update_MFTS_Suit;
+
+  END
+  `;
+
+  return new Promise(function(resolve, reject) {
+
+    console.log("Execute Query update_MFTS_Suit_ByAccountId()" + cardNumber);
+
+    const pool1 = new sql.ConnectionPool(config, err => {
+      pool1.request()
+      .input("cardNumber", sql.VarChar(20), cardNumber)
+      .input("actionBy", sql.VarChar(50), actionBy)
+      .query(queryStr, (err, result) => {
+
+        console.log('***update_MFTS_Suit_ByAccountId(Result) >> ');
+          if(err){
+            const err_msg=err;
+            logger.error('Messge:'+err_msg);
+            resolve({code:'9',message:''+err_msg});
+          }else {
+            resolve({code:'0'});
+          }
+      })
+
+
+    })
+
+    pool1.on('error', err => {
+      console.log('err 2 ->' +err);
+      logger.error(err);
+      reject(err);
+    })
+
+  }
+  );
+}
 
 function update_MFTS_Suit_Detail(cardNumber,actionBy){
 

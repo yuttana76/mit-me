@@ -12,8 +12,6 @@ exports.testAPI = (req, res, next) => {
 
 exports.searchCustomers = (req, res, next) => {
 
-  logger.info('Step 1')
-
   var fncName = "searchCustomers";
 
   var numPerPage = parseInt(req.query.pagesize, 10) || 10;
@@ -331,14 +329,13 @@ exports.getFC_CustomerInfo_proc_v4 = (custCode) => {
   return new Promise(function(resolve, reject) {
 
     fnArray=[];
-  fnArray.push(getFC_CustomerInfo_v4(custCode));
-  fnArray.push(getFC_Address_v4(custCode,1));//identificationDocument
-  fnArray.push(getFC_Address_v4(custCode,2));//current
-  fnArray.push(getFC_Address_v4(custCode,3));//work
+    fnArray.push(getFC_CustomerInfo_v4(custCode));
+    fnArray.push(getFC_Address_v4(custCode,1));//identificationDocument
+    fnArray.push(getFC_Address_v4(custCode,2));//current
+    fnArray.push(getFC_Address_v4(custCode,3));//work
 
   Promise.all(fnArray).then(values => {
 
-    // console.log('FC data>'+JSON.stringify(values))
       custInfo=values[0][0]
 
       if(values[1].length>0)
@@ -441,7 +438,6 @@ const getORG_Address = (cardNumber,seq) => {
       A.Addr_No,
       [Place],
       [Road],
-
       [Tambon_Id],
       [Amphur_Id],
       [Province_Id],
@@ -520,17 +516,35 @@ const getFC_Address_v4 = (cardNumber,seq) => {
 
       const sql = require('mssql')
       var queryStr = `
-      SELECT
-      ISNULL(' '+A.[no],'') +' '+ISNULL(' '+A.building,'')+ISNULL(' ชั้น ' + a.[floor],'') +' '+ ISNULL(' ซ.'+a.soi, '')
-      +ISNULL(' ถ.'+ a.road,'')
-      +ISNULL(' หมู่'+A.moo,'')
-      +ISNULL(' '+A.subDistrict,'')
-      +ISNULL(' '+A.district,'')
-      +ISNULL(' '+A.province,'')
-      +ISNULL(' '+A.postalCode,'') AS printTxt
-      ,A.*
-      FROM [MIT_FC_CUST_ADDR_SF] A
-      WHERE A.cardNumber=@cardNumber AND A.Addr_Seq=@Addr_Seq
+          BEGIN
+
+                SELECT
+                ISNULL(' '+A.[no],'') +' '+ISNULL(' '+A.building,'')+ISNULL(' ชั้น ' + a.[floor],'') +' '+ ISNULL(' ซ.'+a.soi, '')
+                +ISNULL(' ถ.'+ a.road,'')
+                +ISNULL(' หมู่'+A.moo,'')
+                +ISNULL(' '+A.subDistrict,'')
+                +ISNULL(' '+A.district,'')
+                +ISNULL(' '+A.province,'')
+                +ISNULL(' '+A.postalCode,'') AS printTxt
+                ,A.*
+                FROM [MIT_FC_CUST_ADDR_SF] A
+                WHERE A.cardNumber=@cardNumber AND A.Addr_Seq=@Addr_Seq
+
+                IF @@ROWCOUNT= 0 BEGIN
+                SELECT
+                ISNULL(' '+A.[no],'') +' '+ISNULL(' '+A.building,'')+ISNULL(' ชั้น ' + a.[floor],'') +' '+ ISNULL(' ซ.'+a.soi, '')
+                +ISNULL(' ถ.'+ a.road,'')
+                +ISNULL(' หมู่'+A.moo,'')
+                +ISNULL(' '+A.subDistrict,'')
+                +ISNULL(' '+A.district,'')
+                +ISNULL(' '+A.province,'')
+                +ISNULL(' '+A.postalCode,'') AS printTxt
+                ,A.*
+                FROM [MIT_FC_CUST_ADDR] A
+                WHERE A.cardNumber=@cardNumber AND A.Addr_Seq=@Addr_Seq
+              END
+
+          END
       `;
 
       const pool1 = new sql.ConnectionPool(config, err => {
@@ -542,7 +556,11 @@ const getFC_Address_v4 = (cardNumber,seq) => {
               logger.error(err);
               reject(fncName + err);
             }else {
-              resolve(result.recordset);
+
+              // console.log(JSON.stringify(result))
+              resolve(result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1]);
+              // resolve(result.recordset);
+
             }
         })
       })
@@ -5859,7 +5877,13 @@ function getFC_CustomerInfo_v4(cardNumber){
 
 
   --Get Account id
-  SET @getAccount = CURSOR FOR select accountId from MIT_FC_CUST_ACCOUNT_SF WHERE cardNumber = @cardNumber
+  SET @getAccount = CURSOR FOR
+  select accountId from MIT_FC_CUST_ACCOUNT
+    WHERE cardNumber = @cardNumber
+    UNION
+    select accountId from MIT_FC_CUST_ACCOUNT_SF
+    WHERE cardNumber = @cardNumber
+
 
   OPEN @getAccount
   FETCH NEXT
@@ -5885,16 +5909,17 @@ function getFC_CustomerInfo_v4(cardNumber){
     LEFT JOIN  [MFTS].[dbo].[VW_MFTS_SaleCode] C ON B.icLicense=C.License_Code
     WHERE A.cardNumber= @cardNumber
 
+      IF @@ROWCOUNT= 0 BEGIN
+        SELECT  TOP 1 @accountStr AS accountId,C.Id AS RM_ID,C.License_Code AS RM_License_Code,C.EMAIL AS RM_EMAIL,C.Full_Name AS RM,A.*
+        FROM [MIT_FC_CUST_INFO] A
+        LEFT JOIN  MIT_FC_CUST_ACCOUNT B ON A.cardNumber=B.cardNumber
+        LEFT JOIN  [MFTS].[dbo].[VW_MFTS_SaleCode] C ON B.icLicense=C.License_Code
+        WHERE A.cardNumber= @cardNumber
+      END
+
   END
 
   `;
-
-  // var queryStr = `
-  // SELECT  TOP 1 B.accountId,C.Full_Name AS RM,A.*
-  // FROM [MIT_FC_CUST_INFO] A
-  // LEFT JOIN  MIT_FC_CUST_ACCOUNT B ON A.cardNumber=B.cardNumber
-  // LEFT JOIN  [MFTS].[dbo].[VW_MFTS_SaleCode] C ON B.icLicense=C.License_Code
-  // WHERE A.cardNumber=@cardNumber `;
 
   const sql = require('mssql')
 
@@ -5909,7 +5934,8 @@ function getFC_CustomerInfo_v4(cardNumber){
           reject(fncName + err);
         }else {
 
-          resolve(result.recordset);
+          resolve(result.recordsets[0].length !=0?result.recordsets[0]:result.recordsets[1].length !=0? result.recordsets[1]:result.recordsets[2]);
+          // resolve(result.recordset);
         }
     })
   })

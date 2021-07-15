@@ -3972,7 +3972,7 @@ exports.uploadCustomerProfile_v4 = (req, res, next) => {
   // Transaction API
   fnArray=[];
   fnArray.push(exports.uploadCustomerProfilePROC_v4(businessDate,actionBy));
-  // fnArray.push(fundProfileAutoUpdate(actionBy));
+  fnArray.push(fundProfileAutoUpdate(actionBy));
 
   Promise.all(fnArray)
   .then(data => {
